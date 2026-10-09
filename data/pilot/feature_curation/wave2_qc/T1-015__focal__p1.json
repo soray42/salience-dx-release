@@ -1,0 +1,13 @@
+{
+  "seed_id": "T1-015",
+  "my_own_diagnosis": "From xbase + focal alone: the strictly bottom-up progression from oldest to newest leaves is the diagnostic signature of a mobile-nutrient deficiency (nitrogen, with magnesium as a close differential); the iron/alkaline-soil pathway is immediately excluded because iron is immobile and its deficiency always presents first on the youngest upper leaves as interveinal chlorosis, not on old lower leaves.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature identifies both the correct direction (mobile-nutrient/nitrogen bottom-up pattern) and the exclusion rule (immobile nutrients present top-down), giving a competent practitioner everything needed to reject the distractor without ambiguity.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cell_oracles correctly carry the low_diagnostic_oracle_focus text and HH/LH correctly carry the focal oracle_focus text; the low_diagnostic oracle appropriately defers without adopting the distractor.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

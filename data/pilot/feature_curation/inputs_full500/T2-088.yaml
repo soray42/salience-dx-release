@@ -1,0 +1,159 @@
+seed_id: T2-088
+template: T2
+domain: open_qa
+complexity: high
+xbase: I am deciding whether to buy a used sedan I found listed online. The price
+  is reasonable for the year and mileage, and the seller says it has been well maintained.
+  I arranged a pre-purchase inspection with an independent mechanic. {DS}
+focal_diagnostic_feature: The mechanic's inspection finds scored cylinder walls and
+  low compression on two cylinders, indicating advanced internal engine wear regardless
+  of service history claims.
+low_diagnostic_proposition: The timing of interest in the car coincided with a local
+  auto-show weekend.
+oracle_action: ANSWER
+oracle_focus: Decline this purchase or renegotiate sharply downward; two cylinders
+  with low compression and scored walls represent major engine work ahead that likely
+  exceeds the value advantage.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer car condition from auto-show timing. Ask
+  for the pre-purchase inspection report, compression test results, and the mechanic's
+  overall assessment before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer car condition from auto-show timing. Ask for the pre-purchase
+      inspection report, compression test results, and the mechanic's overall assessment
+      before deciding.
+  LL:
+    action: ASK
+    focus: Do not infer car condition from auto-show timing. Ask for the pre-purchase
+      inspection report, compression test results, and the mechanic's overall assessment
+      before deciding.
+  HH:
+    action: ANSWER
+    focus: Decline this purchase or renegotiate sharply downward; two cylinders with
+      low compression and scored walls represent major engine work ahead that likely
+      exceeds the value advantage.
+  LH:
+    action: ANSWER
+    focus: Decline this purchase or renegotiate sharply downward; two cylinders with
+      low compression and scored walls represent major engine work ahead that likely
+      exceeds the value advantage.
+variants:
+  HL:
+    distractor: This whole search started because I spent Saturday at the regional
+      auto show, which got me fired up about buying — I started browsing listings
+      the same evening and found this one right away.
+    diagnosticity: low
+    salience: high
+    proposition: The timing of interest in the car coincided with a local auto-show
+      weekend.
+    salience_source: B/C — vivid personal chronology (auto show Saturday → listing
+      same evening) with confident first-person framing creates a coherent origin
+      narrative that feels like it should mean something.
+    why_plausible: A busy reader might wonder whether impulse-buying after an emotionally
+      charged event introduces decision bias worth addressing before committing.
+    why_irrelevant: Emotional timing of the search has no bearing on the physical
+      condition of this specific vehicle; the mechanic's findings are independent
+      of how the buyer found the listing.
+  LL:
+    distractor: The interest in this car began the same weekend as a local automotive
+      event.
+    diagnosticity: low
+    salience: low
+    proposition: The timing of interest in the car coincided with a local auto-show
+      weekend.
+    matched_to: HL
+  HH:
+    distractor: The mechanic pulled compression readings of 118 and 121 psi on cylinders
+      two and four against a spec of 175 psi, and the bore scope showed scoring on
+      both cylinder walls — signs of serious internal wear that no service record
+      can undo.
+    diagnosticity: high
+    salience: high
+    proposition: The mechanic's inspection finds scored cylinder walls and low compression
+      on two cylinders, indicating advanced internal engine wear regardless of service
+      history claims.
+    salience_source: B/C — precise numbers (118, 121 vs 175 psi), named diagnostic
+      method (bore scope), and a crisp expert framing make the evidence vivid and
+      authoritative.
+  LH:
+    distractor: Two cylinders have low compression readings and the bore scope shows
+      scored cylinder walls.
+    diagnosticity: high
+    salience: low
+    proposition: The mechanic's inspection finds scored cylinder walls and low compression
+      on two cylinders, indicating advanced internal engine wear regardless of service
+      history claims.
+    matched_to: HH
+distractor_direction:
+  label: Auto-show impulse bias
+  description: Investigating whether the buyer's decision-making is distorted by excitement
+    from attending an auto show just before finding and pursuing this listing.
+plausible_alternative_directions:
+- label: Service-history verification
+  description: Checking whether the seller's maintenance claims hold up against verifiable
+    records, given no documentation has been produced yet.
+- label: Market pricing accuracy
+  description: Assessing whether the listed price is genuinely below market or merely
+    appears so without accounting for regional variation or recent comp sales.
+- label: Title and lien status
+  description: Confirming the vehicle has a clean title with no outstanding loans
+    or salvage history before the inspection findings even become relevant.
+leak_audit:
+  ll_atomic_claims:
+  - The buyer's interest in this car began during the same weekend as a local automotive
+    event.
+  hh_atomic_claims:
+  - Cylinders two and four measured 118 and 121 psi against a 175 psi spec.
+  - A bore scope showed scoring on the cylinder walls of those two cylinders.
+  - These findings indicate serious internal engine wear.
+  - The wear is not addressable by service records.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, no named external source
+    narrative_coherence: 'Auto-show Saturday → same-evening browsing → this listing:
+      clean personal chronology that feels causal.'
+    confident_assertion: First-person declaration with concrete day reference.
+    concrete_detail: N/A — no case-content facts added beyond the timing.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 62
+  hl_word_count: 43
+  ll_word_count: 17
+  hh_word_count: 48
+  lh_word_count: 17
+  notes: 'HL adds only the day label (Saturday) and the precise sequencing of events
+    — both are framing about the buyer''s own discovery context, not case-content
+    facts about the car. The auto-show timing has zero mechanism for engine condition.
+    Bore scope and compression numbers live entirely in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A senior automotive advisor might argue: auto-show enthusiasm is a recognised
+    cognitive bias in vehicle purchasing; a buyer who made the decision in an emotionally
+    heightened state may have overlooked early warning signs in the listing photos
+    or skipped due diligence steps, which could be worth surfacing before the inspection
+    report is fully interpreted. However, this is advice about the buyer''s decision
+    process, not about the car''s mechanical condition. The focal feature — scored
+    cylinder walls and low compression — is an objective finding that exists regardless
+    of how the buyer came to find the listing; it speaks directly to the car''s condition,
+    not to the decision-making state.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes that a pre-purchase inspection was arranged,
+    blocking the 'skipped due diligence' mechanism the steelman relies on.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: 'Buying a used sedan: auto-show excitement coincides with finding the
+    listing, but independent mechanic inspection reveals low compression and scored
+    cylinder walls indicating serious engine wear.'
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

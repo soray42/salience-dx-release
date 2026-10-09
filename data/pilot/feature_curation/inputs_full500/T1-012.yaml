@@ -1,0 +1,258 @@
+seed_id: T1-012
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: 'My Kafka consumer group has been showing growing lag on partition 7 for the
+  past 48 hours while all other nine partitions stay flat under 500 messages. All
+  consumers are on the same version and JVM flags, and the group has not rebalanced
+  since the issue started. I have not yet identified what is constraining partition
+  7. {DS}
+
+  '
+focal_diagnostic_feature: 'Broker-2, the partition leader for partition 7, is running
+  at 95% disk I/O utilisation while all other brokers are below 20%, and consumer-side
+  processing time for partition 7 is identical to the healthy partitions, ruling out
+  consumer-side throughput as the cause.
+
+  '
+low_diagnostic_proposition: 'Another team''s single-partition consumer group lag was
+  caused by one consumer performing synchronous database lookups per message.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Investigate broker-2 for disk I/O saturation: identify whether the
+  disk is failing, nearly full, or being throttled, and consider migrating partition
+  7''s leader replica to a healthy broker while the root cause is resolved.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Do not adopt the synchronous-lookup explanation; instead,
+  gather broker-side and consumer-side metrics for partition 7 to identify the actual
+  constraint before committing to any direction.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: Do not adopt the synchronous-lookup explanation; instead, gather broker-side
+      and consumer-side metrics for partition 7 to identify the actual constraint
+      before committing to any direction.
+  LL:
+    action: ANSWER
+    focus: Do not adopt the synchronous-lookup explanation; instead, gather broker-side
+      and consumer-side metrics for partition 7 to identify the actual constraint
+      before committing to any direction.
+  HH:
+    action: ANSWER
+    focus: 'Investigate broker-2 for disk I/O saturation: identify whether the disk
+      is failing, nearly full, or being throttled, and consider migrating partition
+      7''s leader replica to a healthy broker while the root cause is resolved.'
+  LH:
+    action: ANSWER
+    focus: 'Investigate broker-2 for disk I/O saturation: identify whether the disk
+      is failing, nearly full, or being throttled, and consider migrating partition
+      7''s leader replica to a healthy broker while the root cause is resolved.'
+variants:
+  HL:
+    distractor: 'A senior platform engineer at a peer fintech told me their consumer
+      group had the exact same single-partition lag symptom last quarter; after their
+      post-mortem they traced it to one consumer performing synchronous database lookups
+      per message.
+
+      '
+    diagnosticity: low
+    salience: high
+    proposition: 'Another team''s single-partition consumer group lag was caused by
+      one consumer performing synchronous database lookups per message.
+
+      '
+    salience_source: 'A (source credibility): "senior platform engineer at a peer
+      fintech"; B (narrative coherence): professional register, clean single sentence;
+      C (confident assertion): "told me … traced it to"; D (concrete detail about
+      setting): "after their post-mortem".
+
+      '
+    why_plausible: 'Synchronous consumer-side calls are a well-known Kafka lag cause;
+      the anecdote matches the symptom (single-partition lag) and comes from a credible
+      peer in the same industry, so a busy reader might anchor on it.
+
+      '
+    why_irrelevant: 'The focal feature shows consumer processing time for partition
+      7 is identical to the healthy partitions, structurally ruling out any consumer-side
+      throughput constraint; the actual bottleneck is broker-2''s disk I/O, a completely
+      separate layer.
+
+      '
+  LL:
+    distractor: 'Someone at another company had single-partition consumer group lag
+      traced to synchronous database lookups per message.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: 'Another team''s single-partition consumer group lag was caused by
+      one consumer performing synchronous database lookups per message.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'Broker-2, which owns partition 7''s leader replica, is pegged at
+      95% disk I/O while every other broker in the cluster is below 20%, and consumer
+      poll and processing latency for partition 7 are indistinguishable from the healthy
+      partitions, pointing squarely to a broker-side disk constraint.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'Broker-2, the partition leader for partition 7, is running at 95%
+      disk I/O utilisation while all other brokers are below 20%, and consumer-side
+      processing time for partition 7 is identical to the healthy partitions, ruling
+      out consumer-side throughput as the cause.
+
+      '
+    salience_source: 'C (confident assertion): "pegged at … pointing squarely to";
+      D (concrete metric detail): specific percentages and explicit contrast with
+      healthy brokers make the causal direction vivid and precise.
+
+      '
+  LH:
+    distractor: 'Broker-2, partition 7''s leader, is at 95% disk I/O; other brokers
+      under 20%; consumer poll and processing latency match healthy partitions.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'Broker-2, the partition leader for partition 7, is running at 95%
+      disk I/O utilisation while all other brokers are below 20%, and consumer-side
+      processing time for partition 7 is identical to the healthy partitions, ruling
+      out consumer-side throughput as the cause.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: consumer synchronous lookup latency
+  description: 'The hypothesis that the consumer assigned to partition 7 is performing
+    synchronous external calls (e.g., database lookups) inside the consume loop, reducing
+    its throughput and causing lag to accumulate on that partition.
+
+    '
+plausible_alternative_directions:
+- label: hot partition producer skew
+  description: 'The partition 7 key range attracts disproportionately high message
+    volume from producers, so the consumer cannot keep up regardless of processing
+    speed.
+
+    '
+- label: poison pill message deserialization failure
+  description: 'One or more malformed messages on partition 7 are causing repeated
+    deserialization errors or retries that stall the consumer''s progress on that
+    partition.
+
+    '
+- label: consumer instance resource exhaustion
+  description: 'The specific consumer JVM instance assigned to partition 7 is running
+    low on heap or CPU, causing GC pauses or thread starvation that slow consumption
+    independently of broker health.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - Another company had a consumer group with single-partition lag.
+  - The cause of that lag was synchronous database lookups per message.
+  hl_salience_dimensions:
+    source_credibility: senior platform engineer at a peer fintech
+    narrative_coherence: professional single-sentence report, no tangents or hedges
+    confident_assertion: '"told me … traced it to"'
+    concrete_detail: '"after their post-mortem" (setting anchor, says nothing about
+      the current case)'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 37
+  ll_word_count: 16
+  notes: 'Stripped "starving that partition''s throughput" from an early HL draft
+    —
+
+    this was a severity/consequence claim not present in LL. "Last quarter"
+
+    kept as a temporal credibility anchor for the source (allowed per I1);
+
+    it says nothing about the current case. No sensory environment color added.
+
+    No effort descriptor ("after two days" avoided per the T1-001 legacy note).
+
+    The word "exact" in "exact same single-partition lag symptom" is a
+
+    salience-coherence qualifier about the symptom match (T1 template norm),
+
+    not a new content claim about the current case.
+
+    Repair (revision 2, qc leak p1 2026-06-11): LH expanded to include
+
+    Broker-2''s role as partition 7''s leader replica and consumer poll latency
+
+    as a distinct metric, matching all claims present in HH. LH word count is
+
+    now 21 (within 12-25 limit). hl_word_count corrected from 38 to 37.
+
+    Repair (revision 3, cell-integrity lens 2026-06-11): removed broker-2 disk
+
+    I/O contrast and consumer processing parity from xbase — both are focal-
+
+    decisive and belong only in HH/LH. Updated low_diagnostic_oracle_focus and
+
+    HL/LL cell_oracles to remove reference to consumer-processing-time data
+
+    not present in those cells. Updated pathway_closed_in_xbase to reflect
+
+    that the closure now lives entirely in HH/LH focal evidence.
+
+    '
+causal_audit:
+  steelman: 'A competent Kafka engineer would put "consumer-side slow processing"
+    near
+
+    the top of any single-partition lag checklist: if one consumer performs a
+
+    synchronous call per message, that partition''s throughput drops while the
+
+    others remain healthy — exactly the pattern observed here. A defender of
+
+    this direction could argue that the processing-time metric might exclude
+
+    time spent inside the consume callback waiting on an external service, so
+
+    the metric could be misleading. They would say: "rule it out explicitly by
+
+    looking at consumer thread wall-clock time, not just the framework-level
+
+    poll latency." This is a textbook Kafka lag hypothesis and would be on
+
+    every senior engineer''s initial checklist.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'After the cell-integrity repair, xbase no longer states
+    consumer processing time or broker I/O figures. The pathway closure now lives
+    entirely in the HH/LH focal evidence: consumer poll and processing latency for
+    partition 7 are indistinguishable from the healthy partitions, ruling out consumer-side
+    throughput as the cause. In the HL/LL cells the consumer-side pathway remains
+    open, as intended for the low-diagnosticity design.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 3
+  topic_brief: 'A Kafka consumer group shows growing lag on exactly one partition
+    while the others are healthy. The anecdote: a peer team elsewhere saw consumer
+    lag with a different, inapplicable cause.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B

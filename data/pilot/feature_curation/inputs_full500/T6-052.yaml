@@ -1,0 +1,190 @@
+seed_id: T6-052
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our MySQL read replica has been falling progressively further behind the primary
+  for the past two days. The seconds_behind_master counter was under 5 minutes a week
+  ago and is now over 40 minutes and growing. The replica server has the same CPU
+  and memory specifications as the primary, and no unusual queries are running directly
+  against it. {DS}
+focal_diagnostic_feature: SHOW SLAVE STATUS shows replica_parallel_workers is 1; the
+  primary's binlog generates roughly 3 write events per millisecond while the single
+  apply thread sustains only about 1, and lag grows at approximately 15 seconds for
+  every real second elapsed.
+low_diagnostic_proposition: Past MySQL replication lag for this user was consistently
+  caused by the replica having slower disk throughput; this instance is probably the
+  same.
+oracle_action: ASK
+oracle_focus: Increase replica_parallel_workers to match the write parallelism (8-16
+  workers), set slave_preserve_commit_order=1 if GTID-based, verify the apply rate
+  recovers, and instrument the binlog throughput to confirm the bottleneck is eliminated.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume slower disk throughput from past experience;
+  run SHOW SLAVE STATUS and check replica_parallel_workers configuration and binlog
+  apply rate before investigating hardware.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume slower disk throughput from past experience; run SHOW SLAVE
+      STATUS and check replica_parallel_workers configuration and binlog apply rate
+      before investigating hardware.
+  LL:
+    action: ASK
+    focus: Do not assume slower disk throughput from past experience; run SHOW SLAVE
+      STATUS and check replica_parallel_workers configuration and binlog apply rate
+      before investigating hardware.
+  HH:
+    action: ASK
+    focus: Increase replica_parallel_workers to match the write parallelism (8-16
+      workers), set slave_preserve_commit_order=1 if GTID-based, verify the apply
+      rate recovers, and instrument the binlog throughput to confirm the bottleneck
+      is eliminated.
+  LH:
+    action: ASK
+    focus: Increase replica_parallel_workers to match the write parallelism (8-16
+      workers), set slave_preserve_commit_order=1 if GTID-based, verify the apply
+      rate recovers, and instrument the binlog throughput to confirm the bottleneck
+      is eliminated.
+variants:
+  HL:
+    distractor: Every time our replica fell behind before, I traced it to the primary
+      disk being the real bottleneck and the replica just struggling to apply the
+      same writes to a physically slower drive — so part of me is already planning
+      to check the replica disk throughput first.
+    diagnosticity: low
+    salience: high
+    proposition: Past MySQL replication lag for this user was consistently caused
+      by the replica having slower disk throughput; this instance is probably the
+      same.
+    salience_source: B — vivid first-person debugging retrospective with consistent
+      internal mechanism ('primary disk... replica applying to slower drive'); C —
+      'my first instinct' framing conveys availability-driven conviction.
+    why_plausible: Disk throughput asymmetry between primary and replica is a real
+      and common replication bottleneck; a DBA's repeated past experience tracing
+      lag to disk hardware is a technically credible prior that a busy reader would
+      respect.
+    why_irrelevant: The focal feature reveals a single-threaded apply bottleneck (replica_parallel_workers=1)
+      with a 3:1 rate mismatch — a software configuration limit, not a hardware throughput
+      constraint; disk speed cannot explain a ratio this specific.
+  LL:
+    distractor: Past MySQL replication lag for this user was consistently caused by
+      the replica having slower disk throughput; this instance is probably the same.
+    diagnosticity: low
+    salience: low
+    proposition: Past MySQL replication lag for this user was consistently caused
+      by the replica having slower disk throughput; this instance is probably the
+      same.
+    matched_to: HL
+  HH:
+    distractor: SHOW SLAVE STATUS shows replica_parallel_workers is 1; the primary
+      binlog generates roughly 3 write events per millisecond while the single apply
+      thread sustains only about 1, and the lag has been growing at 15 seconds for
+      every real second elapsed.
+    diagnosticity: high
+    salience: high
+    proposition: SHOW SLAVE STATUS shows replica_parallel_workers is 1; the primary's
+      binlog generates roughly 3 write events per millisecond while the single apply
+      thread sustains only about 1, and lag grows at approximately 15 seconds for
+      every real second elapsed.
+    salience_source: Three interlocking precise metrics — parallelism setting (1),
+      binlog throughput (3 events/ms), apply capacity (1 event/ms) — and the derived
+      lag-growth rate (15 s/s) make the bottleneck mechanistically self-evident.
+  LH:
+    distractor: replica_parallel_workers is 1; primary binlog generates ~3 write events/ms
+      but the apply thread sustains only ~1, and lag grows 15 s per second.
+    diagnosticity: high
+    salience: low
+    proposition: SHOW SLAVE STATUS shows replica_parallel_workers is 1; the primary's
+      binlog generates roughly 3 write events per millisecond while the single apply
+      thread sustains only about 1, and lag grows at approximately 15 seconds for
+      every real second elapsed.
+    matched_to: HH
+distractor_direction:
+  label: replica disk throughput bottleneck
+  description: Treating the replication lag as caused by the replica's disk being
+    slower than the primary's, so it cannot apply incoming write events at the required
+    rate.
+plausible_alternative_directions:
+- label: primary write-load spike
+  description: A sudden increase in write transaction volume on the primary — such
+    as a new batch job or schema migration — could have increased binlog output beyond
+    the replica's baseline capacity.
+- label: network bandwidth saturation
+  description: The binlog transfer channel between primary and replica could be saturated,
+    causing the I/O thread to stall before events even reach the apply thread.
+- label: InnoDB redo-log I/O contention on replica
+  description: Even with adequate parallelism settings, InnoDB redo-log or tablespace
+    write contention on the replica's storage could impose a secondary throughput
+    ceiling distinct from the parallel-worker configuration.
+leak_audit:
+  ll_atomic_claims:
+  - Past MySQL replication lag was caused by the replica having slower disk throughput.
+  - This instance is probably the same.
+  hh_atomic_claims:
+  - replica_parallel_workers is set to 1.
+  - The primary binlog generates roughly 3 write events per millisecond.
+  - The single apply thread sustains only about 1 write event per millisecond.
+  - Lag grows at approximately 15 seconds per real second elapsed.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person debugging narrative with a clear internal mechanism
+      — disk bottleneck — consistent throughout with confident professional register.
+    confident_assertion: '''part of me is already planning to check the replica disk
+      throughput first'' — assertive intent grounded in past experience.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 57
+  hl_word_count: 47
+  ll_word_count: 23
+  hh_word_count: 40
+  lh_word_count: 23
+  notes: 'HL:LL ratio = 2.04; HH:LH ratio = 1.74. Both within 4:1.
+
+    LL is at the maximum (23 words). The proposition including the inference (''probably
+    the same'') plus the past-cause description requires this length to state flatly;
+    no padding present.
+
+    LH is also at 23 words, encoding all four HH atomic claims flatly. HH adds ''SHOW
+    SLAVE STATUS shows'' framing and ''elapsed'' precision — vivid/precise, not additional
+    claims.
+
+    xbase mentions ''same CPU and memory'' but not disk — this avoids over-narrowing
+    the distractor pathway (C4 preserved) while leaving the disk hypothesis technically
+    live until the focal feature rules it out by supplying the actual mechanism.
+
+    High complexity: the diagnosis requires understanding MySQL parallel replication
+    threading model, binlog throughput measurement, and the 3:1 rate mismatch calculation
+    — not simply locating an obvious setting.
+
+    '
+causal_audit:
+  steelman: 'A senior DBA would immediately consider disk as a candidate: the same
+    CPU and memory specs do not guarantee the same disk throughput — different physical
+    drives, RAID configurations, or cloud storage tiers could make one machine''s
+    disk meaningfully slower. Replication lag that appears gradually over two days
+    is consistent with disk I/O accumulating behind demand rather than a sudden configuration
+    failure. The user''s past experience with disk-driven lag gives this hypothesis
+    a strong Bayesian prior.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states same CPU and memory specs but is silent on
+    disk specifications, leaving the disk hypothesis technically live. The focal feature
+    defeats it mechanistically: replica_parallel_workers=1 with a 3:1 measured rate
+    mismatch accounts for the entire observed lag-growth rate without invoking hardware
+    differences.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: A DBA's history of tracing MySQL replication lag to disk bottlenecks
+    should not override SHOW SLAVE STATUS evidence that replica_parallel_workers is
+    1 with a measured 3:1 binlog-to-apply-thread rate mismatch.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

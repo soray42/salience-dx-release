@@ -1,0 +1,186 @@
+seed_id: T6-098
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: I migrated my home server project directory from one drive to another using
+  rsync last night. After the migration, several application configs that used symbolic
+  links now point to missing targets or the wrong locations. The files themselves
+  copied over fine. I have used rsync for drive migrations a few times before. {DS}
+focal_diagnostic_feature: The rsync command was run without the --links flag, causing
+  symlinks to be copied as regular files rather than preserved as symbolic links.
+low_diagnostic_proposition: Past rsync migration problems for this user have generally
+  been caused by incorrect file permissions on the destination, so this is probably
+  a permissions issue.
+oracle_action: ANSWER
+oracle_focus: Re-run the rsync with --links (or -l) to migrate symlinks correctly;
+  remove the plain files created in place of symlinks and replace them with proper
+  symbolic links pointing to the intended targets.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a permissions fault from prior migration
+  history. Ask whether the rsync command included --links and whether the destination
+  entries are plain files or actual symlinks.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a permissions fault from prior migration history. Ask whether
+      the rsync command included --links and whether the destination entries are plain
+      files or actual symlinks.
+  LL:
+    action: ASK
+    focus: Do not assume a permissions fault from prior migration history. Ask whether
+      the rsync command included --links and whether the destination entries are plain
+      files or actual symlinks.
+  HH:
+    action: ANSWER
+    focus: Re-run the rsync with --links (or -l) to migrate symlinks correctly; remove
+      the plain files created in place of symlinks and replace them with proper symbolic
+      links pointing to the intended targets.
+  LH:
+    action: ANSWER
+    focus: Re-run the rsync with --links (or -l) to migrate symlinks correctly; remove
+      the plain files created in place of symlinks and replace them with proper symbolic
+      links pointing to the intended targets.
+variants:
+  HL:
+    distractor: Every time I have had rsync mess up a migration before, the problem
+      was wrong file permissions on the destination — so my first thought is that
+      this is another permissions issue.
+    diagnosticity: low
+    salience: high
+    proposition: Past rsync migration problems for this user have generally been caused
+      by incorrect file permissions on the destination, so this is probably a permissions
+      issue.
+    salience_source: B — vivid personal history narrated in first person with direct
+      application to the current case; C — 'every time' and 'my first thought' as
+      strong confident framing.
+    why_plausible: Permissions errors are a common rsync migration failure mode; a
+      user who has repeatedly hit them would naturally test permissions before checking
+      flag usage.
+    why_irrelevant: The destination entries are plain files rather than symbolic links;
+      no permission check can convert a plain file back into a symlink — the wrong
+      copy mode was used, which is a structurally different failure from access denial.
+  LL:
+    distractor: Past rsync migration problems for this user have generally been caused
+      by incorrect file permissions on the destination.
+    diagnosticity: low
+    salience: low
+    proposition: Past rsync migration problems for this user have generally been caused
+      by incorrect file permissions on the destination, so this is probably a permissions
+      issue.
+    matched_to: HL
+  HH:
+    distractor: The rsync command did not include the --links flag, so rsync copied
+      symlinks as regular files rather than preserving them as symbolic links; the
+      destination now has plain files where the symlinks should be, which is why those
+      paths do not resolve.
+    diagnosticity: high
+    salience: high
+    proposition: The rsync command was run without the --links flag, causing symlinks
+      to be copied as regular files rather than preserved as symbolic links.
+    salience_source: B — specific flag name (--links) with precise mechanistic account
+      (symlinks become plain files) and direct causal link to the observed symptom
+      (paths do not resolve).
+  LH:
+    distractor: The rsync command omitted --links; symlinks were copied as plain files,
+      so the destination has no symlinks and those paths do not resolve.
+    diagnosticity: high
+    salience: low
+    proposition: The rsync command was run without the --links flag, causing symlinks
+      to be copied as regular files rather than preserved as symbolic links.
+    matched_to: HH
+distractor_direction:
+  label: Destination permissions fault
+  description: Investigating whether incorrect ownership or permission bits on the
+    destination drive are preventing symlinks from resolving or being accessed correctly.
+plausible_alternative_directions:
+- label: Absolute symlink path breakage
+  description: Even if symlinks were copied correctly, symlinks with absolute paths
+    pointing to the old drive location would be broken on the new drive regardless
+    of the copy mode used.
+- label: Destination filesystem symlink support
+  description: If the destination drive uses a filesystem that does not support symbolic
+    links (e.g., FAT32 or exFAT), symlinks cannot be preserved regardless of rsync
+    flags.
+- label: Partial transfer or rsync error
+  description: An interrupted rsync run may have left some symlink targets absent
+    from the destination, producing broken links even if the copy mode was correct.
+leak_audit:
+  ll_atomic_claims:
+  - Past rsync migration problems for this user have generally been caused by incorrect
+    file permissions.
+  - The current issue is probably a permissions problem on the destination.
+  hh_atomic_claims:
+  - The rsync command did not include the --links flag.
+  - rsync copied symlinks as regular files rather than preserving them.
+  - The destination now has plain files where the symlinks should be.
+  - Those paths do not resolve because of the plain-file substitution.
+  hl_salience_dimensions:
+    source_credibility: N/A — T6 first-person; no named external source.
+    narrative_coherence: B — vivid personal history narrated confidently in first
+      person.
+    confident_assertion: C — 'every time' as a universal claim; 'my first thought'
+      as confident framing.
+    concrete_detail: N/A — no case-content detail added beyond what LL carries.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 52
+  hl_word_count: 31
+  ll_word_count: 18
+  hh_word_count: 42
+  lh_word_count: 23
+  notes: 'T6 availability: past permission errors are structurally different from
+    the present
+
+    case because no permission fix can restore symlink type. The focal feature (missing
+
+    --links flag) is a copy-mode issue, not an access-control issue.
+
+    The availability inference ("this is probably a permissions issue") appears in
+    both
+
+    HL and LL per C1 T6 rule.
+
+    Steelman: permissions errors are a genuinely common rsync failure; the pattern
+    is
+
+    not irrational. But "ls -la" on the destination would immediately show plain files
+
+    rather than symlinks, ruling out the access-denial account.
+
+    '
+causal_audit:
+  steelman: 'File permission errors on the destination are a real and recurring rsync
+    problem,
+
+    especially when migrating between drives with different owner UIDs or when the
+
+    destination is mounted with restrictive umask settings. A user who has hit this
+
+    pattern repeatedly is right to treat it as a first hypothesis. If the symlinks
+
+    appeared to copy but then fail to resolve, a permission on the symlink target
+
+    directory could plausibly explain it for someone who hasn''t yet inspected file
+    types.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the permissions hypothesis is not foreclosed by xbase;
+    the focal evidence (destination entries are plain files, not symlinks) lives in
+    HH/LH, preserving C4.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: rsync migration breaks symlinks because --links flag was omitted; user's
+    past migrations had permission errors, leading them to assume permissions as root
+    cause.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator leak fix (removed current-case symlink
+    mechanism inference)
+  generator: generator_B
+  generation_mode: generator_B_batches

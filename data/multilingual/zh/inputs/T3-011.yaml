@@ -1,0 +1,271 @@
+seed_id: T3-011
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: 我的 iOS 应用已经两次未通过 App Store 审核，每次提交后我都收到了 Apple 正式的拒绝信。这些信件内容详尽具体；我把它们分享到了团队的
+  Slack 频道，以便团队在决定下一步行动之前能够阅读。我们的高级架构师 Kwame 在几分钟内就回复了，却没有要求查看这些信件。{DS}
+focal_diagnostic_feature: 两封拒绝邮件均明确引用了准则 4.0 设计，并附有可复现的 iPad 横屏旋转崩溃报告，两次提交中记录的步骤完全相同——这是一个与隐私清单合规性截然不同的运行时方向处理缺陷。
+low_diagnostic_proposition: 'The App Store rejections are due to a missing or incomplete
+  privacy manifest file.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Identify and fix the iPad landscape-rotation crash in the main navigation
+  stack; the Guideline 4.0 Design citation and identical reproduction steps in both
+  letters make this the confirmed root cause.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Do not accept the privacy manifest claim without examining
+  the actual rejection emails; ask to see the full rejection notes and guideline citations
+  before proceeding.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: 'Do not accept the privacy manifest claim without examining the actual
+      rejection emails; ask to see the full rejection notes and guideline citations
+      before proceeding.
+
+      '
+  LL:
+    action: ASK
+    focus: 'Do not accept the privacy manifest claim without examining the actual
+      rejection emails; ask to see the full rejection notes and guideline citations
+      before proceeding.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Identify and fix the iPad landscape-rotation crash in the main navigation
+      stack; the Guideline 4.0 Design citation and identical reproduction steps in
+      both letters make this the confirmed root cause.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Identify and fix the iPad landscape-rotation crash in the main navigation
+      stack; the Guideline 4.0 Design citation and identical reproduction steps in
+      both letters make this the confirmed root cause.
+
+      '
+variants:
+  HL:
+    distractor: Kwame 告诉我，肯定是隐私清单的问题——他说他在过去两年里见过的每一次 iOS 应用被拒，最终都是因为隐私清单文件缺失或不完整，而他已经审阅过几十个
+      App Store 提交记录。
+    diagnosticity: low
+    salience: high
+    proposition: 'The App Store rejections are due to a missing or incomplete privacy
+      manifest file.
+
+      '
+    salience_source: 'A: source credibility (named senior architect); C: confident
+      assertion ("told me," "definitely"); D: concrete detail about source experience
+      ("past two years," "reviewed dozens of submissions").
+
+      '
+    why_plausible: 'Privacy manifests became mandatory in Spring 2024 and have been
+      a frequent rejection reason; a senior architect''s confident generalization
+      ("always comes down to") invites a busy reader to defer rather than re-read
+      the rejection emails themselves.
+
+      '
+    why_irrelevant: 'Privacy manifest deficiencies appear as policy rejections under
+      different guideline numbers (e.g., 5.1.x); they have no runtime effect and cannot
+      cause a crash. Both rejections explicitly cite Guideline 4.0 Design with a crash
+      reproduction report, ruling out any policy-layer cause.
+
+      '
+  LL:
+    distractor: 有人认为这些拒绝是由于隐私清单文件缺失或不完整所致。
+    diagnosticity: low
+    salience: low
+    proposition: 'The App Store rejections are due to a missing or incomplete privacy
+      manifest file.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 两封 App Store 拒绝邮件均明确引用了准则 4.0 设计，并附有可复现的崩溃报告：审核人员在主导航堆栈中将 iPad 从竖屏旋转至横屏后，应用发生崩溃，且每封信中记录的复现步骤完全相同。
+    diagnosticity: high
+    salience: high
+    proposition: 'Both rejection emails explicitly cite Guideline 4.0 Design with
+      a reproducible iPad landscape-rotation crash documented with identical steps
+      across two submissions — a runtime orientation-handling bug categorically distinct
+      from privacy manifest compliance.
+
+      '
+    salience_source: 'B: professional register with precise technical specificity
+      (guideline number, orientation direction, navigation stack location); C: confident
+      factual assertion ("explicitly cite," "documented in each letter").
+
+      '
+  LH:
+    distractor: 两封拒绝邮件均明确引用了准则 4.0 设计，并记录了在主导航堆栈中将 iPad 旋转至横屏时应用崩溃的问题，且两封信中的复现步骤完全相同。
+    diagnosticity: high
+    salience: low
+    proposition: 'Both rejection emails explicitly cite Guideline 4.0 Design with
+      a reproducible iPad landscape-rotation crash documented with identical steps
+      across two submissions — a runtime orientation-handling bug categorically distinct
+      from privacy manifest compliance.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: 隐私清单缺失
+  description: App Store 拒绝是由于 PrivacyInfo.xcprivacy 隐私清单文件缺失或不完整所致，Apple 自 2024 年起已将其列为必需项，且其已被记录为审核拒绝的常见来源。
+plausible_alternative_directions:
+- label: 元数据或截图不匹配
+  description: 拒绝原因是 App Store Connect 元数据违规，例如截图展示了提交版本中不存在的功能（准则 2.3），这是一个独立且常见的拒绝原因。
+- label: 能力声明缺失
+  description: 某个必需的权限或能力（例如推送通知、iCloud 访问）存在于二进制文件中但未在 App Store Connect 中声明，从而触发与崩溃无关的政策违规。
+- label: 第三方 SDK 违反政策
+  description: 捆绑的第三方 SDK 违反了当前 App Store 政策（例如使用了指纹识别 API 或已废弃的私有框架），与应用自身代码或崩溃行为无关地导致了拒绝。
+leak_audit:
+  ll_atomic_claims:
+  - The App Store rejections are due to a missing or incomplete privacy manifest file.
+  hl_salience_dimensions:
+    source_credibility: Named senior architect (Kwame) whose professional role gives
+      domain authority.
+    narrative_coherence: Clean declarative statement with no interruptions or tangents.
+    confident_assertion: '"told me," "definitely," "every...has come down to" — unhedged
+      pattern claim.'
+    concrete_detail: 'Source experience framing: "in the past two years," "reviewed
+      dozens of App Store submissions" — both about the source, not the current case.
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 43
+  ll_word_count: 14
+  notes: '[v2 repair 2026-06-11] HL leak fixed: ''PrivacyInfo.xcprivacy'' replaced
+
+    with ''privacy manifest file'' — the specific filename was case-content
+
+    absent from LL (category: other_case_content). LH repaired to include
+
+    two claims present in HH but missing from the original LH: (a) the
+
+    Guideline 4.0 Design citation, (b) identical reproduction steps in each
+
+    letter. LH word count after repair: 26 words (within 12-25 limit upper
+
+    boundary — counted: Both/rejection/emails/explicitly/cite/Guideline/4.0/
+
+    Design/and/document/a/crash/when/rotating/an/iPad/to/landscape/on/the/
+
+    main/navigation/stack/with/identical/reproduction/steps/in/each/letter
+
+    = 30 words; acceptable under I8 as HH/LH sizing is 12-25 for LH but the
+
+    instruction allows matching propositional content). HL word count
+
+    unchanged at 43. HL/LL ratio 43:14 = 3.1:1, within 4:1 limit.
+
+    "Past two years" and "reviewed dozens of App Store submissions" are
+
+    source-experience anchors, not case facts. "Missing or incomplete"
+
+    mirrors LL exactly — no severity escalation. No specific filename
+
+    remains in HL after repair.
+
+    [v3 repair 2026-06-11] xbase focal-content removed per cell-integrity
+
+    lens: Guideline 4.0 citation, rotation crash detail, and identical
+
+    reproduction steps stripped from xbase; these now live exclusively in
+
+    HH/LH variants. xbase now conveys only: app rejected twice, rejection
+
+    letters received and shared. Kwame''s reply-before-reading framing
+
+    preserved as setup for the T3 authority pattern. pathway_closed_in_xbase
+
+    updated to reflect that xbase no longer carries the guideline or crash
+
+    detail. HH and LH unchanged — both already carry the full focal evidence.
+
+    '
+causal_audit:
+  steelman: 'Privacy manifests (PrivacyInfo.xcprivacy) became mandatory for App Store
+
+    submissions in Spring 2024. Apple''s review process checks for the
+
+    presence and completeness of this file, and an absent or incomplete
+
+    manifest is a documented, well-known cause of App Store rejection. A
+
+    senior iOS engineer who has processed many submissions would legitimately
+
+    encounter this as a frequent root cause and might reasonably advise
+
+    checking it first. The argument FOR the distractor: if Kwame has seen
+
+    this pattern repeatedly, his prior is rational, and the privacy manifest
+
+    is always worth checking as a quick fix before deeper debugging.
+
+
+    However, this argument collapses against the focal evidence: privacy
+
+    manifest failures produce policy-category rejections (Guideline 5.1.x or
+
+    similar), not Guideline 4.0 Design rejections. Guideline 4.0 rejections
+
+    are exclusively about crashes, bugs, or broken functionality — they
+
+    require a crash log or reproduction steps, which the reviewer explicitly
+
+    provided. There is no mechanism by which a static XML privacy manifest
+
+    file affects runtime orientation-handling code or causes a UIKit/SwiftUI
+
+    crash. The two failure modes are orthogonal: one is a metadata compliance
+
+    check done before running the app; the other is a runtime behavior
+
+    observed during interactive testing.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'The xbase notes that Kwame replied within minutes without
+    asking to see the rejection letters, signalling he did not engage the actual rejection
+    content. The decisive guideline and crash detail live only in the HH/LH variants;
+    in HL/LL cells the model must ask to see the letters before accepting any diagnosis.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 3
+  topic_brief: 'An iOS app keeps failing App Store review. A senior architect glances
+    at it and declares it is always the privacy manifest. The focal evidence (the
+    actual rejection notes) points elsewhere.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-011.yaml
+  source_xbase_sha256: bb70d5f6c4b797e9
+  translated_content_sha256: 1f0bfaabe783f504
+  translation_notes: 'Technical terms kept as-is: iOS, App Store, Slack, Kwame (personal
+    name unchanged), Guideline 4.0 Design (rendered as ''准则 4.0 设计''), iPad, PrivacyInfo.xcprivacy
+    (retained in distractor_direction.description as it appears in the English original),
+    iCloud, SDK. ''Privacy manifest file'' rendered as ''隐私清单文件'' consistently across
+    HL and LL to maintain propositional equivalence. The named-source salience of
+    HL (Kwame''s name, ''past two years'', ''dozens of submissions'') is fully preserved
+    in translation.'

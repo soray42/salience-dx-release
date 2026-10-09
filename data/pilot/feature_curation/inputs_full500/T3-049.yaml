@@ -1,0 +1,165 @@
+seed_id: T3-049
+template: T3
+domain: open_qa
+complexity: low
+xbase: I'm deciding whether to check a bag or travel with only a cabin bag for a four-day
+  work trip. I am flying on a low-cost carrier and want to keep things simple at the
+  airport. I will be in business clothes most of the trip and tend to pack light anyway.
+  I just need to settle this before I pay for the fare options. {DS}
+focal_diagnostic_feature: This carrier's fare includes a free checked bag but charges
+  extra for a cabin bag larger than a small under-seat item, so checking is the cheaper
+  and simpler option here.
+low_diagnostic_proposition: A frequent-flyer acquaintance insists that seasoned travellers
+  always go carry-on only.
+oracle_action: ANSWER
+oracle_focus: Check the bag; on this carrier the fare includes a free checked bag
+  while a full-size cabin bag costs extra, so checking is cheaper and simpler for
+  this trip.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the blanket 'always carry-on' rule. Ask
+  what this specific carrier's fare includes and charges for checked versus cabin
+  bags.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the blanket 'always carry-on' rule. Ask what this specific
+      carrier's fare includes and charges for checked versus cabin bags.
+  LL:
+    action: ASK
+    focus: Do not adopt the blanket 'always carry-on' rule. Ask what this specific
+      carrier's fare includes and charges for checked versus cabin bags.
+  HH:
+    action: ANSWER
+    focus: Check the bag; on this carrier the fare includes a free checked bag while
+      a full-size cabin bag costs extra, so checking is cheaper and simpler for this
+      trip.
+  LH:
+    action: ANSWER
+    focus: Check the bag; on this carrier the fare includes a free checked bag while
+      a full-size cabin bag costs extra, so checking is cheaper and simpler for this
+      trip.
+variants:
+  HL:
+    distractor: My most-travelled friend, who flies almost every week and treats it
+      as a point of pride, told me flatly that anyone who knows what they are doing
+      goes carry-on only, full stop, and that checking a bag is a rookie habit he
+      would never repeat.
+    diagnosticity: low
+    salience: high
+    proposition: A frequent-flyer acquaintance insists that seasoned travellers always
+      go carry-on only.
+    salience_source: A/C — a high-frequency flyer states a confident blanket rule,
+      lending the carry-on advice apparent authority.
+    why_plausible: Carry-on-only is a popular travel mantra associated with savvy
+      travellers, so a frequent flyer's blanket endorsement is tempting to follow.
+    why_irrelevant: The mantra ignores this carrier's pricing, where the cabin bag
+      costs extra and the checked bag is free; a general habit cannot override the
+      specific fare structure.
+  LL:
+    distractor: A frequent-flyer acquaintance stated that any seasoned traveller always
+      goes carry-on only and never checks a bag.
+    diagnosticity: low
+    salience: low
+    proposition: A frequent-flyer acquaintance insists that seasoned travellers always
+      go carry-on only.
+    matched_to: HL
+  HH:
+    distractor: Reading this carrier's fare details, a checked bag is actually included
+      free, while bringing a full-size cabin bag instead of just a small under-seat
+      item costs an extra fee — so for this flight checking is both cheaper and less
+      to juggle at the gate.
+    diagnosticity: high
+    salience: high
+    proposition: This carrier's fare includes a free checked bag but charges extra
+      for a cabin bag larger than a small under-seat item, so checking is the cheaper
+      and simpler option here.
+    salience_source: Concrete fare facts (checked bag free, larger cabin bag charged
+      extra) make checking clearly the better call here.
+  LH:
+    distractor: This carrier's fare includes a free checked bag but charges extra
+      for a full-size cabin bag, making checking cheaper here.
+    diagnosticity: high
+    salience: low
+    proposition: This carrier's fare includes a free checked bag but charges extra
+      for a cabin bag larger than a small under-seat item, so checking is the cheaper
+      and simpler option here.
+    matched_to: HH
+distractor_direction:
+  label: Always-carry-on rule
+  description: Treating carry-on-only as correct because an experienced traveller
+    says seasoned flyers always do it.
+plausible_alternative_directions:
+- label: Time at the airport
+  description: Whether avoiding the baggage belt to save time outweighs the fare difference.
+- label: Risk of lost luggage
+  description: Whether the chance of a checked bag going missing argues for carrying
+    on.
+leak_audit:
+  ll_atomic_claims:
+  - A frequent-flyer acquaintance stated a position.
+  - The position is that seasoned travellers always travel carry-on only.
+  hh_atomic_claims:
+  - On this carrier the fare includes a free checked bag.
+  - A full-size cabin bag costs an extra fee.
+  - Checking is therefore cheaper for this flight.
+  hl_salience_dimensions:
+    source_credibility: A near-weekly flyer who treats travel skill as a point of
+      pride.
+    narrative_coherence: A coherent flat assertion of his rule.
+    confident_assertion: Stated flatly and absolutely, calling checking a rookie habit.
+    concrete_detail: Detail about the source (flies almost weekly, point of pride)
+      only — no engagement with this carrier's fares.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 73
+  hl_word_count: 44
+  ll_word_count: 17
+  hh_word_count: 43
+  lh_word_count: 20
+  notes: 'LL carries only the blanket carry-on-only assertion. The source''s flying
+    frequency, his pride, and the ''rookie
+
+    habit'' framing are HL-only and about the source. xbase withholds the fare structure,
+    stating only the trip
+
+    length, the low-cost carrier, the user''s light-packing tendency, and the goal
+    of simplicity; the decisive
+
+    checked-free-cabin-charged fact lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A seasoned traveller would note carry-on-only genuinely saves time at
+    the belt and avoids lost-bag risk, so the
+
+    mantra captures real advantages and is not foolish in general. But it is a blanket
+    habit that ignores this
+
+    carrier''s pricing: here the checked bag is free and a full-size cabin bag costs
+    extra, so the savvy move is to
+
+    check. A general rule has no mechanism to override the specific fare table; status
+    and confidence do not change
+
+    which option is cheaper and simpler on this particular flight.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the authority distractor is defeated by the focal
+    fare facts in HH/LH; xbase withholds the fare structure and keeps only trip length,
+    carrier type, and the user's packing tendency.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Check-bag versus carry-on where this low-cost carrier includes a free
+    checked bag and charges for a full-size cabin bag, against a frequent flyer's
+    blanket 'always carry-on' rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

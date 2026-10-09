@@ -1,0 +1,171 @@
+seed_id: T1-069
+template: T1
+domain: open_qa
+complexity: low
+xbase: I'm deciding whether to buy the annual pass for a local eight-race running
+  series. The pass costs €120 up front, while paying race by race is €25 each. I enjoy
+  these events and like the idea of committing to the whole season. The weekends matter
+  here, because I have a fixed family rota that blocks out specific Saturdays well
+  in advance, and most of these races are on Saturday mornings. I have to buy the
+  pass before the early-bird window closes this week. {DS}
+focal_diagnostic_feature: The user's own family rota shows that only two of the eight
+  series Saturdays are free, so the pass would cover six races they cannot attend.
+low_diagnostic_proposition: A colleague bought the same series pass and loved having
+  committed to the whole season.
+oracle_action: ANSWER
+oracle_focus: Do not buy the pass; the user's rota frees only two of the eight race
+  Saturdays, so paying €25 twice (€50) beats a €120 pass for six races they cannot
+  run.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a colleague's enthusiasm decide it. Ask how
+  many of the eight race dates the user can actually attend before comparing the pass
+  to per-race pricing.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a colleague's enthusiasm decide it. Ask how many of the eight
+      race dates the user can actually attend before comparing the pass to per-race
+      pricing.
+  LL:
+    action: ASK
+    focus: Do not let a colleague's enthusiasm decide it. Ask how many of the eight
+      race dates the user can actually attend before comparing the pass to per-race
+      pricing.
+  HH:
+    action: ANSWER
+    focus: Do not buy the pass; the user's rota frees only two of the eight race Saturdays,
+      so paying €25 twice (€50) beats a €120 pass for six races they cannot run.
+  LH:
+    action: ANSWER
+    focus: Do not buy the pass; the user's rota frees only two of the eight race Saturdays,
+      so paying €25 twice (€50) beats a €120 pass for six races they cannot run.
+variants:
+  HL:
+    distractor: Sofia from my office bought the exact same series pass last year and
+      she has not stopped talking about how good it felt to commit to the whole season;
+      she says having paid for everything up front made her feel properly part of
+      the running community.
+    diagnosticity: low
+    salience: high
+    proposition: A colleague bought the same series pass and loved having committed
+      to the whole season.
+    salience_source: A — a named colleague recounting her own first-hand, enthusiastic
+      experience lends the endorsement everyday credibility.
+    why_plausible: Commitment devices genuinely help motivation, so a vivid peer who
+      loved the pass makes buying it feel like the engaged choice.
+    why_irrelevant: Her satisfaction reflects her own availability and tastes; it
+      says nothing about how many of the eight dates THIS user can attend, which decides
+      whether the pass is worth it.
+  LL:
+    distractor: A colleague bought the same series pass and loved committing to the
+      whole season.
+    diagnosticity: low
+    salience: low
+    proposition: A colleague bought the same series pass and loved having committed
+      to the whole season.
+    matched_to: HL
+  HH:
+    distractor: I laid the eight race dates against my family rota and only two Saturdays
+      are actually free; the other six fall on rota-blocked weekends. So a €120 pass
+      would be buying me eight races to run exactly two of them.
+    diagnosticity: high
+    salience: high
+    proposition: The user's own family rota shows that only two of the eight series
+      Saturdays are free, so the pass would cover six races they cannot attend.
+    salience_source: Concrete first-person overlay of the eight dates onto the rota
+      makes the two-of-eight conflict vivid and quantified.
+  LH:
+    distractor: The user's family rota leaves only two of the eight race Saturdays
+      free; six are blocked.
+    diagnosticity: high
+    salience: low
+    proposition: The user's own family rota shows that only two of the eight series
+      Saturdays are free, so the pass would cover six races they cannot attend.
+    matched_to: HH
+distractor_direction:
+  label: Commitment-device appeal
+  description: Treating the pass as worth buying because a colleague loved the feeling
+    of committing to the whole season.
+plausible_alternative_directions:
+- label: Motivational value
+  description: Whether buying the pass would itself spur the user to free up more
+    weekends than they currently expect.
+- label: Per-event flexibility
+  description: Whether paying race by race better matches an uncertain schedule even
+    at a higher per-race price.
+leak_audit:
+  ll_atomic_claims:
+  - A colleague bought the same series pass.
+  - That colleague loved committing to the whole season.
+  hh_atomic_claims:
+  - The user overlaid the eight race dates on their family rota.
+  - Only two of the eight Saturdays are free.
+  - The other six fall on rota-blocked weekends.
+  hl_salience_dimensions:
+    source_credibility: Named colleague (Sofia) recounting her own first-hand experience
+      with the same pass.
+    narrative_coherence: Coherent bought-it-last-year-and-loved-it account.
+    confident_assertion: She says ... has not stopped talking — confident, unhedged.
+    concrete_detail: Detail about the source (her office tie, her sense of community)
+      only — no claim about the user's own free dates.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 85
+  hl_word_count: 41
+  ll_word_count: 14
+  hh_word_count: 40
+  lh_word_count: 15
+  notes: 'LL carries only the bought-it-and-loved-it claim; Sofia, the office tie,
+    and her community feeling are HL-only
+
+    and about the source. xbase gives prices, the user''s enjoyment, the fixed family
+    rota that blocks specific
+
+    Saturdays, and the deadline, but withholds how many of the eight dates are free
+    — so HL/LL cannot compute the
+
+    decision. The decisive two-of-eight count lives only in HH/LH. xbase naming a
+    rota that blocks Saturdays is
+
+    context, not the affirmative count.
+
+    '
+causal_audit:
+  steelman: 'A behaviour-change coach might argue that a season pass is a commitment
+    device: by sinking €120 up front the
+
+    user raises the cost of skipping and may attend more often, and a credible peer
+    who loved that effect suggests
+
+    the user could too, making the nominal per-race math beside the point. The motivation
+    mechanism is real in the
+
+    abstract. But it cannot bear on THIS case, because the user''s non-attendance
+    is driven by a fixed external family
+
+    rota that blocks specific Saturdays regardless of how committed they feel; sunk
+    cost cannot free a rota-blocked
+
+    weekend. With only two of eight dates available, the pass is dominated by per-race
+    pricing, and the peer''s
+
+    enthusiasm has no mechanism to change that.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase establishes a fixed family rota blocking specific
+    Saturdays in advance, foreclosing the commitment-device/motivation mechanism without
+    naming the free-date count; the decisive two-of-eight fact lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A runner weighing an eight-race annual pass where their own rota frees
+    only two race Saturdays, making per-race cheaper, not a colleague's enthusiasm.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

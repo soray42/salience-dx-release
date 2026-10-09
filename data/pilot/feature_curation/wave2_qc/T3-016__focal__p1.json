@@ -1,0 +1,13 @@
+{
+  "seed_id": "T3-016",
+  "my_own_diagnosis": "From xbase alone, two explicit facts close both pathways to incorporation: the accountant's case-specific cost-benefit analysis confirms overhead exceeds tax savings at £19,000, and the existing professional indemnity policy already covers liability exposure; a competent practitioner would therefore recommend staying sole trader and discount the friend's generic 'always incorporate' heuristic as inapplicable to this scenario.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature directly closes both incorporation pathways (tax efficiency via accountant CBA, liability via PI insurance), leaving no ambiguity about the correct direction.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cell oracles correctly map to the low-diagnostic oracle focus (reject generic heuristic), and HH/LH correctly map to the focal oracle focus (confirm sole trader with accountant CBA reasoning); oracle_focus and low_diagnostic_oracle_focus are appropriately differentiated.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

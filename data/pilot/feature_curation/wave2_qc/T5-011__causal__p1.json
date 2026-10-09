@@ -1,0 +1,9 @@
+{
+  "seed_id": "T5-011",
+  "steelman": "A visually neglected dashboard (dated color scheme, cluttered layout) may reflect broader engineering neglect of the codebase, which could manifest as broken polling logic, stale scrape intervals, or a cached query that never refreshes — meaning the displayed values could genuinely differ from live data. A senior SRE might flag 'check dashboard polling and refresh configuration' as worth ruling out. Additionally, a principal SRE with direct ownership of the observability platform offering a confident judgment carries professional weight that could make the aesthetic correlation heuristic seem practically justified in a fast-moving incident triage context.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Correlational: visual neglect of a dashboard may correlate with functional neglect (stale polling, broken refresh), which could cause data inaccuracy. However, this is a weak correlational inference, not a direct mechanism — aesthetics do not causally drive data pipeline correctness.",
+  "pathway_closure_check": "effective",
+  "notes": "The focal diagnostic feature (direct Prometheus query returning identical values) effectively forecloses even the weak 'neglect-correlates-with-neglect' mechanism: if the dashboard had stale or broken data retrieval, an independent Prometheus query would return different values. The match confirms the dashboard's data pipeline is functioning correctly regardless of UI appearance. No repair needed — the seed is clean. The causal_audit block in the YAML already identifies this correctly with steelman_verdict: no_defensible_mechanism."
+}

@@ -1,0 +1,9 @@
+{
+  "seed_id": "T5-014",
+  "steelman": "Poor interface design is widely understood as a symptom of constrained engineering resources and limited QA investment. A development team unable to allocate effort to a polished UI may also be cutting corners in testing financial calculation logic — particularly against edge cases such as unusual deductions, partial-year filing, AMT interactions, or state-level reconciliation. Tax software bugs are notoriously hard to detect because they manifest only in uncommon input combinations. An audit professional familiar with small fintech shops might legitimately treat 'visually abandoned product' as a weak prior for 'undertested calculation core,' effectively inverting the aesthetic-usability heuristic into a negative engineering signal. This is the strongest available argument that UI appearance could inform (though not cause) doubt about calculation reliability.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The steelman produces only a weak, indirect correlation argument (resource-constrained teams neglect both UI and testing) — not a causal mechanism. No competent tax professional would put 'interface looks old' on a checklist for doubting a specific computed refund figure; the two are independent code-path properties. The xbase focal (independent CPA manual computation on identical inputs yielding exactly $1,847) fully resolves even this residual prior: once direct verification exists, the appearance-based concern carries zero weight. The seed is clean on this lens. No repair needed."
+}

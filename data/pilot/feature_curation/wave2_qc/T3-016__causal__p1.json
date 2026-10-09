@@ -1,0 +1,9 @@
+{
+  "seed_id": "T3-016",
+  "steelman": "A senior accountant or CFP would always place 'consider limited company structure' on any new freelancer's checklist, so the friend's advice has genuine real-world backing. Limited companies provide liability protection that can exceed what professional indemnity insurance covers in catastrophic-claim scenarios. Above roughly £30,000–£35,000 net profit, corporation tax plus director-dividend extraction is materially cheaper than income tax plus Class 4 NI, making the general heuristic valid at higher income levels. Some enterprise clients or procurement frameworks contractually require suppliers to operate as limited companies, which could override any cost-benefit calculus. The friend, having incorporated three businesses himself, is drawing on pattern-level practitioner knowledge, not uninformed opinion.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Limited company structure can provide tax efficiency and liability protection beyond professional indemnity limits — a real mechanism for incorporation — but both pathways are explicitly foreclosed by xbase facts (accountant's case-specific cost-benefit at £19,000 confirms overhead exceeds savings; existing PI insurance covers full liability exposure).",
+  "pathway_closure_check": "effective",
+  "notes": "Seed is well-constructed. The causal_audit block embedded in the YAML already steelmans and forecloses both pathways (tax efficiency and liability protection), and xbase states both closures explicitly. The distractor direction is a real general heuristic with genuine applicability at higher incomes, but it does not survive the two explicit fact-based closures in this scenario. No repair needed."
+}

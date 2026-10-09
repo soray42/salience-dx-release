@@ -1,0 +1,189 @@
+seed_id: T6-017
+template: T6
+domain: open_qa
+complexity: low
+xbase: أنا أشتري حاسوباً محمولاً جديداً والمتجر يروّج لضمان ممتد لثلاث سنوات بجزء
+  كبير من السعر. أتردد عند الكاونتر لأن لديّ إحساساً قوياً بأنني سأندم إذا تخليت عنه.
+  لا توجد عطل محددة أقلق بشأنها؛ إنه أشبه بحدسي أن شيئاً ما يسوء دائماً بمجرد انتهاء
+  الضمان الأساسي. {DS}
+focal_diagnostic_feature: ماركة هذا الحاسوب وطرازه يحتلان المرتبة الأولى في استطلاعات
+  الموثوقية المستقلة، وبطاقة الدفع تضاعف ضمان الشركة المصنّعة تلقائياً ومجاناً، والخطة
+  الممتدة تكلف حوالي 25% من سعر الحاسوب مع خصم مرتفع لكل مطالبة.
+low_diagnostic_proposition: Every laptop the user has owned failed soon after its
+  standard warranty ended, so this one probably will too.
+oracle_action: ANSWER
+oracle_focus: Skip the extended warranty; this model is highly reliable, the paying
+  card already doubles the manufacturer cover for free, and the plan's ~25% cost with
+  a high deductible makes it poor value.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not buy on the strength of past laptops failing. Ask
+  about this model's reliability, any warranty the card adds, and the plan's cost
+  and deductible.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not buy on the strength of past laptops failing. Ask about this model's
+      reliability, any warranty the card adds, and the plan's cost and deductible.
+  LL:
+    action: ASK
+    focus: Do not buy on the strength of past laptops failing. Ask about this model's
+      reliability, any warranty the card adds, and the plan's cost and deductible.
+  HH:
+    action: ANSWER
+    focus: Skip the extended warranty; this model is highly reliable, the paying card
+      already doubles the manufacturer cover for free, and the plan's ~25% cost with
+      a high deductible makes it poor value.
+  LH:
+    action: ANSWER
+    focus: Skip the extended warranty; this model is highly reliable, the paying card
+      already doubles the manufacturer cover for free, and the plan's ~25% cost with
+      a high deductible makes it poor value.
+variants:
+  HL:
+    distractor: كل حاسوب محمول امتلكته قد توقف عن العمل بُعيد انتهاء الضمان الأساسي،
+      لذا حدسي يصرخ أن هذا الجهاز سيفعل الشيء ذاته.
+    diagnosticity: low
+    salience: high
+    proposition: Every laptop the user has owned failed soon after its standard warranty
+      ended, so this one probably will too.
+    salience_source: B/C — a vivid personal run of past laptop failures plus a confident
+      first-instinct that this one will repeat it.
+    why_plausible: A consistent personal streak of post-warranty failures feels like
+      strong evidence the pattern will continue.
+    why_irrelevant: Past models from other brands say nothing about this specific
+      high-reliability model, and the streak ignores the free card cover and the plan's
+      poor economics.
+  LL:
+    distractor: كل حاسوب محمول امتلكه المستخدم تعطّل بُعيد انتهاء ضمانه الأساسي، لذا
+      هذا الجهاز سيفعل الأمر ذاته على الأرجح.
+    diagnosticity: low
+    salience: low
+    proposition: Every laptop the user has owned failed soon after its standard warranty
+      ended, so this one probably will too.
+    matched_to: HL
+  HH:
+    distractor: عند التحقق من التفاصيل، هذا الطراز بالتحديد يحتل المرتبة الأولى في
+      استطلاعات الموثوقية المستقلة، والبطاقة التي أدفع بها تضاعف ضمان الشركة المصنّعة
+      مجاناً، والخطة الممتدة تكلف حوالي ربع سعر الحاسوب ولا تزال تحمل خصماً مرتفعاً
+      على كل مطالبة.
+    diagnosticity: high
+    salience: high
+    proposition: This laptop's brand and model rank at the top of independent reliability
+      surveys, the card paying for it automatically doubles the manufacturer warranty
+      for free, and the extended plan costs about 25% of the laptop with a high per-claim
+      deductible.
+    salience_source: Naming the top reliability ranking, the free card cover, and
+      the ~25% cost plus deductible makes the value case concrete.
+  LH:
+    distractor: هذا الطراز في صدارة استطلاعات الموثوقية المستقلة، وبطاقة الدفع تضاعف
+      ضمان الشركة المصنّعة مجاناً، وتكلفة الخطة الممتدة حوالي 25% من سعر الحاسوب مع
+      خصم مرتفع لكل مطالبة.
+    diagnosticity: high
+    salience: low
+    proposition: This laptop's brand and model rank at the top of independent reliability
+      surveys, the card paying for it automatically doubles the manufacturer warranty
+      for free, and the extended plan costs about 25% of the laptop with a high per-claim
+      deductible.
+    matched_to: HH
+distractor_direction:
+  label: تكرار الأعطال السابقة
+  description: شراء الضمان لأن حواسيب المستخدم السابقة تعطلت جميعها بُعيد انتهاء ضمانها
+    الأساسي.
+plausible_alternative_directions:
+- label: مخاطر ناجمة عن الاستخدام
+  description: ما إذا كانت طريقة استخدام المستخدم للجهاز (السفر، السقوط، الحمل الثقيل)
+    ترفع من خطر تعطل هذا الحاسوب بصرف النظر عن الماركة.
+  drops: null
+  heavy load) raises this laptop's failure risk regardless of brand.: null
+- label: التعرض لتكاليف الإصلاح
+  description: ما إذا كانت تكاليف إصلاح هذا الطراز خارج الضمان ستكون مرهقة بما يكفي
+    لتبرير التغطية.
+leak_audit:
+  ll_atomic_claims:
+  - Every laptop the user has owned failed soon after its standard warranty ended.
+  - Therefore this laptop will probably do the same.
+  hh_atomic_claims:
+  - This exact model sits at the top of independent reliability surveys.
+  - The paying card doubles the manufacturer warranty for free.
+  - The extended plan costs about 25% of the laptop and carries a high per-claim deductible.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent personal run of past post-warranty laptop failures.
+    confident_assertion: Gut is 'screaming' this one will do the same; first instinct
+      to lock in cover.
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 27
+  ll_word_count: 19
+  hh_word_count: 46
+  lh_word_count: 24
+  notes: 'LH is 24 words to keep equivalence with HH (top reliability, free card cover,
+    ~25% cost, deductible) as a single
+
+    flat clause-set. T6: the availability inference "this one will do the same" is
+    in HL and flat in LL (rule for T6).
+
+    xbase carries only the gut feeling and the plan''s price-as-a-chunk; the model
+    reliability, card cover, and exact
+
+    economics (decisive) live only in HH/LH.
+
+    Repair round 1: removed the parenthetical enumeration of past failure modes ("a
+    screen on one, the board on
+
+    another, a dead battery on the last") from HL — that enumeration was case content
+    absent from LL (other_case_content
+
+    leak). HL now asserts only the bare proposition shared with LL (every past laptop
+    failed soon after warranty → this
+
+    one will too), preserving the vivid first-instinct register that carries the B/C
+    salience. HL recount 50 → 36.
+
+    '
+causal_audit:
+  steelman: 'A cautious buyer could argue that the user''s repeated post-warranty
+    failures might reflect how they use laptops —
+
+    heavy travel, no case, long hours — which would carry over to any new machine,
+    so the personal base rate is
+
+    arguably informative about their future failure risk irrespective of brand.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the model's high reliability, the free card cover,
+    and the plan's poor economics that defeat the streak live only in HH/LH; xbase
+    does not foreclose the purchase.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to buy a costly extended laptop warranty given a top-reliability
+    model and free card cover, against the user's availability bias that past laptops
+    always failed after warranty.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 (orchestrator-adjudicated leak fix per protocol max-2-rounds)
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-017.yaml
+  source_xbase_sha256: 025f592c74bb037c
+  translated_content_sha256: ee82aa74391a1ed5
+  translation_notes: 'The LL distractor in the English source is written in third
+    person (''the user has owned'') rather than first person, which is an unusual
+    feature of this seed — preserved as-is. Technical terms: ''extended warranty''
+    as ''ضمان ممتد'', ''manufacturer warranty'' as ''ضمان الشركة المصنّعة'', ''deductible''
+    as ''خصم'' (standard Arabic insurance term for deductible/franchise). ''Reliability
+    surveys'' as ''استطلاعات الموثوقية''. No culture-bound salience cues flagged.'

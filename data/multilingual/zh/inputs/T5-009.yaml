@@ -1,0 +1,93 @@
+seed_id: T5-009
+template: T5
+domain: technical_troubleshooting
+complexity: high
+xbase: 我们的 gRPC 服务会周期性地出现所有 RPC 同时超时的停顿。每次停顿持续约半分钟，每隔几分钟发生一次，而不是持续不断。{DS}
+focal_diagnostic_feature: JVM 日志显示约 28 秒的 Full GC 事件与超时窗口对齐，且每次事件前老年代使用率超过 90%。
+low_diagnostic_proposition: The monitoring dashboard for GC metrics uses a confusing
+  colour scheme.
+oracle_action: ANSWER
+oracle_focus: Treat this as Full-GC pause behaviour under old-gen pressure; tune GC/heap
+  and investigate retained objects.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame dashboard colours. Ask for raw GC logs and
+  alignment with timeout windows.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame dashboard colours. Ask for raw GC logs and alignment with
+      timeout windows.
+  LL:
+    action: ASK
+    focus: Do not blame dashboard colours. Ask for raw GC logs and alignment with
+      timeout windows.
+  HH:
+    action: ANSWER
+    focus: Treat this as Full-GC pause behaviour under old-gen pressure; tune GC/heap
+      and investigate retained objects.
+  LH:
+    action: ANSWER
+    focus: Treat this as Full-GC pause behaviour under old-gen pressure; tune GC/heap
+      and investigate retained objects.
+variants:
+  HL:
+    distractor: GC 监控面板几乎没法看：黄色背景上显示橙色曲线，线条重叠时标签就消失了。
+    diagnosticity: low
+    salience: high
+    proposition: The monitoring dashboard for GC metrics uses a confusing colour scheme.
+    salience_source: ugly chart colours and visual confusion
+    why_plausible: A bad chart can make the measurement itself feel unreliable.
+    why_irrelevant: Raw GC logs matching the timeout windows remain diagnostic regardless
+      of dashboard colour.
+  LL:
+    distractor: GC 监控面板的配色方案很难阅读。
+    diagnosticity: low
+    salience: low
+    proposition: The monitoring dashboard for GC metrics uses a confusing colour scheme.
+    matched_to: HL
+  HH:
+    distractor: 原始 JVM 日志显示每 7 到 9 分钟就有一次 28 秒的 Full GC，恰好在所有调用超时的时候，而且每次发生前老年代都超过
+      90%。
+    diagnosticity: high
+    salience: high
+    proposition: JVM logs show ~28-second Full GC events aligned with the timeout
+      windows, with old-gen above 90% before each event.
+    salience_source: raw log/event timing alignment
+  LH:
+    distractor: 约 28 秒的 Full GC 事件与 RPC 超时窗口对齐，且每次事件前老年代使用率都超过 90%。
+    diagnosticity: high
+    salience: low
+    proposition: JVM logs show ~28-second Full GC events aligned with the timeout
+      windows, with old-gen above 90% before each event.
+    matched_to: HH
+distractor_direction:
+  label: GC 面板可读性
+  description: 调查令人困惑的 GC 面板视觉效果或标签重叠是否能解释感知到的服务停顿。
+plausible_alternative_directions:
+- label: 线程池耗尽
+  description: RPC 可能因请求处理线程饱和而超时。
+- label: 下游依赖阻塞
+  description: 某个依赖项可能周期性地阻塞所有 RPC。
+- label: 网络分区
+  description: 周期性的网络或负载均衡器问题可能导致同步超时。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-009.yaml
+  source_xbase_sha256: bdb1a123a36e588c
+  translated_content_sha256: fd08aee4b892d59e
+  translation_notes: Technical terms gRPC, RPC, JVM, Full GC, old-gen retained as-is
+    (standard in Chinese tech context). '老年代' is standard Chinese JVM terminology
+    for 'old generation'. Dashboard colour detail (orange on yellow, disappearing
+    labels) preserved verbatim in HL for high-salience vividness.

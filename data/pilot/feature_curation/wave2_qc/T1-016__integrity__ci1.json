@@ -1,0 +1,8 @@
+{
+  "seed_id": "T1-016",
+  "verdict": "clean",
+  "xbase_span": "",
+  "focal_in_hh_lh": true,
+  "reasoning": "The xbase contains only income stability, rate differential, and a distractor placeholder; it makes no mention of the absence of a HELOC or secured lines of credit, which is the decisive focal evidence. The focal evidence is correctly carried by the HH variant (broker confirms in writing zero secured lines of credit) and the LH variant (flat statement that the property has no secured lines of credit or variable-rate products). No pathway-closure statement in xbase forecloses the HELOC consolidation direction.",
+  "repair_hint": ""
+}

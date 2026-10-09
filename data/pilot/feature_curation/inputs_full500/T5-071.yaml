@@ -1,0 +1,165 @@
+seed_id: T5-071
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our EKS node group has not added any nodes during traffic spikes for the past
+  week, even though pending pods sit unscheduled for several minutes. The cluster
+  autoscaler pod is running and its logs show no crash or restart. We added a second
+  node group last sprint without touching autoscaler configuration. {DS}
+focal_diagnostic_feature: The autoscaler log returns AccessDenied on ec2:DescribeAutoScalingGroups
+  for the new node group ARN, indicating the autoscaler IAM role lacks the permission
+  to discover and scale that group.
+low_diagnostic_proposition: The AWS console's dense, older layout makes configuration
+  fields hard to read and its displayed status untrustworthy.
+oracle_action: ANSWER
+oracle_focus: Add the missing ec2:DescribeAutoScalingGroups permission (and related
+  ASG permissions) to the cluster autoscaler's IAM role so it can discover and scale
+  the new node group.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not dismiss autoscaler behaviour based on console
+  appearance. Ask for the autoscaler pod's actual log output and IAM role permissions
+  before concluding the status display is unreliable.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not dismiss autoscaler behaviour based on console appearance. Ask for
+      the autoscaler pod's actual log output and IAM role permissions before concluding
+      the status display is unreliable.
+  LL:
+    action: ASK
+    focus: Do not dismiss autoscaler behaviour based on console appearance. Ask for
+      the autoscaler pod's actual log output and IAM role permissions before concluding
+      the status display is unreliable.
+  HH:
+    action: ANSWER
+    focus: Add the missing ec2:DescribeAutoScalingGroups permission (and related ASG
+      permissions) to the cluster autoscaler's IAM role so it can discover and scale
+      the new node group.
+  LH:
+    action: ANSWER
+    focus: Add the missing ec2:DescribeAutoScalingGroups permission (and related ASG
+      permissions) to the cluster autoscaler's IAM role so it can discover and scale
+      the new node group.
+variants:
+  HL:
+    distractor: The AWS console for the node group uses a dense, old-style layout
+      with grey tabs and clipped labels that make the configuration fields genuinely
+      hard to read, so I would not trust any status it shows.
+    diagnosticity: low
+    salience: high
+    proposition: The AWS console's dense, older layout makes configuration fields
+      hard to read and its displayed status untrustworthy.
+    salience_source: 'B: narrative coherence — vivid sensory description of the console;
+      C: confident dismissal ("I would not trust any status it shows").'
+    why_plausible: Misleading or stale AWS console displays are a real engineering
+      frustration; a practitioner who has been burned by eventual-consistency in the
+      console might reasonably discount what it shows.
+    why_irrelevant: The decisive evidence comes from the autoscaler pod's own log
+      output (AccessDenied errors), which is independent of the console; console appearance
+      cannot cause or explain an IAM permission error in the autoscaler logs.
+  LL:
+    distractor: The AWS console uses a dense, older layout that makes configuration
+      fields hard to read and its displayed status untrustworthy.
+    diagnosticity: low
+    salience: low
+    proposition: The AWS console's dense, older layout makes configuration fields
+      hard to read and its displayed status untrustworthy.
+    matched_to: HL
+  HH:
+    distractor: The autoscaler log shows repeated AccessDenied on ec2:DescribeAutoScalingGroups
+      for the new node group ARN — the autoscaler IAM role is missing the permission
+      to see that group.
+    diagnosticity: high
+    salience: high
+    proposition: The autoscaler log returns AccessDenied on ec2:DescribeAutoScalingGroups
+      for the new node group ARN, indicating the autoscaler IAM role lacks the permission
+      to discover and scale that group.
+    salience_source: Precise error name (ec2:DescribeAutoScalingGroups), concrete
+      log evidence, direct causal mechanism stated (IAM role missing permission).
+  LH:
+    distractor: The autoscaler log returns AccessDenied on ec2:DescribeAutoScalingGroups
+      for the new node group ARN; the autoscaler IAM role lacks that permission.
+    diagnosticity: high
+    salience: low
+    proposition: The autoscaler log returns AccessDenied on ec2:DescribeAutoScalingGroups
+      for the new node group ARN, indicating the autoscaler IAM role lacks the permission
+      to discover and scale that group.
+    matched_to: HH
+distractor_direction:
+  label: Console display unreliability
+  description: Investigating whether the AWS console's visual presentation or data
+    staleness is obscuring the true autoscaler configuration state and causing misdiagnosis.
+plausible_alternative_directions:
+- label: Autoscaler node group tag missing
+  description: The new node group may lack the kubernetes.io/cluster/<name> auto-discovery
+    tag that the autoscaler uses to identify managed groups.
+- label: Max node count reached
+  description: The node group's maxSize setting might already equal the current node
+    count, preventing the autoscaler from requesting further scale-out.
+- label: Pending pod scheduling constraints
+  description: Node affinity, taints, or topology constraints on the pending pods
+    may prevent them from being scheduled onto the existing or new nodes regardless
+    of scale.
+leak_audit:
+  ll_atomic_claims:
+  - The AWS console uses a dense, older layout.
+  - The layout makes configuration fields hard to read.
+  - The displayed status is untrustworthy as a result.
+  hh_atomic_claims:
+  - The autoscaler log shows AccessDenied errors.
+  - The permission denied is on ec2:DescribeAutoScalingGroups.
+  - The errors reference the new node group ARN specifically.
+  - The autoscaler IAM role lacks the permission to see that group.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person aesthetic judgment, no named source.
+    narrative_coherence: Vivid description of console (grey tabs, clipped labels)
+      leads into a confident dismissal of its output.
+    confident_assertion: '"I would not trust any status it shows"'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 51
+  hl_word_count: 36
+  ll_word_count: 20
+  hh_word_count: 27
+  lh_word_count: 20
+  notes: 'T5 bridge verified in both HL and LL: layout → fields hard to read → status
+
+    untrustworthy. HH is at minimum 27 words exactly. Console appearance cannot
+
+    cause an IAM AccessDenied error in autoscaler logs — distractor is clean.
+
+    '
+causal_audit:
+  steelman: 'AWS console display can lag reality or show cached/incorrect configuration
+
+    state. A practitioner who has seen the console report a healthy autoscaler
+
+    while it was silently broken might reasonably conclude the console status
+
+    is not to be trusted and focus on configuration files instead, potentially
+
+    missing what the actual logs are saying while chasing a console-driven
+
+    diagnosis path.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes the autoscaler pod is running and its logs
+    show no crash — pointing away from the pod itself and toward its configuration/permissions
+    as the issue. The console distractor cannot explain or cause the AccessDenied
+    log entries.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: EKS cluster autoscaler fails to scale a new node group because the
+    autoscaler IAM role is missing ec2:DescribeAutoScalingGroups permission, not because
+    the AWS console's layout makes its status display untrustworthy.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

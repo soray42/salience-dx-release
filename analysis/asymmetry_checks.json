@@ -1,0 +1,459 @@
+{
+  "source": "data/full/judge_deepseek_v31.ndjson",
+  "models": [
+    "claude-sonnet-4-6",
+    "gemini-3.5-flash",
+    "llama3.1:8b",
+    "google/gemma-4-31B-it"
+  ],
+  "n_pairs": 1992,
+  "pooled": {
+    "n": 1992,
+    "ISB": 149,
+    "vig": 210,
+    "ISB_pct": 7.5,
+    "vig_pct": 10.5,
+    "flip_pct": 18.0,
+    "asym_p": 0.0015
+  },
+  "pooled_scenario_permutation": {
+    "statistic_vig_minus_isb": 61,
+    "n_scenarios_with_net_flip": 241,
+    "n_perm": 20000,
+    "p_two_sided": 0.0045
+  },
+  "per_model_scenario_permutation": {
+    "claude-sonnet-4-6": {
+      "statistic_vig_minus_isb": 45,
+      "n_scenarios_with_net_flip": 89,
+      "n_perm": 20000,
+      "p_two_sided": 0.0
+    },
+    "gemini-3.5-flash": {
+      "statistic_vig_minus_isb": -2,
+      "n_scenarios_with_net_flip": 66,
+      "n_perm": 20000,
+      "p_two_sided": 0.8992
+    },
+    "llama3.1:8b": {
+      "statistic_vig_minus_isb": 6,
+      "n_scenarios_with_net_flip": 106,
+      "n_perm": 20000,
+      "p_two_sided": 0.624
+    },
+    "google/gemma-4-31B-it": {
+      "statistic_vig_minus_isb": 12,
+      "n_scenarios_with_net_flip": 98,
+      "n_perm": 20000,
+      "p_two_sided": 0.2646
+    }
+  },
+  "by_cue_type": {
+    "T1": {
+      "n": 397,
+      "ISB": 43,
+      "vig": 37,
+      "ISB_pct": 10.8,
+      "vig_pct": 9.3,
+      "flip_pct": 20.2,
+      "asym_p": 0.5764
+    },
+    "T2": {
+      "n": 400,
+      "ISB": 24,
+      "vig": 62,
+      "ISB_pct": 6.0,
+      "vig_pct": 15.5,
+      "flip_pct": 21.5,
+      "asym_p": 0.0001
+    },
+    "T3": {
+      "n": 398,
+      "ISB": 31,
+      "vig": 26,
+      "ISB_pct": 7.8,
+      "vig_pct": 6.5,
+      "flip_pct": 14.3,
+      "asym_p": 0.5966
+    },
+    "T5": {
+      "n": 398,
+      "ISB": 29,
+      "vig": 25,
+      "ISB_pct": 7.3,
+      "vig_pct": 6.3,
+      "flip_pct": 13.6,
+      "asym_p": 0.6835
+    },
+    "T6": {
+      "n": 399,
+      "ISB": 22,
+      "vig": 60,
+      "ISB_pct": 5.5,
+      "vig_pct": 15.0,
+      "flip_pct": 20.6,
+      "asym_p": 0.0
+    }
+  },
+  "by_complexity": {
+    "low": {
+      "n": 531,
+      "ISB": 30,
+      "vig": 64,
+      "ISB_pct": 5.6,
+      "vig_pct": 12.1,
+      "flip_pct": 17.7,
+      "asym_p": 0.0006
+    },
+    "medium": {
+      "n": 957,
+      "ISB": 70,
+      "vig": 95,
+      "ISB_pct": 7.3,
+      "vig_pct": 9.9,
+      "flip_pct": 17.2,
+      "asym_p": 0.0614
+    },
+    "high": {
+      "n": 504,
+      "ISB": 49,
+      "vig": 51,
+      "ISB_pct": 9.7,
+      "vig_pct": 10.1,
+      "flip_pct": 19.8,
+      "asym_p": 0.9204
+    }
+  },
+  "domain_split_500": {
+    "open_qa": 248,
+    "technical_troubleshooting": 252
+  },
+  "by_domain": {
+    "open_qa": {
+      "n": 990,
+      "ISB": 73,
+      "vig": 101,
+      "ISB_pct": 7.4,
+      "vig_pct": 10.2,
+      "flip_pct": 17.6,
+      "asym_p": 0.0404
+    },
+    "technical_troubleshooting": {
+      "n": 1002,
+      "ISB": 76,
+      "vig": 109,
+      "ISB_pct": 7.6,
+      "vig_pct": 10.9,
+      "flip_pct": 18.5,
+      "asym_p": 0.0184
+    }
+  },
+  "by_domain_per_model": {
+    "open_qa": {
+      "claude-sonnet-4-6": {
+        "n": 247,
+        "ISB": 5,
+        "vig": 28,
+        "ISB_pct": 2.0,
+        "vig_pct": 11.3,
+        "flip_pct": 13.4,
+        "asym_p": 0.0001
+      },
+      "gemini-3.5-flash": {
+        "n": 247,
+        "ISB": 21,
+        "vig": 16,
+        "ISB_pct": 8.5,
+        "vig_pct": 6.5,
+        "flip_pct": 15.0,
+        "asym_p": 0.5114
+      },
+      "llama3.1:8b": {
+        "n": 248,
+        "ISB": 23,
+        "vig": 27,
+        "ISB_pct": 9.3,
+        "vig_pct": 10.9,
+        "flip_pct": 20.2,
+        "asym_p": 0.6718
+      },
+      "google/gemma-4-31B-it": {
+        "n": 248,
+        "ISB": 24,
+        "vig": 30,
+        "ISB_pct": 9.7,
+        "vig_pct": 12.1,
+        "flip_pct": 21.8,
+        "asym_p": 0.4966
+      }
+    },
+    "technical_troubleshooting": {
+      "claude-sonnet-4-6": {
+        "n": 252,
+        "ISB": 17,
+        "vig": 39,
+        "ISB_pct": 6.7,
+        "vig_pct": 15.5,
+        "flip_pct": 22.2,
+        "asym_p": 0.0046
+      },
+      "gemini-3.5-flash": {
+        "n": 247,
+        "ISB": 13,
+        "vig": 16,
+        "ISB_pct": 5.3,
+        "vig_pct": 6.5,
+        "flip_pct": 11.7,
+        "asym_p": 0.7111
+      },
+      "llama3.1:8b": {
+        "n": 252,
+        "ISB": 27,
+        "vig": 29,
+        "ISB_pct": 10.7,
+        "vig_pct": 11.5,
+        "flip_pct": 22.2,
+        "asym_p": 0.8939
+      },
+      "google/gemma-4-31B-it": {
+        "n": 251,
+        "ISB": 19,
+        "vig": 25,
+        "ISB_pct": 7.6,
+        "vig_pct": 10.0,
+        "flip_pct": 17.5,
+        "asym_p": 0.4514
+      }
+    }
+  },
+  "sensitivity": {
+    "drop_T2-001_T2-004_T2-007": {
+      "n": 1980,
+      "ISB": 149,
+      "vig": 207,
+      "ISB_pct": 7.5,
+      "vig_pct": 10.5,
+      "flip_pct": 18.0,
+      "asym_p": 0.0025
+    },
+    "expanded_450_only": {
+      "n": 1793,
+      "ISB": 136,
+      "vig": 180,
+      "ISB_pct": 7.6,
+      "vig_pct": 10.0,
+      "flip_pct": 17.6,
+      "asym_p": 0.0154
+    },
+    "handwritten_50_only": {
+      "n": 199,
+      "ISB": 13,
+      "vig": 30,
+      "ISB_pct": 6.5,
+      "vig_pct": 15.1,
+      "flip_pct": 21.6,
+      "asym_p": 0.0137
+    }
+  },
+  "multilingual_relevant_cue_adoption": {
+    "zh": {
+      "pooled": {
+        "k": 320,
+        "n": 360,
+        "pct": 88.9
+      },
+      "per_model": {
+        "claude-sonnet-4-6": {
+          "k": 102,
+          "n": 120,
+          "pct": 85.0
+        },
+        "gemini-3.5-flash": {
+          "k": 110,
+          "n": 120,
+          "pct": 91.7
+        },
+        "google/gemma-4-31B-it": {
+          "k": 108,
+          "n": 120,
+          "pct": 90.0
+        }
+      }
+    },
+    "ru": {
+      "pooled": {
+        "k": 338,
+        "n": 357,
+        "pct": 94.7
+      },
+      "per_model": {
+        "claude-sonnet-4-6": {
+          "k": 114,
+          "n": 120,
+          "pct": 95.0
+        },
+        "gemini-3.5-flash": {
+          "k": 112,
+          "n": 118,
+          "pct": 94.9
+        },
+        "google/gemma-4-31B-it": {
+          "k": 112,
+          "n": 119,
+          "pct": 94.1
+        }
+      }
+    },
+    "ar": {
+      "pooled": {
+        "k": 338,
+        "n": 359,
+        "pct": 94.2
+      },
+      "per_model": {
+        "claude-sonnet-4-6": {
+          "k": 114,
+          "n": 120,
+          "pct": 95.0
+        },
+        "gemini-3.5-flash": {
+          "k": 115,
+          "n": 120,
+          "pct": 95.8
+        },
+        "google/gemma-4-31B-it": {
+          "k": 109,
+          "n": 119,
+          "pct": 91.6
+        }
+      }
+    },
+    "es": {
+      "pooled": {
+        "k": 332,
+        "n": 359,
+        "pct": 92.5
+      },
+      "per_model": {
+        "claude-sonnet-4-6": {
+          "k": 108,
+          "n": 119,
+          "pct": 90.8
+        },
+        "gemini-3.5-flash": {
+          "k": 111,
+          "n": 120,
+          "pct": 92.5
+        },
+        "google/gemma-4-31B-it": {
+          "k": 113,
+          "n": 120,
+          "pct": 94.2
+        }
+      }
+    },
+    "EN_subset": {
+      "pooled": {
+        "k": 333,
+        "n": 357,
+        "pct": 93.3
+      },
+      "per_model": {
+        "claude-sonnet-4-6": {
+          "k": 107,
+          "n": 118,
+          "pct": 90.7
+        },
+        "gemini-3.5-flash": {
+          "k": 112,
+          "n": 119,
+          "pct": 94.1
+        },
+        "google/gemma-4-31B-it": {
+          "k": 114,
+          "n": 120,
+          "pct": 95.0
+        }
+      },
+      "n_subset_ids": 120
+    }
+  },
+  "cot_subset": {
+    "n_seeds": 300,
+    "cot_on": {
+      "n": 1194,
+      "ISB": 88,
+      "vig": 130,
+      "ISB_pct": 7.4,
+      "vig_pct": 10.9,
+      "flip_pct": 18.3,
+      "asym_p": 0.0054
+    },
+    "cot_off": {
+      "n": 1197,
+      "ISB": 108,
+      "vig": 126,
+      "ISB_pct": 9.0,
+      "vig_pct": 10.5,
+      "flip_pct": 19.5,
+      "asym_p": 0.2664
+    },
+    "cot_on_scenario_permutation": {
+      "statistic_vig_minus_isb": 42,
+      "n_scenarios_with_net_flip": 137,
+      "n_perm": 20000,
+      "p_two_sided": 0.0144
+    },
+    "cot_off_scenario_permutation": {
+      "statistic_vig_minus_isb": 18,
+      "n_scenarios_with_net_flip": 147,
+      "n_perm": 20000,
+      "p_two_sided": 0.3349
+    }
+  },
+  "judged_answers_per_model_condition": {
+    "claude-sonnet-4-6": {
+      "LL": 500,
+      "HL": 499,
+      "LH": 496
+    },
+    "gemini-3.5-flash": {
+      "LL": 497,
+      "HL": 496,
+      "LH": 499
+    },
+    "llama3.1:8b": {
+      "LL": 500,
+      "HL": 500,
+      "LH": 499
+    },
+    "google/gemma-4-31B-it": {
+      "LL": 500,
+      "HL": 499,
+      "LH": 500
+    }
+  },
+  "pairs_per_model": {
+    "claude-sonnet-4-6": 499,
+    "gemini-3.5-flash": 494,
+    "llama3.1:8b": 500,
+    "google/gemma-4-31B-it": 499
+  },
+  "missing_answers_per_model": {
+    "claude-sonnet-4-6": 5,
+    "gemini-3.5-flash": 8,
+    "llama3.1:8b": 1,
+    "google/gemma-4-31B-it": 1
+  },
+  "missing_reasons": {
+    "judge_parse_failures": {
+      "gemini-3.5-flash": 3,
+      "llama3.1:8b": 1,
+      "claude-sonnet-4-6": 5,
+      "google/gemma-4-31B-it": 1
+    },
+    "blocked_at_generation": {
+      "gemini-3.5-flash": 5
+    }
+  }
+}

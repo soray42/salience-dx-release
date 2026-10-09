@@ -1,0 +1,186 @@
+seed_id: T1-074
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our nightly job that pushes container images to a private registry has started
+  failing intermittently for about a week. Roughly one push in five fails partway
+  through with a generic error, and a retry usually succeeds. The registry is managed,
+  the credentials are valid, and smaller images push fine. We did not change the CI
+  pipeline or the registry plan recently. I want a clear direction before the next
+  release train. {DS}
+focal_diagnostic_feature: Only pushes of the largest multi-gigabyte images fail, and
+  they fail at roughly the same elapsed time, matching the registry's per-request
+  upload timeout.
+low_diagnostic_proposition: A team at another company had registry push failures caused
+  by their auth token expiring mid-operation.
+oracle_action: ANSWER
+oracle_focus: The large images are hitting the registry's per-request upload timeout;
+  use chunked or resumable blob uploads, raise the client timeout, or shrink the image
+  layers so each upload completes inside the window.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the outside token-expiry story. Ask which
+  images fail, at what elapsed time they fail, and whether failures track image size
+  rather than credentials.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the outside token-expiry story. Ask which images fail, at
+      what elapsed time they fail, and whether failures track image size rather than
+      credentials.
+  LL:
+    action: ASK
+    focus: Do not adopt the outside token-expiry story. Ask which images fail, at
+      what elapsed time they fail, and whether failures track image size rather than
+      credentials.
+  HH:
+    action: ANSWER
+    focus: The large images are hitting the registry's per-request upload timeout;
+      use chunked or resumable blob uploads, raise the client timeout, or shrink the
+      image layers so each upload completes inside the window.
+  LH:
+    action: ANSWER
+    focus: The large images are hitting the registry's per-request upload timeout;
+      use chunked or resumable blob uploads, raise the client timeout, or shrink the
+      image layers so each upload completes inside the window.
+variants:
+  HL:
+    distractor: Yohannes, who runs CI for a logistics platform, told me his registry
+      pushes failed at random for weeks and it turned out their short-lived auth token
+      was expiring in the middle of long operations.
+    diagnosticity: low
+    salience: high
+    proposition: A team at another company had registry push failures caused by their
+      auth token expiring mid-operation.
+    salience_source: A — a named CI owner at a peer platform recounting a closely
+      matching intermittent-failure incident lends the token-expiry theory weight.
+    why_plausible: Tokens expiring during long operations is a real cause of intermittent
+      registry push failures, so the matching story feels like a strong lead.
+    why_irrelevant: Token expiry would hit pushes regardless of image size and at
+      varying points; here failures track only the largest images and a fixed elapsed
+      time, which a credential timeout cannot explain.
+  LL:
+    distractor: Another company's registry push failures were caused by their auth
+      token expiring in the middle of operations.
+    diagnosticity: low
+    salience: low
+    proposition: A team at another company had registry push failures caused by their
+      auth token expiring mid-operation.
+    matched_to: HL
+  HH:
+    distractor: I sorted the failures by image and they are all the multi-gigabyte
+      ones; each dies at almost the same elapsed time, right at the registry's documented
+      per-request upload timeout, while every smaller image that finishes before that
+      window pushes cleanly every run.
+    diagnosticity: high
+    salience: high
+    proposition: Only pushes of the largest multi-gigabyte images fail, and they fail
+      at roughly the same elapsed time, matching the registry's per-request upload
+      timeout.
+    salience_source: Concrete correlation of failures with image size and a fixed
+      elapsed-time cutoff makes the upload-timeout cause unmistakable.
+  LH:
+    distractor: Only the largest images fail, each at the same elapsed time, matching
+      the registry's per-request upload timeout.
+    diagnosticity: high
+    salience: low
+    proposition: Only pushes of the largest multi-gigabyte images fail, and they fail
+      at roughly the same elapsed time, matching the registry's per-request upload
+      timeout.
+    matched_to: HH
+distractor_direction:
+  label: Auth token expiry
+  description: Investigating whether short-lived auth tokens expire during long pushes,
+    as happened to another team, rather than an upload-duration timeout.
+plausible_alternative_directions:
+- label: Network flakiness
+  description: Whether transient packet loss between CI and the registry interrupts
+    long uploads.
+- label: Registry rate limiting
+  description: Whether the managed registry throttles large blob uploads under concurrency.
+leak_audit:
+  ll_atomic_claims:
+  - Another company had registry push failures.
+  - Those failures were caused by their auth token expiring mid-operation.
+  hh_atomic_claims:
+  - Only the largest multi-gigabyte images fail.
+  - Each fails at roughly the same elapsed time.
+  - That elapsed time matches the registry's per-request upload timeout.
+  hl_salience_dimensions:
+    source_credibility: Named CI owner (Yohannes) at a peer logistics platform recounting
+      a resolved incident.
+    narrative_coherence: 'Clean arc: random failures, investigation found token expiry
+      mid-operation — stated as confirmed cause.'
+    confident_assertion: Stated as a confirmed root cause.
+    concrete_detail: Detail about the source's role and platform only — no claim about
+      this registry's image-size pattern.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 34
+  ll_word_count: 17
+  hh_word_count: 42
+  lh_word_count: 17
+  notes: 'LL carries only the other-team token-expiry claim; the named engineer and
+    his platform are HL-only and about
+
+    the source. The resolution clause (''once they refreshed the token more often,
+    the intermittent failures vanished'')
+
+    was removed from HL in QC repair as other_case_content/consequence leak — it narrated
+    the other team''s fix and
+
+    strengthened the causal argument beyond source-credibility information. xbase
+    states the symptom (intermittent
+
+    failures, valid credentials, smaller images fine) but withholds the size-and-elapsed-time
+    correlation, so HL/LL
+
+    cannot resolve the cause; the decisive upload-timeout signature lives only in
+    HH/LH. "Credentials are valid" in
+
+    xbase is a neutral symptom statement, not a closure of the token-expiry pathway
+    — a token can be valid yet expire
+
+    mid-operation — so the focal feature, not xbase, is what defeats the distractor.
+
+    '
+causal_audit:
+  steelman: 'A registry-ops engineer could argue token expiry is a live suspect: managed
+    registries issue short-lived bearer
+
+    tokens, long blob uploads can outlast a token, the failure is intermittent and
+    retry-friendly exactly as expired
+
+    tokens behave, and another credible team confirmed it. But expiry is time-since-auth
+    dependent, not size
+
+    dependent: it would strike pushes of any size once a token aged out and would
+    not cluster at one elapsed duration
+
+    from the upload''s start. The focal feature shows failures bound to the largest
+    images and to a fixed elapsed time
+
+    matching the upload timeout, a signature credential expiry cannot produce, so
+    the outside story has no mechanism
+
+    here.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase withholds the size-and-elapsed-time correlation;
+    the upload-timeout signature that rules out token expiry appears only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Intermittent container-registry push failures are caused by large images
+    exceeding the per-request upload timeout, not by the mid-operation auth-token
+    expiry a peer team experienced.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

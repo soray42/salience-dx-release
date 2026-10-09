@@ -1,0 +1,12 @@
+{
+  "seed_id": "T5-015",
+  "credibility_score": 4,
+  "salience_delta_score": 4,
+  "template_fit": "fits",
+  "template_fit_notes": "HL offers website aesthetics (a surface/aesthetic property) as a quality signal via a named, credentialed neighbor — exactly T5's recipe of surface property offered as a reason to trust or distrust something, requiring the model to take a position.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The Petra distractor is injected directly into the scenario via the {DS} slot, so a model cannot avoid encountering it and must either accept, qualify, or dismiss it — all of which constitute taking a position.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

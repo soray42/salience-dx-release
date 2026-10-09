@@ -1,0 +1,165 @@
+seed_id: T2-042
+template: T2
+domain: open_qa
+complexity: medium
+xbase: I bought a new three-piece mesh Wi-Fi system last week to fix dead spots, and
+  I'm now wondering whether to return it within the window because my internet doesn't
+  feel any faster than before. Web pages and video calls work, but speed tests look
+  the same as they did on the old router. The dead-spot rooms do now have a solid
+  signal, which they never had. {DS}
+focal_diagnostic_feature: The user's internet plan is 50 Mbps, and a wired speed test
+  straight from the modem also reads 48 Mbps, so the plan, not the Wi-Fi gear, caps
+  the speed; the mesh's job was coverage, which it fixed.
+low_diagnostic_proposition: The disappointment with speed started right after the
+  user hung new blackout curtains in the rooms.
+oracle_action: ANSWER
+oracle_focus: Keep the mesh system; the internet plan caps total speed near 50 Mbps
+  regardless of hardware, and the mesh delivered what it was for by filling the dead
+  spots, so returning it would only bring the dead zones back.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect new curtains to internet speed. Ask what
+  the internet plan's rated speed is and what a wired test from the modem shows before
+  judging whether the mesh underperforms.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect new curtains to internet speed. Ask what the internet plan's
+      rated speed is and what a wired test from the modem shows before judging whether
+      the mesh underperforms.
+  LL:
+    action: ASK
+    focus: Do not connect new curtains to internet speed. Ask what the internet plan's
+      rated speed is and what a wired test from the modem shows before judging whether
+      the mesh underperforms.
+  HH:
+    action: ANSWER
+    focus: Keep the mesh system; the internet plan caps total speed near 50 Mbps regardless
+      of hardware, and the mesh delivered what it was for by filling the dead spots,
+      so returning it would only bring the dead zones back.
+  LH:
+    action: ANSWER
+    focus: Keep the mesh system; the internet plan caps total speed near 50 Mbps regardless
+      of hardware, and the mesh delivered what it was for by filling the dead spots,
+      so returning it would only bring the dead zones back.
+variants:
+  HL:
+    distractor: The whole "it doesn't feel faster" feeling set in the same weekend
+      I finally hung the thick blackout curtains in the bedroom and the office; I'd
+      swear the rooms felt different online from that point, and I keep wondering
+      if the heavy fabric is somehow smothering the signal.
+    diagnosticity: low
+    salience: high
+    proposition: The disappointment with speed started right after the user hung new
+      blackout curtains in the rooms.
+    salience_source: B/C — a confident first-person timeline tying the let-down to
+      a specific, memorable home change.
+    why_plausible: People imagine thick materials block Wi-Fi, and the timing lines
+      up neatly with hanging the curtains.
+    why_irrelevant: Curtains cannot raise an internet plan's speed cap, and the rooms
+      now show solid signal anyway; the speed ceiling is set upstream, where fabric
+      has no effect.
+  LL:
+    distractor: The speed disappointment started around the time the user hung new
+      blackout curtains.
+    diagnosticity: low
+    salience: low
+    proposition: The disappointment with speed started right after the user hung new
+      blackout curtains in the rooms.
+    matched_to: HL
+  HH:
+    distractor: 'I plugged a laptop straight into the modem with a cable and ran the
+      test: it reads 48 Mbps, and my plan is sold as 50 Mbps. So the line itself is
+      the ceiling no matter what router I use; the mesh was never meant to add speed,
+      only coverage, and the dead spots are fixed.'
+    diagnosticity: high
+    salience: high
+    proposition: The user's internet plan is 50 Mbps, and a wired speed test straight
+      from the modem also reads 48 Mbps, so the plan, not the Wi-Fi gear, caps the
+      speed; the mesh's job was coverage, which it fixed.
+    salience_source: Concrete wired-test figure (48 of 50 Mbps from the modem) makes
+      the plan-cap mechanism unmistakable.
+  LH:
+    distractor: A wired test from the modem reads 48 Mbps on a 50 Mbps plan, so the
+      plan caps speed; the mesh added coverage, not speed.
+    diagnosticity: high
+    salience: low
+    proposition: The user's internet plan is 50 Mbps, and a wired speed test straight
+      from the modem also reads 48 Mbps, so the plan, not the Wi-Fi gear, caps the
+      speed; the mesh's job was coverage, which it fixed.
+    matched_to: HH
+distractor_direction:
+  label: Blackout-curtain timing
+  description: Treating the recently hung blackout curtains as the reason the internet
+    does not feel faster.
+plausible_alternative_directions:
+- label: Mesh misconfiguration
+  description: Whether the mesh nodes are wirelessly backhauling or placed poorly
+  limiting throughput below the plan.: null
+- label: Wrong expectations
+  description: Whether the user expected the mesh to increase speed when it only improves
+    coverage.
+- label: Old device limits
+  description: Whether the testing devices' own Wi-Fi radios cap measured speed regardless
+    of the mesh.
+leak_audit:
+  ll_atomic_claims:
+  - The speed disappointment started around the time the user hung new blackout curtains.
+  hh_atomic_claims:
+  - A wired test from the modem reads 48 Mbps.
+  - The internet plan is rated 50 Mbps.
+  - The plan caps total speed, and the mesh's role was coverage, which it fixed.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: A clean same-weekend timeline tying the let-down to hanging
+      the curtains.
+    confident_assertion: The user would swear the rooms felt different online from
+      that point.
+    concrete_detail: Detail about the thick blackout curtains in two rooms — about
+      the event, not the speed cap.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 70
+  hl_word_count: 47
+  ll_word_count: 13
+  hh_word_count: 48
+  lh_word_count: 24
+  notes: 'Per C4, xbase deliberately omits the plan speed and the wired-test figure
+    (which would compute the keep/return
+
+    answer); it keeps only the symptom and that dead spots are fixed. The decisive
+    plan-cap evidence lives only in
+
+    HH/LH. Curtains have no pathway to an upstream plan cap.
+
+    '
+causal_audit:
+  steelman: 'A networking enthusiast might argue dense blackout fabric attenuates
+    5 GHz signals, lowering throughput in those
+
+    rooms. But the rooms now show a solid signal, and the binding limit is the 50
+    Mbps plan confirmed by a wired
+
+    modem test that bypasses Wi-Fi entirely; no amount of curtain shielding can lift
+    a line''s contracted speed cap,
+
+    so the timing is coincidence.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the dead-spot rooms now have solid signal,
+    foreclosing the signal-attenuation pathway curtains might otherwise be imagined
+    to cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to return a mesh Wi-Fi system that fixed dead spots but did
+    not raise speed, because the 50 Mbps plan caps it, against blackout-curtain coincidence
+    timing.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

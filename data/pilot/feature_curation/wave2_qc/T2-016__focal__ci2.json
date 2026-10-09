@@ -1,0 +1,15 @@
+{
+  "seed_id": "T2-016",
+  "ci": "ci2",
+  "lens": "focal_validity_v1",
+  "my_own_diagnosis": "From xbase alone (no focal), the coincident timing with the invoice redesign is suspicious but the cosmetic-only nature of the change (same fields, positions, payment terms) forecloses the OCR/parsing mechanism; from xbase + focal, the confirmed AP approval chain restructuring is the decisive causal factor, and the correct response is to ask the client to detail that change.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature simultaneously closes the visual-design pathway (cosmetic-only redesign, no viable mechanism) and opens a specific client-side structural cause (AP chain restructuring), giving a competent practitioner a clear and unambiguous direction.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "oracle_action ASK is correct given the focal confirms AP restructuring but the practitioner should still surface specifics from the client; HL/LL cell oracles correctly apply the low_diagnostic oracle (reject visual-design story, ask broadly); HH/LH cell oracles correctly apply the focal oracle (ask specifically about AP chain restructuring).",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

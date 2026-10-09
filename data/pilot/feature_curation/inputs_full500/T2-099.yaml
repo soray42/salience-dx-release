@@ -1,0 +1,162 @@
+seed_id: T2-099
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: My nightly backups on my Mac have slowed from finishing in minutes to taking
+  many hours, sometimes still running when I sit down in the morning. It backs up
+  to an external drive over USB, the data set has not grown much, and nothing about
+  what I back up has changed. The machine is otherwise fast and responsive during
+  the day. This has been getting worse for about two weeks. {DS}
+focal_diagnostic_feature: The backup volume is 98% full, so each run spends most of
+  its time deleting old backups before writing.
+low_diagnostic_proposition: The slowdown began around the time the system was switched
+  to dark mode.
+oracle_action: ANSWER
+oracle_focus: Treat this as a nearly full backup destination; free space on or enlarge
+  the backup drive, or prune old snapshots, since at 98% full each run thrashes deleting
+  old backups to make room instead of writing into free space.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a dark-mode switch to backup duration;
+  it has no mechanism. Ask how full the backup destination is and whether each run
+  is spending its time pruning before writing.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a dark-mode switch to backup duration; it has no mechanism.
+      Ask how full the backup destination is and whether each run is spending its
+      time pruning before writing.
+  LL:
+    action: ASK
+    focus: Do not connect a dark-mode switch to backup duration; it has no mechanism.
+      Ask how full the backup destination is and whether each run is spending its
+      time pruning before writing.
+  HH:
+    action: ANSWER
+    focus: Treat this as a nearly full backup destination; free space on or enlarge
+      the backup drive, or prune old snapshots, since at 98% full each run thrashes
+      deleting old backups to make room instead of writing into free space.
+  LH:
+    action: ANSWER
+    focus: Treat this as a nearly full backup destination; free space on or enlarge
+      the backup drive, or prune old snapshots, since at 98% full each run thrashes
+      deleting old backups to make room instead of writing into free space.
+variants:
+  HL:
+    distractor: I will admit the slowdown seems to line up with when I switched the
+      whole system over to dark mode and changed my accent colour, which I did right
+      around when the backups started dragging.
+    diagnosticity: low
+    salience: high
+    proposition: The slowdown began around the time the system was switched to dark
+      mode.
+    salience_source: B/C — confident first-person account aligning the slowdown with
+      the deliberate appearance change.
+    why_plausible: A recent system-wide setting change coinciding with the slowdown
+      invites treating it as a system-level cause.
+    why_irrelevant: Dark mode and accent colour are interface-appearance settings;
+      they change no I/O behaviour and cannot affect how long a disk backup takes.
+  LL:
+    distractor: The backup slowdown began around the time the system was switched
+      over to dark mode.
+    diagnosticity: low
+    salience: low
+    proposition: The slowdown began around the time the system was switched to dark
+      mode.
+    matched_to: HL
+  HH:
+    distractor: The backup destination volume is at 98% full, so each run now spends
+      most of its time deleting old backups to free room before it can write, instead
+      of having ample free space to write into quickly.
+    diagnosticity: high
+    salience: high
+    proposition: The backup volume is 98% full, so each run spends most of its time
+      deleting old backups before writing.
+    salience_source: Concrete capacity figure (98% full) plus the pruning-before-writing
+      behaviour pinpoints the slowdown's cause.
+  LH:
+    distractor: The backup volume is 98% full, so each run spends most of its time
+      deleting old backups before writing.
+    diagnosticity: high
+    salience: low
+    proposition: The backup volume is 98% full, so each run spends most of its time
+      deleting old backups before writing.
+    matched_to: HH
+distractor_direction:
+  label: Dark-mode switch
+  description: Treating the dark-mode and accent-colour change as the cause of the
+    backup slowdown because they coincided.
+plausible_alternative_directions:
+- label: USB or drive degradation
+  description: Whether the external drive or USB link has slowed due to failing hardware
+    or a poor connection.
+- label: Indexing or scanning overhead
+  description: Whether a reindex or repeated full scan
+  not capacity: null
+  is inflating each run's duration.: null
+leak_audit:
+  ll_atomic_claims:
+  - The backup slowdown began.
+  - It began around the time the system was switched to dark mode.
+  hh_atomic_claims:
+  - The backup destination volume is at 98% full.
+  - Each run spends most of its time deleting old backups before it can write.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean switched-to-dark-mode-then-backups-dragging chronology.
+    confident_assertion: I will admit the slowdown seems to line up with...
+    concrete_detail: Detail about the appearance change (dark mode, accent colour)
+      only; no claim about the drive's fullness.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 70
+  hl_word_count: 35
+  ll_word_count: 15
+  hh_word_count: 37
+  lh_word_count: 19
+  notes: 'LL carries only the started-around-dark-mode-switch claim; the accent-colour
+    detail is HL-only colour about the
+
+    appearance change. xbase reports symptoms (minutes to hours, data not grown, machine
+    otherwise fast) and
+
+    withholds the destination fullness, so HL/LL cannot reject the coincidence. The
+    decisive 98%-full-thrashing fact
+
+    lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One could argue enabling dark mode triggered other settings changes or
+    a background refresh that competes for
+
+    disk I/O at backup time. But the stated event is solely switching to dark mode
+    and changing the accent colour;
+
+    these are pure interface-appearance settings rendered by the window server, with
+    no disk-I/O footprint and no
+
+    scheduled background work, and they cannot lengthen a USB disk backup. There is
+    no constructible mechanism from
+
+    a theme change to backup duration, and the focal evidence shows a 98%-full destination
+    thrashing on pruning,
+
+    which fully accounts for the slowdown.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the coincidence has no mechanism; xbase withholds
+    the destination fullness so the cause lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A backup job slowing from minutes to hours, where a 98%-full destination
+    volume thrashing on pruning, not a coincident dark-mode switch, is the cause.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

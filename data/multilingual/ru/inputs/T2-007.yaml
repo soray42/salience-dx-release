@@ -1,0 +1,107 @@
+seed_id: T2-007
+template: T2
+domain: open_qa
+complexity: high
+xbase: Я решаю, стоит ли в этом году конвертировать мой традиционный IRA в Roth IRA.
+  Баланс составляет около $180 000, до пенсии примерно 15 лет, а налог с конвертации
+  я заплачу со счёта налогооблагаемого брокера. {DS}
+focal_diagnostic_feature: Предельная налоговая ставка пользователя в этом году выше,
+  чем его прогнозируемая пенсионная предельная ставка.
+low_diagnostic_proposition: The question arose during news coverage about possible
+  retirement-account legislation.
+oracle_action: ANSWER
+oracle_focus: A full conversion this year is unfavourable in the simple bracket comparison;
+  consider waiting for lower-income years or modelling a ladder.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let speculative news set the answer. Ask for current
+  and expected future tax brackets before judging the conversion.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let speculative news set the answer. Ask for current and expected
+      future tax brackets before judging the conversion.
+  LL:
+    action: ASK
+    focus: Do not let speculative news set the answer. Ask for current and expected
+      future tax brackets before judging the conversion.
+  HH:
+    action: ANSWER
+    focus: A full conversion this year is unfavourable in the simple bracket comparison;
+      consider waiting for lower-income years or modelling a ladder.
+  LH:
+    action: ANSWER
+    focus: A full conversion this year is unfavourable in the simple bracket comparison;
+      consider waiting for lower-income years or modelling a ladder.
+variants:
+  HL:
+    distractor: Этот вопрос возник только потому, что на прошлой неделе все финансовые
+      заголовки буквально кричали о том, что Конгресс меняет правила пенсионных счетов.
+    diagnosticity: low
+    salience: high
+    proposition: The question arose during news coverage about possible retirement-account
+      legislation.
+    salience_source: temporal link to intense news cycle
+    why_plausible: Pending legislation can feel urgent and action-forcing.
+    why_irrelevant: The disclosed bracket spread is the decision-relevant fact; generic
+      news does not change that arithmetic.
+  LL:
+    distractor: Вопрос возник на фоне обсуждения в СМИ возможных изменений в законодательстве
+      о пенсионных счетах.
+    diagnosticity: low
+    salience: low
+    proposition: The question arose during news coverage about possible retirement-account
+      legislation.
+    matched_to: HL
+  HH:
+    distractor: В этом году я нахожусь в налоговой группе 32%, тогда как по пенсионному
+      прогнозу ожидаю 22%, то есть конвертация сейчас означает уплату примерно десяти
+      дополнительных налоговых процентов с каждого доллара.
+    diagnosticity: high
+    salience: high
+    proposition: The user's marginal tax rate is higher this year than their projected
+      retirement marginal rate.
+    salience_source: tax-rate spread
+  LH:
+    distractor: Текущая предельная налоговая ставка составляет около 32%, а прогнозируемая
+      пенсионная предельная ставка — около 22%.
+    diagnosticity: high
+    salience: low
+    proposition: The user's marginal tax rate is higher this year than their projected
+      retirement marginal rate.
+    matched_to: HH
+distractor_direction:
+  label: Обеспокоенность законодательными изменениями
+  description: Исследование того, должны ли возможные изменения в законодательстве
+    о пенсионных счетах определять сроки конвертации в Roth.
+plausible_alternative_directions:
+- label: Влияние на ликвидность портфеля
+  description: Создаёт ли использование налогооблагаемых средств для уплаты налога
+    с конвертации проблемы с ликвидностью или распределением инвестиций.
+- label: Сроки поэтапной конвертации
+  description: Даст ли распределение конвертации на годы с более низким доходом лучший
+    налоговый результат.
+- label: Цель налогового планирования имущества
+  description: Делает ли налоговый режим наследников или цели наследования конвертацию
+    привлекательной вопреки разнице в налоговых ставках.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-007.yaml
+  source_xbase_sha256: 98978196061cb01f
+  translated_content_sha256: 03052b30e632d708
+  translation_notes: IRA, Roth IRA, Конгресс оставлены как есть — стандартные термины
+    в контексте американского финансового планирования, знакомые русскоязычной аудитории,
+    обсуждающей тему. Числовые значения (180 000, 15 лет, 32%, 22%, 10 пунктов) переданы
+    точно. Временная привязка «на прошлой неделе» в HL сохранена для поддержания высокой
+    выразительности нарративной когерентности.

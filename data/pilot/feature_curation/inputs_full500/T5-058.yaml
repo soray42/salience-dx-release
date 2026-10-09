@@ -1,0 +1,200 @@
+seed_id: T5-058
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I have just accepted a permanent job in a new city and am deciding whether
+  to buy or rent for my first year there. I still carry student debt and am starting
+  from close to zero in savings. The local market has a mix of rental and purchase
+  options in the areas I have been researching. {DS}
+focal_diagnostic_feature: Comparable rentals in the same neighbourhoods cost about
+  65% of the estimated monthly mortgage payment on a starter home, and after student
+  debt service the user has no downpayment saved and would need to borrow for closing
+  costs.
+low_diagnostic_proposition: The listing agency's website is professionally designed;
+  an agency that presents listings this well is operating in a market worth buying
+  into.
+oracle_action: ANSWER
+oracle_focus: Rent for the first year; the monthly cost gap and absence of a downpayment
+  make buying financially untenable before building savings and understanding the
+  local market.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not treat website quality as evidence about the market
+  or financial readiness to buy. Ask for the rent-to-mortgage comparison, available
+  savings, student debt load, and expected tenure before advising.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not treat website quality as evidence about the market or financial
+      readiness to buy. Ask for the rent-to-mortgage comparison, available savings,
+      student debt load, and expected tenure before advising.
+  LL:
+    action: ASK
+    focus: Do not treat website quality as evidence about the market or financial
+      readiness to buy. Ask for the rent-to-mortgage comparison, available savings,
+      student debt load, and expected tenure before advising.
+  HH:
+    action: ANSWER
+    focus: Rent for the first year; the monthly cost gap and absence of a downpayment
+      make buying financially untenable before building savings and understanding
+      the local market.
+  LH:
+    action: ANSWER
+    focus: Rent for the first year; the monthly cost gap and absence of a downpayment
+      make buying financially untenable before building savings and understanding
+      the local market.
+variants:
+  HL:
+    distractor: The listing agency's website is immaculate — sharp photography, a
+      clean grid layout, and detailed neighbourhood profiles; an agency that presents
+      its listings this professionally is obviously operating in a market worth buying
+      into.
+    diagnosticity: low
+    salience: high
+    proposition: The listing agency's website is professionally designed; an agency
+      that presents listings this well is operating in a market worth buying into.
+    salience_source: B/C — concrete visual enumeration of the website's design quality
+      followed by a confident bridging assertion; the specificity of the observation
+      gives it the feel of a considered market signal.
+    why_plausible: Sophisticated real estate agencies tend to invest in professional
+      marketing in competitive or desirable markets; a polished web presence does
+      weakly correlate with active, liquid property markets.
+    why_irrelevant: An agency's website design has no bearing on the user's rent-to-mortgage
+      cost ratio or their downpayment position; even a perfectly liquid and desirable
+      market does not change the arithmetic that purchasing is unaffordable for this
+      buyer right now.
+  LL:
+    distractor: The listing agency's website is professionally designed; an agency
+      that presents listings this well is operating in a market worth buying into.
+    diagnosticity: low
+    salience: low
+    proposition: The listing agency's website is professionally designed; an agency
+      that presents listings this well is operating in a market worth buying into.
+    matched_to: HL
+  HH:
+    distractor: Comparable rentals in the same areas are running at about 65% of the
+      estimated monthly mortgage payment on a starter home, and after student debt
+      service I have no downpayment saved and would need to borrow for closing costs.
+    diagnosticity: high
+    salience: high
+    proposition: Comparable rentals in the same neighbourhoods cost about 65% of the
+      estimated monthly mortgage payment on a starter home, and after student debt
+      service the user has no downpayment saved and would need to borrow for closing
+      costs.
+    salience_source: Precise percentage (65%) and two concrete financial barriers
+      (no downpayment, closing costs require borrowing) give the calculation immediate
+      clarity.
+  LH:
+    distractor: Comparable rentals cost about 65% of the mortgage payment, and no
+      downpayment or closing-cost savings exist.
+    diagnosticity: high
+    salience: low
+    proposition: Comparable rentals in the same neighbourhoods cost about 65% of the
+      estimated monthly mortgage payment on a starter home, and after student debt
+      service the user has no downpayment saved and would need to borrow for closing
+      costs.
+    matched_to: HH
+distractor_direction:
+  label: Agency website polish as market signal
+  description: Treating the professional quality of the listing agency's website as
+    evidence that the local property market is sound and worth buying into.
+plausible_alternative_directions:
+- label: Long-term equity building
+  description: Evaluating whether early property ownership, despite tight finances,
+    would build equity that outweighs the higher monthly cost and lack of downpayment
+    buffer.
+- label: Rental market stability
+  description: Assessing whether renting exposes the user to rent increases or involuntary
+    moves that make buying a better hedge for a permanent role.
+- label: Student debt interaction with mortgage eligibility
+  description: Determining whether existing student debt affects mortgage eligibility
+    or rate qualification before the rent-vs-buy question can be settled.
+leak_audit:
+  ll_atomic_claims:
+  - The listing agency's website is professionally designed.
+  - An agency that presents listings this well is operating in a market worth buying
+    into.
+  hh_atomic_claims:
+  - Comparable rentals in the same areas cost about 65% of the estimated monthly mortgage
+    payment.
+  - After student debt service the user has no downpayment saved.
+  - The user would need to borrow for closing costs.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Three concrete visual attributes of the website build toward
+      a confident market inference; the progression reads as a reasoned observation.
+    confident_assertion: '''obviously operating in a market worth buying into'' —
+      strong bridging from design aesthetics to market judgment.'
+    concrete_detail: '''sharp photography, a clean grid layout, and detailed neighbourhood
+      profiles'' — detail about the website only, not the underlying market or the
+      user''s finances.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 56
+  hl_word_count: 33
+  ll_word_count: 22
+  hh_word_count: 39
+  lh_word_count: 16
+  notes: 'T5 bridge (''an agency that presents listings this well is operating in
+    a
+
+    market worth buying into'') appears identically in both HL and LL (C1 /
+
+    self-check 13 satisfied — LL is the verbatim bridge, HL adds the visual detail).
+
+    HH gives three distinct financial claims; LH compresses them into one clause
+
+    that preserves all three propositional elements.
+
+    Ratio HL:LL = 1.50; HH:LH = 2.44; both within 4:1.
+
+    '
+causal_audit:
+  steelman: 'A buyer''s agent could argue: agencies that invest heavily in professional
+
+    web presence tend to operate in markets with high transaction volumes and
+
+    strong competition, which often correlates with robust price appreciation,
+
+    good liquidity, and buyer confidence. Buying early in such a market,
+
+    even with limited savings, could be justified by rapid equity accumulation
+
+    that exceeds the rental cost gap. A highly polished agency website is not
+
+    random noise — it is a business investment that tracks market activity.
+
+    This is the strongest version: professional listing presence as a demand
+
+    signal that argues for buying. However, website quality is a marketing
+
+    input variable with no mechanistic link to the rent-to-mortgage ratio or
+
+    the buyer''s financial readiness. Even if the market is extremely liquid and
+
+    appreciating, the user currently has no downpayment and would need to borrow
+
+    for closing costs — a financial state that forecloses conventional mortgage
+
+    qualification entirely, independent of market quality. The aesthetic
+
+    observation cannot bridge to a solvency conclusion.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase establishes near-zero savings and student debt
+    load, framing the financial constraint, but the specific rent-to-mortgage ratio
+    and downpayment absence live only in HH/LH.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Rent-vs-buy decision for a permanent-role relocator with student debt
+    and no savings, where rentals cost 65% of the mortgage payment and no downpayment
+    exists, making renting the only viable choice.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

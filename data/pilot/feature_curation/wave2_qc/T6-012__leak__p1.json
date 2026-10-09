@@ -1,0 +1,27 @@
+{
+  "seed_id": "T6-012",
+  "ll_claims_extracted": [
+    "Previous buffering problems on this TV (both of them) were fixed by doing a factory reset."
+  ],
+  "hl_case_claims": [
+    "Previous stuttering/buffering problems on this TV were fixed by factory reset (twice before)."
+  ],
+  "hl_source_claims": [
+    "The speaker fixed the problem themselves, twice ('I've fixed').",
+    "The speaker's gut tells them the current issue is the same issue again — conviction/belief framing.",
+    "The speaker is confident a factory reset is what they need to do — confident-assertion framing.",
+    "The phrase 'this exact stuttering' characterises the symptom as identical to past episodes, but this mirrors the xbase description and serves as salience intensifier rather than new case fact."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "ll": 14,
+    "hl": 32,
+    "xbase": 50,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

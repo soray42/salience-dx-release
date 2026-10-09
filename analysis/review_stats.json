@@ -1,0 +1,80 @@
+{
+  "scaling_equivalence": {
+    "per_size": [
+      {
+        "size": "E4B (~4B act/8B)",
+        "n": 496,
+        "flip_pct": 23.59,
+        "wilson_ci": [
+          20.1,
+          27.5
+        ],
+        "kf": 117
+      },
+      {
+        "size": "12B dense",
+        "n": 500,
+        "flip_pct": 20.0,
+        "wilson_ci": [
+          16.7,
+          23.7
+        ],
+        "kf": 100
+      },
+      {
+        "size": "26B-A4B MoE(~4B act)",
+        "n": 499,
+        "flip_pct": 20.84,
+        "wilson_ci": [
+          17.5,
+          24.6
+        ],
+        "kf": 104
+      },
+      {
+        "size": "31B dense",
+        "n": 499,
+        "flip_pct": 19.64,
+        "wilson_ci": [
+          16.4,
+          23.4
+        ],
+        "kf": 98
+      }
+    ],
+    "E4B_minus_31B": {
+      "diff_pct": 3.95,
+      "ci95_pct": [
+        -1.16,
+        9.06
+      ]
+    },
+    "TOST_equivalence_margin_pp": 5,
+    "TOST_p": 0.3435,
+    "TOST_verdict": "equivalence within +-5pp not established"
+  },
+  "meta_hartung_knapp": {
+    "k": 4,
+    "pooled_logOR": -0.341,
+    "pooled_OR": 0.711,
+    "tau2": 0.175,
+    "DL_OR_ci95": [
+      0.447,
+      1.13
+    ],
+    "HK_OR_ci95": [
+      0.318,
+      1.589
+    ]
+  },
+  "manipulation_logit": {
+    "n": 10,
+    "mean_HL_minus_LL_logit": 0.052,
+    "sd": 0.031,
+    "range": [
+      -0.002,
+      0.103
+    ],
+    "note": "Llama 3.1 8B log-odds of the cue's claim, salient minus plain; ten-scenario pilot."
+  }
+}

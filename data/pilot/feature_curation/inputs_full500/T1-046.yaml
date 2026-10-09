@@ -1,0 +1,169 @@
+seed_id: T1-046
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: On our office VoIP phones, outbound calls connect but the far side often cannot
+  hear us, while we hear them perfectly. It is not every call, and the desk phones
+  register fine and show full signal. Internal calls between two of our phones are
+  flawless. We replaced one handset and the problem followed the same set of calls,
+  not the hardware. Nothing about our call provider has changed on our account. {DS}
+focal_diagnostic_feature: The affected calls are the ones whose media path traverses
+  the office router, whose SIP ALG is rewriting the SDP and advertising the wrong
+  private RTP address, so the far end sends audio to an unreachable address while
+  our inbound audio is unaffected.
+low_diagnostic_proposition: A colleague's similar one-way-audio complaint at a previous
+  job was caused by a faulty headset microphone.
+oracle_action: ANSWER
+oracle_focus: Disable SIP ALG on the office router (and use proper NAT traversal);
+  the one-way-audio pattern comes from the ALG rewriting SDP to an unreachable private
+  RTP address, which breaks only the outbound media path.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the faulty-headset-microphone explanation.
+  Ask whether the issue follows the call path rather than the handset and whether
+  the router has SIP ALG enabled before blaming hardware.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the faulty-headset-microphone explanation. Ask whether the
+      issue follows the call path rather than the handset and whether the router has
+      SIP ALG enabled before blaming hardware.
+  LL:
+    action: ASK
+    focus: Do not adopt the faulty-headset-microphone explanation. Ask whether the
+      issue follows the call path rather than the handset and whether the router has
+      SIP ALG enabled before blaming hardware.
+  HH:
+    action: ANSWER
+    focus: Disable SIP ALG on the office router (and use proper NAT traversal); the
+      one-way-audio pattern comes from the ALG rewriting SDP to an unreachable private
+      RTP address, which breaks only the outbound media path.
+  LH:
+    action: ANSWER
+    focus: Disable SIP ALG on the office router (and use proper NAT traversal); the
+      one-way-audio pattern comes from the ALG rewriting SDP to an unreachable private
+      RTP address, which breaks only the outbound media path.
+variants:
+  HL:
+    distractor: Huy, who ran the phones at my previous job, told me he chased almost
+      exactly this one-way-audio complaint for a week and it turned out to be a handset
+      with a quietly failing microphone element, and he was sure ours is the same
+      tired old hardware story.
+    diagnosticity: low
+    salience: high
+    proposition: A colleague's similar one-way-audio complaint at a previous job was
+      caused by a faulty headset microphone.
+    salience_source: A/C — a former phone-system colleague confidently mapping our
+      symptom onto his firsthand hardware fix.
+    why_plausible: A dead or failing mic genuinely produces one-way audio, so an experienced
+      colleague's matching story feels like the obvious cause.
+    why_irrelevant: We swapped a handset and the problem followed the same calls,
+      not the hardware, and internal calls are flawless, so a failing microphone is
+      ruled out for this case regardless of his anecdote.
+  LL:
+    distractor: A former colleague's similar one-way-audio problem was caused by a
+      faulty headset microphone.
+    diagnosticity: low
+    salience: low
+    proposition: A colleague's similar one-way-audio complaint at a previous job was
+      caused by a faulty headset microphone.
+    matched_to: HL
+  HH:
+    distractor: The dead calls are exactly the ones whose audio crosses our office
+      router, whose SIP ALG is rewriting the call's SDP to advertise a private RTP
+      address the far end can't reach; so the remote side ships our audio into a black
+      hole while their audio back to us is untouched.
+    diagnosticity: high
+    salience: high
+    proposition: The affected calls are the ones whose media path traverses the office
+      router, whose SIP ALG is rewriting the SDP and advertising the wrong private
+      RTP address, so the far end sends audio to an unreachable address while our
+      inbound audio is unaffected.
+    salience_source: Affected-call set maps onto the router-traversing media path,
+      with SIP ALG rewriting SDP to an unreachable RTP address.
+  LH:
+    distractor: Affected calls traverse the router whose SIP ALG rewrites SDP to an
+      unreachable private RTP address, breaking only outbound audio.
+    diagnosticity: high
+    salience: low
+    proposition: The affected calls are the ones whose media path traverses the office
+      router, whose SIP ALG is rewriting the SDP and advertising the wrong private
+      RTP address, so the far end sends audio to an unreachable address while our
+      inbound audio is unaffected.
+    matched_to: HH
+distractor_direction:
+  label: Faulty handset microphone
+  description: Investigating a failing microphone in the phones or headsets as the
+    cause of the far side not hearing the user.
+plausible_alternative_directions:
+- label: Codec negotiation mismatch
+  description: Whether a one-sided codec mismatch with the provider is silencing the
+    outbound stream on some calls.
+- label: One-way firewall/QoS rule
+  description: Whether a firewall or QoS rule is dropping outbound RTP packets on
+    certain routes.
+- label: Provider trunk problem
+  description: Whether the SIP trunk provider is mishandling media on a subset of
+    routes.
+leak_audit:
+  ll_atomic_claims:
+  - A former colleague had a similar one-way-audio problem.
+  - That problem was caused by a faulty headset microphone.
+  hh_atomic_claims:
+  - The affected calls are the ones whose media path traverses the office router.
+  - The router's SIP ALG rewrites the SDP to advertise an unreachable private RTP
+    address.
+  - The far end sends audio to that unreachable address while inbound audio is unaffected.
+  hl_salience_dimensions:
+    source_credibility: Named former phone-system colleague (Huy) recounting his firsthand
+      fix.
+    narrative_coherence: A week-long chase ending in a failing mic element — a clean
+      story.
+    confident_assertion: He was sure ours is the same hardware story.
+    concrete_detail: Detail about his prior incident — about his case, not our call-path
+      behaviour.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 75
+  hl_word_count: 45
+  ll_word_count: 14
+  hh_word_count: 48
+  lh_word_count: 19
+  notes: 'xbase narrows the symptom (intermittent one-way audio, handset swap did
+    not move it, internal calls fine) but
+
+    keeps the decisive media-path/SIP-ALG mechanism only in HH/LH. The handset-swap
+    line is a narrow pathway closure
+
+    of the mic theory; it names no affirmative cause, staying within C4.
+
+    '
+causal_audit:
+  steelman: 'A telephony engineer could argue a failing mic capsule yields exactly
+    this far-side silence and is a common
+
+    field fault worth ruling out first. But the user swapped a handset and the problem
+    followed the same calls, not
+
+    the hardware, and internal phone-to-phone calls are flawless; a microphone fault
+    cannot be call-path-selective,
+
+    so it is structurally excluded for this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states a handset was replaced and the problem followed
+    the same calls (not the hardware), and internal calls are flawless, foreclosing
+    the failing-microphone pathway.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: VoIP one-way audio from the office router's SIP ALG rewriting SDP to
+    an unreachable RTP address, against a colleague's faulty-headset-microphone anecdote.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

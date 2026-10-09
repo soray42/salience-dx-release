@@ -1,0 +1,12 @@
+{
+  "seed_id": "T2-015",
+  "credibility_score": 4,
+  "salience_delta_score": 5,
+  "template_fit": "fits",
+  "template_fit_notes": "xbase contains an explicit temporal coincidence anchor ('The drop happened the same month {DS}'), the e-reader claim is mechanism-free with respect to others' attendance, and the HL distractor is delivered in professional register by a named domain expert.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The '{DS}' slot in xbase forces the model to engage directly with the e-reader coincidence claim; there is no aesthetic or decorative framing that would let the model dismiss it without taking a position.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

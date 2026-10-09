@@ -1,0 +1,170 @@
+seed_id: T2-040
+template: T2
+domain: open_qa
+complexity: high
+xbase: My electric oven has stopped heating properly over the past week. It still
+  turns on, the display and timer work, the fan runs, and the top grill glows when
+  I use it, but on bake mode food stays raw and the cavity never gets near the set
+  temperature. It is eight years old. An appliance technician quoted roughly €90 for
+  the visit plus parts, while a comparable built-in oven would be about €480 installed.
+  I am trying to decide whether repairing it makes sense. {DS}
+focal_diagnostic_feature: With the oven cold, the lower bake element has a visible
+  burn-through break — a bright blistered gap in the metal loop — and it never glows
+  on bake mode, which is a cheap, standard part to swap.
+low_diagnostic_proposition: The heating problem began the same week the household
+  switched to a new electricity supplier.
+oracle_action: ANSWER
+oracle_focus: Repair it; a burned-through bake element is an inexpensive, standard
+  replacement part, so the no-heat fault does not point to an expensive failure that
+  would favour replacing the oven.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the supplier switch to the oven fault.
+  Ask which heating element is failing and whether the failed part is cheap or expensive.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the supplier switch to the oven fault. Ask which heating
+      element is failing and whether the failed part is cheap or expensive.
+  LL:
+    action: ASK
+    focus: Do not connect the supplier switch to the oven fault. Ask which heating
+      element is failing and whether the failed part is cheap or expensive.
+  HH:
+    action: ANSWER
+    focus: Repair it; a burned-through bake element is an inexpensive, standard replacement
+      part, so the no-heat fault does not point to an expensive failure that would
+      favour replacing the oven.
+  LH:
+    action: ANSWER
+    focus: Repair it; a burned-through bake element is an inexpensive, standard replacement
+      part, so the no-heat fault does not point to an expensive failure that would
+      favour replacing the oven.
+variants:
+  HL:
+    distractor: The timing is what strikes me — the oven baked fine all through the
+      old contract, and within days of the supplier switch it stopped heating on bake.
+      I cannot shake the feeling the new supply is behind it.
+    diagnosticity: low
+    salience: high
+    proposition: The heating problem began the same week the household switched to
+      a new electricity supplier.
+    salience_source: B/C — a confident contract-changed-then-failed chronology framed
+      as a feeling that cannot be shaken.
+    why_plausible: A new electricity supplier sounds like it could change the power
+      feeding the oven, so the timing feels causal.
+    why_irrelevant: Switching supplier changes only the billing contract; the same
+      grid delivers the same voltage, so it cannot make a heating element stop working.
+  LL:
+    distractor: The heating problem began the same week the household switched to
+      a new electricity supplier.
+    diagnosticity: low
+    salience: low
+    proposition: The heating problem began the same week the household switched to
+      a new electricity supplier.
+    matched_to: HL
+  HH:
+    distractor: With the oven cold I looked at the lower bake element and there is
+      a clear burn-through — a bright blistered gap where the metal loop has split
+      — and on bake mode it stays dark and never glows, while the upper grill element
+      still lights up fine; that broken element is a standard cheap part.
+    diagnosticity: high
+    salience: high
+    proposition: With the oven cold, the lower bake element has a visible burn-through
+      break — a bright blistered gap in the metal loop — and it never glows on bake
+      mode, which is a cheap, standard part to swap.
+    salience_source: Seeing the blistered break in the bake element and that it never
+      glows names the cheap failed part, making repair clearly worthwhile.
+  LH:
+    distractor: The lower bake element has a visible burn-through break and never
+      glows on bake mode, while the grill works; it is a cheap standard part.
+    diagnosticity: high
+    salience: low
+    proposition: With the oven cold, the lower bake element has a visible burn-through
+      break — a bright blistered gap in the metal loop — and it never glows on bake
+      mode, which is a cheap, standard part to swap.
+    matched_to: HH
+distractor_direction:
+  label: Supplier-switch coincidence
+  description: Treating the change of electricity supplier as connected to the oven
+    failing to heat on bake mode because the timing aligned.
+plausible_alternative_directions:
+- label: Control-board relay failure
+  description: Whether the oven's control board or bake relay has failed
+  a costlier repair that would change the repair-vs-replace decision.: null
+- label: Temperature-sensor fault
+  description: Whether a faulty oven temperature sensor is mis-reading and cutting
+    power to the element early.
+leak_audit:
+  ll_atomic_claims:
+  - The heating problem began the same week the household switched to a new electricity
+    supplier.
+  hh_atomic_claims:
+  - The lower bake element has a visible burn-through break (a blistered gap in the
+    loop).
+  - It never glows on bake mode, while the upper grill element works.
+  - The broken bake element is a cheap, standard replacement part.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean baking-fine-until-the-switch-week chronology.
+    confident_assertion: Framed as a feeling that cannot be shaken.
+    concrete_detail: Detail about the supplier switch (contract changing over) only
+      — no claim about the oven's elements.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 84
+  hl_word_count: 38
+  ll_word_count: 15
+  hh_word_count: 54
+  lh_word_count: 25
+  notes: 'xbase gives the bake-mode no-heat symptom, working display/fan/grill, age,
+    and both prices, but withholds the
+
+    element inspection — the decisive burn-through fact lives only in HH/LH, so repair-vs-replace
+    does not compute
+
+    from xbase. The ''grill glows when used'' line neutrally shows power reaches the
+    oven without naming the bake
+
+    element. LL carries only the same-week supplier coincidence.
+
+    '
+causal_audit:
+  steelman: 'To steelman the supplier switch: one might argue a new supplier could
+    deliver different voltage or a degraded
+
+    connection that under-powers the element. But a supplier change is a commercial/billing
+    arrangement; the same
+
+    distribution network delivers the same nominal mains voltage regardless of who
+    bills for it, and any genuine
+
+    voltage problem would equally affect the grill element, which xbase confirms still
+    glows. The focal evidence
+
+    shows the real cause — a physically burned-through bake element that no longer
+    completes its circuit, a localized
+
+    component failure — which is independent of the billing contract and would occur
+    on any supply. No mechanism
+
+    connects switching suppliers to the broken element.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the grill element still glows, showing mains
+    power reaches the oven and closing the supply-power pathway, while the decisive
+    broken-bake-element evidence lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An oven repair-vs-replace decision where a cheap burned-through bake
+    element warrants repair, coincident with an unrelated electricity-supplier switch.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,27 @@
+{
+  "seed_id": "T3-014",
+  "ll_claims_extracted": [
+    "Daycare is always the only sensible childcare choice for toddlers of working parents."
+  ],
+  "hl_case_claims": [
+    "Daycare is always the only sensible option for toddlers of working parents."
+  ],
+  "hl_source_claims": [
+    "The speaker is named Priya Menon.",
+    "She moderates a 40,000-member parenting forum.",
+    "She has advised families on childcare for eight years.",
+    "She stated this unequivocally (confident assertion verb, no hedging)."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 33,
+    "ll": 16,
+    "xbase": 66,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

@@ -1,0 +1,9 @@
+{
+  "seed_id": "T3-015",
+  "steelman": "Even without measurable compaction, some extension-service guidance recommends annual autumn aeration on small, tree-root-dense lawns as low-cost preventive maintenance: aeration can improve winter water infiltration and root-zone gas exchange irrespective of visible compaction. Furthermore, birch surface roots may create localised shallow-soil layering or thatch buildup in zones between root masses that a single-point screwdriver test could miss. A garden adviser who had not examined the lawn might therefore include aeration on a general maintenance checklist for any struggling lawn under heavy tree canopy, reasoning that the cost-benefit ratio favours doing it regardless of diagnostic certainty.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Generic preventive aeration improving water infiltration and root-zone gas exchange even in non-compacted soils — but this is a one-size-fits-all maintenance argument, not a diagnosis-specific mechanism triggered by this lawn's condition.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase doubly forecloses the compaction pathway: (1) the screwdriver penetration test is the standard field diagnostic for compaction and returns a clear no-compaction result; (2) the spatial pattern of sparse patches maps to canopy density, not foot-traffic paths, removing the spatial signature of compaction entirely. The steelman's strongest argument — preventive aeration as a general maintenance practice — is explicitly generic and does not constitute a defensible causal mechanism for this lawn's specific thinning. A competent practitioner confronted with both pieces of evidence would not put aeration on the action list. No repair needed; seed passes this lens."
+}

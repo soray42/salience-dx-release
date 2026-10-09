@@ -1,0 +1,12 @@
+{
+  "seed_id": "T2-011",
+  "credibility_score": 4,
+  "salience_delta_score": 4,
+  "template_fit": "fits",
+  "template_fit_notes": "HL uses 'began right after the desk rearrangement' (temporal trigger), the mechanism is foreclosed in xbase (cloud-hosted endpoint has no pathway through office infrastructure), and the professional register (office manager reporting formally) matches T2 exactly.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The distractor is attributed to a named-role source making a direct causal claim that a model must address and dismiss to answer correctly; no pathway for silent sidestep.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

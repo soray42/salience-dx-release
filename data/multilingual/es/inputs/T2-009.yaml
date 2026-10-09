@@ -1,0 +1,103 @@
+seed_id: T2-009
+template: T2
+domain: open_qa
+complexity: low
+xbase: Mi bicicleta se ha vuelto mucho más difícil de pedalear en mi trayecto habitual
+  llano durante las últimas dos semanas. No cambié la ruta, y la cadena fue limpiada
+  y lubricada recientemente. {DS}
+focal_diagnostic_feature: Cuando se levanta la rueda trasera y se gira a mano, se
+  detiene rápidamente porque una pastilla de freno está rozando el aro.
+low_diagnostic_proposition: The harder pedalling began after a cosmetic accessory
+  change.
+oracle_action: ANSWER
+oracle_focus: Adjust the rubbing brake pad before looking elsewhere; it is adding
+  drag directly.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame the accessory colour or timing. Ask for
+  wheel spin, brake rub, tyre pressure, and bearing drag.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame the accessory colour or timing. Ask for wheel spin, brake
+      rub, tyre pressure, and bearing drag.
+  LL:
+    action: ASK
+    focus: Do not blame the accessory colour or timing. Ask for wheel spin, brake
+      rub, tyre pressure, and bearing drag.
+  HH:
+    action: ANSWER
+    focus: Adjust the rubbing brake pad before looking elsewhere; it is adding drag
+      directly.
+  LH:
+    action: ANSWER
+    focus: Adjust the rubbing brake pad before looking elsewhere; it is adding drag
+      directly.
+variants:
+  HL:
+    distractor: Empezó justo después de cambiar a una botella de agua rojo brillante;
+      está en el cuadro de la bici y me llama la atención cada vez que pedaleo.
+    diagnosticity: low
+    salience: high
+    proposition: The harder pedalling began after a cosmetic accessory change.
+    salience_source: vivid colour detail, temporal coincidence with visible accessory
+    why_plausible: A recent visible change on the bike invites causal guessing.
+    why_irrelevant: A water bottle does not add drivetrain resistance; brake rub directly
+      does.
+  LL:
+    distractor: El cambio comenzó alrededor del momento en que hice un cambio de accesorio
+      no funcional en la bicicleta.
+    diagnosticity: low
+    salience: low
+    proposition: The harder pedalling began after a cosmetic accessory change.
+    matched_to: HL
+  HH:
+    distractor: Si levanto la rueda trasera y la giro, se detiene después de un par
+      de vueltas porque la pastilla de freno izquierda roza el aro todo el tiempo.
+    diagnosticity: high
+    salience: high
+    proposition: When the rear wheel is lifted and spun by hand, it stops quickly
+      because one brake pad is rubbing the rim.
+    salience_source: direct mechanical friction test
+  LH:
+    distractor: La rueda trasera tiene rozamiento continuo de la pastilla de freno
+      y se detiene rápido al girarla libremente.
+    diagnosticity: high
+    salience: low
+    proposition: When the rear wheel is lifted and spun by hand, it stops quickly
+      because one brake pad is rubbing the rim.
+    matched_to: HH
+distractor_direction:
+  label: Resistencia por cambio de accesorio
+  description: Investigar si un cambio de accesorio no funcional en la bicicleta está
+    causando el pedaleo más duro.
+plausible_alternative_directions:
+- label: Fricción en la transmisión
+  description: La cadena, el desviador, el eje de pedalier o los rodamientos del buje
+    están añadiendo resistencia.
+- label: Presión baja en los neumáticos
+  description: Los neumáticos desinflados están aumentando la resistencia de rodadura
+    en la misma ruta.
+- label: Problema de alineación de la rueda
+  description: Una rueda está desalineada o roza en algún otro lugar además de la
+    pastilla de freno identificada.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-009.yaml
+  source_xbase_sha256: ad6bcc4d3bd0abb8
+  translated_content_sha256: 427cee860d50ac97
+  translation_notes: No culture-bound salience issues. 'Rim' translated as 'aro' (standard
+    bicycle term in Spanish). 'Bottom bracket' translated as 'eje de pedalier'. 'Brake
+    pad' as 'pastilla de freno'. The vivid red water-bottle detail (HL salience cue)
+    translates naturally.

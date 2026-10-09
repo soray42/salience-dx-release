@@ -1,0 +1,167 @@
+seed_id: T2-050
+template: T2
+domain: open_qa
+complexity: medium
+xbase: My monthly public-transport spending has crept up by roughly thirty euros over
+  the last two months and I cannot pin down why. I take the same metro and tram lines
+  to work and back, the same number of days a week, and I top up the same travel card
+  I have used for years. My commute pattern genuinely has not changed, yet the card
+  runs out faster than it used to. {DS}
+focal_diagnostic_feature: A fare-zone boundary was redrawn two months ago so the user's
+  destination stop now sits in a higher zone, raising the per-trip fare for the same
+  journey.
+low_diagnostic_proposition: The higher spending began the same month the user started
+  using a new coffee-shop loyalty app on their phone.
+oracle_action: ANSWER
+oracle_focus: 'The increase is the fare-zone change: the destination stop moved into
+  a higher zone two months ago, raising the per-trip fare for the same commute, so
+  check for a zone-capped pass or season ticket.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a coffee loyalty app to transit spending.
+  Ask whether fares or fare zones on the user's lines changed, and compare the old
+  and new per-trip price.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a coffee loyalty app to transit spending. Ask whether fares
+      or fare zones on the user's lines changed, and compare the old and new per-trip
+      price.
+  LL:
+    action: ASK
+    focus: Do not connect a coffee loyalty app to transit spending. Ask whether fares
+      or fare zones on the user's lines changed, and compare the old and new per-trip
+      price.
+  HH:
+    action: ANSWER
+    focus: 'The increase is the fare-zone change: the destination stop moved into
+      a higher zone two months ago, raising the per-trip fare for the same commute,
+      so check for a zone-capped pass or season ticket.'
+  LH:
+    action: ANSWER
+    focus: 'The increase is the fare-zone change: the destination stop moved into
+      a higher zone two months ago, raising the per-trip fare for the same commute,
+      so check for a zone-capped pass or season ticket.'
+variants:
+  HL:
+    distractor: The only deliberate change I can think of is that two months ago I
+      started using a new coffee-shop loyalty app that lives on my phone; a friend
+      half insists that all these phone apps quietly drain money somehow, and the
+      start dates do line up suspiciously well.
+    diagnosticity: low
+    salience: high
+    proposition: The higher spending began the same month the user started using a
+      new coffee-shop loyalty app on their phone.
+    salience_source: B/C — a confident same-month chronology amplified by a friend's
+      claim makes the app feel like a culprit.
+    why_plausible: People reach for a recent deliberate change to explain a budget
+      creep, and a phone app loosely associated with spending feels suspicious.
+    why_irrelevant: A coffee-shop loyalty app charges nothing toward transit and never
+      touches the travel card's balance; it cannot raise the per-trip metro and tram
+      fares.
+  LL:
+    distractor: The higher spending began the same month the user started using a
+      new coffee-shop loyalty app on their phone.
+    diagnosticity: low
+    salience: low
+    proposition: The higher spending began the same month the user started using a
+      new coffee-shop loyalty app on their phone.
+    matched_to: HL
+  HH:
+    distractor: Looking at the transit operator's notice, a fare-zone boundary was
+      redrawn two months ago, and my destination stop now falls in a higher zone than
+      before; the very same journey I have always made simply costs more per trip
+      now, which is exactly why the card empties faster.
+    diagnosticity: high
+    salience: high
+    proposition: A fare-zone boundary was redrawn two months ago so the user's destination
+      stop now sits in a higher zone, raising the per-trip fare for the same journey.
+    salience_source: Concrete fare-policy specifics (boundary redrawn, destination
+      now a higher zone, higher per-trip fare) make the cause clear.
+  LH:
+    distractor: A fare-zone boundary was redrawn two months ago, placing the destination
+      stop in a higher zone and raising the per-trip fare for the same journey.
+    diagnosticity: high
+    salience: low
+    proposition: A fare-zone boundary was redrawn two months ago so the user's destination
+      stop now sits in a higher zone, raising the per-trip fare for the same journey.
+    matched_to: HH
+distractor_direction:
+  label: Loyalty-app timing
+  description: Treating the coincident adoption of a coffee-shop loyalty app as connected
+    to the higher transport spending.
+plausible_alternative_directions:
+- label: Card top-up leak
+  description: Whether the travel card has a fault or auto-renewing add-on quietly
+    drawing balance.
+- label: Hidden trip increase
+  description: Whether the user is in fact making more or longer trips than they realise.
+leak_audit:
+  ll_atomic_claims:
+  - The higher spending began the same month.
+  - That month the user started using a new coffee-shop loyalty app.
+  hh_atomic_claims:
+  - A fare-zone boundary was redrawn two months ago.
+  - The destination stop now falls in a higher zone than before.
+  - The same journey now costs more per trip.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-month chronology of starting the app.
+    confident_assertion: A friend insists phone apps quietly drain money.
+    concrete_detail: Detail about the coincidence event (a new loyalty app on the
+      phone) only — no claim about transit fares.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 73
+  hl_word_count: 44
+  ll_word_count: 18
+  hh_word_count: 45
+  lh_word_count: 24
+  notes: 'LL carries only the same-month-loyalty-app timing claim. The friend''s insistence
+    and the on-phone detail are
+
+    HL-only and about the coincidence event. xbase fixes that lines, days, and the
+    travel card are unchanged —
+
+    closing the trip-increase pathway as far as the user perceives it — while withholding
+    the fare-zone change; the
+
+    decisive zone-redraw fact lives only in HH/LH. A coffee loyalty app has no path
+    to transit-card balance,
+
+    satisfying C2 absolute.
+
+    '
+causal_audit:
+  steelman: 'One might argue a loyalty app nudges extra coffee purchases that show
+    up in overall card spending. But the
+
+    spending in question is the travel card emptying faster, and a coffee-shop loyalty
+    app does not debit the travel
+
+    card or change metro and tram fares; it operates entirely in a separate purchase
+    channel. There is no mechanism
+
+    by which adopting that app could raise the per-trip transit fare. The timing coincides,
+    but the cause is the
+
+    fare-zone redraw that lifted the journey into a more expensive zone.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the lines, days per week, and travel card
+    are all unchanged, foreclosing the more-trips and different-card pathways; the
+    decisive fare-zone redraw lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Rising commute cost because a fare-zone boundary redraw pushed the
+    destination into a higher zone, coincidentally timed with adopting a coffee-shop
+    loyalty app, which has no mechanism.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

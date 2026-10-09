@@ -1,0 +1,173 @@
+seed_id: T3-047
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I'm planning a two-week trip across a few countries and deciding whether to
+  book a rail pass or buy individual point-to-point train tickets as I go. I have
+  a rough route in mind but the dates of some legs are still flexible. I would rather
+  not overpay, and I do not enjoy the stress of locking everything in months ahead.
+  I have to decide which way to go before I start booking. {DS}
+focal_diagnostic_feature: For the user's specific planned legs, the total of the cheapest
+  advance point-to-point fares is well under half the price of the rail pass, even
+  before counting the pass's mandatory seat-reservation surcharges.
+low_diagnostic_proposition: A senior travel-industry figure asserts that rail passes
+  are the obvious choice for any multi-country European rail trip.
+oracle_action: ANSWER
+oracle_focus: Buy point-to-point tickets for these legs; the advance fares total well
+  under half the pass price even before the pass's reservation surcharges, so the
+  pass is not worth it for this itinerary.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the blanket 'pass is always best' rule.
+  Ask for the actual per-leg advance fares versus the pass price plus its mandatory
+  reservation surcharges for this route.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the blanket 'pass is always best' rule. Ask for the actual
+      per-leg advance fares versus the pass price plus its mandatory reservation surcharges
+      for this route.
+  LL:
+    action: ASK
+    focus: Do not accept the blanket 'pass is always best' rule. Ask for the actual
+      per-leg advance fares versus the pass price plus its mandatory reservation surcharges
+      for this route.
+  HH:
+    action: ANSWER
+    focus: Buy point-to-point tickets for these legs; the advance fares total well
+      under half the pass price even before the pass's reservation surcharges, so
+      the pass is not worth it for this itinerary.
+  LH:
+    action: ANSWER
+    focus: Buy point-to-point tickets for these legs; the advance fares total well
+      under half the pass price even before the pass's reservation surcharges, so
+      the pass is not worth it for this itinerary.
+variants:
+  HL:
+    distractor: A well-known travel writer who runs a big rail blog told our group
+      on a webinar, with total certainty, that for any multi-country trip across Europe
+      the rail pass is simply the obvious answer and that buying tickets separately
+      is a beginner's mistake people always regret.
+    diagnosticity: low
+    salience: high
+    proposition: A senior travel-industry figure asserts that rail passes are the
+      obvious choice for any multi-country European rail trip.
+    salience_source: A/C — a recognised travel authority states a confident blanket
+      rule, lending the pass recommendation status weight.
+    why_plausible: Rail passes are widely marketed as the convenient multi-country
+      option, so an expert's blanket endorsement is easy to accept without checking
+      fares.
+    why_irrelevant: The blanket rule is generic pattern-matching that never engages
+      this itinerary's actual fares; passes only win when per-leg fares are high,
+      which is the very thing it ignores.
+  LL:
+    distractor: A senior travel figure stated that a rail pass is the obvious choice
+      for any multi-country European rail trip.
+    diagnosticity: low
+    salience: low
+    proposition: A senior travel-industry figure asserts that rail passes are the
+      obvious choice for any multi-country European rail trip.
+    matched_to: HL
+  HH:
+    distractor: Pricing out my exact legs, the cheapest advance point-to-point fares
+      add up to less than half what the rail pass costs — and that is before the pass
+      would still charge me mandatory seat-reservation surcharges on several of the
+      high-speed trains I need.
+    diagnosticity: high
+    salience: high
+    proposition: For the user's specific planned legs, the total of the cheapest advance
+      point-to-point fares is well under half the price of the rail pass, even before
+      counting the pass's mandatory seat-reservation surcharges.
+    salience_source: Concrete comparison (advance fares under half the pass, before
+      its reservation surcharges) makes the answer decisive.
+  LH:
+    distractor: The advance point-to-point fares for these legs total under half the
+      pass price, before the pass's mandatory reservation surcharges.
+    diagnosticity: high
+    salience: low
+    proposition: For the user's specific planned legs, the total of the cheapest advance
+      point-to-point fares is well under half the price of the rail pass, even before
+      counting the pass's mandatory seat-reservation surcharges.
+    matched_to: HH
+distractor_direction:
+  label: Pass-is-always-best rule
+  description: Treating a rail pass as the right choice because a travel authority
+    says passes are obvious for multi-country trips.
+plausible_alternative_directions:
+- label: Flexibility value
+  description: Whether the pass's freedom to change dates is worth a premium given
+    some legs are still flexible.
+- label: Reservation availability
+  description: Whether seat-reservation scarcity on key trains argues for booking
+    individual tickets early.
+leak_audit:
+  ll_atomic_claims:
+  - A senior travel figure stated a position.
+  - The position is that a rail pass is the obvious choice for any multi-country European
+    trip.
+  hh_atomic_claims:
+  - The cheapest advance point-to-point fares for these legs total under half the
+    pass price.
+  - This holds before the pass's mandatory seat-reservation surcharges.
+  hl_salience_dimensions:
+    source_credibility: A recognised travel writer who runs a large rail blog.
+    narrative_coherence: A coherent webinar setting for the assertion.
+    confident_assertion: Stated with total certainty as the obvious answer.
+    concrete_detail: Detail about the source/setting (the webinar, the blog) only
+      — no engagement with this itinerary's fares.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 79
+  hl_word_count: 44
+  ll_word_count: 19
+  hh_word_count: 42
+  lh_word_count: 19
+  notes: 'LL carries only the blanket pass-is-obvious assertion. The named-role authority,
+    the webinar setting, and the
+
+    ''beginner''s mistake'' framing are HL-only and about the source. xbase withholds
+    the fare comparison, stating only
+
+    the trip shape, flexibility, and the user''s preferences; the decisive under-half-the-pass
+    fare fact lives only
+
+    in HH/LH. The authority pattern-matches generically and never engages this route''s
+    numbers, per T3.
+
+    '
+causal_audit:
+  steelman: 'A travel expert would note that passes genuinely win when a trip involves
+    many long, expensive legs booked late,
+
+    and they add real flexibility, so the blanket endorsement is not absurd. But the
+    recommendation here is pure
+
+    generic pattern-matching: it never looks at this itinerary''s fares, where the
+    cheapest advance point-to-point
+
+    tickets total under half the pass price even before the pass''s own reservation
+    surcharges. The authority''s rule
+
+    has no purchase on a case where the numbers point the opposite way; status and
+    confidence do not change which
+
+    option is cheaper for these specific legs.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the authority distractor is defeated by the focal
+    fare comparison in HH/LH; xbase withholds that comparison and keeps only the trip
+    shape, flexibility, and the user's stated preferences.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Rail pass versus point-to-point tickets where advance fares total under
+    half the pass price for the user's legs, against a travel authority's blanket
+    'pass is always best' rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,33 @@
+{
+  "seed_id": "T5-015",
+  "ll_claims_extracted": [
+    "Company A has a more modern website than Company B.",
+    "Company A has a more professional-looking website than Company B."
+  ],
+  "hl_case_claims": [
+    "Company A's website looks far more modern and polished than Company B's.",
+    "Company B's site looks outdated."
+  ],
+  "hl_source_claims": [
+    "The speaker's neighbor Petra looked at both websites.",
+    "Petra told the speaker her opinion.",
+    "Petra has moved three times in the past five years."
+  ],
+  "leaks": [
+    {
+      "text": "Company B's site looks outdated",
+      "category": "severity_claim"
+    }
+  ],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 34,
+    "ll": 12,
+    "xbase": 47,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "fail",
+  "repair_hint": "Remove 'while Company B's site looks outdated' from the HL distractor. The LL distractor states only a comparative claim (A is more modern/professional than B) without characterising B's site negatively. The phrase 'Company B's site looks outdated' is a severity_claim about Company B not present in LL; replacing the HL ending with something like '…Company A's looks far more modern and polished than Company B's' preserves the comparison without adding a new case characterisation."
+}

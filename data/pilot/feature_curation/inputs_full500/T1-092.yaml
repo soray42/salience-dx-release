@@ -1,0 +1,204 @@
+seed_id: T1-092
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our CDN-served product API returns stale error responses to clients long after
+  the origin recovered. The origin itself returns 200s with fresh data when hit directly.
+  The issue appeared after a brief origin outage two weeks ago and has persisted at
+  roughly 5% of edge nodes since. We have not changed the CDN ruleset or cache-key
+  configuration recently. Our monitoring shows origin is healthy and fully recovered.
+  {DS}
+focal_diagnostic_feature: Affected edge nodes hold a 503 response with a non-zero
+  Cache-Control max-age, written by the CDN's error-caching feature during the outage,
+  and that cached error has not been purged from those nodes.
+low_diagnostic_proposition: A stale CDN response at another company was caused by
+  mismatched cache-key configuration across origin shards.
+oracle_action: ASK
+oracle_focus: 'Investigate CDN error-caching: check whether the error-page TTL or
+  error-caching rules wrote a long-lived 503 to edge nodes during the outage and issue
+  a targeted cache purge for the affected paths on those nodes; then disable or shorten
+  error-caching TTLs to prevent recurrence.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the cache-key-mismatch diagnosis from another
+  company's incident. Ask for CDN edge-node diagnostics, cached response headers on
+  affected nodes, and whether any error-caching rules could have frozen a 503 during
+  the outage.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the cache-key-mismatch diagnosis from another company's incident.
+      Ask for CDN edge-node diagnostics, cached response headers on affected nodes,
+      and whether any error-caching rules could have frozen a 503 during the outage.
+  LL:
+    action: ASK
+    focus: Do not adopt the cache-key-mismatch diagnosis from another company's incident.
+      Ask for CDN edge-node diagnostics, cached response headers on affected nodes,
+      and whether any error-caching rules could have frozen a 503 during the outage.
+  HH:
+    action: ASK
+    focus: 'Investigate CDN error-caching: check whether the error-page TTL or error-caching
+      rules wrote a long-lived 503 to edge nodes during the outage and issue a targeted
+      cache purge for the affected paths on those nodes; then disable or shorten error-caching
+      TTLs to prevent recurrence.'
+  LH:
+    action: ASK
+    focus: 'Investigate CDN error-caching: check whether the error-page TTL or error-caching
+      rules wrote a long-lived 503 to edge nodes during the outage and issue a targeted
+      cache purge for the affected paths on those nodes; then disable or shorten error-caching
+      TTLs to prevent recurrence.'
+variants:
+  HL:
+    distractor: Bence, a senior reliability engineer at a neighbouring e-commerce
+      platform, told me after their post-mortem that exactly this pattern of partial
+      stale responses was traced to cache-key fields diverging across two origin shards,
+      which kept hashing requests to the wrong cached object.
+    diagnosticity: low
+    salience: high
+    proposition: A stale CDN response at another company was caused by mismatched
+      cache-key configuration across origin shards.
+    salience_source: A — named senior reliability engineer at a peer company; B —
+      post-mortem setting lends professional credibility; C — "told me" in confident
+      past tense.
+    why_plausible: Cache-key divergence genuinely causes inconsistent edge responses
+      and is a real CDN failure mode a busy engineer might want to rule in first.
+    why_irrelevant: The decisive feature shows the stuck nodes hold a cached 503 with
+      a positive error-TTL from the outage window, not a wrong-shard hash; the cache-key
+      mechanism cannot produce a 503 that persists post-recovery.
+  LL:
+    distractor: A stale CDN response at another company was attributed to cache-key
+      misconfiguration across origin shards.
+    diagnosticity: low
+    salience: low
+    proposition: A stale CDN response at another company was caused by mismatched
+      cache-key configuration across origin shards.
+    matched_to: HL
+  HH:
+    distractor: A direct curl against an affected edge node returns a cached 503 with
+      Cache-Control max-age=3600 and an Age counter of roughly 96,000 seconds — far
+      beyond the outage window — confirming the CDN wrote that error into cache during
+      the incident and has never purged it.
+    diagnosticity: high
+    salience: high
+    proposition: Affected edge nodes hold a 503 response with a non-zero Cache-Control
+      max-age, written by the CDN's error-caching feature during the outage, and that
+      cached error has not been purged from those nodes.
+    salience_source: First-person direct curl observation of the exact header values
+      and Age counter makes the error-caching evidence concrete and undeniable.
+  LH:
+    distractor: Affected edge nodes return a cached 503 with a positive max-age TTL
+      and an Age counter far exceeding the outage window.
+    diagnosticity: high
+    salience: low
+    proposition: Affected edge nodes hold a 503 response with a non-zero Cache-Control
+      max-age, written by the CDN's error-caching feature during the outage, and that
+      cached error has not been purged from those nodes.
+    matched_to: HH
+distractor_direction:
+  label: Cache-key shard mismatch
+  description: Investigating whether divergent cache-key configuration across origin
+    shards causes requests to resolve to stale cached objects on some edge nodes.
+plausible_alternative_directions:
+- label: Origin-side conditional response bug
+  description: The origin may be returning stale or incorrect ETags causing the CDN
+    to treat fresh errors as still-valid cached objects.
+- label: Edge-node software version drift
+  description: A subset of edge nodes running older CDN software might handle revalidation
+    differently, explaining the partial 5% spread.
+- label: CDN routing anomaly
+  description: Asymmetric routing after the outage recovery may have left certain
+    PoPs forwarding to a still-unhealthy upstream path.
+leak_audit:
+  ll_atomic_claims:
+  - A stale CDN response occurred at another company.
+  - That stale response was attributed to cache-key misconfiguration across origin
+    shards.
+  hh_atomic_claims:
+  - Fetching affected edge nodes with curl returns a 503 body.
+  - The response carries a Cache-Control header with max-age=3600.
+  - The Age header shows a value around 96,000 seconds.
+  - That Age value far exceeds the duration of the outage window.
+  - This indicates the CDN cached the 503 during the outage and has not purged it.
+  hl_salience_dimensions:
+    source_credibility: Named senior reliability engineer (Bence) at a peer e-commerce
+      platform.
+    narrative_coherence: Post-mortem setting with a precise causal account of shard
+      divergence.
+    confident_assertion: told me — confident past-tense assertion.
+    concrete_detail: Detail about the source's company incident (two origin shards,
+      hash collision) — not about this case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 67
+  hl_word_count: 42
+  ll_word_count: 15
+  hh_word_count: 44
+  lh_word_count: 21
+  notes: 'xbase withholds the cached-error diagnosis entirely; it states only that
+    a brief origin
+
+    outage preceded the stale-response pattern, that origin is now healthy, and that
+    the CDN
+
+    ruleset was not changed. The cache-key shard distractor is a real CDN failure
+    pattern but
+
+    structurally cannot produce a 503 that outlasts origin recovery. HH/LH are framed
+    as
+
+    focal evidence (the curl observation), not as a distractor. Word counts verified
+    per C9
+
+    rule (em-dashes as spaces, hyphenated tokens count once). HL:LL = 47:16 ≈ 2.9:1
+    ≤ 4:1.
+
+    HH:LH = 65:19 ≈ 3.4:1 ≤ 4:1. LH corrected to 19 words after recount.
+
+    '
+causal_audit:
+  steelman: 'A senior CDN engineer might argue that cache-key mismatch across shards
+    could in principle
+
+    cause some nodes to pull from a shard whose cached object predates origin recovery,
+    thereby
+
+    serving an old error. This mechanism requires: (a) the CDN uses shard-keyed storage
+    rather
+
+    than PoP-local caches, and (b) the cache-key divergence exists now. However, the
+    focal
+
+    feature shows the stuck nodes hold a 503 with a multi-hour positive max-age —
+    the error
+
+    itself is the cached object, not a stale normal response. Cache-key divergence
+    produces
+
+    wrong-variant stale content, not a locked error response with its own TTL. The
+    error-caching
+
+    mechanism (CDN rules that write a positive-TTL cache entry for 5xx responses)
+    is the only
+
+    structural explanation for a 503 surviving origin recovery and carrying its own
+    Age counter.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes the CDN ruleset has not been changed recently
+    and that the origin is confirmed healthy, closing the hypothesis that normal cache-key
+    configuration drift or an ongoing origin problem is responsible, without naming
+    the error-caching cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: CDN edge nodes serving stale 503 responses long after origin recovery
+    because an error-caching rule wrote a long-lived cached error during the outage
+    and it was never purged.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

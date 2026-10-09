@@ -1,0 +1,43 @@
+{
+  "seed_id": "T6-013",
+  "ll_claims_extracted": [
+    "The speaker has personal prior experience with cert errors of this type.",
+    "Those prior cert errors were caused by clock skew."
+  ],
+  "hl_case_claims": [
+    "Every mTLS cert error ever seen in this cluster has traced back to clock skew.",
+    "The current situation feels like the same pattern again."
+  ],
+  "hl_source_claims": [
+    "The speaker has been the on-call engineer here for three years."
+  ],
+  "leaks": [
+    {
+      "text": "in this cluster",
+      "category": "other_case_content",
+      "note": "Binds the historical clock-skew claim specifically to the current environment under investigation; LL makes only a generic personal-experience claim with no environment anchor. A smart responder could weight clock skew more heavily because the specific cluster has a demonstrated history, changing their conclusion about the current case."
+    },
+    {
+      "text": "This feels like the same pattern again.",
+      "category": "other_case_content",
+      "note": "Explicitly asserts the current incident matches the speaker's known clock-skew pattern — a direct case-referential inference not present in LL. LL states only historical causation; this sentence applies that pattern to the current case."
+    }
+  ],
+  "style_flags": [
+    {
+      "text": "This feels like",
+      "category": "hedging_language",
+      "note": "Epistemic hedge ('feels like') not present in LL. LL makes a flat declarative historical claim. This introduces subjective uncertainty framing absent from the matched low-salience variant."
+    }
+  ],
+  "word_counts": {
+    "hl": 33,
+    "ll": 14,
+    "xbase": 51,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "fail",
+  "repair_hint": "Remove 'in this cluster' from HL (replace with 'in this environment' only if parity with LL's generic framing is desired, or drop entirely — LL does not anchor to environment). Replace 'This feels like the same pattern again.' with a neutral first-instinct framing that does not assert case-level pattern match, e.g. 'This looks like the same old story.' — or remove the sentence and rely on the historical claim alone. The hedging flag resolves automatically if the sentence is removed or reworded without 'feels like'."
+}

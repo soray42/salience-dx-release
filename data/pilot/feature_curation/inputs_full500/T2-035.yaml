@@ -1,0 +1,168 @@
+seed_id: T2-035
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our nightly feature-engineering job has started producing nulls in the average-order-value
+  column for about a quarter of customers, where that column used to be fully populated.
+  The job code has not been touched in weeks, and the rows with nulls are not concentrated
+  in any one region or customer segment. The downstream model now silently treats
+  those nulls as zeros, which is skewing its scores. {DS}
+focal_diagnostic_feature: An upstream source table changed the order-amount column
+  from integer cents to a formatted string with a currency symbol, so the job's numeric
+  cast now returns null for every value containing that symbol.
+low_diagnostic_proposition: The nulls began the same week the team migrated its internal
+  documentation from one wiki tool to another.
+oracle_action: ANSWER
+oracle_focus: 'Fix the type mismatch: the upstream order-amount column is now a currency-formatted
+  string, so strip the symbol and parse it (or coerce the type) before the cast that
+  is producing nulls.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the wiki migration to the nulls. Ask what
+  changed in the upstream data feeding the average-order-value column.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the wiki migration to the nulls. Ask what changed in the
+      upstream data feeding the average-order-value column.
+  LL:
+    action: ASK
+    focus: Do not connect the wiki migration to the nulls. Ask what changed in the
+      upstream data feeding the average-order-value column.
+  HH:
+    action: ANSWER
+    focus: 'Fix the type mismatch: the upstream order-amount column is now a currency-formatted
+      string, so strip the symbol and parse it (or coerce the type) before the cast
+      that is producing nulls.'
+  LH:
+    action: ANSWER
+    focus: 'Fix the type mismatch: the upstream order-amount column is now a currency-formatted
+      string, so strip the symbol and parse it (or coerce the type) before the cast
+      that is producing nulls.'
+variants:
+  HL:
+    distractor: The whole thing seems to line up exactly with the week we finally
+      migrated all our internal documentation off the old wiki onto the new platform
+      — same Monday the first null rows appeared in the nightly run, as far as I can
+      reconstruct from the timestamps.
+    diagnosticity: low
+    salience: high
+    proposition: The nulls began the same week the team migrated its internal documentation
+      from one wiki tool to another.
+    salience_source: B/C — a clean reconstructed-timestamp chronology asserted with
+      confidence makes the coincidence feel meaningful.
+    why_plausible: Two changes landing in the same week invites a busy engineer to
+      suspect the visible recent change as the cause.
+    why_irrelevant: A documentation-tool migration cannot touch the data values a
+      nightly job reads, so it has no path to produce nulls in a computed column.
+  LL:
+    distractor: The nulls began the same week the team migrated its internal documentation
+      to a new wiki tool.
+    diagnosticity: low
+    salience: low
+    proposition: The nulls began the same week the team migrated its internal documentation
+      from one wiki tool to another.
+    matched_to: HL
+  HH:
+    distractor: I traced one null row back to source and found the order-amount column,
+      which used to be integer cents, now arrives as a string like '€1,240.00'; our
+      numeric cast cannot parse the symbol and silently returns null, which is exactly
+      the set of rows showing up empty.
+    diagnosticity: high
+    salience: high
+    proposition: An upstream source table changed the order-amount column from integer
+      cents to a formatted string with a currency symbol, so the job's numeric cast
+      now returns null for every value containing that symbol.
+    salience_source: Tracing a null row to a currency-formatted source value names
+      the exact cast failure, making the type mismatch decisive.
+  LH:
+    distractor: The upstream order-amount column changed from integer cents to a currency-formatted
+      string, so the numeric cast returns null for those values.
+    diagnosticity: high
+    salience: low
+    proposition: An upstream source table changed the order-amount column from integer
+      cents to a formatted string with a currency symbol, so the job's numeric cast
+      now returns null for every value containing that symbol.
+    matched_to: HH
+distractor_direction:
+  label: Wiki-migration coincidence
+  description: Treating the internal documentation tool migration as connected to
+    the appearance of nulls in the feature job.
+plausible_alternative_directions:
+- label: Upstream null-value increase
+  description: Whether the source genuinely has more missing order amounts now rather
+    than a type change defeating the cast.
+- label: Join key drift
+  description: Whether a changed or re-keyed join is failing to match some customers
+    to their order totals.
+leak_audit:
+  ll_atomic_claims:
+  - The nulls began the same week the team migrated its internal documentation to
+    a new wiki tool.
+  hh_atomic_claims:
+  - The upstream order-amount column used to be integer cents.
+  - It now arrives as a currency-formatted string (with a symbol and separators).
+  - The job's numeric cast cannot parse the symbol and returns null for those values.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-Monday timeline reconstructed from timestamps.
+    confident_assertion: Asserted as lining up 'exactly' with the migration week.
+    concrete_detail: Detail about the migration itself (off old wiki onto new platform)
+      only — no claim about the job's data.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 70
+  hl_word_count: 47
+  ll_word_count: 17
+  hh_word_count: 46
+  lh_word_count: 22
+  notes: 'xbase states the null symptom, untouched job code, and non-clustered distribution,
+    but withholds the upstream
+
+    type change — the decisive cast-failure fact lives only in HH/LH, so HL/LL cannot
+    resolve it. The wiki migration
+
+    is a pure observability/documentation change with no path to the data, satisfying
+    the T2 absolute. LL carries
+
+    only the same-week migration coincidence with no residual anchors.
+
+    '
+causal_audit:
+  steelman: 'To steelman the wiki migration: one might imagine the migration coincided
+    with a broader platform change that
+
+    also touched data infrastructure, or that engineers distracted by the migration
+    shipped an unnoticed change. But
+
+    these are conjectures about other events, not about the migration itself; the
+    migration of documentation content
+
+    from one wiki tool to another moves prose pages and has no read or write path
+    to the order data a nightly job
+
+    consumes. It cannot alter a column''s type or insert nulls into a computed field.
+    The focal evidence shows the
+
+    real cause — an upstream string-typed currency value defeating the numeric cast
+    — which is wholly independent of
+
+    where the team''s documentation lives. No mechanism connects the migration to
+    the nulls.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive upstream type change lives only in HH/LH;
+    the wiki migration has no constructible path to the data regardless of xbase.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A feature job producing nulls because an upstream column became a currency-formatted
+    string, coincident with an unrelated wiki migration.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

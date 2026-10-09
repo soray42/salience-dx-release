@@ -1,0 +1,178 @@
+seed_id: T2-081
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: My web app's hero section animation has been dropping frames and stuttering
+  for the past few days. The CSS keyframe animation runs at 60 fps on a coworker's
+  machine but hovers around 15 fps on mine. Chrome DevTools shows no unusual CPU usage
+  and there are no JavaScript errors in the console. {DS}
+focal_diagnostic_feature: The DevTools Layers panel shows 47 simultaneous compositor
+  layers on the hero section and the GPU tile memory budget is exhausted.
+low_diagnostic_proposition: The animation frame drops began at the same time as a
+  desk-lamp hardware swap.
+oracle_action: ANSWER
+oracle_focus: Reduce compositor layer count on the hero element by auditing will-change
+  and transform usage; collapse unnecessary stacking contexts to stay within GPU memory
+  limits.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a desk-lamp change to browser rendering
+  performance. Ask for DevTools Layers panel output, GPU memory status, and CSS properties
+  that create compositor layers.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a desk-lamp change to browser rendering performance. Ask
+      for DevTools Layers panel output, GPU memory status, and CSS properties that
+      create compositor layers.
+  LL:
+    action: ASK
+    focus: Do not connect a desk-lamp change to browser rendering performance. Ask
+      for DevTools Layers panel output, GPU memory status, and CSS properties that
+      create compositor layers.
+  HH:
+    action: ANSWER
+    focus: Reduce compositor layer count on the hero element by auditing will-change
+      and transform usage; collapse unnecessary stacking contexts to stay within GPU
+      memory limits.
+  LH:
+    action: ANSWER
+    focus: Reduce compositor layer count on the hero element by auditing will-change
+      and transform usage; collapse unnecessary stacking contexts to stay within GPU
+      memory limits.
+variants:
+  HL:
+    distractor: I swapped out my old halogen desk lamp for a new LED model the same
+      afternoon this started; I remember noticing the first dropped frames right after
+      moving everything back into place on my desk.
+    diagnosticity: low
+    salience: high
+    proposition: The animation frame drops began at the same time as a desk-lamp hardware
+      swap.
+    salience_source: B — clean chronological narrative with a specific remembered
+      moment; C — confident first-person assertion ("I remember noticing")
+    why_plausible: A practitioner might wonder whether changed ambient light affected
+      screen colour-profile calibration or triggered a monitor refresh-rate switch,
+      prompting a hardware investigation.
+    why_irrelevant: A desk-lamp swap involves no signal path to the GPU compositor;
+      it has no constructible mechanism for increasing compositor layer count or exhausting
+      GPU tile memory.
+  LL:
+    distractor: The frame drops began around the time of a desk-light hardware change
+      at the workstation.
+    diagnosticity: low
+    salience: low
+    proposition: The animation frame drops began at the same time as a desk-lamp hardware
+      swap.
+    matched_to: HL
+  HH:
+    distractor: The DevTools Layers panel shows the hero section triggering 47 separate
+      compositor layers simultaneously; the performance trace confirms the GPU tile
+      memory budget is fully exhausted each frame.
+    diagnosticity: high
+    salience: high
+    proposition: The DevTools Layers panel shows 47 simultaneous compositor layers
+      on the hero section and the GPU tile memory budget is exhausted.
+    salience_source: D — precise numeric observation (47 layers) plus a causally complete
+      chain visible in the trace; B — coherent professional register
+  LH:
+    distractor: The Layers panel shows 47 compositor layers on the hero element and
+      GPU tile memory is exhausted.
+    diagnosticity: high
+    salience: low
+    proposition: The DevTools Layers panel shows 47 simultaneous compositor layers
+      on the hero section and the GPU tile memory budget is exhausted.
+    matched_to: HH
+distractor_direction:
+  label: desk-lamp hardware change
+  description: Investigating whether replacing a halogen desk lamp with an LED model
+    caused the browser animation frame drops, perhaps through monitor calibration
+    or display-mode side effects.
+plausible_alternative_directions:
+- label: CSS animation complexity
+  description: The keyframe animation itself may be computationally expensive due
+    to animated properties that trigger layout or paint rather than composite-only
+    transforms.
+- label: Browser hardware-acceleration setting
+  description: Hardware acceleration may be disabled or misconfigured in Chrome on
+    this specific machine, preventing GPU offloading of the animation.
+- label: Display refresh-rate mismatch
+  description: The monitor on this machine may be running at a different refresh rate
+    than the coworker's, causing the animation to miss vsync windows at 15 fps.
+leak_audit:
+  ll_atomic_claims:
+  - The frame drops began around the time of a desk-light hardware change at the workstation.
+  hh_atomic_claims:
+  - The DevTools Layers panel shows the hero section triggering 47 compositor layers
+    simultaneously.
+  - The GPU tile memory budget is exhausted each frame (confirmed by performance trace).
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: 'Clean chronological sequence: lamp swap → moving items back
+      → noticing first dropped frames'
+    confident_assertion: '"I remember noticing the first dropped frames right after"'
+    concrete_detail: Specific remembered action (moving everything back into place)
+      about the setting event — not about the rendering case itself
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 52
+  hl_word_count: 35
+  ll_word_count: 15
+  hh_word_count: 28
+  lh_word_count: 17
+  notes: 'HL adds only: the specific lamp swap event and the remembered moment of
+    noticing drops.
+
+    No tunable values, effort descriptors, or severity claims added.
+
+    Desk-lamp LED swap has no plausible path to GPU compositor layer budget — not
+    even worth ruling out in xbase.
+
+    HH/LH verified: both claim 47 layers and exhausted GPU tile memory; no added claims
+    in HH.
+
+    '
+causal_audit:
+  steelman: 'Swapping a halogen lamp for an LED model can marginally alter the colour
+    temperature
+
+    and brightness of ambient light. On some laptops, a significant ambient-light
+    change
+
+    triggers an automatic switch in display colour profile or even refresh-rate mode.
+
+    If Chrome detects a display-mode change mid-session, it may invalidate compositor
+
+    resources and force a re-promotion of layers, transiently affecting GPU tile allocation.
+
+    A very determined practitioner might argue this deserves one check. However, xbase
+
+    already states a coworker on a different machine (with presumably a different
+    lamp)
+
+    sees 60 fps, meaning the symptom is local to this machine''s software/hardware
+    stack,
+
+    not to ambient conditions. There is no constructible mechanism by which the lamp
+
+    swap itself causes persistent layer-count inflation or GPU memory exhaustion independent
+
+    of the application code.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Coworker on same codebase reproduces 60 fps on a different
+    machine, ruling out ambient-environment causes shared across setups.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: CSS animation drops frames on high-DPI machine due to excessive GPU
+    compositor layers created by will-change overuse; coincidence distractor is a
+    desk-lamp hardware swap.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

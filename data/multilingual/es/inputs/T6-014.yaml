@@ -1,0 +1,280 @@
+seed_id: T6-014
+template: T6
+domain: open_qa
+complexity: medium
+xbase: 'Mi colección de plantas de interior ha vuelto a tener problemas con plagas.
+  Lo he tratado tres veces distintas en los últimos dos años, y cada vez revisé la
+  tierra, confirmé riego excesivo y encontré mosquitas del sustrato — en cuanto corregí
+  el riego y usé trampas adhesivas amarillas, el problema se resolvió cada vez. Así
+  que esta vez ya he pedido más trampas adhesivas y planeo reducir el riego. {DS}
+
+  '
+focal_diagnostic_feature: Se ve una fina tela plateada en el envés de varias hojas
+  y a lo largo de las uniones de los tallos, lo cual es un signo estructural exclusivo
+  de infestación por ácaros araña y no puede ser producido por mosquitas del sustrato.
+low_diagnostic_proposition: 'Every previous pest outbreak in this plant collection
+  was fungus gnats caused by overwatering.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Identify spider mites as the likely current pest based on the visible
+  webbing; recommend appropriate treatment (miticide spray, increasing humidity, isolating
+  affected plants, wiping leaves) rather than the yellow sticky traps and watering
+  reduction that target fungus gnats.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Do not assume the current problem is fungus gnats simply
+  because past outbreaks were; recommend inspecting the plants now for specific visible
+  symptoms (webbing, visible insects, sticky residue, discoloration pattern) before
+  committing to a treatment, since the correct pest determines the correct remedy.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume the current problem is fungus gnats simply because past outbreaks
+      were; recommend inspecting the plants now for specific visible symptoms (webbing,
+      visible insects, sticky residue, discoloration pattern) before committing to
+      a treatment, since the correct pest determines the correct remedy.
+  LL:
+    action: ASK
+    focus: Do not assume the current problem is fungus gnats simply because past outbreaks
+      were; recommend inspecting the plants now for specific visible symptoms (webbing,
+      visible insects, sticky residue, discoloration pattern) before committing to
+      a treatment, since the correct pest determines the correct remedy.
+  HH:
+    action: ANSWER
+    focus: Identify spider mites as the likely current pest based on the visible webbing;
+      recommend appropriate treatment (miticide spray, increasing humidity, isolating
+      affected plants, wiping leaves) rather than the yellow sticky traps and watering
+      reduction that target fungus gnats.
+  LH:
+    action: ANSWER
+    focus: Identify spider mites as the likely current pest based on the visible webbing;
+      recommend appropriate treatment (miticide spray, increasing humidity, isolating
+      affected plants, wiping leaves) rather than the yellow sticky traps and watering
+      reduction that target fungus gnats.
+variants:
+  HL:
+    distractor: Llevo más de una década cultivando plantas de interior y todos los
+      brotes de plagas que he tenido han resultado ser mosquitas del sustrato por
+      riego excesivo, y estoy seguro de que esta vez es lo mismo.
+    diagnosticity: low
+    salience: high
+    proposition: 'Every previous pest outbreak in this plant collection was fungus
+      gnats caused by overwatering.
+
+      '
+    salience_source: 'A: Source credibility — decade of hands-on growing experience
+      as credibility anchor. C: Confident assertion — "I''m confident this is the
+      same thing again."
+
+      '
+    why_plausible: 'A reader sees a consistent pattern (three-for-three past diagnoses,
+      as noted in xbase) from someone who has successfully resolved the problem before;
+      the logical shortcut is that the same symptom context has the same cause.
+
+      '
+    why_irrelevant: 'Fungus gnats (Bradysia spp.) are soil-dwelling flies that do
+      not spin webs; the visible webbing the user has now is structurally impossible
+      for a fungus gnat infestation and identifies a completely different pest class.
+      Past outcomes cannot override present physical evidence.
+
+      '
+  LL:
+    distractor: Todos los problemas de plagas que he tenido con mis plantas anteriormente
+      fueron mosquitas del sustrato por riego excesivo.
+    diagnosticity: low
+    salience: low
+    proposition: 'Every previous pest outbreak in this plant collection was fungus
+      gnats caused by overwatering.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: Acabo de notar una fina tela plateada extendida por el envés de varias
+      hojas y a lo largo de las uniones de los tallos — la tela está claramente diferenciada
+      del tejido vegetal y se está propagando a las plantas adyacentes.
+    diagnosticity: high
+    salience: high
+    proposition: 'Fine silvery webbing is visible on the undersides of several leaves
+      and along the stem joints, which is a structural sign exclusive to spider mite
+      infestation and cannot be produced by fungus gnats.
+
+      '
+    salience_source: 'B: Narrative coherence — vivid, precise spatial description
+      of the webbing location. D: Concrete believable detail about the observation
+      — spreading to adjacent plants adds specificity without adding causal claim
+      beyond the focal feature.
+
+      '
+  LH:
+    distractor: Hay una tela fina visible en el envés de varias hojas y a lo largo
+      de los tallos, claramente distinta del tejido vegetal, y se está extendiendo
+      a las plantas adyacentes.
+    diagnosticity: high
+    salience: low
+    proposition: 'Fine silvery webbing is visible on the undersides of several leaves
+      and along the stem joints, which is a structural sign exclusive to spider mite
+      infestation and cannot be produced by fungus gnats.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: mosquitas del sustrato por riego excesivo
+  description: La experiencia previa repetida del propietario con mosquitas del sustrato
+    le lleva a asumir que la infestación actual es la misma, lo que le lleva a tratar
+    con trampas adhesivas amarillas y reducción del riego en lugar de investigar los
+    síntomas actuales.
+plausible_alternative_directions:
+- label: infestación de trips
+  description: Los trips son plagas comunes de plantas de interior que causan punteado
+    plateado y deformación de hojas; a partir del xbase solo (problema de plagas recurrente,
+    plantas estresadas) los trips serían un candidato activo antes de examinar las
+    plantas de cerca.
+- label: infestación de cochinillas harinosas
+  description: Las cochinillas harinosas son plagas frecuentes de plantas de interior
+    que causan marchitamiento y decoloración; sin la observación de la tela, representan
+    un diagnóstico alternativo plausible para un problema de plagas recurrente en
+    una colección mixta.
+- label: infestación de cochinillas de escudo
+  description: Las cochinillas de escudo infestan comúnmente plantas de interior y
+    causan un deterioro progresivo; son una candidata creíble para un problema de
+    plagas recurrente en múltiples plantas y son distintas tanto del distractor (mosquitas
+    del sustrato) como de la dirección focal (ácaros araña).
+leak_audit:
+  ll_atomic_claims:
+  - every previous pest outbreak in this collection was fungus gnats
+  - the fungus gnats were caused by overwatering
+  hl_salience_dimensions:
+    source_credibility: over a decade of hands-on houseplant growing experience
+    narrative_coherence: clean single-clause statement in consistent first-person
+      voice
+    confident_assertion: I'm confident this is the same thing again
+    concrete_detail: N/A — outbreak count removed from HL to eliminate case-content
+      leak; count remains in xbase only
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 31
+  ll_word_count: 14
+  notes: 'Repair (revision 2): removed "three times now" from HL.distractor — the
+
+    outbreak count is already in xbase and re-injecting it into HL made it a
+
+    case-content claim absent from LL, violating I1/I4. HL now contains only
+
+    the decade-of-experience credibility anchor and the confident-assertion
+
+    phrase, both about the SOURCE, not the current case. The concrete_detail
+
+    dimension entry updated to N/A accordingly; salience_source updated to
+
+    remove the count reference.
+
+
+    LH fix: added "clearly distinct from the plant tissue" and "spreading to
+
+    adjacent plants" in flat wording to LH.distractor, matching the two claims
+
+    present in HH.distractor and restoring HH/LH propositional equivalence
+
+    under I1. LH word count is now 21, within the 12–25 word limit.
+
+
+    Unchanged: no effort descriptors, no tunable values, no severity claims
+
+    about the current outbreak, no sensory setting detail. HL ratio 31:14 =
+
+    2.2:1, well within 4:1 limit.
+
+    '
+causal_audit:
+  steelman: 'Best-faith argument that fungus gnats (from overwatering) could be causal
+
+    for the current problem or at minimum inform it:
+
+
+    Fungus gnats thrive in persistently moist, organically rich soil.
+
+    Overwatered soil also weakens root systems, creating plant stress. A
+
+    stressed, root-compromised plant is more susceptible to multiple pest
+
+    types simultaneously. One could argue: (a) the overwatering that produced
+
+    fungus gnats in the past is still present, and (b) the same overwatering
+
+    stress has now also attracted spider mites by weakening the plant''s
+
+    natural defenses. Therefore, treating for overwatering (reducing watering)
+
+    is a shared upstream intervention that addresses a root cause common to
+
+    both pest types.
+
+
+    The counter-argument (why this steelman fails): the question is not
+
+    whether overwatering is a shared risk factor but whether "it is fungus
+
+    gnats" is the correct diagnosis of the CURRENT infestation. Fungus gnats
+
+    do not produce webbing — this is a hard biological fact. No amount of
+
+    overwatering creates webbing from fungus gnats. The distractor is the
+
+    owner''s DIAGNOSIS ("it is fungus gnats again"), not just the upstream
+
+    condition. A senior IPM (integrated pest management) practitioner would
+
+    look at visible webbing and immediately classify it as a spider mite
+
+    indicator, ruling out fungus gnats regardless of watering history. The
+
+    distractor direction is the misdiagnosis, not the overwatering itself.
+
+    Therefore no defensible mechanism exists for the distractor AS STATED.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase does not explicitly state the webbing (that is the
+    focal feature in HH/LH variants), so the closure is structural: the xbase + distractor
+    cells (HL/LL) present a scenario where a practitioner should ask about current
+    symptoms rather than accept the past-experience diagnosis — the correct oracle
+    response is ASK, which avoids the contamination issue entirely. The focal feature
+    closes the pathway decisively in HH/LH.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 2
+  topic_brief: 'A houseplant collection has a recurring pest problem. The owner: every
+    time before it was fungus gnats from overwatering, so I will treat for that again.
+    Focal: visible webbing indicates a different pest.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: qc leak p1 2026-06-11
+  generator: generator_B
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-014.yaml
+  source_xbase_sha256: f1f36cc27c1d183c
+  translated_content_sha256: cf78e6a4545af955
+  translation_notes: '''Fungus gnats'' translated as ''mosquitas del sustrato'' (standard
+    Spanish term for Bradysia spp.). ''Spider mite'' translated as ''ácaros araña''.
+    ''Thrips'' kept as ''trips'' (accepted Spanish term). ''Mealybug'' translated
+    as ''cochinillas harinosas''; ''scale insect'' as ''cochinillas de escudo''. ''Yellow
+    sticky traps'' translated as ''trampas adhesivas amarillas''. First-person register
+    preserved.'

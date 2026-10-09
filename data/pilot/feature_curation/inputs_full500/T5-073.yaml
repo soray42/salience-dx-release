@@ -1,0 +1,167 @@
+seed_id: T5-073
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: I deployed a Helm chart to our staging cluster twenty minutes ago, and no new
+  pods appeared in the staging namespace. The helm install command returned a success
+  message with no errors. I have deployed other services to this cluster through Helm
+  without issue this week. {DS}
+focal_diagnostic_feature: kubectl get pods in the default namespace shows five new
+  pods in Running state; the staging namespace remains empty because the helm install
+  command omitted the -n staging flag.
+low_diagnostic_proposition: The Helm management interface is cluttered and makes namespace
+  fields hard to read, suggesting a display glitch is hiding the deployed pods.
+oracle_action: ANSWER
+oracle_focus: The pods deployed to the default namespace; delete the misplaced release
+  and redeploy with helm install -n staging to target the correct namespace.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not attribute missing pods to a display glitch from
+  a cluttered interface. Check the actual namespace the pods were deployed to with
+  kubectl get pods across namespaces before concluding they are absent.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not attribute missing pods to a display glitch from a cluttered interface.
+      Check the actual namespace the pods were deployed to with kubectl get pods across
+      namespaces before concluding they are absent.
+  LL:
+    action: ASK
+    focus: Do not attribute missing pods to a display glitch from a cluttered interface.
+      Check the actual namespace the pods were deployed to with kubectl get pods across
+      namespaces before concluding they are absent.
+  HH:
+    action: ANSWER
+    focus: The pods deployed to the default namespace; delete the misplaced release
+      and redeploy with helm install -n staging to target the correct namespace.
+  LH:
+    action: ANSWER
+    focus: The pods deployed to the default namespace; delete the misplaced release
+      and redeploy with helm install -n staging to target the correct namespace.
+variants:
+  HL:
+    distractor: The Helm CLI dashboard we use has a cluttered, poorly organized layout
+      with overlapping resource columns and a colour scheme that makes namespace fields
+      nearly invisible, so I assumed the display was just glitching.
+    diagnosticity: low
+    salience: high
+    proposition: The Helm management interface is cluttered and makes namespace fields
+      hard to read, suggesting a display glitch is hiding the deployed pods.
+    salience_source: 'B: vivid concrete description of the interface layout (overlapping
+      columns, colour scheme); C: confident first-person inferential conclusion ("I
+      assumed the display was just glitching").'
+    why_plausible: Kubernetes tooling dashboards sometimes lag or show stale data;
+      a practitioner who has seen a UI fail to reflect actual cluster state might
+      reasonably wait for the display to update rather than running a kubectl check.
+    why_irrelevant: The decisive check uses kubectl directly — independent of the
+      Helm dashboard entirely — and shows the pods are present in a different namespace;
+      the interface appearance cannot cause or hide pods from kubectl output.
+  LL:
+    distractor: The Helm management interface is cluttered, making namespace fields
+      hard to read and suggesting a display glitch.
+    diagnosticity: low
+    salience: low
+    proposition: The Helm management interface is cluttered and makes namespace fields
+      hard to read, suggesting a display glitch is hiding the deployed pods.
+    matched_to: HL
+  HH:
+    distractor: Running kubectl get pods -n staging shows nothing, but kubectl get
+      pods -n default shows five new pods in Running state — the chart deployed to
+      the default namespace because the release command omitted the -n staging flag.
+    diagnosticity: high
+    salience: high
+    proposition: kubectl get pods in the default namespace shows five new pods in
+      Running state; the staging namespace remains empty because the helm install
+      command omitted the -n staging flag.
+    salience_source: Specific kubectl commands with namespace flags, concrete pod
+      count (five), exact cause identified (missing -n staging flag).
+  LH:
+    distractor: kubectl get pods in the default namespace shows the new pods running;
+      staging namespace is empty because the -n staging flag was omitted.
+    diagnosticity: high
+    salience: low
+    proposition: kubectl get pods in the default namespace shows five new pods in
+      Running state; the staging namespace remains empty because the helm install
+      command omitted the -n staging flag.
+    matched_to: HH
+distractor_direction:
+  label: Helm dashboard display glitch
+  description: Investigating whether a cluttered or unreliable Helm management interface
+    is incorrectly showing no pods when the deployment actually succeeded and pods
+    are running somewhere in the cluster.
+plausible_alternative_directions:
+- label: Helm release failed silently
+  description: Despite the success message, the Helm release may have partially failed
+    after the client-side confirmation, leaving resources in a pending or failed state
+    in the target namespace.
+- label: Resource quota or limit range blocking pods
+  description: The staging namespace may have a ResourceQuota or LimitRange that rejects
+    the pods' resource requests, preventing scheduling without visible errors in the
+    helm install output.
+- label: Chart template rendering to wrong kind
+  description: A bug in the chart's templates may have rendered the workload as a
+    resource kind (Job, DaemonSet) that is not visible as pods immediately, or the
+    pod selector labels may not match.
+leak_audit:
+  ll_atomic_claims:
+  - The Helm management interface is cluttered.
+  - The clutter makes namespace fields hard to read.
+  - The result suggests a display glitch is hiding the deployed pods.
+  hh_atomic_claims:
+  - kubectl get pods -n staging shows nothing.
+  - kubectl get pods -n default shows five new pods in Running state.
+  - The chart deployed to the default namespace.
+  - The helm install command omitted the -n staging flag.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person aesthetic judgment, no named source.
+    narrative_coherence: Vivid description of UI defects (overlapping columns, colour
+      scheme) leads to a first-person confident conclusion about display glitching.
+    confident_assertion: '"I assumed the display was just glitching"'
+    concrete_detail: Overlapping resource columns, colour scheme making namespace
+      fields nearly invisible — specific layout defects named.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 34
+  ll_word_count: 17
+  hh_word_count: 38
+  lh_word_count: 23
+  notes: 'T5 bridge verified in both HL and LL: cluttered layout → namespace fields
+
+    hard to read → display glitch inference. HH uses kubectl (independent of
+
+    Helm dashboard), ruling out a display issue as the cause. LH exactly
+
+    matches the HH atomic claims in flat form.
+
+    '
+causal_audit:
+  steelman: 'Helm management dashboards are known to display stale data and can fail
+    to
+
+    show newly deployed resources for several seconds or minutes. A practitioner
+
+    who has seen a dashboard lag behind actual cluster state might reasonably
+
+    conclude the pods exist but are not yet showing, especially immediately after
+
+    a successful install command.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the focal evidence uses kubectl (independent of any
+    dashboard) and finds the pods in the default namespace rather than absent; the
+    dashboard appearance cannot account for kubectl showing pods in a different namespace.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Helm chart deployed to default namespace instead of staging because
+    the -n staging flag was omitted, not because the Helm dashboard's cluttered layout
+    is hiding the pods with a display glitch.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

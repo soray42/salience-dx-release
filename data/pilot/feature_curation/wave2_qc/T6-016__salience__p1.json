@@ -1,0 +1,12 @@
+{
+  "seed_id": "T6-016",
+  "credibility_score": 4,
+  "salience_delta_score": 4,
+  "template_fit": "fits",
+  "template_fit_notes": "HL is the user's own repeated first-person diagnostic history projected as a current first instinct, structurally inapplicable because the xbase closes the fee pathway (0.07% ≈ index cost), which is the canonical T6 pattern.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The distractor is directly stated as the investor's live working hypothesis so a model cannot pass over it without taking a position on whether the past-fee-attribution applies to this case.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

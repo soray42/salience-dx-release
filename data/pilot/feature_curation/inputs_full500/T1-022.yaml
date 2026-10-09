@@ -1,0 +1,170 @@
+seed_id: T1-022
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: A nightly cron job that emails our team a sales digest silently stopped running
+  about a week ago. No digest arrives, but there is no error in my application logs
+  and the script runs perfectly when I execute it by hand. The crontab entry is still
+  there and looks exactly as it always did. Nobody touched the schedule or the script,
+  and df shows every partition well under 80% full. {DS}
+focal_diagnostic_feature: The system auth log shows cron refusing to start the job's
+  session with "account locked", and the dedicated service account was locked during
+  a security-hardening pass eight days ago.
+low_diagnostic_proposition: A colleague's cron job stopped running because a full
+  disk prevented the daemon from writing its logs.
+oracle_action: ANSWER
+oracle_focus: Re-enable (or replace) the locked service account the cron job runs
+  as, or move the job to a permitted account; PAM is refusing the cron session because
+  the account was locked, which is why no script error appears.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a full-disk cause from another case. Ask
+  what the system auth/cron logs show about the job's user account and recent account
+  or permission changes.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a full-disk cause from another case. Ask what the system
+      auth/cron logs show about the job's user account and recent account or permission
+      changes.
+  LL:
+    action: ASK
+    focus: Do not assume a full-disk cause from another case. Ask what the system
+      auth/cron logs show about the job's user account and recent account or permission
+      changes.
+  HH:
+    action: ANSWER
+    focus: Re-enable (or replace) the locked service account the cron job runs as,
+      or move the job to a permitted account; PAM is refusing the cron session because
+      the account was locked, which is why no script error appears.
+  LH:
+    action: ANSWER
+    focus: Re-enable (or replace) the locked service account the cron job runs as,
+      or move the job to a permitted account; PAM is refusing the cron session because
+      the account was locked, which is why no script error appears.
+variants:
+  HL:
+    distractor: 'Idunn, an SRE I worked with for years, told me a vanished cron job
+      once came down to a full disk: the disk was full, so cron could not write its
+      run logs and simply stopped firing the job.'
+    diagnosticity: low
+    salience: high
+    proposition: A colleague's cron job stopped running because a full disk prevented
+      the daemon from writing its logs.
+    salience_source: A — an experienced SRE colleague recounting a closely matching
+      'vanished cron job' debugging story.
+    why_plausible: A full disk genuinely breaks many background jobs and is a common
+      gotcha, so it is a reasonable thing to check first.
+    why_irrelevant: xbase reports df shows every partition well under 80% full, so
+      disk space is affirmatively adequate; the failure is specific to cron's scheduled
+      session, which a full disk does not explain.
+  LL:
+    distractor: A colleague's cron job stopped running because a full disk prevented
+      the daemon from writing its logs.
+    diagnosticity: low
+    salience: low
+    proposition: A colleague's cron job stopped running because a full disk prevented
+      the daemon from writing its logs.
+    matched_to: HL
+  HH:
+    distractor: 'The auth log tells the whole story: every night at the scheduled
+      minute, cron logs a session failure reading "account locked" for the service
+      user the job runs as. That account was locked during a security-hardening sweep
+      eight days ago, right when the digests stopped.'
+    diagnosticity: high
+    salience: high
+    proposition: The system auth log shows cron refusing to start the job's session
+      with "account locked", and the dedicated service account was locked during a
+      security-hardening pass eight days ago.
+    salience_source: The auth-log line and the dated hardening sweep make the locked-account
+      cause precise and corroborated.
+  LH:
+    distractor: The auth log shows cron failing the service account's session "account
+      locked", locked by a hardening pass eight days ago, when digests stopped.
+    diagnosticity: high
+    salience: low
+    proposition: The system auth log shows cron refusing to start the job's session
+      with "account locked", and the dedicated service account was locked during a
+      security-hardening pass eight days ago.
+    matched_to: HH
+distractor_direction:
+  label: Full-disk failure
+  description: Investigating whether the host ran out of disk space, preventing cron
+    from logging and therefore from running the job.
+plausible_alternative_directions:
+- label: Crontab environment difference
+  description: Whether cron's minimal environment (PATH
+  variables) differs from the interactive shell and breaks the job.: null
+- label: Cron daemon not running
+  description: Whether the cron service itself was stopped or crashed on the host.
+leak_audit:
+  ll_atomic_claims:
+  - A colleague's cron job stopped running.
+  - The cause was a full disk preventing the daemon from writing its logs.
+  hh_atomic_claims:
+  - The auth log shows cron failing the job's session with "account locked" every
+    scheduled night.
+  - The failure is for the dedicated service account the job runs as.
+  - That account was locked during a security-hardening pass eight days ago, matching
+    when digests stopped.
+  hl_salience_dimensions:
+    source_credibility: Named long-time SRE colleague (Idunn).
+    narrative_coherence: Coherent recollection of a closely matching vanished-cron-job
+      incident.
+    confident_assertion: Told me confidently it came down to a full disk.
+    concrete_detail: N/A — HL adds only source identification (Idunn, SRE) and the
+      shared mechanism, no case-specific detail LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 70
+  hl_word_count: 39
+  ll_word_count: 17
+  hh_word_count: 45
+  lh_word_count: 23
+  notes: 'xbase establishes "runs by hand, no app error, crontab unchanged" — symptoms
+    shared by many cron failures.
+
+    xbase now also closes the disk pathway with a neutral df check (every partition
+    well under 80% full),
+
+    naming no affirmative cause, so the full-disk distractor retains no defensible
+    mechanism for this case.
+
+    The decisive account-locked auth-log evidence is HH/LH-only. HL no longer adds
+    the resolution consequence
+
+    ("until they cleared space") or the tunable "partition at 100%" that LL lacked;
+    LH now carries HH''s
+
+    "when the digests stopped" temporal correlation, restoring HH/LH flat equivalence.
+
+    '
+causal_audit:
+  steelman: 'A platform engineer could argue a full disk is a frequent silent killer
+    of scheduled jobs — cron and the mailer
+
+    both need to write, and a wedged partition can make jobs fail without an application-level
+    error, matching the
+
+    "no error, just stopped" symptom, so checking disk usage is a legitimate early
+    step.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'Yes: xbase states ''df shows every partition well under
+    80% full'', a neutral check that affirmatively rules out disk pressure without
+    naming the locked-account cause (given only in HH/LH); ''runs perfectly by hand''
+    further shows script and environment are fine.'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A nightly cron digest that silently stopped because the service account
+    it runs as was locked during security hardening, not because of a full disk.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

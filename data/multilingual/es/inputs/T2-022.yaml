@@ -1,0 +1,177 @@
+seed_id: T2-022
+template: T2
+domain: open_qa
+complexity: medium
+xbase: El consumo de combustible de mi coche ha empeorado notablemente en las últimas
+  semanas y estoy empezando a pensar en cambiarlo por uno más nuevo. Ahora lleno el
+  depósito mucho más a menudo que antes para el mismo trayecto. El motor funciona
+  con suavidad, no hay luces de advertencia y no he cambiado dónde ni cuánto conduzco.
+  Simplemente ahora bebe mucho. {DS}
+focal_diagnostic_feature: Un manómetro de neumáticos marca unos 22 psi en los cuatro
+  neumáticos frente a los 35 psi de la pegatina de la puerta, y la presión insuficiente
+  aumenta notablemente la resistencia a la rodadura y el consumo de combustible.
+low_diagnostic_proposition: The drop in fuel economy began right after new seat covers
+  and a steering-wheel cover were fitted.
+oracle_action: ANSWER
+oracle_focus: Do not trade in the car; inflate all four tyres to the placard pressure
+  first, because roughly 22 psi against a 35 psi spec sharply raises rolling resistance
+  and fuel consumption.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect new seat or wheel covers to fuel economy.
+  Ask about tyre pressures, recent maintenance, and any drivetrain or tyre changes.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect new seat or wheel covers to fuel economy. Ask about tyre
+      pressures, recent maintenance, and any drivetrain or tyre changes.
+  LL:
+    action: ASK
+    focus: Do not connect new seat or wheel covers to fuel economy. Ask about tyre
+      pressures, recent maintenance, and any drivetrain or tyre changes.
+  HH:
+    action: ANSWER
+    focus: Do not trade in the car; inflate all four tyres to the placard pressure
+      first, because roughly 22 psi against a 35 psi spec sharply raises rolling resistance
+      and fuel consumption.
+  LH:
+    action: ANSWER
+    focus: Do not trade in the car; inflate all four tyres to the placard pressure
+      first, because roughly 22 psi against a 35 psi spec sharply raises rolling resistance
+      and fuel consumption.
+variants:
+  HL:
+    distractor: Me di cuenta de que el aumento de consumo comenzó justo después de
+      renovar el interior — fundas acolchadas para los asientos delanteros y traseros
+      y una funda de cuero para el volante, todo colocado la misma tarde. El siguiente
+      depósito se agotó mucho más rápido de lo habitual, y así ha seguido desde entonces.
+    diagnosticity: low
+    salience: high
+    proposition: The drop in fuel economy began right after new seat covers and a
+      steering-wheel cover were fitted.
+    salience_source: B/C — a confident first-person timeline pinning the change to
+      a specific, recent thing done to the car.
+    why_plausible: It was the most recent deliberate change to the car, so it is the
+      natural event to blame when something shifts afterward.
+    why_irrelevant: Seat and wheel covers add negligible weight and touch nothing
+      in the drivetrain or tyres; they cannot move fuel consumption.
+  LL:
+    distractor: El aumento de consumo comenzó alrededor del momento en que se colocaron
+      fundas nuevas para los asientos y el volante.
+    diagnosticity: low
+    salience: low
+    proposition: The drop in fuel economy began right after new seat covers and a
+      steering-wheel cover were fitted.
+    matched_to: HL
+  HH:
+    distractor: Por fin puse un manómetro en los neumáticos y todos marcan unos 22
+      psi, mientras que la pegatina en el marco de la puerta indica 35. Unos neumáticos
+      tan blandos ofrecen mucha más resistencia al rodar, y esa resistencia adicional
+      a la rodadura por sí sola explicaría que el motor queme notablemente más combustible.
+    diagnosticity: high
+    salience: high
+    proposition: A tyre-pressure gauge reads about 22 psi on all four tyres against
+      the 35 psi on the door placard, and the underinflation noticeably increases
+      rolling resistance and fuel use.
+    salience_source: The measured 22-vs-35 psi reading makes the underinflation and
+      its fuel cost concrete and quantified.
+  LH:
+    distractor: Los cuatro neumáticos marcan unos 22 psi frente a los 35 psi de la
+      especificación en la pegatina de la puerta, y esa presión insuficiente aumenta
+      la resistencia a la rodadura y el consumo de combustible.
+    diagnosticity: high
+    salience: low
+    proposition: A tyre-pressure gauge reads about 22 psi on all four tyres against
+      the 35 psi on the door placard, and the underinflation noticeably increases
+      rolling resistance and fuel use.
+    matched_to: HH
+distractor_direction:
+  label: Coincidencia con la renovación del interior
+  description: Asociar el mayor consumo de combustible con las fundas de asientos
+    y volante recién colocadas porque las dos cosas coincidieron.
+plausible_alternative_directions:
+- label: Fallo mecánico o mantenimiento pendiente
+  description: Si un filtro de aire obstruido, un sensor defectuoso o un servicio
+    atrasado está afectando la eficiencia.
+  failing sensor: null
+  or overdue service is hurting efficiency.: null
+- label: Cambio de combustible o climático
+  description: Si un cambio de combustible o el tiempo más frío está reduciendo el
+    consumo medido.
+leak_audit:
+  ll_atomic_claims:
+  - The drop in fuel economy began around the time new seat covers and a steering-wheel
+    cover were fitted.
+  hh_atomic_claims:
+  - A gauge reads about 22 psi on all four tyres.
+  - The door-placard specification is 35 psi.
+  - That underinflation raises rolling resistance and would explain the higher fuel
+    use.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent fitted-covers-then-thirsty-tank timeline.
+    confident_assertion: States the next tank 'vanished way faster than usual'.
+    concrete_detail: Concrete detail about the covers (front/back seats, leather wheel
+      cover, same afternoon) — about the event, not the fuel system.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 44
+  ll_word_count: 18
+  hh_word_count: 47
+  lh_word_count: 22
+  notes: 'T2 coincidence: seat/wheel covers add trivial weight and touch no drivetrain
+    element, so no mechanism for fuel
+
+    economy exists. xbase gives the worse-economy symptom, smooth engine, no warning
+    lights, and unchanged route —
+
+    symptoms only; the measured 22-vs-35 psi tyre reading (decisive) is HH/LH-only.
+    No tunable value leaks into HL.
+
+    '
+causal_audit:
+  steelman: 'A mechanic could note that heavier upholstery adds a little mass and
+    that a thicker wheel cover changes nothing
+
+    aerodynamic — but the added mass from fabric covers is a rounding error against
+    vehicle weight and cannot produce
+
+    a noticeable economy drop, whereas tyres 13 psi under spec measurably increase
+    rolling resistance. The covers have
+
+    no real path to fuel use.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the route and distance are unchanged and the
+    engine runs smoothly with no warning lights, closing the driving-pattern and obvious-fault
+    pathways and leaving the tyre evidence (in HH/LH) decisive.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Worsening car fuel economy caused by all four tyres being underinflated
+    to 22 psi versus a 35 psi spec, coincidentally timed with fitting new seat and
+    wheel covers, prompting a needless trade-in.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-022.yaml
+  source_xbase_sha256: 7f58e40c07fda6b4
+  translated_content_sha256: f40f5f5753b8ec23
+  translation_notes: '"Manómetro" is the standard Spanish term for a pressure gauge.
+    "Resistencia a la rodadura" is the standard term for rolling resistance. "Pegatina
+    de la puerta" / "pegatina en el marco de la puerta" refers to the door placard/sticker
+    with tyre pressure specs. "psi" is kept as-is — it is the conventional unit used
+    on Spanish tyre placards. "Depósito" is the natural term for fuel tank. "Volante"
+    is steering wheel.'

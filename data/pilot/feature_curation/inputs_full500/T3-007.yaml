@@ -1,0 +1,92 @@
+seed_id: T3-007
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our auth service occasionally issues JWTs whose `exp` claim is already in the
+  past. It happens in under 1% of tokens. The service runs on three replicas behind
+  a load balancer. {DS}
+focal_diagnostic_feature: All bad tokens come from replica 2, whose system clock is
+  exactly 24 hours behind real time.
+low_diagnostic_proposition: A principal security engineer says the token library should
+  be treated as the main cause and replaced.
+oracle_action: ANSWER
+oracle_focus: Fix time synchronisation on replica 2, recycle it, and add clock-skew
+  monitoring across replicas.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not jump to library migration from authority alone.
+  Ask for per-replica token attribution and node time checks.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not jump to library migration from authority alone. Ask for per-replica
+      token attribution and node time checks.
+  LL:
+    action: ASK
+    focus: Do not jump to library migration from authority alone. Ask for per-replica
+      token attribution and node time checks.
+  HH:
+    action: ANSWER
+    focus: Fix time synchronisation on replica 2, recycle it, and add clock-skew monitoring
+      across replicas.
+  LH:
+    action: ANSWER
+    focus: Fix time synchronisation on replica 2, recycle it, and add clock-skew monitoring
+      across replicas.
+variants:
+  HL:
+    distractor: Our principal security engineer is convinced the JWT library is rotten
+      and wants to migrate the whole service to PASETO immediately.
+    diagnosticity: low
+    salience: high
+    proposition: A principal security engineer says the token library should be treated
+      as the main cause and replaced.
+    salience_source: senior authority, dramatic migration prescription
+    why_plausible: Security-library bugs are plausible and the role is credible.
+    why_irrelevant: The per-replica pattern and clock offset exactly explain the timestamps;
+      library migration ignores direct node evidence.
+  LL:
+    distractor: A senior security engineer stated that the token library is the main
+      cause and should be replaced.
+    diagnosticity: low
+    salience: low
+    proposition: A principal security engineer says the token library should be treated
+      as the main cause and replaced.
+    matched_to: HL
+  HH:
+    distractor: Every bad token is from replica 2, and that machine's clock is sitting
+      exactly 24 hours behind real time, matching the expired `exp` values.
+    diagnosticity: high
+    salience: high
+    proposition: All bad tokens come from replica 2, whose system clock is exactly
+      24 hours behind real time.
+    salience_source: per-replica isolation plus clock measurement
+  LH:
+    distractor: Malformed tokens originate only from replica 2, whose system clock
+      is 24 hours behind real time.
+    diagnosticity: high
+    salience: low
+    proposition: All bad tokens come from replica 2, whose system clock is exactly
+      24 hours behind real time.
+    matched_to: HH
+distractor_direction:
+  label: Token library defect
+  description: Investigating whether the JWT/token library is defective or unsafe
+    and should be replaced.
+plausible_alternative_directions:
+- label: Load-balancer routing issue
+  description: A subset of requests may be routed to a misconfigured or stale service
+    instance.
+- label: Signing-key rotation bug
+  description: Key rotation or cached key state may create inconsistent token validation
+    or generation.
+- label: Timezone conversion bug
+  description: Application code may mishandle UTC/local-time conversion when setting
+    expiration claims.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

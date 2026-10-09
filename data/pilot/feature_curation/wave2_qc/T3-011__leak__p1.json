@@ -1,0 +1,32 @@
+{
+  "seed_id": "T3-011",
+  "ll_claims_extracted": [
+    "The App Store rejections are due to a missing or incomplete privacy manifest file."
+  ],
+  "hl_case_claims": [
+    "The App Store rejections are due to a missing or incomplete PrivacyInfo.xcprivacy file."
+  ],
+  "hl_source_claims": [
+    "The source is named Kwame.",
+    "Kwame confidently asserts the privacy manifest is the cause ('definitely').",
+    "Every iOS app rejection Kwame has seen in the past two years has come down to a missing or incomplete PrivacyInfo.xcprivacy file.",
+    "Kwame has reviewed dozens of App Store submissions."
+  ],
+  "leaks": [
+    {
+      "text": "PrivacyInfo.xcprivacy",
+      "category": "other_case_content"
+    }
+  ],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 43,
+    "ll": 14,
+    "xbase": 58,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": false,
+  "verdict": "fail",
+  "repair_hint": "Two repairs needed. (1) HL leak: replace 'PrivacyInfo.xcprivacy file' with 'privacy manifest file' to strip the specific filename that is absent from LL — this is case-level content that could direct a responder to check a concrete artifact LL does not mention. (2) LH under-specification: LH ('Both rejection emails cite a crash when rotating an iPad to landscape on the main navigation screen.') omits two substantive case claims present in HH — the Guideline 4.0 Design citation and 'identical reproduction steps documented in each letter.' Add both: e.g., 'Both rejection emails explicitly cite Guideline 4.0 Design and document a reproducible crash when rotating an iPad to landscape on the main navigation stack, with identical reproduction steps in each letter.'"
+}

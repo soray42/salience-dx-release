@@ -1,0 +1,247 @@
+seed_id: T6-024
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Nuestro servicio ha estado alcanzando los límites de tasa de la API de pagos
+  upstream de forma intermitente durante los últimos cinco días. El límite de tasa
+  afecta solo a un subconjunto de usuarios a la vez y estamos muy por debajo de nuestra
+  cuota contratada de solicitudes en conjunto. El rastreo distribuido no muestra llamadas
+  repetidas provocadas por errores. Añadimos un nuevo middleware de caché al flujo
+  de pagos hace dos semanas. {DS}
+focal_diagnostic_feature: El rastreo distribuido muestra entre 4 y 5 llamadas a la
+  API de pagos upstream por sesión de usuario donde se espera exactamente una; el
+  middleware de caché genera claves por ID de usuario en lugar de por token de idempotencia,
+  por lo que las solicitudes concurrentes dentro de la misma sesión no se deduplicane
+  y todas llegan al upstream.
+low_diagnostic_proposition: Past rate-limit incidents for this service were caused
+  by retry logic firing without adequate backoff, and the same may be happening now.
+oracle_action: ANSWER
+oracle_focus: Fix the caching middleware key to include the idempotency token so concurrent
+  requests within a session are deduplicated before reaching the upstream payment
+  API.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to retry-backoff as the cause without
+  evidence. Ask for distributed tracing data showing upstream call counts per session
+  and per-user rate-limit patterns.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to retry-backoff as the cause without evidence. Ask for
+      distributed tracing data showing upstream call counts per session and per-user
+      rate-limit patterns.
+  LL:
+    action: ASK
+    focus: Do not default to retry-backoff as the cause without evidence. Ask for
+      distributed tracing data showing upstream call counts per session and per-user
+      rate-limit patterns.
+  HH:
+    action: ANSWER
+    focus: Fix the caching middleware key to include the idempotency token so concurrent
+      requests within a session are deduplicated before reaching the upstream payment
+      API.
+  LH:
+    action: ANSWER
+    focus: Fix the caching middleware key to include the idempotency token so concurrent
+      requests within a session are deduplicated before reaching the upstream payment
+      API.
+variants:
+  HL:
+    distractor: Cada problema de límite de tasa que he depurado en este servicio antes
+      se remontaba al código de reintento golpeando el upstream sin un retroceso exponencial
+      adecuado, y habiendo mantenido este servicio durante años, mi instinto es que
+      la misma mala configuración de retroceso nos está afectando de nuevo.
+    diagnosticity: low
+    salience: high
+    proposition: Past rate-limit incidents for this service were caused by retry logic
+      firing without adequate backoff, and the same may be happening now.
+    salience_source: B/C — first-person service-specific history ('every rate-limit
+      problem I have debugged on this service'), long-tenure authority marker ('having
+      maintained this service for years'), and confident forward inference ('my instinct
+      is that the same backoff misconfiguration is biting us').
+    why_plausible: Retry amplification is one of the most common rate-limit causes;
+      a practitioner who has fixed it on the same service before has domain-relevant
+      pattern recognition that a busy reviewer would take seriously.
+    why_irrelevant: Distributed tracing in xbase confirms no error-triggered repeat
+      calls, directly ruling out retry amplification as a mechanism. The focal evidence
+      further shows the excess calls are first-attempt duplicates from cache-key collision,
+      not retries, and would appear even with perfect backoff.
+  LL:
+    distractor: Los incidentes de límite de tasa anteriores en este servicio fueron
+      causados por lógica de reintento que se disparaba sin el retroceso adecuado,
+      y lo mismo puede estar ocurriendo ahora.
+    diagnosticity: low
+    salience: low
+    proposition: Past rate-limit incidents for this service were caused by retry logic
+      firing without adequate backoff, and the same may be happening now.
+    matched_to: HL
+  HH:
+    distractor: El rastreo distribuido muestra que cada sesión de usuario genera entre
+      4 y 5 llamadas a la API de pagos upstream donde se espera una; la clave de caché
+      usa solo el ID de usuario, por lo que las solicitudes concurrentes llevan diferentes
+      tokens de idempotencia, no coinciden con la caché y todas llegan al upstream.
+    diagnosticity: high
+    salience: high
+    proposition: Distributed tracing shows 4 to 5 upstream payment API calls per user
+      session where exactly one is expected; the caching middleware keys on user ID
+      rather than the idempotency token, so concurrent requests within the same session
+      are not deduplicated and all reach the upstream.
+    salience_source: B — concrete trace metric (4-5 calls per session vs 1 expected)
+      paired with a specific code-level mechanism (cache key omits idempotency token),
+      forming a complete causal chain from middleware design to upstream excess calls.
+  LH:
+    distractor: El rastreo por sesión muestra 4-5 llamadas a la API upstream donde
+      se espera una sola; la clave de caché omite el token de idempotencia, por lo
+      que las solicitudes no se deduplicane.
+    diagnosticity: high
+    salience: low
+    proposition: Distributed tracing shows 4 to 5 upstream payment API calls per user
+      session where exactly one is expected; the caching middleware keys on user ID
+      rather than the idempotency token, so concurrent requests within the same session
+      are not deduplicated and all reach the upstream.
+    matched_to: HH
+distractor_direction:
+  label: Mala configuración de retroceso en los reintentos
+  description: Investigar si la lógica de reintento del servicio se dispara sin el
+    retroceso exponencial adecuado, amplificando el número de solicitudes upstream
+    y provocando los límites de tasa.
+plausible_alternative_directions:
+- label: Cambio de nivel en el límite de tasa upstream
+  description: El proveedor de la API de pagos puede haber reducido silenciosamente
+    los umbrales de límite de tasa por usuario sin notificar a los integradores downstream,
+    haciendo que patrones de llamadas anteriormente aceptables sean ahora violatorios.
+- label: Pico de concurrencia de sesiones
+  description: Un cambio reciente en el producto puede haber incrementado la concurrencia
+    legítima de sesiones — por ejemplo, múltiples pestañas del navegador o una nueva
+    funcionalidad móvil enviando solicitudes en paralelo — superando lo que el upstream
+    permite por sesión.
+- label: Reintento del flujo de pagos por tiempo de espera
+  description: 'Un mecanismo relacionado pero distinto: la interfaz de pagos puede
+    estar reintentando ante respuestas lentas en lugar de errores, creando llamadas
+    duplicadas que son correctas individualmente pero excesivas en conjunto.'
+leak_audit:
+  ll_atomic_claims:
+  - Past rate-limit incidents for this service were caused by retry logic without
+    adequate backoff.
+  - The same cause may be operating now.
+  hh_atomic_claims:
+  - Distributed tracing shows 4-5 upstream payment API calls per user session.
+  - Only one upstream call is expected per session.
+  - The caching middleware cache key uses user ID but not the idempotency token.
+  - Concurrent requests within the same session miss the cache and all reach the upstream.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person service history with a specific named mechanism
+      ('exponential backoff') and long-tenure authority framing ('having maintained
+      this service for years').
+    confident_assertion: '''My instinct is that the same backoff misconfiguration
+      is biting us here again'' — no hedging.'
+    concrete_detail: N/A — 'rough edges' is a characterisation of prior code quality,
+      not a new case fact.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 59
+  hl_word_count: 43
+  ll_word_count: 22
+  hh_word_count: 41
+  lh_word_count: 23
+  notes: 'T6 availability inference check: HL includes ''my instinct is that the same
+    backoff
+
+    misconfiguration is biting us here again.'' LL includes ''and the same may be
+    happening
+
+    now.'' Both carry the application-to-present inference per C1. Confident vs hedged
+
+    phrasing is a salience dimension C difference, not content.
+
+    QC repair [leak]: Removed ''I already know our retry implementation has had rough
+    edges''
+
+    from HL — this was a case-level claim about known implementation defect absent
+    from LL.
+
+    Replaced with long-tenure authority marker ''having maintained this service for
+    years''
+
+    (pure source-credibility anchor, no case content).
+
+    QC repair [causal]: Added ''Distributed tracing shows no error-triggered repeat
+    calls.''
+
+    to xbase as an affirmative pathway-closure ruling out retry amplification. Per
+    C4,
+
+    this blocks the retry mechanism without naming the affirmative cause (cache-key
+
+    collision), which remains exclusively in HH/LH. The final answer is not derivable
+
+    from xbase alone.
+
+    HH/LH diff: LH covers all four HH claims at lower resolution. Clean.
+
+    '
+causal_audit:
+  steelman: 'Retry logic without adequate backoff is the single most common cause
+    of API rate
+
+    limiting in production services. If the retry implementation has known rough edges
+    and
+
+    was the cause of previous incidents on this exact service, a senior engineer applying
+
+    pattern recognition from personal history is making a rational first-order diagnosis.
+
+    Furthermore, a subset of users being affected could be consistent with retry behaviour:
+
+    if errors occur more often for users in a specific region, on a slow connection,
+    or
+
+    triggering a specific code path, retries would amplify those users'' request counts
+
+    selectively. However, the aggregate quota being well within contracted limits
+    argues
+
+    against global retry amplification, and distributed tracing showing 4-5 first-attempt
+
+    calls (not error-triggered retries) per session identifies a structurally different
+
+    mechanism. No amount of backoff tuning would fix a cache-key collision that generates
+
+    duplicate first-attempt requests.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase affirmatively states 'Distributed tracing shows no
+    error-triggered repeat calls,' directly ruling out per-user retry amplification
+    as the mechanism. The aggregate quota clause further corroborates. The final answer
+    (fix cache-key to include idempotency token) is not derivable from xbase alone
+    and remains in HH/LH.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Payment API rate limiting caused by caching middleware keyed on user
+    ID without idempotency token, causing concurrent session requests to duplicate;
+    distracted by past retry-backoff incidents on the same service.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-024.yaml
+  source_xbase_sha256: 4f4a389be091f7e8
+  translated_content_sha256: 98b077e28255c816
+  translation_notes: 'Technical terms kept as-is: middleware, idempotency token (token
+    de idempotencia), distributed tracing (rastreo distribuido), exponential backoff
+    (retroceso exponencial), cache key (clave de caché). Register is first-person
+    technical. ''Rate limit'' rendered as ''límite de tasa'' (standard in Spanish
+    technical contexts).'

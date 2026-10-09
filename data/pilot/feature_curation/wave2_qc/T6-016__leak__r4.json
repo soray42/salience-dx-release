@@ -1,0 +1,26 @@
+{
+  "seed_id": "T6-016",
+  "ll_claims_extracted": [
+    "The investor's portfolio has lagged its benchmark on at least three prior occasions.",
+    "Fund fees were identified as the cause of those prior instances of underperformance."
+  ],
+  "hl_case_claims": [
+    "The portfolio has lagged before on three separate years.",
+    "Fund fees were identified as the cause each of those times."
+  ],
+  "hl_source_claims": [
+    "The investor knows this pattern well (self-credentialing: 'I know this pattern well')."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 25,
+    "ll": 15,
+    "xbase": 59,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

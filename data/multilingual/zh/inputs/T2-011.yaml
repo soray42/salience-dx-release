@@ -1,0 +1,207 @@
+seed_id: T2-011
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: 我们使用一款SaaS CRM将订单事件推送到团队的webhook端点，该端点部署在主流云平台上，而非我们的办公室网络。大约一周前，推送开始间歇性失败；大约一半成功，其余的报错。云平台状态页面显示无故障，端点近期也未重新部署。{DS}
+focal_diagnostic_feature: SaaS提供商的webhook投递仪表板在每次失败投递上均显示HTTP 401，且仪表板事件日志显示webhook签名密钥三天前已被轮换，但端点的签名验证代码未同步更新。
+low_diagnostic_proposition: 'The webhook delivery failures began right after the office
+  desks were rearranged.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'The HTTP 401 responses confirm a webhook authentication failure. The
+  signing secret was rotated in the SaaS provider''s dashboard but the receiving application
+  was not updated to use the new secret for signature verification; correcting the
+  secret in the application config will resolve the failures.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Request the webhook delivery logs and HTTP response
+  codes from the SaaS provider dashboard to identify the failure mode; do not attribute
+  the failures to the office desk rearrangement, as a cloud-hosted endpoint is entirely
+  outside the office physical environment and the rearrangement has no pathway to
+  affect it.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Request the webhook delivery logs and HTTP response codes from the SaaS
+      provider dashboard to identify the failure mode; do not attribute the failures
+      to the office desk rearrangement, as a cloud-hosted endpoint is entirely outside
+      the office physical environment and the rearrangement has no pathway to affect
+      it.
+  LL:
+    action: ASK
+    focus: Request the webhook delivery logs and HTTP response codes from the SaaS
+      provider dashboard to identify the failure mode; do not attribute the failures
+      to the office desk rearrangement, as a cloud-hosted endpoint is entirely outside
+      the office physical environment and the rearrangement has no pathway to affect
+      it.
+  HH:
+    action: ANSWER
+    focus: The HTTP 401 responses confirm a webhook authentication failure. The signing
+      secret was rotated in the SaaS provider's dashboard but the receiving application
+      was not updated to use the new secret for signature verification; correcting
+      the secret in the application config will resolve the failures.
+  LH:
+    action: ANSWER
+    focus: The HTTP 401 responses confirm a webhook authentication failure. The signing
+      secret was rotated in the SaaS provider's dashboard but the receiving application
+      was not updated to use the new secret for signature verification; correcting
+      the secret in the application config will resolve the failures.
+variants:
+  HL:
+    distractor: 是我们的办公室主管告诉我这件事的——她在这里负责设施管理已经六年了——她确信失败是从上周办公桌重新摆放之后开始的。
+    diagnosticity: low
+    salience: high
+    proposition: 'The webhook delivery failures began right after the office desks
+      were rearranged.
+
+      '
+    salience_source: 'A (source credibility): office manager with six years of institutional
+      tenure at this company; C (confident assertion): "she''s certain".
+
+      '
+    why_plausible: 'The temporal correlation is tight and the source is a credible
+      institutional observer with long memory of the space; facilities staff often
+      notice infrastructure side-effects of physical moves, so a busy reader may treat
+      the assertion as informed rather than coincidental.
+
+      '
+    why_irrelevant: 'The webhook endpoint is hosted on an external cloud platform;
+      inbound deliveries travel from the SaaS provider''s servers directly to that
+      cloud endpoint without passing through or depending on any office-local network,
+      hardware, or physical infrastructure. No physical change to the office has any
+      pathway to the delivery path.
+
+      '
+  LL:
+    distractor: 有人说失败是从上周我们办公室重新摆放桌子之后开始的。
+    diagnosticity: low
+    salience: low
+    proposition: 'The webhook delivery failures began right after the office desks
+      were rearranged.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: SaaS提供商的webhook仪表板显示每次失败投递都返回HTTP 401。仪表板的事件日志还显示，webhook签名密钥在三天前被轮换——恰好是失败率开始飙升的时候。
+    diagnosticity: high
+    salience: high
+    proposition: 'The SaaS provider''s webhook delivery dashboard shows HTTP 401 on
+      every failed delivery, and the event log shows the signing secret was rotated
+      three days ago.
+
+      '
+    salience_source: 'C (confident assertion via precise log evidence): specific HTTP
+      status code and a timestamped dashboard event log entry that correlates to the
+      failure onset.
+
+      '
+  LH:
+    distractor: webhook投递日志显示HTTP 401错误，签名密钥最近已被轮换。
+    diagnosticity: high
+    salience: low
+    proposition: 'The SaaS provider''s webhook delivery dashboard shows HTTP 401 on
+      every failed delivery, and the event log shows the signing secret was rotated
+      three days ago.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: 办公场所重新布局
+  description: 办公桌的物理重新摆放被认为是导致webhook投递失败的原因，依据是时间上的巧合。云端托管的端点在架构上与办公室本地基础设施完全隔离，使这一方向没有任何因果路径。
+plausible_alternative_directions:
+- label: 云平台局部故障
+  description: 状态页面未反映的细微或区域性云平台故障可能导致间歇性的5xx响应，SaaS提供商会将其记录为投递失败。
+- label: SaaS提供商限流
+  description: SaaS提供商可能因事件量增加或政策变更，开始对该端点进行限流，从提供商侧造成间歇性失败。
+- label: TLS证书到期
+  description: 云端端点的TLS证书可能已过期或进入续期窗口，导致部分投递尝试因握手错误而失败。
+leak_audit:
+  ll_atomic_claims:
+  - The webhook delivery failures began right after the office desks were rearranged.
+  - The desk rearrangement occurred last week.
+  hl_salience_dimensions:
+    source_credibility: Office manager with six years of facilities coordination tenure
+      at this company.
+    narrative_coherence: Clean single-clause report; professional register; no interruptions.
+    confident_assertion: '"she''s certain" — active confident verb.'
+    concrete_detail: '"coordinated facilities here for six years" — detail about the
+      source''s institutional history, not about the technical case.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 27
+  ll_word_count: 14
+  notes: 'Stripped: no tunable values (no port numbers, thresholds, or config values
+    added
+
+    to HL vs LL); no effort descriptors ("after two days" etc.); no severity claims;
+
+    no sensory/environmental color; no hedging. The only HL additions are source
+
+    identity, tenure credential, and confident-assertion verb. "The morning after"
+
+    timing was considered and rejected as a content leak (more specific case timing
+
+    than LL''s "right after"); replaced with neutral "last week" matching LL.
+
+    '
+causal_audit:
+  steelman: 'A competent infrastructure practitioner might reason: office desk rearrangements
+
+    often involve moving physical networking hardware — access points, patch-panel
+
+    connections, or edge switches — which could disrupt local LAN connectivity.
+
+    However, webhook deliveries arrive from the SaaS provider''s cloud infrastructure
+
+    to a cloud-hosted endpoint; the office LAN is not in the delivery path at all.
+
+    A stronger attempt: if the team had an on-prem reverse proxy or VPN gateway
+
+    that webhook traffic was tunnelled through, a physical move could indirectly
+
+    affect it. But the brief explicitly states the endpoint is cloud-hosted, ruling
+
+    out any on-prem intermediary. There is no mechanism by which rearranging office
+
+    desks affects the routing, authentication, or availability of a cloud-to-cloud
+
+    HTTP delivery.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states the endpoint is "deployed on a major cloud
+    platform — not our office network," directly foreclosing the tempting on-prem-network
+    pathway that a desk rearrangement could theoretically affect.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  topic_brief: 'Inbound webhook deliveries from a SaaS provider to the team endpoint
+    started failing intermittently. Temporal coincidence: it began right after the
+    office desks were rearranged. Desk rearrangement must have no constructible mechanism
+    (endpoint is cloud-hosted).
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  generator: generator_B
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-011.yaml
+  source_xbase_sha256: ec139bd219e51166
+  translated_content_sha256: edc6fcb1f10f3f86
+  translation_notes: 技术术语（SaaS、CRM、webhook、HTTP 401、TLS、5xx）保留英文原名。HL的salience来源于具名来源（办公室主管）、六年任期的信服力凭证以及确信断言（'她确信'），译文均予以保留。'签名密钥轮换'为webhook
+    signing secret rotation的中文技术标准译法。

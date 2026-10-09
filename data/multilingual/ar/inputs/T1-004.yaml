@@ -1,0 +1,111 @@
+seed_id: T1-004
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: انخفضت دقة نموذج اكتشاف الاحتيال لدينا في الإنتاج خلال الأسابيع الماضية، في
+  حين ظلت نسبة الاستدعاء دون تغيير يُذكر. النموذج نُشر منذ تسعة أشهر ولم يُعاد تدريبه
+  منذ ذلك الحين. لم أعثر على أي دليل على تغيير حديث في pipeline التسميات. {DS}
+focal_diagnostic_feature: تتركز خسارة الدقة في فئة تجار مُضافة حديثاً لم تكن موجودة
+  في بيانات التدريب.
+low_diagnostic_proposition: A fraud-model regression at another bank was caused by
+  swapped labels in their pipeline.
+oracle_action: ASK
+oracle_focus: Investigate per-MCC precision and distribution shift; the pattern suggests
+  covariate shift in the new merchant category and may require calibration or retraining
+  on that segment.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not import the other bank's label-swap explanation.
+  Ask for segment-level error rates and whether the drop is concentrated in new transaction
+  types.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not import the other bank's label-swap explanation. Ask for segment-level
+      error rates and whether the drop is concentrated in new transaction types.
+  LL:
+    action: ASK
+    focus: Do not import the other bank's label-swap explanation. Ask for segment-level
+      error rates and whether the drop is concentrated in new transaction types.
+  HH:
+    action: ASK
+    focus: Investigate per-MCC precision and distribution shift; the pattern suggests
+      covariate shift in the new merchant category and may require calibration or
+      retraining on that segment.
+  LH:
+    action: ASK
+    focus: Investigate per-MCC precision and distribution shift; the pattern suggests
+      covariate shift in the new merchant category and may require calibration or
+      retraining on that segment.
+variants:
+  HL:
+    distractor: زميل في بنك آخر أخبرني أن درجات الاحتيال لديهم انهارت بعد أن قلب أحد
+      المحللين عن طريق الخطأ تسميتَي نوعَين من البطاقات في رفع بيانات يوم الجمعة.
+    diagnosticity: low
+    salience: high
+    proposition: A fraud-model regression at another bank was caused by swapped labels
+      in their pipeline.
+    salience_source: vivid human-error anecdote from adjacent industry
+    why_plausible: Label swaps are plausible ML failures and the banking context sounds
+      close.
+    why_irrelevant: The current evidence points to a new distribution segment, not
+      changed labels; the external pipeline story adds no evidence about this model.
+  LL:
+    distractor: أبلغ نظير في بنك آخر عن انحدار في نموذج اكتشاف الاحتيال ناجم عن تبديل
+      التسميات في pipeline البيانات لديهم.
+    diagnosticity: low
+    salience: low
+    proposition: A fraud-model regression at another bank was caused by swapped labels
+      in their pipeline.
+    matched_to: HL
+  HH:
+    distractor: تقريباً كل انخفاض الدقة مصدره رمز MCC جديد تماماً لم يكن موجوداً حين
+      دربنا النموذج؛ وتبدو الفئات الأقدم طبيعية في الأساس.
+    diagnosticity: high
+    salience: high
+    proposition: The precision loss is concentrated in a newly added merchant category
+      that did not exist in the training data.
+    salience_source: segment-localised error concentration
+  LH:
+    distractor: تتركز الدقة المنخفضة في فئة تجار جديدة تعود إلى ما بعد بيانات التدريب؛
+      في حين تبدو الفئات الأخرى مستقرة نسبياً.
+    diagnosticity: high
+    salience: low
+    proposition: The precision loss is concentrated in a newly added merchant category
+      that did not exist in the training data.
+    matched_to: HH
+distractor_direction:
+  label: تبديل التسميات في pipeline
+  description: التحقيق فيما إذا كانت تسميات التدريب أو التقييم قد تبدّلت أو انعكست
+    أو اختلطت في pipeline النموذج.
+plausible_alternative_directions:
+- label: سوء معايرة عتبة القرار
+  description: تغيّرت عتبة درجة النموذج أو طبقة المعايرة، مما يقلل الدقة دون تغيير
+    الاستدعاء كثيراً.
+- label: انحدار في تسجيل الميزات
+  description: تغيير في توليد الميزات أو التسجيل أفسد مدخلاً أو أكثر من مدخلات النموذج
+    بعد النشر.
+- label: تأخر في تسميات الاحتيال
+  description: تصل تسميات النتائج متأخرة أو بشكل غير منتظم، مما يشوّه قياسات الدقة
+    الأخيرة.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-004.yaml
+  source_xbase_sha256: c8c2d5edcc6bcc83
+  translated_content_sha256: 66539f82f7ba0cf6
+  translation_notes: Technical terms (pipeline, MCC, ORM, recall, precision) kept
+    as-is or minimally adapted (pipeline as 'pipeline'). 'MCC' (Merchant Category
+    Code) kept as acronym. 'Friday upload' kept concrete to preserve HL vivid-anecdote
+    salience. Named 'colleague at another bank' preserves adjacent-industry source
+    salience.

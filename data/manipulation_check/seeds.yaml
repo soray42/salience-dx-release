@@ -1,0 +1,196 @@
+_meta:
+  experiment_id: salience_manipulation_check_v1
+  purpose: |
+    Test whether salience — held independent of propositional content — produces a
+    measurable internal logit shift in Llama 3.1 8B Instruct. The "content" axis
+    is held maximally constant across HL/LL within each pair; the "salience"
+    axis is pushed to its maximum separation. If HL-LL diff > 0 with tight CI
+    and HL vs LL across pairs decorrelates, salience IS an internally
+    separable construct. If diff ≈ 0 or HL/LL stay highly correlated even
+    here, salience is not separable from content at the model's internal level
+    — and the existing project's HL/LL operationalization needs rethinking.
+  content_invariance_rule: |
+    LL_atomic_claims must be the COMPLETE set of propositional claims the
+    distractor introduces. HL must claim exactly that set plus rhetorical
+    color (named source, time/place of conversation, speaker affect, narrative
+    voice). HL must NOT add: tighter causal language, stronger match assertions,
+    specifics about the cause that aren't in LL, effort/difficulty descriptors,
+    or confidence enhancers. If a pair cannot be written under this rule, the
+    `leak_audit.unconstructable` field MUST be set and flagged in results.
+  measurement: |
+    For each pair × {baseline=no distractor, HL, LL}, compute Llama 3.1 8B
+    Instruct sequence log-prob per token of the distractor_implied candidate
+    text given (xbase with {DS} replaced). Pin model revision for exact
+    reproducibility. Report scalar_shift_HL = L_HL - L_baseline,
+    scalar_shift_LL = L_LL - L_baseline, HL_minus_LL = scalar_shift_HL - scalar_shift_LL.
+
+pairs:
+  - pair_id: M-01
+    domain: technical_troubleshooting
+    xbase: "CI integration tests started timing out against the staging Postgres replica yesterday. Build, lint, unit tests all green. {DS}"
+    propositional_claim: "There exists a comparable CI timeout in another stack; its cause was an ORM connection pool misconfiguration."
+    leak_audit:
+      ll_atomic_claims:
+        - "There is another case of a comparable CI timeout (different stack)."
+        - "That case's cause was an ORM connection pool misconfiguration."
+      hl_color_categories: [named_speaker, time, place, speaker_affect]
+      unconstructable: false
+    distractors:
+      HL: "Marco at a friend's fintech told me over coffee last Tuesday — he was practically waving his arms recounting it — about a comparable CI timeout in his stack; it was due to an ORM connection pool misconfiguration."
+      LL: "A comparable CI timeout in another stack was due to an ORM connection pool misconfiguration."
+    distractor_implied_candidate:
+      label: "ORM connection-pool misconfiguration"
+      description: "Application-side connection pool exhausted, mis-sized, or stuck — e.g., pool_size set to 1, leaked connections, or checkout timeout misconfigured."
+
+  - pair_id: M-02
+    domain: technical_troubleshooting
+    xbase: "Our user-facing API p99 latency jumped from 80ms to 2.4s starting around 3pm yesterday. No code deploys, no traffic spike. {DS}"
+    propositional_claim: "There exists a comparable latency spike on another service; its cause was a DNS issue."
+    leak_audit:
+      ll_atomic_claims:
+        - "There is another case of a comparable latency spike (different service)."
+        - "That case's cause was a DNS issue."
+      hl_color_categories: [named_speaker, time, place, speaker_affect, communication_mode]
+      unconstructable: false
+    distractors:
+      HL: "Priya from our sister office's platform team called me Thursday evening — you could hear the frustration in her voice the whole conversation — about a comparable latency spike on their service; it was due to a DNS issue."
+      LL: "A comparable latency spike on another service was due to a DNS issue."
+    distractor_implied_candidate:
+      label: "DNS resolution issue"
+      description: "DNS lookup failures, stale cache, or slow resolver responses causing intermittent or systemic upstream latency."
+
+  - pair_id: M-03
+    domain: open_qa
+    xbase: "My fiddle leaf fig has been dropping leaves for two weeks. The new leaves coming in are smaller and have brown edges. {DS}"
+    propositional_claim: "There exists a similar leaf-drop problem on another plant; its cause was overwatering."
+    leak_audit:
+      ll_atomic_claims:
+        - "There is another case of a similar leaf-drop problem (different plant)."
+        - "That case's cause was overwatering."
+      hl_color_categories: [named_speaker, time, place, conversation_length]
+      unconstructable: false
+    distractors:
+      HL: "My neighbor Aunt Carol stopped me in the elevator Saturday afternoon — we ended up chatting for twenty minutes — about a similar leaf-drop problem her ficus had; it was due to overwatering."
+      LL: "A similar leaf-drop problem on another plant was due to overwatering."
+    distractor_implied_candidate:
+      label: "Overwatering"
+      description: "Soil staying saturated, leading to root suffocation or root rot, manifesting as yellowing leaves, leaf drop, and brown leaf margins."
+
+  - pair_id: M-04
+    domain: open_qa
+    xbase: "I've been waking up around 3am every night for the past three weeks, can't fall back asleep, and feel groggy all day. I haven't changed anything about my routine. {DS}"
+    propositional_claim: "There exists a similar 3am-waking pattern in another case; its cause was the bedroom being too warm."
+    leak_audit:
+      ll_atomic_claims:
+        - "There is another case of a similar 3am-waking pattern."
+        - "That case's cause was the bedroom being too warm."
+      hl_color_categories: [named_speaker, time, place, speaker_affect, narrative_voice]
+      unconstructable: false
+    distractors:
+      HL: "My old college roommate Dave called me Sunday afternoon — driving home from somewhere, rambling for half the conversation — about a similar 3am-waking pattern he'd had; it was due to his bedroom running too warm."
+      LL: "A similar 3am-waking pattern in another case was due to the bedroom being too warm."
+    distractor_implied_candidate:
+      label: "Bedroom temperature too high"
+      description: "Sleep environment running above the recommended 60-67°F range, causing sleep fragmentation, especially in the second half of the night when core temperature normally drops."
+
+  - pair_id: M-05
+    domain: technical_troubleshooting
+    xbase: "Our overnight test coverage report dropped from 84% to 71% this morning. The team didn't merge anything that would explain it. {DS}"
+    propositional_claim: "There exists a comparable coverage drop on another team; its cause was a test runner config change."
+    leak_audit:
+      ll_atomic_claims:
+        - "There is another case of a comparable coverage drop (different team)."
+        - "That case's cause was a test runner config change."
+      hl_color_categories: [named_speaker, time, communication_mode, speaker_affect]
+      unconstructable: false
+    distractors:
+      HL: "Jordan, the engineering manager from the data-platform org, pinged me on Slack at 9am with three exclamation marks — clearly worked up — about a comparable coverage drop on their team; it was due to a test runner config change."
+      LL: "A comparable coverage drop on another team was due to a test runner config change."
+    distractor_implied_candidate:
+      label: "Test runner / coverage tool config change"
+      description: "An unintended change to CI test runner flags, coverage collector configuration, or instrumentation thresholds causing previously-tracked code paths to fall out of measurement."
+
+  - pair_id: M-06
+    domain: open_qa
+    xbase: "I've been comparing my employer's 401k S&P 500 index fund against a generic vanguard fund my friend recommended. Over 5 years his account grew noticeably more, even though we contributed similarly. {DS}"
+    propositional_claim: "There exists a comparable 5-year underperformance pattern in another case; its cause was an expense ratio difference."
+    leak_audit:
+      ll_atomic_claims:
+        - "There is another case of a comparable 5-year underperformance pattern."
+        - "That case's cause was an expense ratio difference."
+      hl_color_categories: [named_speaker_role, time, place, sensory_detail]
+      unconstructable: false
+    distractors:
+      HL: "A senior partner from finance cornered me at the holiday party in December — over those tiny stuffed-mushroom appetizers — to tell me about a comparable 5-year underperformance pattern in a client of his; it was due to an expense ratio difference."
+      LL: "A comparable 5-year underperformance pattern in another case was due to an expense ratio difference."
+    distractor_implied_candidate:
+      label: "Expense ratio difference"
+      description: "One of the two funds has a higher annual expense ratio, compounding over a multi-year horizon into a meaningful gap in net return even when underlying index exposure is similar."
+
+  - pair_id: M-07
+    domain: open_qa
+    xbase: "My car cranks but doesn't start when I try to leave for work in the morning. The dashboard lights up fine. It's been doing this for the past three days. {DS}"
+    propositional_claim: "There exists a comparable cranking-but-not-starting issue on another car; its cause was a failing alternator."
+    leak_audit:
+      ll_atomic_claims:
+        - "There is another case of a comparable cranking-but-not-starting issue (different car)."
+        - "That case's cause was a failing alternator."
+      hl_color_categories: [named_speaker, time, place, sensory_detail]
+      unconstructable: false
+    distractors:
+      HL: "My brother-in-law Greg cornered me at the family BBQ on Memorial Day — grease still on his hands from working on his own truck — to tell me about a comparable cranking-but-not-starting issue on his car; it was due to a failing alternator."
+      LL: "A comparable cranking-but-not-starting issue on another car was due to a failing alternator."
+    distractor_implied_candidate:
+      label: "Failing alternator"
+      description: "An alternator that no longer reliably charges the battery while the engine runs, leading to a battery that's discharged enough to crank weakly but not start, despite the dashboard's electronics seeming to power up normally."
+
+  - pair_id: M-08
+    domain: open_qa
+    xbase: "I've been training for my first marathon and around mile 15-17 of my long runs my calves seize up so badly I have to walk. My pace has been consistent for weeks. {DS}"
+    propositional_claim: "There exists a comparable mile-15-area cramping pattern in another runner; its cause was an electrolyte imbalance."
+    leak_audit:
+      ll_atomic_claims:
+        - "There is another case of a comparable mile-15-area cramping pattern (different runner)."
+        - "That case's cause was an electrolyte imbalance."
+      hl_color_categories: [named_speaker, place, speaker_quirk]
+      unconstructable: false
+    distractors:
+      HL: "Tabitha from my Wednesday-evening running club — she's the one who always brings homemade energy bars — went on at length after practice about a comparable mile-15-area cramping pattern she'd experienced; it was due to an electrolyte imbalance."
+      LL: "A comparable mile-15-area cramping pattern in another runner was due to an electrolyte imbalance."
+    distractor_implied_candidate:
+      label: "Electrolyte imbalance"
+      description: "Insufficient sodium, potassium, or magnesium intake or excessive loss through sweat during prolonged endurance exercise, predisposing skeletal muscle to involuntary contraction."
+
+  - pair_id: M-09
+    domain: technical_troubleshooting
+    xbase: "Our marketing emails to Gmail addresses have been going to spam since Wednesday — open rates dropped from 28% to 4%. Nothing changed on our end that we know of. {DS}"
+    propositional_claim: "There exists a comparable Gmail deliverability cratering at another organization; its cause was a DKIM record misconfiguration."
+    leak_audit:
+      ll_atomic_claims:
+        - "There is another case of a comparable Gmail deliverability cratering (different organization)."
+        - "That case's cause was a DKIM record misconfiguration."
+      hl_color_categories: [named_speaker, time, communication_mode, speaker_affect]
+      unconstructable: false
+    distractors:
+      HL: "Brendan, who runs deliverability at a B2B SaaS we used to share an office with, sent me a six-paragraph email on Friday afternoon recounting in real-time their panicked response to a comparable Gmail deliverability cratering; it was due to a DKIM record misconfiguration."
+      LL: "A comparable Gmail deliverability cratering at another organization was due to a DKIM record misconfiguration."
+    distractor_implied_candidate:
+      label: "DKIM record misconfiguration"
+      description: "DKIM DNS TXT record missing, malformed, key-rotated without DNS update, or signing domain mismatched against the From header, causing Gmail to deprioritize or junk previously-trusted senders."
+
+  - pair_id: M-10
+    domain: open_qa
+    xbase: "Our 10-month-old, who was sleeping through the night for six weeks straight, has been waking every 90 minutes for the past four nights. Daytime mood seems normal. {DS}"
+    propositional_claim: "There exists a comparable return-to-night-waking in another child; its cause was a growth spurt."
+    leak_audit:
+      ll_atomic_claims:
+        - "There is another case of a comparable return-to-night-waking (different child)."
+        - "That case's cause was a growth spurt."
+      hl_color_categories: [named_speaker, time, place, speaker_quirk, narrative_voice]
+      unconstructable: false
+    distractors:
+      HL: "In the pediatrician's waiting room yesterday morning, the woman next to me — Megan, who'd been chatty since I sat down — launched into a vivid retelling of a comparable return-to-night-waking with her kid; it was due to a growth spurt."
+      LL: "A comparable return-to-night-waking in another child was due to a growth spurt."
+    distractor_implied_candidate:
+      label: "Growth spurt"
+      description: "A developmental period of accelerated physical growth during which sleep architecture transiently fragments, manifesting as more frequent night wakings in a previously settled sleeper."

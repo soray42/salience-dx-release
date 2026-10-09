@@ -1,0 +1,158 @@
+seed_id: T3-069
+template: T3
+domain: open_qa
+complexity: low
+xbase: I am trying to get my weekday eating under control and I am weighing whether
+  to spend Sunday afternoon doing meal prep for the week. I live alone and cook for
+  myself. I have found it hard to eat well on busy days recently. {DS}
+focal_diagnostic_feature: On four of the user's five weekdays, they leave before 7am
+  and return after 8pm, leaving no practical window for daily cooking.
+low_diagnostic_proposition: Meal prep is a nutritional compromise and fresh daily
+  cooking is always the superior option.
+oracle_action: ANSWER
+oracle_focus: Meal prep is the right solution; the user's schedule leaves no viable
+  window for daily cooking on four weekdays, making fresh daily cooking impractical
+  regardless of its nutritional advantages.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the generic nutritional-quality claim as
+  decisive. Ask about the user's actual weekday schedule before recommending against
+  meal prep.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the generic nutritional-quality claim as decisive. Ask about
+      the user's actual weekday schedule before recommending against meal prep.
+  LL:
+    action: ASK
+    focus: Do not accept the generic nutritional-quality claim as decisive. Ask about
+      the user's actual weekday schedule before recommending against meal prep.
+  HH:
+    action: ANSWER
+    focus: Meal prep is the right solution; the user's schedule leaves no viable window
+      for daily cooking on four weekdays, making fresh daily cooking impractical regardless
+      of its nutritional advantages.
+  LH:
+    action: ANSWER
+    focus: Meal prep is the right solution; the user's schedule leaves no viable window
+      for daily cooking on four weekdays, making fresh daily cooking impractical regardless
+      of its nutritional advantages.
+variants:
+  HL:
+    distractor: Kalliopi is a registered dietitian and told me, with real conviction,
+      that meal prep is a nutritional compromise — food degrades over days in the
+      fridge and fresh daily cooking is always the superior option.
+    diagnosticity: low
+    salience: high
+    proposition: Meal prep is a nutritional compromise and fresh daily cooking is
+      always the superior option.
+    salience_source: A (source credibility — registered dietitian, domain-matched
+      professional); C (confident assertion — 'with real conviction', 'always the
+      superior option')
+    why_plausible: Nutritional degradation in stored food is a real phenomenon; a
+      registered dietitian recommending fresh cooking has professional credibility,
+      and the general claim has genuine nutritional grounding.
+    why_irrelevant: The dietitian's advice assumes the user has time to cook daily;
+      the focal evidence shows they do not — the advice engages nutritional quality
+      but not the scheduling constraint that makes daily cooking impossible on four
+      out of five weekdays.
+  LL:
+    distractor: A registered dietitian stated that meal prep is a nutritional compromise
+      and fresh daily cooking is always the superior option.
+    diagnosticity: low
+    salience: low
+    proposition: Meal prep is a nutritional compromise and fresh daily cooking is
+      always the superior option.
+    matched_to: HL
+  HH:
+    distractor: Four of my weekdays I leave the flat before seven in the morning and
+      walk back in after eight at night, which leaves me no realistic window to cook
+      a proper meal from scratch after work.
+    diagnosticity: high
+    salience: high
+    proposition: On four of the user's five weekdays, they leave before 7am and return
+      after 8pm, leaving no practical window for daily cooking.
+    salience_source: B (narrative coherence — specific departure and return times,
+      vivid door-to-door framing, clear constraint conclusion); C (unambiguous 'no
+      realistic window')
+  LH:
+    distractor: On four weekdays the user leaves before 7am and returns after 8pm,
+      leaving no practical window for daily cooking.
+    diagnosticity: high
+    salience: low
+    proposition: On four of the user's five weekdays, they leave before 7am and return
+      after 8pm, leaving no practical window for daily cooking.
+    matched_to: HH
+distractor_direction:
+  label: Nutritional superiority of fresh cooking
+  description: Treating the question as primarily about nutritional quality and recommending
+    against meal prep because fresh daily cooking preserves nutrients better.
+plausible_alternative_directions:
+- label: Portion control and overeating
+  description: Considering whether prepped meals help or hinder appropriate portion
+    sizing for the user's goals.
+- label: Variety and food fatigue
+  description: Examining whether eating the same prepped meals across four days would
+    lead to disengagement and worsen dietary adherence.
+leak_audit:
+  ll_atomic_claims:
+  - Meal prep is a nutritional compromise.
+  - Fresh daily cooking is always the superior option.
+  hh_atomic_claims:
+  - On four weekdays the user leaves before 7am.
+  - On four weekdays the user returns after 8pm.
+  - This leaves no realistic window to cook a proper meal from scratch after work.
+  hl_salience_dimensions:
+    source_credibility: Kalliopi is a registered dietitian — domain-matched professional
+      authority.
+    narrative_coherence: Clear single-sentence delivery with professional register;
+      clean cause-and-effect ('food degrades ... therefore always superior').
+    confident_assertion: '''with real conviction'', ''always the superior option''
+      — unhedged recommendation.'
+    concrete_detail: N/A — no case-specific detail added; mechanism ('food degrades
+      over days') is generic not case-specific.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 34
+  ll_word_count: 20
+  hh_word_count: 36
+  lh_word_count: 19
+  notes: 'xbase mentions ''busy days'' and ''hard to eat well'' but does not specify
+    departure/return times — decisive schedule detail lives only in HH/LH.
+
+    HL mechanism claim (''food degrades over days'') is generic domain knowledge,
+    not a case-specific claim about this user''s meal prep — permissible under C1
+    as an explanatory mechanism for the source''s general advice.
+
+    HH third atomic claim (''no realistic window'') is the conclusion derivable from
+    claims 1+2; LH carries it explicitly.
+
+    '
+causal_audit:
+  steelman: 'Nutritional degradation of prepared food over three to four days in the
+    fridge is documented for some nutrients (vitamin C, B vitamins in cooked vegetables).
+    A registered dietitian recommending fresh daily cooking has a real scientific
+    basis. The advice is not folklore — it reflects genuine nutritional trade-offs
+    of meal prep.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the dietitian's advice is generic and does not engage
+    the user's scheduling reality; xbase signals 'busy days' but does not rule out
+    any mechanism; the focal feature structurally makes fresh daily cooking impractical
+    regardless of nutritional merits.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Deciding whether to meal prep on Sundays; authority dietitian recommends
+    fresh daily cooking for nutritional quality; root cause of meal prep being correct
+    is user has no cooking window on four weekdays (leaves before 7am, returns after
+    8pm).
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

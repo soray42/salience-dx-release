@@ -1,0 +1,13 @@
+{
+  "seed_id": "T2-014",
+  "my_own_diagnosis": "From xbase alone, the temperature drop is the only changed variable and has a direct mechanistic pathway to slower fermentation; I would advise the baker to warm the proofing environment before reading the oracle.",
+  "focal_decisive": true,
+  "focal_notes": "The 5°C kitchen temperature drop is the sole changed environmental factor stated in xbase, and its mechanistic link to reduced yeast/bacterial activity is unambiguous to any competent practitioner.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cell oracles correctly map to low-diagnostic focus (no endorsement of loyalty-programme hypothesis); HH/LH correctly map to focal temperature-drop focus.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

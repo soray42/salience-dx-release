@@ -1,0 +1,178 @@
+seed_id: T2-091
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: A new product image we uploaded keeps showing as a broken image for most visitors,
+  even though it has been live on origin for two days. The file is present in origin
+  storage and loads correctly when I open its URL with a cache-bypassing query parameter.
+  Other images on the same page render fine. We serve all images through our CDN,
+  and only this one specific asset is affected. Nothing in the deploy or the storage
+  looks wrong now. {DS}
+focal_diagnostic_feature: The CDN negatively cached the 404 from the brief window
+  before the file finished uploading, and its negative-caching TTL holds that 404
+  at the edge so it keeps serving not-found despite the file now existing.
+low_diagnostic_proposition: The broken image started appearing the same week the team
+  migrated to a new group-chat workspace.
+oracle_action: ANSWER
+oracle_focus: Purge or invalidate that asset's path at the CDN so the cached 404 is
+  evicted; the edge negatively cached the not-found from before the upload completed
+  and is still serving it, so a fresh origin fetch will resolve it.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a chat-workspace migration to a broken
+  image. Ask whether the CDN negatively cached a 404 for this asset and what its negative-cache
+  TTL is.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a chat-workspace migration to a broken image. Ask whether
+      the CDN negatively cached a 404 for this asset and what its negative-cache TTL
+      is.
+  LL:
+    action: ASK
+    focus: Do not connect a chat-workspace migration to a broken image. Ask whether
+      the CDN negatively cached a 404 for this asset and what its negative-cache TTL
+      is.
+  HH:
+    action: ANSWER
+    focus: Purge or invalidate that asset's path at the CDN so the cached 404 is evicted;
+      the edge negatively cached the not-found from before the upload completed and
+      is still serving it, so a fresh origin fetch will resolve it.
+  LH:
+    action: ANSWER
+    focus: Purge or invalidate that asset's path at the CDN so the cached 404 is evicted;
+      the edge negatively cached the not-found from before the upload completed and
+      is still serving it, so a fresh origin fetch will resolve it.
+variants:
+  HL:
+    distractor: This broken image showed up the same week we moved the whole team
+      onto a new group-chat workspace; I keep circling back to that week because the
+      migration dominated everything we were doing.
+    diagnosticity: low
+    salience: high
+    proposition: The broken image started appearing the same week the team migrated
+      to a new group-chat workspace.
+    salience_source: B/C — confident first-person 'I keep circling back' framing ties
+      the bug to the memorable chat-migration week.
+    why_plausible: A disruptive team-tooling change is a salient landmark, so it is
+      tempting to pin a same-week glitch on it.
+    why_irrelevant: A group-chat workspace migration touches none of the origin storage,
+      the asset's URL, or the CDN's edge caching; it cannot make one image 404.
+  LL:
+    distractor: The broken image started appearing the same week the team migrated
+      to a new group-chat workspace.
+    diagnosticity: low
+    salience: low
+    proposition: The broken image started appearing the same week the team migrated
+      to a new group-chat workspace.
+    matched_to: HL
+  HH:
+    distractor: 'The edge is returning a cached 404 for this asset: it was requested
+      in the brief gap before the upload finished, the CDN negatively cached that
+      not-found, and its negative-cache TTL is still holding that 404 at the edge
+      even though origin now has the file.'
+    diagnosticity: high
+    salience: high
+    proposition: The CDN negatively cached the 404 from the brief window before the
+      file finished uploading, and its negative-caching TTL holds that 404 at the
+      edge so it keeps serving not-found despite the file now existing.
+    salience_source: Naming the cached 404, the pre-upload request window, and the
+      negative-cache TTL makes the stale-not-found mechanism concrete and decisive.
+  LH:
+    distractor: The CDN negatively cached the 404 from before the upload finished,
+      and its negative-cache TTL keeps serving that not-found at the edge.
+    diagnosticity: high
+    salience: low
+    proposition: The CDN negatively cached the 404 from the brief window before the
+      file finished uploading, and its negative-caching TTL holds that 404 at the
+      edge so it keeps serving not-found despite the file now existing.
+    matched_to: HH
+distractor_direction:
+  label: Chat-migration timing
+  description: Treating the same-week migration to a new group-chat workspace as connected
+    to the single broken image.
+plausible_alternative_directions:
+- label: Wrong content-type
+  description: Whether the asset is stored or served with an incorrect content-type
+    so browsers refuse to render it.
+- label: Path or case mismatch
+  description: Whether the live URL references a slightly different path or filename
+    casing than the stored object.
+leak_audit:
+  ll_atomic_claims:
+  - The team migrated to a new group-chat workspace.
+  - The broken image started appearing that same week.
+  hh_atomic_claims:
+  - The edge is returning a cached 404 for this asset.
+  - The asset was requested in the gap before its upload finished, and the CDN negatively
+    cached that not-found.
+  - The negative-cache TTL still holds the 404 even though origin now has the file.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person same-week chronology around the chat migration.
+    confident_assertion: Frames the migration as dominating that week; 'I keep circling
+      back' asserts persistent conviction.
+    concrete_detail: Detail about the team event (migration dominated everything)
+      only — no claim about the CDN or the asset.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 33
+  ll_word_count: 16
+  hh_word_count: 44
+  lh_word_count: 21
+  notes: 'xbase narrows to one asset, confirms it exists on origin and loads with
+    a cache-bypass parameter, and that other
+
+    images render — but never inspects what the edge returns for the normal URL, so
+    HL/LL cannot identify the cached
+
+    404; that decisive negative-cache fact lives only in HH/LH. The cache-bypass-loads
+    detail is a symptom pointing
+
+    at caching generally, not the specific negative-cache mechanism. HL adds only
+    the team''s chat migration framing;
+
+    LL keeps the bare same-week coincidence. HL trimmed from 51 to 33 words to satisfy
+    C9 hard bound (25-50) and
+
+    operational target (27-48); propositional claims identical to LL.
+
+    '
+causal_audit:
+  steelman: 'To steelman the chat-migration timing as causal, I would need a path
+    from switching group-chat tools to a single
+
+    image returning 404 through the CDN. A chat workspace migration changes where
+    the team communicates; it does not
+
+    touch origin object storage, the asset''s URL, deploy artifacts, or the CDN''s
+    edge caches. No webhook, build step,
+
+    or asset-publishing flow in this description is wired through the chat tool. There
+    is no constructible mechanism
+
+    by which the migration could cause or inform a stale cached 404 on one asset;
+    the cause is the CDN''s negative
+
+    caching of the pre-upload not-found.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase confirms the file is present on origin and loads
+    with a cache-bypass parameter, foreclosing the 'file actually missing' pathway;
+    the cached-404 negative-caching mechanism still lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: One image 404s at the CDN edge because the CDN negatively cached the
+    pre-upload not-found and its negative TTL persists, unrelated to a coincidental
+    team chat-workspace migration.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

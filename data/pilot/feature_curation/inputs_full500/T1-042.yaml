@@ -1,0 +1,172 @@
+seed_id: T1-042
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: My smart TV suddenly cannot open one streaming app; it spins and then shows
+  "can't connect to the service." Every other app on the same TV streams fine, and
+  my phone plays that same streaming service perfectly on the same home Wi-Fi. I rebooted
+  the TV and the router, and nothing changed. I have not touched any router settings
+  that I know of. {DS}
+focal_diagnostic_feature: On the TV the streaming app's API hostname returns NXDOMAIN,
+  while every other app and the phone resolve it, because the TV is configured to
+  use the router as its DNS and the router's DNS-rebind protection is dropping that
+  provider's CDN hostname.
+low_diagnostic_proposition: A neighbour reported that the user's internet provider
+  had a regional outage around the same time.
+oracle_action: ANSWER
+oracle_focus: Treat this as DNS resolution failing for that one provider's hostname
+  on the TV; add an exception in the router's DNS-rebind protection or point the TV
+  at a public resolver, since the name resolves everywhere except through the router's
+  filter.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not attribute this to a provider outage. Ask whether
+  the failing app's hostname resolves on the TV versus other devices and what DNS
+  the TV is configured to use before concluding anything about the streaming service.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not attribute this to a provider outage. Ask whether the failing app's
+      hostname resolves on the TV versus other devices and what DNS the TV is configured
+      to use before concluding anything about the streaming service.
+  LL:
+    action: ASK
+    focus: Do not attribute this to a provider outage. Ask whether the failing app's
+      hostname resolves on the TV versus other devices and what DNS the TV is configured
+      to use before concluding anything about the streaming service.
+  HH:
+    action: ANSWER
+    focus: Treat this as DNS resolution failing for that one provider's hostname on
+      the TV; add an exception in the router's DNS-rebind protection or point the
+      TV at a public resolver, since the name resolves everywhere except through the
+      router's filter.
+  LH:
+    action: ANSWER
+    focus: Treat this as DNS resolution failing for that one provider's hostname on
+      the TV; add an exception in the router's DNS-rebind protection or point the
+      TV at a public resolver, since the name resolves everywhere except through the
+      router's filter.
+variants:
+  HL:
+    distractor: Quang two doors down, who works at a phone shop, messaged the building
+      group to say our internet provider was having a regional outage that same evening,
+      and he was sure that was why people's apps were acting up across the street.
+    diagnosticity: low
+    salience: high
+    proposition: A neighbour reported that the user's internet provider had a regional
+      outage around the same time.
+    salience_source: A/C — a named neighbour with telecom-adjacent work confidently
+      reporting a provider outage to the group.
+    why_plausible: Provider outages do break streaming, and a confident neighbour's
+      outage report during the same evening feels like the obvious explanation.
+    why_irrelevant: A provider-wide outage would not let every other app and the phone
+      stream fine on the same connection; the failure is isolated to one hostname
+      on one device, which an outage cannot produce.
+  LL:
+    distractor: A neighbour said the internet provider had a regional outage around
+      the same time.
+    diagnosticity: low
+    salience: low
+    proposition: A neighbour reported that the user's internet provider had a regional
+      outage around the same time.
+    matched_to: HL
+  HH:
+    distractor: 'I dug in: on the TV that app''s API hostname comes back NXDOMAIN,
+      yet the exact same name resolves on my phone and for every other app. The TV
+      uses the router for DNS, and the router''s DNS-rebind protection is silently
+      dropping that provider''s CDN hostname.'
+    diagnosticity: high
+    salience: high
+    proposition: On the TV the streaming app's API hostname returns NXDOMAIN, while
+      every other app and the phone resolve it, because the TV is configured to use
+      the router as its DNS and the router's DNS-rebind protection is dropping that
+      provider's CDN hostname.
+    salience_source: Precise isolation (NXDOMAIN on one host, one device) pinned to
+      the router's DNS-rebind filter.
+  LH:
+    distractor: The app's hostname returns NXDOMAIN only on the router-resolved TV;
+      the router's DNS-rebind protection drops that provider's CDN name.
+    diagnosticity: high
+    salience: low
+    proposition: On the TV the streaming app's API hostname returns NXDOMAIN, while
+      every other app and the phone resolve it, because the TV is configured to use
+      the router as its DNS and the router's DNS-rebind protection is dropping that
+      provider's CDN hostname.
+    matched_to: HH
+distractor_direction:
+  label: Provider regional outage
+  description: Attributing the single app's failure to a reported internet-provider
+    outage in the area.
+plausible_alternative_directions:
+- label: App-side service problem
+  description: Whether the streaming provider's own servers or the TV app build are
+    broken rather than the network path.
+- label: TV app cache or login
+  description: Whether a corrupted app cache or expired session on the TV is blocking
+    the connection.
+- label: TV firmware regression
+  description: Whether a recent TV firmware update broke that specific app's networking.
+leak_audit:
+  ll_atomic_claims:
+  - A neighbour reported the internet provider had a regional outage around the same
+    time.
+  hh_atomic_claims:
+  - On the TV, the app's API hostname returns NXDOMAIN.
+  - The same hostname resolves on the phone and for every other app.
+  - The TV uses the router as its DNS and the router's DNS-rebind protection drops
+    that provider's CDN hostname.
+  hl_salience_dimensions:
+    source_credibility: Named neighbour (Quang) who works at a phone shop, posting
+      an outage report.
+    narrative_coherence: Same-evening timeline tying the app trouble to a reported
+      outage.
+    confident_assertion: He was sure that was why apps were acting up.
+    concrete_detail: Detail about the neighbour and the building group message — about
+      the source, not this TV's resolution behaviour.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 73
+  hl_word_count: 47
+  ll_word_count: 14
+  hh_word_count: 44
+  lh_word_count: 21
+  notes: 'xbase establishes that other apps and the phone work on the same Wi-Fi (symptoms)
+    but keeps the decisive
+
+    NXDOMAIN-vs-resolves isolation and the DNS-rebind cause only in HH/LH. The neighbour
+    outage is generic
+
+    coincident report, not a claim about this device''s per-host resolution.
+
+    '
+causal_audit:
+  steelman: 'A network engineer might note that partial provider outages can degrade
+    specific CDNs or peering paths, so one
+
+    app routed through an affected CDN could fail while others survive. But an outage
+    cannot explain the same
+
+    provider streaming perfectly on the phone on the same connection AND every other
+    app working; the failure is a
+
+    per-hostname NXDOMAIN on one device behind the router''s filter, which no provider
+    outage produces.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the phone plays that same streaming service
+    on the same home Wi-Fi and every other TV app works, foreclosing a connection-wide
+    or provider-wide outage.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A smart TV failing one streaming app because the router's DNS-rebind
+    protection drops that provider's CDN hostname, against a neighbour's coincident
+    provider-outage report.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

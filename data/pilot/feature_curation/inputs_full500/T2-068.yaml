@@ -1,0 +1,170 @@
+seed_id: T2-068
+template: T2
+domain: open_qa
+complexity: high
+xbase: Our family has been arriving late to work and school almost every morning for
+  the past two weeks, and it's becoming a real source of stress. We wake at the same
+  time we always have, the kids get dressed at the usual pace, and breakfast runs
+  the same as ever. We still aim to pull out of the driveway at 8:10 like we always
+  did. Something in the morning has quietly stopped working and I want to find what
+  actually changed. {DS}
+focal_diagnostic_feature: Two weeks ago the family added a sibling drop-off at a second
+  school that adds a 22-minute detour, but the target departure time of 8:10 was never
+  moved earlier, so the new leg consumes the entire former arrival margin.
+low_diagnostic_proposition: The lateness started the same week a new kitchen clock
+  was installed.
+oracle_action: ANSWER
+oracle_focus: Leave earlier or restructure the route; the newly added 22-minute second-school
+  detour was layered onto an unchanged 8:10 departure, so it eats the whole former
+  margin and makes the family late.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame a new kitchen clock for the lateness on
+  timing alone. Ask what was actually added to the morning route and whether the departure
+  time still leaves a margin.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame a new kitchen clock for the lateness on timing alone. Ask
+      what was actually added to the morning route and whether the departure time
+      still leaves a margin.
+  LL:
+    action: ASK
+    focus: Do not blame a new kitchen clock for the lateness on timing alone. Ask
+      what was actually added to the morning route and whether the departure time
+      still leaves a margin.
+  HH:
+    action: ANSWER
+    focus: Leave earlier or restructure the route; the newly added 22-minute second-school
+      detour was layered onto an unchanged 8:10 departure, so it eats the whole former
+      margin and makes the family late.
+  LH:
+    action: ANSWER
+    focus: Leave earlier or restructure the route; the newly added 22-minute second-school
+      detour was layered onto an unchanged 8:10 departure, so it eats the whole former
+      margin and makes the family late.
+variants:
+  HL:
+    distractor: It dawned on me that all of this started the very week we hung a new
+      clock in the kitchen; it's the big station-style one over the table that everyone
+      glances at while eating, and the lateness crept in right alongside it.
+    diagnosticity: low
+    salience: high
+    proposition: The lateness started the same week a new kitchen clock was installed.
+    salience_source: B/C — a clean, confident first-person chronology tying the symptom
+      to a vivid, dated household change everyone sees.
+    why_plausible: A clock is literally what the family checks while getting ready,
+      so an inaccurate new one is a believable culprit for being late.
+    why_irrelevant: The family wakes and departs by the same stated times regardless
+      of the clock face; the lateness comes from a new route leg, not from misreading
+      the time.
+  LL:
+    distractor: The lateness started the same week a new kitchen clock was installed.
+    diagnosticity: low
+    salience: low
+    proposition: The lateness started the same week a new kitchen clock was installed.
+    matched_to: HL
+  HH:
+    distractor: 'I traced the route and there it is: two weeks ago we added a drop-off
+      at the younger one''s new school, which tacks a 22-minute detour onto the trip,
+      yet we never moved our 8:10 departure earlier. The detour swallows the whole
+      arrival cushion we used to have.'
+    diagnosticity: high
+    salience: high
+    proposition: Two weeks ago the family added a sibling drop-off at a second school
+      that adds a 22-minute detour, but the target departure time of 8:10 was never
+      moved earlier, so the new leg consumes the entire former arrival margin.
+    salience_source: Concrete route trace pairing the new 22-minute leg with the unchanged
+      8:10 departure makes the consumed-margin cause vivid and quantified.
+  LH:
+    distractor: A new 22-minute second-school drop-off was added two weeks ago while
+      the 8:10 departure held, consuming the former arrival margin.
+    diagnosticity: high
+    salience: low
+    proposition: Two weeks ago the family added a sibling drop-off at a second school
+      that adds a 22-minute detour, but the target departure time of 8:10 was never
+      moved earlier, so the new leg consumes the entire former arrival margin.
+    matched_to: HH
+distractor_direction:
+  label: New kitchen clock
+  description: Investigating whether the recently installed kitchen clock is inaccurate
+    and causing the family to misjudge the time each morning.
+plausible_alternative_directions:
+- label: Traffic pattern shift
+  description: Whether changed road or traffic conditions on the existing route are
+    adding time.
+- label: Slower morning prep
+  description: Whether some part of the wake-and-prepare routine has actually slowed
+    without anyone noticing.
+leak_audit:
+  ll_atomic_claims:
+  - The lateness started the same week a new kitchen clock was installed.
+  hh_atomic_claims:
+  - Two weeks ago the family added a drop-off at a younger sibling's new school.
+  - That drop-off adds a 22-minute detour to the morning trip.
+  - The 8:10 departure time was never moved earlier.
+  - The detour consumes the family's former arrival margin.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-week chronology tying lateness to a dated household
+      change.
+    confident_assertion: It dawned on me that all of this started the very week —
+      confident first-person framing.
+    concrete_detail: Detail about the event (the station-style clock over the table,
+      everyone glancing at it) only — no claim about the route or departure margin.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 85
+  hl_word_count: 39
+  ll_word_count: 13
+  hh_word_count: 47
+  lh_word_count: 21
+  notes: 'LL carries only the same-week-as-clock timing claim; the station-style clock
+    and glancing detail are HL-only and
+
+    about the event. xbase states the symptom (daily lateness, unchanged wake/prep/breakfast,
+    same 8:10 departure
+
+    aim) but withholds the added route leg, so HL/LL cannot resolve it. The decisive
+    22-minute-detour-versus-
+
+    unchanged-departure fact lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One could argue a clock matters: if the family paces the whole morning
+    by a kitchen clock and the new one runs
+
+    slow, everyone would believe they have more time than they do and leave late,
+    exactly matching the symptom. The
+
+    misread-time mechanism is coherent in general. But it cannot fit THIS case: xbase
+    states the family wakes at the
+
+    same time and aims to depart at the same 8:10 as always, so their schedule is
+    anchored to fixed target times,
+
+    not to whatever the clock reads, and the focal change is a newly added 22-minute
+    route leg with no compensating
+
+    earlier departure. A clock cannot add distance to the drive. The clock coincidence
+    is purely temporal.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase fixes wake time, prep pace, and the 8:10 departure
+    aim as unchanged, foreclosing a misread-the-clock mechanism while leaving the
+    added route leg unstated; the decisive consumed-margin fact lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A family's morning lateness caused by a new 22-minute second-school
+    drop-off layered on an unchanged departure time, coincident with a new kitchen
+    clock.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

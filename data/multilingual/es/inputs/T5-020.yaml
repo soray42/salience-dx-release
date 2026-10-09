@@ -1,0 +1,190 @@
+seed_id: T5-020
+template: T5
+domain: open_qa
+complexity: high
+xbase: 'Estoy eligiendo entre dos coches usados del mismo modelo y con un kilometraje
+  y precio similares. Uno está absolutamente impecable: pintura perfecta, interior
+  inmaculado, parece que acaba de salir de un concesionario. El otro está limpio pero
+  sin nada especial, con algunos arañazos leves y un acabado apagado. Planeo conservar
+  el que compre durante muchos años, así que la fiabilidad me importa mucho más que
+  el aspecto. {DS}'
+focal_diagnostic_feature: Un informe del historial del vehículo muestra que el coche
+  impecable tiene un título de salvamento por daños previos de inundación y lagunas
+  en su historial de servicio, mientras que el coche apagado tiene un título limpio
+  y un historial de servicio completo, sellado por el concesionario.
+low_diagnostic_proposition: The gleaming car's showroom-perfect condition is a sign
+  it has been well maintained mechanically and is the more reliable choice.
+oracle_action: ANSWER
+oracle_focus: Buy the dull car; its clean title and complete service history outweigh
+  appearance, while the gleaming car's salvage/flood-damage title and service gaps
+  are serious reliability red flags a detailing job hides.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not read mechanical condition from how shiny the car
+  looks. Ask for each car's title status, accident/flood history, and service records.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not read mechanical condition from how shiny the car looks. Ask for
+      each car's title status, accident/flood history, and service records.
+  LL:
+    action: ASK
+    focus: Do not read mechanical condition from how shiny the car looks. Ask for
+      each car's title status, accident/flood history, and service records.
+  HH:
+    action: ANSWER
+    focus: Buy the dull car; its clean title and complete service history outweigh
+      appearance, while the gleaming car's salvage/flood-damage title and service
+      gaps are serious reliability red flags a detailing job hides.
+  LH:
+    action: ANSWER
+    focus: Buy the dull car; its clean title and complete service history outweigh
+      appearance, while the gleaming car's salvage/flood-damage title and service
+      gaps are serious reliability red flags a detailing job hides.
+variants:
+  HL:
+    distractor: 'El impecable simplemente transmite la imagen de un coche mimado:
+      pintura de espejo, ni una marca en los asientos, todo inmaculado. Y un vehículo
+      que está tan cuidado por fuera es uno que ha sido atendido con el mismo esmero
+      por dentro.'
+    diagnosticity: low
+    salience: high
+    proposition: The gleaming car's showroom-perfect condition is a sign it has been
+      well maintained mechanically and is the more reliable choice.
+    salience_source: B/D — vivid concrete detail of the car's flawless appearance
+      carrying the bridge that surface care implies mechanical care.
+    why_plausible: An owner who keeps a car immaculate often does maintain it well,
+      so cosmetic perfection reads as a proxy for diligence.
+    why_irrelevant: A detail and polish can be applied in an afternoon and even mask
+      flood damage; shine reflects effort on the surface, not the title or mechanical
+      history.
+  LL:
+    distractor: El estado perfecto y de sala de exposición del coche impecable es
+      una señal de que ha sido bien mantenido mecánicamente y es la opción más fiable.
+    diagnosticity: low
+    salience: low
+    proposition: The gleaming car's showroom-perfect condition is a sign it has been
+      well maintained mechanically and is the more reliable choice.
+    matched_to: HL
+  HH:
+    distractor: 'Los informes de historial cambian el panorama por completo: el coche
+      impecable tiene un título de salvamento por daños previos de inundación y claras
+      lagunas en su historial de servicio, mientras que el coche apagado tiene un
+      título completamente limpio y un historial de servicio completo, sellado por
+      el concesionario, sin intervalos faltantes.'
+    diagnosticity: high
+    salience: high
+    proposition: A vehicle-history report shows the gleaming car has a salvage title
+      from prior flood damage and gaps in its service record, while the dull car has
+      a clean title and a complete, stamped dealer service history.
+    salience_source: Pulling the title and service histories makes the reliability
+      picture concrete and reverses the surface impression.
+  LH:
+    distractor: El coche impecable tiene un título de salvamento por daños previos
+      de inundación y lagunas en su historial de servicio; el coche apagado tiene
+      un título limpio y un historial de servicio completo del concesionario.
+    diagnosticity: high
+    salience: low
+    proposition: A vehicle-history report shows the gleaming car has a salvage title
+      from prior flood damage and gaps in its service record, while the dull car has
+      a clean title and a complete, stamped dealer service history.
+    matched_to: HH
+distractor_direction:
+  label: Brillo-implica-mantenimiento
+  description: Elegir el coche impecable porque su apariencia perfecta se toma como
+    evidencia de un cuidado mecánico esmerado.
+plausible_alternative_directions:
+- label: Inspección por un mecánico independiente
+  description: Si una inspección previa a la compra revela problemas mecánicos ocultos
+    en alguno de los dos coches.
+- label: Coincidencia de kilometraje y desgaste
+  description: Si el desgaste y el kilometraje se corresponden con el historial declarado
+    y el precio de cada coche.
+leak_audit:
+  ll_atomic_claims:
+  - The gleaming car is in showroom-perfect condition.
+  - That condition is a sign it has been well maintained mechanically and is more
+    reliable.
+  hh_atomic_claims:
+  - A history report shows the gleaming car has a salvage title from prior flood damage
+    and gaps in its service record.
+  - The dull car has a completely clean title.
+  - The dull car has a full, dealer-stamped service history with no missing intervals.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: N/A
+    confident_assertion: N/A
+    concrete_detail: Vivid concrete detail of the gleaming car's appearance (mirror
+      paint, unmarked seats).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 43
+  ll_word_count: 20
+  hh_word_count: 45
+  lh_word_count: 22
+  notes: 'LH is 22 words, preserving full HH equivalence — flood-salvage title, service
+    gaps on the gleaming car, clean
+
+    title and complete service history on the dull car. It remains a single flat clause-set
+    with no salience anchors.
+
+    T5 bridge "surface care implies mechanical care" is in HL and
+
+    flat in LL (self-check 13). xbase gives the appearance contrast and same mileage/price
+    but withholds the title
+
+    and service histories (decisive), which live only in HH/LH.
+
+    QC repair round 1: removed HL-only hedging marker "almost always" from the inferential
+    bridge so HL no longer
+
+    carries hedging_language that LL lacks; the bridge now reads as a flat confident
+    assertion matched to LL''s
+
+    "is a sign", with no change to the distractor''s case content, salience, or propositional
+    equivalence.
+
+    '
+causal_audit:
+  steelman: 'A used-car buyer could argue that owners who keep a car spotless tend
+    to be conscientious about servicing too,
+
+    that interior care correlates with garage-keeping and gentle use, and that visible
+    neglect often signals
+
+    mechanical neglect — so cosmetic condition is a real, if imperfect, signal of
+    how a car was treated.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the title and service-history facts that overturn
+    the shine inference are supplied only in HH/LH; xbase does not foreclose the appearance
+    argument.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Choosing between two used cars where title and service history favour
+    the dull one, against the inference that the gleaming, showroom-perfect car must
+    be mechanically sounder.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-020.yaml
+  source_xbase_sha256: 068a642fd4d39153
+  translated_content_sha256: da7a74f476a17b56
+  translation_notes: Salvage title translated as 'título de salvamento', the standard
+    Spanish automotive term. 'Dealer-stamped service history' rendered as 'historial
+    de servicio sellado por el concesionario', preserving the concrete salience cue
+    in HH. No culture-bound issues.

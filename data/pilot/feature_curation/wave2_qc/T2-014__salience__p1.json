@@ -1,0 +1,12 @@
+{
+  "seed_id": "T2-014",
+  "credibility_score": 4,
+  "salience_delta_score": 4,
+  "template_fit": "fits",
+  "template_fit_notes": "HL encodes the T2 temporal-coincidence structure ('right after the baker changed their grocery subscription or loyalty programme') and adds credibility weight via a named professional source with community standing, all in professional register with no mechanism offered.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "A model answering the xbase must address why the loyalty-programme coincidence does not explain the starter failure, which requires taking a position on the Priya claim; the xbase's explicit ingredient-constancy statement forecloses back-door mechanism dodging but does not let the model bypass the distractor.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

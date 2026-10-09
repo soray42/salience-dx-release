@@ -1,0 +1,187 @@
+seed_id: T5-083
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: One of our Kafka consumer groups has stopped processing for the last two days.
+  The group shows a growing lag on a single partition — confirmed via the kafka-consumer-groups
+  CLI — but messages continue arriving on all other partitions and all other consumer
+  groups stay healthy. The main application logs show no unhandled exception. {DS}
+focal_diagnostic_feature: Consumer debug logs record a DeserializationException at
+  a fixed offset on partition 3, which the consumer retries on a loop without ever
+  advancing past it, indicating a poison-pill message blocking the partition.
+low_diagnostic_proposition: The consumer-group monitoring interface looks dated and
+  cluttered, making the lag figures seem unreliable.
+oracle_action: ASK
+oracle_focus: Investigate the stuck offset on partition 3 — skip or handle the poison-pill
+  message using a DeserializationExceptionHandler or by manually resetting the consumer
+  group offset past the bad record; then add dead-letter routing to prevent future
+  stalls.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not discount the lag figures on the basis of UI appearance;
+  the CLI has already confirmed the lag is real. Ask for debug-level consumer logs
+  and what is happening at the stuck offset before diagnosing.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not discount the lag figures on the basis of UI appearance; the CLI
+      has already confirmed the lag is real. Ask for debug-level consumer logs and
+      what is happening at the stuck offset before diagnosing.
+  LL:
+    action: ASK
+    focus: Do not discount the lag figures on the basis of UI appearance; the CLI
+      has already confirmed the lag is real. Ask for debug-level consumer logs and
+      what is happening at the stuck offset before diagnosing.
+  HH:
+    action: ASK
+    focus: Investigate the stuck offset on partition 3 — skip or handle the poison-pill
+      message using a DeserializationExceptionHandler or by manually resetting the
+      consumer group offset past the bad record; then add dead-letter routing to prevent
+      future stalls.
+  LH:
+    action: ASK
+    focus: Investigate the stuck offset on partition 3 — skip or handle the poison-pill
+      message using a DeserializationExceptionHandler or by manually resetting the
+      consumer group offset past the bad record; then add dead-letter routing to prevent
+      future stalls.
+variants:
+  HL:
+    distractor: Our Kafka monitoring tool runs an interface that looks like it was
+      designed in 2015 — dull grey tables, overlapping tooltips, and numbers crammed
+      into columns too narrow to read — which makes me genuinely distrust the lag
+      figures it is reporting.
+    diagnosticity: low
+    salience: high
+    proposition: The consumer-group monitoring interface looks dated and cluttered,
+      making the lag figures seem unreliable.
+    salience_source: B/C — a vivid first-person aesthetic critique delivered with
+      confident distrust framing; the UI description is specific enough to feel credible.
+    why_plausible: A genuinely cluttered, hard-to-read monitoring tool could plausibly
+      misrender or cache stale data; a busy engineer might dismiss the lag as a display
+      artefact.
+    why_irrelevant: The lag has already been confirmed by the kafka-consumer-groups
+      CLI, which is independent of any monitoring UI; the UI's visual design cannot
+      affect CLI output.
+  LL:
+    distractor: The consumer-group monitoring interface looks dated and cluttered,
+      making the lag figures seem unreliable.
+    diagnosticity: low
+    salience: low
+    proposition: The consumer-group monitoring interface looks dated and cluttered,
+      making the lag figures seem unreliable.
+    matched_to: HL
+  HH:
+    distractor: Consumer debug logs show a DeserializationException at offset 8,847,219
+      on partition 3; the consumer retries that exact offset on a five-second loop
+      and never advances past it.
+    diagnosticity: high
+    salience: high
+    proposition: Consumer debug logs record a DeserializationException at a fixed
+      offset on partition 3, which the consumer retries on a loop without ever advancing
+      past it, indicating a poison-pill message blocking the partition.
+    salience_source: The exact offset number, the five-second retry cadence, and the
+      zero-advance observation together make the poison-pill stall concrete and unambiguous.
+  LH:
+    distractor: Consumer logs record a DeserializationException at partition 3, offset
+      8,847,219; the offset is never advanced.
+    diagnosticity: high
+    salience: low
+    proposition: Consumer debug logs record a DeserializationException at a fixed
+      offset on partition 3, which the consumer retries on a loop without ever advancing
+      past it, indicating a poison-pill message blocking the partition.
+    matched_to: HH
+distractor_direction:
+  label: Monitoring UI unreliability
+  description: Treating the dated, hard-to-read consumer-group dashboard as a source
+    of unreliable or misrendered lag data rather than investigating the underlying
+    consumer behaviour.
+plausible_alternative_directions:
+- label: Schema or message-format change
+  description: A producer-side schema update may have changed the message format in
+    a way the consumer's deserializer cannot handle, which would also appear as a
+    stuck consumer.
+- label: Broker partition leader issue
+  description: A broker failover or preferred-replica election issue on partition
+    3 could stall a consumer waiting for a leader.
+- label: Consumer thread deadlock
+  description: A deadlock or blocked thread in the consumer's processing logic could
+    prevent offset commits and cause growing lag without a visible exception in default
+    logs.
+leak_audit:
+  ll_atomic_claims:
+  - The consumer-group monitoring interface looks dated and cluttered.
+  - The dated, cluttered interface makes the lag figures seem unreliable.
+  hh_atomic_claims:
+  - Consumer debug logs show a DeserializationException at offset 8,847,219 on partition
+    3.
+  - The consumer retries that exact offset on a five-second loop.
+  - The consumer never advances past offset 8,847,219.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: A coherent first-person account of inspecting the tool and
+      forming a reasoned distrust of its output.
+    confident_assertion: '"makes me genuinely distrust" — a confident distrust assertion.'
+    concrete_detail: Visual specifics (grey tables, overlapping tooltips, narrow columns)
+      are about the UI's appearance, not about the Kafka cluster state.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 52
+  hl_word_count: 39
+  ll_word_count: 14
+  hh_word_count: 27
+  lh_word_count: 15
+  notes: 'T5 aesthetic: the inferential bridge (dated/cluttered interface → lag figures
+
+    unreliable) appears in both HL and LL as required by C1/self-check 13. xbase
+
+    closes the "UI could be wrong" pathway by stating the lag was confirmed via CLI,
+
+    so the distractor cannot argue the data is a display artefact. HH/LH carry the
+
+    poison-pill evidence (exact offset, retry loop, zero advance) as the decisive
+
+    focal finding. oracle_action is ASK because even with focal evidence the next
+
+    step is handling the bad record, not a fully answerable closed question.
+
+    Ratios HL:LL=39:14=2.8, HH:LH=27:15=1.8 — both within 4:1.
+
+    '
+causal_audit:
+  steelman: 'A genuinely buggy monitoring tool could cache stale data or render incorrect
+
+    metrics, making a healthy consumer appear to have a stalled partition. If the
+    UI
+
+    were misreporting, no actual problem exists and the investigation should start
+    by
+
+    questioning the data source. However, xbase explicitly states the lag was confirmed
+
+    independently via the kafka-consumer-groups CLI, which is a separate tool that
+    reads
+
+    directly from Kafka''s coordinator. The CLI output is not mediated by the monitoring
+
+    UI, so no visual design issue can explain the CLI reading. The steelman collapses
+
+    on the CLI-confirmation clause in xbase.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the growing lag on partition 3 was confirmed
+    via the kafka-consumer-groups CLI, closing the "monitoring UI could be misrepresenting
+    data" pathway that a dated-UI distractor would otherwise leave open.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Kafka consumer group stalled by a poison-pill deserialization exception
+    at a fixed partition offset; distractor is an aesthetic critique of the monitoring
+    UI suggesting the lag figures themselves are unreliable.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

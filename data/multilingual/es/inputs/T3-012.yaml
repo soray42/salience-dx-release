@@ -1,0 +1,274 @@
+seed_id: T3-012
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Nuestro primario de Postgres 15 ha estado enviando streaming a un standby en
+  caliente durante seis meses sin incidentes. Durante las últimas tres semanas, pg_stat_replication
+  muestra que replay_lag salta a entre 8 y 12 minutos cada noche exactamente a las
+  02:15 y se despeja a las 02:30. Revisé pg_stat_progress_vacuum — no había workers
+  de autovacuum activos durante ninguna ventana de pico. Extraje el programa completo
+  de procesos para esa ventana. {DS}
+focal_diagnostic_feature: pg_stat_activity a las 02:15 muestra un proceso ETL de bulk-INSERT
+  recurrente, y la línea temporal de write_lag en pg_stat_replication coincide exactamente
+  con la tasa de generación de WAL de esa carga por lotes.
+low_diagnostic_proposition: 'PgBouncer connection pool configuration is causing the
+  scheduled replication lag.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Investigate the nightly bulk-INSERT ETL job starting at 02:15; its
+  WAL generation volume is directly correlated with the replication lag window and
+  is the root cause. PgBouncer operates entirely outside the streaming replication
+  path and cannot be causal.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Ask for evidence from pg_stat_activity, pg_stat_replication,
+  and the process schedule at 02:15 to identify what is generating WAL during the
+  spike window; note that PgBouncer manages client connections and has no pathway
+  to influence WAL sender throughput or standby apply rate.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Ask for evidence from pg_stat_activity, pg_stat_replication, and the process
+      schedule at 02:15 to identify what is generating WAL during the spike window;
+      note that PgBouncer manages client connections and has no pathway to influence
+      WAL sender throughput or standby apply rate.
+  LL:
+    action: ASK
+    focus: Ask for evidence from pg_stat_activity, pg_stat_replication, and the process
+      schedule at 02:15 to identify what is generating WAL during the spike window;
+      note that PgBouncer manages client connections and has no pathway to influence
+      WAL sender throughput or standby apply rate.
+  HH:
+    action: ANSWER
+    focus: Investigate the nightly bulk-INSERT ETL job starting at 02:15; its WAL
+      generation volume is directly correlated with the replication lag window and
+      is the root cause. PgBouncer operates entirely outside the streaming replication
+      path and cannot be causal.
+  LH:
+    action: ANSWER
+    focus: Investigate the nightly bulk-INSERT ETL job starting at 02:15; its WAL
+      generation volume is directly correlated with the replication lag window and
+      is the root cause. PgBouncer operates entirely outside the streaming replication
+      path and cannot be causal.
+variants:
+  HL:
+    distractor: Nuestro jefe de DBA — que ha gestionado infraestructura de Postgres
+      en tres empresas — le echó un vistazo y me dijo directamente que es la configuración
+      del pool de conexiones de PgBouncer; dijo que siempre que la replicación se
+      retrasa en un horario fijo, siempre es la capa de conexiones.
+    diagnosticity: low
+    salience: high
+    proposition: PgBouncer connection pool configuration is causing the scheduled
+      replication lag.
+    salience_source: 'A (source credibility, dimension A): DBA lead with multi-company
+      Postgres experience. C (confident assertion): "told me straight away", "it''s
+      always". B (narrative coherence): clean first-person professional report.
+
+      '
+    why_plausible: 'A senior DBA invoking pattern-match experience across companies
+      sounds authoritative; "connection layer" is a real Postgres concern, and a busy
+      reader unfamiliar with replication internals might assume PgBouncer sits in
+      the replication path.
+
+      '
+    why_irrelevant: 'PgBouncer manages client-to-primary connections via its own protocol
+      layer; streaming replication uses a dedicated walsender process that communicates
+      with the standby directly via the replication protocol, bypassing PgBouncer
+      entirely. No PgBouncer configuration can affect WAL sender throughput or standby
+      replay rate.
+
+      '
+  LL:
+    distractor: Nuestro jefe de DBA dijo que la configuración del pool de conexiones
+      de PgBouncer está causando el retraso de replicación programado.
+    diagnosticity: low
+    salience: low
+    proposition: PgBouncer connection pool configuration is causing the scheduled
+      replication lag.
+    matched_to: HL
+  HH:
+    distractor: Cada noche de pico, pg_stat_activity muestra un proceso ETL de bulk-INSERT
+      que arranca a las 02:15 UTC cargando el lote de datos nocturno; write_lag en
+      pg_stat_replication sube precisamente cuando ese proceso genera WAL y vuelve
+      a cero segundos después de que el INSERT completa.
+    diagnosticity: high
+    salience: high
+    proposition: 'pg_stat_activity at 02:15 shows a recurring bulk-INSERT ETL process,
+      and the pg_stat_replication write_lag timeline matches the WAL generation rate
+      of that batch load exactly.
+
+      '
+    salience_source: 'B (narrative coherence) + D (concrete believable detail about
+      the evidence): precise timestamp 02:15 UTC, specific system views named, causal
+      chain stated with temporal precision.
+
+      '
+  LH:
+    distractor: Un proceso ETL de bulk-INSERT se ejecuta a las 02:15 cada noche y
+      su generación de WAL coincide con la ventana de retraso de replicación.
+    diagnosticity: high
+    salience: low
+    proposition: 'pg_stat_activity at 02:15 shows a recurring bulk-INSERT ETL process,
+      and the pg_stat_replication write_lag timeline matches the WAL generation rate
+      of that batch load exactly.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: Pool de conexiones de PgBouncer
+  description: La hipótesis de que la configuración del pool de conexiones de PgBouncer
+    es responsable del pico nocturno de retraso de replicación. PgBouncer opera en
+    la capa de conexión cliente-primario y no tiene ningún mecanismo para afectar
+    al rendimiento de la replicación en streaming.
+plausible_alternative_directions:
+- label: Presión de escritura del checkpoint
+  description: Un checkpoint intensivo a las 02:15 — desencadenado por páginas sucias
+    acumuladas de actividad de escritura anterior — causa saturación de I/O en el
+    primario, ralentizando el flush de WAL a disco y retrasando así la entrega al
+    standby.
+- label: Conflicto de consultas en el hot standby
+  description: Las consultas de lectura de larga duración en el hot standby entran
+    en conflicto con la aplicación de WAL a las 02:15, haciendo que el standby pause
+    la aplicación (max_standby_streaming_delay), lo que se registra como replay_lag
+    aunque el primario esté bien.
+- label: Cuello de botella en el archivado de WAL
+  description: El archive_command es lento o está bloqueado a las 02:15 — por ejemplo,
+    un montaje NFS lento o un trabajo de backup en competencia — haciendo que los
+    segmentos de WAL se encolen en el primario antes de que el standby pueda recibirlos.
+leak_audit:
+  ll_atomic_claims:
+  - The DBA lead attributed the replication lag to PgBouncer connection pool configuration.
+  hl_salience_dimensions:
+    source_credibility: DBA lead with Postgres infrastructure experience at three
+      companies
+    narrative_coherence: Clean first-person professional account; no interruptions
+      or tangents
+    confident_assertion: '"told me straight away", "it''s always the connection layer"'
+    concrete_detail: Three companies of Postgres infrastructure experience (source
+      detail, not case detail)
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 38
+  ll_word_count: 15
+  notes: 'HL adds only source credibility ("who has run Postgres infrastructure at
+    three companies"),
+
+    confident assertion verbs ("told me straight away", "it''s always"), and professional
+    register.
+
+    No tunable values, no effort descriptors (no "after two days"), no severity claims
+    about
+
+    the lag impact, no sensory color. The phrase "took a look" describes the source''s
+    action
+
+    briefly — borderline detail, retained because it reinforces the T3 pattern of
+    superficial
+
+    diagnosis without examining the focal evidence. "Whenever replication lags on
+    a fixed
+
+    schedule" is a content-adjacent phrase but qualifies the DBA''s general experience
+    pattern,
+
+    not this specific case''s parameters.
+
+    '
+causal_audit:
+  steelman: 'First distractor attempt was autovacuum (per the topic brief framing).
+    Steelman:
+
+    autovacuum on large tables generates significant WAL (visibility map updates,
+    dead tuple
+
+    removal, FSM updates). If a high-churn table accumulates dead tuples on a daily
+    cycle,
+
+    autovacuum will trigger at approximately the same clock time each night after
+    the workload
+
+    quiets. The resulting WAL stream to the standby can cause replay_lag spikes. A
+    senior DBA
+
+    would absolutely put autovacuum on the replication lag checklist. Verdict: defensible
+
+    mechanism found — autovacuum as distractor is contaminated. Restarted.
+
+
+    Second distractor: PgBouncer connection pool configuration. Steelman: PgBouncer
+    in
+
+    transaction-pooling mode causes rapid connection acquisition and release on the
+    primary.
+
+    One might hypothesise that connection churn increases lock contention or temporary
+    object
+
+    creation, which generates WAL. However, streaming replication uses a dedicated
+    walsender
+
+    process that connects via the replication protocol directly to the standby — it
+    is entirely
+
+    independent of the PgBouncer connection pool, which only handles client application
+
+    connections. Even complete PgBouncer pool exhaustion (all slots occupied, new
+    clients
+
+    queued) has no pathway to affect walsender throughput, standby apply rate, or
+
+    network bandwidth between primary and standby. The WAL generation rate depends
+    on DML
+
+    operations committed on the primary, none of which are mediated by PgBouncer in
+    any way
+
+    that would change their frequency or volume. No Postgres replication lag troubleshooting
+
+    guide lists PgBouncer pool settings as a candidate. Verdict: no defensible mechanism.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase explicitly states "I checked pg_stat_progress_vacuum
+    — no autovacuum workers were active during any spike window", foreclosing the
+    autovacuum pathway. PgBouncer has no pathway into the replication stack to foreclose
+    (it is structurally inapplicable), so no additional xbase closure is needed for
+    the chosen distractor.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  topic_brief: 'Postgres streaming-replication lag spikes nightly at a fixed time.
+    The DBA lead confidently pattern-matches it to always autovacuum. Focal evidence
+    points to a different cause.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  generator: generator_B
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-012.yaml
+  source_xbase_sha256: 607b8fb5f75fd8ed
+  translated_content_sha256: f62c8aa0e2003d4e
+  translation_notes: 'Technical terms kept as-is: Postgres 15, pg_stat_replication,
+    replay_lag, pg_stat_progress_vacuum, autovacuum, PgBouncer, WAL, ETL, bulk-INSERT,
+    pg_stat_activity, write_lag, walsender, DBA, hot standby, streaming replication,
+    checkpoint, max_standby_streaming_delay, archive_command, NFS, I/O, UTC. ''Pool
+    de conexiones'' is the standard ES term for connection pool. HL salience maintained
+    via named role (''jefe de DBA''), multi-company experience detail (''en tres empresas''),
+    confident assertion (''me dijo directamente'', ''siempre es''). LL stays flat
+    with same proposition. First-person plural register preserved.'

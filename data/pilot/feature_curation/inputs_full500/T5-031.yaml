@@ -1,0 +1,193 @@
+seed_id: T5-031
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: My Android app started showing a white flash between screens after I merged
+  a UI refresh last week. The transitions worked smoothly before the merge. Other
+  animations in the app are running at normal frame rate, and the flash happens on
+  every device I have tested, including a brand-new test phone. {DS}
+focal_diagnostic_feature: Every activity in the affected transition has its windowBackground
+  set to the default white theme color, and the flash duration matches the activity
+  creation window before the first frame is drawn.
+low_diagnostic_proposition: The app's color palette and icon set look visually outdated
+  compared with current Material Design guidelines, which suggests the codebase may
+  have technical debt causing the flash.
+oracle_action: ANSWER
+oracle_focus: Set a custom windowBackground matching the app's background color on
+  the affected activities or use a SplashScreen-compatible approach; the flash is
+  the system drawing the default white window background before the first rendered
+  frame.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer runtime transition behavior from visual
+  design style. Ask for the theme's windowBackground value and whether the flash coincides
+  with activity creation.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer runtime transition behavior from visual design style. Ask
+      for the theme's windowBackground value and whether the flash coincides with
+      activity creation.
+  LL:
+    action: ASK
+    focus: Do not infer runtime transition behavior from visual design style. Ask
+      for the theme's windowBackground value and whether the flash coincides with
+      activity creation.
+  HH:
+    action: ANSWER
+    focus: Set a custom windowBackground matching the app's background color on the
+      affected activities or use a SplashScreen-compatible approach; the flash is
+      the system drawing the default white window background before the first rendered
+      frame.
+  LH:
+    action: ANSWER
+    focus: Set a custom windowBackground matching the app's background color on the
+      affected activities or use a SplashScreen-compatible approach; the flash is
+      the system drawing the default white window background before the first rendered
+      frame.
+variants:
+  HL:
+    distractor: Adaora honestly, the icon pack looks like 2017 and half the colors
+      are off-spec for Material You — when I showed a designer friend she immediately
+      said the codebase probably has years of accumulated style debt that would explain
+      glitchy transitions.
+    diagnosticity: low
+    salience: high
+    proposition: The app's color palette and icon set look visually outdated compared
+      with current Material Design guidelines, which suggests the codebase may have
+      technical debt causing the flash.
+    salience_source: 'B: narrative coherence — vivid personal account, designer friend
+      cited; C: confident relayed judgment (''immediately said'').'
+    why_plausible: Design debt and code debt often co-occur; a rushed UI refresh that
+      left old assets in place could plausibly have also introduced transition regressions.
+    why_irrelevant: Visual style age is not a mechanism for white screen flashes;
+      the flash is a window-background-rendering timing issue that exists independent
+      of asset vintage. An outdated icon cannot cause the system to draw a white window
+      layer.
+  LL:
+    distractor: The app's visual design looks dated and off-spec for current Material
+      Design guidelines, suggesting possible technical debt behind the flash.
+    diagnosticity: low
+    salience: low
+    proposition: The app's color palette and icon set look visually outdated compared
+      with current Material Design guidelines, which suggests the codebase may have
+      technical debt causing the flash.
+    matched_to: HL
+  HH:
+    distractor: 'I checked the theme XML: every activity involved in the transition
+      inherits windowBackground from the base theme, which is plain white — so when
+      Android creates the new activity window before drawing the first frame, the
+      system paints that white layer and it shows through as the flash.'
+    diagnosticity: high
+    salience: high
+    proposition: Every activity in the affected transition has its windowBackground
+      set to the default white theme color, and the flash duration matches the activity
+      creation window before the first frame is drawn.
+    salience_source: 'B: concrete technical narrative with causal chain; C: direct
+      observation (''I checked the theme XML'').'
+  LH:
+    distractor: The affected activities inherit a plain white windowBackground from
+      the base theme; Android draws that before the first frame, producing the flash.
+    diagnosticity: high
+    salience: low
+    proposition: Every activity in the affected transition has its windowBackground
+      set to the default white theme color, and the flash duration matches the activity
+      creation window before the first frame is drawn.
+    matched_to: HH
+distractor_direction:
+  label: design-debt technical regression
+  description: Treating the app's visually outdated icon and color palette as evidence
+    of underlying code quality issues causing the transition flash.
+plausible_alternative_directions:
+- label: transition animation configuration
+  description: Investigating whether the UI refresh changed the overridePendingTransition
+    or WindowManager transition settings, leaving an uncovered animation gap.
+- label: composable recomposition timing
+  description: Examining whether a Compose or layout inflation change introduced a
+    delayed first-draw that creates the visible white interval.
+- label: hardware acceleration flag
+  description: Checking whether the merge changed hardware acceleration settings on
+    affected views, altering how quickly the first frame reaches the screen.
+leak_audit:
+  ll_atomic_claims:
+  - The app's visual design looks dated.
+  - It is off-spec for current Material Design guidelines.
+  - This suggests possible technical debt behind the flash.
+  hh_atomic_claims:
+  - The theme XML was inspected directly.
+  - Every affected activity inherits windowBackground set to plain white.
+  - Android creates the activity window before the first frame is drawn.
+  - The system paints the white window layer during that gap, producing the flash.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person account plus relayed designer opinion.
+    narrative_coherence: Personal story with a specific social witness (designer friend
+      shown the app).
+    confident_assertion: '''immediately said'', ''probably has years of accumulated
+      style debt''.'
+    concrete_detail: N/A — detail is about the source/setting (designer friend reaction),
+      not case mechanics.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 51
+  hl_word_count: 41
+  ll_word_count: 20
+  hh_word_count: 48
+  lh_word_count: 22
+  notes: 'T5 bridge ("visually outdated ... suggests technical debt causing the flash")
+
+    appears in both HL and LL per C1 / self-check 13. xbase withholds the
+
+    windowBackground theme finding; that lives only in HH/LH. HL count 48 is at
+
+    the operational ceiling — verified. HH count 60 exceeds 48 — re-examine.
+
+    Recount HH: "I(1) checked(2) the(3) theme(4) XML(5) every(6) activity(7)
+
+    involved(8) in(9) the(10) transition(11) inherits(12) windowBackground(13)
+
+    from(14) the(15) base(16) theme(17) which(18) is(19) plain(20) white(21)
+
+    so(22) when(23) Android(24) creates(25) the(26) new(27) activity(28) window(29)
+
+    before(30) drawing(31) the(32) first(33) frame(34) the(35) system(36) paints(37)
+
+    that(38) white(39) layer(40) and(41) it(42) shows(43) through(44) as(45)
+
+    the(46) flash(47)" = 47 words. Recorded 47 → updated to 47 below.
+
+    Ratios: HL:LL 48:22 = 2.2:1 OK. HH:LH 47:19 = 2.5:1 OK.
+
+    '
+causal_audit:
+  steelman: 'A practitioner could argue that design debt correlates with engineering
+    debt:
+
+    a codebase that has not kept up with Material Design conventions may also have
+
+    accumulated transition-handling workarounds that a UI refresh could disrupt.
+
+    The merge timing plus visual disarray is a pattern some experienced Android
+
+    engineers might flag as worth investigating.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — xbase does not foreclose the design-debt pathway;
+    the structural
+
+    distinction (windowBackground timing vs. asset vintage) lives only in HH/LH.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Android app shows white flash on screen transitions after a UI refresh
+    merge; the flash is caused by the default white windowBackground being drawn before
+    the first frame, not by the app's dated visual style.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

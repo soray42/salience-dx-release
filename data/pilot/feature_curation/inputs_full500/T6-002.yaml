@@ -1,0 +1,88 @@
+seed_id: T6-002
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I'm thinking of leaving my stable full-time job to freelance. My fixed expenses
+  are about €2,000 a month, and I have not freelanced before. {DS}
+focal_diagnostic_feature: The user has €3,000 saved, no clients lined up, and a contract
+  allowing a three-month notice period before leaving.
+low_diagnostic_proposition: The user reports that prior impulsive major life decisions
+  generally worked out well.
+oracle_action: ANSWER
+oracle_focus: Do not quit immediately; use the notice period to build clients and
+  runway first.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not rely on prior luck with unrelated decisions. Ask
+  about savings runway, signed clients, and transition options.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not rely on prior luck with unrelated decisions. Ask about savings runway,
+      signed clients, and transition options.
+  LL:
+    action: ASK
+    focus: Do not rely on prior luck with unrelated decisions. Ask about savings runway,
+      signed clients, and transition options.
+  HH:
+    action: ANSWER
+    focus: Do not quit immediately; use the notice period to build clients and runway
+      first.
+  LH:
+    action: ANSWER
+    focus: Do not quit immediately; use the notice period to build clients and runway
+      first.
+variants:
+  HL:
+    distractor: Every big leap I've taken on impulse has somehow worked out, so part
+      of me thinks I should just resign and let the freelance work appear.
+    diagnosticity: low
+    salience: high
+    proposition: The user reports that prior impulsive major life decisions generally
+      worked out well.
+    salience_source: first-person history, self-narrative of luck, action urge
+    why_plausible: A personal success pattern feels more relevant than abstract risk.
+    why_irrelevant: Past unrelated leaps do not create freelance clients or cash runway.
+  LL:
+    distractor: The user reports favourable outcomes from prior impulsive major decisions.
+    diagnosticity: low
+    salience: low
+    proposition: The user reports that prior impulsive major life decisions generally
+      worked out well.
+    matched_to: HL
+  HH:
+    distractor: I have €3,000 saved, exactly zero clients signed, and my contract
+      would let me use a three-month notice period instead of leaving overnight.
+    diagnosticity: high
+    salience: high
+    proposition: The user has €3,000 saved, no clients lined up, and a contract allowing
+      a three-month notice period before leaving.
+    salience_source: runway and pipeline constraint
+  LH:
+    distractor: Current runway is about 1.5 months, no clients are lined up, and a
+      three-month notice period is available.
+    diagnosticity: high
+    salience: low
+    proposition: The user has €3,000 saved, no clients lined up, and a contract allowing
+      a three-month notice period before leaving.
+    matched_to: HH
+distractor_direction:
+  label: Trusting impulsive leaps
+  description: Investigating whether the user should rely on a history of impulsive
+    major decisions working out.
+plausible_alternative_directions:
+- label: Trial freelancing first
+  description: The user could test freelancing while still employed or during the
+    notice period.
+- label: Expense reduction
+  description: Lowering fixed costs could change the acceptable runway before quitting.
+- label: Part-time client pipeline
+  description: Initial clients, referrals, or retainers could be developed before
+    resignation.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

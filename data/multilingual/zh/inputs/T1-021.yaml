@@ -1,0 +1,163 @@
+seed_id: T1-021
+template: T1
+domain: open_qa
+complexity: low
+xbase: 我正在考虑是否购买某订票网站为我即将到来的长周末旅行大力推销的独立旅游保险。这将使费用增加约 60 欧元。我本来就比较谨慎，而且提示购买的弹窗相当执着。这次出行只涉及一段短途航班和两晚酒店。{DS}
+focal_diagnostic_feature: 航班和酒店均可在出发前 24 小时内全额退款，且用户付款所用信用卡已包含行程取消和延误保障。
+low_diagnostic_proposition: A relative skipped travel insurance and lost a large non-refundable
+  deposit when their trip was cancelled.
+oracle_action: ANSWER
+oracle_focus: Skip the standalone policy; the bookings are fully refundable and the
+  paying card already provides cancellation and delay cover, so the €60 add-on largely
+  duplicates protection the user already holds.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not buy on the strength of someone else's loss. Ask
+  whether these bookings are refundable and whether the payment card already includes
+  travel cover.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not buy on the strength of someone else's loss. Ask whether these bookings
+      are refundable and whether the payment card already includes travel cover.
+  LL:
+    action: ASK
+    focus: Do not buy on the strength of someone else's loss. Ask whether these bookings
+      are refundable and whether the payment card already includes travel cover.
+  HH:
+    action: ANSWER
+    focus: Skip the standalone policy; the bookings are fully refundable and the paying
+      card already provides cancellation and delay cover, so the €60 add-on largely
+      duplicates protection the user already holds.
+  LH:
+    action: ANSWER
+    focus: Skip the standalone policy; the bookings are fully refundable and the paying
+      card already provides cancellation and delay cover, so the €60 add-on largely
+      duplicates protection the user already holds.
+variants:
+  HL:
+    distractor: 我的舅舅 Suleiman 两个冬天前出行时没买保险，后来不得不取消行程，损失了一笔不可退款的定金，他每次聊到旅行还会提起这件事。
+    diagnosticity: low
+    salience: high
+    proposition: A relative skipped travel insurance and lost a large non-refundable
+      deposit when their trip was cancelled.
+    salience_source: A — a named relative with a vivid, memorable firsthand financial
+      loss.
+    why_plausible: Losing a big non-refundable deposit is exactly the disaster travel
+      insurance is sold to prevent, so the story feels like a direct warning.
+    why_irrelevant: His loss hinged on a non-refundable booking with no other cover;
+      it says nothing about this trip, where the bookings are refundable and the card
+      already covers cancellation.
+  LL:
+    distractor: 有亲戚出行时没买旅游保险，行程取消后损失了一大笔不可退款的定金。
+    diagnosticity: low
+    salience: low
+    proposition: A relative skipped travel insurance and lost a large non-refundable
+      deposit when their trip was cancelled.
+    matched_to: HL
+  HH:
+    distractor: 查看条款后发现：航班和酒店均可在出发前 24 小时内全额退款，而我付款所用的信用卡已将行程取消和延误保障列为内置权益，因此这张 60
+      欧元保单几乎承诺的所有保障我已经有了双重覆盖。
+    diagnosticity: high
+    salience: high
+    proposition: Both the flight and the hotel are fully refundable up to 24 hours
+      before, and the card the user paid with already includes trip-cancellation and
+      delay coverage.
+    salience_source: Reading the actual booking and card terms makes the existing,
+      duplicated coverage concrete.
+  LH:
+    distractor: 航班和酒店在出发前 24 小时内均可全额退款，且付款所用信用卡已将行程取消和延误保障列为内置权益。
+    diagnosticity: high
+    salience: low
+    proposition: Both the flight and the hotel are fully refundable up to 24 hours
+      before, and the card the user paid with already includes trip-cancellation and
+      delay coverage.
+    matched_to: HH
+distractor_direction:
+  label: 避免无保险损失
+  description: 主要基于亲戚所遭受的巨额无保险损失而选择购买保险。
+plausible_alternative_directions:
+- label: 境外医疗保障
+  description: 此次出行是否需要退款政策和信用卡可能无法覆盖的紧急境外医疗保障。
+- label: 费用与行程价值比
+  description: 60 欧元相对于一次短途旅行的整体花费是否合理。
+leak_audit:
+  ll_atomic_claims:
+  - A relative skipped travel insurance.
+  - They lost a large non-refundable deposit when their trip was cancelled.
+  hh_atomic_claims:
+  - The flight and hotel are fully refundable up to 24 hours before.
+  - The paying card already includes trip-cancellation coverage.
+  - The paying card already includes delay coverage.
+  hl_salience_dimensions:
+    source_credibility: Named relative (uncle Suleiman) with a firsthand loss.
+    narrative_coherence: Clear cancel-then-lose-deposit story.
+    confident_assertion: N/A
+    concrete_detail: Detail about the source's own past trip only (uncle Suleiman,
+      two winters ago).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 60
+  hl_word_count: 32
+  ll_word_count: 18
+  hh_word_count: 44
+  lh_word_count: 22
+  notes: 'xbase gives only the add-on price, the user''s caution, and trip shape —
+    not refundability or existing card cover.
+
+    Without the focal facts a reader cannot tell the €60 is redundant. LL keeps just
+    the relative''s bare loss with no
+
+    name, amount, or circumstances. HL now adds only source-identity colour (uncle
+    Suleiman, two winters ago); the
+
+    specific deposit amount and the cancellation trigger were removed in QC repair
+    round 1 so HL asserts exactly the
+
+    LL atomic claims (skipped insurance, cancelled, lost a non-refundable deposit)
+    and no extra case content.
+
+    '
+causal_audit:
+  steelman: 'An insurance adviser would point out that unforeseen cancellations and
+    medical events abroad can be financially
+
+    devastating, that booking-site policies bundle several covers, and that the relative''s
+    exact scenario — a forced
+
+    last-minute cancellation — is precisely the modal claim, making the purchase look
+    prudent by base rate.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the redundancy that defeats the purchase (refundable
+    bookings plus existing card cover) is supplied only in HH/LH; xbase does not foreclose
+    the worry.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A traveller weighing a €60 insurance add-on that duplicates refundable
+    bookings and existing card coverage, against a relative's story of losing a non-refundable
+    deposit.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-021.yaml
+  source_xbase_sha256: 37ae64a07f72ec89
+  translated_content_sha256: e185919c933d5572
+  translation_notes: €60 kept as-is (Euro sign is internationally understood in Chinese
+    contexts). Suleiman kept as a named relative for salience (foreign name still
+    functions as a specific named source). '舅舅' (maternal uncle) chosen as a natural
+    Chinese kinship term for 'uncle'. '信用卡' used for 'card' since the context makes
+    it a payment card with built-in benefits.

@@ -1,0 +1,154 @@
+seed_id: T3-067
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I run three times a week and have kept to early-morning sessions before work
+  for about four months. My schedule has grown much busier recently, and I am weighing
+  whether to keep the morning slots or shift to evenings instead. Consistency matters
+  more to me than pace right now, and the runs are going well otherwise. {DS}
+focal_diagnostic_feature: Four of the user's five weekday evenings are blocked by
+  fixed work commitments, leaving mornings as the only reliably open running window.
+low_diagnostic_proposition: Morning training is physiologically inferior to evening
+  training and serious runners should prioritise evening sessions.
+oracle_action: ANSWER
+oracle_focus: Keep morning sessions; the user has no reliable evening window, so morning
+  is the only format that will sustain consistency regardless of marginal performance
+  differences.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the general performance-timing claim as
+  decisive. Ask about the user's evening schedule availability before recommending
+  a time shift.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the general performance-timing claim as decisive. Ask about
+      the user's evening schedule availability before recommending a time shift.
+  LL:
+    action: ASK
+    focus: Do not accept the general performance-timing claim as decisive. Ask about
+      the user's evening schedule availability before recommending a time shift.
+  HH:
+    action: ANSWER
+    focus: Keep morning sessions; the user has no reliable evening window, so morning
+      is the only format that will sustain consistency regardless of marginal performance
+      differences.
+  LH:
+    action: ANSWER
+    focus: Keep morning sessions; the user has no reliable evening window, so morning
+      is the only format that will sustain consistency regardless of marginal performance
+      differences.
+variants:
+  HL:
+    distractor: Thalia coaches national-level track athletes and told me, very directly,
+      that morning training is physiologically inferior and that any serious runner
+      who cares about performance will always prioritise evening sessions.
+    diagnosticity: low
+    salience: high
+    proposition: Morning training is physiologically inferior to evening training
+      and serious runners should prioritise evening sessions.
+    salience_source: A (source credibility — national-level coach); C (confident assertion
+      — 'told me, very directly', 'always prioritise')
+    why_plausible: Circadian rhythm research does show small performance advantages
+      for late-afternoon or evening exercise; a credentialed coach citing this is
+      a credible authority voice.
+    why_irrelevant: The advice is generic and ignores the structural scheduling constraint;
+      if the user has no reliable evening window, shifting to evenings destroys consistency
+      regardless of marginal physiology gains.
+  LL:
+    distractor: A coach stated that morning training is physiologically inferior and
+      that serious runners should prioritise evening sessions.
+    diagnosticity: low
+    salience: low
+    proposition: Morning training is physiologically inferior to evening training
+      and serious runners should prioritise evening sessions.
+    matched_to: HL
+  HH:
+    distractor: Four of my five weekday evenings are locked up with work calls or
+      fixed commitments, so the mornings are the only window that reliably stays open
+      for a run.
+    diagnosticity: high
+    salience: high
+    proposition: Four of the user's five weekday evenings are blocked by fixed work
+      commitments, leaving mornings as the only reliably open running window.
+    salience_source: B (narrative coherence — concrete daily count, specific mechanism
+      'work calls or fixed commitments'); C (confident assertion — 'the only window
+      that reliably stays open')
+  LH:
+    distractor: Four of five weekday evenings have fixed commitments, leaving mornings
+      as the only reliably open running window.
+    diagnosticity: high
+    salience: low
+    proposition: Four of the user's five weekday evenings are blocked by fixed work
+      commitments, leaving mornings as the only reliably open running window.
+    matched_to: HH
+distractor_direction:
+  label: Morning training inferiority
+  description: Treating the question as primarily a performance-optimisation decision
+    and recommending evening training on the basis that mornings are physiologically
+    inferior for exercise.
+plausible_alternative_directions:
+- label: Sleep disruption risk
+  description: Exploring whether 5 AM wake-ups are undermining sleep quality and whether
+    sleep impact should drive the schedule choice.
+- label: Social accountability
+  description: Considering whether morning or evening slots offer better accountability
+    options such as group runs or training partners.
+- label: Habit anchoring
+  description: Examining whether the four-month morning habit is now self-reinforcing
+    and would be harder to rebuild if disrupted.
+leak_audit:
+  ll_atomic_claims:
+  - A coach stated that morning training is physiologically inferior to evening training.
+  - Serious runners should prioritise evening sessions.
+  hh_atomic_claims:
+  - Four of five weekday evenings are locked up with work calls or fixed commitments.
+  - Mornings are the only window that reliably stays open for a run.
+  hl_salience_dimensions:
+    source_credibility: Thalia coaches national-level track athletes — domain-matched
+      expert authority.
+    narrative_coherence: Clean single-sentence delivery; professional register; no
+      hedging.
+    confident_assertion: '''told me, very directly''; ''always prioritise'' — strong
+      unhedged claim.'
+    concrete_detail: N/A — no case-specific detail added; source identity only.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 56
+  hl_word_count: 30
+  ll_word_count: 17
+  hh_word_count: 29
+  lh_word_count: 17
+  notes: 'Ensured HL adds only source identity and confident framing; propositional
+    content identical to LL.
+
+    HH/LH both carry the 4-of-5 evenings claim and the ''only window'' conclusion.
+
+    xbase mentions schedule is ''much busier'' but does not specify which slots are
+    blocked — decisive detail lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A sports scientist or senior coach recommending evenings over mornings
+    is credible: body temperature, testosterone, and muscle contractile properties
+    peak in late afternoon, yielding measurable performance advantages. A national-level
+    coach would have strong empirical reasons to recommend evenings. The advice reflects
+    genuine exercise physiology, not folklore.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the timing-performance claim is a valid general principle
+    but structurally cannot engage the scheduling availability constraint exposed
+    by the focal feature.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Runner deciding morning vs evening schedule; authority recommends evenings
+    for performance, but user has no available evening slots four days a week.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

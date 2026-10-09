@@ -1,0 +1,33 @@
+{
+  "seed_id": "T6-016",
+  "ll_claims_extracted": [
+    "The investor's portfolio lagged its benchmark on at least three prior occasions.",
+    "Fund fees were identified as the cause each of those prior times."
+  ],
+  "hl_case_claims": [
+    "The investor's portfolio has lagged its benchmark on prior occasions (three prior years).",
+    "Fund fees were identified (traced) as the cause each of those times.",
+    "The investor's current instinct is that this year is the same — i.e., fees are the cause in the current case."
+  ],
+  "hl_source_claims": [
+    "The investor personally traced the lag back to fund fees (first-person self-attribution of diagnosis).",
+    "The statement is made by the investor about their own prior experience ('Every time this has happened to me before')."
+  ],
+  "leaks": [
+    {
+      "text": "my first instinct is that this year is the same",
+      "category": "other_case_content"
+    }
+  ],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 29,
+    "ll": 15,
+    "xbase": 59,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "fail",
+  "repair_hint": "Remove the final clause 'my first instinct is that this year is the same' from the HL distractor. This clause bridges the past-experience pattern to the current case, constituting a case-content leak absent from LL. Revised HL: 'Every time this has happened to me before — three prior years — I traced the lag back to fund fees.' (17 words, within 25–50 limit after the semicolon and final clause are dropped; if 17 words is below the 25-word floor, expand with an allowed salience marker, e.g., 'Every time this has happened to me before — and it has happened three prior years running — I traced the lag back to fund fees each time.' (29 words))."
+}

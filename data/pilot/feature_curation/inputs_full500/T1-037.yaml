@@ -1,0 +1,172 @@
+seed_id: T1-037
+template: T1
+domain: open_qa
+complexity: low
+xbase: My countertop microwave has stopped heating food properly; a mug of water comes
+  out barely warm after two minutes. It still powers on, the light comes on, and the
+  plate turns. It is about four years old and I am wondering whether to repair or
+  just replace it. {DS}
+focal_diagnostic_feature: The microwave makes a loud buzzing hum while running and
+  the test mug of water stays cold, which points to a failed magnetron — the costliest,
+  hardest part to replace on this appliance.
+low_diagnostic_proposition: A coworker's microwave stopped heating and the fix was
+  a cheap blown ceramic fuse.
+oracle_action: ANSWER
+oracle_focus: Replace the microwave; a loud-hum no-heat symptom points to a failed
+  magnetron, whose part and labour cost typically approaches or exceeds the price
+  of a new unit at this age.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a cheap fuse from the coworker's case.
+  Ask what the running symptoms are and whether the likely failed part is cheap or
+  expensive.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a cheap fuse from the coworker's case. Ask what the running
+      symptoms are and whether the likely failed part is cheap or expensive.
+  LL:
+    action: ASK
+    focus: Do not assume a cheap fuse from the coworker's case. Ask what the running
+      symptoms are and whether the likely failed part is cheap or expensive.
+  HH:
+    action: ANSWER
+    focus: Replace the microwave; a loud-hum no-heat symptom points to a failed magnetron,
+      whose part and labour cost typically approaches or exceeds the price of a new
+      unit at this age.
+  LH:
+    action: ANSWER
+    focus: Replace the microwave; a loud-hum no-heat symptom points to a failed magnetron,
+      whose part and labour cost typically approaches or exceeds the price of a new
+      unit at this age.
+variants:
+  HL:
+    distractor: Anneli at my office had the exact same thing — her microwave ran but
+      stopped heating anything — and her repair guy found it was just a blown ceramic
+      line fuse, a part of a couple of euros.
+    diagnosticity: low
+    salience: high
+    proposition: A coworker's microwave stopped heating and the fix was a cheap blown
+      ceramic fuse.
+    salience_source: A — a named coworker relaying a technician's cheap-fix outcome
+      makes repair sound obviously worthwhile.
+    why_plausible: A blown fuse is a real cheap cause of a no-heat microwave, so the
+      story suggests this one is a trivial fix too.
+    why_irrelevant: The coworker's fuse says nothing about which part failed in THIS
+      unit; the running symptoms identify the actual culprit.
+  LL:
+    distractor: A coworker's microwave stopped heating and the fix was a cheap blown
+      ceramic fuse.
+    diagnosticity: low
+    salience: low
+    proposition: A coworker's microwave stopped heating and the fix was a cheap blown
+      ceramic fuse.
+    matched_to: HL
+  HH:
+    distractor: When I run it now there is a loud, straining buzz the whole time that
+      it never used to make, and after a full two minutes the mug of water is still
+      stone cold — the classic signature of a magnetron that has burned out.
+    diagnosticity: high
+    salience: high
+    proposition: The microwave makes a loud buzzing hum while running and the test
+      mug of water stays cold, which points to a failed magnetron — the costliest,
+      hardest part to replace on this appliance.
+    salience_source: The loud strain plus a stone-cold mug names the magnetron — the
+      expensive part — making the replace case vivid.
+  LH:
+    distractor: It runs with a loud buzzing hum and leaves the test water cold, indicating
+      a failed magnetron, the costliest part to replace.
+    diagnosticity: high
+    salience: low
+    proposition: The microwave makes a loud buzzing hum while running and the test
+      mug of water stays cold, which points to a failed magnetron — the costliest,
+      hardest part to replace on this appliance.
+    matched_to: HH
+distractor_direction:
+  label: Cheap fuse fix
+  description: Treating the no-heat fault as a trivially cheap repair (such as a blown
+    line fuse) that makes repair the obvious choice over replacement.
+plausible_alternative_directions:
+- label: High-voltage diode failure
+  description: Whether a failed HV diode or capacitor
+  a moderate-cost repair: null
+  is the cause rather than the magnetron.: null
+- label: Door-interlock or control fault
+  description: Whether a safety interlock switch or control board is preventing full
+    power delivery.
+leak_audit:
+  ll_atomic_claims:
+  - A coworker's microwave stopped heating.
+  - The fix was a cheap blown ceramic fuse.
+  hh_atomic_claims:
+  - The microwave makes a loud buzzing hum while running.
+  - The test mug of water stays cold after running.
+  - This signature indicates a failed magnetron, the costliest part to replace.
+  hl_salience_dimensions:
+    source_credibility: Named coworker (Anneli) relaying her repair guy's cheap-fuse
+      fix.
+    narrative_coherence: Clean same-symptom, quick-fix sequence.
+    confident_assertion: N/A
+    concrete_detail: Detail about the source's case (ceramic fuse, low cost) only
+      — no claim about THIS unit's failed part.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 53
+  hl_word_count: 36
+  ll_word_count: 14
+  hh_word_count: 45
+  lh_word_count: 21
+  notes: 'xbase gives the no-heat symptom, age, and that the plate/light still work,
+    but withholds the running sound and
+
+    the cold-water test that name the failed part — so HL/LL cannot resolve repair-vs-replace.
+    The decisive
+
+    magnetron signature lives only in HH/LH. LL carries only the coworker-cheap-fuse
+    claim; the name and technician
+
+    detail are HL-only and about the source''s case. QC repair: removed ''that he
+    swapped in five minutes'' from HL —
+
+    that phrase was a forbidden effort_descriptor (speed-of-repair) not mirrored in
+    LL (hl_word_count 43 → 36).
+
+    '
+causal_audit:
+  steelman: 'A repair-minded person could argue that a microwave that powers on but
+    does not heat very often has a cheap,
+
+    fixable fault — a blown line fuse, a thermal cutout, a door switch — and that
+    Anneli''s two-euro fuse is a
+
+    realistic and encouraging precedent, so repair should be tried before writing
+    the unit off. The flaw is that
+
+    this reasons from a different microwave''s fault to this one''s. xbase does not
+    say which part failed. The focal
+
+    evidence — a loud straining hum during operation together with water that stays
+    stone cold — is the recognised
+
+    signature of magnetron burnout, the one component whose part-plus-labour cost
+    rivals a new microwave, so the
+
+    cheap-fuse precedent has no bearing on this unit''s economics.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase withholds the running symptoms; the decisive
+    magnetron signature that defeats the cheap-fuse story lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A microwave repair-vs-replace decision where a loud-hum no-heat magnetron
+    failure makes replacement right, against a coworker's cheap-fuse anecdote.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

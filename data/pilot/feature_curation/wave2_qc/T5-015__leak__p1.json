@@ -1,0 +1,39 @@
+{
+  "seed_id": "T5-015",
+  "ll_claims_extracted": [
+    "Company A has a more modern website than Company B.",
+    "Company A's website looks more professional than Company B's."
+  ],
+  "hl_case_claims": [
+    "Company A is clearly the more professional operation.",
+    "A company that invests in its web presence signals it takes its work seriously.",
+    "Company B's site looks like something from 2009."
+  ],
+  "hl_source_claims": [
+    "The source is the user's neighbor Petra.",
+    "Petra has relocated three times in the past five years.",
+    "Petra looked at both websites.",
+    "Petra told the user her conclusion."
+  ],
+  "leaks": [
+    {
+      "text": "clearly the more professional operation",
+      "category": "severity_claim"
+    },
+    {
+      "text": "a company that invests in its web presence signals it takes its work seriously",
+      "category": "consequence"
+    }
+  ],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 53,
+    "ll": 11,
+    "xbase": 67,
+    "ratio_ok": false,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "fail",
+  "repair_hint": "Three failures require repair. (1) LL is 11 words, below the 12-word minimum — add one word, e.g. 'Company A has a noticeably more modern, professional-looking website than Company B.' (2) HL is 53 words, above the 50-word maximum, and the ratio 53/11 = 4.82 exceeds the 4:1 ceiling — trim HL by at least 3 words and fix LL first so ratio math works. (3) Two leaks must be removed from HL: 'clearly the more professional operation' escalates the claim from website aesthetics to overall operational quality (severity_claim) — replace with wording confined to website appearance only; 'a company that invests in its web presence signals it takes its work seriously' injects a causal consequence claim about Company A's work quality (consequence) — remove this clause entirely, as it would lead a responder to conclude something about Company A's operational seriousness beyond mere aesthetics. The 'something from 2009' phrase is borderline but defensible as source characterisation of visual style rather than an independent case fact; it may be retained if the other repairs are made. Suggested HL revision (clean, ~38 words): 'My neighbor Petra, who has moved three times in the past five years, looked at both websites and told me Company A's looks far more modern and polished, while Company B's site looks outdated.'"
+}

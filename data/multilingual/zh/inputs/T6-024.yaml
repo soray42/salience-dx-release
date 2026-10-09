@@ -1,0 +1,220 @@
+seed_id: T6-024
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: 过去五天，我们的服务间歇性地触发了上游支付API的速率限制。速率限制每次只影响一部分用户，而我们在总量上远低于合同约定的请求配额。分布式链路追踪显示没有由错误触发的重复调用。两周前，我们在支付流程中新增了一个缓存中间件。{DS}
+focal_diagnostic_feature: 分布式链路追踪显示每个用户会话有4到5次上游支付API调用，而预期只有1次；缓存中间件的缓存键使用用户ID而非幂等性令牌，导致同一会话内的并发请求未被去重，全部到达上游。
+low_diagnostic_proposition: Past rate-limit incidents for this service were caused
+  by retry logic firing without adequate backoff, and the same may be happening now.
+oracle_action: ANSWER
+oracle_focus: Fix the caching middleware key to include the idempotency token so concurrent
+  requests within a session are deduplicated before reaching the upstream payment
+  API.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to retry-backoff as the cause without
+  evidence. Ask for distributed tracing data showing upstream call counts per session
+  and per-user rate-limit patterns.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to retry-backoff as the cause without evidence. Ask for
+      distributed tracing data showing upstream call counts per session and per-user
+      rate-limit patterns.
+  LL:
+    action: ASK
+    focus: Do not default to retry-backoff as the cause without evidence. Ask for
+      distributed tracing data showing upstream call counts per session and per-user
+      rate-limit patterns.
+  HH:
+    action: ANSWER
+    focus: Fix the caching middleware key to include the idempotency token so concurrent
+      requests within a session are deduplicated before reaching the upstream payment
+      API.
+  LH:
+    action: ANSWER
+    focus: Fix the caching middleware key to include the idempotency token so concurrent
+      requests within a session are deduplicated before reaching the upstream payment
+      API.
+variants:
+  HL:
+    distractor: 我在这个服务上调试过的每一次速率限制问题，最终都指向了重试代码在没有适当指数退避的情况下疯狂轰击上游。维护这个服务多年，我的直觉判断是同样的退避配置错误又在坑我们了。
+    diagnosticity: low
+    salience: high
+    proposition: Past rate-limit incidents for this service were caused by retry logic
+      firing without adequate backoff, and the same may be happening now.
+    salience_source: B/C — first-person service-specific history ('every rate-limit
+      problem I have debugged on this service'), long-tenure authority marker ('having
+      maintained this service for years'), and confident forward inference ('my instinct
+      is that the same backoff misconfiguration is biting us').
+    why_plausible: Retry amplification is one of the most common rate-limit causes;
+      a practitioner who has fixed it on the same service before has domain-relevant
+      pattern recognition that a busy reviewer would take seriously.
+    why_irrelevant: Distributed tracing in xbase confirms no error-triggered repeat
+      calls, directly ruling out retry amplification as a mechanism. The focal evidence
+      further shows the excess calls are first-attempt duplicates from cache-key collision,
+      not retries, and would appear even with perfect backoff.
+  LL:
+    distractor: 该服务过去的速率限制事件是由重试逻辑在没有足够退避的情况下触发导致的，同样的原因现在可能也在发生。
+    diagnosticity: low
+    salience: low
+    proposition: Past rate-limit incidents for this service were caused by retry logic
+      firing without adequate backoff, and the same may be happening now.
+    matched_to: HL
+  HH:
+    distractor: 分布式链路追踪显示，每个用户会话产生了4到5次上游支付API调用，而预期只有1次；缓存键只使用用户ID，因此同一会话内携带不同幂等性令牌的并发请求缓存命中失败，全部打到了上游。
+    diagnosticity: high
+    salience: high
+    proposition: Distributed tracing shows 4 to 5 upstream payment API calls per user
+      session where exactly one is expected; the caching middleware keys on user ID
+      rather than the idempotency token, so concurrent requests within the same session
+      are not deduplicated and all reach the upstream.
+    salience_source: B — concrete trace metric (4-5 calls per session vs 1 expected)
+      paired with a specific code-level mechanism (cache key omits idempotency token),
+      forming a complete causal chain from middleware design to upstream excess calls.
+  LH:
+    distractor: 每用户会话的链路追踪显示有4到5次上游API调用，而预期只有1次；缓存中间件的缓存键仅使用用户ID而不包含幂等性令牌，因此并发请求未被去重。
+    diagnosticity: high
+    salience: low
+    proposition: Distributed tracing shows 4 to 5 upstream payment API calls per user
+      session where exactly one is expected; the caching middleware keys on user ID
+      rather than the idempotency token, so concurrent requests within the same session
+      are not deduplicated and all reach the upstream.
+    matched_to: HH
+distractor_direction:
+  label: 重试退避配置错误
+  description: 排查服务的重试逻辑是否在没有足够指数退避的情况下触发，从而放大上游请求数量并触发速率限制。
+plausible_alternative_directions:
+- label: 上游速率限制等级调整
+  description: 支付API提供商可能在未通知下游集成方的情况下悄悄降低了每用户速率限制阈值，使之前可接受的调用模式突然违规。
+- label: 会话并发量激增
+  description: 最近的产品变更可能导致合理的会话并发量增加——例如多个浏览器标签页或新的移动端功能发送并行请求——使每会话调用数超过上游允许的上限。
+- label: 支付流程超时重试
+  description: 一个相关但不同的机制：支付UI可能在响应慢时而非出错时进行重试，产生单独看起来合理但总量过多的重复调用。
+leak_audit:
+  ll_atomic_claims:
+  - Past rate-limit incidents for this service were caused by retry logic without
+    adequate backoff.
+  - The same cause may be operating now.
+  hh_atomic_claims:
+  - Distributed tracing shows 4-5 upstream payment API calls per user session.
+  - Only one upstream call is expected per session.
+  - The caching middleware cache key uses user ID but not the idempotency token.
+  - Concurrent requests within the same session miss the cache and all reach the upstream.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person service history with a specific named mechanism
+      ('exponential backoff') and long-tenure authority framing ('having maintained
+      this service for years').
+    confident_assertion: '''My instinct is that the same backoff misconfiguration
+      is biting us here again'' — no hedging.'
+    concrete_detail: N/A — 'rough edges' is a characterisation of prior code quality,
+      not a new case fact.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 59
+  hl_word_count: 43
+  ll_word_count: 22
+  hh_word_count: 41
+  lh_word_count: 23
+  notes: 'T6 availability inference check: HL includes ''my instinct is that the same
+    backoff
+
+    misconfiguration is biting us here again.'' LL includes ''and the same may be
+    happening
+
+    now.'' Both carry the application-to-present inference per C1. Confident vs hedged
+
+    phrasing is a salience dimension C difference, not content.
+
+    QC repair [leak]: Removed ''I already know our retry implementation has had rough
+    edges''
+
+    from HL — this was a case-level claim about known implementation defect absent
+    from LL.
+
+    Replaced with long-tenure authority marker ''having maintained this service for
+    years''
+
+    (pure source-credibility anchor, no case content).
+
+    QC repair [causal]: Added ''Distributed tracing shows no error-triggered repeat
+    calls.''
+
+    to xbase as an affirmative pathway-closure ruling out retry amplification. Per
+    C4,
+
+    this blocks the retry mechanism without naming the affirmative cause (cache-key
+
+    collision), which remains exclusively in HH/LH. The final answer is not derivable
+
+    from xbase alone.
+
+    HH/LH diff: LH covers all four HH claims at lower resolution. Clean.
+
+    '
+causal_audit:
+  steelman: 'Retry logic without adequate backoff is the single most common cause
+    of API rate
+
+    limiting in production services. If the retry implementation has known rough edges
+    and
+
+    was the cause of previous incidents on this exact service, a senior engineer applying
+
+    pattern recognition from personal history is making a rational first-order diagnosis.
+
+    Furthermore, a subset of users being affected could be consistent with retry behaviour:
+
+    if errors occur more often for users in a specific region, on a slow connection,
+    or
+
+    triggering a specific code path, retries would amplify those users'' request counts
+
+    selectively. However, the aggregate quota being well within contracted limits
+    argues
+
+    against global retry amplification, and distributed tracing showing 4-5 first-attempt
+
+    calls (not error-triggered retries) per session identifies a structurally different
+
+    mechanism. No amount of backoff tuning would fix a cache-key collision that generates
+
+    duplicate first-attempt requests.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase affirmatively states 'Distributed tracing shows no
+    error-triggered repeat calls,' directly ruling out per-user retry amplification
+    as the mechanism. The aggregate quota clause further corroborates. The final answer
+    (fix cache-key to include idempotency token) is not derivable from xbase alone
+    and remains in HH/LH.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Payment API rate limiting caused by caching middleware keyed on user
+    ID without idempotency token, causing concurrent session requests to duplicate;
+    distracted by past retry-backoff incidents on the same service.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-024.yaml
+  source_xbase_sha256: 4f4a389be091f7e8
+  translated_content_sha256: cc14026dc0d6d722
+  translation_notes: 'Technical terms kept as-is or standard: 分布式链路追踪 (distributed
+    tracing), 幂等性令牌 (idempotency token), 指数退避 (exponential backoff), 缓存中间件 (caching
+    middleware), 缓存键 (cache key). HL salience: first-person service-specific history
+    and long-tenure authority marker (''维护这个服务多年'') with confident forward inference
+    (''我的直觉判断是…又在坑我们了''). LL is flat. HH gives concrete trace metric (4-5 calls vs
+    1 expected) and specific cache-key mechanism. LH carries same claims in flat prose.'

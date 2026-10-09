@@ -1,0 +1,166 @@
+seed_id: T6-047
+template: T6
+domain: open_qa
+complexity: medium
+xbase: We are booking accommodation for a group trip — six adults, nine nights in
+  Lisbon. The group wants to cook some meals and do laundry mid-trip. I am comparing
+  a serviced apartment with a block of hotel rooms. The total group budget for accommodation
+  is around €2,000. {DS}
+focal_diagnostic_feature: The apartment costs €1,350 total for nine nights, has a
+  verified full kitchen and in-unit laundry, and review scores confirm it comfortably
+  sleeps six; equivalent hotel rooms for six would cost €2,700 total and require eating
+  out for every meal.
+low_diagnostic_proposition: The last time the user organised a group trip with an
+  apartment rental, kitchen access problems caused significant inconvenience.
+oracle_action: ANSWER
+oracle_focus: Book the apartment; it fits the budget, meets the kitchen and laundry
+  requirements, and comfortably accommodates six, while the hotel option exceeds budget
+  by 35%.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not rule out apartments based on a past bad experience;
+  ask about this property's verified amenities, sleep capacity, and total cost comparison
+  against the hotel option.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not rule out apartments based on a past bad experience; ask about this
+      property's verified amenities, sleep capacity, and total cost comparison against
+      the hotel option.
+  LL:
+    action: ASK
+    focus: Do not rule out apartments based on a past bad experience; ask about this
+      property's verified amenities, sleep capacity, and total cost comparison against
+      the hotel option.
+  HH:
+    action: ANSWER
+    focus: Book the apartment; it fits the budget, meets the kitchen and laundry requirements,
+      and comfortably accommodates six, while the hotel option exceeds budget by 35%.
+  LH:
+    action: ANSWER
+    focus: Book the apartment; it fits the budget, meets the kitchen and laundry requirements,
+      and comfortably accommodates six, while the hotel option exceeds budget by 35%.
+variants:
+  HL:
+    distractor: Every time I have organised a group trip with an apartment rental,
+      the kitchen situation turned into a logistical headache — someone always found
+      the equipment broken or the advertised amenities missing, so my instinct is
+      to stick with hotels and eat out.
+    diagnosticity: low
+    salience: high
+    proposition: The last time the user organised a group trip with an apartment rental,
+      kitchen access problems caused significant inconvenience.
+    salience_source: 'B: personal narrative with vivid specifics (broken equipment,
+      missing amenities); C: confident first-instinct framing (my instinct is to).'
+    why_plausible: Apartment rental quality varies widely and host amenity descriptions
+      are often inaccurate; a trip organiser burned by past misrepresentation has
+      reasonable grounds for caution.
+    why_irrelevant: The past problems relate to a different property with unverified
+      listings; the current apartment has confirmed amenities in recent reviews, so
+      the structural difference the focal feature exposes is that this property's
+      kitchen and laundry are independently verified.
+  LL:
+    distractor: Past group trips with apartment rentals ended with kitchen access
+      problems causing inconvenience, so hotels feel safer.
+    diagnosticity: low
+    salience: low
+    proposition: The last time the user organised a group trip with an apartment rental,
+      kitchen access problems caused significant inconvenience.
+    matched_to: HL
+  HH:
+    distractor: The apartment listing shows €1,350 for nine nights, and recent reviews
+      from the last two months specifically call out a well-stocked kitchen and working
+      in-unit washer-dryer; the property sleeps six with a confirmed floor plan. Booking
+      equivalent hotel rooms for the group comes to €2,700, eating out every meal
+      since they have no kitchen.
+    diagnosticity: high
+    salience: high
+    proposition: The apartment costs €1,350 total for nine nights, has a verified
+      full kitchen and in-unit laundry, and review scores confirm it comfortably sleeps
+      six; equivalent hotel rooms for six would cost €2,700 total and require eating
+      out for every meal.
+    salience_source: 'B: precise figures (€1,350 vs €2,700, nine nights) with recent
+      corroborating review evidence; C: definitive comparison framed concretely.'
+  LH:
+    distractor: The apartment is €1,350 for nine nights with verified kitchen and
+      laundry, sleeps six; six hotel rooms total €2,700 with no cooking option.
+    diagnosticity: high
+    salience: low
+    proposition: The apartment costs €1,350 total for nine nights, has a verified
+      full kitchen and in-unit laundry, and review scores confirm it comfortably sleeps
+      six; equivalent hotel rooms for six would cost €2,700 total and require eating
+      out for every meal.
+    matched_to: HH
+distractor_direction:
+  label: Past apartment rental failure
+  description: Treating previous bad experiences with group apartment rentals as the
+    dominant reason to prefer hotel accommodation for this trip.
+plausible_alternative_directions:
+- label: Group coordination friction
+  description: A single apartment may create shared-space conflict for six adults
+    over nine nights compared with separate hotel rooms.
+- label: Cancellation flexibility
+  description: Hotel rooms may offer better cancellation terms than a privately managed
+    apartment, which matters if the group trip might change.
+- label: Location convenience
+  description: The hotel may be better located for the group's planned activities,
+    offsetting cost and amenity disadvantages.
+leak_audit:
+  ll_atomic_claims:
+  - Past group trips with apartment rentals involved kitchen access problems.
+  - The user found hotels safer as a result.
+  hh_atomic_claims:
+  - The apartment costs €1,350 for nine nights.
+  - Recent reviews confirm a well-stocked kitchen and working in-unit washer-dryer.
+  - The property sleeps six with a confirmed floor plan.
+  - Equivalent hotel rooms for the group total €2,700.
+  - Hotel rooms provide no kitchen, requiring eating out for every meal.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker.
+    narrative_coherence: Personal history with vivid specifics (broken equipment,
+      missing amenities) framed as a pattern.
+    confident_assertion: '''My instinct is to'' presents the hotel preference as a
+      firm conclusion from experience.'
+    concrete_detail: N/A — detail describes past experiences, not the current property's
+      case content.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 47
+  ll_word_count: 18
+  hh_word_count: 48
+  lh_word_count: 23
+  notes: 'T6 availability: past pattern is structurally different (unverified listings
+    vs current property with verified reviews). C4 check: xbase carries group size,
+    budget, and cooking/laundry needs but not the price comparison or amenity verification
+    — those live in HH/LH. HL adds no case-content facts. HH/LH atomic diff clean.
+    QC repair: LH distractor updated to include ''sleeps six'' claim (was missing
+    vs HH); lh_word_count corrected from 20 to 23.
+
+    '
+causal_audit:
+  steelman: 'A trip organiser could argue: even properties with glowing reviews sometimes
+    have inaccurate amenity descriptions, and the reviews cited may be from solo or
+    couple stays that did not stress-test the kitchen or laundry for six people simultaneously.
+    Past failures in similar scenarios are valid Bayesian evidence for elevated caution.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the past experience provides general caution, not
+    a specific mechanism applying to this verified property. The focal feature (recent
+    confirmed reviews for the specific amenities) structurally distinguishes this
+    case from the past failures.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Group Lisbon apartment booking clearly favoured by price (half hotel
+    cost) and verified amenities, against the user's availability bias from past apartment
+    rental kitchen problems.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,173 @@
+seed_id: T1-019
+template: T1
+domain: open_qa
+complexity: medium
+xbase: I handed in my resignation after getting an external offer, and my current
+  employer has come back with a counteroffer. They are matching the new salary and,
+  more importantly to me, they say they will address the structural issues that made
+  me want to leave. I genuinely like the work here when the conditions are right.
+  I have three days to respond. {DS}
+focal_diagnostic_feature: The counteroffer is in writing and concretely fixes both
+  reasons the user wanted to leave — the team assignment and the reporting line —
+  not only the pay.
+low_diagnostic_proposition: An acquaintance who accepted a counteroffer was managed
+  out of the company within a year.
+oracle_action: ANSWER
+oracle_focus: 'The counteroffer is reasonable to accept: in writing it addresses the
+  actual drivers of the user''s departure (team and manager), not just salary, so
+  the generic "counteroffers backfire" worry does not apply to these terms.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not generalise from one person's counteroffer going
+  badly. Ask what the counteroffer actually changes and whether it addresses why the
+  user wanted out.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not generalise from one person's counteroffer going badly. Ask what
+      the counteroffer actually changes and whether it addresses why the user wanted
+      out.
+  LL:
+    action: ASK
+    focus: Do not generalise from one person's counteroffer going badly. Ask what
+      the counteroffer actually changes and whether it addresses why the user wanted
+      out.
+  HH:
+    action: ANSWER
+    focus: 'The counteroffer is reasonable to accept: in writing it addresses the
+      actual drivers of the user''s departure (team and manager), not just salary,
+      so the generic "counteroffers backfire" worry does not apply to these terms.'
+  LH:
+    action: ANSWER
+    focus: 'The counteroffer is reasonable to accept: in writing it addresses the
+      actual drivers of the user''s departure (team and manager), not just salary,
+      so the generic "counteroffers backfire" worry does not apply to these terms.'
+variants:
+  HL:
+    distractor: Thandeka, who mentors people in my field, swears that accepting a
+      counteroffer is a trap; she took one years ago, and within a year she had been
+      quietly sidelined and then let go in a reorg.
+    diagnosticity: low
+    salience: high
+    proposition: An acquaintance who accepted a counteroffer was managed out of the
+      company within a year.
+    salience_source: A — a mentor figure in the user's field giving a confident, dated
+      firsthand cautionary account.
+    why_plausible: The 'counteroffers are a trap' belief is widely repeated and sometimes
+      true when a counter only patches pay, so it lands as conventional wisdom.
+    why_irrelevant: Her outcome turned on loyalty distrust after a pay-only counter;
+      it cannot tell us whether THIS written offer, which restructures the user's
+      role, will be honoured.
+  LL:
+    distractor: Someone who accepted a counteroffer was managed out of their company
+      within a year.
+    diagnosticity: low
+    salience: low
+    proposition: An acquaintance who accepted a counteroffer was managed out of the
+      company within a year.
+    matched_to: HL
+  HH:
+    distractor: 'The counter came as a written memo from HR: a formal transfer to
+      the platform team starting next month with a named new manager, plus the salary
+      match. It directly resolves the two things — wrong team, wrong boss — that made
+      me want to leave in the first place.'
+    diagnosticity: high
+    salience: high
+    proposition: The counteroffer is in writing and concretely fixes both reasons
+      the user wanted to leave — the team assignment and the reporting line — not
+      only the pay.
+    salience_source: The written memo and the explicit team-and-manager change make
+      the substance of the counter vivid and verifiable.
+  LH:
+    distractor: The written counteroffer changes the user's team and reporting manager
+      as well as matching salary, addressing both stated reasons for leaving.
+    diagnosticity: high
+    salience: low
+    proposition: The counteroffer is in writing and concretely fixes both reasons
+      the user wanted to leave — the team assignment and the reporting line — not
+      only the pay.
+    matched_to: HH
+distractor_direction:
+  label: Counteroffers backfire
+  description: Treating acceptance as likely to end in being sidelined or pushed out,
+    on the strength of a cautionary anecdote.
+plausible_alternative_directions:
+- label: Burned bridge with new employer
+  description: Whether reneging on the accepted external offer damages a relationship
+    worth preserving.
+- label: Root cause unresolved
+  description: Whether the underlying problems would actually persist despite the
+    counteroffer's promises.
+leak_audit:
+  ll_atomic_claims:
+  - Someone accepted a counteroffer.
+  - They were managed out of the company within a year.
+  hh_atomic_claims:
+  - The counteroffer is in writing (an HR memo).
+  - It transfers the user to the platform team under a named new manager.
+  - It includes the salary match, addressing both stated reasons for wanting to leave.
+  hl_salience_dimensions:
+    source_credibility: Named mentor (Thandeka) in the user's field with a firsthand
+      account.
+    narrative_coherence: Coherent within-a-year sidelining-to-layoff arc.
+    confident_assertion: Swears it is a trap; confidently recounts her own being managed
+      out.
+    concrete_detail: Detail about the source's own past episode only.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 62
+  hl_word_count: 36
+  ll_word_count: 14
+  hh_word_count: 48
+  lh_word_count: 21
+  notes: 'xbase states that the counter matches salary and that the employer "says
+    they will address the structural issues"
+
+    that drove the user out — a vague verbal intent, not a confirmed, in-writing,
+    team-and-manager commitment. Only the
+
+    salary match is concrete in xbase; the decisive fact that the change is formal
+    and binds both drivers (specific team,
+
+    named manager) lives exclusively in HH/LH. LL is the bare backfire claim with
+    no source or timeline. Repair round 1:
+
+    HL timeline "within ten months" changed to "within a year" to match LL''s value,
+    and the loyalty-distrust mechanism
+
+    clause was deleted so HL carries only the bare managed-out outcome that LL carries
+    — restoring HL/LL propositional
+
+    equivalence.
+
+    '
+causal_audit:
+  steelman: 'A seasoned career coach would note that counteroffers frequently address
+    only compensation while leaving the
+
+    real grievances intact, and that resigning can durably mark an employee as a flight
+    risk; on that base rate the
+
+    mentor''s "you''ll be managed out" outcome is a legitimately common failure mode
+    worth weighting.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase carries only the employer's vague verbal intent
+    to address the issues; the base-rate worry is defused only by the focal fact that
+    this written counter concretely restructures team and manager, which lives in
+    HH/LH, not xbase.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A worker weighing a written counteroffer that fixes their actual reasons
+    for leaving (team and manager), against a mentor's anecdote that counteroffers
+    always backfire.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

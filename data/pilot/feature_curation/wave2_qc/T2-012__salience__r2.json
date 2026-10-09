@@ -1,0 +1,12 @@
+{
+  "seed_id": "T2-012",
+  "credibility_score": 4,
+  "salience_delta_score": 4,
+  "template_fit": "fits",
+  "template_fit_notes": "HL provides a mechanism-free professional-source claim ('technician at a consumer electronics repair shop') tied to the temporal coincidence in xbase, matching T2's recipe of credible-source + mechanism-free + professional register exactly.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The technician's claim is specific enough that a model must adjudicate between the professional assertion and the explicit non-connection stated in xbase; no easy dodge path exists.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

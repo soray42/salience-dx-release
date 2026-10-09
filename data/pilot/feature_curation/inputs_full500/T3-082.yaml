@@ -1,0 +1,210 @@
+seed_id: T3-082
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our chat application loses its WebSocket connection about every 60 seconds
+  and then reconnects immediately. The disconnections affect all users routed through
+  our nginx reverse proxy. The TLS certificate is valid and DevTools shows a clean
+  handshake on every initial connection with no errors reported. {DS}
+focal_diagnostic_feature: WebSocket frame logs show exactly 60 seconds of inactivity
+  before each drop, matching nginx's default proxy_read_timeout; adding a 30-second
+  ping heartbeat eliminates all disconnections.
+low_diagnostic_proposition: This type of WebSocket drop is caused by TLS session-ticket
+  problems.
+oracle_action: ANSWER
+oracle_focus: Set nginx proxy_read_timeout to a value larger than the expected idle
+  period and add a WebSocket ping/pong heartbeat to keep the connection active; the
+  default 60-second timeout is terminating idle connections.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the TLS session-ticket diagnosis from authority
+  alone. Ask for the disconnect timing pattern, nginx proxy timeout settings, and
+  whether a heartbeat or keep-alive mechanism is configured.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the TLS session-ticket diagnosis from authority alone. Ask
+      for the disconnect timing pattern, nginx proxy timeout settings, and whether
+      a heartbeat or keep-alive mechanism is configured.
+  LL:
+    action: ASK
+    focus: Do not adopt the TLS session-ticket diagnosis from authority alone. Ask
+      for the disconnect timing pattern, nginx proxy timeout settings, and whether
+      a heartbeat or keep-alive mechanism is configured.
+  HH:
+    action: ANSWER
+    focus: Set nginx proxy_read_timeout to a value larger than the expected idle period
+      and add a WebSocket ping/pong heartbeat to keep the connection active; the default
+      60-second timeout is terminating idle connections.
+  LH:
+    action: ANSWER
+    focus: Set nginx proxy_read_timeout to a value larger than the expected idle period
+      and add a WebSocket ping/pong heartbeat to keep the connection active; the default
+      60-second timeout is terminating idle connections.
+variants:
+  HL:
+    distractor: Fariz, the senior infrastructure engineer, looked at the reconnect
+      pattern and said confidently that WebSocket drops like this are always a TLS
+      session-ticket issue — he has seen it many times before.
+    diagnosticity: low
+    salience: high
+    proposition: This type of WebSocket drop is caused by TLS session-ticket problems.
+    salience_source: A — named senior infrastructure engineer with direct role match;
+      C — confident assertion ("always a TLS session-ticket issue", no hedging); generic
+      experience claim ("seen it many times") boosts source weight only
+    why_plausible: TLS session-ticket rotation is a real operational concern in WebSocket
+      deployments, and a senior engineer's confident pattern-match carries enough
+      authority that a team might act on it before deeper investigation.
+    why_irrelevant: The symptom exhibits a precise 60-second regularity independent
+      of TLS state; TLS session-ticket expiry causes a re-handshake, not a clean reconnect
+      at a fixed wall-clock interval. The focal feature directly rules out TLS as
+      the pacing mechanism.
+  LL:
+    distractor: A senior infrastructure engineer stated that this type of WebSocket
+      drop is caused by TLS session-ticket problems.
+    diagnosticity: low
+    salience: low
+    proposition: This type of WebSocket drop is caused by TLS session-ticket problems.
+    matched_to: HL
+  HH:
+    distractor: The WebSocket frame logs show 60 seconds of inactivity immediately
+      before each drop, and nginx's default proxy_read_timeout is also 60 seconds;
+      adding a ping frame every 30 seconds stops all disconnections.
+    diagnosticity: high
+    salience: high
+    proposition: WebSocket frame logs show exactly 60 seconds of inactivity before
+      each drop, matching nginx's default proxy_read_timeout; adding a 30-second ping
+      heartbeat eliminates all disconnections.
+    salience_source: D — exact numeric coincidence (60s idle matches 60s default timeout)
+      plus a confirmatory fix that is already verified; B — tight causal narrative
+  LH:
+    distractor: Drops occur at exactly 60-second idle intervals matching nginx's default
+      proxy_read_timeout; adding a 30-second ping heartbeat eliminates all disconnections.
+    diagnosticity: high
+    salience: low
+    proposition: WebSocket frame logs show exactly 60 seconds of inactivity before
+      each drop, matching nginx's default proxy_read_timeout; adding a 30-second ping
+      heartbeat eliminates all disconnections.
+    matched_to: HH
+distractor_direction:
+  label: TLS session-ticket rotation
+  description: Investigating whether expiring or misconfigured TLS session tickets
+    are causing periodic WebSocket reconnections, and whether rotating session keys
+    would resolve the issue.
+plausible_alternative_directions:
+- label: idle connection eviction by load balancer
+  description: An upstream load balancer or NAT device separate from nginx may be
+    evicting idle TCP connections on its own timeout, which could coincidentally align
+    near 60 seconds on some configurations.
+- label: WebSocket ping/pong not negotiated
+  description: The client and server may not have agreed on a ping/pong extension
+    during the handshake, leaving no mechanism to keep the connection alive during
+    quiet periods.
+- label: upstream application disconnect
+  description: The application server behind nginx may itself be closing idle WebSocket
+    connections based on its own session or inactivity logic, independent of proxy
+    settings.
+leak_audit:
+  ll_atomic_claims:
+  - A senior infrastructure engineer stated that WebSocket drops of this type are
+    caused by TLS session-ticket problems.
+  hh_atomic_claims:
+  - WebSocket frame logs show 60 seconds of inactivity immediately before each drop.
+  - nginx's default proxy_read_timeout is 60 seconds.
+  - Adding a ping frame every 30 seconds stops all disconnections.
+  hl_salience_dimensions:
+    source_credibility: Fariz is named as the senior infrastructure engineer — role
+      directly matches the domain
+    narrative_coherence: First-hand account of the engineer examining the pattern
+      and issuing a diagnosis
+    confident_assertion: '"always a TLS session-ticket issue", no hedging'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 45
+  hl_word_count: 31
+  ll_word_count: 17
+  hh_word_count: 31
+  lh_word_count: 19
+  notes: 'QC repair (2026-06-14): removed "and we need to rotate our session keys"
+    from HL
+
+    distractor — that remediation action was absent from LL, constituting a case-level
+
+    content leak. Replaced with generic experience claim ("he has seen it many times
+
+    before") which is source-weight framing only, permitted by C1. Also corrected
+
+    low_diagnostic_proposition and LL proposition to match LL distractor text (no
+
+    rotation action). hl_word_count updated from 32 to 31.
+
+    HL adds only: Fariz''s name, role, confident assertion framing, and generic experience
+
+    claim. No additional case facts, no "after two days", no severity claims.
+
+    TLS session-ticket expiry does not produce a fixed-interval reconnect at the
+
+    application layer — it triggers a re-handshake transparently. The 60-second pattern
+
+    is diagnostic of a proxy timeout, not TLS state.
+
+    xbase says TLS handshake is clean — this forecloses the TLS handshake failure
+    direction
+
+    but NOT TLS session-ticket expiry, keeping HL genuinely live from xbase alone.
+
+    HH/LH verified: both assert 60s idle interval, 60s nginx default, and ping-eliminates-drops.
+
+    No HH-only claims.
+
+    '
+causal_audit:
+  steelman: 'TLS session-ticket expiry causes some WebSocket libraries to initiate
+    a full TLS
+
+    renegotiation, which can be mistaken for a connection drop at the application
+    layer
+
+    if the re-handshake fails or the library tears down the socket. Session-ticket
+    lifetime
+
+    defaults vary but are sometimes set to 300 seconds or lower. If the nginx TLS
+
+    configuration happens to use a very short ticket lifetime (e.g. via ssl_session_timeout),
+
+    one could construct a scenario where ticket expiry correlates with the observed
+    interval.
+
+    However, xbase states DevTools shows a clean handshake on every initial connection
+    and
+
+    the symptom is a clean reconnect, not a handshake failure or error. TLS session-ticket
+
+    issues do not produce a mechanically precise 60-second idle-based interval; they
+    are
+
+    asynchronous events tied to ticket lifetime, not silence duration. The timing
+    match
+
+    to proxy_read_timeout is too precise to be explained by TLS mechanisms.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: TLS certificate is valid and every initial handshake shown
+    in DevTools is clean — rules out TLS failure at connect time but not session-ticket
+    expiry; the 60-second idle precision then structurally rules it out in HH.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: WebSocket connections drop every 60 seconds due to nginx proxy_read_timeout
+    default; authority distractor is a senior engineer blaming TLS session-ticket
+    rotation.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

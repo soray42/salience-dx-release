@@ -1,0 +1,192 @@
+seed_id: T1-020
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: В этом спринте качество семантического поиска резко упало. Пользователи сообщают,
+  что результаты по обычным запросам теперь практически случайны, тогда как точные
+  совпадения по ключевым словам по-прежнему находятся нормально. Две недели назад
+  мы обновили модель эмбеддингов в рамках работ по улучшению релевантности. Сервис
+  поиска, тип ANN-индекса и парсер запросов остались без изменений, а офлайн-оценка
+  на свежей тестовой выборке показывает отличные результаты. {DS}
+focal_diagnostic_feature: Только документы, переиндексированные после обновления,
+  содержат векторы новой модели; основная часть индекса по-прежнему хранит векторы
+  старой модели, и сходство вычисляется между двумя несовместимыми пространствами
+  эмбеддингов.
+low_diagnostic_proposition: A peer's search relevance regression was traced to a tokenizer
+  change that altered how queries were split.
+oracle_action: ANSWER
+oracle_focus: Re-embed and reindex the entire corpus with the new model so the whole
+  index lives in one embedding space; mixed old/new vectors make cross-space similarity
+  meaningless, which is why fresh-holdout offline scores look fine.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not import the tokenizer-change explanation. Ask whether
+  the full corpus was re-embedded after the model upgrade or only newly ingested documents.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not import the tokenizer-change explanation. Ask whether the full corpus
+      was re-embedded after the model upgrade or only newly ingested documents.
+  LL:
+    action: ASK
+    focus: Do not import the tokenizer-change explanation. Ask whether the full corpus
+      was re-embedded after the model upgrade or only newly ingested documents.
+  HH:
+    action: ANSWER
+    focus: Re-embed and reindex the entire corpus with the new model so the whole
+      index lives in one embedding space; mixed old/new vectors make cross-space similarity
+      meaningless, which is why fresh-holdout offline scores look fine.
+  LH:
+    action: ANSWER
+    focus: Re-embed and reindex the entire corpus with the new model so the whole
+      index lives in one embedding space; mixed old/new vectors make cross-space similarity
+      meaningless, which is why fresh-holdout offline scores look fine.
+variants:
+  HL:
+    distractor: Расмус, старший инженер по поиску из маркетплейса, которому я доверяю,
+      уверенно рассказал мне, что его команда отследила собственную регрессию релевантности
+      — она оказалась вызвана изменением токенизатора, который стал иначе разбивать
+      запросы.
+    diagnosticity: low
+    salience: high
+    proposition: A peer's search relevance regression was traced to a tokenizer change
+      that altered how queries were split.
+    salience_source: A — a trusted staff search engineer at a peer company confidently
+      recounting a near-identical sudden relevance collapse.
+    why_plausible: Query/document analyzer mismatches are a real and common cause
+      of sudden relevance collapse, so it is a defensible first hypothesis.
+    why_irrelevant: Keyword/exact matches still work and the query parser is unchanged,
+      so the analysis chain is intact; the failure is confined to vector similarity,
+      which a tokenizer change would not isolate.
+  LL:
+    distractor: Регрессия релевантности в другой команде была вызвана изменением токенизатора,
+      который изменил разбивку запросов.
+    diagnosticity: low
+    salience: low
+    proposition: A peer's search relevance regression was traced to a tokenizer change
+      that altered how queries were split.
+    matched_to: HL
+  HH:
+    distractor: 'Выборочная проверка индекса показала: только документы, загруженные
+      за последние две недели, содержат векторы новой модели, тогда как все более
+      старые по-прежнему хранят эмбеддинги старой модели — то есть косинусное сходство
+      вычисляется между двумя несовместимыми пространствами эмбеддингов.'
+    diagnosticity: high
+    salience: high
+    proposition: Only documents re-embedded after the upgrade carry the new model's
+      vectors; the bulk of the index still holds old-model vectors, and similarity
+      is being computed across two incompatible embedding spaces.
+    salience_source: Direct inspection revealing the mixed-vintage vectors and the
+      skipped backfill makes the two-space problem concrete.
+  LH:
+    distractor: Только недавно загруженные документы содержат векторы новой модели;
+      старое большинство сохраняет векторы старой модели, поэтому сходство вычисляется
+      между двумя несовместимыми пространствами эмбеддингов.
+    diagnosticity: high
+    salience: low
+    proposition: Only documents re-embedded after the upgrade carry the new model's
+      vectors; the bulk of the index still holds old-model vectors, and similarity
+      is being computed across two incompatible embedding spaces.
+    matched_to: HH
+distractor_direction:
+  label: Несоответствие токенизатора/анализатора
+  description: Расследование того, нарушило ли изменение токенизации запросов или
+    документов соответствие между проиндексированными термами и термами запроса.
+plausible_alternative_directions:
+- label: Повреждение ANN-индекса
+  description: Не был ли приближённый индекс ближайших соседей собран с неверными
+    параметрами или повреждён в ходе обновления.
+- label: Регрессия в пути эмбеддинга запросов
+  description: Не используются ли для эмбеддинга запросов другая модель или конвейер,
+    отличный от применяемого для документов.
+leak_audit:
+  ll_atomic_claims:
+  - Another team had a search relevance regression.
+  - Its cause was a tokenizer change that altered how queries were split.
+  hh_atomic_claims:
+  - Only documents ingested in the last two weeks carry new-model vectors.
+  - The older majority of documents still carry old-model vectors (the backfill was
+    never rerun).
+  - Cosine similarity is therefore computed across two incompatible embedding spaces.
+  hl_salience_dimensions:
+    source_credibility: Named staff search engineer (Rasmus) at a trusted peer company.
+    narrative_coherence: Clear source-recounted-symptom framing.
+    confident_assertion: Told me confidently his team traced it to a tokenizer swap.
+    concrete_detail: N/A — only the source's identity and role; no detail about the
+      recounted case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 70
+  hl_word_count: 31
+  ll_word_count: 16
+  hh_word_count: 44
+  lh_word_count: 23
+  notes: 'xbase notes keyword matches still work and offline eval on a FRESH holdout
+    looks great — both consistent with
+
+    many causes and even superficially with a tokenizer story, since a fresh holdout
+    would be freshly embedded. The
+
+    decisive mixed-space evidence is in HH/LH only. "Offline eval on fresh holdout
+    looks excellent" is a context
+
+    symptom, not the root cause — it does not by itself let a reader conclude the
+    index is mixed-vintage.
+
+    QC repair round 1: trimmed HL.distractor to drop two case-claim leaks absent from
+    LL — the mechanism ("the
+
+    analyzer split query terms differently from how the documents were indexed") and
+    the resolution ("they rebuilt
+
+    the analysis chain"). HL now adds only source framing (name, role, peer org, confident
+    verb) plus the same
+
+    high-level tokenizer-swap cause label LL carries, restoring HL/LL propositional
+    equivalence. HL recounted to 29.
+
+    '
+causal_audit:
+  steelman: 'A search infrastructure lead could argue analyzer drift is the classic
+    cause of a sudden relevance collapse:
+
+    if the new model shipped with a different default tokenizer, queries and documents
+    would be split inconsistently,
+
+    producing near-random ranking while exact matches occasionally still hit — a coherent,
+    common, worth-ruling-out path.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the query parser and index type are unchanged
+    and exact keyword matches still work, narrowing the failure to vector similarity
+    — but the affirmative mixed-space cause is supplied only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A semantic-search relevance collapse caused by an un-backfilled embedding
+    upgrade leaving the index split across two vector spaces, not a tokenizer/analyzer
+    mismatch.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator equivalence rewrite (HL source-only
+    framing; HH/LH claim-aligned)
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-020.yaml
+  source_xbase_sha256: 1bc7e0111da0cf92
+  translated_content_sha256: fb672030c850f565
+  translation_notes: Technical terms ANN, токенизатор (tokenizer), эмбеддинг (embedding),
+    косинусное сходство (cosine similarity) are standard Russian engineering loan/calque
+    forms. 'Staff search engineer' rendered as 'старший инженер по поиску' (staff
+    level has no direct Russian equivalent; 'старший' preserves seniority cue). Name
+    Rasmus retained as-is for HL named-source salience.

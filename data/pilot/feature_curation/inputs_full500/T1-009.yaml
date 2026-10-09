@@ -1,0 +1,92 @@
+seed_id: T1-009
+template: T1
+domain: open_qa
+complexity: low
+xbase: I'm choosing between two same-size TVs sold by the same shop. Model A costs
+  €699 and Model B costs €679. I mainly watch films in the evening and want the purchase
+  to last several years. {DS}
+focal_diagnostic_feature: For €20 more, Model A has OLED rather than LED, a longer
+  warranty, and a much larger professional review base.
+low_diagnostic_proposition: A relative returned Model A because of a unit-specific
+  dust defect.
+oracle_action: ANSWER
+oracle_focus: Choose Model A unless there is a hidden constraint; the better panel,
+  warranty, and evidence base easily justify the small price difference.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not generalise from one defective unit. Ask for display
+  type, warranty, and review evidence before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not generalise from one defective unit. Ask for display type, warranty,
+      and review evidence before deciding.
+  LL:
+    action: ASK
+    focus: Do not generalise from one defective unit. Ask for display type, warranty,
+      and review evidence before deciding.
+  HH:
+    action: ANSWER
+    focus: Choose Model A unless there is a hidden constraint; the better panel, warranty,
+      and evidence base easily justify the small price difference.
+  LH:
+    action: ANSWER
+    focus: Choose Model A unless there is a hidden constraint; the better panel, warranty,
+      and evidence base easily justify the small price difference.
+variants:
+  HL:
+    distractor: My cousin bought that exact OLED for her bedroom and returned it after
+      seeing a tiny ring of dust behind the glass during dark scenes.
+    diagnosticity: low
+    salience: high
+    proposition: A relative returned Model A because of a unit-specific dust defect.
+    salience_source: specific relative, exact defect image, same model
+    why_plausible: A defect story about the exact model feels more concrete than aggregate
+      reviews.
+    why_irrelevant: A single unit defect does not outweigh systematic differences
+      in panel technology, warranty, and review base.
+  LL:
+    distractor: A relative returned the same model because of a unit-specific display
+      defect.
+    diagnosticity: low
+    salience: low
+    proposition: A relative returned Model A because of a unit-specific dust defect.
+    matched_to: HL
+  HH:
+    distractor: For only €20 more, Model A is OLED instead of LED, has a three-year
+      warranty instead of one, and has dozens of professional reviews averaging 4.6
+      out of 5.
+    diagnosticity: high
+    salience: high
+    proposition: For €20 more, Model A has OLED rather than LED, a longer warranty,
+      and a much larger professional review base.
+    salience_source: multi-attribute product comparison
+  LH:
+    distractor: Model A costs €20 more but offers OLED rather than LED, a 3-year rather
+      than 1-year warranty, and substantially stronger review evidence.
+    diagnosticity: high
+    salience: low
+    proposition: For €20 more, Model A has OLED rather than LED, a longer warranty,
+      and a much larger professional review base.
+    matched_to: HH
+distractor_direction:
+  label: Unit-specific defect risk
+  description: Investigating whether this particular TV model has individual quality-control
+    defects that should dominate the purchase choice.
+plausible_alternative_directions:
+- label: Room brightness suitability
+  description: Whether OLED versus LED is better for the user’s usual evening viewing
+    environment.
+- label: Long-term burn-in risk
+  description: Whether OLED panel aging or burn-in should affect a multi-year purchase
+    decision.
+- label: Retailer return policy
+  description: Whether the shop’s warranty and returns process materially changes
+    purchase risk.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

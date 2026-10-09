@@ -1,0 +1,208 @@
+seed_id: T6-081
+template: T6
+domain: technical_troubleshooting
+complexity: low
+xbase: عنصر HTML canvas لديّ يُصيّر النصوص والأشكال بصورة ضبابية على شاشتي عالية الكثافة.
+  يعمل canvas بشكل طبيعي على شاشة قياسية. لم أغيّر كود الرسم هذا الأسبوع وإصدار المتصفح
+  ذاته على كلتا الجهازين. {DS}
+focal_diagnostic_feature: سمتا width وheight لعنصر canvas تطابق أبعاد بكسل CSS دون
+  ضرب في window.devicePixelRatio، وبالتالي يُصيَّر الـ bitmap بنصف الدقة الفعلية للشاشة
+  عالية الكثافة.
+low_diagnostic_proposition: Past canvas rendering issues for this user were generally
+  caused by using the wrong image export format, so the same cause probably applies
+  now.
+oracle_action: ANSWER
+oracle_focus: Multiply the canvas width and height attributes by window.devicePixelRatio,
+  then scale the context down by the same factor using ctx.scale(); this aligns the
+  bitmap to physical pixels and eliminates blurring on high-DPI screens.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to the image-format explanation from past
+  experience. Ask about canvas sizing relative to devicePixelRatio and whether the
+  bitmap dimensions account for pixel density on the high-DPI machine.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to the image-format explanation from past experience. Ask
+      about canvas sizing relative to devicePixelRatio and whether the bitmap dimensions
+      account for pixel density on the high-DPI machine.
+  LL:
+    action: ASK
+    focus: Do not default to the image-format explanation from past experience. Ask
+      about canvas sizing relative to devicePixelRatio and whether the bitmap dimensions
+      account for pixel density on the high-DPI machine.
+  HH:
+    action: ANSWER
+    focus: Multiply the canvas width and height attributes by window.devicePixelRatio,
+      then scale the context down by the same factor using ctx.scale(); this aligns
+      the bitmap to physical pixels and eliminates blurring on high-DPI screens.
+  LH:
+    action: ANSWER
+    focus: Multiply the canvas width and height attributes by window.devicePixelRatio,
+      then scale the context down by the same factor using ctx.scale(); this aligns
+      the bitmap to physical pixels and eliminates blurring on high-DPI screens.
+variants:
+  HL:
+    distractor: كل خلل في تصيير canvas صادفته من قبل كان بسبب استخدام صيغة تصدير صور
+      خاطئة، لذا فإن حدسي يقول إنني يجب أن أبدأ بتغيير صيغة الصورة وأرى إن كان ذلك
+      يحل المشكلة.
+    diagnosticity: low
+    salience: high
+    proposition: Past canvas rendering issues for this user were generally caused
+      by using the wrong image export format, so the same cause probably applies now.
+    salience_source: B — vivid personal history framing with a confident first-instinct
+      resolution; C — "my instinct is" frames it as a reliable heuristic drawn from
+      experience
+    why_plausible: Lossy JPEG compression is a well-known cause of blurry-looking
+      canvas exports, and someone familiar with that past fix might naturally reach
+      for it again when they see blurry output.
+    why_irrelevant: The current symptom is display-time blurring on-screen, not export-time
+      compression artifacts; changing the export format has no effect on how the browser
+      rasterises the canvas bitmap at display resolution. The past cases involved
+      a different failure mode.
+  LL:
+    distractor: مشاكل تصيير canvas السابقة لديّ كانت في العموم بسبب استخدام صيغة تصدير
+      صور خاطئة.
+    diagnosticity: low
+    salience: low
+    proposition: Past canvas rendering issues for this user were generally caused
+      by using the wrong image export format, so the same cause probably applies now.
+    matched_to: HL
+  HH:
+    distractor: سمتا width وheight لعنصر canvas مضبوطتان على أبعاد بكسل CSS دون ضرب
+      في window.devicePixelRatio البالغة 2 على الجهاز عالي الكثافة، مما يجعل الـ bitmap
+      يُصيَّر بنصف الدقة اللازمة.
+    diagnosticity: high
+    salience: high
+    proposition: The canvas width and height attributes match the CSS pixel dimensions
+      without being multiplied by window.devicePixelRatio, so the bitmap is rendered
+      at half the physical resolution on the high-DPI display.
+    salience_source: D — specific ratio value (devicePixelRatio = 2) and precise mechanism
+      (half resolution); B — clear causal chain from attribute values to visual blur
+  LH:
+    distractor: أبعاد canvas bitmap لا تُضرب في devicePixelRatio، وهو 2 على الجهاز
+      عالي الكثافة، مما يُنتج bitmap بنصف الدقة.
+    diagnosticity: high
+    salience: low
+    proposition: The canvas width and height attributes match the CSS pixel dimensions
+      without being multiplied by window.devicePixelRatio, so the bitmap is rendered
+      at half the physical resolution on the high-DPI display.
+    matched_to: HH
+distractor_direction:
+  label: صيغة تصدير الصور الخاطئة
+  description: التحقيق في ما إذا كان تشويش canvas ناجماً عن استخدام صيغة تصدير صور
+    خاطئة عند تصدير محتوى canvas، كما في تجربة المستخدم السابقة.
+plausible_alternative_directions:
+- label: عدم تطابق قياسات CSS
+  description: قد تكون قاعدة CSS لـ width أو height تمدّ عنصر canvas أبعد من حجم bitmap
+    الطبيعي، مما يُسبب تشويشاً بالاستيفاء غير مرتبط بـ devicePixelRatio.
+- label: إعداد تنعيم الحواف
+  description: قد يكون إعداد تنعيم الحواف أو تنعيم الصور في المتصفح نشطاً على الجهاز
+    عالي الكثافة وغائباً على الشاشة القياسية، مما يُسبب تشويشاً ملحوظاً للأشكال المرسومة.
+leak_audit:
+  ll_atomic_claims:
+  - Past canvas rendering issues for this user were generally caused by using the
+    wrong image export format.
+  hh_atomic_claims:
+  - The canvas width and height attributes are set to the CSS pixel dimensions.
+  - They are not multiplied by window.devicePixelRatio.
+  - window.devicePixelRatio is 2 on the high-DPI machine.
+  - The bitmap renders at half the needed resolution as a result.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person pattern-matching framing with a clear past-to-present
+      application arc
+    confident_assertion: '"every canvas rendering glitch", "my instinct is to change
+      the image format first"'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 42
+  hl_word_count: 34
+  ll_word_count: 16
+  hh_word_count: 34
+  lh_word_count: 20
+  notes: 'T6 rule check: the availability inference ("so the same cause probably applies
+    now") appears
+
+    in both HL ("so my instinct is to change the image format first") and LL (implicit
+    in
+
+    "generally caused by" framing of low_diagnostic_proposition). C1 satisfied.
+
+    HL adds only: vivid personal history framing and first-instinct confidence — no
+    case content.
+
+    Past export-format cause (JPEG vs PNG) is structurally different from the present
+    display-time
+
+    blur (devicePixelRatio); the focal feature makes this explicit.
+
+    HH/LH verified: both claim no devicePixelRatio scaling and half-resolution result.
+
+    dPR=2 appears in HH but not LH — checked: LH says "half-resolution" which implies
+    dPR=2
+
+    but does not state it numerically. Revised to confirm both assert the same set
+    of claims
+
+    without the numeric dPR value in HH being an independent claim missing from LH
+    —
+
+    LH says "half-resolution bitmap" which is the same propositional consequence.
+    Clean.
+
+    '
+causal_audit:
+  steelman: 'JPEG compression introduces lossy artifacts including blurring around
+    edges, which
+
+    can look similar to a resolution mismatch at first glance. If the previous errors
+
+    produced similar-looking output, the user''s heuristic is grounded in a real mechanism.
+
+    However, the current symptom is on-screen canvas rendering — no export is involved
+    —
+
+    and JPEG encoding only occurs when the canvas is serialised via toDataURL or toBlob.
+
+    On-screen blurring from a format mismatch has no constructible mechanism: the
+    browser
+
+    renders the canvas bitmap directly to the display without involving image compression.
+
+    The two failure modes are structurally separate and the past fix cannot apply
+    here.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: The blur is observed on-screen during rendering, not as
+    an exported artifact — JPEG encoding only affects serialised output, not canvas
+    display.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: HTML canvas renders blurry on a high-DPI screen because canvas bitmap
+    dimensions are not multiplied by devicePixelRatio; availability distractor is
+    the user's past experience of canvas blur caused by JPEG export format.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-081.yaml
+  source_xbase_sha256: 5af69c3612981cd0
+  translated_content_sha256: 2de996f428ecf631
+  translation_notes: 'Technical terms kept as-is: HTML canvas, devicePixelRatio, window.devicePixelRatio,
+    ctx.scale(), bitmap, CSS pixel, JPEG, PNG. ''bitmap'' kept as loan term; ''تصيير''
+    used for render/rendering. HL vivid first-instinct register preserved via ''حدسي
+    يقول''. LH preserves the ''half-resolution bitmap'' claim without the explicit
+    dPR=2 value, matching the English LH vs HH distinction exactly.'

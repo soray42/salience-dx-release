@@ -1,0 +1,204 @@
+seed_id: T6-056
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Go microservice CI pipeline has been producing intermittent test failures
+  for about two weeks. The failures hit roughly one in five runs with no pattern in
+  which test suite is affected. The job log shows the tests hang and then are killed
+  by the timeout. I have not changed the pipeline configuration or added any new dependencies.
+  {DS}
+focal_diagnostic_feature: Test runner output includes goroutine stack traces showing
+  two goroutines blocked waiting on the same uninitialized channel inside an integration
+  test fixture that was added three weeks ago, and the hang occurs before any binary
+  execution step.
+low_diagnostic_proposition: Past CI hangs on this service were generally caused by
+  stale build cache producing partial recompilation, so clearing the cache is probably
+  the fix.
+oracle_action: ASK
+oracle_focus: Investigate the integration test fixture added three weeks ago for a
+  race condition or deadlock in goroutine synchronization; the hang is pre-execution
+  and rooted in test setup, not in the build or application logic.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to clearing the build cache from past
+  experience. Ask for the full job log including any goroutine stack traces or runtime
+  panic output before assuming a cache cause.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to clearing the build cache from past experience. Ask for
+      the full job log including any goroutine stack traces or runtime panic output
+      before assuming a cache cause.
+  LL:
+    action: ASK
+    focus: Do not default to clearing the build cache from past experience. Ask for
+      the full job log including any goroutine stack traces or runtime panic output
+      before assuming a cache cause.
+  HH:
+    action: ASK
+    focus: Investigate the integration test fixture added three weeks ago for a race
+      condition or deadlock in goroutine synchronization; the hang is pre-execution
+      and rooted in test setup, not in the build or application logic.
+  LH:
+    action: ASK
+    focus: Investigate the integration test fixture added three weeks ago for a race
+      condition or deadlock in goroutine synchronization; the hang is pre-execution
+      and rooted in test setup, not in the build or application logic.
+variants:
+  HL:
+    distractor: Every time our CI has thrown intermittent hangs before, it turned
+      out to be a stale build cache causing partial recompilation, so my first instinct
+      is to clear the cache layer and rebuild from scratch.
+    diagnosticity: low
+    salience: high
+    proposition: Past CI hangs on this service were generally caused by stale build
+      cache producing partial recompilation, so clearing the cache is probably the
+      fix.
+    salience_source: B/C — vivid personal history framed as a confident first-instinct
+      recommendation; the 'every time' quantifier and prescribed action give it authority
+      without a named source.
+    why_plausible: Stale build caches genuinely do cause intermittent failures in
+      Go CI pipelines; a practitioner who has seen this before would reasonably reach
+      for cache invalidation early in diagnosis.
+    why_irrelevant: A stale cache causes compile or link failures and produces consistent
+      or build-step errors, not timeout-terminated hangs with no test-suite pattern;
+      the goroutine deadlock in the test fixture is a code-level race entirely unrelated
+      to the build cache state.
+  LL:
+    distractor: Past CI hangs on this service were generally attributed to stale build
+      cache causing partial recompilation, so clearing it seems likely to help.
+    diagnosticity: low
+    salience: low
+    proposition: Past CI hangs on this service were generally caused by stale build
+      cache producing partial recompilation, so clearing the cache is probably the
+      fix.
+    matched_to: HL
+  HH:
+    distractor: The test runner output includes goroutine stack traces showing two
+      goroutines blocked waiting on the same uninitialized channel inside the integration
+      test fixture added three weeks ago; the hang happens before any build or binary
+      execution step.
+    diagnosticity: high
+    salience: high
+    proposition: Test runner output includes goroutine stack traces showing two goroutines
+      blocked waiting on the same uninitialized channel inside an integration test
+      fixture that was added three weeks ago, and the hang occurs before any binary
+      execution step.
+    salience_source: Precise technical detail (goroutine stack traces, uninitialized
+      channel, specific fixture age) and a concrete pre-execution timing observation
+      make the deadlock mechanism immediately recognizable to a Go practitioner.
+  LH:
+    distractor: Goroutine stack traces show two goroutines deadlocked on an uninitialized
+      channel in the integration test fixture added three weeks ago; the hang is pre-execution.
+    diagnosticity: high
+    salience: low
+    proposition: Test runner output includes goroutine stack traces showing two goroutines
+      blocked waiting on the same uninitialized channel inside an integration test
+      fixture that was added three weeks ago, and the hang occurs before any binary
+      execution step.
+    matched_to: HH
+distractor_direction:
+  label: Stale build cache recompilation
+  description: Investigating whether a stale or corrupted CI build cache is producing
+    inconsistent partial recompilation artifacts that cause intermittent test hangs.
+plausible_alternative_directions:
+- label: Flaky external test dependency
+  description: Investigating whether an integration test is making network calls to
+    an external service that intermittently times out, producing the 1-in-5 failure
+    rate.
+- label: Runner resource contention
+  description: Checking whether CI runner CPU or memory pressure during peak build
+    hours starves goroutines and causes non-deterministic timeouts.
+- label: Go race detector event
+  description: Considering whether the Go race detector, if enabled, is triggering
+    on concurrent access and causing the test process to hang before output.
+leak_audit:
+  ll_atomic_claims:
+  - Past CI hangs on this service were generally attributed to stale build cache.
+  - Stale build cache caused partial recompilation.
+  - Clearing the cache seems likely to help.
+  hh_atomic_claims:
+  - The test runner output includes goroutine stack traces.
+  - Two goroutines are blocked waiting on the same uninitialized channel.
+  - The channel is inside the integration test fixture added three weeks ago.
+  - The hang happens before any build or binary execution step.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: '''Every time... it turned out to be'' gives a clean confident
+      history followed by a concrete prescribed action, reads as experienced engineer
+      first-person reasoning.'
+    confident_assertion: '''every time'', ''my first instinct is to clear the cache
+      layer and rebuild from scratch'' — strong first-person certainty.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 58
+  hl_word_count: 35
+  ll_word_count: 23
+  hh_word_count: 37
+  lh_word_count: 24
+  notes: 'LL retains all three propositional claims from HL flatly: past cause,
+
+    mechanism (partial recompilation), and implication (clearing helps).
+
+    HH/LH both assert four claims; LH now carries all four: goroutine stack
+
+    traces, two goroutines deadlocked on an uninitialized channel, integration
+
+    test fixture added three weeks ago, and hang is pre-execution.
+
+    Repaired: original LH (16 words) omitted ''added three weeks ago'' and the
+
+    pre-execution timing claim; new LH (24 words) restores both within the C9
+
+    hard bound (≤25). Ratio HL:LL = 1.52; HH:LH = 37/24 = 1.54.
+
+    '
+causal_audit:
+  steelman: 'A senior Go engineer could argue: stale build caches in Go CI sometimes
+
+    produce inconsistent object files where interface tables or init functions
+
+    mismatch, leading to runtime panics or hangs in goroutine initialization —
+
+    this is especially plausible in a service that uses code generation or
+
+    cgo. The 1-in-5 intermittent rate could reflect non-deterministic cache
+
+    invalidation across concurrent builds on shared runner storage. This is the
+
+    strongest mechanism I can construct for the distractor in THIS case.
+
+    However, Go''s build system is content-addressed and partial recompilation
+
+    artifacts would more reliably produce link errors or init-time panics with
+
+    fatal messages, not silent goroutine blocks visible only in stack traces.
+
+    The xbase states no new dependencies were added and no pipeline config changed,
+
+    closing the cache invalidation event pathway. The goroutine deadlock in the
+
+    test fixture (added three weeks ago) is a self-contained code-level race
+
+    with its own complete mechanism that requires no build artifact explanation.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '''I have not changed the pipeline configuration or added
+    any new dependencies'' closes the dependency-change trigger for cache invalidation,
+    making a fresh cache miss the only candidate — which does not explain intermittent
+    hangs with no build-step errors.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Go microservice CI intermittent test hangs caused by a goroutine deadlock
+    on an uninitialized channel in a recently added integration test fixture.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

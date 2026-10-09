@@ -1,0 +1,32 @@
+{
+  "seed_id": "T6-014",
+  "ll_claims_extracted": [
+    "every past pest problem the speaker has had with their plants was fungus gnats",
+    "the fungus gnats were caused by overwatering"
+  ],
+  "hl_case_claims": [
+    "every outbreak the speaker has had was fungus gnats from overwatering",
+    "there have been three such outbreaks",
+    "the speaker believes the current problem is the same thing (fungus gnats from overwatering)"
+  ],
+  "hl_source_claims": [
+    "the speaker has been growing houseplants for over a decade"
+  ],
+  "leaks": [
+    {
+      "text": "three times now",
+      "category": "other_case_content"
+    }
+  ],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 34,
+    "ll": 14,
+    "xbase": 66,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": false,
+  "verdict": "fail",
+  "repair_hint": "1) LL leak: remove 'three times now' from HL.distractor (the count is already in xbase; HL should not re-inject it as a case-content claim distinguishing it from LL). Alternatively, add the count to LL.distractor so both cells carry it ('Every past pest problem I've had — three times — was fungus gnats from overwatering'). 2) HH/LH equivalence: LH.distractor omits two HH claims — 'clearly distinct from the plant tissue' and 'spreading to adjacent plants'. Either drop these from HH or add equivalent flat statements to LH (e.g., 'Fine webbing is visible on the undersides of several leaves and along the stems, clearly distinct from the plant tissue, and spreading to adjacent plants.')."
+}

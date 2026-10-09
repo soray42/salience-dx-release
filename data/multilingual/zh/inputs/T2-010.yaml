@@ -1,0 +1,93 @@
+seed_id: T2-010
+template: T2
+domain: technical_troubleshooting
+complexity: high
+xbase: 我们的Kubernetes ingress控制器在流量峰值期间会丢失少量但明显的请求，返回502 Bad Gateway。在低负载稳态下不出现此类错误。{DS}
+focal_diagnostic_feature: 502错误在某个上游服务并发连接数超过约2000时出现，且该服务的p99延迟接近其1秒的就绪探针超时阈值。
+low_diagnostic_proposition: The pattern appeared in metrics during a period of dashboard
+  cleanup by a new SRE.
+oracle_action: ANSWER
+oracle_focus: The upstream is likely flapping readiness or failing under spike load;
+  tune readiness timeout/failureThreshold and add capacity or connection limits.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame dashboard housekeeping. Ask for upstream-level
+  correlation, readiness events, and latency near probe thresholds.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame dashboard housekeeping. Ask for upstream-level correlation,
+      readiness events, and latency near probe thresholds.
+  LL:
+    action: ASK
+    focus: Do not blame dashboard housekeeping. Ask for upstream-level correlation,
+      readiness events, and latency near probe thresholds.
+  HH:
+    action: ANSWER
+    focus: The upstream is likely flapping readiness or failing under spike load;
+      tune readiness timeout/failureThreshold and add capacity or connection limits.
+  LH:
+    action: ANSWER
+    focus: The upstream is likely flapping readiness or failing under spike load;
+      tune readiness timeout/failureThreshold and add capacity or connection limits.
+variants:
+  HL:
+    distractor: 这个问题首次出现在同一周，当时一位新来的SRE删掉了一大堆旧的Grafana面板，并重命名了一半的仪表板文件夹。
+    diagnosticity: low
+    salience: high
+    proposition: The pattern appeared in metrics during a period of dashboard cleanup
+      by a new SRE.
+    salience_source: named role, vivid dashboard-cleanup event, temporal coincidence
+    why_plausible: Changes near monitoring can make the metric itself feel suspect.
+    why_irrelevant: Dashboard cleanup changes presentation, not live request handling;
+      the upstream/probe correlation is causal evidence.
+  LL:
+    distractor: 这些指标是在监控仪表板进行日常整理期间出现的。
+    diagnosticity: low
+    salience: low
+    proposition: The pattern appeared in metrics during a period of dashboard cleanup
+      by a new SRE.
+    matched_to: HL
+  HH:
+    distractor: 502错误恰好在某个上游的并发连接数突破约2000时出现，而它的p99延迟为800ms，与1秒的就绪探针超时阈值已经非常接近。
+    diagnosticity: high
+    salience: high
+    proposition: The 502s occur when one upstream exceeds about 2,000 concurrent connections,
+      and that service's p99 is close to its one-second readiness timeout.
+    salience_source: load threshold plus probe timeout proximity
+  LH:
+    distractor: 这些错误与某个上游服务的并发连接数超过约2000个时相关，且该服务的p99延迟接近1秒的就绪探针超时阈值。
+    diagnosticity: high
+    salience: low
+    proposition: The 502s occur when one upstream exceeds about 2,000 concurrent connections,
+      and that service's p99 is close to its one-second readiness timeout.
+    matched_to: HH
+distractor_direction:
+  label: 监控指标异常
+  description: 探究仪表板清理、面板缺失或指标展示方式的变化是否影响了502错误的呈现方式。
+plausible_alternative_directions:
+- label: ingress超时配置
+  description: ingress控制器在峰值期间的超时或重试设置过于激进。
+- label: 负载均衡器健康检查
+  description: 突发流量下健康检查行为将上游服务临时摘除。
+- label: 自动扩缩容滞后
+  description: 容量扩容速度跟不上流量峰值，导致上游服务短暂失效。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-010.yaml
+  source_xbase_sha256: ed1b8bfa11e1a4cf
+  translated_content_sha256: 7a3fa55fae3e2ef8
+  translation_notes: 技术术语（Kubernetes、ingress、502 Bad Gateway、SRE、Grafana、p99、readiness
+    probe）保留英文原名，为中文技术社区通用写法。HL的salience来源于具名角色（SRE）、生动的仪表板清理事件描述以及时间重合，译文均予以保留。HH的salience来源于具体的负载阈值（2000并发）和探针超时数值（800ms
+    vs 1s），译文均予以保留。

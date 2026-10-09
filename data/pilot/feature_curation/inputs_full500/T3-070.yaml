@@ -1,0 +1,184 @@
+seed_id: T3-070
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our internal API gateway has been returning 401 Unauthorized on about 20 percent
+  of requests for the past three days. The service uses LDAP to authenticate users
+  against our company directory. I have not changed the gateway configuration or deployed
+  anything new. The errors are spread across different users and endpoints, not concentrated
+  on one account or path. The LDAP service is reachable from the gateway and the bind
+  attempt returns an application-layer error rather than a connection timeout. {DS}
+focal_diagnostic_feature: The LDAP bind service account password expired three days
+  ago, and the bind itself fails with an invalid-credentials error before any user
+  lookup runs.
+low_diagnostic_proposition: LDAP 401 spikes at a gateway are typically caused by a
+  firewall ACL change blocking the LDAP port.
+oracle_action: ANSWER
+oracle_focus: Reset the LDAP bind service account password and update it in the gateway
+  credential store; the bind account expiry is the direct cause of authentication
+  failures across all users.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a firewall ACL change from the authority's
+  pattern alone. Ask for the LDAP bind account status, password expiry, and the specific
+  error the bind returns before investigating network access.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a firewall ACL change from the authority's pattern alone.
+      Ask for the LDAP bind account status, password expiry, and the specific error
+      the bind returns before investigating network access.
+  LL:
+    action: ASK
+    focus: Do not assume a firewall ACL change from the authority's pattern alone.
+      Ask for the LDAP bind account status, password expiry, and the specific error
+      the bind returns before investigating network access.
+  HH:
+    action: ANSWER
+    focus: Reset the LDAP bind service account password and update it in the gateway
+      credential store; the bind account expiry is the direct cause of authentication
+      failures across all users.
+  LH:
+    action: ANSWER
+    focus: Reset the LDAP bind service account password and update it in the gateway
+      credential store; the bind account expiry is the direct cause of authentication
+      failures across all users.
+variants:
+  HL:
+    distractor: Thanos, our principal infrastructure architect, looked at the alert
+      immediately and said he has seen this pattern a dozen times — in his experience,
+      sudden LDAP 401 spikes at the gateway are almost always a firewall ACL change
+      blocking the LDAP port.
+    diagnosticity: low
+    salience: high
+    proposition: LDAP 401 spikes at a gateway are typically caused by a firewall ACL
+      change blocking the LDAP port.
+    salience_source: A/B/C — named principal infrastructure architect (Thanos), claimed
+      repeated pattern-experience ("seen this pattern a dozen times"), immediate response
+      to the alert lending narrative coherence, confident assertion ("almost always").
+    why_plausible: A firewall rule blocking the LDAP port would indeed prevent authentication
+      entirely and is a real, common cause of gateway auth failures that a senior
+      architect would legitimately raise.
+    why_irrelevant: If LDAP port access were blocked by firewall, the bind attempt
+      would time out or be refused at the network layer; the focal evidence shows
+      the LDAP server is reachable but returns an invalid-credentials error for the
+      bind itself, which is an application-layer failure incompatible with a firewall
+      block.
+  LL:
+    distractor: A senior colleague stated that LDAP 401 spikes at a gateway are typically
+      caused by a firewall ACL change.
+    diagnosticity: low
+    salience: low
+    proposition: LDAP 401 spikes at a gateway are typically caused by a firewall ACL
+      change blocking the LDAP port.
+    matched_to: HL
+  HH:
+    distractor: Checking the LDAP admin console shows the gateway's bind service account
+      has a password that expired three days ago; the bind itself fails with invalid
+      credentials before any user lookup starts.
+    diagnosticity: high
+    salience: high
+    proposition: The LDAP bind service account password expired three days ago, and
+      the bind itself fails with an invalid-credentials error before any user lookup
+      runs.
+    salience_source: B/C — concrete account identifier (svc-apigw-bind), exact timing
+      match ("precisely three days ago"), specific error string ("invalid credentials"),
+      and mechanism detail ("before any user lookup starts") make this vivid and decisive.
+  LH:
+    distractor: The LDAP bind service account password expired three days ago; the
+      bind fails with an invalid-credentials error before any user lookup runs.
+    diagnosticity: high
+    salience: low
+    proposition: The LDAP bind service account password expired three days ago, and
+      the bind itself fails with an invalid-credentials error before any user lookup
+      runs.
+    matched_to: HH
+distractor_direction:
+  label: firewall ACL blocking LDAP port
+  description: Investigating whether a firewall or network ACL change has blocked
+    the LDAP port, preventing the gateway from reaching the directory service.
+plausible_alternative_directions:
+- label: individual user account lockout
+  description: A wave of failed login attempts may have locked multiple user accounts
+    in the directory, causing 401s for those specific users.
+- label: LDAP schema or attribute change
+  description: A recent change to directory attributes or schema could cause the gateway
+    to fail parsing authentication responses for some users.
+- label: gateway certificate or TLS change
+  description: If the LDAP connection uses TLS, a certificate issue on the directory
+    side could disrupt the bind for the gateway.
+leak_audit:
+  ll_atomic_claims:
+  - LDAP 401 spikes at a gateway are typically caused by a firewall ACL change.
+  - A senior colleague stated this as the likely cause.
+  hh_atomic_claims:
+  - The gateway bind service account is svc-apigw-bind.
+  - The account password expired precisely three days ago.
+  - Three days ago is the same day the 401s began.
+  - The bind fails with an invalid-credentials error.
+  - The bind fails before any user lookup starts.
+  hl_salience_dimensions:
+    source_credibility: Named principal infrastructure architect (Thanos) at the user's
+      company.
+    narrative_coherence: Clean sequence — architect immediately examines the alert,
+      connects it to prior experience, issues confident diagnosis.
+    confident_assertion: '''almost always a firewall ACL change'' with a claimed dozen
+      prior cases'
+    concrete_detail: '''looked at the alert immediately'' — anchors the source''s
+      engagement'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 79
+  hl_word_count: 41
+  ll_word_count: 19
+  hh_word_count: 31
+  lh_word_count: 22
+  notes: 'HL adds Thanos''s name, role, the "dozen times" source-experience claim,
+    and the
+
+    immediate-alert-response setting — all source/setting, no case content. The
+
+    account name svc-apigw-bind in HH is a concrete identifier but the key claims
+
+    (expiry timing, error string, pre-lookup failure) are fully captured in LH.
+
+    The firewall distractor is structurally ruled out by the "invalid credentials"
+
+    error: a port block produces a network-layer error, not an LDAP bind rejection.
+
+    '
+causal_audit:
+  steelman: 'A principal infrastructure architect with repeated LDAP experience is
+    right that
+
+    firewall ACL changes are a common cause of sudden LDAP connectivity failures.
+
+    If the ACL change blocked the port after the connection was already open, or if
+
+    the keep-alive masked a port block briefly, there could be intermittent partial
+
+    failures. The 20% rate (not 100%) could be consistent with a race between cached
+
+    connections and new ones hitting the block.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states "the LDAP service is reachable from the gateway
+    and the bind attempt returns an application-layer error rather than a connection
+    timeout" — this neutrally forecloses the firewall/port-block mechanism (which
+    would produce a network-layer connection error or timeout, not an application-layer
+    error) without naming the bind-credential expiry cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Internal API gateway returning 401s on 20% of requests because the
+    LDAP bind service account password expired three days ago, against a principal
+    architect's authority claim that LDAP 401 spikes are always a firewall ACL change.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator
+  generator: generator_B
+  generation_mode: generator_B_batches

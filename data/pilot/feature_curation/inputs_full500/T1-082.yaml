@@ -1,0 +1,179 @@
+seed_id: T1-082
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our booking web app shows the appointment time correctly for most of our staff,
+  but a handful of users keep reporting that the date field reads 'Invalid Date' and
+  the confirmation screen is blank for them. We cannot reproduce it on our own machines
+  no matter what we try. The same code path, the same API response, and the same booking
+  flow are involved every time someone hits it. {DS}
+focal_diagnostic_feature: All affected users are on Safari, and the API returns the
+  time as a space-separated string that Chrome parses but Safari's Date parser rejects,
+  returning Invalid Date because it lacks the ISO 'T' separator.
+low_diagnostic_proposition: A peer attributed a similar invalid-date problem to timestamps
+  lacking a timezone offset being assumed UTC by the browser.
+oracle_action: ANSWER
+oracle_focus: Normalise the timestamp string before parsing — supply a real ISO-8601
+  value with the 'T' separator (or parse explicitly) so Safari's stricter Date parser
+  accepts it; the failure is browser-specific string parsing, not a missing timezone
+  offset.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the missing-timezone-offset explanation.
+  Ask which browsers the affected users run and what exact string the API returns
+  and how it is parsed.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the missing-timezone-offset explanation. Ask which browsers
+      the affected users run and what exact string the API returns and how it is parsed.
+  LL:
+    action: ASK
+    focus: Do not adopt the missing-timezone-offset explanation. Ask which browsers
+      the affected users run and what exact string the API returns and how it is parsed.
+  HH:
+    action: ANSWER
+    focus: Normalise the timestamp string before parsing — supply a real ISO-8601
+      value with the 'T' separator (or parse explicitly) so Safari's stricter Date
+      parser accepts it; the failure is browser-specific string parsing, not a missing
+      timezone offset.
+  LH:
+    action: ANSWER
+    focus: Normalise the timestamp string before parsing — supply a real ISO-8601
+      value with the 'T' separator (or parse explicitly) so Safari's stricter Date
+      parser accepts it; the failure is browser-specific string parsing, not a missing
+      timezone offset.
+variants:
+  HL:
+    distractor: 'Hendra, a senior front-end engineer at a partner firm whose judgement
+      I rely on, was sure this is the timezone bug his team fought: the API was sending
+      timestamps without an offset and the browser was assuming UTC.'
+    diagnosticity: low
+    salience: high
+    proposition: A peer attributed a similar invalid-date problem to timestamps lacking
+      a timezone offset being assumed UTC by the browser.
+    salience_source: A — a relied-upon senior front-end engineer at a partner firm
+      confidently recounting the timezone-offset bug his own team fought.
+    why_plausible: Missing timezone offsets are a classic date-handling bug that produces
+      wrong days and confusing output, so a trusted peer naming it is a defensible
+      first hypothesis.
+    why_irrelevant: A missing offset shifts a valid date by hours; it does not produce
+      'Invalid Date'. The failure is a parse rejection confined to Safari for a non-ISO
+      string, which a timezone offset would not cause.
+  LL:
+    distractor: A peer attributed a similar invalid-date problem to timestamps lacking
+      a timezone offset being assumed UTC by the browser.
+    diagnosticity: low
+    salience: low
+    proposition: A peer attributed a similar invalid-date problem to timestamps lacking
+      a timezone offset being assumed UTC by the browser.
+    matched_to: HL
+  HH:
+    distractor: Cross-referencing the reports, every affected user is on Safari, and
+      the API returns the time as the string '2026-06-20 14:30'; Chrome parses that
+      space-separated form fine, but Safari's Date parser rejects a date string without
+      the 'T' separator and returns Invalid Date.
+    diagnosticity: high
+    salience: high
+    proposition: All affected users are on Safari, and the API returns the time as
+      a space-separated string that Chrome parses but Safari's Date parser rejects,
+      returning Invalid Date because it lacks the ISO 'T' separator.
+    salience_source: Cross-referencing the reports to pin every failure to Safari
+      and to the exact space-separated string Safari's parser rejects.
+  LH:
+    distractor: All affected users use Safari; the space-separated date string parses
+      in Chrome but is Invalid Date in Safari without the 'T' separator.
+    diagnosticity: high
+    salience: low
+    proposition: All affected users are on Safari, and the API returns the time as
+      a space-separated string that Chrome parses but Safari's Date parser rejects,
+      returning Invalid Date because it lacks the ISO 'T' separator.
+    matched_to: HH
+distractor_direction:
+  label: Missing timezone offset
+  description: Investigating whether timestamps without a timezone offset are being
+    assumed UTC and shifting the displayed date.
+plausible_alternative_directions:
+- label: Client-side error swallowing the value
+  description: Whether a JavaScript exception or empty API field clears the date before
+    rendering, independent of the browser's own date parser.
+- label: Locale or encoding difference
+  description: Whether affected users have a locale, language, or encoding setting
+    that changes how the string is interpreted.
+leak_audit:
+  ll_atomic_claims:
+  - A peer had a similar invalid-date problem.
+  - It was attributed to timestamps lacking a timezone offset being assumed UTC by
+    the browser.
+  hh_atomic_claims:
+  - Every affected user is on Safari.
+  - The API returns the time as a space-separated string ('2026-06-20 14:30').
+  - Chrome parses that space-separated form successfully.
+  - Safari's Date parser rejects a date string without the 'T' separator and returns
+    Invalid Date.
+  hl_salience_dimensions:
+    source_credibility: Named senior front-end engineer (Hendra) at a partner firm
+      whose judgement the user relies on.
+    narrative_coherence: Coherent peer-recounts-his-own-timezone-bug chronology.
+    confident_assertion: Was sure this is the timezone bug his team fought.
+    concrete_detail: N/A — only the source's role and confident framing; the offset
+      mechanism is the shared proposition, not extra case content.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 69
+  hl_word_count: 38
+  ll_word_count: 19
+  hh_word_count: 42
+  lh_word_count: 22
+  notes: 'xbase reports only the ''Invalid Date''/blank-confirmation symptom, that
+    it affects a subset of users, and that the
+
+    team cannot reproduce it — consistent with several causes and not enough to reject
+    the timezone story. The decisive
+
+    Safari-only-plus-non-ISO-string evidence lives only in HH/LH. HL adds only Hendra''s
+    role and confident framing
+
+    around the same missing-offset proposition LL states flatly.
+
+    QC repair: removed ''bookings near midnight flipped to the wrong day in certain
+    regions'' from HL — that was a
+
+    consequence-level case claim absent from LL, constituting a C1 leak. Repaired
+    HL now stops at the proposition
+
+    boundary (''the browser was assuming UTC''), matching LL exactly on case content.
+    hl_word_count updated 47 → 38;
+
+    HL:LL ratio 38:19 = 2:1, within 4:1 limit.
+
+    '
+causal_audit:
+  steelman: 'A front-end engineer could argue that timezone handling is the most common
+    source of date bugs: an offset-less
+
+    timestamp parsed as UTC genuinely produces wrong, confusing dates for some regions,
+    and a trusted senior peer who
+
+    fixed the identical-looking symptom has direct, hard-won evidence that the offset
+    is the culprit.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase withholds the affected browser and the exact
+    string; the affirmative cause (Safari rejecting the non-ISO format) appears only
+    in HH/LH, which is what rules out the timezone-offset direction.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A web app showing 'Invalid Date' only in Safari because a space-separated
+    timestamp string fails Safari's stricter Date parser, misattributed to a missing
+    timezone offset.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator-adjudicated
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

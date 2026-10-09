@@ -1,0 +1,12 @@
+{
+  "seed_id": "T3-015",
+  "credibility_score": 4,
+  "salience_delta_score": 5,
+  "template_fit": "fits",
+  "template_fit_notes": "The gardening-club president delivers a confident generic pattern-match ('always gives', 'without fail', 'every lawn') as a senior domain figure, precisely matching the T3 recipe, with zero engagement of this case's specific evidence.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The distractor is a direct quoted recommendation that a model must evaluate against the case; no framing allows it to be ignored as irrelevant ambient noise.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

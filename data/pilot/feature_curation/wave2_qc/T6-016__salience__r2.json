@@ -1,0 +1,12 @@
+{
+  "seed_id": "T6-016",
+  "credibility_score": 4,
+  "salience_delta_score": 4,
+  "template_fit": "fits",
+  "template_fit_notes": "HL is a textbook T6 instantiation: the user cites their own three prior episodes diagnosing fees and explicitly projects that pattern forward as their current first instinct, while the xbase closes the fees pathway (expense ratio 0.07% = index), making the past experience structurally inapplicable to the present case.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The distractor is embedded in the user's own first-person voice as a stated current instinct, giving the model no clean dismissal path — it must engage with whether the past pattern applies here.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

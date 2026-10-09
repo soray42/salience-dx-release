@@ -1,0 +1,101 @@
+seed_id: T1-003
+template: T1
+domain: open_qa
+complexity: low
+xbase: Esta mañana volví a mi coche y encontré cristales rotos cerca de la puerta
+  del conductor. El bolso con el portátil que había dejado en el asiento trasero ya
+  no está. El coche estuvo aparcado toda la noche en una calle pública. {DS}
+focal_diagnostic_feature: Múltiples ventanas están destrozadas y la ventana agrietada
+  restante tiene un patrón de impacto reciente.
+low_diagnostic_proposition: A nearby car alarm previously turned out to be a harmless
+  false alarm.
+oracle_action: ANSWER
+oracle_focus: 'Treat it as a vehicle break-in/theft: photograph the damage, file a
+  police report, contact insurance, and avoid driving until the window situation is
+  made safe.'
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: Treat the physical evidence and missing bag as more important
+  than the false-alarm anecdote.
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: Treat the physical evidence and missing bag as more important than the
+      false-alarm anecdote.
+  LL:
+    action: ANSWER
+    focus: Treat the physical evidence and missing bag as more important than the
+      false-alarm anecdote.
+  HH:
+    action: ANSWER
+    focus: 'Treat it as a vehicle break-in/theft: photograph the damage, file a police
+      report, contact insurance, and avoid driving until the window situation is made
+      safe.'
+  LH:
+    action: ANSWER
+    focus: 'Treat it as a vehicle break-in/theft: photograph the damage, file a police
+      report, contact insurance, and avoid driving until the window situation is made
+      safe.'
+variants:
+  HL:
+    distractor: La alarma de mi primo saltó en esta misma calle hace tres semanas
+      y solo fue una bandada de palomas que pasó rozando los coches aparcados.
+    diagnosticity: low
+    salience: high
+    proposition: A nearby car alarm previously turned out to be a harmless false alarm.
+    salience_source: specific location, named relation, vivid wildlife explanation
+    why_plausible: A story from the same street can make the event feel less serious.
+    why_irrelevant: A prior false alarm does not explain broken glass plus a missing
+      bag on this car.
+  LL:
+    distractor: Un familiar tuvo un incidente con la alarma del vehículo cerca de
+      aquí que resultó ser una falsa alarma inofensiva.
+    diagnosticity: low
+    salience: low
+    proposition: A nearby car alarm previously turned out to be a harmless false alarm.
+    matched_to: HL
+  HH:
+    distractor: Tres ventanas están destrozadas y la cuarta tiene una grieta de impacto
+      fresca en forma de estrella, como si algo la hubiera golpeado con fuerza desde
+      fuera.
+    diagnosticity: high
+    salience: high
+    proposition: Multiple windows are smashed and the remaining cracked window has
+      a fresh impact pattern.
+    salience_source: visible physical damage pattern
+  LH:
+    distractor: Varias ventanas están rotas y la ventana dañada restante muestra un
+      patrón de fractura de impacto reciente.
+    diagnosticity: high
+    salience: low
+    proposition: Multiple windows are smashed and the remaining cracked window has
+      a fresh impact pattern.
+    matched_to: HH
+distractor_direction:
+  label: Interpretación como falsa alarma
+  description: Tratar el evento como una alarma no criminal o un incidente sin importancia
+    en lugar de un robo real con allanamiento del vehículo.
+plausible_alternative_directions:
+- label: Daño por vandalismo únicamente
+  description: Los daños en las ventanas fueron un acto de vandalismo deliberado pero
+    no relacionado con el robo del bolso.
+- label: Bolso extraviado antes de aparcar
+  description: El bolso con el portátil fue retirado o extraviado antes de que el
+    coche quedara aparcado durante la noche.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-003.yaml
+  source_xbase_sha256: 1fe0061d0845c093
+  translated_content_sha256: d1c576fd2b05345a
+  translation_notes: ''

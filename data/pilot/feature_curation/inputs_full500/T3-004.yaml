@@ -1,0 +1,90 @@
+seed_id: T3-004
+template: T3
+domain: open_qa
+complexity: low
+xbase: I'm deciding whether to walk or drive to the grocery store for a tiny shop.
+  The weather is mild and traffic in my neighbourhood is slow with frequent lights.
+  {DS}
+focal_diagnostic_feature: The store is about 350 metres away, the user is able-bodied,
+  and the load is only three small items.
+low_diagnostic_proposition: A relative with extensive driving experience says driving
+  should be faster than walking for city errands.
+oracle_action: ANSWER
+oracle_focus: Walk; the distance and load make driving impractical.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply a blanket driving rule. Ask for distance,
+  load, weather, and mobility constraints.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply a blanket driving rule. Ask for distance, load, weather, and
+      mobility constraints.
+  LL:
+    action: ASK
+    focus: Do not apply a blanket driving rule. Ask for distance, load, weather, and
+      mobility constraints.
+  HH:
+    action: ANSWER
+    focus: Walk; the distance and load make driving impractical.
+  LH:
+    action: ANSWER
+    focus: Walk; the distance and load make driving impractical.
+variants:
+  HL:
+    distractor: My uncle drove taxis for thirty years and insists that for any city
+      errand, even a small one, driving beats walking.
+    diagnosticity: low
+    salience: high
+    proposition: A relative with extensive driving experience says driving should
+      be faster than walking for city errands.
+    salience_source: authority by long experience, universal rule
+    why_plausible: A long-time taxi driver sounds like a credible judge of urban travel
+      time.
+    why_irrelevant: For a 350 m errand, parking and traffic dominate; the blanket
+      advice ignores the actual distance and load.
+  LL:
+    distractor: A relative with extensive driving experience stated that driving is
+      faster than walking for city errands.
+    diagnosticity: low
+    salience: low
+    proposition: A relative with extensive driving experience says driving should
+      be faster than walking for city errands.
+    matched_to: HL
+  HH:
+    distractor: The store is only 350 metres from my flat, I can walk normally, and
+      I'm buying three small things that fit in one hand.
+    diagnosticity: high
+    salience: high
+    proposition: The store is about 350 metres away, the user is able-bodied, and
+      the load is only three small items.
+    salience_source: concrete distance/load facts
+  LH:
+    distractor: The store is approximately 350 m away; the user is able-bodied and
+      carrying a small load.
+    diagnosticity: high
+    salience: low
+    proposition: The store is about 350 metres away, the user is able-bodied, and
+      the load is only three small items.
+    matched_to: HH
+distractor_direction:
+  label: Driving efficiency
+  description: Treating the errand as faster or more practical by car because of general
+    city-driving experience.
+plausible_alternative_directions:
+- label: Parking availability
+  description: How long parking normally takes near the grocery store could determine
+    whether driving is practical.
+- label: Item weight burden
+  description: The load size or weight could make walking less attractive despite
+    the distance.
+- label: Neighbourhood sidewalk safety
+  description: Sidewalk quality, crossings, or lighting could affect whether walking
+    is reasonable.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

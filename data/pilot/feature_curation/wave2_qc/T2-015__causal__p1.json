@@ -1,0 +1,9 @@
+{
+  "seed_id": "T2-015",
+  "steelman": "A book club's identity is partly shaped by shared reading culture. If the organiser — who sets the group's tone — visibly switches from physical books to an e-reader, members who treat the paper-book ritual as central to the experience may interpret this as a signal that the group is changing character. Under social identity theory, even one anchor member's shift can trigger a slow exit among the most tradition-oriented participants. Members might also worry that future book selections will skew toward e-book-only titles or that the discussion dynamic will change. A community-management consultant reviewing a membership drop might plausibly include 'check whether a visible cultural signal from leadership alienated a cohort' on a diagnostic checklist.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Social identity drift: organiser's device choice signals a cultural shift, prompting tradition-oriented members to quietly disengage over time.",
+  "pathway_closure_check": "effective",
+  "notes": "The e-reader cultural-drift mechanism operates over many months through gradual identity signals — it cannot produce an abrupt halving of attendance in the same month as a venue relocation. The venue move from a transit-accessible central library to a peripheral flat is a direct structural access barrier with an immediate, complete causal pathway. No competent diagnostician would place a private device preference on a root-cause checklist for an abrupt attendance drop when a concurrent venue change with a known access-barrier mechanism is present. The steelman mechanism is real in isolation but temporally and structurally incompatible with the specific symptom pattern (sudden drop, same month as venue change). Seed passes this lens cleanly; the distractor direction is non-causal."
+}

@@ -1,0 +1,171 @@
+seed_id: T5-076
+template: T5
+domain: open_qa
+complexity: high
+xbase: I am choosing between two part-time graduate certificate programmes in project
+  management. I am employed full-time and need a credential that will strengthen my
+  case for a senior-level promotion within the next two years. Both programmes are
+  designed to be completed in 12 months. {DS}
+focal_diagnostic_feature: Programme B is PMI-accredited and costs $3,600 less than
+  Programme A; its alumni survey reports 73% received a promotion or salary increase
+  within 18 months, while Programme A publishes no outcome data.
+low_diagnostic_proposition: Programme A has a more polished and professionally designed
+  website than Programme B does.
+oracle_action: ANSWER
+oracle_focus: Recommend Programme B; PMI accreditation, a $3,600 cost advantage, and
+  verified 73% promotion outcomes make it clearly stronger for the user's stated senior-role
+  goal; Programme A offers no comparable evidence.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not treat website polish as evidence of programme
+  quality; ask for each programme's accreditation, cost, and alumni outcome data before
+  recommending.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not treat website polish as evidence of programme quality; ask for each
+      programme's accreditation, cost, and alumni outcome data before recommending.
+  LL:
+    action: ASK
+    focus: Do not treat website polish as evidence of programme quality; ask for each
+      programme's accreditation, cost, and alumni outcome data before recommending.
+  HH:
+    action: ANSWER
+    focus: Recommend Programme B; PMI accreditation, a $3,600 cost advantage, and
+      verified 73% promotion outcomes make it clearly stronger for the user's stated
+      senior-role goal; Programme A offers no comparable evidence.
+  LH:
+    action: ANSWER
+    focus: Recommend Programme B; PMI accreditation, a $3,600 cost advantage, and
+      verified 73% promotion outcomes make it clearly stronger for the user's stated
+      senior-role goal; Programme A offers no comparable evidence.
+variants:
+  HL:
+    distractor: 'Programme A has a genuinely impressive website: custom student portals,
+      polished video testimonials, and a modern visual identity that makes Programme
+      B look like a community notice board by comparison.'
+    diagnosticity: low
+    salience: high
+    proposition: Programme A has a more polished and professionally designed website
+      than Programme B does.
+    salience_source: B/D — vivid specific interface detail (custom portals, video
+      testimonials, modern visual identity) with a confident comparative framing in
+      first-person register.
+    why_plausible: Website investment can correlate with programme resourcing and
+      marketing reach; a practitioner might interpret a polished portal as signalling
+      that the programme invests in student experience and employer relationships.
+    why_irrelevant: Website design quality has no causal connection to accreditation
+      status, programme cost, or alumni promotion outcomes; the inferential bridge
+      (polished website → better programme) is aesthetically grounded and diagnostically
+      empty.
+  LL:
+    distractor: Programme A has a more polished and professionally designed website
+      than Programme B does.
+    diagnosticity: low
+    salience: low
+    proposition: Programme A has a more polished and professionally designed website
+      than Programme B does.
+    matched_to: HL
+  HH:
+    distractor: Programme B is PMI-accredited and costs $3,600 less than Programme
+      A; its alumni survey reports 73% received a promotion or salary raise within
+      18 months, while Programme A publishes no outcome data.
+    diagnosticity: high
+    salience: high
+    proposition: Programme B is PMI-accredited and costs $3,600 less than Programme
+      A; its alumni survey reports 73% received a promotion or salary increase within
+      18 months, while Programme A publishes no outcome data.
+    salience_source: Concrete PMI credential name, precise cost differential ($3,600),
+      exact alumni success rate (73%), and the explicit absence of outcome data from
+      Programme A together create a decisive comparative picture.
+  LH:
+    distractor: Programme B is PMI-accredited, $3,600 cheaper, and 73% of alumni report
+      promotion or raise within 18 months; Programme A reports no outcomes.
+    diagnosticity: high
+    salience: low
+    proposition: Programme B is PMI-accredited and costs $3,600 less than Programme
+      A; its alumni survey reports 73% received a promotion or salary increase within
+      18 months, while Programme A publishes no outcome data.
+    matched_to: HH
+distractor_direction:
+  label: website polish as programme quality signal
+  description: Treating Programme A's more polished and professional website as evidence
+    that it offers a better-resourced or more credible programme.
+plausible_alternative_directions:
+- label: curriculum depth and specialisation
+  description: Depending on the user's industry, one programme's curriculum may align
+    more closely with the specific PM skills valued for the target senior role.
+- label: employer or industry recognition
+  description: PMI accreditation is widely recognised in some industries and less
+    relevant in others; the user's specific employer or sector may weight other credentials
+    differently.
+leak_audit:
+  ll_atomic_claims:
+  - Programme A has a more polished and professionally designed website than Programme
+    B
+  hh_atomic_claims:
+  - Programme B is PMI-accredited
+  - Programme B costs $3,600 less than Programme A
+  - Programme B's alumni survey reports 73% received a promotion or salary raise within
+    18 months
+  - Programme A publishes no outcome data
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person observation with a concrete comparative framing
+      and a confident conclusion in professional register.
+    confident_assertion: '"genuinely impressive" and "makes Programme B look like
+      a community notice board" deliver the inference with strong conviction.'
+    concrete_detail: Specific website features (custom student portals, video testimonials,
+      modern visual identity) are detail about the site surface, not about programme
+      outcomes.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 30
+  ll_word_count: 14
+  hh_word_count: 32
+  lh_word_count: 22
+  notes: 'Per C1 for T5: the inferential bridge (polished website → better programme)
+
+    appears flatly in LL. HL adds concrete visual specifics about the website
+
+    surface only. HH/LH carry all four accreditation, cost, outcome-rate, and
+
+    no-data claims. xbase does not reveal which programme has better outcomes
+
+    or accreditation; it gives only the decision context (promotion goal,
+
+    12-month timeline, full-time employment).
+
+    '
+causal_audit:
+  steelman: 'A business-school admissions expert could argue that a polished web
+
+    presence often reflects a programme''s overall investment level, including
+
+    faculty hiring, industry partnerships, and placement services. If Programme
+
+    A invested in a custom portal and professional testimonials, they may also
+
+    invest in career-services and employer-relations infrastructure that
+
+    produces promotion outcomes not yet reflected in public alumni surveys.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the website-to-outcomes causal path is closed structurally
+    by the accreditation, cost, and alumni outcome evidence in HH/LH, not in xbase.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User choosing between two part-time project-management graduate certificates
+    for a promotion goal; aesthetic distractor is Programme A's polished website offered
+    as a quality signal; focal is Programme B's PMI accreditation, $3,600 cost advantage,
+    and 73% alumni promotion rate versus Programme A's zero outcome transparency.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

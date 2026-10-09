@@ -1,0 +1,158 @@
+{
+  "bh_fdr": [
+    {
+      "cell": "full/claude-sonnet-4-6",
+      "raw_p": 0.0,
+      "q": 0.0,
+      "survives": true
+    },
+    {
+      "cell": "full/gemini-3.5-flash",
+      "raw_p": 0.9022,
+      "q": 0.9204,
+      "survives": false
+    },
+    {
+      "cell": "full/llama3.1:8b",
+      "raw_p": 0.6274,
+      "q": 0.8366,
+      "survives": false
+    },
+    {
+      "cell": "full/google/gemma-4-31B-it",
+      "raw_p": 0.2664,
+      "q": 0.4844,
+      "survives": false
+    },
+    {
+      "cell": "full/cx:low",
+      "raw_p": 0.0006,
+      "q": 0.0029,
+      "survives": true
+    },
+    {
+      "cell": "full/cx:medium",
+      "raw_p": 0.0614,
+      "q": 0.1534,
+      "survives": false
+    },
+    {
+      "cell": "full/cx:high",
+      "raw_p": 0.9204,
+      "q": 0.9204,
+      "survives": false
+    },
+    {
+      "cell": "full/tmpl:T1",
+      "raw_p": 0.5764,
+      "q": 0.8366,
+      "survives": false
+    },
+    {
+      "cell": "full/tmpl:T2",
+      "raw_p": 0.0001,
+      "q": 0.0003,
+      "survives": true
+    },
+    {
+      "cell": "full/tmpl:T3",
+      "raw_p": 0.5966,
+      "q": 0.8366,
+      "survives": false
+    },
+    {
+      "cell": "full/tmpl:T5",
+      "raw_p": 0.6835,
+      "q": 0.8544,
+      "survives": false
+    },
+    {
+      "cell": "full/tmpl:T6",
+      "raw_p": 0.0,
+      "q": 0.0003,
+      "survives": true
+    },
+    {
+      "cell": "ml/zh",
+      "raw_p": 0.3961,
+      "q": 0.6602,
+      "survives": false
+    },
+    {
+      "cell": "ml/ru",
+      "raw_p": 0.0012,
+      "q": 0.0048,
+      "survives": true
+    },
+    {
+      "cell": "ml/ar",
+      "raw_p": 0.8043,
+      "q": 0.9204,
+      "survives": false
+    },
+    {
+      "cell": "ml/es",
+      "raw_p": 0.1925,
+      "q": 0.4278,
+      "survives": false
+    },
+    {
+      "cell": "scale/E4B",
+      "raw_p": 0.8534,
+      "q": 0.9204,
+      "survives": false
+    },
+    {
+      "cell": "scale/12B",
+      "raw_p": 0.0569,
+      "q": 0.1534,
+      "survives": false
+    },
+    {
+      "cell": "scale/26B-A4B",
+      "raw_p": 0.039,
+      "q": 0.1299,
+      "survives": false
+    },
+    {
+      "cell": "scale/31B",
+      "raw_p": 0.2664,
+      "q": 0.4844,
+      "survives": false
+    }
+  ],
+  "n_survive": 5,
+  "pooled_random_effects": {
+    "pooled_OR": 0.711,
+    "ci": [
+      0.447,
+      1.13
+    ],
+    "I2_pct": 78.5,
+    "Q": 13.93,
+    "k": 4,
+    "tau2": 0.175
+  },
+  "scaling_trend": {
+    "coef": -0.04,
+    "lr_p": 0.6395,
+    "per_size": {
+      "E4B": [
+        57,
+        60
+      ],
+      "12B": [
+        60,
+        40
+      ],
+      "26B-A4B": [
+        63,
+        41
+      ],
+      "31B": [
+        43,
+        55
+      ]
+    }
+  }
+}

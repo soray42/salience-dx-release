@@ -1,0 +1,185 @@
+seed_id: T1-057
+template: T1
+domain: open_qa
+complexity: low
+xbase: I'm trying to decide whether to hire professional movers or rent a van and
+  move myself with a couple of friends helping. The new place is about an hour away
+  across town. Doing it myself would clearly be cheaper, and I have moved small flats
+  that way before without much trouble. The movers gave a reasonable quote, so cost
+  alone is not stopping me from considering the self-move. {DS}
+focal_diagnostic_feature: The user owns a heavy upright piano, and the new flat is
+  on the third floor of a walk-up building with a narrow turning staircase.
+low_diagnostic_proposition: A friend hired movers and was unhappy because items arrived
+  scratched and a lamp was broken.
+oracle_action: ANSWER
+oracle_focus: Hire professional movers; a heavy upright piano going up a third-floor
+  narrow walk-up staircase requires specialist equipment and technique that a friends-and-van
+  self-move cannot safely provide.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one friend's bad-mover story decide this.
+  Ask what the user is actually moving and the access at both ends before choosing
+  self-move or pros.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one friend's bad-mover story decide this. Ask what the user
+      is actually moving and the access at both ends before choosing self-move or
+      pros.
+  LL:
+    action: ASK
+    focus: Do not let one friend's bad-mover story decide this. Ask what the user
+      is actually moving and the access at both ends before choosing self-move or
+      pros.
+  HH:
+    action: ANSWER
+    focus: Hire professional movers; a heavy upright piano going up a third-floor
+      narrow walk-up staircase requires specialist equipment and technique that a
+      friends-and-van self-move cannot safely provide.
+  LH:
+    action: ANSWER
+    focus: Hire professional movers; a heavy upright piano going up a third-floor
+      narrow walk-up staircase requires specialist equipment and technique that a
+      friends-and-van self-move cannot safely provide.
+variants:
+  HL:
+    distractor: Burak, who moved house twice last year, hired a removal firm both
+      times and still grumbles about it, because a box of his arrived with a cracked
+      corner and one of his favourite lamps turned up broken, and he swears he would
+      rather have done it himself.
+    diagnosticity: low
+    salience: high
+    proposition: A friend hired movers and was unhappy because items arrived scratched
+      and a lamp was broken.
+    salience_source: A — a named friend with recent repeated moving experience recounting
+      a concrete, first-hand complaint.
+    why_plausible: Movers do sometimes damage items, so the grievance feels like a
+      fair reason to favour a careful self-move.
+    why_irrelevant: Occasional handling damage is irrelevant to whether amateurs can
+      move a piano up a narrow walk-up at all; the access-and-object constraint is
+      what decides this case.
+  LL:
+    distractor: A friend hired movers and was unhappy because items arrived scratched
+      and a lamp was broken.
+    diagnosticity: low
+    salience: low
+    proposition: A friend hired movers and was unhappy because items arrived scratched
+      and a lamp was broken.
+    matched_to: HL
+  HH:
+    distractor: 'The thing I keep forgetting in this is my upright piano: it weighs
+      well over two hundred kilos, and the new flat is a third-floor walk-up with
+      a narrow staircase that turns twice, which is exactly the kind of job that needs
+      piano-specific gear and trained handlers.'
+    diagnosticity: high
+    salience: high
+    proposition: The user owns a heavy upright piano, and the new flat is on the third
+      floor of a walk-up building with a narrow turning staircase.
+    salience_source: The concrete weight plus the twice-turning third-floor walk-up
+      makes the specialist-handling need vivid and unavoidable.
+  LH:
+    distractor: Upright piano weighs well over 200 kg; destination is a third-floor
+      walk-up with a narrow twice-turning staircase needing piano-specific gear and
+      trained handlers.
+    diagnosticity: high
+    salience: low
+    proposition: The user owns a heavy upright piano, and the new flat is on the third
+      floor of a walk-up building with a narrow turning staircase.
+    matched_to: HH
+distractor_direction:
+  label: Mover damage risk
+  description: Treating the choice as favouring a self-move because professional movers
+    risk scratching or breaking items.
+plausible_alternative_directions:
+- label: Cost savings
+  description: Whether the money saved by a self-move outweighs the effort and time
+    it requires.
+- label: Friends' availability
+  description: Whether enough capable helpers are reliably available on moving day.
+leak_audit:
+  ll_atomic_claims:
+  - A friend hired movers.
+  - They were unhappy because items arrived scratched and a lamp was broken.
+  hh_atomic_claims:
+  - The user owns a heavy upright piano weighing well over two hundred kilos.
+  - The new flat is a third-floor walk-up.
+  - The staircase is narrow and turns twice.
+  - The move needs piano-specific gear and trained handlers.
+  hl_salience_dimensions:
+    source_credibility: Named friend (Burak) with two recent moves and direct removal-firm
+      experience.
+    narrative_coherence: Coherent two-move retrospective with a consistent damage
+      complaint.
+    confident_assertion: He swears he would rather have done it himself.
+    concrete_detail: Detail about the source (cracked box corner, broken lamp) only
+      — no fact about the user's own belongings or stairs.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 73
+  hl_word_count: 45
+  ll_word_count: 14
+  hh_word_count: 46
+  lh_word_count: 23
+  notes: 'LL carries only the hired-movers and scratched-items-and-broken-lamp claims;
+    the named source, his two moves,
+
+    and his stated preference are HL-only and about the source. xbase states the distance,
+    that self-move is cheaper,
+
+    and prior small-flat self-moves, but never mentions the piano or the walk-up access,
+    so the HL/LL cells cannot
+
+    resolve the choice. The decisive piano-and-staircase fact lives only in HH/LH.
+
+    QC repair: LH rewritten to include all four HH atomic claims — piano weight (well
+    over 200 kg), third-floor
+
+    walk-up, narrow twice-turning staircase, and piano-specific gear and trained handlers.
+    hh_atomic_claims updated
+
+    to add the gear-and-handlers claim and fix ''well over'' on weight. lh_word_count
+    corrected from 20 to 23.
+
+    '
+causal_audit:
+  steelman: 'A consumer advocate might argue the bad-mover story is decision-relevant:
+    removal firms do damage goods, claims
+
+    processes are often unsatisfying, and a friend with two recent moves reporting
+    scratched boxes and a broken lamp
+
+    is exactly the kind of evidence that should temper enthusiasm for hiring pros
+    over a careful self-move. That
+
+    reasoning assumes the self-move is actually feasible. The focal fact is a two-hundred-kilo
+    upright piano bound
+
+    for a third-floor walk-up with a narrow twice-turning staircase — a job that requires
+    piano dollies, strapping,
+
+    and trained handlers to do safely. Amateur handling there risks serious injury
+    and destruction of the
+
+    instrument, so the damage anecdote cannot bear on a decision whose binding constraint
+    is physical feasibility,
+
+    not handling care.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive piano-and-walk-up fact is withheld from
+    xbase and lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A self-move-versus-movers decision settled by a heavy piano bound for
+    a narrow third-floor walk-up, not a friend's complaint about mover-caused scratches
+    and a broken lamp.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,175 @@
+seed_id: T2-085
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: Our order-confirmation emails have stopped being sent for the last three days.
+  The emails are triggered by a RabbitMQ consumer that watches a confirmation queue.
+  The queue is filling up steadily, but no messages are being consumed. The broker
+  is running and other queues bound to different consumers are draining normally.
+  The server room and network cabinet were not accessed during the period. {DS}
+focal_diagnostic_feature: The consumer process has no running instance — the PID file
+  on disk is three days old and the process is completely absent from the server process
+  list, with no supervisor or restart policy configured.
+low_diagnostic_proposition: The issue started the same morning the office facilities
+  team installed new meeting-room name plaques.
+oracle_action: ANSWER
+oracle_focus: Restart the consumer process and configure a supervisor or process manager
+  to restart it automatically on crash; also investigate why it crashed three days
+  ago.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect office signage work to RabbitMQ consumer
+  state. Ask whether the consumer process is actually running before investigating
+  any other cause.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect office signage work to RabbitMQ consumer state. Ask whether
+      the consumer process is actually running before investigating any other cause.
+  LL:
+    action: ASK
+    focus: Do not connect office signage work to RabbitMQ consumer state. Ask whether
+      the consumer process is actually running before investigating any other cause.
+  HH:
+    action: ANSWER
+    focus: Restart the consumer process and configure a supervisor or process manager
+      to restart it automatically on crash; also investigate why it crashed three
+      days ago.
+  LH:
+    action: ANSWER
+    focus: Restart the consumer process and configure a supervisor or process manager
+      to restart it automatically on crash; also investigate why it crashed three
+      days ago.
+variants:
+  HL:
+    distractor: This started the same morning the facilities team put up new brass
+      name plaques outside every meeting room — I remember noticing them when I walked
+      in and then finding the first email complaint in my inbox before noon.
+    diagnosticity: low
+    salience: high
+    proposition: The issue started the same morning the office facilities team installed
+      new meeting-room name plaques.
+    salience_source: B/C — confident first-person timeline ("same morning", "I remember
+      noticing") with a specific sensory anchor (brass plaques) that pins the coincidence
+      precisely.
+    why_plausible: A visible, building-wide facilities event happening on the exact
+      same morning is an easy anchor; the coincidence feels meaningful when no other
+      change is apparent.
+    why_irrelevant: Hanging wall plaques has no physical or logical path to a RabbitMQ
+      consumer process; the server room was not accessed and network infrastructure
+      was untouched, leaving zero mechanism for signage work to affect application
+      state.
+  LL:
+    distractor: The issue started the same morning the office facilities team installed
+      new meeting-room name plaques.
+    diagnosticity: low
+    salience: low
+    proposition: The issue started the same morning the office facilities team installed
+      new meeting-room name plaques.
+    matched_to: HL
+  HH:
+    distractor: 'The consumer service has no running process: the PID file on disk
+      is three days old, the process is completely absent from the server process
+      list, and there is no supervisor or restart policy configured for it.'
+    diagnosticity: high
+    salience: high
+    proposition: The consumer process has no running instance — the PID file on disk
+      is three days old and the process is completely absent from the server process
+      list, with no supervisor or restart policy configured.
+    salience_source: The three-day-old PID file, the zero-result process-list check,
+      and the explicit absence of a restart policy make the crash-without-recovery
+      diagnosis concrete and verifiable.
+  LH:
+    distractor: The consumer process is not running; the PID file is three days old
+      and no supervisor or restart policy is configured.
+    diagnosticity: high
+    salience: low
+    proposition: The consumer process has no running instance — the PID file on disk
+      is three days old and the process is completely absent from the server process
+      list, with no supervisor or restart policy configured.
+    matched_to: HH
+distractor_direction:
+  label: Facilities work coincidence
+  description: Treating the simultaneous office name-plaque installation as a trigger
+    for the RabbitMQ consumer failure because the timing of both events is identical.
+plausible_alternative_directions:
+- label: Consumer configuration error
+  description: A misconfigured queue name, binding key, or credentials could prevent
+    the consumer from attaching to the correct queue even if it appears to run.
+- label: Message format change
+  description: A change in the message schema or encoding three days ago could be
+    causing the consumer to reject messages before acknowledging them, causing apparent
+    non-consumption.
+leak_audit:
+  ll_atomic_claims:
+  - The issue started the same morning the office facilities team installed new meeting-room
+    name plaques.
+  hh_atomic_claims:
+  - The consumer service has no running process.
+  - The PID file on disk is three days old.
+  - The process is completely absent from the server process list.
+  - There is no supervisor or restart policy configured for the consumer.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: A coherent first-person morning account — noticing the plaques,
+      then finding the complaint — creates a plausible causal narrative.
+    confident_assertion: '"same morning", "I remember noticing them" — confident temporal
+      assertion.'
+    concrete_detail: '"brass name plaques outside every meeting room" is a detail
+      about the facilities event, not about the RabbitMQ state.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 38
+  ll_word_count: 15
+  hh_word_count: 37
+  lh_word_count: 21
+  notes: 'T2 coincidence: office name plaques have zero path to a RabbitMQ consumer
+
+    process. xbase closes the tempting "facilities team touched hardware" pathway
+    by
+
+    stating the server room and network cabinet were not accessed. The consumer process
+
+    being absent from the process list (stale PID + no supervisor) is the decisive
+
+    focal evidence, living only in HH/LH. Ratios HL:LL=38:15=2.5, HH:LH=37:21=1.76
+
+    — both within 4:1.
+
+    '
+causal_audit:
+  steelman: 'A facilities team installing wall fixtures might accidentally bump or
+    reboot
+
+    network equipment in adjacent areas, causing a brief power event that could
+
+    terminate a running process. However, xbase explicitly states the server room
+
+    and network cabinet were not accessed during the period, eliminating this
+
+    physical-access pathway. Hanging name plaques on office walls has no electrical
+
+    or network effect on application servers. There is no constructible mechanism
+    by
+
+    which signage installation affects a RabbitMQ consumer process.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states "the server room and network cabinet were
+    not accessed during the period," closing the one plausible steelman path (facilities
+    staff accidentally triggering a hardware event).
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: RabbitMQ order-confirmation consumer crashed three days ago and was
+    never restarted because no supervisor is configured; distractor is a temporal
+    coincidence with office name-plaque installation on the same morning.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

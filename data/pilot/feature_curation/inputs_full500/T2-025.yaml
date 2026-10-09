@@ -1,0 +1,164 @@
+seed_id: T2-025
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: Our single-page web app suddenly cannot call its own REST API from the browser
+  since this morning; the requests fail and the console shows a CORS error. The API
+  itself is up, and calling the same endpoints directly with a command-line HTTP client
+  returns 200 with the expected data. We did push a small frontend change earlier,
+  but nothing about the API server or its CORS setup was touched. {DS}
+focal_diagnostic_feature: The frontend change added a new custom request header, and
+  the API's CORS configuration does not list that header in Access-Control-Allow-Headers,
+  so the browser's preflight fails and blocks the actual request.
+low_diagnostic_proposition: The CORS failures started the same morning the office
+  replaced the lobby coffee machine.
+oracle_action: ANSWER
+oracle_focus: Add the new custom request header to the API's Access-Control-Allow-Headers
+  list; the browser preflight is failing because the header the frontend now sends
+  is not allowed, which is why direct non-browser calls still succeed.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the lobby coffee-machine change to the
+  CORS error. Ask what the frontend change altered about the request, especially new
+  headers, and what the preflight response permits.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the lobby coffee-machine change to the CORS error. Ask what
+      the frontend change altered about the request, especially new headers, and what
+      the preflight response permits.
+  LL:
+    action: ASK
+    focus: Do not connect the lobby coffee-machine change to the CORS error. Ask what
+      the frontend change altered about the request, especially new headers, and what
+      the preflight response permits.
+  HH:
+    action: ANSWER
+    focus: Add the new custom request header to the API's Access-Control-Allow-Headers
+      list; the browser preflight is failing because the header the frontend now sends
+      is not allowed, which is why direct non-browser calls still succeed.
+  LH:
+    action: ANSWER
+    focus: Add the new custom request header to the API's Access-Control-Allow-Headers
+      list; the browser preflight is failing because the header the frontend now sends
+      is not allowed, which is why direct non-browser calls still succeed.
+variants:
+  HL:
+    distractor: I keep coming back to the fact that this all started the same morning
+      the office swapped out the old lobby coffee machine for a fancy new one; people
+      were crowding around it right as the first CORS errors began popping up in our
+      channel.
+    diagnosticity: low
+    salience: high
+    proposition: The CORS failures started the same morning the office replaced the
+      lobby coffee machine.
+    salience_source: B/C — a vivid first-person chronology pinning the onset to a
+      memorable same-morning office event.
+    why_plausible: The timing is exact and same-day, and when something breaks people
+      grab at any salient simultaneous change.
+    why_irrelevant: A lobby appliance has no connection to browser CORS preflight
+      negotiation between the web app and the API; it cannot affect which headers
+      the server permits.
+  LL:
+    distractor: The CORS failures started the same morning the office replaced the
+      lobby coffee machine.
+    diagnosticity: low
+    salience: low
+    proposition: The CORS failures started the same morning the office replaced the
+      lobby coffee machine.
+    matched_to: HL
+  HH:
+    distractor: The frontend change we shipped this morning added a new custom request
+      header to every API call, and the API's CORS config never listed that header
+      in Access-Control-Allow-Headers; so the browser's preflight check fails and
+      blocks the real request, while a direct command-line call skips preflight entirely.
+    diagnosticity: high
+    salience: high
+    proposition: The frontend change added a new custom request header, and the API's
+      CORS configuration does not list that header in Access-Control-Allow-Headers,
+      so the browser's preflight fails and blocks the actual request.
+    salience_source: The new header plus its absence from Access-Control-Allow-Headers
+      and the preflight-skipping direct call name the exact CORS mechanism.
+  LH:
+    distractor: The frontend now sends a custom header missing from the API's Access-Control-Allow-Headers,
+      so the browser preflight fails while direct calls skip preflight.
+    diagnosticity: high
+    salience: low
+    proposition: The frontend change added a new custom request header, and the API's
+      CORS configuration does not list that header in Access-Control-Allow-Headers,
+      so the browser's preflight fails and blocks the actual request.
+    matched_to: HH
+distractor_direction:
+  label: Lobby coffee-machine swap
+  description: Investigating whether the same-morning replacement of the office coffee
+    machine is connected to the CORS failures.
+plausible_alternative_directions:
+- label: API server CORS regression
+  description: Whether the API's CORS origin or method configuration was changed despite
+    the team's belief it was untouched.
+- label: Browser or extension update
+  description: Whether a browser or extension update changed how preflight requests
+    are handled.
+leak_audit:
+  ll_atomic_claims:
+  - The CORS failures started the same morning the office replaced the lobby coffee
+    machine.
+  hh_atomic_claims:
+  - The frontend change added a new custom request header to every API call.
+  - The API's CORS configuration does not list that header in Access-Control-Allow-Headers.
+  - The browser preflight therefore fails and blocks the request, while a direct command-line
+    call skips preflight.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person coincidence, no external source.
+    narrative_coherence: Vivid same-morning chronology around a memorable office event.
+    confident_assertion: States the exact same-morning timing plainly.
+    concrete_detail: N/A — about the coffee machine (setting), not the CORS case;
+      adds no case fact LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 42
+  ll_word_count: 16
+  hh_word_count: 46
+  lh_word_count: 23
+  notes: 'T2: a lobby coffee machine has no path to CORS preflight. xbase notes a
+    frontend change shipped and that direct
+
+    calls work, but does not reveal the new header or the missing allow-list entry,
+    which are HH/LH-only. The fact
+
+    that a frontend change shipped is neutral context, not the affirmative cause,
+    so xbase alone cannot pin it.
+
+    '
+causal_audit:
+  steelman: 'One could try to argue the coffee-machine install required an electrician
+    who briefly tripped office power or
+
+    network, disrupting something — but the API is up and serving direct calls fine,
+    and CORS preflight is a
+
+    header-negotiation between browser and server unrelated to any lobby appliance
+    or its installation; no power or
+
+    network blip changes which headers the server allows.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'Yes (partial): xbase states direct command-line calls
+    return 200, showing the API and network are fine and isolating the problem to
+    browser preflight; the affirmative cause (new header missing from the allow-list)
+    is given only in HH/LH.'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Browser CORS failures caused by a frontend adding a custom header missing
+    from the API's Access-Control-Allow-Headers, coincidentally timed with replacing
+    the office lobby coffee machine.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

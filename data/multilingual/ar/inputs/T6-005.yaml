@@ -1,0 +1,108 @@
+seed_id: T6-005
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: حاوية Docker الخاصة بي تعمل، لكن التطبيق بداخلها لا يستطيع الاتصال بـ API الداخلية
+  لشركتنا. الجهاز المضيف نفسه يستطيع الوصول إلى موارد داخلية أخرى. {DS}
+focal_diagnostic_feature: داخل الحاوية، `nslookup internal-api.company.local` يُعيد
+  NXDOMAIN، بينما ينجح الاستعلام ذاته على الجهاز المضيف؛ والحاوية تستخدم شبكة الـ
+  bridge الافتراضية.
+low_diagnostic_proposition: The user's previous Docker networking issues were caused
+  by missing EXPOSE directives.
+oracle_action: ANSWER
+oracle_focus: Configure container DNS or networking for the internal domain; this
+  is resolver configuration, not EXPOSE metadata.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not reuse the EXPOSE explanation. Ask for DNS resolution
+  inside the container versus the host.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not reuse the EXPOSE explanation. Ask for DNS resolution inside the
+      container versus the host.
+  LL:
+    action: ASK
+    focus: Do not reuse the EXPOSE explanation. Ask for DNS resolution inside the
+      container versus the host.
+  HH:
+    action: ANSWER
+    focus: Configure container DNS or networking for the internal domain; this is
+      resolver configuration, not EXPOSE metadata.
+  LH:
+    action: ANSWER
+    focus: Configure container DNS or networking for the internal domain; this is
+      resolver configuration, not EXPOSE metadata.
+variants:
+  HL:
+    distractor: كل مشكلة في شبكات Docker صادفتها من قبل كانت بسبب سطر EXPOSE مفقود،
+      لذا لا أزال أحدّق في Dockerfile حتى وإن كانت هذه المشكلة تبدو مختلفة.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous Docker networking issues were caused by missing
+      EXPOSE directives.
+    salience_source: familiar past Docker fix, repeated troubleshooting habit
+    why_plausible: EXPOSE is a common source of Docker confusion.
+    why_irrelevant: EXPOSE does not control DNS resolution; NXDOMAIN inside the container
+      points to resolver/network configuration.
+  LL:
+    distractor: مشكلات الشبكات في Docker التي واجهها المستخدم سابقاً كانت تُعزى في
+      العادة إلى توجيهات EXPOSE مفقودة.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous Docker networking issues were caused by missing
+      EXPOSE directives.
+    matched_to: HL
+  HH:
+    distractor: داخل الحاوية، `nslookup internal-api.company.local` يُعيد NXDOMAIN؛
+      على الجهاز المضيف يتم حل الاسم نفسه بنجاح، والحاوية على الـ bridge الافتراضي
+      لـ Docker فحسب.
+    diagnosticity: high
+    salience: high
+    proposition: Inside the container, `nslookup internal-api.company.local` returns
+      NXDOMAIN, while the same lookup succeeds on the host; the container uses the
+      default bridge network.
+    salience_source: host/container DNS contrast
+  LH:
+    distractor: تحليل DNS للاسم الداخلي يفشل داخل حاوية الـ bridge الافتراضية بينما
+      ينجح على الجهاز المضيف.
+    diagnosticity: high
+    salience: low
+    proposition: Inside the container, `nslookup internal-api.company.local` returns
+      NXDOMAIN, while the same lookup succeeds on the host; the container uses the
+      default bridge network.
+    matched_to: HH
+distractor_direction:
+  label: توجيه EXPOSE مفقود
+  description: التحقيق في ما إذا كانت بيانات EXPOSE في الـ Dockerfile مفقودة أو خاطئة
+    وتحجب اتصال الحاوية.
+plausible_alternative_directions:
+- label: قاعدة جدار الحماية للحاوية
+  description: قد يحجب جدار الحماية في الحاوية أو الجهاز المضيف حركة مرور API الصادرة.
+- label: متغيرات البيئة للوكيل مفقودة
+  description: قد تكون متغيرات بيئة HTTP proxy أو NO_PROXY أو الشهادات غائبة داخل
+    الحاوية.
+- label: مشكلة في بيانات اعتماد API
+  description: قد لا تمتلك الحاوية بيانات اعتماد أو رموز مميزة صالحة لـ API الداخلية.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-005.yaml
+  source_xbase_sha256: 2941ea2d585d9c5e
+  translated_content_sha256: 7b37d01e7a9aebc8
+  translation_notes: 'Technical terms kept as-is: Docker, EXPOSE, Dockerfile, DNS,
+    NXDOMAIN, nslookup, bridge, API, NO_PROXY, HTTP proxy. ''internal-api.company.local''
+    kept verbatim in backtick context as it is a concrete technical identifier central
+    to the HH salience. Arabic ''bridge'' transliterated as ''الـ bridge'' following
+    common Arabic tech writing practice. Salience contrast preserved: HL retains familiar
+    troubleshooting habit + named directive; LL is flat.'

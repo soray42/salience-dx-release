@@ -1,0 +1,166 @@
+seed_id: T6-050
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our PostgreSQL application is experiencing intermittent query slowdowns during
+  business hours. Queries that normally complete in under 100 milliseconds are taking
+  fifteen to twenty seconds at peak times. The database server shows normal CPU and
+  memory utilisation during the spikes. No schema changes were made recently. {DS}
+focal_diagnostic_feature: During the slowdown windows, pg_locks shows a long-running
+  transaction holding an exclusive row-level lock on the orders table for over eight
+  minutes, blocking every concurrent query that touches that table.
+low_diagnostic_proposition: Past PostgreSQL slowdowns for this developer were consistently
+  caused by missing indexes; this one is probably the same.
+oracle_action: ASK
+oracle_focus: 'Investigate lock contention: use pg_locks joined with pg_stat_activity
+  to identify the blocking transaction, find its origin process, and either terminate
+  it or fix the upstream code that holds it open so long.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a missing index from past experience; run
+  pg_locks and pg_stat_activity to check for blocking transactions before examining
+  index coverage.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a missing index from past experience; run pg_locks and pg_stat_activity
+      to check for blocking transactions before examining index coverage.
+  LL:
+    action: ASK
+    focus: Do not assume a missing index from past experience; run pg_locks and pg_stat_activity
+      to check for blocking transactions before examining index coverage.
+  HH:
+    action: ASK
+    focus: 'Investigate lock contention: use pg_locks joined with pg_stat_activity
+      to identify the blocking transaction, find its origin process, and either terminate
+      it or fix the upstream code that holds it open so long.'
+  LH:
+    action: ASK
+    focus: 'Investigate lock contention: use pg_locks joined with pg_stat_activity
+      to identify the blocking transaction, find its origin process, and either terminate
+      it or fix the upstream code that holds it open so long.'
+variants:
+  HL:
+    distractor: Every query slowdown I've debugged in Postgres before turned out to
+      be a missing index — the planner just gave up and scanned the whole table —
+      so I keep pulling up pg_stat_user_indexes and half-expecting to find the same
+      culprit again.
+    diagnosticity: low
+    salience: high
+    proposition: Past PostgreSQL slowdowns for this developer were consistently caused
+      by missing indexes; this one is probably the same.
+    salience_source: B — vivid first-person debugging narrative with confident register;
+      C — 'keep pulling up... half-expecting' conveys strong availability-driven conviction.
+    why_plausible: Missing indexes are genuinely the most common cause of slow Postgres
+      queries, making pattern-matching to past experience feel rational and technically
+      grounded.
+    why_irrelevant: The focal feature identifies lock contention as the mechanism
+      — a blocking transaction, not a planner choice — and queries blocked on locks
+      show high latency without the sequential-scan CPU signature that missing indexes
+      produce.
+  LL:
+    distractor: Past PostgreSQL slowdowns for this developer were consistently caused
+      by missing indexes; this one is probably the same.
+    diagnosticity: low
+    salience: low
+    proposition: Past PostgreSQL slowdowns for this developer were consistently caused
+      by missing indexes; this one is probably the same.
+    matched_to: HL
+  HH:
+    distractor: During one of the slowdown windows, pg_locks shows a long-running
+      transaction holding an exclusive row-level lock on the orders table for over
+      eight minutes, and every other query touching that table is queued behind it
+      waiting to acquire their own lock.
+    diagnosticity: high
+    salience: high
+    proposition: During the slowdown windows, pg_locks shows a long-running transaction
+      holding an exclusive row-level lock on the orders table for over eight minutes,
+      blocking every concurrent query that touches that table.
+    salience_source: Precise lock type (exclusive row-level), named table (orders),
+      specific duration (eight minutes), and the vivid image of a queue building behind
+      the blocker make the evidence immediately actionable.
+  LH:
+    distractor: pg_locks shows a long-running transaction holding an exclusive lock
+      on the orders table for over eight minutes, with concurrent queries queued behind
+      it.
+    diagnosticity: high
+    salience: low
+    proposition: During the slowdown windows, pg_locks shows a long-running transaction
+      holding an exclusive row-level lock on the orders table for over eight minutes,
+      blocking every concurrent query that touches that table.
+    matched_to: HH
+distractor_direction:
+  label: missing index on queried column
+  description: Treating the slowdowns as caused by absent or unused indexes, forcing
+    the planner to do sequential scans on large tables.
+plausible_alternative_directions:
+- label: autovacuum bloat accumulation
+  description: Autovacuum failing to keep up with dead-tuple accumulation could inflate
+    table size and degrade planner choices, a live possibility in a busy OLTP system.
+- label: checkpoint I/O spikes
+  description: Aggressive checkpoint activity during business hours can produce I/O
+    bursts that temporarily stall query execution even when CPU and memory appear
+    normal.
+- label: connection pool exhaustion
+  description: Intermittent slowdowns correlated with business-hour load could reflect
+    application-side pool saturation causing queries to queue before they reach the
+    database.
+leak_audit:
+  ll_atomic_claims:
+  - Past PostgreSQL slowdowns were caused by missing indexes.
+  - This slowdown is probably the same.
+  hh_atomic_claims:
+  - pg_locks shows a long-running transaction during the slowdown windows.
+  - The transaction holds an exclusive row-level lock on the orders table.
+  - The lock has been held for over eight minutes.
+  - Every other query touching the orders table is queued behind it.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person debugging story with consistent internal logic
+      — planner scan, specific tool invoked, familiar conclusion.
+    confident_assertion: '''keep pulling up pg_stat_user_indexes and half-expecting
+      to find the same culprit'' — strong availability-heuristic conviction.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 39
+  ll_word_count: 18
+  hh_word_count: 41
+  lh_word_count: 20
+  notes: 'HL:LL ratio = 2.22; HH:LH ratio = 2.25. Both within 4:1.
+
+    Normal CPU in xbase is consistent with lock-wait behaviour (locks cause latency
+    without compute cost) and weakens the missing-index hypothesis (sequential scans
+    show I/O/CPU load) — but does not conclusively rule it out, preserving C4.
+
+    HH word count confirmed at 41 (includes ''waiting to acquire their own lock''
+    phrase — all within 27-48 target). HL:LL = 2.22, HH:LH = 1.78.
+
+    '
+causal_audit:
+  steelman: 'Missing indexes are the canonical cause of slow Postgres queries and
+    a DBA''s first diagnostic move is always to check EXPLAIN ANALYZE and pg_stat_user_indexes.
+    Fifteen-to-twenty second latency with normal CPU could theoretically fit a low-cardinality
+    index miss where the planner picks a sequential scan that happens to be mostly
+    memory-resident. The developer''s consistent past experience makes the prior strong.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Normal CPU and memory during spikes (xbase) is consistent
+    with lock-wait behaviour and somewhat inconsistent with heavy sequential scans,
+    narrowing — but not conclusively closing — the missing-index pathway before the
+    focal evidence appears.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: A developer's habit of finding missing indexes in past Postgres slowdowns
+    should not override pg_locks evidence of a long-running blocking transaction on
+    the orders table.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,164 @@
+seed_id: T2-065
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: Users on our internal web app are bounced straight back to the login screen
+  the moment they finish signing in. The credentials are accepted and the app briefly
+  loads, but the very next page request behaves as if they were never authenticated.
+  It happens on every fresh login, for everyone, and started this week. The login
+  service and our identity provider both report successful authentications with no
+  errors logged. {DS}
+focal_diagnostic_feature: The browser drops the session cookie because it is set without
+  the Secure attribute, so it is discarded on the cross-site callback redirect that
+  completes the login.
+low_diagnostic_proposition: The login problem began the same week the office was repainted.
+oracle_action: ANSWER
+oracle_focus: Set the session cookie with the Secure attribute so the browser keeps
+  it across the cross-site callback redirect; it is currently dropped, which is why
+  each fresh login fails to persist.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect an office repaint to a web authentication
+  failure. Ask whether the session cookie is being set and retained across the login
+  redirect.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect an office repaint to a web authentication failure. Ask whether
+      the session cookie is being set and retained across the login redirect.
+  LL:
+    action: ASK
+    focus: Do not connect an office repaint to a web authentication failure. Ask whether
+      the session cookie is being set and retained across the login redirect.
+  HH:
+    action: ANSWER
+    focus: Set the session cookie with the Secure attribute so the browser keeps it
+      across the cross-site callback redirect; it is currently dropped, which is why
+      each fresh login fails to persist.
+  LH:
+    action: ANSWER
+    focus: Set the session cookie with the Secure attribute so the browser keeps it
+      across the cross-site callback redirect; it is currently dropped, which is why
+      each fresh login fails to persist.
+variants:
+  HL:
+    distractor: Now that I think about it, this all kicked off the same week the building
+      crew repainted our whole office floor; the place still smelled of fresh paint
+      on the Monday morning the first login complaints started rolling in.
+    diagnosticity: low
+    salience: high
+    proposition: The login problem began the same week the office was repainted.
+    salience_source: B/C — a clean, confident first-person chronology tying the symptom
+      to a vivid, dated event.
+    why_plausible: The repaint and the bug landed in the same week, and coincident
+      timing is a natural first thing a tired engineer latches onto.
+    why_irrelevant: Repainting walls cannot touch cookie attributes or HTTPS redirects;
+      the cause is the session cookie being dropped for lacking the Secure flag.
+  LL:
+    distractor: The login failures affecting all users started the same week the office
+      was repainted.
+    diagnosticity: low
+    salience: low
+    proposition: The login problem began the same week the office was repainted.
+    matched_to: HL
+  HH:
+    distractor: Watching the network trace, the login sets a session cookie but it
+      has no Secure attribute, so on the cross-site callback redirect that finalises
+      the login the browser silently discards it; the next request then arrives with
+      no session at all.
+    diagnosticity: high
+    salience: high
+    proposition: The browser drops the session cookie because it is set without the
+      Secure attribute, so it is discarded on the cross-site callback redirect that
+      completes the login.
+    salience_source: Concrete network-trace observation of the missing Secure flag
+      and the drop on redirect makes the mechanism precise.
+  LH:
+    distractor: The session cookie is set without the Secure attribute and the browser
+      discards it on the cross-site callback redirect.
+    diagnosticity: high
+    salience: low
+    proposition: The browser drops the session cookie because it is set without the
+      Secure attribute, so it is discarded on the cross-site callback redirect that
+      completes the login.
+    matched_to: HH
+distractor_direction:
+  label: Office repaint timing
+  description: Investigating whether the building repaint, or anything about that
+    week's office activity, is responsible for the login failures.
+plausible_alternative_directions:
+- label: Session store outage
+  description: Whether the server-side session store is failing to persist or look
+    up sessions after login.
+- label: Clock skew on token validation
+  description: Whether server time drift causes freshly issued session tokens to be
+    treated as invalid.
+leak_audit:
+  ll_atomic_claims:
+  - The login problem began the same week the office was repainted.
+  hh_atomic_claims:
+  - The session cookie is set without the Secure attribute.
+  - The browser discards it on the cross-site callback redirect that completes the
+    login.
+  - The next request then arrives with no session.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-week chronology anchored to a Monday.
+    confident_assertion: Now that I think about it, this all kicked off — confident
+      first-person framing.
+    concrete_detail: Detail about the setting (the repaint, the paint smell, the Monday)
+      only — no claim about the cookie or redirect.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 73
+  hl_word_count: 35
+  ll_word_count: 14
+  hh_word_count: 40
+  lh_word_count: 19
+  notes: 'LL carries only the same-week-as-repaint timing claim; the paint smell and
+    Monday detail are HL-only and about
+
+    the setting. xbase states the symptom (immediate re-login, all users, clean auth
+    logs) but withholds the
+
+    cookie/redirect trace, so HL/LL cannot resolve it. The decisive missing-Secure-flag
+    fact lives only in HH/LH.
+
+    The HL sensory note (paint smell) is about the coincidence event, not noise injected
+    to garble the cell.
+
+    '
+causal_audit:
+  steelman: 'One might try to argue the office work mattered: a repaint could accompany
+    electrical or network-cabinet changes
+
+    that disrupted connectivity to the session store. But xbase confines the event
+    to repainting walls, and a paint
+
+    job has no path to cookie attributes, HTTPS behaviour, or the browser''s decision
+    to drop a session cookie on a
+
+    redirect. There is no constructible mechanism by which repainting could cause
+    a cookie to be set without the
+
+    Secure flag or be discarded across a cross-site callback. The coincidence is purely
+    temporal.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase confines the coincident event to repainting and reports
+    clean auth-service and IdP logs, leaving no connectivity or infrastructure pathway
+    for the repaint; the decisive cookie-drop fact lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A re-login loop caused by a session cookie set without the Secure attribute
+    being dropped on the callback redirect, coincident with an office repaint.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

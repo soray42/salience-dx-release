@@ -1,0 +1,197 @@
+seed_id: T3-032
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Android app has been crashing for a subset of users when they tap a push
+  notification to open it. The crash started appearing in production three days ago
+  and affects roughly 4% of notification opens. We sampled the available crash reports
+  and confirmed the exception class is not a threading type. I described the symptoms
+  to our lead mobile engineer on the platform team. {DS}
+focal_diagnostic_feature: The crash stack trace shows a NullPointerException in the
+  notification payload parser on a field introduced in a new push template deployed
+  three days ago; the field is absent in older template versions still in circulation.
+low_diagnostic_proposition: Notification-tap crashes on Android are almost always
+  caused by threading violations when the app resumes from a killed background state.
+oracle_action: ANSWER
+oracle_focus: Fix the notification payload parser to handle the missing field gracefully
+  or enforce the new template server-side; the crash is a null-dereference on a new
+  optional field, not a threading issue.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the threading-violation diagnosis from authority
+  alone. Ask for the crash stack trace and any recent push template or payload schema
+  changes.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the threading-violation diagnosis from authority alone. Ask
+      for the crash stack trace and any recent push template or payload schema changes.
+  LL:
+    action: ASK
+    focus: Do not adopt the threading-violation diagnosis from authority alone. Ask
+      for the crash stack trace and any recent push template or payload schema changes.
+  HH:
+    action: ANSWER
+    focus: Fix the notification payload parser to handle the missing field gracefully
+      or enforce the new template server-side; the crash is a null-dereference on
+      a new optional field, not a threading issue.
+  LH:
+    action: ANSWER
+    focus: Fix the notification payload parser to handle the missing field gracefully
+      or enforce the new template server-side; the crash is a null-dereference on
+      a new optional field, not a threading issue.
+variants:
+  HL:
+    distractor: 'Kehinde has shipped Android SDKs for five years and responded at
+      once: notification-tap crashes are almost always threading violations when the
+      process is killed — he has diagnosed this across four apps and told me to look
+      at how we resume the activity stack from a cold start.'
+    diagnosticity: low
+    salience: high
+    proposition: Notification-tap crashes on Android are almost always caused by threading
+      violations when the app resumes from a killed background state.
+    salience_source: 'A: source credibility (five years shipping Android SDKs, cross-app
+      pattern); B: clean professional report; C: ''almost always'', ''told me to look
+      at''; D: cross-app count (''four different apps'').'
+    why_plausible: Threading violations during cold-start notification launches are
+      a real and common Android failure mode; the authority's cross-app track record
+      gives the diagnosis weight and many engineers would start there.
+    why_irrelevant: The stack trace pinpoints a NullPointerException in the payload
+      parser on a newly introduced field, which is a data-schema defect unrelated
+      to activity-resume threading; a threading violation would surface as a different
+      exception class on a different call path.
+  LL:
+    distractor: A senior Android engineer said notification-tap crashes are almost
+      always threading violations when the app resumes from a killed background state.
+    diagnosticity: low
+    salience: low
+    proposition: Notification-tap crashes on Android are almost always caused by threading
+      violations when the app resumes from a killed background state.
+    matched_to: HL
+  HH:
+    distractor: The crash stack trace shows a NullPointerException inside the notification
+      payload parser, on a field named action_deep_link_v2 that was added to the new
+      push template three days ago; devices that received only older template versions
+      have that field absent and hit the null dereference immediately on open.
+    diagnosticity: high
+    salience: high
+    proposition: The crash stack trace shows a NullPointerException in the notification
+      payload parser on a field introduced in a new push template deployed three days
+      ago; the field is absent in older template versions still in circulation.
+    salience_source: 'B: precise technical narrative with field name and timing correlation;
+      C: direct evidence framing (''the crash stack trace shows'').'
+  LH:
+    distractor: The stack trace shows a NullPointerException in the payload parser
+      on a new-template field (action_deep_link_v2) absent in older versions.
+    diagnosticity: high
+    salience: low
+    proposition: The crash stack trace shows a NullPointerException in the notification
+      payload parser on a field introduced in a new push template deployed three days
+      ago; the field is absent in older template versions still in circulation.
+    matched_to: HH
+distractor_direction:
+  label: threading violation on cold resume
+  description: Investigating whether Android threading constraints during activity
+    resume from a killed background state are raising the exception that crashes the
+    app on notification tap.
+plausible_alternative_directions:
+- label: intent flag misconfiguration
+  description: Checking whether the PendingIntent flags on the notification were changed
+    in the release, causing the activity stack to be reconstructed incorrectly on
+    tap.
+- label: deep-link routing regression
+  description: Examining whether the navigation component or deep-link handler fails
+    to resolve the notification's target URI for a subset of users based on account
+    state or app version.
+- label: Firebase Messaging library version conflict
+  description: Investigating whether a dependency update to the FCM or messaging library
+    introduced a compatibility issue with the existing notification handling code.
+leak_audit:
+  ll_atomic_claims:
+  - A senior Android engineer made the claim.
+  - The claim is that notification-tap crashes are almost always threading violations.
+  - The threading violation occurs when the app resumes from a killed background state.
+  hh_atomic_claims:
+  - The crash stack trace shows a NullPointerException.
+  - The exception is inside the notification payload parser.
+  - The field causing the null is named action_deep_link_v2.
+  - That field was added in the new push template deployed three days ago.
+  - Devices that received only older template versions have the field absent.
+  - The null dereference occurs immediately on notification open.
+  hl_salience_dimensions:
+    source_credibility: 'A: five years shipping Android SDKs, cross-app pattern across
+      four apps.'
+    narrative_coherence: 'B: clean professional-register report of a direct exchange.'
+    confident_assertion: 'C: ''almost always'', ''told me to look at''.'
+    concrete_detail: 'D: ''across four different apps'' — about the source''s track
+      record, not the present case.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 65
+  hl_word_count: 47
+  ll_word_count: 21
+  hh_word_count: 47
+  lh_word_count: 19
+  notes: 'xbase deliberately omits the stack trace finding and new template deployment;
+
+    those live only in HH/LH (C4). The 4% crash rate and three-day window are
+
+    context, not the diagnostic answer. xbase now carries a narrow pathway-closure
+
+    (''exception class is not a threading type'') that definitively forecloses threading
+
+    without revealing the NullPointerException cause or the payload-parser call site.
+
+    This replaces the weaker ''no core navigation or threading change'' closure that
+
+    QC flagged as insufficiently decisive. Source name Kehinde is fresh (C12).
+
+    No prior seed has null-payload on push template as root cause (C11).
+
+    HL:LL ratio 48:21 = 2.3:1 OK. HH:LH ratio 47:18 = 2.6:1 OK.
+
+    '
+causal_audit:
+  steelman: 'Threading violations on Android notification-tap launches are a documented
+    and
+
+    common failure mode: if the app process was killed, tapping a notification cold-
+
+    starts the activity stack, and improper UI-thread access in the resume path can
+
+    throw exceptions. A senior Android engineer with cross-app experience would have
+
+    strong empirical grounds to rank this as a leading hypothesis given the symptom
+
+    description alone, and many production incidents trace back to exactly this
+
+    pattern. However, xbase explicitly states that the exception class in the
+
+    available crash reports is not a threading type, which directly forecloses the
+
+    cold-resume threading mechanism; a practitioner reading xbase knows the crash
+
+    is not a threading exception and would not pursue that path.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states that the team sampled the available crash
+    reports and confirmed the exception class is not a threading type — this directly
+    and narrowly forecloses the cold-resume threading mechanism without revealing
+    the NullPointerException cause or the payload-parser call site (those remain in
+    HH/LH only).
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Android app crashes on notification tap for 4% of opens; authority
+    diagnoses threading on cold resume, but the crash is a NullPointerException in
+    the payload parser on a field added to a new push template deployed the same day
+    crashes began.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator
+  generator: generator_B
+  generation_mode: generator_B_batches

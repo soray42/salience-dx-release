@@ -1,0 +1,256 @@
+seed_id: T6-016
+template: T6
+domain: open_qa
+complexity: high
+xbase: 'My equity-bond portfolio has underperformed its benchmark index for the third
+  consecutive year. The fund''s expense ratio is 0.07%, essentially the same as the
+  index tracker itself, so fees cannot explain the gap. I have a target asset allocation
+  on file but I have not revisited the portfolio''s actual weights in some time. {DS}
+
+  '
+focal_diagnostic_feature: 'The portfolio is running approximately 15–18 percentage
+  points above its 60% equity target after two-plus years without rebalancing during
+  a sustained equity bull run; the allocation drift alone shifts the risk/return profile
+  materially away from the blended benchmark, accounting for the underperformance
+  without any fee differential.
+
+  '
+low_diagnostic_proposition: 'The last three times this investor''s portfolio lagged
+  its benchmark, fund fees were the cause.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Address allocation drift: the portfolio is approximately 75–78% equity
+  against a 60% target, a 15–18 pp overshoot from not rebalancing over two equity-bull
+  years; the investor should rebalance toward the target and verify whether the return
+  gap is fully explained by the changed equity/bond mix before considering any fund
+  change.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Decline to adopt the fee-attribution from past experience;
+  instead ask about the portfolio''s current allocation versus target, rebalancing
+  history, tax drag, and whether the benchmark is an appropriate comparator for the
+  actual current mix.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Decline to adopt the fee-attribution from past experience; instead ask
+      about the portfolio's current allocation versus target, rebalancing history,
+      tax drag, and whether the benchmark is an appropriate comparator for the actual
+      current mix.
+  LL:
+    action: ASK
+    focus: Decline to adopt the fee-attribution from past experience; instead ask
+      about the portfolio's current allocation versus target, rebalancing history,
+      tax drag, and whether the benchmark is an appropriate comparator for the actual
+      current mix.
+  HH:
+    action: ANSWER
+    focus: 'Address allocation drift: the portfolio is approximately 75–78% equity
+      against a 60% target, a 15–18 pp overshoot from not rebalancing over two equity-bull
+      years; the investor should rebalance toward the target and verify whether the
+      return gap is fully explained by the changed equity/bond mix before considering
+      any fund change.'
+  LH:
+    action: ANSWER
+    focus: 'Address allocation drift: the portfolio is approximately 75–78% equity
+      against a 60% target, a 15–18 pp overshoot from not rebalancing over two equity-bull
+      years; the investor should rebalance toward the target and verify whether the
+      return gap is fully explained by the changed equity/bond mix before considering
+      any fund change.'
+variants:
+  HL:
+    distractor: 'I know this pattern well: every time my portfolio has lagged before
+      — three separate years — the cause that emerged was fund fees, every single
+      time.'
+    diagnosticity: low
+    salience: high
+    proposition: 'The last three times this investor''s portfolio lagged its benchmark,
+      fund fees were the cause.
+
+      '
+    salience_source: 'B (narrative coherence: clean first-person history with specific
+      count), C (confident assertion: "I traced the lag back to fund fees"), D (concrete
+      detail about past episodes: "three prior years").
+
+      '
+    why_plausible: 'Fund fees are a canonical cause of benchmark underperformance,
+      and the investor''s own three-time track record of diagnosing fees gives the
+      claim credibility and emotional familiarity — a busy reader pattern-matches
+      to the well-known fees story.
+
+      '
+    why_irrelevant: 'The xbase explicitly discloses an expense ratio of 0.07%, essentially
+      equal to the index tracker; there is no fee differential capable of explaining
+      multi-year lag, so the past-experience pattern does not transfer to this case.
+
+      '
+  LL:
+    distractor: 'The last three times my portfolio lagged, fund fees turned out to
+      be the cause.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: 'The last three times this investor''s portfolio lagged its benchmark,
+      fund fees were the cause.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'My confirmed target allocation is 60% equity, but I have not rebalanced
+      in over two years; equity markets ran hard over that period, so my live equity
+      weight sits at 75–78% — roughly 15–18 percentage points above target.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'The portfolio''s equity allocation has drifted approximately 15–18
+      percentage points above the 60% target due to no rebalancing over two equity-bull
+      years.
+
+      '
+    salience_source: 'C (confident self-report with precise figures), D (concrete
+      measurable detail: specific current weight range, specific target, specific
+      drift magnitude).
+
+      '
+  LH:
+    distractor: 'My equity allocation has drifted to about 75–78% — roughly 15–18
+      pp above my 60% target — after two equity-bull years without rebalancing.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'The portfolio''s equity allocation has drifted approximately 15–18
+      percentage points above the 60% target due to no rebalancing over two equity-bull
+      years.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: past fee attribution
+  description: 'The investor attributes the current benchmark lag to fund fees, reasoning
+    from three prior personal episodes where fees were the diagnosed cause. Here the
+    fees pathway is closed because the fund''s expense ratio is negligibly low and
+    matches the index.
+
+    '
+plausible_alternative_directions:
+- label: benchmark mismatch
+  description: 'The chosen benchmark index may not reflect the portfolio''s actual
+    strategy or current risk profile, making the comparison misleading rather than
+    indicating true underperformance.
+
+    '
+- label: tax drag
+  description: 'Taxable capital-gains distributions or loss-harvesting decisions may
+    have reduced after-tax returns relative to the pre-tax benchmark, accounting for
+    the apparent gap without any underlying performance issue.
+
+    '
+- label: cash drag
+  description: 'Uninvested cash held in the account reduces overall equity and bond
+    exposure, creating a structural shortfall versus a fully invested benchmark index.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - The investor's portfolio lagged its benchmark on at least three prior occasions.
+  - Fund fees were identified as the cause each of those times.
+  hl_salience_dimensions:
+    source_credibility: N/A — no external source; salience derives from the user's
+      own repeated personal experience
+    narrative_coherence: 'Clean, first-person chronological account: prior years,
+      consistent diagnosis, current instinct'
+    confident_assertion: '"I traced the lag back to fund fees" — active, definite
+      verb of causal finding'
+    concrete_detail: '"three prior years" anchors the history count without adding
+      case content'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 25
+  ll_word_count: 15
+  lh_word_count: 21
+  notes: 'Avoided "after going through my statements carefully" (effort_descriptor).
+
+    Avoided naming a specific fund or fee figure in the distractor (tunable_value).
+
+    "Three prior years" refers to the user''s past history count, not a case-content
+    value.
+
+    HL ratio 29/15 = 1.93, well within the 4:1 ceiling.
+
+    No sensory environment color added anywhere.
+
+    REPAIR (revision 2): LH distractor rewritten to include all three claims present
+    in HH
+
+    but absent in original LH: (1) two-year duration of non-rebalancing, (2) equity-market
+
+    appreciation mechanism, (3) explicit drift magnitude of 15–18 pp. New LH wording:
+    "My
+
+    equity allocation has drifted to about 75–78% — roughly 15–18 pp above my 60%
+    target —
+
+    after two equity-bull years without rebalancing." (21 words, within 12–25 limit).
+    LH
+
+    proposition unchanged; HH/LH propositional equivalence now restored.
+
+
+    rev3 2026-06-11: HL hand-repaired per QC r2 verdict (orchestrator edit); word
+    count 26.
+
+    rev4 2026-06-11: effort-descriptor strip per QC r3.
+
+    rev5 2026-06-11: cell-integrity repair — xbase no longer narrates drift figures
+    (60% target vs 75-78% current weight, two equity-bull years); focal evidence now
+    lives exclusively in HH/LH variants. xbase retains: third-year underperformance,
+    0.07% expense ratio (fees-pathway closure), and existence of a target allocation
+    without quantified drift.'
+causal_audit:
+  steelman: 'Fund expense ratios directly reduce investor returns year-over-year;
+    a 1%
+
+    annual fee compounds into a ~10% return gap over a decade. On any portfolio
+
+    underperformance investigation, a senior CFP or investment adviser would
+
+    check the fund''s total expense ratio as a first-order diagnostic. The
+
+    investor''s three prior successful diagnoses of fees further support the
+
+    hypothesis. If the fund had a higher expense ratio than the index, fees
+
+    would be a fully defensible primary explanation.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states the fund''s expense ratio is 0.07%, described
+    as "essentially the same as the index tracker itself"; this eliminates any material
+    fee differential as an explanatory variable, collapsing the fees pathway to ~0bp
+    impact and making the past-experience pattern inapplicable to this specific case.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 5
+  topic_brief: 'A personal portfolio lags its benchmark for the third year. The investor:
+    the last three times this happened it was fund fees, so I will switch funds again.
+    Focal: stated allocation drift is the live signal.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B

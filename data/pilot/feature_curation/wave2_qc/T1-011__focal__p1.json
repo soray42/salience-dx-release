@@ -1,0 +1,13 @@
+{
+  "seed_id": "T1-011",
+  "my_own_diagnosis": "Given the xbase alone the differential includes R8 minification, BuildConfig misconfiguration, and DI binding failures; adding the focal feature (ClassNotFoundException for a reflection-accessed class, R8 enabled without a keep rule) collapses the diagnosis unambiguously to R8 stripping the class — add a -keep rule in proguard-rules.pro.",
+  "focal_decisive": true,
+  "focal_notes": "The combination of a specific ClassNotFoundException, reflection access, and confirmed R8 minification without a keep rule constitutes a complete, verifiable causal chain that leaves no residual ambiguity.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracles correctly route HL/LL to the ASK/low-diagnostic focus (rejecting OEM) and HH/LH to the ANSWER/focal focus; low_diagnostic_oracle explicitly closes the OEM pathway while requesting build config evidence.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

@@ -1,0 +1,182 @@
+seed_id: T2-092
+template: T2
+domain: open_qa
+complexity: high
+xbase: My home contents insurer denied most of my claim for a stolen €1,900 laptop,
+  paying only a few hundred euros, and I am deciding whether to formally appeal the
+  decision as a processing error or just accept it. The theft was reported to police
+  and the insurer accepts the laptop was stolen. I filed everything on time with receipts.
+  I have the full policy schedule and the wording in front of me but have not gone
+  through the limits section yet. {DS}
+focal_diagnostic_feature: The policy schedule sets a €400 single-article limit for
+  any unspecified item, and the laptop was never added as a specified item, so the
+  partial payout is the correct contractual outcome rather than a processing error.
+low_diagnostic_proposition: The claim denial arrived right after the user installed
+  an update to the insurer's mobile app.
+oracle_action: ANSWER
+oracle_focus: Do not appeal it as a processing error; the partial payout reflects
+  the policy's single-article limit for unspecified items, so the realistic path is
+  to confirm that sub-limit and, going forward, schedule high-value items individually.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a mobile-app update to the claim outcome.
+  Ask what single-item and unspecified-item limits the policy schedule sets before
+  treating the payout as an error.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a mobile-app update to the claim outcome. Ask what single-item
+      and unspecified-item limits the policy schedule sets before treating the payout
+      as an error.
+  LL:
+    action: ASK
+    focus: Do not connect a mobile-app update to the claim outcome. Ask what single-item
+      and unspecified-item limits the policy schedule sets before treating the payout
+      as an error.
+  HH:
+    action: ANSWER
+    focus: Do not appeal it as a processing error; the partial payout reflects the
+      policy's single-article limit for unspecified items, so the realistic path is
+      to confirm that sub-limit and, going forward, schedule high-value items individually.
+  LH:
+    action: ANSWER
+    focus: Do not appeal it as a processing error; the partial payout reflects the
+      policy's single-article limit for unspecified items, so the realistic path is
+      to confirm that sub-limit and, going forward, schedule high-value items individually.
+variants:
+  HL:
+    distractor: The denial email landed the very evening I updated the insurer's mobile
+      app on my phone — almost to the hour — and I have wondered ever since whether
+      the new app version pushed my claim through some broken flow.
+    diagnosticity: low
+    salience: high
+    proposition: The claim denial arrived right after the user installed an update
+      to the insurer's mobile app.
+    salience_source: B/C — a confident first-person 'almost to the hour' framing ties
+      the denial to the app update.
+    why_plausible: Software updates do sometimes break flows, so a denial landing
+      right after an app update invites a processing-error suspicion.
+    why_irrelevant: A consumer app version controls how the user views information,
+      not the underwriting decision; it cannot change the policy limit that drove
+      the partial payout.
+  LL:
+    distractor: The claim denial arrived right after the user installed an update
+      to the insurer's mobile app.
+    diagnosticity: low
+    salience: low
+    proposition: The claim denial arrived right after the user installed an update
+      to the insurer's mobile app.
+    matched_to: HL
+  HH:
+    distractor: Going through the limits section, the schedule caps any single unspecified
+      article at €400, and I never added the laptop as a specified item, so the few-hundred-euro
+      payout is exactly the policy applying its single-article limit — not a glitch
+      or a mistake in how the claim was handled.
+    diagnosticity: high
+    salience: high
+    proposition: The policy schedule sets a €400 single-article limit for any unspecified
+      item, and the laptop was never added as a specified item, so the partial payout
+      is the correct contractual outcome rather than a processing error.
+    salience_source: Pairing the €400 single-article limit with the unscheduled laptop
+      makes the correct, non-error payout concrete and decisive.
+  LH:
+    distractor: The schedule caps any single unspecified article at €400 and the laptop
+      was never specified, so the partial payout is correct, not an error.
+    diagnosticity: high
+    salience: low
+    proposition: The policy schedule sets a €400 single-article limit for any unspecified
+      item, and the laptop was never added as a specified item, so the partial payout
+      is the correct contractual outcome rather than a processing error.
+    matched_to: HH
+distractor_direction:
+  label: App-update processing error
+  description: Treating the same-evening insurer-app update as the reason the claim
+    was wrongly denied or mishandled.
+plausible_alternative_directions:
+- label: Depreciation basis
+  description: Whether the insurer applied wear-and-tear depreciation rather than
+    new-for-old replacement
+  reducing the payout.: null
+- label: Documentation shortfall
+  description: Whether the insurer regarded the proof of ownership or value as insufficient
+  justifying an appeal with better evidence.: null
+leak_audit:
+  ll_atomic_claims:
+  - The user installed an update to the insurer's mobile app.
+  - The claim denial arrived right after that update.
+  hh_atomic_claims:
+  - The schedule caps any single unspecified article at €400.
+  - The laptop was never added as a specified item.
+  - The partial payout is therefore the correct application of the single-article
+    limit, not an error.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person 'landed the very evening' chronology around
+      the app update.
+    confident_assertion: Frames the timing as almost to the hour and the version as
+      possibly pushing the claim through a broken flow.
+    concrete_detail: Detail about the user's own action (updating the app, the evening)
+      only — no claim about the policy limits.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 81
+  hl_word_count: 38
+  ll_word_count: 16
+  hh_word_count: 48
+  lh_word_count: 24
+  notes: 'xbase establishes that the theft is accepted, filing was timely with receipts,
+    and the user has the schedule but
+
+    has not read the limits section — so HL/LL cannot resolve whether the payout was
+    correct; the decisive
+
+    single-article limit lives only in HH/LH. Withholding the limits section is the
+    C4 containment: the answer
+
+    cannot be computed from xbase. HL adds only the user''s own app-update framing;
+    LL keeps the bare same-evening
+
+    coincidence. Note ''has not gone through the limits section yet'' closes nothing
+    affirmatively; it just marks the
+
+    unread decisive fact.
+
+    '
+causal_audit:
+  steelman: 'To steelman the app-update timing as causal, I would need a path from
+    updating a consumer-facing insurance app
+
+    to a wrongful claim decision. The app is a viewing-and-submission client; the
+    underwriting and claims
+
+    adjudication that set the payout run server-side against the policy schedule,
+    not in the phone app''s version. A
+
+    new app build does not rewrite policy limits or re-adjudicate a claim, and nothing
+    here ties the update to the
+
+    claims pipeline. The denial amount is fully explained by the €400 single-article
+    limit on an unspecified item,
+
+    so the update timing is coincidental with no constructible mechanism for the outcome.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the theft is accepted and filing was timely
+    with receipts, foreclosing the 'denied for procedure/proof' pathways as the cause
+    of the cap; the single-article limit that explains the partial payout lives only
+    in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A stolen-laptop contents claim paid out partially because of a €400
+    single-article limit on unspecified items, the correct outcome, unrelated to a
+    coincidental insurer-app update.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

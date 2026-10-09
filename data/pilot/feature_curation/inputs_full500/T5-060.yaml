@@ -1,0 +1,195 @@
+seed_id: T5-060
+template: T5
+domain: open_qa
+complexity: high
+xbase: I am trying to choose between two chef's knives for serious home cooking, mainly
+  butchery and daily prep work. Both are in the same price range and hold an edge
+  in normal use. Knife A has a striking damascus layered steel pattern and a hand-polished
+  blade. Knife B looks plain and industrial in comparison. I want the knife that will
+  perform better over years of use. {DS}
+focal_diagnostic_feature: Knife B has a higher steel hardness rating and substantially
+  better edge retention in independent testing, and is preferred by professional cooks
+  in a blind cutting trial.
+low_diagnostic_proposition: Knife A's damascus pattern and polished finish indicate
+  its steel and edge retention will outperform the plain knife.
+oracle_action: ANSWER
+oracle_focus: Choose Knife B; its harder steel, measured edge retention advantage,
+  and blind professional preference are the relevant performance indicators, while
+  Knife A's damascus pattern is cosmetic and does not predict superior edge retention.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer edge retention from visual appearance. Ask
+  for steel hardness ratings, independent edge-retention test results, and professional
+  performance comparisons before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer edge retention from visual appearance. Ask for steel hardness
+      ratings, independent edge-retention test results, and professional performance
+      comparisons before deciding.
+  LL:
+    action: ASK
+    focus: Do not infer edge retention from visual appearance. Ask for steel hardness
+      ratings, independent edge-retention test results, and professional performance
+      comparisons before deciding.
+  HH:
+    action: ANSWER
+    focus: Choose Knife B; its harder steel, measured edge retention advantage, and
+      blind professional preference are the relevant performance indicators, while
+      Knife A's damascus pattern is cosmetic and does not predict superior edge retention.
+  LH:
+    action: ANSWER
+    focus: Choose Knife B; its harder steel, measured edge retention advantage, and
+      blind professional preference are the relevant performance indicators, while
+      Knife A's damascus pattern is cosmetic and does not predict superior edge retention.
+variants:
+  HL:
+    distractor: Knife A's damascus layers and hand-polished finish are the hallmarks
+      of genuine high-end craftsmanship, and that level of visible workmanship is
+      a reliable indicator the steel and edge retention will outperform a plain production
+      blade over years of hard use.
+    diagnosticity: low
+    salience: high
+    proposition: Knife A's damascus pattern and polished finish indicate its steel
+      and edge retention will outperform the plain knife.
+    salience_source: B — a vivid description of the aesthetic properties; C — "reliable
+      indicator" framing presents the inferential bridge as a confident causal claim
+      rather than a guess.
+    why_plausible: Damascus steel has a historical association with premium construction,
+      and hand-polishing suggests careful craftsmanship; it is natural to assume visible
+      quality correlates with performance quality.
+    why_irrelevant: Modern decorative damascus cladding is cosmetic and does not determine
+      core steel hardness or edge retention; the focal evidence shows Knife B has
+      the harder steel and better measured performance, which visual assessment cannot
+      predict.
+  LL:
+    distractor: Knife A's damascus pattern and polished finish indicate its steel
+      and edge retention will outperform the plain knife.
+    diagnosticity: low
+    salience: low
+    proposition: Knife A's damascus pattern and polished finish indicate its steel
+      and edge retention will outperform the plain knife.
+    matched_to: HL
+  HH:
+    distractor: Knife B's steel is rated HRC 62 versus Knife A's HRC 58; independent
+      edge-retention tests show Knife B stays sharp after three times as many slices
+      before requiring a strop, and four of five professional cooks preferred Knife
+      B in a blind cutting trial.
+    diagnosticity: high
+    salience: high
+    proposition: Knife B has a higher steel hardness rating and substantially better
+      edge retention in independent testing, and is preferred by professional cooks
+      in a blind cutting trial.
+    salience_source: Specific HRC ratings, a quantified edge-retention ratio, and
+      a structured blind trial make the performance case concrete and independently
+      verifiable.
+  LH:
+    distractor: Knife B has harder steel (HRC 62 vs 58), better edge-retention test
+      results, and is preferred in a blind professional trial.
+    diagnosticity: high
+    salience: low
+    proposition: Knife B has a higher steel hardness rating and substantially better
+      edge retention in independent testing, and is preferred by professional cooks
+      in a blind cutting trial.
+    matched_to: HH
+distractor_direction:
+  label: Damascus-pattern quality signal
+  description: Treating Knife A's damascus pattern and hand-polished finish as reliable
+    evidence that its steel and edge retention will outperform the plain knife.
+plausible_alternative_directions:
+- label: Handle ergonomics
+  description: Whether grip comfort and balance during extended prep work should outweigh
+    measured edge retention in the final choice.
+- label: Steel corrosion resistance
+  description: Whether each knife's resistance to corrosion and staining matters for
+    frequent use in a kitchen environment with wet ingredients.
+- label: Sharpenability
+  description: Whether the harder steel on Knife B is more difficult to resharpen
+    at home, which could offset the edge-retention advantage over time.
+leak_audit:
+  ll_atomic_claims:
+  - Knife A's damascus pattern and polished finish indicate its steel and edge retention
+    will outperform the plain knife.
+  hh_atomic_claims:
+  - Knife B's steel is rated HRC 62 versus Knife A's HRC 58.
+  - Independent edge-retention tests show Knife B stays sharp after three times as
+    many slices before requiring a strop.
+  - Four of five professional cooks preferred Knife B in a blind cutting trial.
+  hl_salience_dimensions:
+    source_credibility: N/A — T5 first-person aesthetic observation.
+    narrative_coherence: A vivid visual description of Knife A's distinctive appearance
+      followed by a confident inferential step to performance quality.
+    confident_assertion: '"Reliable indicator" — confident causal bridge from visual
+      property to performance prediction.'
+    concrete_detail: '"Damascus layers", "hand-polished finish", "plain production
+      blade" — specific aesthetic properties of the knives, not performance data.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 40
+  ll_word_count: 18
+  hh_word_count: 44
+  lh_word_count: 21
+  notes: 'T5 bridge ("visible workmanship is a reliable indicator the steel and edge
+
+    retention will outperform") appears in both HL (vivid + bridge) and LL
+
+    (flat bridge — "indicate its steel and edge retention will outperform")
+
+    per C1 and self-check 13. HL adds only the concrete visual description of
+
+    Knife A''s damascus layers and hand-polish — surface detail about the knife''s
+
+    appearance, not its performance data. Performance data (HRC ratings, edge-
+
+    retention tests, blind trial) live only in HH/LH. High complexity calibrated
+
+    through HRC metallurgy and structured professional blind trial.
+
+    '
+causal_audit:
+  steelman: 'Damascus (pattern-welded) steel has a genuine historical basis for premium
+
+    performance: traditional Damascus combined hard and soft steel layers to
+
+    produce blades with superior edge retention and flex resistance. A hand-
+
+    polished finish suggests careful, skilled manufacturing. In the knife market,
+
+    decorative appearance does sometimes correlate with overall premium
+
+    construction — a manufacturer investing in visual finish may also invest in
+
+    steel selection. The inference from visible craftsmanship to performance
+
+    quality is not absurd. The seed is clean because modern decorative damascus
+
+    cladding is an aesthetic process that uses a core steel independent of the
+
+    pattern layers; the core steel''s hardness (HRC 58 vs 62) determines edge
+
+    retention, not the visual pattern. Independent testing and a structured
+
+    blind trial are direct empirical evidence that the visual inference cannot
+
+    substitute for. The damascus surface has no causal path to the measured
+
+    performance gap.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — steel hardness ratings, edge-retention test results,
+    and the blind trial live only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Chef's knife choice decided by harder steel, better measured edge retention,
+    and blind professional preference for the plain knife, not by the damascus-patterned
+    knife's visual workmanship.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

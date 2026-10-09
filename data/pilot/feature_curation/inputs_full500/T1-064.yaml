@@ -1,0 +1,194 @@
+seed_id: T1-064
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our distributed tracing shows a spike in P99 response time for our most-called
+  internal RPC endpoint — up from around 90 ms to nearly two seconds over the past
+  five days. No application code changes were deployed during that window. The endpoint
+  hits three downstream services, and I have not found an obvious suspect looking
+  at aggregate metrics. I opened a thread in our reliability channel asking for help.
+  {DS}
+focal_diagnostic_feature: The cache tier between the endpoint and the database shows
+  disk read latency averaging 800 ms on cold keys while pool metrics across all replicas
+  show healthy utilisation throughout the spike.
+low_diagnostic_proposition: A senior SRE at a peer company attributed a similar RPC
+  P99 spike to connection-pool exhaustion.
+oracle_action: ANSWER
+oracle_focus: Investigate the cache tier's cold-key disk read path; the 800 ms cold-read
+  latency on cache misses accounts for the P99 regression while healthy pool metrics
+  rule out connection-pool exhaustion.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the connection-pool-exhaustion diagnosis
+  from the external anecdote. Ask for per-service latency breakdown and pool-wait
+  metrics before diagnosing application-side pooling.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the connection-pool-exhaustion diagnosis from the external
+      anecdote. Ask for per-service latency breakdown and pool-wait metrics before
+      diagnosing application-side pooling.
+  LL:
+    action: ASK
+    focus: Do not adopt the connection-pool-exhaustion diagnosis from the external
+      anecdote. Ask for per-service latency breakdown and pool-wait metrics before
+      diagnosing application-side pooling.
+  HH:
+    action: ANSWER
+    focus: Investigate the cache tier's cold-key disk read path; the 800 ms cold-read
+      latency on cache misses accounts for the P99 regression while healthy pool metrics
+      rule out connection-pool exhaustion.
+  LH:
+    action: ANSWER
+    focus: Investigate the cache tier's cold-key disk read path; the 800 ms cold-read
+      latency on cache misses accounts for the P99 regression while healthy pool metrics
+      rule out connection-pool exhaustion.
+variants:
+  HL:
+    distractor: Aravind, a senior SRE at a company we benchmarked against last quarter,
+      told me in our reliability thread that this symptom pattern is a classic connection-pool-exhaustion
+      scenario — he has diagnosed it a dozen times and says the queue-wait signature
+      is unmistakable.
+    diagnosticity: low
+    salience: high
+    proposition: A senior SRE at a peer company attributed a similar RPC P99 spike
+      to connection-pool exhaustion.
+    salience_source: A — credible senior SRE at a known peer company; C — confident
+      assertion ("unmistakable", "classic"); D — named source in the reliability thread
+      with claimed repeated diagnostic history.
+    why_plausible: Connection-pool exhaustion is a genuine cause of P99 spikes in
+      RPC services, and a senior SRE citing repeated experience is a natural authority
+      to defer to when the cause is unclear.
+    why_irrelevant: Pool metrics across all replicas are healthy throughout the spike;
+      pool exhaustion would manifest as elevated pool-wait time, not cache disk read
+      latency on cold keys.
+  LL:
+    distractor: Someone at a peer company suggested connection-pool exhaustion is
+      the classic explanation for this kind of RPC latency pattern.
+    diagnosticity: low
+    salience: low
+    proposition: A senior SRE at a peer company attributed a similar RPC P99 spike
+      to connection-pool exhaustion.
+    matched_to: HL
+  HH:
+    distractor: The cache tier between the endpoint and the database shows disk read
+      latency averaging 800 ms on cold keys — keys that were not recently accessed
+      — while warm-key reads complete in under 5 ms; pool metrics across all replicas
+      show healthy utilisation throughout the spike.
+    diagnosticity: high
+    salience: high
+    proposition: The cache tier between the endpoint and the database shows disk read
+      latency averaging 800 ms on cold keys while pool metrics across all replicas
+      show healthy utilisation throughout the spike.
+    salience_source: Precise latency numbers (800 ms cold vs 5 ms warm), explicit
+      pool-health confirmation, and a named tier localise the fault unambiguously.
+  LH:
+    distractor: Cache disk reads on cold keys average 800 ms, warm-key reads complete
+      under 5 ms, and pool metrics are healthy across all replicas throughout the
+      spike.
+    diagnosticity: high
+    salience: low
+    proposition: The cache tier between the endpoint and the database shows disk read
+      latency averaging 800 ms on cold keys while pool metrics across all replicas
+      show healthy utilisation throughout the spike.
+    matched_to: HH
+distractor_direction:
+  label: Connection-pool exhaustion
+  description: Investigating whether application-side connection-pool depletion or
+    queue-wait time is causing the P99 latency spike on the RPC endpoint.
+plausible_alternative_directions:
+- label: Downstream service degradation
+  description: Whether one of the three downstream services the endpoint calls is
+    itself degraded, with the cascade causing the P99 regression.
+- label: Database query plan regression
+  description: Whether a query-plan change on the backing database — triggered by
+    stale statistics or a schema change — slowed queries independently of the cache
+    tier.
+- label: Network routing change
+  description: Whether a route or peering change between the endpoint host and its
+    dependencies introduced latency for this traffic class.
+leak_audit:
+  ll_atomic_claims:
+  - Someone at a peer company attributed a similar RPC P99 spike to connection-pool
+    exhaustion.
+  - Connection-pool exhaustion is described as the classic explanation for this kind
+    of latency pattern.
+  hh_atomic_claims:
+  - The cache tier between the endpoint and the database shows disk read latency averaging
+    800 ms on cold keys.
+  - Warm-key reads complete in under 5 ms.
+  - Pool metrics across all replicas show healthy utilisation throughout the spike.
+  hl_salience_dimensions:
+    source_credibility: Aravind is identified as a senior SRE at a benchmarked peer
+      company, establishing domain authority.
+    narrative_coherence: A credible named source contributing to the reliability thread,
+      with a clean professional context and repeated prior success.
+    confident_assertion: '"Classic", "diagnosed it a dozen times", "unmistakable"
+      — all strong assertion markers.'
+    concrete_detail: Named source (Aravind) and sourcing context (peer company, reliability
+      thread) only — no detail about the current case's pool metrics.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 68
+  hl_word_count: 41
+  ll_word_count: 19
+  hh_word_count: 44
+  lh_word_count: 26
+  notes: 'LL carries only the peer-company attribution and the "classic explanation"
+
+    claim; Aravind''s name, his twelve diagnoses, and the "unmistakable" framing
+
+    are HL-only and concern the source. xbase holds symptoms and context but
+
+    never reveals cache disk latency or pool health — those live only in HH/LH.
+
+    Connection-pool exhaustion is a real cause-class for P99 spikes; the seed
+
+    is clean because pool metrics in HH structurally rule it out for this case.
+
+    QC repair: LH was missing the warm-key reads under 5 ms claim present in HH;
+
+    appended it so LH carries all three hh_atomic_claims flatly.
+
+    '
+causal_audit:
+  steelman: 'A senior SRE invoking connection-pool exhaustion is credible: depleted
+    pools
+
+    cause requests to queue at the application boundary, which manifests as a
+
+    P99 spike on the RPC endpoint. The pattern of no-code-change plus sudden
+
+    P99 regression is consistent with a pool leak accumulating over days. A
+
+    busy practitioner would reasonably put pool exhaustion on a checklist. The
+
+    seed is clean, however, because the focal evidence in HH shows pool metrics
+
+    are healthy across all replicas throughout the spike — elevated pool-wait
+
+    time would be visible in pool utilisation dashboards if exhaustion were the
+
+    cause. Cold-key cache disk reads at 800 ms, with warm reads at 5 ms, points
+
+    to a cache cold-start or eviction issue as the mechanism, not pool queuing.
+
+    The pool-metrics data structurally rule out exhaustion for this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase states only that aggregate metrics show no
+    obvious suspect; the pool-health evidence lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An RPC P99 latency spike caused by 800 ms disk reads on cold cache
+    keys, not connection-pool exhaustion as a senior SRE anecdote suggests.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator-adjudicated
+  generator: generator_B
+  generation_mode: generator_B_batches

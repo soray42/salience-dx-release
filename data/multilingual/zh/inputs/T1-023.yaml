@@ -1,0 +1,158 @@
+seed_id: T1-023
+template: T1
+domain: open_qa
+complexity: medium
+xbase: 我正在精简每月的订阅支出。我翻出了去年的信用卡账单，列出了所有循环扣款项目。我订阅了两个不同的流媒体服务、一个云存储套餐、一个音乐会员、一个新闻网站和一个冥想
+  App。我想取消那些自己确实没在用的，而不是凭感觉乱猜，而且我可以查阅实际的使用记录。{DS}
+focal_diagnostic_feature: 用户自己的观看记录显示，两个流媒体服务中有一个在过去六个月里从未打开，而另一个几乎每周都在使用。
+low_diagnostic_proposition: A friend regretted cancelling a streaming service because
+  a show they later wanted moved exclusively to it.
+oracle_action: ANSWER
+oracle_focus: Cancel the streaming service the user's own history shows unopened for
+  six months; keep the one used most weeks, and review the rest against actual usage
+  the same way rather than against someone else's regret story.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a friend's content-exclusivity regret decide
+  it. Ask for the user's own usage history on each service before cancelling anything.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a friend's content-exclusivity regret decide it. Ask for the
+      user's own usage history on each service before cancelling anything.
+  LL:
+    action: ASK
+    focus: Do not let a friend's content-exclusivity regret decide it. Ask for the
+      user's own usage history on each service before cancelling anything.
+  HH:
+    action: ANSWER
+    focus: Cancel the streaming service the user's own history shows unopened for
+      six months; keep the one used most weeks, and review the rest against actual
+      usage the same way rather than against someone else's regret story.
+  LH:
+    action: ANSWER
+    focus: Cancel the streaming service the user's own history shows unopened for
+      six months; keep the one used most weeks, and review the rest against actual
+      usage the same way rather than against someone else's regret story.
+variants:
+  HL:
+    distractor: 我的朋友 Camila 对自己的观影计划很有规划，她告诉我她为了省钱取消了一个流媒体服务，结果她一直期待的一部剧独家移到了那个平台，她不得不在几周内重新订阅。
+    diagnosticity: low
+    salience: high
+    proposition: A friend regretted cancelling a streaming service because a show
+      they later wanted moved exclusively to it.
+    salience_source: A — a thoughtful friend recounting a concrete, relatable cancellation-regret
+      experience.
+    why_plausible: Content does migrate between platforms, so the fear of cancelling
+      and losing access to a future show is a common, real hesitation.
+    why_irrelevant: The friend's story is about her viewing preferences, not the user's;
+      it cannot tell which of the user's two services the user themselves actually
+      uses, which the user's own history settles directly.
+  LL:
+    distractor: 一位朋友取消了一个流媒体服务后后悔了，因为她后来想看的一部剧独家移到了那个平台。
+    diagnosticity: low
+    salience: low
+    proposition: A friend regretted cancelling a streaming service because a show
+      they later wanted moved exclusively to it.
+    matched_to: HL
+  HH:
+    distractor: 我的账户历史一目了然：两个流媒体服务中，有一个在过去六个月里一次都没有打开过，而另一个在这同样的六个月里几乎每周都看了点什么。
+    diagnosticity: high
+    salience: high
+    proposition: The user's own viewing history shows one of the two streaming services
+      was opened zero times in the last six months, while the other was used most
+      weeks.
+    salience_source: The zero-opens-versus-most-weeks contrast over six months is
+      a precise, self-sourced usage record.
+  LH:
+    distractor: 一个流媒体服务在用户记录中显示过去六个月从未打开过；另一个则几乎每周都有使用。
+    diagnosticity: high
+    salience: low
+    proposition: The user's own viewing history shows one of the two streaming services
+      was opened zero times in the last six months, while the other was used most
+      weeks.
+    matched_to: HH
+distractor_direction:
+  label: 担忧未来内容独家锁定后悔
+  description: 将「未来想看的节目独家移至已取消的平台」这一风险视为保留两个流媒体订阅的主要理由。
+plausible_alternative_directions:
+- label: 捆绑/年付折扣核查
+  description: 在取消之前，切换为年付或捆绑套餐是否会改变某项服务的性价比。
+- label: 家庭共享使用情况
+  description: 看似闲置的服务是否有家中其他人在使用，即使用户本人没有使用。
+leak_audit:
+  ll_atomic_claims:
+  - A friend cancelled a streaming service.
+  - A show the friend later wanted moved exclusively to that service.
+  - The friend regretted the cancellation.
+  hh_atomic_claims:
+  - One of the two streaming services was opened zero times in the last six months.
+  - The other streaming service was used most weeks over that same six months.
+  hl_salience_dimensions:
+    source_credibility: Named friend (Camila) who plans her viewing carefully, with
+      a firsthand account.
+    narrative_coherence: 'Clean before/after story: cancel, show moves, resubscribe
+      within weeks.'
+    confident_assertion: Told me directly what happened to her.
+    concrete_detail: N/A — HL adds only source identification and the regret mechanism,
+      no usage fact about the user that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 41
+  ll_word_count: 18
+  hh_word_count: 43
+  lh_word_count: 18
+  notes: 'xbase lists the subscriptions and states usage history is available, but
+    never reveals which service is idle —
+
+    that decisive fact lives only in HH/LH. HL adds only Camila''s identity and her
+    regret story, no fact about the
+
+    user''s own usage. The distractor is about the friend''s preferences, structurally
+    unable to inform which of the
+
+    user''s services the user uses.
+
+    '
+causal_audit:
+  steelman: 'A careful budgeter could argue that streaming catalogues are volatile
+    and exclusivity deals shift constantly, so
+
+    a service that looks idle today might host next quarter''s must-watch release;
+    keeping both as cheap insurance
+
+    against forced resubscription churn is a defensible hedge worth weighing before
+    cancelling.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the friend's regret is about her own future viewing
+    wants and says nothing about which of the user's two services the user actually
+    uses; the decisive own-usage record is supplied only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Deciding which of two streaming subscriptions to cancel using the user's
+    own zero-opens-in-six-months viewing history, not a friend's content-exclusivity
+    regret story.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-023.yaml
+  source_xbase_sha256: de6ccb035bcaa630
+  translated_content_sha256: c1e7b966e287191e
+  translation_notes: Camila kept as named friend for salience. '流媒体服务' is the standard
+    Chinese term for streaming service. '独家' for 'exclusively'. App kept in English
+    as it is the universally used term in Chinese digital contexts. No culture-bound
+    salience cues require flagging.

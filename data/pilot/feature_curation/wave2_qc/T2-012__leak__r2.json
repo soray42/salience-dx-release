@@ -1,0 +1,25 @@
+{
+  "seed_id": "T2-012",
+  "ll_claims_extracted": [
+    "The new bedside lamp could be causing the e-reader battery to drain faster."
+  ],
+  "hl_case_claims": [
+    "Bedside lamps like that could cause battery drain in nearby devices."
+  ],
+  "hl_source_claims": [
+    "The speaker's neighbor told them this.",
+    "The neighbor works as a technician at a consumer electronics repair shop."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 27,
+    "ll": 16,
+    "xbase": 67,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

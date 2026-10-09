@@ -1,0 +1,172 @@
+seed_id: T2-048
+template: T2
+domain: open_qa
+complexity: high
+xbase: Over the past two months my regular drive to my parents' town has started taking
+  noticeably longer — maybe forty minutes more each way than it used to. I take the
+  same motorway route at roughly the same time on weekends. My car runs fine, my navigation
+  app is the same one I have always used, and I have not changed my departure habits.
+  I am trying to work out what changed. {DS}
+focal_diagnostic_feature: A long-term roadworks closure two months ago reduced the
+  motorway to a single lane for an eight-kilometre stretch on the route, with a contraflow
+  speed limit in force.
+low_diagnostic_proposition: The longer journeys began around the time the user switched
+  their phone to a new mobile network provider.
+oracle_action: ANSWER
+oracle_focus: 'The added time is the motorway roadworks: an eight-kilometre single-lane
+  contraflow on the route explains the consistent forty-minute delay, so plan around
+  it or take an alternative road.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a phone-network change to drive time.
+  Ask what changed on the road itself — roadworks, closures, or speed-limit changes
+  on the route.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a phone-network change to drive time. Ask what changed on
+      the road itself — roadworks, closures, or speed-limit changes on the route.
+  LL:
+    action: ASK
+    focus: Do not connect a phone-network change to drive time. Ask what changed on
+      the road itself — roadworks, closures, or speed-limit changes on the route.
+  HH:
+    action: ANSWER
+    focus: 'The added time is the motorway roadworks: an eight-kilometre single-lane
+      contraflow on the route explains the consistent forty-minute delay, so plan
+      around it or take an alternative road.'
+  LH:
+    action: ANSWER
+    focus: 'The added time is the motorway roadworks: an eight-kilometre single-lane
+      contraflow on the route explains the consistent forty-minute delay, so plan
+      around it or take an alternative road.'
+variants:
+  HL:
+    distractor: It nags at me that the slower drives lined up almost exactly with
+      the fortnight I ported my number to a new mobile network to save money; my partner
+      keeps pointing out that I never had these long trips before the switch, and
+      the timing really is uncanny.
+    diagnosticity: low
+    salience: high
+    proposition: The longer journeys began around the time the user switched their
+      phone to a new mobile network provider.
+    salience_source: B/C — a confident, coherent same-fortnight chronology reinforced
+      by a second person makes the timing feel significant.
+    why_plausible: People instinctively suspect a recent deliberate change, and a
+      navigation app riding on a phone makes a network switch feel like it could touch
+      the drive.
+    why_irrelevant: A mobile network change affects connectivity, not the road; the
+      same navigation app and route are used, and carrier choice has no bearing on
+      traffic flow or driving time.
+  LL:
+    distractor: The longer journeys began around the time the user switched their
+      phone to a new mobile network provider.
+    diagnosticity: low
+    salience: low
+    proposition: The longer journeys began around the time the user switched their
+      phone to a new mobile network provider.
+    matched_to: HL
+  HH:
+    distractor: Checking the route, a major roadworks scheme started two months ago
+      that squeezes an eight-kilometre motorway stretch down to a single contraflow
+      lane with a reduced speed limit; every weekend crawl now happens precisely along
+      that section, which fully accounts for the extra forty minutes.
+    diagnosticity: high
+    salience: high
+    proposition: A long-term roadworks closure two months ago reduced the motorway
+      to a single lane for an eight-kilometre stretch on the route, with a contraflow
+      speed limit in force.
+    salience_source: Concrete roadworks specifics (eight-kilometre single-lane contraflow,
+      reduced limit, on the route) make the cause vivid and decisive.
+  LH:
+    distractor: A two-month-old roadworks scheme reduces an eight-kilometre stretch
+      of the route to a single contraflow lane with a lower speed limit.
+    diagnosticity: high
+    salience: low
+    proposition: A long-term roadworks closure two months ago reduced the motorway
+      to a single lane for an eight-kilometre stretch on the route, with a contraflow
+      speed limit in force.
+    matched_to: HH
+distractor_direction:
+  label: Phone-network switch
+  description: Treating the coincident change of mobile network provider as connected
+    to the longer driving times.
+plausible_alternative_directions:
+- label: Seasonal traffic increase
+  description: Whether more weekend traffic on the route over recent months is adding
+    the delay.
+- label: Navigation routing change
+  description: Whether the app started sending the user on a slower variant of the
+    route.
+leak_audit:
+  ll_atomic_claims:
+  - The longer journeys began around a certain time.
+  - That time was when the user switched to a new mobile network provider.
+  hh_atomic_claims:
+  - A roadworks scheme started two months ago on the route.
+  - It reduces an eight-kilometre motorway stretch to a single contraflow lane.
+  - A reduced speed limit is in force on that stretch.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-fortnight chronology of the port.
+    confident_assertion: The partner keeps pointing out the trips were never long
+      before the switch.
+    concrete_detail: Detail about the coincidence event (porting the number to save
+      money) only — no claim about the road.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 46
+  ll_word_count: 19
+  hh_word_count: 44
+  lh_word_count: 22
+  notes: 'LL carries only the same-time-network-switch timing claim. The partner''s
+    reinforcement and the porting-to-save-
+
+    money detail are HL-only and about the coincidence event. xbase establishes that
+    the route, departure time,
+
+    navigation app, and car are unchanged — closing the routing/habit pathways — while
+    withholding the roadworks
+
+    that decide it; the decisive single-lane-contraflow fact lives only in HH/LH.
+    The carrier change has no path to
+
+    road conditions, satisfying C2 absolute.
+
+    '
+causal_audit:
+  steelman: 'One might argue a new carrier could give the navigation app worse traffic
+    data or slower rerouting, indirectly
+
+    lengthening trips. But xbase fixes that the same navigation app and the same route
+    are used, so app behaviour is
+
+    held constant; a carrier change alters cellular connectivity, not the physical
+    road or its traffic. There is no
+
+    mechanism by which which company bills the SIM could add a steady forty minutes
+    to a motorway drive. The timing
+
+    is coincidental, and the cause is the contraflow roadworks the carrier switch
+    cannot touch.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the navigation app, route, departure time,
+    and car are all unchanged, foreclosing the routing-data and habit pathways the
+    carrier switch might be imagined to act through; the decisive roadworks evidence
+    lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A weekend drive growing forty minutes longer because of an eight-kilometre
+    single-lane contraflow roadworks on the route, coincidentally timed with porting
+    to a new mobile network, which has no mechanism.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

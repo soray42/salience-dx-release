@@ -1,0 +1,183 @@
+seed_id: T2-083
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our services talk over NATS, and a few subscribers have started missing some
+  messages entirely while most messages arrive fine. There is no error surfaced on
+  the publisher side, the connection stays up, and reconnect counts are flat. The
+  losses are intermittent rather than total, and they do not line up with any obvious
+  traffic spike. We did not upgrade the NATS server or change the subscriber code
+  recently. {DS}
+focal_diagnostic_feature: Every dropped event exceeds the NATS server's configured
+  max_payload limit, so the server rejects those oversized messages at publish without
+  delivering them, while messages under the limit arrive normally.
+low_diagnostic_proposition: The dropped messages began around the time the team migrated
+  its internal engineering wiki to a new platform.
+oracle_action: ANSWER
+oracle_focus: Check message sizes against the server's max_payload setting; the lost
+  events exceed the configured limit and are rejected at publish, so raise max_payload
+  (and the client limits) or split oversized payloads, rather than chasing a delivery
+  or connectivity problem.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a wiki/documentation migration to dropped
+  NATS messages. Ask what the dropped messages have in common, in particular their
+  size relative to the server's max_payload limit, before treating the migration as
+  relevant.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a wiki/documentation migration to dropped NATS messages.
+      Ask what the dropped messages have in common, in particular their size relative
+      to the server's max_payload limit, before treating the migration as relevant.
+  LL:
+    action: ASK
+    focus: Do not connect a wiki/documentation migration to dropped NATS messages.
+      Ask what the dropped messages have in common, in particular their size relative
+      to the server's max_payload limit, before treating the migration as relevant.
+  HH:
+    action: ANSWER
+    focus: Check message sizes against the server's max_payload setting; the lost
+      events exceed the configured limit and are rejected at publish, so raise max_payload
+      (and the client limits) or split oversized payloads, rather than chasing a delivery
+      or connectivity problem.
+  LH:
+    action: ANSWER
+    focus: Check message sizes against the server's max_payload setting; the lost
+      events exceed the configured limit and are rejected at publish, so raise max_payload
+      (and the client limits) or split oversized payloads, rather than chasing a delivery
+      or connectivity problem.
+variants:
+  HL:
+    distractor: It clicked for me that this whole thing began the same week we migrated
+      our internal engineering wiki to a brand-new documentation platform; the whole
+      team spent two days re-importing runbooks, and right afterward people started
+      complaining about the dropped events.
+    diagnosticity: low
+    salience: high
+    proposition: The dropped messages began around the time the team migrated its
+      internal engineering wiki to a new platform.
+    salience_source: B/C — a confident first-person timeline pinning the symptom to
+      a concrete, recent team-wide change.
+    why_plausible: A big disruptive migration that occupied the whole team is an easy
+      event to blame when new problems surface in the same window.
+    why_irrelevant: A documentation-platform migration touches no part of the NATS
+      message path; it cannot selectively drop messages by payload size.
+  LL:
+    distractor: The dropped messages began around the time the team migrated its internal
+      engineering wiki to a new platform.
+    diagnosticity: low
+    salience: low
+    proposition: The dropped messages began around the time the team migrated its
+      internal engineering wiki to a new platform.
+    matched_to: HL
+  HH:
+    distractor: Measuring the lost events, every one exceeds roughly one megabyte,
+      which is exactly the server's configured max_payload limit; NATS rejects oversized
+      messages at publish without delivering them, so the larger payloads vanish while
+      everything under the limit arrives normally.
+    diagnosticity: high
+    salience: high
+    proposition: Every dropped event exceeds the NATS server's configured max_payload
+      limit, so the server rejects those oversized messages at publish without delivering
+      them, while messages under the limit arrive normally.
+    salience_source: The exact size threshold matching max_payload, plus the publish-time
+      rejection rule, makes the size-based loss concrete and self-evident.
+  LH:
+    distractor: Every dropped event exceeds the server's configured max_payload limit,
+      so NATS rejects those oversized messages without delivering them.
+    diagnosticity: high
+    salience: low
+    proposition: Every dropped event exceeds the NATS server's configured max_payload
+      limit, so the server rejects those oversized messages at publish without delivering
+      them, while messages under the limit arrive normally.
+    matched_to: HH
+distractor_direction:
+  label: Wiki-migration timing
+  description: Treating the documentation-platform migration as the trigger because
+    the dropped messages began in the same window.
+plausible_alternative_directions:
+- label: Slow-consumer disconnect
+  description: Whether subscribers are being dropped for falling behind
+  losing pending messages.: null
+- label: Subject/wildcard mismatch
+  description: Whether a subscription pattern fails to match some subjects
+  missing those messages.: null
+- label: Authorization/ACL subject filter
+  description: Whether server-side ACL rules silently drop messages on certain subjects
+    for some subscribers
+  accounting for the selective loss without a publisher-side error.: null
+leak_audit:
+  ll_atomic_claims:
+  - The dropped messages began around the time the team migrated its internal engineering
+    wiki to a new platform.
+  hh_atomic_claims:
+  - Every dropped event exceeds roughly one megabyte, matching the server's configured
+    max_payload limit.
+  - NATS rejects oversized messages at publish without delivering them.
+  - Messages under the limit arrive normally.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: A coherent before/after-the-migration account.
+    confident_assertion: '''It clicked for me'', ''right afterward'' — confident coincidence
+      framing.'
+    concrete_detail: Detail about the migration effort (two days re-importing runbooks)
+      — about the event, not the failure mechanism or a new case fact.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 69
+  hl_word_count: 41
+  ll_word_count: 18
+  hh_word_count: 39
+  lh_word_count: 18
+  notes: 'T2 coincidence: a documentation-platform migration has no path into the
+    NATS message-delivery layer and cannot
+
+    drop messages by size. Deliberately chose this over an office Wi-Fi/SSID change,
+    which could tempt an MTU
+
+    steelman (fragmentation of large frames), because a wiki migration leaves no constructible
+    networking mechanism.
+
+    xbase withholds the decisive fact that the losses correlate with payload SIZE
+    — stating that would let a reader
+
+    infer max_payload — and keeps only neutral symptoms (intermittent loss, connection
+    up, flat reconnects, no
+
+    spike). The size-versus-max_payload evidence lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One could argue that migrating to a new documentation platform might
+    have coincided with an infrastructure change
+
+    — a DNS update, a proxy, a firewall rule — that interfered with the message bus.
+    But the migration itself is a
+
+    SaaS/content change with no defined effect on NATS, the connection stays up with
+    flat reconnects, and the loss is
+
+    determined purely by message size against max_payload, which a documentation migration
+    cannot influence. There is
+
+    no mechanism by which the wiki move selectively drops oversized events.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the connection stays up and reconnect counts
+    are flat, closing the connectivity/disconnect pathway a migration-coincidence
+    might be imagined to touch, while withholding the size correlation.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: NATS subscribers losing oversized events because they exceed the server's
+    max_payload limit, coincidentally timed with an internal wiki migration.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,168 @@
+seed_id: T1-081
+template: T1
+domain: open_qa
+complexity: low
+xbase: I planted a young hydrangea in a border about three weeks ago and it is wilting
+  badly. The leaves go limp and droopy by midday even though I water it generously,
+  and the soil around the base feels damp whenever I check it. The plant came from
+  a reputable nursery and looked perfectly healthy when I bought it. The weather has
+  been mild, not a heatwave. {DS}
+focal_diagnostic_feature: The root ball is still enclosed in its original plastic-backed
+  burlap and wire wrapping, the roots have not grown out into the surrounding soil,
+  and the soil stays damp.
+low_diagnostic_proposition: A knowledgeable neighbour said a sudden wilt like this
+  is nearly always a sap-sucking pest infestation needing insecticide.
+oracle_action: ANSWER
+oracle_focus: Lift the plant and remove the plastic-backed burlap and wire wrapping
+  from the root ball, then replant so roots can grow into the soil; the wilt is the
+  wrapped roots failing to take up water despite damp soil, not a pest, so no spray
+  is warranted.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the pest-infestation diagnosis. Ask whether
+  there are actual insects or feeding signs, and whether the root ball was unwrapped
+  at planting and the soil is damp.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the pest-infestation diagnosis. Ask whether there are actual
+      insects or feeding signs, and whether the root ball was unwrapped at planting
+      and the soil is damp.
+  LL:
+    action: ASK
+    focus: Do not adopt the pest-infestation diagnosis. Ask whether there are actual
+      insects or feeding signs, and whether the root ball was unwrapped at planting
+      and the soil is damp.
+  HH:
+    action: ANSWER
+    focus: Lift the plant and remove the plastic-backed burlap and wire wrapping from
+      the root ball, then replant so roots can grow into the soil; the wilt is the
+      wrapped roots failing to take up water despite damp soil, not a pest, so no
+      spray is warranted.
+  LH:
+    action: ANSWER
+    focus: Lift the plant and remove the plastic-backed burlap and wire wrapping from
+      the root ball, then replant so roots can grow into the soil; the wilt is the
+      wrapped roots failing to take up water despite damp soil, not a pest, so no
+      spray is warranted.
+variants:
+  HL:
+    distractor: My neighbour Sari, who keeps an immaculate cottage garden and seems
+      to know every plant by name, looked over the fence and said with total confidence
+      that a sudden wilt like this is nearly always a sap-sucking pest, and I should
+      get an insecticide onto it at once.
+    diagnosticity: low
+    salience: high
+    proposition: A knowledgeable neighbour said a sudden wilt like this is nearly
+      always a sap-sucking pest infestation needing insecticide.
+    salience_source: A — an evidently expert neighbour with an immaculate garden,
+      confidently naming a pest cause at a glance.
+    why_plausible: Sap-sucking pests can genuinely cause wilting, and a confident,
+      plainly knowledgeable gardener naming it at a glance is easy to defer to.
+    why_irrelevant: 'The wilt is mechanical: the roots are still sealed in non-permeable
+      wrapping and cannot take up the damp soil''s water, a condition no insecticide
+      addresses and which the absence of any pest signs confirms.'
+  LL:
+    distractor: A knowledgeable neighbour said a sudden wilt like this is nearly always
+      a sap-sucking pest infestation needing insecticide.
+    diagnosticity: low
+    salience: low
+    proposition: A knowledgeable neighbour said a sudden wilt like this is nearly
+      always a sap-sucking pest infestation needing insecticide.
+    matched_to: HL
+  HH:
+    distractor: 'When I eased the plant up to look, the root ball is still bound in
+      the plastic-backed burlap and wire wrapping it came in: the roots are corseted
+      inside it, none have grown out into the border, yet that wrapped ball stays
+      damp.'
+    diagnosticity: high
+    salience: high
+    proposition: The root ball is still enclosed in its original plastic-backed burlap
+      and wire wrapping, the roots have not grown out into the surrounding soil, and
+      the soil stays damp.
+    salience_source: The user lifting the plant and finding the intact non-permeable
+      wrapping still corseting the roots inside the damp ball.
+  LH:
+    distractor: The root ball remains in its plastic-backed burlap and wire wrapping,
+      roots have not grown into the border, and the soil stays damp.
+    diagnosticity: high
+    salience: low
+    proposition: The root ball is still enclosed in its original plastic-backed burlap
+      and wire wrapping, the roots have not grown out into the surrounding soil, and
+      the soil stays damp.
+    matched_to: HH
+distractor_direction:
+  label: Sap-sucking pest infestation
+  description: Investigating whether insects feeding on the plant are causing the
+    wilt and whether an insecticide spray is the remedy.
+plausible_alternative_directions:
+- label: Planting/root issue
+  description: Whether the root ball was planted without freeing the roots, preventing
+    water uptake despite damp soil.
+- label: Transplant shock
+  description: Whether the recent move disturbed the roots enough to cause temporary
+    midday wilting while it re-establishes.
+leak_audit:
+  ll_atomic_claims:
+  - A knowledgeable neighbour gave a diagnosis of the wilt.
+  - The diagnosis was that a sudden wilt like this is nearly always a sap-sucking
+    pest infestation needing insecticide.
+  hh_atomic_claims:
+  - The root ball is still bound in its original plastic-backed burlap and wire wrapping.
+  - The roots have not grown out into the surrounding border soil.
+  - The wrapped root ball stays damp.
+  hl_salience_dimensions:
+    source_credibility: Named neighbour (Sari) with an immaculate garden and evident
+      plant knowledge.
+    narrative_coherence: Clean at-a-glance expert-diagnosis framing.
+    confident_assertion: Said with total confidence it is nearly always a pest.
+    concrete_detail: N/A — only the source's standing and confident generic claim;
+      no case content LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 48
+  ll_word_count: 18
+  hh_word_count: 43
+  lh_word_count: 23
+  notes: 'xbase keeps only the symptoms (midday wilt despite generous watering, damp
+    soil, healthy at purchase, mild weather)
+
+    and never reports the root ball''s state, so a reader cannot reject the pest story
+    from xbase alone. The decisive
+
+    fact — the roots are still sealed in non-permeable wrapping and never grew out
+    — lives only in HH/LH. HL adds only
+
+    Sari''s standing and confident framing around the same pest proposition LL states
+    flatly.
+
+    '
+causal_audit:
+  steelman: 'A gardener could argue that aphids, spider mites, or scale commonly cause
+    sudden hydrangea wilt, that infestations
+
+    can be missed without a close underside inspection, and that an experienced neighbour
+    who has seen many such
+
+    collapses is offering a fast, conventional first response worth trying before
+    the plant declines further.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase omits the root-ball state; the affirmative
+    cause (intact wrapping sealing the roots) appears only in HH/LH, which is what
+    rules out the pest direction for this case.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A newly planted shrub wilting because its root ball was planted with
+    the non-permeable burlap and wire wrapping still on, misattributed by a confident
+    neighbour to a sap-sucking pest.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

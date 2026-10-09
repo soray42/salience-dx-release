@@ -1,0 +1,168 @@
+seed_id: T1-050
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'Our MongoDB-backed API has started returning stale data to some users: they
+  update a record, refetch it, and get the old value for a minute or two before it
+  corrects itself. It does not happen on every request, just intermittently. The application
+  code has not changed and the cluster is healthy with no failovers in the logs. {DS}'
+focal_diagnostic_feature: The read queries use a secondary read preference, and replication
+  lag on one secondary spikes to about 90 seconds during the affected windows.
+low_diagnostic_proposition: A similar stale-read problem at another team was caused
+  by a caching layer holding responses past their TTL.
+oracle_action: ANSWER
+oracle_focus: Address read preference and replication lag; reads are being served
+  from a lagging secondary, so route consistency-sensitive reads to the primary or
+  use a stronger read concern.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the other team's caching-TTL explanation.
+  Ask about read preference, replication lag, and read concern before assuming a cache
+  is involved.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the other team's caching-TTL explanation. Ask about read preference,
+      replication lag, and read concern before assuming a cache is involved.
+  LL:
+    action: ASK
+    focus: Do not adopt the other team's caching-TTL explanation. Ask about read preference,
+      replication lag, and read concern before assuming a cache is involved.
+  HH:
+    action: ANSWER
+    focus: Address read preference and replication lag; reads are being served from
+      a lagging secondary, so route consistency-sensitive reads to the primary or
+      use a stronger read concern.
+  LH:
+    action: ANSWER
+    focus: Address read preference and replication lag; reads are being served from
+      a lagging secondary, so route consistency-sensitive reads to the primary or
+      use a stronger read concern.
+variants:
+  HL:
+    distractor: Halina, who runs platform at a company we share investors with, hit
+      nearly the same stale-read complaints last quarter and told me it turned out
+      to be their Redis cache layer serving responses well past the configured TTL;
+      she was certain a cache was the usual culprit for this.
+    diagnosticity: low
+    salience: high
+    proposition: A similar stale-read problem at another team was caused by a caching
+      layer holding responses past their TTL.
+    salience_source: A — a named platform lead at a connected company recounting nearly
+      identical complaints lends the cache story credibility.
+    why_plausible: A cache serving past its TTL is a classic, very common cause of
+      stale reads, so the matching story tempts an engineer to hunt the cache first.
+    why_irrelevant: There is no caching layer in this read path; the staleness is
+      produced by reading from a replica that is behind, which a cache explanation
+      cannot touch.
+  LL:
+    distractor: A similar stale-read problem at another team was caused by a caching
+      layer serving responses past their TTL.
+    diagnosticity: low
+    salience: low
+    proposition: A similar stale-read problem at another team was caused by a caching
+      layer holding responses past their TTL.
+    matched_to: HL
+  HH:
+    distractor: The reads are configured with a secondary read preference, and during
+      the windows when users see old values, replication lag on one secondary climbs
+      to roughly 90 seconds — exactly the minute-or-two staleness, served by a replica
+      that has not yet caught up.
+    diagnosticity: high
+    salience: high
+    proposition: The read queries use a secondary read preference, and replication
+      lag on one secondary spikes to about 90 seconds during the affected windows.
+    salience_source: Concrete configuration plus a measured 90-second lag aligned
+      to the symptom windows makes the cause vivid.
+  LH:
+    distractor: Reads use a secondary read preference, and one secondary's replication
+      lag spikes to about 90 seconds during the affected windows.
+    diagnosticity: high
+    salience: low
+    proposition: The read queries use a secondary read preference, and replication
+      lag on one secondary spikes to about 90 seconds during the affected windows.
+    matched_to: HH
+distractor_direction:
+  label: Cache TTL staleness
+  description: Investigating whether a caching layer is serving responses past their
+    TTL and producing the stale reads.
+plausible_alternative_directions:
+- label: Write concern timing
+  description: Whether writes acknowledged before propagation make a subsequent read
+    appear stale.
+- label: Client-side state
+  description: Whether the client or a CDN is caching the response and showing an
+    outdated value.
+leak_audit:
+  ll_atomic_claims:
+  - A similar stale-read problem occurred at another team.
+  - It was caused by a caching layer serving responses past their TTL.
+  hh_atomic_claims:
+  - The reads are configured with a secondary read preference.
+  - During the affected windows, one secondary's replication lag climbs to roughly
+    90 seconds.
+  hl_salience_dimensions:
+    source_credibility: Named platform lead (Halina) at a company sharing investors
+      describing matching complaints.
+    narrative_coherence: Coherent last-quarter incident with a stated resolution.
+    confident_assertion: She was certain a cache was the usual culprit.
+    concrete_detail: Detail about the source's case (Redis layer, configured TTL)
+      only — no claim about this system's read path.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 65
+  hl_word_count: 47
+  ll_word_count: 16
+  hh_word_count: 44
+  lh_word_count: 19
+  notes: 'LL carries only the cache-past-TTL claim from another team. The named lead,
+    the Redis specificity, and her
+
+    certainty are HL-only and about the source''s case. xbase deliberately withholds
+    the read preference and
+
+    replication-lag evidence; it states only the symptom, that code is unchanged,
+    and the cluster is healthy with no
+
+    failovers. The decisive secondary-read-lag fact lives only in HH/LH. xbase does
+    not name a cache at all, so the
+
+    HL/LL cells cannot rule the cache in or out from xbase alone.
+
+    '
+causal_audit:
+  steelman: 'A senior engineer would note that stale reads are the textbook symptom
+    of a cache serving entries past their
+
+    TTL, and a matching incident at a peer company makes the cache the obvious first
+    hypothesis. The defeater is the
+
+    focal evidence: the reads use a secondary read preference and the staleness windows
+    line up precisely with a
+
+    secondary lagging by about 90 seconds. The staleness is therefore produced by
+    reading an un-caught-up replica,
+
+    a mechanism entirely inside MongoDB''s replication, with no cache in the path.
+    The cache story has nothing to act
+
+    on in this system.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase withholds the read-preference and lag evidence
+    rather than closing a pathway; the cache distractor is defeated by the focal feature
+    in HH/LH, and xbase keeps only symptom and health-status context.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Intermittent MongoDB stale reads caused by a secondary read preference
+    plus replica lag, not the cache-past-TTL layer a peer's matching war story points
+    to.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

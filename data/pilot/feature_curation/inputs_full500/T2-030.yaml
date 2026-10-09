@@ -1,0 +1,174 @@
+seed_id: T2-030
+template: T2
+domain: open_qa
+complexity: medium
+xbase: I have an offer for a role in another city and I am genuinely torn about whether
+  to take it. I have been in my current city a long time and moving feels like a huge
+  upheaval, even though nothing concrete is keeping me here. The work itself is in
+  the direction I want my career to go. I keep going back and forth, and I have to
+  give the company a decision by Monday. {DS}
+focal_diagnostic_feature: The offer raises pay by thirty-five percent, fully covers
+  relocation costs, and is in the exact specialty the user has been trying to move
+  into, with no lease, family, or other ties holding them in their current city.
+low_diagnostic_proposition: The offer arrived the same week the user's favourite neighbourhood
+  cafe closed down for good.
+oracle_action: ANSWER
+oracle_focus: Lean toward accepting; a thirty-five percent raise, fully covered relocation,
+  exact specialty fit, and the absence of local ties make this a strong move on the
+  disclosed facts.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let the cafe closing colour the decision. Ask
+  about the offer's pay, relocation support, role fit, and whether anything actually
+  ties the user to the current city before judging the move.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let the cafe closing colour the decision. Ask about the offer's
+      pay, relocation support, role fit, and whether anything actually ties the user
+      to the current city before judging the move.
+  LL:
+    action: ASK
+    focus: Do not let the cafe closing colour the decision. Ask about the offer's
+      pay, relocation support, role fit, and whether anything actually ties the user
+      to the current city before judging the move.
+  HH:
+    action: ANSWER
+    focus: Lean toward accepting; a thirty-five percent raise, fully covered relocation,
+      exact specialty fit, and the absence of local ties make this a strong move on
+      the disclosed facts.
+  LH:
+    action: ANSWER
+    focus: Lean toward accepting; a thirty-five percent raise, fully covered relocation,
+      exact specialty fit, and the absence of local ties make this a strong move on
+      the disclosed facts.
+variants:
+  HL:
+    distractor: What makes the timing feel strange is that the offer landed in my
+      inbox the very same week the little corner cafe I have gone to every morning
+      for years finally shut its doors for good, and the whole street feels different
+      now.
+    diagnosticity: low
+    salience: high
+    proposition: The offer arrived the same week the user's favourite neighbourhood
+      cafe closed down for good.
+    salience_source: B/C — a vivid, confident first-person account tying the offer's
+      arrival to an emotionally charged neighbourhood loss gives the coincidence pull.
+    why_plausible: Big decisions feel coloured by what is happening around them, so
+      a meaningful neighbourhood change in the same week feels like it carries significance.
+    why_irrelevant: A cafe closing changes the texture of the old neighbourhood but
+      tells the user nothing about whether the offer's pay, relocation terms, and
+      role fit make the move worthwhile.
+  LL:
+    distractor: The offer arrived the same week the user's favourite neighbourhood
+      cafe closed down for good.
+    diagnosticity: low
+    salience: low
+    proposition: The offer arrived the same week the user's favourite neighbourhood
+      cafe closed down for good.
+    matched_to: HL
+  HH:
+    distractor: Concretely, the offer lifts my pay by thirty-five percent, the company
+      pays the full cost of relocating, the role is squarely in the specialty I have
+      been trying to break into, and there is no lease, family, or commitment actually
+      tying me to this city.
+    diagnosticity: high
+    salience: high
+    proposition: The offer raises pay by thirty-five percent, fully covers relocation
+      costs, and is in the exact specialty the user has been trying to move into,
+      with no lease, family, or other ties holding them in their current city.
+    salience_source: The concrete thirty-five percent raise, fully paid relocation,
+      exact-specialty fit, and explicit absence of ties make the move's strength vivid.
+  LH:
+    distractor: The offer raises pay thirty-five percent, fully covers relocation,
+      fits the user's target specialty, and no local ties hold them here.
+    diagnosticity: high
+    salience: low
+    proposition: The offer raises pay by thirty-five percent, fully covers relocation
+      costs, and is in the exact specialty the user has been trying to move into,
+      with no lease, family, or other ties holding them in their current city.
+    matched_to: HH
+distractor_direction:
+  label: Neighbourhood-loss timing
+  description: Treating the coincidental closing of a beloved local cafe as something
+    that bears on whether to accept the out-of-city offer.
+plausible_alternative_directions:
+- label: Cost-of-living adjustment
+  description: Whether the thirty-five percent raise holds up after the new city's
+    living costs.
+- label: Social-support continuity
+  description: Whether leaving an established social network is a cost the move does
+    not offset.
+leak_audit:
+  ll_atomic_claims:
+  - The user's favourite neighbourhood cafe closed down for good.
+  - The closing happened the same week the offer arrived.
+  hh_atomic_claims:
+  - The offer raises pay by thirty-five percent.
+  - The company fully covers relocation costs.
+  - The role is in the user's exact target specialty.
+  - No lease, family, or other ties hold the user in the current city.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person account tying the offer's arrival to the
+      cafe's closing week.
+    confident_assertion: Confident framing ('What makes the timing feel strange')
+      foregrounds the coincidence.
+    concrete_detail: Detail about the cafe (every-morning ritual, the changed street)
+      only — no claim about the offer's terms.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 78
+  hl_word_count: 41
+  ll_word_count: 15
+  hh_word_count: 44
+  lh_word_count: 21
+  notes: 'LL carries only the cafe-closed-same-week claim; the every-morning ritual
+    and the changed-street feeling are
+
+    HL-only colour about the coincidence event, adding no decision fact LL lacks.
+    xbase states the dilemma (offer in
+
+    another city, long-time resident, nothing concrete keeping them, career-direction
+    fit, deadline); the "nothing
+
+    keeping me" line is a neutral pathway-closure of the local-obligation mechanism
+    that names no offer terms, so
+
+    HL/LL cannot resolve the decision. The decisive pay/relocation/specialty/no-ties
+    facts live only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A counsellor might argue the cafe''s closing is a meaningful signal:
+    a cherished daily ritual ending could mark
+
+    that the user''s attachment to the city is already fraying, making this a natural
+    moment to leave. But that
+
+    reframes the coincidence as a feeling, not a fact about the decision. The closing
+    of one cafe has no bearing on
+
+    whether the offer''s compensation, relocation support, and role fit make the move
+    financially and professionally
+
+    sound; those are what determine the move''s merit, and a shuttered cafe provides
+    no information about any of them.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states nothing concrete keeps the user in the city,
+    foreclosing the local-obligation mechanism without revealing the decisive pay/relocation/specialty
+    facts, which remain only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A user deciding on an out-of-city offer that is strong on pay, relocation,
+    and fit, where a coincidentally closed cafe is irrelevant to the decision.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

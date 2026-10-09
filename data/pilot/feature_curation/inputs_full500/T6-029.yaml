@@ -1,0 +1,194 @@
+seed_id: T6-029
+template: T6
+domain: open_qa
+complexity: low
+xbase: I have a competing offer that pays 18 percent more than my current role. My
+  performance reviews have been strong and I like my team. I am wondering whether
+  to use the competing offer to negotiate a raise rather than accepting it outright.
+  {DS}
+focal_diagnostic_feature: The current employer has a published no-counter-offer policy
+  and has announced a headcount budget freeze through the end of Q2.
+low_diagnostic_proposition: Every time the user has used a competing offer as leverage
+  before, the current employer matched it, so the same outcome is expected now.
+oracle_action: ANSWER
+oracle_focus: Do not use the offer purely as leverage; the current employer's no-counter-offer
+  policy and active budget freeze mean a counter is structurally unavailable, so the
+  user should evaluate the competing offer on its own merits and decide whether to
+  accept or decline it.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume this employer will respond as past employers
+  did. Ask whether the current employer has counter-offer policies, budget constraints,
+  or a history of matching competing offers before treating the negotiation as a reliable
+  strategy.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume this employer will respond as past employers did. Ask whether
+      the current employer has counter-offer policies, budget constraints, or a history
+      of matching competing offers before treating the negotiation as a reliable strategy.
+  LL:
+    action: ASK
+    focus: Do not assume this employer will respond as past employers did. Ask whether
+      the current employer has counter-offer policies, budget constraints, or a history
+      of matching competing offers before treating the negotiation as a reliable strategy.
+  HH:
+    action: ANSWER
+    focus: Do not use the offer purely as leverage; the current employer's no-counter-offer
+      policy and active budget freeze mean a counter is structurally unavailable,
+      so the user should evaluate the competing offer on its own merits and decide
+      whether to accept or decline it.
+  LH:
+    action: ANSWER
+    focus: Do not use the offer purely as leverage; the current employer's no-counter-offer
+      policy and active budget freeze mean a counter is structurally unavailable,
+      so the user should evaluate the competing offer on its own merits and decide
+      whether to accept or decline it.
+variants:
+  HL:
+    distractor: Every time I have used a competing offer as leverage at a previous
+      employer, my manager matched it within a week; the pattern is so reliable that
+      I mentally treat it as a guaranteed negotiation step.
+    diagnosticity: low
+    salience: high
+    proposition: Every time the user has used a competing offer as leverage before,
+      the current employer matched it, so the same outcome is expected now.
+    salience_source: B/C — confident first-person recollection framed as a pattern
+      so reliable it functions as a rule, with 'mentally treat it as guaranteed' driving
+      strong first-instinct pull.
+    why_plausible: Competing offers that have worked repeatedly do form a real prior,
+      and users understandably extrapolate from their own negotiation history when
+      facing the same tactical choice.
+    why_irrelevant: Past employers who matched competing offers were different organisations
+      with different policies and budgets; whether this specific employer can or will
+      counter depends on its own policy and current budget constraints, which are
+      structurally different from any past employer.
+  LL:
+    distractor: Every time the user has used a competing offer as leverage before,
+      the employer matched it, so the same outcome is expected now.
+    diagnosticity: low
+    salience: low
+    proposition: Every time the user has used a competing offer as leverage before,
+      the current employer matched it, so the same outcome is expected now.
+    matched_to: HL
+  HH:
+    distractor: My current employer posted a company-wide policy last quarter stating
+      it does not match outside offers under any circumstances, and our department
+      head announced a full headcount budget freeze through the end of Q2.
+    diagnosticity: high
+    salience: high
+    proposition: The current employer has a published no-counter-offer policy and
+      has announced a headcount budget freeze through the end of Q2.
+    salience_source: Two concrete, independent structural barriers — a published company-wide
+      policy and a named budget freeze with a deadline — together make a counter-offer
+      mechanically impossible, not merely unlikely.
+  LH:
+    distractor: The current employer has an explicit no-counter-offer policy and a
+      headcount budget freeze through Q2.
+    diagnosticity: high
+    salience: low
+    proposition: The current employer has a published no-counter-offer policy and
+      has announced a headcount budget freeze through the end of Q2.
+    matched_to: HH
+distractor_direction:
+  label: Past leverage pattern repeating
+  description: Assuming that the current employer will match the competing offer because
+    previous employers always did so when the same tactic was used.
+plausible_alternative_directions:
+- label: Manager discretion override
+  description: Whether the user's manager has individual authority to make an exception
+    to any policy given strong review history.
+- label: Accepting the competing offer
+  description: Whether the 18-percent raise at the new employer is attractive enough
+    to justify leaving outright rather than treating it as a negotiating tool.
+leak_audit:
+  ll_atomic_claims:
+  - Every time the user used a competing offer as leverage before, the employer matched
+    it.
+  - The same outcome is expected now.
+  hh_atomic_claims:
+  - The current employer posted a company-wide policy last quarter.
+  - The policy states it does not match outside offers under any circumstances.
+  - The department head announced a headcount budget freeze through the end of Q2.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clear first-person recollection of a repeated, reliable personal
+      experience, with smooth chronological framing.
+    confident_assertion: '''So reliable that I mentally treat it as a guaranteed negotiation
+      step'' states the inference with maximum confidence.'
+    concrete_detail: Detail about past timing ('matched within a week') describes
+      the prior experience only; no claim about the current employer's policy or budget
+      is added.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 43
+  hl_word_count: 35
+  ll_word_count: 21
+  hh_word_count: 34
+  lh_word_count: 15
+  notes: 'T6 bridge check: HL says ''mentally treat it as a guaranteed negotiation
+    step'' (current
+
+    inference); LL says ''the same outcome is expected now'' — both apply the past
+    pattern to
+
+    the present case as required by C1 for T6. The past timing detail (''within a
+    week'') in HL
+
+    is about the prior employers'' behaviour, not the current employer, and does not
+    appear in
+
+    LL — it is source detail (describing the historical experience), not a new claim
+    about this
+
+    case. HH/LH atomic-claim diff: LH carries all three HH claims (company-wide policy,
+
+    no-match-under-any-circumstances content, Q2 budget freeze) in condensed form.
+
+    '
+causal_audit:
+  steelman: 'A user''s own negotiation history is genuine empirical evidence about
+    how employers respond
+
+    to competing offers. If the pattern has held across multiple employers, a practitioner
+    might
+
+    argue it is informative about the general population of employers, including this
+    one.
+
+    Strong performance reviews further suggest the employer would want to retain the
+    user.
+
+    However, the T6 steelman must address whether ''the past cause operates in the
+    present
+
+    case'': this employer is structurally different because it has a published no-counter-offer
+
+    policy and an active budget freeze. Past employers who matched offers did not
+    have these
+
+    constraints. The structural differences make the past pattern inapplicable to
+    this specific
+
+    case regardless of how reliable it has been elsewhere; the focal feature exposes
+    exactly
+
+    this structural break.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not reveal the current employer's counter-offer
+    policy or budget status; those decisive facts live only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: User wants to use a competing offer as leverage but the current employer
+    has a no-counter-offer policy and a Q2 budget freeze, making the past-success
+    pattern structurally inapplicable.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,191 @@
+seed_id: T3-084
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Kafka-backed pipeline drops messages for about 90 seconds whenever we do
+  a rolling broker restart. The cluster has three brokers, and all topics share the
+  same 24-hour retention configuration. The drops only affect one specific topic;
+  all other topics recover cleanly during the same restarts. We run rolling restarts
+  weekly for maintenance. {DS}
+focal_diagnostic_feature: The affected topic has a replication factor of 1 while all
+  other topics on the cluster use factor 3; when its single-broker leader is restarted,
+  there is no replica to elect a new leader, leaving producers and consumers blocked
+  for the full restart window.
+low_diagnostic_proposition: Message loss during rolling restarts is almost always
+  caused by log retention being shorter than the restart window.
+oracle_action: ANSWER
+oracle_focus: Increase the replication factor for the affected topic to at least 3
+  and reassign partition replicas across the other brokers; then verify min.insync.replicas
+  is set appropriately to prevent silent under-replication in future.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the retention explanation; all topics share
+  the same 24-hour retention and only one topic loses messages. Ask for the affected
+  topic's replication factor and partition replica assignment before making changes.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the retention explanation; all topics share the same 24-hour
+      retention and only one topic loses messages. Ask for the affected topic's replication
+      factor and partition replica assignment before making changes.
+  LL:
+    action: ASK
+    focus: Do not accept the retention explanation; all topics share the same 24-hour
+      retention and only one topic loses messages. Ask for the affected topic's replication
+      factor and partition replica assignment before making changes.
+  HH:
+    action: ANSWER
+    focus: Increase the replication factor for the affected topic to at least 3 and
+      reassign partition replicas across the other brokers; then verify min.insync.replicas
+      is set appropriately to prevent silent under-replication in future.
+  LH:
+    action: ANSWER
+    focus: Increase the replication factor for the affected topic to at least 3 and
+      reassign partition replicas across the other brokers; then verify min.insync.replicas
+      is set appropriately to prevent silent under-replication in future.
+variants:
+  HL:
+    distractor: Arash, the senior Kafka engineer our team consulted when we set up
+      the cluster two years ago, looked at the symptoms and said this is always about
+      retention — production pipelines almost always lose messages during restarts
+      because the window is longer than people set their retention for.
+    diagnosticity: low
+    salience: high
+    proposition: Message loss during rolling restarts is almost always caused by log
+      retention being shorter than the restart window.
+    salience_source: 'A — source credibility: the named engineer who originally set
+      up this specific cluster, asserting a confident pattern rule ("always about
+      retention", "almost always").'
+    why_plausible: Retention shorter than the restart window is a genuine failure
+      mode; an expert who set up the cluster confidently diagnosing a common pattern
+      is easy to defer to before checking topic-level configuration details.
+    why_irrelevant: All topics share the same 24-hour retention, so retention cannot
+      explain why only one topic loses messages; the authority applies a general rule
+      without examining per-topic replication settings.
+  LL:
+    distractor: A senior Kafka engineer said that message loss during restarts is
+      almost always caused by log retention being shorter than the restart window.
+    diagnosticity: low
+    salience: low
+    proposition: Message loss during rolling restarts is almost always caused by log
+      retention being shorter than the restart window.
+    matched_to: HL
+  HH:
+    distractor: The affected topic's replication factor is set to 1 while every other
+      topic on the cluster uses 3; when broker 2 goes down for its restart, that topic
+      has no replica to take over, leaving producers and consumers completely blocked
+      for the full 90-second window.
+    diagnosticity: high
+    salience: high
+    proposition: The affected topic has a replication factor of 1 while all other
+      topics on the cluster use factor 3; when its single-broker leader is restarted,
+      there is no replica to elect a new leader, leaving producers and consumers blocked
+      for the full restart window.
+    salience_source: The direct contrast (1 vs 3 replication factor), the identification
+      of broker 2 as the failing case, and the "no replica to take over" mechanism
+      make the under-replication cause precise and verifiable.
+  LH:
+    distractor: The affected topic has replication factor 1; all other topics use
+      factor 3, leaving no replica available during the broker restart window.
+    diagnosticity: high
+    salience: low
+    proposition: The affected topic has a replication factor of 1 while all other
+      topics on the cluster use factor 3; when its single-broker leader is restarted,
+      there is no replica to elect a new leader, leaving producers and consumers blocked
+      for the full restart window.
+    matched_to: HH
+distractor_direction:
+  label: Retention-window mismatch
+  description: Investigating whether the affected topic's log retention period is
+    shorter than the rolling-restart window, causing messages to expire before consumers
+    can re-read them after leader election.
+plausible_alternative_directions:
+- label: Consumer group rebalance storm
+  description: Rolling restarts triggering repeated consumer-group rebalances could
+    stall consumption for longer than expected if the group protocol is slow to stabilise.
+- label: Producer acks misconfiguration
+  description: If the affected topic's producers use acks=1 while the broker is mid-restart,
+    messages acknowledged by a non-surviving leader could be lost before replication.
+- label: Unclean leader election enabled
+  description: With unclean.leader.election.enable=true, an out-of-sync replica could
+    be elected leader during the restart window, causing message loss regardless of
+    retention.
+leak_audit:
+  ll_atomic_claims:
+  - Message loss during rolling restarts is almost always caused by log retention
+    being shorter than the restart window.
+  hh_atomic_claims:
+  - The affected topic's replication factor is set to 1.
+  - Every other topic on the cluster uses replication factor 3.
+  - When broker 2 goes down for its restart, the affected topic has no replica to
+    take over.
+  - Producers and consumers are completely blocked for the full 90-second window.
+  hl_salience_dimensions:
+    source_credibility: Arash is the engineer who set up this specific cluster two
+      years ago — direct first-hand institutional knowledge cited as the credibility
+      basis.
+    narrative_coherence: Described as a standup-style consultation where the expert
+      looked at the symptoms and delivered a confident diagnosis.
+    confident_assertion: '"said this is always about retention", "almost always lose
+      messages" — no hedging, pure authority assertion.'
+    concrete_detail: N/A — no case-specific detail added; Arash states only the generic
+      pattern.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 53
+  hl_word_count: 47
+  ll_word_count: 23
+  hh_word_count: 45
+  lh_word_count: 22
+  notes: 'T3 authority: Arash gives a confident pattern rule without examining per-topic
+
+    configuration. xbase closes the retention pathway by stating all topics share
+
+    the same 24-hour retention — making retention unable to explain why only one
+
+    topic is affected. The replication-factor finding (RF=1 vs 3) lives only in
+
+    HH/LH and is the decisive structural cause. Ratios HL:LL=47:23=2.0,
+
+    HH:LH=45:22=2.0 — both within 4:1.
+
+    '
+causal_audit:
+  steelman: 'Retention shorter than the rolling-restart window is a real failure mode:
+    if a
+
+    topic retains messages for less time than it takes for all brokers to cycle through
+
+    a restart, consumers that fell behind could lose access to messages after the
+    window.
+
+    An engineer who set up the cluster would know whether the retention defaults were
+
+    set conservatively. However, xbase states all topics share the same 24-hour retention
+
+    configuration, so retention cannot explain why only this one topic experiences
+    message
+
+    loss while identical-retention topics recover cleanly. The steelman collapses
+    on the
+
+    shared-retention clause in xbase.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states "all topics share the same 24-hour retention
+    configuration," closing the retention-window pathway because retention cannot
+    differentiate the one affected topic from the others that recover cleanly.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Kafka topic with replication factor 1 loses messages during every rolling
+    broker restart because there is no replica to elect as leader; authority attributes
+    it to a retention-window mismatch without inspecting per-topic replication settings.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

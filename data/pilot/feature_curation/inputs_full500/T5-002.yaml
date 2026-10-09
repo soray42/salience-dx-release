@@ -1,0 +1,92 @@
+seed_id: T5-002
+template: T5
+domain: open_qa
+complexity: low
+xbase: I've been offered a permanent mostly-remote job and am trying to decide whether
+  to accept. I would only visit the office for onboarding and occasional quarterly
+  meetings. The contract terms look ordinary for my industry. {DS}
+focal_diagnostic_feature: The offer is 18% above current salary, aligns with the user's
+  career direction, and includes two trusted former colleagues on the team.
+low_diagnostic_proposition: The office lobby used for occasional visits is dim, dated,
+  and smells musty.
+oracle_action: ANSWER
+oracle_focus: Accept or negotiate from strength; the disclosed compensation, fit,
+  and team information are favourable.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not use an occasional-visit lobby as a proxy for job
+  quality. Ask about compensation, role fit, manager/team, and contract terms.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not use an occasional-visit lobby as a proxy for job quality. Ask about
+      compensation, role fit, manager/team, and contract terms.
+  LL:
+    action: ASK
+    focus: Do not use an occasional-visit lobby as a proxy for job quality. Ask about
+      compensation, role fit, manager/team, and contract terms.
+  HH:
+    action: ANSWER
+    focus: Accept or negotiate from strength; the disclosed compensation, fit, and
+      team information are favourable.
+  LH:
+    action: ANSWER
+    focus: Accept or negotiate from strength; the disclosed compensation, fit, and
+      team information are favourable.
+variants:
+  HL:
+    distractor: The lobby hit me with a musty smell, greenish fluorescent light, and
+      carpet that looked like it had survived three reorganisations.
+    diagnosticity: low
+    salience: high
+    proposition: The office lobby used for occasional visits is dim, dated, and smells
+      musty.
+    salience_source: smell, lighting, worn physical setting
+    why_plausible: A workplace's atmosphere can feel like information about culture.
+    why_irrelevant: The role is mostly remote and the lobby is only used occasionally;
+      it does not determine compensation, role fit, or team reliability.
+  LL:
+    distractor: The office lobby used for occasional visits is dim, dated, and somewhat
+      unpleasant.
+    diagnosticity: low
+    salience: low
+    proposition: The office lobby used for occasional visits is dim, dated, and smells
+      musty.
+    matched_to: HL
+  HH:
+    distractor: The salary is 18% higher than mine, the role lines up with the direction
+      I want, and two people I trust from past projects are already on the team.
+    diagnosticity: high
+    salience: high
+    proposition: The offer is 18% above current salary, aligns with the user's career
+      direction, and includes two trusted former colleagues on the team.
+    salience_source: compensation/fit/team evidence
+  LH:
+    distractor: The offer includes an 18% pay increase, aligned role content, and
+      two trusted prior colleagues on the team.
+    diagnosticity: high
+    salience: low
+    proposition: The offer is 18% above current salary, aligns with the user's career
+      direction, and includes two trusted former colleagues on the team.
+    matched_to: HH
+distractor_direction:
+  label: Office-environment discomfort
+  description: Investigating whether the physical office environment for occasional
+    visits should drive acceptance of the mostly remote job.
+plausible_alternative_directions:
+- label: Manager compatibility
+  description: The future manager’s expectations and communication style may determine
+    whether the role is a good fit.
+- label: Contract probation risk
+  description: Probation terms, termination notice, or hidden contractual conditions
+    may weaken the offer.
+- label: Long-term skill growth
+  description: The role may or may not build skills aligned with the user’s career
+    direction.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

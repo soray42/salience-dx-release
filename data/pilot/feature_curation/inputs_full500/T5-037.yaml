@@ -1,0 +1,197 @@
+seed_id: T5-037
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: A colleague flagged that our weekly pipeline report, exported as a CSV and
+  opened in Excel, has inconsistent column widths and some numeric cells appear right-aligned
+  while others are left-aligned. The report is sent to three internal teams who use
+  it to track weekly processing volumes. {DS}
+focal_diagnostic_feature: Direct warehouse queries for the same date range return
+  every count and total matching the report values exactly, confirming no data corruption;
+  the alignment mismatch is caused by the export step omitting quotes around mixed-type
+  columns, causing Excel to auto-detect some numbers as text.
+low_diagnostic_proposition: The inconsistent alignment and column irregularities in
+  the Excel view suggest the underlying pipeline data may be corrupted or miscalculated.
+oracle_action: ANSWER
+oracle_focus: Fix the CSV export step to quote all mixed-type columns consistently;
+  the warehouse data is correct and no reprocessing is needed.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer data corruption from Excel formatting irregularities.
+  Query the warehouse directly for the same period and compare values before investigating
+  the pipeline logic.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer data corruption from Excel formatting irregularities. Query
+      the warehouse directly for the same period and compare values before investigating
+      the pipeline logic.
+  LL:
+    action: ASK
+    focus: Do not infer data corruption from Excel formatting irregularities. Query
+      the warehouse directly for the same period and compare values before investigating
+      the pipeline logic.
+  HH:
+    action: ANSWER
+    focus: Fix the CSV export step to quote all mixed-type columns consistently; the
+      warehouse data is correct and no reprocessing is needed.
+  LH:
+    action: ANSWER
+    focus: Fix the CSV export step to quote all mixed-type columns consistently; the
+      warehouse data is correct and no reprocessing is needed.
+variants:
+  HL:
+    distractor: When I opened the file, the numbers were jumping left and right across
+      cells and two columns had what looked like broken padding — it honestly looks
+      less like a professional data export and more like something that got corrupted
+      mid-transfer.
+    diagnosticity: low
+    salience: high
+    proposition: The inconsistent alignment and column irregularities in the Excel
+      view suggest the underlying pipeline data may be corrupted or miscalculated.
+    salience_source: 'B: vivid first-person visual description with confident negative
+      inference (''honestly looks like something that got corrupted''); C: confident
+      causal framing connecting appearance directly to corruption.'
+    why_plausible: Corrupted CSV exports do produce irregular alignment in Excel,
+      and an engineer who has seen corrupted data before might reasonably infer the
+      same cause from similar visual symptoms.
+    why_irrelevant: Excel alignment irregularities are routinely caused by CSV encoding
+      and quoting inconsistencies with no data corruption; the values themselves must
+      be queried directly to determine whether the numbers are wrong.
+  LL:
+    distractor: The CSV report has inconsistent numeric alignment and visual formatting
+      irregularities when opened in Excel.
+    diagnosticity: low
+    salience: low
+    proposition: The inconsistent alignment and column irregularities in the Excel
+      view suggest the underlying pipeline data may be corrupted or miscalculated.
+    matched_to: HL
+  HH:
+    distractor: Running a direct query against the warehouse for the same date range
+      returns every count and total matching the report values exactly; the inconsistent
+      alignment is caused by Excel auto-detecting some numeric strings as text because
+      the export step omits quotes around mixed-type columns.
+    diagnosticity: high
+    salience: high
+    proposition: Direct warehouse queries for the same date range return every count
+      and total matching the report values exactly, confirming no data corruption;
+      the alignment mismatch is caused by the export step omitting quotes around mixed-type
+      columns, causing Excel to auto-detect some numbers as text.
+    salience_source: 'B: precise verification method (direct warehouse query, same
+      date range) with specific mechanism named (missing quotes, Excel text auto-detection);
+      D: concrete query result — every value matches.'
+  LH:
+    distractor: Direct warehouse queries confirm all reported values are correct;
+      the misalignment is an export encoding issue, not data corruption.
+    diagnosticity: high
+    salience: low
+    proposition: Direct warehouse queries for the same date range return every count
+      and total matching the report values exactly, confirming no data corruption;
+      the alignment mismatch is caused by the export step omitting quotes around mixed-type
+      columns, causing Excel to auto-detect some numbers as text.
+    matched_to: HH
+distractor_direction:
+  label: Pipeline data corruption
+  description: Investigating whether the pipeline has produced incorrect or corrupted
+    underlying data values, which would require reprocessing or a logic fix.
+plausible_alternative_directions:
+- label: Encoding or locale mismatch
+  description: The CSV is exported with a different character encoding or decimal
+    separator than Excel expects for the recipient's locale, corrupting how numbers
+    display without affecting the raw values.
+- label: Recipient Excel number-format override
+  description: A recipient has a saved workbook template or default number-format
+    rule that forces some columns to text, producing alignment differences in their
+    local view only, with no error in the exported file itself.
+- label: Column-order or header drift
+  description: The export step emits columns in a different order than the internal
+    schema version teams use, causing columns to appear in the wrong position when
+    opened.
+leak_audit:
+  ll_atomic_claims:
+  - The CSV report has inconsistent numeric alignment when opened in Excel.
+  - The CSV report has visual formatting irregularities when opened in Excel.
+  hh_atomic_claims:
+  - A direct query against the warehouse for the same date range was run.
+  - Every count and total in that query matches the report values exactly.
+  - Excel auto-detects some numeric strings as text.
+  - The export step omits quotes around mixed-type columns.
+  - This auto-detection is the cause of the inconsistent alignment.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person visual inspection, no external source.
+    narrative_coherence: 'B: vivid first-person account of opening the file with confident
+      causal conclusion.'
+    confident_assertion: 'C: ''honestly looks like something that got corrupted mid-transfer''
+      — direct causal inference stated confidently.'
+    concrete_detail: N/A — detail is about the visual appearance of the file, not
+      case-specific data values.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 40
+  ll_word_count: 15
+  hh_word_count: 44
+  lh_word_count: 19
+  notes: 'T5 self-check 13: inferential bridge (visual formatting -> data corruption)
+    appears
+
+    in HL (''looks like something that got corrupted mid-transfer'') and LL carries
+
+    it in low_diagnostic_proposition (''suggest the underlying pipeline data may be
+
+    corrupted''). Both cells assert the surface-to-data-quality inference. The xbase
+
+    does not state the values are correct (that is the HH/LH finding). Ratios:
+
+    HL:LL = 2.67, HH:LH = 2.32.
+
+    QC repair: replaced plausible_alternative_directions[1] (''Pipeline transformation
+
+    bug'') which was a subtype of distractor_direction (''Pipeline data corruption'')
+
+    and therefore not mutually exclusive with it. Replacement (''Recipient Excel
+
+    number-format override'') is orthogonal to data-value corruption, orthogonal to
+
+    export-level encoding/locale mismatch, and orthogonal to column-order drift;
+
+    it is live from xbase (CSV opened in Excel by three internal teams who may each
+
+    have different saved templates or default format rules). Fix is client-side only,
+
+    not in the pipeline or export step.
+
+    '
+causal_audit:
+  steelman: 'A data engineer could argue: some CSV truncation or encoding corruption
+    modes
+
+    produce exactly this pattern — numbers that look visually normal in one column
+
+    but are silently truncated or shifted by a byte — and it is not uncommon for
+
+    Excel to misrepresent a corrupted value as a plausible-looking number. Visual
+
+    alignment irregularities are therefore a legitimate early signal worth investigating
+
+    before trusting the raw values.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase presents the visual symptom without closing
+    any pathway. The HH/LH warehouse query provides the structural exclusion by confirming
+    values match exactly.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Weekly CSV pipeline report has ragged Excel formatting; visual appearance
+    is offered as evidence of data corruption, but direct warehouse queries confirm
+    all values are correct and the misalignment is a CSV export quoting bug.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

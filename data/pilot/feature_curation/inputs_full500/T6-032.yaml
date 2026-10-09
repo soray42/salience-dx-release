@@ -1,0 +1,189 @@
+seed_id: T6-032
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our iOS app's background fetch has stopped firing completely on devices running
+  the latest OS version we rolled out support for last week. The fetch was reliable
+  before the update. Affected devices receive the remote config push that should trigger
+  it, and the behaviour is consistent across multiple test handsets regardless of
+  battery level or power mode. {DS}
+focal_diagnostic_feature: The app's UIBackgroundModes entitlement array in the compiled
+  entitlements no longer includes fetch; the entitlement was dropped during an Xcode
+  project file migration two weeks ago and has not been present in any build since.
+low_diagnostic_proposition: My previous background-fetch outages on iOS were always
+  caused by Low Power Mode suppressing background activity, so this is probably the
+  same thing again.
+oracle_action: ANSWER
+oracle_focus: Restore the fetch value inside UIBackgroundModes in the app's entitlements
+  and capabilities configuration; the missing entitlement is preventing the OS from
+  scheduling background fetch regardless of device state.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the Low Power Mode explanation automatically.
+  Ask for entitlements configuration, background capability settings, and whether
+  the issue persists across multiple devices in different power states.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the Low Power Mode explanation automatically. Ask for entitlements
+      configuration, background capability settings, and whether the issue persists
+      across multiple devices in different power states.
+  LL:
+    action: ASK
+    focus: Do not apply the Low Power Mode explanation automatically. Ask for entitlements
+      configuration, background capability settings, and whether the issue persists
+      across multiple devices in different power states.
+  HH:
+    action: ANSWER
+    focus: Restore the fetch value inside UIBackgroundModes in the app's entitlements
+      and capabilities configuration; the missing entitlement is preventing the OS
+      from scheduling background fetch regardless of device state.
+  LH:
+    action: ANSWER
+    focus: Restore the fetch value inside UIBackgroundModes in the app's entitlements
+      and capabilities configuration; the missing entitlement is preventing the OS
+      from scheduling background fetch regardless of device state.
+variants:
+  HL:
+    distractor: Every background-fetch outage I have dealt with on iOS turned out
+      to be Low Power Mode silently blocking background activity — the culprit every
+      time without fail, and the OS-update timing makes me confident users are hitting
+      it here again.
+    diagnosticity: low
+    salience: high
+    proposition: My previous background-fetch outages on iOS were always caused by
+      Low Power Mode suppressing background activity, so this is probably the same
+      thing again.
+    salience_source: 'B: vivid personal track record with absolute framing (''every
+      single time without fail''); C: confident first-instinct conclusion (''makes
+      me confident that is what users are hitting here again'').'
+    why_plausible: Low Power Mode is a genuinely common and well-documented cause
+      of iOS background-fetch suppression; experienced iOS developers frequently encounter
+      it and the timing of an OS update could plausibly activate stricter power-management
+      defaults.
+    why_irrelevant: 'The past Low Power Mode cases are structurally different: here
+      the issue is consistent across devices regardless of battery level or power
+      mode, and the focal evidence shows the entitlement itself is missing — an OS-level
+      prerequisite that no power state can substitute for.'
+  LL:
+    distractor: Past background-fetch failures on this codebase were consistently
+      caused by Low Power Mode, so this is probably the same thing again.
+    diagnosticity: low
+    salience: low
+    proposition: My previous background-fetch outages on iOS were always caused by
+      Low Power Mode suppressing background activity, so this is probably the same
+      thing again.
+    matched_to: HL
+  HH:
+    distractor: 'I compared the compiled entitlements from the last working build
+      and the current one: the UIBackgroundModes array used to include fetch, and
+      now it does not — the entry was dropped during an Xcode project migration two
+      weeks ago and every build since then ships without it.'
+    diagnosticity: high
+    salience: high
+    proposition: The app's UIBackgroundModes entitlement array in the compiled entitlements
+      no longer includes fetch; the entitlement was dropped during an Xcode project
+      file migration two weeks ago and has not been present in any build since.
+    salience_source: 'B: direct artifact comparison with precise timeline; C: definitive
+      first-person finding (''I compared'', ''used to include'', ''now it does not'').'
+  LH:
+    distractor: The UIBackgroundModes entitlement no longer contains the fetch value;
+      it was removed during the Xcode project migration two weeks ago.
+    diagnosticity: high
+    salience: low
+    proposition: The app's UIBackgroundModes entitlement array in the compiled entitlements
+      no longer includes fetch; the entitlement was dropped during an Xcode project
+      file migration two weeks ago and has not been present in any build since.
+    matched_to: HH
+distractor_direction:
+  label: Low Power Mode fetch suppression
+  description: Treating iOS Low Power Mode as the cause of background fetch failing,
+    based on the user's consistent past experience with that failure mode.
+plausible_alternative_directions:
+- label: OS-version background fetch policy change
+  description: Investigating whether the target OS version introduced stricter background
+    execution policies that changed fetch scheduling behavior for apps at this permission
+    level.
+- label: push notification entitlement or token issue
+  description: Examining whether the remote config push delivery issue affects whether
+    the OS is being notified to trigger background fetch at all.
+- label: app target signing configuration mismatch
+  description: Checking whether the Xcode project migration changed the provisioning
+    profile or signing configuration in a way that affects which entitlements are
+    honored at runtime.
+leak_audit:
+  ll_atomic_claims:
+  - Past background-fetch failures on this codebase were caused by Low Power Mode.
+  - The claim is they were consistently the same cause.
+  - The inference is this failure is probably the same.
+  hh_atomic_claims:
+  - The compiled entitlements were compared between the last working build and the
+    current one.
+  - UIBackgroundModes previously included the fetch value.
+  - UIBackgroundModes no longer includes fetch.
+  - The entry was dropped during an Xcode project migration two weeks ago.
+  - Every build since the migration ships without the fetch entitlement.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person availability inference, no named external
+      source.
+    narrative_coherence: 'B: personal track record with absolute (''every single time
+      without fail'').'
+    confident_assertion: 'C: ''makes me confident that is what users are hitting here
+      again''.'
+    concrete_detail: N/A — no case-specific technical fact added in HL.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 57
+  hl_word_count: 40
+  ll_word_count: 21
+  hh_word_count: 47
+  lh_word_count: 20
+  notes: 'T6: availability inference ("so this is probably the same thing again")
+    in
+
+    both HL and LL per C1 and T6 recipe. xbase explicitly closes the Low Power
+
+    Mode pathway ("regardless of battery level or power mode") as permitted by C4
+
+    — this is a narrow pathway closure that names no affirmative cause. The compiled
+
+    entitlements finding lives only in HH/LH. Low Power Mode is a genuinely common
+
+    iOS cause so steelman is strong, but the device-independence in xbase forecloses
+
+    it before HH/LH are even needed.
+
+    Ratios: HL:LL 45:20 = 2.3:1 OK. HH:LH 47:17 = 2.8:1 OK.
+
+    '
+causal_audit:
+  steelman: 'Low Power Mode suppressing iOS background fetch is extremely well-documented
+
+    and is one of the first things experienced iOS engineers check: the OS explicitly
+
+    suspends discretionary background activity when Low Power Mode is enabled, and
+
+    a new OS version could have altered how aggressively it applies or defaults this
+
+    mode. A developer with a track record of finding Low Power Mode as the culprit
+
+    has genuine empirical grounds for that first instinct.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase closes the Low Power Mode pathway by stating the
+    behaviour is consistent across devices regardless of battery level or power mode
+    — this blocks the mechanism without naming the actual cause (C4 boundary respected).
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: iOS background fetch stops firing after a project migration; user's
+    past fetch failures were always Low Power Mode, but the actual cause is the UIBackgroundModes
+    fetch entitlement silently dropped during an Xcode project file migration.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

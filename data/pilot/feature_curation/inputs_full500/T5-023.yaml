@@ -1,0 +1,189 @@
+seed_id: T5-023
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our REST API is returning stale product data to clients even after we update
+  the backend records. The backend service itself always returns fresh data when called
+  directly. We introduced a CDN layer two months ago and the staleness issue has become
+  noticeable and consistent over the past two weeks. {DS}
+focal_diagnostic_feature: None of the backend API responses include a Cache-Control
+  header, so the CDN applies its default 24-hour TTL and serves cached content until
+  that window expires.
+low_diagnostic_proposition: The CDN administration console has an outdated appearance,
+  suggesting the cache configuration may be poorly maintained.
+oracle_action: ANSWER
+oracle_focus: Add Cache-Control headers to API responses with an appropriate max-age
+  or no-store directive so the CDN stops applying its 24-hour default TTL to mutable
+  data.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer cache configuration quality from the console's
+  visual design. Ask for the Cache-Control headers present in API responses and the
+  CDN's default TTL behaviour when headers are absent.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer cache configuration quality from the console's visual design.
+      Ask for the Cache-Control headers present in API responses and the CDN's default
+      TTL behaviour when headers are absent.
+  LL:
+    action: ASK
+    focus: Do not infer cache configuration quality from the console's visual design.
+      Ask for the Cache-Control headers present in API responses and the CDN's default
+      TTL behaviour when headers are absent.
+  HH:
+    action: ANSWER
+    focus: Add Cache-Control headers to API responses with an appropriate max-age
+      or no-store directive so the CDN stops applying its 24-hour default TTL to mutable
+      data.
+  LH:
+    action: ANSWER
+    focus: Add Cache-Control headers to API responses with an appropriate max-age
+      or no-store directive so the CDN stops applying its 24-hour default TTL to mutable
+      data.
+variants:
+  HL:
+    distractor: The CDN management console looks genuinely neglected — grey-on-grey
+      navigation, a settings menu referencing a product name from 2019, and tooltip
+      text that still advertises features the vendor discontinued — and that visual
+      decay makes me question whether the caching rules are actually being applied
+      correctly.
+    diagnosticity: low
+    salience: high
+    proposition: The CDN administration console has an outdated appearance, suggesting
+      the cache configuration may be poorly maintained.
+    salience_source: B/C — vivid enumeration of specific visual symptoms in a confident
+      first-person register implies direct observation and informed aesthetic judgment.
+    why_plausible: Engineers do sometimes infer operational neglect from unmaintained
+      tooling; a console frozen in time raises a reasonable suspicion that someone
+      stopped actively managing the configuration.
+    why_irrelevant: The console's visual design reflects only the vendor's UI investment
+      decisions, not the correctness of any caching rules; the absence of Cache-Control
+      headers in API responses is a code-level omission entirely independent of how
+      the CDN dashboard looks.
+  LL:
+    distractor: The CDN administration console has an outdated appearance, suggesting
+      the cache configuration may be poorly maintained.
+    diagnosticity: low
+    salience: low
+    proposition: The CDN administration console has an outdated appearance, suggesting
+      the cache configuration may be poorly maintained.
+    matched_to: HL
+  HH:
+    distractor: Inspecting response headers with curl shows none of the product API
+      responses include a Cache-Control header; the CDN vendor's documentation confirms
+      the platform defaults to a 24-hour TTL for any cacheable response that arrives
+      without an explicit Cache-Control directive.
+    diagnosticity: high
+    salience: high
+    proposition: None of the backend API responses include a Cache-Control header,
+      so the CDN applies its default 24-hour TTL and serves cached content until that
+      window expires.
+    salience_source: B — concrete tool output (curl header inspection) cross-referenced
+      with vendor documentation, presenting a complete mechanism from missing header
+      to 24-hour stale window.
+  LH:
+    distractor: API responses carry no Cache-Control header; the CDN defaults to a
+      24-hour TTL when absent, causing stale content to be served.
+    diagnosticity: high
+    salience: low
+    proposition: None of the backend API responses include a Cache-Control header,
+      so the CDN applies its default 24-hour TTL and serves cached content until that
+      window expires.
+    matched_to: HH
+distractor_direction:
+  label: CDN console neglect
+  description: Investigating whether the outdated appearance of the CDN management
+    console indicates that caching rules are misconfigured or not actively maintained.
+plausible_alternative_directions:
+- label: CDN purge rule misconfiguration
+  description: A specific CDN purge or invalidation rule was set incorrectly, preventing
+    cache entries from being cleared when records are updated on the backend.
+- label: CDN origin shield caching
+  description: An intermediate origin-shield layer within the CDN is caching responses
+    that bypass the primary CDN edge cache and ignoring purge signals.
+- label: application-layer caching bug
+  description: An in-process cache in the backend service layer is serving stale data
+    before responses even reach the CDN, making the CDN layer appear responsible.
+leak_audit:
+  ll_atomic_claims:
+  - The CDN administration console has an outdated appearance.
+  - This outdated appearance suggests the cache configuration may be poorly maintained.
+  hh_atomic_claims:
+  - No product API responses include a Cache-Control header.
+  - The CDN defaults to a 24-hour TTL when Cache-Control is absent.
+  - The CDN serves cached content until the 24-hour window expires.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Specific, enumerated visual observations in a first-person
+      voice with a clean logical bridge to the configuration concern.
+    confident_assertion: First-person confident framing ('makes me question') without
+      hedging.
+    concrete_detail: Grey-on-grey navigation, 2019 product name, discontinued-feature
+      tooltips — these are visual details about the tool's appearance, not claims
+      about the case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 50
+  hl_word_count: 44
+  ll_word_count: 16
+  hh_word_count: 39
+  lh_word_count: 21
+  notes: 'T5 bridge check: HL states ''that visual decay makes me question whether
+    the caching
+
+    rules are actually being applied correctly'' (surface -> quality inference). LL
+    states
+
+    ''suggesting the cache configuration may be poorly maintained'' (same inference,
+    flat).
+
+    Both cells carry the inferential bridge per C1 self-check 13.
+
+    Concrete detail in HL is about the tool''s visual appearance only — no additional
+
+    claim about CDN behaviour or case facts. HH/LH diff is clean: LH covers all three
+
+    HH claims without additions.
+
+    '
+causal_audit:
+  steelman: 'If a CDN vendor''s management console is visually frozen in time, one
+    could argue the
+
+    underlying platform has not been actively developed, which might mean purge APIs
+    or
+
+    cache-control header propagation have unresolved bugs. Some practitioners do use
+    UI
+
+    maintenance as a rough proxy for platform health. However, this is a general inference
+
+    about the vendor, not a mechanism connecting console appearance to the specific
+
+    missing Cache-Control headers in our backend API code. Those headers are written
+    by
+
+    application developers, not configured in the CDN console. The console''s appearance
+
+    has no pathway to whether our Node.js or Python backend includes a Cache-Control
+
+    header in its HTTP response object.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — no in-xbase closure needed; the console appearance
+    has no constructible pathway to API response header content.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: REST API serving stale data because no Cache-Control headers are set,
+    causing the CDN to apply a 24-hour default TTL; distracted by the CDN console's
+    outdated visual appearance.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

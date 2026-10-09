@@ -1,0 +1,162 @@
+seed_id: T2-028
+template: T2
+domain: open_qa
+complexity: high
+xbase: I am deciding whether to keep paying for a premium news subscription I have
+  had for two years. I read a lot of news and I do value good journalism, so cancelling
+  is not an automatic choice. But the renewal is coming up, money is tight, and I
+  want to make a clear-headed call about whether this particular subscription still
+  earns its monthly cost rather than keeping it out of habit. {DS}
+focal_diagnostic_feature: The user's public library card already provides free unlimited
+  digital access to this exact publication, so the paid subscription duplicates content
+  the user can read for free.
+low_diagnostic_proposition: The user started reconsidering the subscription the same
+  month they adopted a rescue cat.
+oracle_action: ANSWER
+oracle_focus: Cancel the paid news subscription; the user's library card already grants
+  free unlimited digital access to the same publication, so the paid plan duplicates
+  content the user can read at no cost.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not tie the decision to adopting the cat. Ask whether
+  the user can already access this publication for free through another channel they
+  hold.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not tie the decision to adopting the cat. Ask whether the user can already
+      access this publication for free through another channel they hold.
+  LL:
+    action: ASK
+    focus: Do not tie the decision to adopting the cat. Ask whether the user can already
+      access this publication for free through another channel they hold.
+  HH:
+    action: ANSWER
+    focus: Cancel the paid news subscription; the user's library card already grants
+      free unlimited digital access to the same publication, so the paid plan duplicates
+      content the user can read at no cost.
+  LH:
+    action: ANSWER
+    focus: Cancel the paid news subscription; the user's library card already grants
+      free unlimited digital access to the same publication, so the paid plan duplicates
+      content the user can read at no cost.
+variants:
+  HL:
+    distractor: What sticks with me is that I started reconsidering this subscription
+      the same month we adopted our rescue cat; suddenly there were vet bills and
+      supplies to budget for, and in my head the subscription doubt and the cat arriving
+      are tied together as the moment money got tight.
+    diagnosticity: low
+    salience: high
+    proposition: The user started reconsidering the subscription the same month they
+      adopted a rescue cat.
+    salience_source: B/C — a coherent first-person account anchoring the reconsideration
+      to a memorable, datable life event.
+    why_plausible: A new pet really does tighten a budget and prompt cost reviews,
+      so the timing feels causally meaningful for the decision.
+    why_irrelevant: Adopting a cat changes overall budget pressure but says nothing
+      about whether this specific subscription's content is worth its price or already
+      available elsewhere.
+  LL:
+    distractor: The user started reconsidering the subscription around the time they
+      adopted a rescue cat.
+    diagnosticity: low
+    salience: low
+    proposition: The user started reconsidering the subscription the same month they
+      adopted a rescue cat.
+    matched_to: HL
+  HH:
+    distractor: The decisive fact is that my public library card already gives me
+      free, unlimited digital access to this exact publication through the library's
+      news portal; so the paid subscription is buying me content I can already read
+      in full for nothing whenever I want.
+    diagnosticity: high
+    salience: high
+    proposition: The user's public library card already provides free unlimited digital
+      access to this exact publication, so the paid subscription duplicates content
+      the user can read for free.
+    salience_source: The library card's free unlimited access to the same publication
+      names the duplication concretely.
+  LH:
+    distractor: The user's library card already gives free unlimited digital access
+      to the same publication, duplicating the paid subscription's content.
+    diagnosticity: high
+    salience: low
+    proposition: The user's public library card already provides free unlimited digital
+      access to this exact publication, so the paid subscription duplicates content
+      the user can read for free.
+    matched_to: HH
+distractor_direction:
+  label: Pet-adoption timing
+  description: Treating the recent cat adoption and its budget pressure as relevant
+    to whether this specific news subscription is worth keeping.
+plausible_alternative_directions:
+- label: Reading frequency vs cost
+  description: Whether the user reads enough articles per month to justify the per-article
+    cost.
+- label: Cheaper digital-only tier
+  description: Whether a lower-cost tier of the same publication would meet the user's
+    needs.
+leak_audit:
+  ll_atomic_claims:
+  - The user started reconsidering the subscription around the time they adopted a
+    rescue cat.
+  hh_atomic_claims:
+  - The user's public library card provides free unlimited digital access to this
+    exact publication.
+  - The paid subscription therefore duplicates content the user can already read for
+    free.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person coincidence, no external source.
+    narrative_coherence: Coherent account tying the reconsideration to the cat's arrival
+      and new bills.
+    confident_assertion: States the same-month timing plainly.
+    concrete_detail: N/A — about the cat adoption, not the subscription's value; adds
+      no decision fact LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 73
+  hl_word_count: 47
+  ll_word_count: 16
+  hh_word_count: 43
+  lh_word_count: 19
+  notes: 'T2 open_qa: adopting a cat raises general budget pressure but has no bearing
+    on this subscription''s specific value
+
+    or its free availability elsewhere. xbase keeps context (two years, values journalism,
+    renewal coming, tight
+
+    budget) and withholds the decisive library-access fact, which is HH/LH-only. HL
+    adds no value fact beyond the
+
+    timing in LL.
+
+    '
+causal_audit:
+  steelman: 'One might argue the cat adoption is a legitimate trigger to cut discretionary
+    spending and that any subscription
+
+    is fair game during a budget squeeze — but general budget pressure is a reason
+    to scrutinise all costs, not
+
+    evidence about this subscription in particular; the cat''s arrival cannot make
+    this news plan more or less
+
+    worth its price.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the cat adoption is unrelated to this subscription's
+    specific value; the decisive free-library-access fact lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to cancel a paid news subscription duplicated by free unlimited
+    library-card digital access, against a coincidental same-month rescue-cat adoption.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

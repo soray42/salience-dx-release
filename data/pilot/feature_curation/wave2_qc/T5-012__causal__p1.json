@@ -1,0 +1,9 @@
+{
+  "seed_id": "T5-012",
+  "steelman": "A software project with an obviously neglected website might also have neglected code: maintainers who do not update their web presence may not be applying security patches, fixing known bugs, or testing on modern OS versions. An unmaintained backup tool could accumulate silent data-corruption bugs over time. A senior sysadmin performing vendor due diligence would include 'check project maintenance signals' — website recency, last commit date, issue-tracker responsiveness — as an evaluation criterion. Under this chain, a 1990s-looking website is a (weak) proxy for maintenance neglect, which is a (weak) proxy for reliability risk, so a practitioner vetting a new tool might note it.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Weak proxy chain only: neglected website → maintenance neglect → accumulated code bugs → possible corruption. This is a heuristic for pre-adoption tool vetting, not a causal mechanism for whether a specific completed backup operation produced corrupted bytes.",
+  "pathway_closure_check": "effective",
+  "notes": "The steelman resolves to a correlation heuristic relevant only for tool-selection decisions, not for diagnosing a specific backup event. The xbase closes the pathway definitively: the user already ran a full restore to a separate test volume and executed the built-in verify command; the focal variants confirm SHA-256 checksums matched across every file. Once checksums pass, the website aesthetic argument is completely uninformative about this event — a practitioner troubleshooting 'was my backup corrupted?' relies on checksum verification, not website appearance. No repair needed; seed passes this lens."
+}

@@ -1,0 +1,8 @@
+{
+  "seed_id": "T5-015",
+  "verdict": "clean",
+  "xbase_span": "",
+  "focal_in_hh_lh": true,
+  "reasoning": "xbase states only that the companies differ on insurance coverage and customer references, without disclosing the direction, magnitude, or valence of those differences. The statement that the user has reviewed insurance certificates and spoken with customers is a pathway-closure device (exception (a)), blocking the 'hasn't checked yet' mechanism rather than supplying the affirmative focal conclusion. The decisive focal evidence — Company B's $2,000 vs $100 per-item coverage and verified positive references — is present exclusively in HH (vivid form) and LH (flat form).",
+  "repair_hint": ""
+}

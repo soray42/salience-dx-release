@@ -1,0 +1,26 @@
+{
+  "seed_id": "T3-015",
+  "ll_claims_extracted": [
+    "The lawn needs core aeration this autumn.",
+    "The recommendation comes from someone at the gardening club."
+  ],
+  "hl_case_claims": [],
+  "hl_source_claims": [
+    "She (the president) told me straight away.",
+    "Every lawn in our climate needs core aeration every autumn without fail (universal prescription from the president).",
+    "It is the standard recommendation she always gives (source practice pattern).",
+    "Skipping aeration is why most lawns thin out over winter (general causal claim attributed to president, not specific to this lawn)."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 39,
+    "ll": 13,
+    "xbase": 69,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": false,
+  "verdict": "fail",
+  "repair_hint": "LH is missing the foot-traffic path contrast that HH explicitly states ('with no thinning along the path where I actually walk'). The matched proposition for both cells requires ruling out foot-traffic paths as an explanation, but LH only says 'The soil is not compacted, and the thin patches are under the deepest canopy shade' — it does not flatly state the negative path evidence. Fix: expand LH to e.g. 'The soil is not compacted, the thin patches are under the deepest canopy shade, and there is no thinning along the path I walk.' This keeps salience low while completing the propositional match to HH."
+}

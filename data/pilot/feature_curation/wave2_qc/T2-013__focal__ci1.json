@@ -1,0 +1,13 @@
+{
+  "seed_id": "T2-013",
+  "my_own_diagnosis": "The HTTP 503 'SlowDown' errors are caused by the CI refactor to 32 parallel shards saturating the per-prefix PUT request rate limit on cloud object storage; the rebrand timing is a coincidence with no infrastructure mechanism, as explicitly closed by the unchanged bucket name and IAM credentials.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature (32-shard fan-out exceeding per-prefix PUT rate limit) uniquely and sufficiently explains the 503 SlowDown errors and gives a competent practitioner clear direction to investigate, while the distractor (rebrand) is definitively excludable from xbase constraints.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "cell_oracles correctly assign ASK + low_diagnostic_oracle_focus to HL/LL cells and ANSWER + focal oracle_focus to HH/LH cells; low_diagnostic_oracle_focus properly instructs non-adoption of the rebrand hypothesis with explicit mechanism-closure reasoning.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

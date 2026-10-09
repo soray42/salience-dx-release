@@ -1,0 +1,171 @@
+seed_id: T5-086
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I am choosing between two used road bike frames listed at similar prices. Both
+  are carbon fibre and claimed the same size, offered by private sellers in my city.
+  I plan to commute on whichever I buy and keep it for several years. I have not seen
+  either frame in person yet. {DS}
+focal_diagnostic_feature: Frame A fits the user's measured stack and reach within
+  two millimetres and comes with a full service history, while Frame B has a four-centimetre
+  hairline crack on the chainstay near the dropout.
+low_diagnostic_proposition: Frame B has a more polished gloss finish and cleaner presentation
+  in photos, suggesting it is in better structural condition.
+oracle_action: ANSWER
+oracle_focus: Choose Frame A; the hairline crack on Frame B is a structural disqualifier
+  for a carbon frame, and Frame A's fit and documentation both support the choice.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer structural integrity from photo presentation.
+  Ask about each frame's actual condition on in-person inspection and geometry fit
+  to the rider's measurements.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer structural integrity from photo presentation. Ask about each
+      frame's actual condition on in-person inspection and geometry fit to the rider's
+      measurements.
+  LL:
+    action: ASK
+    focus: Do not infer structural integrity from photo presentation. Ask about each
+      frame's actual condition on in-person inspection and geometry fit to the rider's
+      measurements.
+  HH:
+    action: ANSWER
+    focus: Choose Frame A; the hairline crack on Frame B is a structural disqualifier
+      for a carbon frame, and Frame A's fit and documentation both support the choice.
+  LH:
+    action: ANSWER
+    focus: Choose Frame A; the hairline crack on Frame B is a structural disqualifier
+      for a carbon frame, and Frame A's fit and documentation both support the choice.
+variants:
+  HL:
+    distractor: The photos of Frame B look so crisp and the gloss finish so flawless
+      that it is hard to imagine any structural issue with a bike this carefully presented.
+    diagnosticity: low
+    salience: high
+    proposition: Frame B has a more polished gloss finish and cleaner presentation
+      in photos, suggesting it is in better structural condition.
+    salience_source: 'B: vivid specific visual description (crisp photos, flawless
+      gloss); C: confident evaluative claim (''hard to imagine any structural issue'')'
+    why_plausible: High-quality presentation photos can signal a careful owner and
+      good maintenance; a reader might treat photographic quality as a proxy for structural
+      condition.
+    why_irrelevant: Photographic presentation quality reflects the seller's photography
+      skills, not the frame's structural integrity; a hairline crack on a chainstay
+      is not visible in standard listing photos and cannot be inferred from gloss
+      finish.
+  LL:
+    distractor: Frame B has a more polished gloss finish and cleaner presentation
+      photos than Frame A, suggesting it is in better structural condition.
+    diagnosticity: low
+    salience: low
+    proposition: Frame B has a more polished gloss finish and cleaner presentation
+      in photos, suggesting it is in better structural condition.
+    matched_to: HL
+  HH:
+    distractor: 'I inspected both frames in person: Frame A fits my measured stack
+      and reach within two millimetres and comes with a full service history, while
+      Frame B has a hairline crack running about four centimetres along the chainstay
+      near the right dropout.'
+    diagnosticity: high
+    salience: high
+    proposition: Frame A fits the user's measured stack and reach within two millimetres
+      and comes with a full service history, while Frame B has a four-centimetre hairline
+      crack on the chainstay near the dropout.
+    salience_source: 'B: in-person inspection framing with precise measurements and
+      crack dimensions; C: declarative findings stated directly'
+  LH:
+    distractor: Frame A matches the rider's stack and reach and has service documentation;
+      Frame B has a four-centimetre hairline crack on the chainstay near the dropout.
+    diagnosticity: high
+    salience: low
+    proposition: Frame A fits the user's measured stack and reach within two millimetres
+      and comes with a full service history, while Frame B has a four-centimetre hairline
+      crack on the chainstay near the dropout.
+    matched_to: HH
+distractor_direction:
+  label: Photo presentation as quality signal
+  description: Investigating whether Frame B's polished, high-quality listing photos
+    indicate superior structural condition and make it the better choice.
+plausible_alternative_directions:
+- label: Geometry fit to rider
+  description: A frame that does not fit the rider's stack and reach measurements
+    will cause discomfort and injury risk regardless of structural condition or price.
+- label: Component compatibility
+  description: Used frames may require specific bottom bracket standards
+  cable routing systems: null
+  or dropout spacing that adds cost or is incompatible with available parts.: null
+- label: Seller credibility and provenance
+  description: A private seller with no service history or crash disclosure presents
+    higher unknown risk than one with documented maintenance records.
+leak_audit:
+  ll_atomic_claims:
+  - Frame B has a more polished gloss finish than Frame A.
+  - Frame B's listing photos are cleaner than Frame A's.
+  - The polished finish and cleaner photos suggest Frame B is in better structural
+    condition.
+  hh_atomic_claims:
+  - Frame A fits the user's stack and reach within two millimetres.
+  - Frame A comes with a full service history.
+  - Frame B has a hairline crack on the chainstay.
+  - The crack is approximately four centimetres long.
+  - The crack is located near the right dropout.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observation, no named source
+    narrative_coherence: Clean first-person visual observation
+    confident_assertion: '''hard to imagine any structural issue'' — confident inferential
+      conclusion'
+    concrete_detail: Crisp photos, flawless gloss — visual specifics about the listing
+      presentation only, not the frame
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 48
+  hl_word_count: 28
+  ll_word_count: 22
+  hh_word_count: 41
+  lh_word_count: 21
+  notes: 'T5 inferential bridge (polished photos -> good structural condition) appears
+    in LL as a flat source-less clause per C1/self-check 13.
+
+    QC repair: LL previously omitted the inferential bridge (''suggesting it is in
+    better structural condition''), making it propositionally non-equivalent to HL.
+    Bridge appended to LL; ll_word_count updated from 15 to 22; ll_atomic_claims updated
+    to include the inferential claim.
+
+    xbase explicitly says the user has not seen either frame in person, so in-person
+    inspection is naturally the decisive step and lives in HH/LH only.
+
+    Hairline crack on carbon chainstay is a structural disqualifier regardless of
+    price; this is not a borderline trade-off.
+
+    '
+causal_audit:
+  steelman: 'Sellers who take high-quality, well-lit photos of a bicycle frame may
+    genuinely be more careful owners who maintained the frame better. A meticulous
+    presentation can correlate with attentive ownership. However, a hairline crack
+    in carbon fibre near a high-stress point like the dropout is not visible in standard
+    listing photographs regardless of photo quality; it requires in-person tactile
+    and visual inspection. Photo quality tells you nothing about the presence or absence
+    of structural damage, and the inference from gloss finish to structural soundness
+    has no causal mechanism.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the user has not yet seen either frame in
+    person, so photo presentation is the only available information before inspection
+    — this correctly stages the question as one requiring in-person verification
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing between two used carbon bike frames where Frame A fits and
+    has documentation while Frame B has a hairline crack, with aesthetic distractor
+    of Frame B's polished photo presentation implying better condition.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

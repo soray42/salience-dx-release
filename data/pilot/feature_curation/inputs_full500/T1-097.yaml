@@ -1,0 +1,176 @@
+seed_id: T1-097
+template: T1
+domain: open_qa
+complexity: low
+xbase: My office chair has gotten wobbly and tilts to one side when I lean back. I
+  use it all day for work and would rather repair it than spend on a new one if the
+  fix is cheap. It is about seven years old, a mid-range model I liked. A local repair
+  shop can look at it next week, and a comparable new chair runs about €180. {DS}
+focal_diagnostic_feature: The seat-plate weld is cracked through, and frame parts
+  for this discontinued chair are no longer available.
+low_diagnostic_proposition: A relative fixed a similar wobbly chair cheaply by replacing
+  the worn gas cylinder.
+oracle_action: ANSWER
+oracle_focus: Replace rather than repair; the wobble is a cracked structural weld
+  on a discontinued frame with no available parts, so it cannot be safely fixed with
+  a bolt-on component, unlike a swappable gas cylinder.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a cheap cylinder swap from a relative's
+  chair. Ask what is actually causing the wobble on this chair and whether the failed
+  part can be sourced and replaced.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a cheap cylinder swap from a relative's chair. Ask what is
+      actually causing the wobble on this chair and whether the failed part can be
+      sourced and replaced.
+  LL:
+    action: ASK
+    focus: Do not assume a cheap cylinder swap from a relative's chair. Ask what is
+      actually causing the wobble on this chair and whether the failed part can be
+      sourced and replaced.
+  HH:
+    action: ANSWER
+    focus: Replace rather than repair; the wobble is a cracked structural weld on
+      a discontinued frame with no available parts, so it cannot be safely fixed with
+      a bolt-on component, unlike a swappable gas cylinder.
+  LH:
+    action: ANSWER
+    focus: Replace rather than repair; the wobble is a cracked structural weld on
+      a discontinued frame with no available parts, so it cannot be safely fixed with
+      a bolt-on component, unlike a swappable gas cylinder.
+variants:
+  HL:
+    distractor: Amihan, my sister-in-law, had an almost identical wobble in her desk
+      chair and it turned out to be just a worn pneumatic gas cylinder; a replacement
+      part fixed it and the chair was stable again.
+    diagnosticity: low
+    salience: high
+    proposition: A relative fixed a similar wobbly chair cheaply by replacing the
+      worn gas cylinder.
+    salience_source: A — a named relative recounting a concrete, matching wobble she
+      fixed with a drop-in cylinder swap.
+    why_plausible: A worn gas cylinder is a common, cheap cause of chair wobble, so
+      a matching success story makes a quick part-swap feel like the obvious move.
+    why_irrelevant: Her cylinder swap fixed her chair; it says nothing about why this
+      chair tilts, which is a cracked structural weld a cylinder cannot address.
+  LL:
+    distractor: A relative fixed a similar wobbly chair cheaply by replacing the worn
+      gas cylinder.
+    diagnosticity: low
+    salience: low
+    proposition: A relative fixed a similar wobbly chair cheaply by replacing the
+      worn gas cylinder.
+    matched_to: HL
+  HH:
+    distractor: When I tipped it over I saw the weld joining the seat plate to the
+      central column has cracked clean across, and this model was discontinued years
+      ago with no replacement seat-mechanism or frame parts available from anyone.
+    diagnosticity: high
+    salience: high
+    proposition: The seat-plate weld is cracked through, and frame parts for this
+      discontinued chair are no longer available.
+    salience_source: Concrete first-person inspection naming the cracked structural
+      weld and the dead-end parts search makes repair-impossibility vivid.
+  LH:
+    distractor: The seat-plate weld is cracked through, and frame parts for this discontinued
+      chair are no longer available.
+    diagnosticity: high
+    salience: low
+    proposition: The seat-plate weld is cracked through, and frame parts for this
+      discontinued chair are no longer available.
+    matched_to: HH
+distractor_direction:
+  label: Cheap part swap
+  description: Treating the wobble as a worn gas cylinder fixable with a cheap drop-in
+    replacement, as a relative's chair was.
+plausible_alternative_directions:
+- label: Loose fasteners
+  description: Whether bolts at the base or mechanism have simply loosened and can
+    be retightened.
+- label: Worn tilt mechanism
+  description: Whether a serviceable tilt-tension or recline module
+  not the frame: null
+  is the failing component.: null
+leak_audit:
+  ll_atomic_claims:
+  - A relative had a similar wobbly chair.
+  - They fixed it cheaply.
+  - The fix was replacing the worn gas cylinder.
+  hh_atomic_claims:
+  - The seat-plate-to-column weld is cracked through.
+  - The chair model is discontinued.
+  - No frame or seat-mechanism replacement parts are available.
+  hl_salience_dimensions:
+    source_credibility: Named relative (Amihan) recounting her own matching repair.
+    narrative_coherence: Clean wobble-to-quick-fix chronology.
+    confident_assertion: N/A
+    concrete_detail: N/A — source is a named relative; no extra case-specific quantitative
+      detail retained after QC repair.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 67
+  hl_word_count: 35
+  ll_word_count: 14
+  hh_word_count: 38
+  lh_word_count: 17
+  notes: 'QC repair: stripped tunable_value ''€25'', effort_descriptors ''snapped
+    in'' and ''within ten minutes'', and
+
+    consequence ''solid as new'' from HL; replaced with neutral ''a drop-in replacement
+    part fixed it and the
+
+    chair was stable again''. HL now adds only: named source (Amihan, sister-in-law)
+    and the matching wobble
+
+    symptom — all source/setting framing, none about this chair. LL carries only the
+    relative-fixed-wobble-
+
+    with-cheap-cylinder claim. xbase gives symptoms and decision framing (wobble,
+    daily use, age, new price,
+
+    repair option) but withholds the actual failed part, so HL/LL cannot resolve repair-versus-replace.
+    The
+
+    decisive cracked-weld-plus-no-parts fact lives only in HH/LH, where it defeats
+    the cheap-swap hope.
+
+    '
+causal_audit:
+  steelman: 'A handy person could argue chair wobble is almost always a consumable:
+    a worn gas cylinder or loosened bolt,
+
+    both cheap and quick, so a relative''s matching cylinder fix is a sensible first
+    thing to try and the repair-
+
+    versus-replace lean should start with replace-the-part. That reasoning is about
+    chair wobble in general and
+
+    about the relative''s chair. It supplies no case-specific reason here, where the
+    wobble comes from a cracked
+
+    weld on the load-bearing seat plate of a discontinued frame with no parts. A gas-cylinder
+    swap cannot fix a
+
+    broken structural weld, so the anecdote''s cheap-fix pathway is structurally inapplicable
+    to this chair.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase withholds the failed-part identity, so the
+    cheap-cylinder pathway is only foreclosed by HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An office chair repair-versus-replace decision, where a cracked structural
+    seat-plate weld on a discontinued frame with no available parts, not a relative's
+    cheap gas-cylinder fix, dictates replacement.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator-adjudicated
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

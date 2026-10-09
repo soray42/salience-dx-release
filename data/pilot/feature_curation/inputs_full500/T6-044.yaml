@@ -1,0 +1,207 @@
+seed_id: T6-044
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our backend service started failing to reach an external payment API about
+  four hours ago. The service logs show connection errors at the HTTPS layer, and
+  the gateway hostname resolves to the expected IP. Nothing was deployed today, and
+  other external API calls from the same service are completing normally. An early
+  TLS trace shows the server hello completes before the error occurs. {DS}
+focal_diagnostic_feature: 'curl with verbose TLS output shows the gateway accepts
+  the TLS handshake and returns HTTP 403 with an X-Block-Reason: IP-ACL header; the
+  provider''s status page confirms our egress subnet was added to their abuse blocklist
+  six hours ago.'
+low_diagnostic_proposition: Past payment API outages for this team were attributed
+  to expired client certificates, suggesting cert rotation should be checked first
+  in this case.
+oracle_action: ASK
+oracle_focus: Contact the payment provider to request egress subnet removal from their
+  abuse blocklist; consider switching to a dedicated egress IP or range to avoid shared-subnet
+  incidents.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to certificate rotation from past incidents.
+  Ask for verbose TLS output, the specific HTTP error code, and any provider status-page
+  entries before diagnosing.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to certificate rotation from past incidents. Ask for verbose
+      TLS output, the specific HTTP error code, and any provider status-page entries
+      before diagnosing.
+  LL:
+    action: ASK
+    focus: Do not default to certificate rotation from past incidents. Ask for verbose
+      TLS output, the specific HTTP error code, and any provider status-page entries
+      before diagnosing.
+  HH:
+    action: ASK
+    focus: Contact the payment provider to request egress subnet removal from their
+      abuse blocklist; consider switching to a dedicated egress IP or range to avoid
+      shared-subnet incidents.
+  LH:
+    action: ASK
+    focus: Contact the payment provider to request egress subnet removal from their
+      abuse blocklist; consider switching to a dedicated egress IP or range to avoid
+      shared-subnet incidents.
+variants:
+  HL:
+    distractor: Every payment API outage I've dealt with before has come down to an
+      expired client certificate — that pattern has never failed me, so my first move
+      would be checking our cert store right now.
+    diagnosticity: low
+    salience: high
+    proposition: Past payment API outages for this team were attributed to expired
+      client certificates, suggesting cert rotation should be checked first in this
+      case.
+    salience_source: B/C — multi-incident personal history ('never failed me'); confident
+      first-instinct framing and specific action ('checking our cert store right now').
+    why_plausible: Client certificate expiry is a common payment API failure mode;
+      an engineer who has consistently resolved past outages this way would naturally
+      apply the same diagnosis.
+    why_irrelevant: The gateway is completing the TLS handshake successfully; certificate
+      errors occur during TLS negotiation before any HTTP response is sent, so a cert
+      expiry cannot produce an HTTP 403 with a WAF header.
+  LL:
+    distractor: Past payment API outages for this team were attributed to expired
+      client certificates, suggesting cert rotation should be checked first.
+    diagnosticity: low
+    salience: low
+    proposition: Past payment API outages for this team were attributed to expired
+      client certificates, suggesting cert rotation should be checked first in this
+      case.
+    matched_to: HL
+  HH:
+    distractor: 'curl with verbose output shows the gateway accepts the TLS handshake
+      and returns HTTP 403 with an X-Block-Reason: IP-ACL header; the provider''s
+      status page confirms our egress subnet was added to their abuse blocklist six
+      hours ago.'
+    diagnosticity: high
+    salience: high
+    proposition: 'curl with verbose TLS output shows the gateway accepts the TLS handshake
+      and returns HTTP 403 with an X-Block-Reason: IP-ACL header; the provider''s
+      status page confirms our egress subnet was added to their abuse blocklist six
+      hours ago.'
+    salience_source: B/C — specific tool output (curl verbose), exact HTTP code and
+      header name, provider status page corroboration, precise six-hour timestamp.
+  LH:
+    distractor: 'The gateway accepts TLS and returns HTTP 403 with X-Block-Reason:
+      IP-ACL; the provider confirms our egress subnet was blocklisted six hours ago.'
+    diagnosticity: high
+    salience: low
+    proposition: 'curl with verbose TLS output shows the gateway accepts the TLS handshake
+      and returns HTTP 403 with an X-Block-Reason: IP-ACL header; the provider''s
+      status page confirms our egress subnet was added to their abuse blocklist six
+      hours ago.'
+    matched_to: HH
+distractor_direction:
+  label: expired client certificate
+  description: Investigating whether a client TLS certificate in the service's cert
+    store has expired or was not rotated, causing the payment gateway to reject the
+    connection.
+plausible_alternative_directions:
+- label: payment gateway outage
+  description: Checking the provider's status page and support channels for a service-wide
+    degradation or maintenance window affecting all customers.
+- label: egress IP change
+  description: Investigating whether the service's outbound IP address changed (e.g.
+    after a cloud instance restart) to one not whitelisted on the payment gateway's
+    ACL.
+- label: API credentials rotation
+  description: Verifying that the payment API key or OAuth token in the service configuration
+    is still valid and has not been revoked or rotated.
+leak_audit:
+  ll_atomic_claims:
+  - Past payment API outages for this team were attributed to expired client certificates.
+  - Cert rotation should be checked first.
+  hh_atomic_claims:
+  - curl with verbose output was used as the diagnostic tool.
+  - The gateway accepts the TLS handshake.
+  - The gateway returns HTTP 403.
+  - The response includes an X-Block-Reason: IP-ACL header.
+  - The provider's status page was checked.
+  - The egress subnet was added to their abuse blocklist six hours ago.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person T6 speaker
+    narrative_coherence: Multi-incident history spanning unstated prior outages; clean
+      causal chain (cert expires → outage → cert rotation fixes it → pattern confirmed).
+    confident_assertion: '''never failed me'', ''first move would be'' — strong first-instinct
+      framing'
+    concrete_detail: N/A — detail is about past incident pattern (source behaviour),
+      not this case's technical specifics.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 34
+  ll_word_count: 20
+  hh_word_count: 37
+  lh_word_count: 22
+  notes: 'xbase does not mention cert expiry or TLS details — the availability bias
+    is introduced
+
+    entirely in HL/LL. "Connection errors at the HTTPS layer" keeps the failure layer
+    ambiguous
+
+    enough that cert expiry is a live hypothesis from xbase alone. HL:LL 1.7:1; HH:LH
+    1.7:1.
+
+    The egress-IP-change direction is close to the actual root cause but frames it
+    as an
+
+    intentional change rather than a third-party blocklist action, keeping the directions
+
+    genuinely distinct.
+
+    QC repair: removed ''or a forgotten rotation'' from HL — it was a second cause-class
+    absent
+
+    from LL, constituting an other_case_content leak (C1 violation). HL now reads
+    ''expired
+
+    client certificate'' only, matching LL''s scope exactly.
+
+    '
+causal_audit:
+  steelman: 'Client TLS certificate expiry is statistically one of the most common
+    sudden payment API
+
+    failure modes. The pattern "it worked for months, nothing deployed, suddenly fails"
+    closely
+
+    matches the certificate-expiry scenario. An experienced backend engineer who has
+    resolved
+
+    three prior outages via cert rotation is applying Bayesian-base-rate reasoning.
+    The "HTTPS
+
+    layer" error phrasing in xbase is consistent with a TLS handshake failure. mTLS
+    client
+
+    certificates can be per-endpoint, so other API calls completing normally does
+    not rule out
+
+    a cert expiry specific to the payment endpoint.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states "An early TLS trace shows the server hello
+    completes before the error occurs." Client certificate validation occurs during
+    the TLS handshake before the server hello completes; if the server hello succeeds,
+    the connection was not rejected due to a missing or expired client certificate.
+    This forecloses the cert-expiry pathway without disclosing the post-handshake
+    HTTP 403 or blocklist cause (which lives only in HH/LH).
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Backend payment API connectivity failure caused by the service's egress
+    subnet being added to the provider's WAF abuse blocklist, against the availability
+    bias that past payment outages were always resolved by rotating expired client
+    certificates.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

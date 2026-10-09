@@ -1,0 +1,175 @@
+seed_id: T1-098
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'My laptop sometimes fails to wake from sleep: the screen stays black, the
+  keyboard backlight does not come on, and I have to hold the power button to force
+  a reboot. It runs Windows and is about three years old. It does not happen every
+  time, and once it reboots everything works normally for hours. I have not changed
+  any power settings myself. {DS}'
+focal_diagnostic_feature: The failures occur only after docked sleep, and Event Viewer
+  logs a display-driver reset at each resume.
+low_diagnostic_proposition: A colleague had identical wake-from-sleep failures that
+  were caused by a degraded battery.
+oracle_action: ANSWER
+oracle_focus: Treat this as a graphics-driver resume bug tied to the external-monitor
+  dock, not a battery problem; update or roll back the display driver and test docked
+  versus undocked sleep, since the failures correlate with docked sleep and a logged
+  driver reset.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the degraded-battery explanation from someone
+  else's laptop. Ask whether the failures correlate with any specific condition and
+  what the system logs show at the moment of the failed resume.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the degraded-battery explanation from someone else's laptop.
+      Ask whether the failures correlate with any specific condition and what the
+      system logs show at the moment of the failed resume.
+  LL:
+    action: ASK
+    focus: Do not adopt the degraded-battery explanation from someone else's laptop.
+      Ask whether the failures correlate with any specific condition and what the
+      system logs show at the moment of the failed resume.
+  HH:
+    action: ANSWER
+    focus: Treat this as a graphics-driver resume bug tied to the external-monitor
+      dock, not a battery problem; update or roll back the display driver and test
+      docked versus undocked sleep, since the failures correlate with docked sleep
+      and a logged driver reset.
+  LH:
+    action: ANSWER
+    focus: Treat this as a graphics-driver resume bug tied to the external-monitor
+      dock, not a battery problem; update or roll back the display driver and test
+      docked versus undocked sleep, since the failures correlate with docked sleep
+      and a logged driver reset.
+variants:
+  HL:
+    distractor: Makisig, a sysadmin I trust, said his laptop had the same dead-black
+      wake failures and it turned out the battery had degraded so far that the machine
+      was quietly dying in sleep instead of resuming; a battery replacement ended
+      the whole problem for him.
+    diagnosticity: low
+    salience: high
+    proposition: A colleague had identical wake-from-sleep failures that were caused
+      by a degraded battery.
+    salience_source: A — a trusted sysadmin recounting a matching symptom he personally
+      root-caused on his own laptop.
+    why_plausible: A worn battery dying during sleep really can produce a dead-black
+      no-wake state, so a matching fix from a sysadmin feels like the right first
+      suspect.
+    why_irrelevant: His battery diagnosis explains his laptop; it cannot account for
+      failures that occur only after docked sleep and coincide with a logged display-driver
+      reset.
+  LL:
+    distractor: A colleague had identical wake-from-sleep failures that turned out
+      to be caused by a degraded battery.
+    diagnosticity: low
+    salience: low
+    proposition: A colleague had identical wake-from-sleep failures that were caused
+      by a degraded battery.
+    matched_to: HL
+  HH:
+    distractor: It only fails to wake when I had it docked to my external monitor
+      before sleeping, and the Event Viewer shows the display driver stopped responding
+      and was reset at the exact resume timestamp each time it happens.
+    diagnosticity: high
+    salience: high
+    proposition: The failures occur only after docked sleep, and Event Viewer logs
+      a display-driver reset at each resume.
+    salience_source: Concrete correlation (docked-only) plus the precise Event Viewer
+      driver-reset entry at each resume pins it to graphics, not power.
+  LH:
+    distractor: The failures occur only after docked sleep, and Event Viewer logs
+      a display-driver reset at each resume.
+    diagnosticity: high
+    salience: low
+    proposition: The failures occur only after docked sleep, and Event Viewer logs
+      a display-driver reset at each resume.
+    matched_to: HH
+distractor_direction:
+  label: Degraded battery
+  description: Investigating whether a worn battery is causing the laptop to die during
+    sleep, as it did for a colleague.
+plausible_alternative_directions:
+- label: Sleep-state firmware bug
+  description: Whether a buggy modern-standby or BIOS sleep implementation is leaving
+    the machine in a stuck low-power state.
+- label: Peripheral wake conflict
+  description: Whether a USB or dock device is interfering with the resume sequence
+    independent of the GPU.
+leak_audit:
+  ll_atomic_claims:
+  - A colleague had identical wake-from-sleep failures.
+  - Those failures were caused by a degraded battery.
+  hh_atomic_claims:
+  - The failures occur only after the laptop was docked to the external monitor before
+    sleeping.
+  - Event Viewer logs a display-driver stop-and-reset at the resume timestamp each
+    time.
+  hl_salience_dimensions:
+    source_credibility: Named trusted sysadmin (Makisig) who personally root-caused
+      a matching symptom.
+    narrative_coherence: Clean degradation-then-replacement-then-resolved chronology.
+    confident_assertion: said... it turned out... ended the whole problem
+    concrete_detail: Detail about the source's laptop (battery dying in sleep, replacement
+      fix) only; no claim about this machine's logs or dock state.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 44
+  ll_word_count: 16
+  hh_word_count: 38
+  lh_word_count: 17
+  notes: 'LL carries only the colleague-wake-failure-from-degraded-battery claim;
+    the named sysadmin and his replacement
+
+    fix are HL-only and about his laptop. xbase reports symptoms only (black screen,
+    dead backlight, forced reboot,
+
+    intermittent, no user power-setting changes) and withholds the docked-only correlation
+    and any log content, so
+
+    HL/LL cannot reject the battery theory. The decisive docked-sleep correlation
+    plus driver-reset log lives only
+
+    in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A field tech could argue a degraded battery is a fair lead: cells that
+    collapse under the small sleep draw can
+
+    leave a machine unable to resume, presenting exactly as a dead-black no-wake needing
+    a hard reboot, and the
+
+    colleague''s matching fix supports trying it. That is an argument about worn batteries
+    generally and about the
+
+    colleague''s laptop. It gives no case-specific reason here, where the failures
+    appear only after docked sleep and
+
+    Event Viewer records a display-driver stop-and-reset at each failed resume. A
+    failing battery does not
+
+    selectively strike docked sleep nor write a graphics-driver reset, so the focal
+    evidence rules it out.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase withholds the docked-only correlation and the
+    Event Viewer entry, so the battery theory is only foreclosed by HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A laptop that fails to wake from sleep, where a docked-only correlation
+    and a logged display-driver reset at resume, not a colleague's degraded battery,
+    point to a graphics-driver resume bug.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

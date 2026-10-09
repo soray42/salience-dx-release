@@ -1,0 +1,8 @@
+{
+  "seed_id": "T3-015",
+  "verdict": "clean",
+  "xbase_span": "",
+  "focal_in_hh_lh": true,
+  "reasoning": "The xbase presents only bare symptoms — a small shaded lawn with patchy grass and no recent soil work — and contains neither the screwdriver penetration test result nor the observation that sparse patches map to canopy shade rather than foot-traffic paths. A competent practitioner reading xbase alone cannot conclusively reject the compaction-aeration distractor; they would need to investigate, which is exactly what the HL/LL oracles require. Both HH and LH variants carry the full focal evidence (no-compaction screwdriver result plus canopy-correlated patch distribution), confirming the diagnostic signal lives where it should.",
+  "repair_hint": ""
+}

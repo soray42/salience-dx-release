@@ -1,0 +1,91 @@
+seed_id: T3-009
+template: T3
+domain: technical_troubleshooting
+complexity: low
+xbase: My new laptop's Wi-Fi drops every 10 to 20 minutes. The laptop has the manufacturer-recommended
+  latest driver installed. I have not changed the router settings. {DS}
+focal_diagnostic_feature: A phone next to the laptop and other devices in the house
+  stay connected to the same network while the laptop drops.
+low_diagnostic_proposition: A neighbour with telecommunications experience says the
+  5 GHz band should be treated as the main cause.
+oracle_action: ASK
+oracle_focus: 'Investigate laptop-side causes: power saving, antenna/hardware fault,
+  driver/OS interaction, or vendor diagnostics.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not follow generic band advice without device comparison.
+  Ask whether other devices on the same network/band drop.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not follow generic band advice without device comparison. Ask whether
+      other devices on the same network/band drop.
+  LL:
+    action: ASK
+    focus: Do not follow generic band advice without device comparison. Ask whether
+      other devices on the same network/band drop.
+  HH:
+    action: ASK
+    focus: 'Investigate laptop-side causes: power saving, antenna/hardware fault,
+      driver/OS interaction, or vendor diagnostics.'
+  LH:
+    action: ASK
+    focus: 'Investigate laptop-side causes: power saving, antenna/hardware fault,
+      driver/OS interaction, or vendor diagnostics.'
+variants:
+  HL:
+    distractor: My neighbour used to work for a major ISP and says modern routers
+      always have weak 5 GHz, so the band is probably the whole problem.
+    diagnosticity: low
+    salience: high
+    proposition: A neighbour with telecommunications experience says the 5 GHz band
+      should be treated as the main cause.
+    salience_source: authority background, absolute router-band claim, concrete prescription
+    why_plausible: ISP experience and real 5 GHz range issues make the advice sound
+      plausible.
+    why_irrelevant: Stable neighbouring devices on the same network point away from
+      a general router/band cause and toward the laptop.
+  LL:
+    distractor: A neighbour with telecommunications experience stated that the 5 GHz
+      band is the main cause of this type of Wi-Fi drop.
+    diagnosticity: low
+    salience: low
+    proposition: A neighbour with telecommunications experience says the 5 GHz band
+      should be treated as the main cause.
+    matched_to: HL
+  HH:
+    distractor: My phone sits right beside the laptop on the same network and never
+      drops, and the other devices in the house stay connected too.
+    diagnosticity: high
+    salience: high
+    proposition: A phone next to the laptop and other devices in the house stay connected
+      to the same network while the laptop drops.
+    salience_source: same-network device comparison
+  LH:
+    distractor: Other devices on the same network remain connected while the laptop
+      disconnects.
+    diagnosticity: high
+    salience: low
+    proposition: A phone next to the laptop and other devices in the house stay connected
+      to the same network while the laptop drops.
+    matched_to: HH
+distractor_direction:
+  label: 5 GHz band weakness
+  description: Investigating whether the router’s 5 GHz band or radio behaviour is
+    causing repeated Wi-Fi drops.
+plausible_alternative_directions:
+- label: Router firmware issue
+  description: The router firmware or access-point settings may have a bug affecting
+    some clients.
+- label: Local wireless interference
+  description: Nearby devices or networks may be interfering with the laptop connection.
+- label: Power-saving setting
+  description: The laptop’s Wi-Fi power management may be suspending or throttling
+    the adapter.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

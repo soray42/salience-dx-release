@@ -1,0 +1,104 @@
+seed_id: T1-005
+template: T1
+domain: open_qa
+complexity: medium
+xbase: Tengo una oferta para un nuevo puesto. El salario base es considerablemente
+  más alto que el actual, la empresa tiene cuentas públicas y su línea de producto
+  principal parece estable. Me gusta mi equipo actual pero no estoy seguro de si quedarme
+  ayuda a mi trayectoria a largo plazo. {DS}
+focal_diagnostic_feature: El puesto actual no tiene una vía de promoción definida
+  a pesar de buenas evaluaciones, mientras que el nuevo puesto cuenta con una escala
+  de promoción documentada.
+low_diagnostic_proposition: A comparable job move by an acquaintance ended badly because
+  of team culture.
+oracle_action: ANSWER
+oracle_focus: On the stated facts, the move is favourable, while still leaving room
+  to verify team culture before accepting.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one external culture story override the offer
+  facts. Ask about this specific manager, team norms, and promotion criteria.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one external culture story override the offer facts. Ask about
+      this specific manager, team norms, and promotion criteria.
+  LL:
+    action: ASK
+    focus: Do not let one external culture story override the offer facts. Ask about
+      this specific manager, team norms, and promotion criteria.
+  HH:
+    action: ANSWER
+    focus: On the stated facts, the move is favourable, while still leaving room to
+      verify team culture before accepting.
+  LH:
+    action: ANSWER
+    focus: On the stated facts, the move is favourable, while still leaving room to
+      verify team culture before accepting.
+variants:
+  HL:
+    distractor: Daniel se fue por un salario más alto el año pasado, odiaba al equipo
+      en el segundo mes y renunció después de siete meses muy malos.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable job move by an acquaintance ended badly because of team
+      culture.
+    salience_source: named person, concrete timeline, bad outcome narrative
+    why_plausible: A cautionary story makes any job move feel risky.
+    why_irrelevant: The anecdote concerns another team and cannot substitute for evidence
+      about this offer's manager, role, or progression structure.
+  LL:
+    distractor: Un conocido aceptó un cambio similar con mejor sueldo y luego reportó
+      una mala adaptación al equipo.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable job move by an acquaintance ended badly because of team
+      culture.
+    matched_to: HL
+  HH:
+    distractor: Llevo tres años con buenas evaluaciones sin cambio de título ni camino
+      de promoción; el nuevo puesto tiene una escala escrita con criterios explícitos.
+    diagnosticity: high
+    salience: high
+    proposition: The current role has no defined promotion path despite strong reviews,
+      while the new role has a written promotion ladder.
+    salience_source: career-progression contrast
+  LH:
+    distractor: El puesto actual carece de una vía de ascenso definida a pesar de
+      buenas evaluaciones, mientras que la oferta incluye criterios de promoción documentados.
+    diagnosticity: high
+    salience: low
+    proposition: The current role has no defined promotion path despite strong reviews,
+      while the new role has a written promotion ladder.
+    matched_to: HH
+distractor_direction:
+  label: Mala adaptación al equipo
+  description: Investigar si el nuevo puesto es probable que tenga problemas de cultura,
+    mánager o encaje con el equipo a pesar de la mayor remuneración.
+plausible_alternative_directions:
+- label: Estabilidad financiera de la empresa
+  description: Si el futuro empleador es financieramente estable como para sostener
+    el puesto a largo plazo.
+- label: Valor de permanencia en el equipo actual
+  description: Si quedarse en el equipo actual ofrece ventajas de mentoría, patrocinio
+    o movilidad interna.
+- label: Desajuste en el alcance del puesto
+  description: Si el título del nuevo puesto y las responsabilidades reales difieren
+    de la dirección profesional del usuario.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-005.yaml
+  source_xbase_sha256: 838093596c7d4e4d
+  translated_content_sha256: 786be3703ce78701
+  translation_notes: ''

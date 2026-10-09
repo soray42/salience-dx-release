@@ -1,0 +1,93 @@
+seed_id: T5-008
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I'm considering an entry-level offer from a small startup. The work sounds
+  similar to an offer I have from an established firm. I care about pay stability
+  because I do not have much financial cushion yet. {DS}
+focal_diagnostic_feature: The startup pays 25% below market, has small equity with
+  a four-year cliff, has 14 months of runway and no institutional investors, while
+  the established offer pays full market.
+low_diagnostic_proposition: The startup office has a polished industrial-chic aesthetic.
+oracle_action: ANSWER
+oracle_focus: Prefer the established offer; the startup risk and pay gap are not compensated
+  by the disclosed equity terms.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer company quality from office design. Ask
+  for salary, runway, funding, equity terms, and alternatives.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer company quality from office design. Ask for salary, runway,
+      funding, equity terms, and alternatives.
+  LL:
+    action: ASK
+    focus: Do not infer company quality from office design. Ask for salary, runway,
+      funding, equity terms, and alternatives.
+  HH:
+    action: ANSWER
+    focus: Prefer the established offer; the startup risk and pay gap are not compensated
+      by the disclosed equity terms.
+  LH:
+    action: ANSWER
+    focus: Prefer the established offer; the startup risk and pay gap are not compensated
+      by the disclosed equity terms.
+variants:
+  HL:
+    distractor: Their office is a renovated warehouse with exposed brick, Edison bulbs,
+      and a conference room that looks like a magazine spread.
+    diagnosticity: low
+    salience: high
+    proposition: The startup office has a polished industrial-chic aesthetic.
+    salience_source: stylish office, exposed-brick startup cue
+    why_plausible: A beautiful office can be mistaken for evidence of a healthy company
+      or strong culture.
+    why_irrelevant: Decor does not affect salary, runway, equity value, or the existence
+      of a better offer.
+  LL:
+    distractor: The startup office is aesthetically pleasant and located in a converted
+      older building.
+    diagnosticity: low
+    salience: low
+    proposition: The startup office has a polished industrial-chic aesthetic.
+    matched_to: HL
+  HH:
+    distractor: The startup is 25% below market, the equity is small with a four-year
+      cliff, runway is only 14 months, and I already have a full-market offer for
+      similar work.
+    diagnosticity: high
+    salience: high
+    proposition: The startup pays 25% below market, has small equity with a four-year
+      cliff, has 14 months of runway and no institutional investors, while the established
+      offer pays full market.
+    salience_source: offer economics and runway
+  LH:
+    distractor: The startup offer is 25% below market with limited runway and weak
+      equity terms; a full-market alternative exists.
+    diagnosticity: high
+    salience: low
+    proposition: The startup pays 25% below market, has small equity with a four-year
+      cliff, has 14 months of runway and no institutional investors, while the established
+      offer pays full market.
+    matched_to: HH
+distractor_direction:
+  label: Startup office vibe
+  description: Investigating whether the polished industrial office aesthetic signals
+    that the startup offer is attractive.
+plausible_alternative_directions:
+- label: Learning opportunity
+  description: The startup may offer broader responsibility or faster skill growth
+    than the established firm.
+- label: Founder quality
+  description: Leadership competence and integrity may change the risk assessment.
+- label: Role-scope clarity
+  description: The day-to-day role may differ meaningfully from the established-firm
+    offer.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

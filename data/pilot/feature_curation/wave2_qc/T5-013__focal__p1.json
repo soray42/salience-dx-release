@@ -1,0 +1,13 @@
+{
+  "seed_id": "T5-013",
+  "my_own_diagnosis": "Given that all three crash stack traces terminate inside app-owned onCompletionCallback code while mutating shared state (and the async context means the callback likely fires on a background thread), the root cause is almost certainly an unsynchronised write to shared mutable state — a thread-safety bug in the app's callback, not an SDK defect.",
+  "focal_decisive": true,
+  "focal_notes": "Three consistent stack traces all localising the crash to the same app-owned frame during a shared-state write is definitive evidence of an app-side concurrency bug, leaving no ambiguity about where to investigate.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracles correctly route HL/LL to the low-diagnostic (doc-quality) oracle and HH/LH to the focal (thread-safety) oracle; low_diagnostic_oracle_focus correctly instructs non-adoption of the doc-quality-as-reliability-signal inference.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

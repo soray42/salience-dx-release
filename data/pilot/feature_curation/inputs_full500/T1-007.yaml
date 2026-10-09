@@ -1,0 +1,92 @@
+seed_id: T1-007
+template: T1
+domain: open_qa
+complexity: high
+xbase: I'm considering buying a small apartment in a mid-tier European city as an
+  investment property. Local population growth is flat, sale prices have been stagnant
+  for about five years, and I already hold diversified index funds. {DS}
+focal_diagnostic_feature: The property's gross rental yield is below the fixed mortgage
+  rate before maintenance, vacancy, and tax.
+low_diagnostic_proposition: A family member's apartment in a different city appreciated
+  substantially.
+oracle_action: ANSWER
+oracle_focus: Do not buy on these numbers; the property has negative carry and weak
+  demand fundamentals relative to the diversified alternative.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not generalise from a different city. Ask for yield,
+  financing rate, vacancy, maintenance, and tax before judging the investment.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not generalise from a different city. Ask for yield, financing rate,
+      vacancy, maintenance, and tax before judging the investment.
+  LL:
+    action: ASK
+    focus: Do not generalise from a different city. Ask for yield, financing rate,
+      vacancy, maintenance, and tax before judging the investment.
+  HH:
+    action: ANSWER
+    focus: Do not buy on these numbers; the property has negative carry and weak demand
+      fundamentals relative to the diversified alternative.
+  LH:
+    action: ANSWER
+    focus: Do not buy on these numbers; the property has negative carry and weak demand
+      fundamentals relative to the diversified alternative.
+variants:
+  HL:
+    distractor: My older sister bought a similar-looking flat eight years ago in another
+      city and the price more than doubled before she even repainted it.
+    diagnosticity: low
+    salience: high
+    proposition: A family member's apartment in a different city appreciated substantially.
+    salience_source: family success story, specific time horizon, vivid appreciation
+    why_plausible: Real-estate anecdotes are memorable and make appreciation feel
+      typical.
+    why_irrelevant: A different market's past appreciation does not alter this property's
+      yield, financing cost, or demand fundamentals.
+  LL:
+    distractor: A family member bought a comparable apartment in a different market
+      and experienced substantial appreciation.
+    diagnosticity: low
+    salience: low
+    proposition: A family member's apartment in a different city appreciated substantially.
+    matched_to: HL
+  HH:
+    distractor: The gross yield is only 3.1%, while the mortgage is 4.6% fixed, so
+      the place starts losing money before repairs, vacancies, or taxes enter the
+      picture.
+    diagnosticity: high
+    salience: high
+    proposition: The property's gross rental yield is below the fixed mortgage rate
+      before maintenance, vacancy, and tax.
+    salience_source: spread between yield and financing cost
+  LH:
+    distractor: Gross yield is 3.1% and the fixed mortgage rate is 4.6%, implying
+      negative carry before other ownership costs.
+    diagnosticity: high
+    salience: low
+    proposition: The property's gross rental yield is below the fixed mortgage rate
+      before maintenance, vacancy, and tax.
+    matched_to: HH
+distractor_direction:
+  label: Prior appreciation precedent
+  description: Investigating whether another property’s appreciation implies similar
+    upside for this investment property.
+plausible_alternative_directions:
+- label: Local rental demand
+  description: Whether tenant demand, vacancy rates, and rent growth in this city
+    can support the investment.
+- label: Tax treatment effects
+  description: Whether local taxes, deductions, or transaction costs materially change
+    after-tax return.
+- label: Financing-term sensitivity
+  description: Whether alternative mortgage terms, rate locks, or down-payment choices
+    change the return profile.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

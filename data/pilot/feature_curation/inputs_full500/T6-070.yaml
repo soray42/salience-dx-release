@@ -1,0 +1,179 @@
+seed_id: T6-070
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our integration with a third-party data export API has been failing with 403
+  Forbidden since we rotated the API key last week as part of a scheduled credential
+  refresh. The new key was generated and added to our config without other changes,
+  and our server's IP address has not changed. The endpoint and request format are
+  the same as before. {DS}
+focal_diagnostic_feature: The new API key was generated with only the default read
+  scope; the data export endpoint requires write scope, which the previous key held
+  but was not re-selected during regeneration.
+low_diagnostic_proposition: Past 403 errors from this API were caused by the server
+  IP not being allowlisted; an allowlist issue is the likely cause now.
+oracle_action: ANSWER
+oracle_focus: Regenerate the API key with the write scope enabled, or add write scope
+  to the existing key through the provider's key management interface; the scope omission
+  during key creation is the direct cause of the 403 responses.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume an IP allowlist issue — the server IP has
+  not changed. Ask what scopes the new key was generated with and what permissions
+  the target endpoint requires.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume an IP allowlist issue — the server IP has not changed. Ask
+      what scopes the new key was generated with and what permissions the target endpoint
+      requires.
+  LL:
+    action: ASK
+    focus: Do not assume an IP allowlist issue — the server IP has not changed. Ask
+      what scopes the new key was generated with and what permissions the target endpoint
+      requires.
+  HH:
+    action: ANSWER
+    focus: Regenerate the API key with the write scope enabled, or add write scope
+      to the existing key through the provider's key management interface; the scope
+      omission during key creation is the direct cause of the 403 responses.
+  LH:
+    action: ANSWER
+    focus: Regenerate the API key with the write scope enabled, or add write scope
+      to the existing key through the provider's key management interface; the scope
+      omission during key creation is the direct cause of the 403 responses.
+variants:
+  HL:
+    distractor: Every 403 I have hit with this provider before was because our server
+      IP was not on their allowlist — that has been the problem three times, and my
+      instinct is to check the allowlist again before anything else.
+    diagnosticity: low
+    salience: high
+    proposition: Past 403 errors from this API were caused by the server IP not being
+      allowlisted; an allowlist issue is the likely cause now.
+    salience_source: B/C — vivid personal track record ("three times"), confident
+      first-instinct framing ("my instinct is to check the allowlist again"), coherent
+      pattern of repeated identical failures, confident prioritisation.
+    why_plausible: IP allowlist mismatches are a genuine and common cause of 403 errors
+      from third-party APIs, and a practitioner who has fixed this three times would
+      have strong prior reason to check it first after a credential rotation.
+    why_irrelevant: The xbase confirms the server's IP address has not changed, which
+      closes the allowlist mechanism; the focal evidence shows the 403 is caused by
+      a missing write scope on the new key, which is independent of IP access control.
+  LL:
+    distractor: Past 403 errors from this API were caused by the server IP not being
+      allowlisted; an allowlist issue is the likely cause now.
+    diagnosticity: low
+    salience: low
+    proposition: Past 403 errors from this API were caused by the server IP not being
+      allowlisted; an allowlist issue is the likely cause now.
+    matched_to: HL
+  HH:
+    distractor: The API provider's key management page shows the new key was created
+      with only the default read scope checked; the export endpoint we call requires
+      write scope, and the old key had both — write was not re-selected when regenerating.
+    diagnosticity: high
+    salience: high
+    proposition: The new API key was generated with only the default read scope; the
+      data export endpoint requires write scope, which the previous key held but was
+      not re-selected during regeneration.
+    salience_source: B/C — concrete UI observation ("key management page shows"),
+      precise scope names (read vs write), the direct comparison to the old key's
+      scope set, and the mechanistic identification of the omission ("not re-selected
+      when regenerating") create a vivid and conclusive account.
+  LH:
+    distractor: The new key has only read scope; the endpoint requires write scope
+      that the old key held but was not re-selected on regeneration.
+    diagnosticity: high
+    salience: low
+    proposition: The new API key was generated with only the default read scope; the
+      data export endpoint requires write scope, which the previous key held but was
+      not re-selected during regeneration.
+    matched_to: HH
+distractor_direction:
+  label: IP allowlist mismatch
+  description: Investigating whether the server's IP address is not included in the
+    API provider's allowlist, causing the 403 Forbidden responses after the key rotation.
+plausible_alternative_directions:
+- label: key generation error or corruption
+  description: The new key itself may be malformed, truncated, or copied incorrectly
+    into the config, producing an authentication failure regardless of scope.
+- label: endpoint-level access restriction
+  description: The provider may have added access-control restrictions to the specific
+    endpoint that are independent of the key's scope configuration.
+- label: key not yet activated or propagated
+  description: The newly generated key may require activation or may be subject to
+    a propagation delay before the provider's API gateway accepts it.
+leak_audit:
+  ll_atomic_claims:
+  - Past 403 errors from this API were caused by the server IP not being allowlisted.
+  - An allowlist issue is the likely cause now.
+  hh_atomic_claims:
+  - The key management page shows the new key was created with only the default read
+    scope.
+  - The export endpoint requires write scope.
+  - The old key had both read and write scope.
+  - Write scope was not re-selected when regenerating the key.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, no named external source
+    narrative_coherence: Coherent personal track record of three prior identical allowlist
+      incidents, with confident first-instinct prioritisation directing toward the
+      same check again.
+    confident_assertion: '''my instinct is to check the allowlist again before anything
+      else'''
+    concrete_detail: N/A — vivid detail is about the speaker's past incidents, not
+      the current case
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 60
+  hl_word_count: 38
+  ll_word_count: 23
+  hh_word_count: 39
+  lh_word_count: 23
+  notes: 'The IP-allowlist pathway is explicitly closed in xbase ("our server''s IP
+    address
+
+    has not changed"), ruling out the distractor''s mechanism per C2/C4. This closure
+
+    names no positive cause. The LL text happens to be verbatim the same as the
+
+    low_diagnostic_proposition, which is correct — the flat version of the distractor
+
+    and the neutral-phrased proposition are the same two claims.
+
+    '
+causal_audit:
+  steelman: 'IP allowlist entries are sometimes configured per key (not per server),
+    meaning
+
+    a newly generated key might need its own allowlist entry independent of the server
+
+    IP''s existing record. Under this model, "our server''s IP has not changed" would
+
+    not close the allowlist pathway, because the new key lacks the IP association
+    that
+
+    the old key had. This is a real provider-side design pattern and a practitioner
+
+    aware of per-key allowlisting would be right to check it regardless of IP stability.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"Our server''s IP address has not changed" — closes the
+    IP-changed mechanism. The per-key allowlist steelman is noted but is not how the
+    xbase frames the issue; the provider''s key management page (in HH) shows the
+    problem is scope, not allowlist.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Third-party data export API returning 403 Forbidden because the newly
+    rotated API key was generated with only default read scope, omitting the write
+    scope required by the endpoint, against an availability bias that past 403s from
+    this provider were always caused by IP allowlist mismatches.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

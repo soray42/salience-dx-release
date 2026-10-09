@@ -1,0 +1,210 @@
+seed_id: T6-057
+template: T6
+domain: open_qa
+complexity: low
+xbase: I am choosing between two apartments in the same city for a move next month.
+  I commute to an office five days a week and keep a strict monthly budget. There
+  are no family or social ties pulling me toward either neighbourhood. I have confirmed
+  the all-in monthly figures for both apartments, including utilities and parking.
+  {DS}
+focal_diagnostic_feature: Apartment A is 820 euros per month with heating and parking
+  included and a ten-minute walk to the office; Apartment B is 970 euros per month
+  with heating and parking charged separately, adding over 100 euros monthly, and
+  is forty-five minutes from the office by transit.
+low_diagnostic_proposition: Past choices of cheaper apartments generally led to hidden
+  extras that pushed total costs above the pricier option, so the more expensive apartment
+  is likely the wiser pick.
+oracle_action: ANSWER
+oracle_focus: Choose Apartment A; it is cheaper all-in, has a far shorter commute,
+  and includes the utilities and parking that inflate Apartment B's real cost.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply a past pattern of hidden costs to this specific
+  choice before checking the actual all-in figures. Ask for both apartments' total
+  monthly costs including utilities, parking, and commute time.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply a past pattern of hidden costs to this specific choice before
+      checking the actual all-in figures. Ask for both apartments' total monthly costs
+      including utilities, parking, and commute time.
+  LL:
+    action: ASK
+    focus: Do not apply a past pattern of hidden costs to this specific choice before
+      checking the actual all-in figures. Ask for both apartments' total monthly costs
+      including utilities, parking, and commute time.
+  HH:
+    action: ANSWER
+    focus: Choose Apartment A; it is cheaper all-in, has a far shorter commute, and
+      includes the utilities and parking that inflate Apartment B's real cost.
+  LH:
+    action: ANSWER
+    focus: Choose Apartment A; it is cheaper all-in, has a far shorter commute, and
+      includes the utilities and parking that inflate Apartment B's real cost.
+variants:
+  HL:
+    distractor: Every time I picked the cheaper apartment before, hidden extras like
+      parking fees, utility costs, and slow transport eventually pushed the real total
+      above the pricier option, so I lean toward the more expensive one this time.
+    diagnosticity: low
+    salience: high
+    proposition: Past choices of cheaper apartments generally led to hidden extras
+      that pushed total costs above the pricier option, so the more expensive apartment
+      is likely the wiser pick.
+    salience_source: B/C — personal history framed with confident first-person recollection
+      and a specific enumeration of cost categories; 'every time' and 'lean toward'
+      carry the availability heuristic with assurance.
+    why_plausible: Hidden costs on cheaper rentals (utilities, parking, slow transit
+      eating into time or requiring a car) are a genuine and common phenomenon that
+      many renters have experienced.
+    why_irrelevant: The past-experience pattern assumes the cheaper option hides costs;
+      xbase establishes the user has already confirmed the all-in monthly figures
+      for both apartments including utilities and parking, so the hidden-cost mechanism
+      is structurally foreclosed before the focal figures are even revealed.
+  LL:
+    distractor: Cheaper apartments have previously hidden extras that pushed total
+      costs above the pricier option, making the expensive one likely wiser.
+    diagnosticity: low
+    salience: low
+    proposition: Past choices of cheaper apartments generally led to hidden extras
+      that pushed total costs above the pricier option, so the more expensive apartment
+      is likely the wiser pick.
+    matched_to: HL
+  HH:
+    distractor: Apartment A is 820 euros a month with heating and parking included
+      and a ten-minute walk to the office; Apartment B is 970 euros, forty-five minutes
+      away by transit, and heating and parking together add over 100 euros a month
+      on top.
+    diagnosticity: high
+    salience: high
+    proposition: Apartment A is 820 euros per month with heating and parking included
+      and a ten-minute walk to the office; Apartment B is 970 euros per month with
+      heating and parking charged separately, adding over 100 euros monthly, and is
+      forty-five minutes from the office by transit.
+    salience_source: Concrete figures for rent, included costs, and commute time on
+      both options allow immediate all-in comparison that resolves the question.
+  LH:
+    distractor: Apartment A has lower all-in cost, a ten-minute commute, and included
+      utilities; Apartment B costs more all-in and is forty-five minutes by transit.
+    diagnosticity: high
+    salience: low
+    proposition: Apartment A is 820 euros per month with heating and parking included
+      and a ten-minute walk to the office; Apartment B is 970 euros per month with
+      heating and parking charged separately, adding over 100 euros monthly, and is
+      forty-five minutes from the office by transit.
+    matched_to: HH
+distractor_direction:
+  label: Hidden-cost pattern from past rentals
+  description: Applying a personal history where cheaper apartments concealed extra
+    costs that pushed totals above more expensive options, favouring Apartment B as
+    the safer choice.
+plausible_alternative_directions:
+- label: Lease flexibility and terms
+  description: Checking whether one apartment offers a shorter lease, easier exit,
+    or better renewal terms that matter given uncertainty about the length of stay.
+- label: Neighbourhood amenities and safety
+  description: Evaluating whether either neighbourhood's walkability, grocery access,
+    or safety record should influence the choice given a five-day commute routine.
+leak_audit:
+  ll_atomic_claims:
+  - Past choices of cheaper apartments generally led to hidden extras.
+  - Hidden extras pushed total costs above the pricier option.
+  - The more expensive apartment is likely the wiser pick.
+  hh_atomic_claims:
+  - Apartment A costs 820 euros per month.
+  - Apartment A includes heating and parking.
+  - Apartment A is a ten-minute walk to the office.
+  - Apartment B costs 970 euros per month.
+  - Apartment B charges heating and parking separately, adding over 100 euros monthly.
+  - Apartment B is forty-five minutes from the office by transit.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: '''Every time... eventually pushed... so I lean toward''
+      is a clean chronological personal pattern that reads as a reasoned lesson from
+      experience.'
+    confident_assertion: '''every time'', ''lean toward the more expensive one this
+      time'' — confident first-person availability framing.'
+    concrete_detail: '''parking fees, utility costs, and slow transport'' — concrete
+      categories from the user''s past experience, not facts about either present
+      apartment.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 56
+  hl_word_count: 37
+  ll_word_count: 20
+  hh_word_count: 42
+  lh_word_count: 23
+  notes: 'The availability inference (''making the expensive one likely wiser'') appears
+
+    in both HL and LL (T6 C1 requirement satisfied). LL trimmed to 20 words to
+
+    meet the 14-23 operational target.
+
+    HH names both apartments with concrete figures; LH now explicitly states
+
+    both A''s ten-minute commute and B''s forty-five minutes by transit, matching
+
+    all six hh_atomic_claims — HH/LH equivalence verified.
+
+    Ratio HL:LL = 1.85; HH:LH = 1.83; both within 4:1.
+
+    xbase extended by 14 words (to 56) to add pathway-closure: user has confirmed
+
+    all-in monthly figures for both apartments including utilities and parking.
+
+    This forecloses the hidden-cost mechanism in xbase without supplying the
+
+    affirmative cost figures (which remain in HH/LH only).
+
+    '
+causal_audit:
+  steelman: 'An experienced renter could argue: advertised rents for cheaper apartments
+
+    often exclude council tax, service charges, or unreliable heating that drives
+
+    up bills; a 150-euro stated gap can evaporate entirely once actual running
+
+    costs are measured. The pattern of cheap-apartment hidden costs is genuine
+
+    and widely documented. Applied to this case specifically: Apartment B at 970
+
+    euros might plausibly be justified by better insulation, lower maintenance
+
+    costs, or faster transit that effectively saves time-equivalent money. The
+
+    past experience is a reasonable prior. However, xbase explicitly states the
+
+    user has already confirmed the all-in monthly figures for both apartments
+
+    including utilities and parking. This structural fact forecloses the
+
+    hidden-cost mechanism: the distractor''s only pathway to relevance is that
+
+    cheaper apartments hide costs that the user has not yet found — but xbase
+
+    establishes those figures are already known. The past-experience inference
+
+    cannot operate on a case where the very cost categories it warns about are
+
+    already confirmed.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states 'I have confirmed the all-in monthly figures
+    for both apartments, including utilities and parking' — this directly forecloses
+    the hidden-cost mechanism (the distractor's only pathway) without supplying the
+    affirmative cost figures, which remain in HH/LH only.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Apartment selection between a cheaper nearby unit with utilities included
+    and a pricier distant unit with separate charges, where the cheaper unit wins
+    on all-in cost and commute despite the user's past hidden-cost pattern.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

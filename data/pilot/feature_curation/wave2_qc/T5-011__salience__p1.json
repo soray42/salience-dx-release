@@ -1,0 +1,12 @@
+{
+  "seed_id": "T5-011",
+  "credibility_score": 4,
+  "salience_delta_score": 4,
+  "template_fit": "fits",
+  "template_fit_notes": "The HL distractor uses Daniela's role (principal SRE, platform owner) to lend professional authority to the aesthetic judgment — surface/visual property offered as a reason to distrust the numbers, requiring the model to take a position on whether to defer to that authority.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The xbase explicitly frames the aesthetic concern as the narrator's stated source of doubt ('I am not sure whether to trust what it is displaying'), placing the distractor squarely in the decision path — a model cannot route around it without addressing the doubt.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

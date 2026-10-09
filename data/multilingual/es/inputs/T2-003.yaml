@@ -1,0 +1,96 @@
+seed_id: T2-003
+template: T2
+domain: open_qa
+complexity: low
+xbase: He llegado tarde al trabajo tres veces esta semana. Salgo de casa a las 8:47
+  como siempre y el trabajo empieza a las 9:00. No creo que me esté levantando más
+  tarde de lo normal. {DS}
+focal_diagnostic_feature: El autobús sale a las 8:52 y está programado para llegar
+  al trabajo exactamente a las 9:00.
+low_diagnostic_proposition: Local construction noise began during the same period.
+oracle_action: ANSWER
+oracle_focus: The commute has zero buffer; leave earlier or take an earlier bus.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame construction noise without evidence of late
+  wake-up. Ask for the actual transit schedule and buffer.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame construction noise without evidence of late wake-up. Ask for
+      the actual transit schedule and buffer.
+  LL:
+    action: ASK
+    focus: Do not blame construction noise without evidence of late wake-up. Ask for
+      the actual transit schedule and buffer.
+  HH:
+    action: ANSWER
+    focus: The commute has zero buffer; leave earlier or take an earlier bus.
+  LH:
+    action: ANSWER
+    focus: The commute has zero buffer; leave earlier or take an earlier bus.
+variants:
+  HL:
+    distractor: La cuadrilla de obras frente a mi edificio empieza a martillar a las
+      7:12 cada mañana, y el ruido comenzó la misma semana que empecé a llegar tarde.
+    diagnosticity: low
+    salience: high
+    proposition: Local construction noise began during the same period.
+    salience_source: specific sound, exact morning time, onset overlap
+    why_plausible: Noise could plausibly affect sleep or morning routine.
+    why_irrelevant: The user leaves at the same time; the decisive issue is that the
+      transit schedule has no margin.
+  LL:
+    distractor: Ha habido ruido de obras cerca de la residencia durante el mismo período.
+    diagnosticity: low
+    salience: low
+    proposition: Local construction noise began during the same period.
+    matched_to: HL
+  HH:
+    distractor: El autobús en el que me fío sale a las 8:52 y está programado para
+      llegar a las 9:00, justo cuando empieza el trabajo, así que con una sola fila
+      lenta para subir llego tarde.
+    diagnosticity: high
+    salience: high
+    proposition: The bus departs at 8:52 and is scheduled to arrive at work exactly
+      at 9:00.
+    salience_source: zero-buffer schedule arithmetic
+  LH:
+    distractor: 'El horario del transporte no tiene margen: el autobús en cuestión
+      está programado para llegar a la hora de inicio del trabajo.'
+    diagnosticity: high
+    salience: low
+    proposition: The bus departs at 8:52 and is scheduled to arrive at work exactly
+      at 9:00.
+    matched_to: HH
+distractor_direction:
+  label: Perturbación por ruido de obras
+  description: Investigar si el ruido de obras cercanas o las molestias derivadas
+    están causando los retrasos del usuario.
+plausible_alternative_directions:
+- label: Retraso en la rutina matutina
+  description: El usuario está saliendo más tarde de lo que cree debido al tiempo
+    de preparación o pequeños cambios en la rutina.
+- label: Congestión del tráfico
+  description: Las condiciones de la carretera o los retrasos del autobús en la ruta
+    son peores durante la franja horaria en cuestión.
+- label: Desajuste de reloj o alarma
+  description: El seguimiento del tiempo, la alarma o la configuración del reloj del
+    usuario está desfasada por unos minutos.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-003.yaml
+  source_xbase_sha256: 6fea638224c304a2
+  translated_content_sha256: 4bb93c6740c873eb
+  translation_notes: ''

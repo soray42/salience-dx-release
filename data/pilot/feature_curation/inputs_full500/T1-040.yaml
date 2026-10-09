@@ -1,0 +1,186 @@
+seed_id: T1-040
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: 'Our event-ingestion pipeline is dropping records: the analytics warehouse
+  counts roughly 8% fewer events per day than the producer''s own emit counter, and
+  the gap has been steady since we rolled out the new consumer service. The Kafka
+  topic shows no under-replicated partitions and no consumer-lag alerts, and the producer
+  logs confirm every event was accepted by the broker. The loss is happening somewhere
+  on the consumer side. {DS}'
+focal_diagnostic_feature: The consumer is configured to auto-commit offsets on a fixed
+  timer, before each batch finishes writing to the warehouse, so when a worker restarts
+  mid-batch the already-committed-but-unwritten records are skipped and never reprocessed.
+low_diagnostic_proposition: A peer's pipeline silently lost events because a partition
+  rebalance kept reassigning ownership and starving one consumer.
+oracle_action: ANSWER
+oracle_focus: 'Fix the offset-commit ordering: commit offsets only after the batch
+  is durably written to the warehouse, so a mid-batch restart reprocesses rather than
+  skips.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the rebalance-starvation story from the
+  peer. Ask whether offsets are committed before or after records are durably written
+  downstream.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the rebalance-starvation story from the peer. Ask whether
+      offsets are committed before or after records are durably written downstream.
+  LL:
+    action: ASK
+    focus: Do not adopt the rebalance-starvation story from the peer. Ask whether
+      offsets are committed before or after records are durably written downstream.
+  HH:
+    action: ANSWER
+    focus: 'Fix the offset-commit ordering: commit offsets only after the batch is
+      durably written to the warehouse, so a mid-batch restart reprocesses rather
+      than skips.'
+  LH:
+    action: ANSWER
+    focus: 'Fix the offset-commit ordering: commit offsets only after the batch is
+      durably written to the warehouse, so a mid-batch restart reprocesses rather
+      than skips.'
+variants:
+  HL:
+    distractor: Espen, a staff platform engineer, told me their team once silently
+      lost about a tenth of events with no lag alerts; it turned out to be a rebalance
+      loop where consumers kept trading partitions back and forth, starving one of
+      them.
+    diagnosticity: low
+    salience: high
+    proposition: A peer's pipeline silently lost events because a partition rebalance
+      kept reassigning ownership and starving one consumer.
+    salience_source: A — a named staff platform engineer recounting a silent-loss-with-no-lag-alerts
+      incident lends the rebalance story credibility.
+    why_plausible: A rebalance storm is a real way to lose throughput silently without
+      lag alerts, so the symptom-match invites the same diagnosis.
+    why_irrelevant: The peer's rebalance loop says nothing about whether THIS consumer
+      commits offsets before writing; that ordering is what the focal evidence exposes.
+  LL:
+    distractor: A peer's pipeline silently lost events because a partition rebalance
+      kept reassigning ownership and starving one consumer.
+    diagnosticity: low
+    salience: low
+    proposition: A peer's pipeline silently lost events because a partition rebalance
+      kept reassigning ownership and starving one consumer.
+    matched_to: HL
+  HH:
+    distractor: Reading the consumer config, it auto-commits offsets on a five-second
+      timer regardless of write progress, so the moment a worker restarts mid-batch
+      the records it had read but not yet written are already marked consumed and
+      are never fetched again — and the daily gap matches the restart count.
+    diagnosticity: high
+    salience: high
+    proposition: The consumer is configured to auto-commit offsets on a fixed timer,
+      before each batch finishes writing to the warehouse, so when a worker restarts
+      mid-batch the already-committed-but-unwritten records are skipped and never
+      reprocessed.
+    salience_source: Quoting the timer-based auto-commit and tying the gap to restart
+      count makes the at-most-once data loss concrete.
+  LH:
+    distractor: The consumer auto-commits offsets on a timer before batches are written,
+      so records read but unwritten at a mid-batch restart are skipped and never reprocessed.
+    diagnosticity: high
+    salience: low
+    proposition: The consumer is configured to auto-commit offsets on a fixed timer,
+      before each batch finishes writing to the warehouse, so when a worker restarts
+      mid-batch the already-committed-but-unwritten records are skipped and never
+      reprocessed.
+    matched_to: HH
+distractor_direction:
+  label: Rebalance starvation
+  description: Investigating whether a partition-rebalance loop is reassigning ownership
+    and starving a consumer so it never processes its full share of events.
+plausible_alternative_directions:
+- label: Downstream write failures dropped
+  description: Whether warehouse insert errors are being swallowed and the failed
+    rows silently discarded.
+- label: Deduplication over-filtering
+  description: Whether an idempotency or dedup step is discarding legitimate distinct
+    events as duplicates.
+- label: Schema-validation rejection
+  description: Whether records failing a new schema check are dropped rather than
+    dead-lettered.
+leak_audit:
+  ll_atomic_claims:
+  - A peer's pipeline silently lost events.
+  - The cause was a partition rebalance repeatedly reassigning ownership and starving
+    one consumer.
+  hh_atomic_claims:
+  - The consumer auto-commits offsets on a fixed timer.
+  - The commit happens before each batch is written to the warehouse.
+  - A mid-batch worker restart therefore skips already-committed-but-unwritten records,
+    which are never reprocessed.
+  hl_salience_dimensions:
+    source_credibility: Named staff platform engineer (Espen) recounting a silent-loss
+      incident.
+    narrative_coherence: Coherent no-lag-alerts, rebalance-loop, partition-trading
+      account.
+    confident_assertion: N/A
+    concrete_detail: Detail about the source's incident (their consumers trading partitions
+      back and forth) only — no claim about THIS consumer's commit ordering.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 41
+  ll_word_count: 21
+  hh_word_count: 46
+  lh_word_count: 25
+  notes: 'xbase establishes the ~8% loss on the consumer side, healthy broker/replication,
+    no lag alerts, and producer
+
+    confirmation, but does NOT reveal the offset-commit ordering — the decisive at-most-once
+    fact lives only in
+
+    HH/LH, so HL/LL cannot resolve the case. The ''no lag alerts / not under-replicated''
+    lines neutrally rule out the
+
+    broker, but the rebalance story can still run on no-lag-alerts. LL carries only
+    the peer-rebalance claim.
+
+    HL repair (lint word-count fix): removed effort descriptor ''after days of digging''
+    (C1-forbidden) and tightened
+
+    phrasing from 54 words to 41 words, within the 27-48 operational target.
+
+    '
+causal_audit:
+  steelman: 'A senior streaming engineer could argue a rebalance storm is a real silent-loss
+    mode — it produces no lag alerts
+
+    because committed offsets keep advancing while a starved consumer never durably
+    processes its partitions — so
+
+    Espen''s incident is a credible analogy worth checking. Yet that is a fact about
+    a different cluster. Nothing in
+
+    xbase indicates rebalancing is occurring; lag and replication are healthy and
+    the loss is steady, not bursty as a
+
+    flapping rebalance would be. The focal evidence identifies the true mechanism:
+    offsets are committed on a timer
+
+    before the warehouse write, so restarts skip in-flight records — at-most-once
+    delivery by construction. That
+
+    fully explains a steady percentage loss and is independent of any rebalance behaviour.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states there are no under-replicated partitions and
+    no consumer-lag alerts, closing the broker pathway, while the decisive offset-commit-ordering
+    evidence lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An ingestion pipeline losing events because the consumer commits offsets
+    before writing (at-most-once), not the rebalance starvation a peer once hit.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

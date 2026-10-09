@@ -1,0 +1,188 @@
+seed_id: T6-059
+template: T6
+domain: open_qa
+complexity: medium
+xbase: My sourdough bread has been coming out with a dense, gummy crumb for the past
+  month. I have been baking sourdough for about two years and this is frustrating
+  because I was happy with my results before. I shape, score, and bake in a covered
+  Dutch oven the same way as before. The loaves look fine from outside but cut open
+  they are underdeveloped inside. {DS}
+focal_diagnostic_feature: The starter is visibly active and passes the float test,
+  while bulk fermentation is being cut to two hours in a 19°C kitchen, which is insufficient
+  time for dough development at that temperature.
+low_diagnostic_proposition: Past dense sourdough results were traced to a sluggish
+  starter, so the starter is probably inactive again.
+oracle_action: ANSWER
+oracle_focus: Extend bulk fermentation substantially at 19°C; the active starter rules
+  out starter weakness, and two hours is far too short for full dough development
+  at that temperature.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to the starter explanation from past experience.
+  Ask about starter activity and bulk fermentation duration and temperature before
+  diagnosing the cause.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to the starter explanation from past experience. Ask about
+      starter activity and bulk fermentation duration and temperature before diagnosing
+      the cause.
+  LL:
+    action: ASK
+    focus: Do not default to the starter explanation from past experience. Ask about
+      starter activity and bulk fermentation duration and temperature before diagnosing
+      the cause.
+  HH:
+    action: ANSWER
+    focus: Extend bulk fermentation substantially at 19°C; the active starter rules
+      out starter weakness, and two hours is far too short for full dough development
+      at that temperature.
+  LH:
+    action: ANSWER
+    focus: Extend bulk fermentation substantially at 19°C; the active starter rules
+      out starter weakness, and two hours is far too short for full dough development
+      at that temperature.
+variants:
+  HL:
+    distractor: Every time my sourdough turned out dense like this before, I eventually
+      traced it back to a sluggish starter — weak fermentation produces exactly this
+      gummy, flat crumb, so my first instinct is that my starter has gone inactive
+      again.
+    diagnosticity: low
+    salience: high
+    proposition: Past dense sourdough results were traced to a sluggish starter, so
+      the starter is probably inactive again.
+    salience_source: B — vivid first-person narrative of a reliable personal pattern
+      with specific symptom match; C — confident first-instinct framing.
+    why_plausible: An inactive starter genuinely produces dense, gummy loaves, and
+      a baker who has reliably diagnosed this before has a credible basis for the
+      pattern — the symptom description matches closely.
+    why_irrelevant: The starter is confirmed active and passes the float test, structurally
+      ruling out starter weakness as the cause; the past cases were structurally different
+      from the current one where starter activity is not in question.
+  LL:
+    distractor: Past dense sourdough results were traced to a sluggish starter, so
+      the starter is probably inactive again.
+    diagnosticity: low
+    salience: low
+    proposition: Past dense sourdough results were traced to a sluggish starter, so
+      the starter is probably inactive again.
+    matched_to: HL
+  HH:
+    distractor: My starter doubles reliably within five hours of feeding and passes
+      the float test every time; what I changed last month is cutting bulk fermentation
+      to two hours at around 19°C, which is not nearly long enough for dough to develop
+      at that temperature.
+    diagnosticity: high
+    salience: high
+    proposition: The starter is visibly active and passes the float test, while bulk
+      fermentation is being cut to two hours in a 19°C kitchen, which is insufficient
+      time for dough development at that temperature.
+    salience_source: Two specific activity markers (doubles in five hours, float test),
+      a concrete timing change, and the named temperature make the diagnosis precise
+      and directly testable.
+  LH:
+    distractor: Starter doubles within five hours and passes the float test; bulk
+      fermentation is two hours at 19°C, not long enough for dough development.
+    diagnosticity: high
+    salience: low
+    proposition: The starter is visibly active and passes the float test, while bulk
+      fermentation is being cut to two hours in a 19°C kitchen, which is insufficient
+      time for dough development at that temperature.
+    matched_to: HH
+distractor_direction:
+  label: Inactive starter
+  description: Investigating whether the sourdough starter has lost activity and is
+    not generating enough fermentation to leaven and develop the dough.
+plausible_alternative_directions:
+- label: Overproofed during final proof
+  description: Whether the shaped loaf was proofed too long after shaping, causing
+    gluten to degrade and the crumb to collapse during baking.
+- label: Oven temperature too low
+  description: Whether the Dutch oven or oven is running cooler than intended, leaving
+    the loaf underbaked at the centre.
+leak_audit:
+  ll_atomic_claims:
+  - Past dense sourdough results were traced to a sluggish starter.
+  - The starter is probably inactive again.
+  hh_atomic_claims:
+  - The starter doubles within five hours of feeding.
+  - The starter passes the float test every time.
+  - Bulk fermentation was cut to two hours last month.
+  - The kitchen temperature is around 19°C.
+  - Two hours is not long enough for dough development at that temperature.
+  hl_salience_dimensions:
+    source_credibility: N/A — T6 first-person availability heuristic.
+    narrative_coherence: A vivid personal history of repeated dense-loaf incidents
+      traced back to the same cause, with clear symptom match to the current case.
+    confident_assertion: '"Every time", "exactly this gummy, flat crumb", "my first
+      instinct" — confident first-person framing from experience.'
+    concrete_detail: N/A — detail concerns the user's own past, not the source.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 65
+  hl_word_count: 40
+  ll_word_count: 17
+  hh_word_count: 44
+  lh_word_count: 16
+  notes: 'T6 C1 check: the availability inference "so it''s probably the same thing
+
+    again" is propositional content and appears in both HL ("my first instinct
+
+    is that my starter has gone inactive again") and LL ("so the starter is
+
+    probably inactive again"). HL adds only narrative vivacity and confident
+
+    first-instinct framing — no case-specific facts about current starter
+
+    activity. The starter-activity and bulk-fermentation facts live only in
+
+    HH/LH; xbase gives symptoms and method but never discloses fermentation
+
+    duration or temperature.
+
+    '
+causal_audit:
+  steelman: 'An experienced sourdough baker reliably tracing past dense loaves to
+    starter
+
+    weakness is applying a genuine pattern: an underactive starter produces
+
+    insufficient CO2 and organic acids, leaving dough under-leavened and the
+
+    crumb dense and gummy. The symptom match — dense, gummy crumb, looks fine
+
+    outside — is close. The seed is clean because the focal evidence structurally
+
+    rules out starter weakness: the starter doubles within five hours and passes
+
+    the float test, two independent activity markers that confirm healthy
+
+    fermentation capacity. The past cases were ones where the starter was
+
+    actually sluggish; the present case differs because the starter is
+
+    confirmed active. The decisive variable is bulk fermentation time: two hours
+
+    at 19°C leaves the dough substantially under-fermented regardless of starter
+
+    health, and extending fermentation resolves the symptom without touching the
+
+    starter.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — starter activity and bulk fermentation facts live
+    only in HH/LH; xbase reports only the symptom and method.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Dense gummy sourdough crumb caused by two-hour bulk fermentation at
+    19°C being too short, not by an inactive starter as prior experience suggests.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

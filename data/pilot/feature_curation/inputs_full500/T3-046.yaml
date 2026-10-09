@@ -1,0 +1,173 @@
+seed_id: T3-046
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our internal DNS resolver has been timing out for roughly one in five queries
+  from my workstation for the past two days. Public DNS resolvers answer instantly
+  from the same machine. The company resolver serves both VLAN 10 and VLAN 20 under
+  a shared firewall policy, and I have not modified any rules recently. {DS}
+focal_diagnostic_feature: Queries from VLAN 20 to the same resolver all succeed; the
+  VLAN 10 forwarding zone contains a stale upstream forwarder IP pointing to a decommissioned
+  host.
+low_diagnostic_proposition: A senior network engineer asserts that DNS timeouts in
+  this environment are always caused by a firewall rule blocking port 53.
+oracle_action: ASK
+oracle_focus: Investigate the resolver's per-VLAN forwarding configuration; fix the
+  stale forwarder IP in the VLAN 10 zone and verify that queries from VLAN 10 begin
+  resolving.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the firewall-rule diagnosis from authority
+  alone. Ask whether other VLANs experience the same drops and inspect the resolver's
+  per-VLAN forwarding zone configuration.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the firewall-rule diagnosis from authority alone. Ask whether
+      other VLANs experience the same drops and inspect the resolver's per-VLAN forwarding
+      zone configuration.
+  LL:
+    action: ASK
+    focus: Do not accept the firewall-rule diagnosis from authority alone. Ask whether
+      other VLANs experience the same drops and inspect the resolver's per-VLAN forwarding
+      zone configuration.
+  HH:
+    action: ASK
+    focus: Investigate the resolver's per-VLAN forwarding configuration; fix the stale
+      forwarder IP in the VLAN 10 zone and verify that queries from VLAN 10 begin
+      resolving.
+  LH:
+    action: ASK
+    focus: Investigate the resolver's per-VLAN forwarding configuration; fix the stale
+      forwarder IP in the VLAN 10 zone and verify that queries from VLAN 10 begin
+      resolving.
+variants:
+  HL:
+    distractor: Phong, our senior network engineer, heard the symptoms and said flatly
+      that it is always a firewall rule — port 53 gets blocked when policy changes
+      propagate and nobody catches it.
+    diagnosticity: low
+    salience: high
+    proposition: A senior network engineer asserts that DNS timeouts in this environment
+      are always caused by a firewall rule blocking port 53.
+    salience_source: A/C — named senior network engineer with domain-specific role;
+      confident flat assertion ('always a firewall rule') with a plausible propagation
+      mechanism.
+    why_plausible: Firewall port-53 blocks are a common cause of DNS failures; a senior
+      network engineer citing a known pattern sounds authoritative enough to act on
+      without further checking.
+    why_irrelevant: The shared firewall policy covering both VLANs means a port-53
+      block would affect VLAN 20 as well; since VLAN 20 queries succeed (HH/LH), the
+      firewall cannot be the discriminating cause.
+  LL:
+    distractor: A senior network engineer stated that DNS timeouts in this environment
+      are always caused by a firewall rule blocking port 53.
+    diagnosticity: low
+    salience: low
+    proposition: A senior network engineer asserts that DNS timeouts in this environment
+      are always caused by a firewall rule blocking port 53.
+    matched_to: HL
+  HH:
+    distractor: A quick dig from a VLAN 20 machine to the same resolver gets responses
+      in under 10ms every time; inspecting the resolver's VLAN 10 forwarding zone
+      shows an upstream forwarder IP that was decommissioned six weeks ago.
+    diagnosticity: high
+    salience: high
+    proposition: Queries from VLAN 20 to the same resolver all succeed; the VLAN 10
+      forwarding zone contains a stale upstream forwarder IP pointing to a decommissioned
+      host.
+    salience_source: B/C — clean comparative test result (VLAN 20 success vs VLAN
+      10 failure); precise timing figure (10ms); concrete finding ('decommissioned
+      six weeks ago').
+  LH:
+    distractor: VLAN 20 queries to the same resolver succeed; the VLAN 10 forwarding
+      zone has a stale forwarder IP for a decommissioned host.
+    diagnosticity: high
+    salience: low
+    proposition: Queries from VLAN 20 to the same resolver all succeed; the VLAN 10
+      forwarding zone contains a stale upstream forwarder IP pointing to a decommissioned
+      host.
+    matched_to: HH
+distractor_direction:
+  label: firewall port-53 block
+  description: Investigating whether a firewall rule is blocking UDP or TCP port 53
+    traffic between the workstation and the internal DNS resolver.
+plausible_alternative_directions:
+- label: resolver capacity saturation
+  description: Checking whether the shared resolver is dropping queries under load,
+    which would explain the one-in-five timeout rate.
+- label: DHCP-assigned DNS mismatch
+  description: Verifying that VLAN 10's DHCP configuration points workstations to
+    the correct resolver address and not a stale or secondary IP.
+- label: NIC or OS resolver timeout
+  description: Investigating whether the workstation's OS resolver is configured with
+    an aggressive timeout or retry policy that masks intermittent drops.
+leak_audit:
+  ll_atomic_claims:
+  - A senior network engineer stated DNS timeouts in this environment are always caused
+    by a firewall rule blocking port 53.
+  hh_atomic_claims:
+  - A VLAN 20 machine queries the same resolver and gets responses in under 10ms every
+    time.
+  - The VLAN 10 forwarding zone has an upstream forwarder IP that was decommissioned
+    six weeks ago.
+  hl_salience_dimensions:
+    source_credibility: Named senior network engineer (Phong) with direct domain expertise.
+    narrative_coherence: Clear cause-mechanism framing ("port 53 gets blocked when
+      policy changes propagate") gives the claim internal logical coherence.
+    confident_assertion: '''said flatly'', ''always a firewall rule'' — no hedging.'
+    concrete_detail: N/A — HL detail is about the general mechanism, not this case's
+      data.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 54
+  hl_word_count: 30
+  ll_word_count: 21
+  hh_word_count: 37
+  lh_word_count: 22
+  notes: 'Firewall pathway is closed narrowly in xbase via "shared firewall policy"
+    — this blocks the
+
+    mechanism by which a per-VLAN ACL could discriminate between VLAN 10 and VLAN
+    20 without
+
+    providing the affirmative cause. HL uses Phong as a Vietnamese male name not in
+    the taken
+
+    list. HL:LL 1.4:1; HH:LH 1.7:1.
+
+    '
+causal_audit:
+  steelman: 'Port-53 firewall blocks are the single most common cause of DNS failures
+    in enterprise
+
+    environments. Policy propagation delays can create transient asymmetric blocks
+    on individual
+
+    VLANs even under a nominally shared policy if the enforcement device processes
+    rule updates
+
+    asynchronously by segment. A senior network engineer citing this pattern is raising
+    a
+
+    statistically dominant hypothesis.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states "shared firewall policy" for both VLANs and
+    "I have not modified any rules recently" — a shared policy with no recent changes
+    provides no mechanism for a VLAN-10-only firewall block. VLAN 20 success in the
+    focal feature structurally rules out a firewall explanation.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Internal DNS resolver timing out on VLAN 10 due to a stale upstream
+    forwarder IP pointing to a decommissioned host, against a senior network engineer's
+    blanket assertion that it is always a firewall rule blocking port 53.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

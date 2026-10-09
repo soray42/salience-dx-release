@@ -1,0 +1,157 @@
+seed_id: T2-049
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: My nightly database backup job has been failing for the last three nights.
+  It is a simple dump of our SQLite-backed application database to a file on the same
+  server, and it had run cleanly every night for over a year. The application itself
+  is working normally during the day, and I have not changed the backup script. {DS}
+focal_diagnostic_feature: The backup target partition is at 100% usage, and the dump
+  fails partway through with a disk-full write error each night.
+low_diagnostic_proposition: The backup failures began the same week a new desk lamp
+  was plugged in next to the server in the office.
+oracle_action: ANSWER
+oracle_focus: Free space on the backup target partition; it is full, so the dump cannot
+  complete — clear old backups, move the target, or expand the disk.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a desk lamp to a backup failure. Ask for
+  the exact error and the free space on the backup target partition.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a desk lamp to a backup failure. Ask for the exact error
+      and the free space on the backup target partition.
+  LL:
+    action: ASK
+    focus: Do not connect a desk lamp to a backup failure. Ask for the exact error
+      and the free space on the backup target partition.
+  HH:
+    action: ANSWER
+    focus: Free space on the backup target partition; it is full, so the dump cannot
+      complete — clear old backups, move the target, or expand the disk.
+  LH:
+    action: ANSWER
+    focus: Free space on the backup target partition; it is full, so the dump cannot
+      complete — clear old backups, move the target, or expand the disk.
+variants:
+  HL:
+    distractor: The odd thing is the failures started the same week a colleague plugged
+      a new desk lamp into the socket strip right beside the server; he half-jokes
+      that he has cursed the machine, and we both keep noticing that the timing lines
+      up almost to the day.
+    diagnosticity: low
+    salience: high
+    proposition: The backup failures began the same week a new desk lamp was plugged
+      in next to the server in the office.
+    salience_source: B/C — a clean same-week chronology with a memorable shared joke
+      makes the coincidence stick.
+    why_plausible: A new device plugged in near a server is exactly the sort of physical
+      change people reflexively blame when something breaks soon after.
+    why_irrelevant: A desk lamp on the same socket strip draws independent power and
+      does nothing to the server's storage; it cannot affect whether a backup file
+      can be written.
+  LL:
+    distractor: The backup failures began the same week a new desk lamp was plugged
+      in next to the server.
+    diagnosticity: low
+    salience: low
+    proposition: The backup failures began the same week a new desk lamp was plugged
+      in next to the server in the office.
+    matched_to: HL
+  HH:
+    distractor: Looking at the server, the partition the backup writes to is sitting
+      at 100% usage, and the dump dies partway through every night with a clear disk-full
+      write error — there is simply no room left to finish writing the backup file.
+    diagnosticity: high
+    salience: high
+    proposition: The backup target partition is at 100% usage, and the dump fails
+      partway through with a disk-full write error each night.
+    salience_source: Concrete state (partition at 100%, disk-full error partway through)
+      makes the cause undeniable.
+  LH:
+    distractor: The backup target partition is at 100% usage and the dump fails partway
+      through each night with a disk-full write error.
+    diagnosticity: high
+    salience: low
+    proposition: The backup target partition is at 100% usage, and the dump fails
+      partway through with a disk-full write error each night.
+    matched_to: HH
+distractor_direction:
+  label: Desk-lamp timing
+  description: Treating the coincident plugging-in of a desk lamp near the server
+    as connected to the backup failures.
+plausible_alternative_directions:
+- label: Database lock during dump
+  description: Whether the application is holding a lock that blocks the nightly dump.
+- label: File permission change
+  description: Whether the backup user lost write permission on the target path.
+leak_audit:
+  ll_atomic_claims:
+  - The backup failures began the same week.
+  - That week a new desk lamp was plugged in near the server.
+  hh_atomic_claims:
+  - The backup target partition is at 100% usage.
+  - The dump fails partway through each night with a disk-full write error.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-week chronology.
+    confident_assertion: The colleague's joke and the shared sense the timing lines
+      up.
+    concrete_detail: Detail about the coincidence event (new lamp on the socket strip
+      beside the server) only — no claim about storage.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 60
+  hl_word_count: 45
+  ll_word_count: 16
+  hh_word_count: 40
+  lh_word_count: 20
+  notes: 'LL carries only the same-week-desk-lamp timing claim. The colleague''s joke
+    and the socket-strip detail are
+
+    HL-only and about the coincidence event. xbase withholds the disk-full evidence,
+    stating only that the job
+
+    failed three nights, ran fine for a year, the app works by day, and the script
+    is unchanged; the decisive
+
+    full-partition fact lives only in HH/LH. A desk lamp on a power strip has no path
+    to disk space, satisfying C2
+
+    absolute.
+
+    '
+causal_audit:
+  steelman: 'One could imagine the lamp overloaded a circuit and caused brownouts
+    that corrupted writes. But the application
+
+    runs normally during the day on the same server, so the machine is powered and
+    stable; a desk lamp on a socket
+
+    strip draws its own current and has no logical or storage path into how the backup
+    file is written. There is no
+
+    mechanism by which adding a lamp could fill or restrict the backup partition.
+    The timing is pure coincidence and
+
+    the cause is the disk being full.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the application runs normally during the day
+    on the same server, foreclosing the power-instability pathway the lamp might be
+    imagined to act through; the decisive disk-full evidence lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A nightly SQLite backup failing because the target partition is full,
+    coincidentally timed with a colleague plugging in a desk lamp near the server,
+    which has no mechanism.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

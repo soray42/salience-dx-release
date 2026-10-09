@@ -1,0 +1,154 @@
+seed_id: T6-065
+template: T6
+domain: open_qa
+complexity: low
+xbase: I want to start strength training and am deciding between joining the gym three
+  streets away or building a bodyweight routine at home. I have done almost no structured
+  exercise for the past few years and want something I will genuinely stick with long-term.
+  {DS}
+focal_diagnostic_feature: The gym is four minutes' walk away and the user's studio
+  flat has no floor space for a bodyweight routine without moving furniture.
+low_diagnostic_proposition: Past gym memberships ended within two months due to commute
+  fatigue, suggesting home training would be more sustainable.
+oracle_action: ANSWER
+oracle_focus: Join the gym; the four-minute walk removes the commute friction that
+  ended previous memberships, and the studio flat provides no viable home training
+  space.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the previous commute-fatigue pattern automatically.
+  Ask how far the current gym is and whether the home has adequate space for bodyweight
+  training.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the previous commute-fatigue pattern automatically. Ask how
+      far the current gym is and whether the home has adequate space for bodyweight
+      training.
+  LL:
+    action: ASK
+    focus: Do not apply the previous commute-fatigue pattern automatically. Ask how
+      far the current gym is and whether the home has adequate space for bodyweight
+      training.
+  HH:
+    action: ANSWER
+    focus: Join the gym; the four-minute walk removes the commute friction that ended
+      previous memberships, and the studio flat provides no viable home training space.
+  LH:
+    action: ANSWER
+    focus: Join the gym; the four-minute walk removes the commute friction that ended
+      previous memberships, and the studio flat provides no viable home training space.
+variants:
+  HL:
+    distractor: Every time I've signed up for a gym before, the commute wore me down
+      and I quit within two months, so my gut says home training is the only format
+      that will actually stick for me.
+    diagnosticity: low
+    salience: high
+    proposition: Past gym memberships ended within two months due to commute fatigue,
+      suggesting home training would be more sustainable.
+    salience_source: B (narrative coherence — vivid personal history with specific
+      timeline); C (confident assertion — 'my gut says', 'the only format that will
+      actually stick')
+    why_plausible: Commute friction is a well-documented reason people abandon gym
+      memberships; a first-person pattern of two-month dropouts is credible and emotionally
+      compelling.
+    why_irrelevant: Past memberships involved a different structural situation with
+      a longer commute; the current gym is four minutes away on foot, which removes
+      the friction mechanism entirely, and the home alternative has no viable floor
+      space.
+  LL:
+    distractor: Past gym memberships ended within two months due to commute fatigue,
+      suggesting home training would be more sustainable.
+    diagnosticity: low
+    salience: low
+    proposition: Past gym memberships ended within two months due to commute fatigue,
+      suggesting home training would be more sustainable.
+    matched_to: HL
+  HH:
+    distractor: The gym is a four-minute walk from my front door, and my flat is a
+      studio where even laying out a yoga mat means moving the bed and coffee table.
+    diagnosticity: high
+    salience: high
+    proposition: The gym is four minutes' walk away and the user's studio flat has
+      no floor space for a bodyweight routine without moving furniture.
+    salience_source: B (narrative coherence — specific walk time, concrete description
+      of space constraint with named furniture); C (precise measurement)
+  LH:
+    distractor: The gym is four minutes' walk away; the user's studio flat has no
+      floor space for a home workout routine.
+    diagnosticity: high
+    salience: low
+    proposition: The gym is four minutes' walk away and the user's studio flat has
+      no floor space for a bodyweight routine without moving furniture.
+    matched_to: HH
+distractor_direction:
+  label: Commute-fatigue pattern
+  description: Treating the user's history of abandoning gyms due to commute friction
+    as predictive of the current situation and recommending home training as the safer
+    option.
+plausible_alternative_directions:
+- label: Cost comparison
+  description: Examining whether the gym membership fee is affordable relative to
+    the user's budget before committing.
+- label: Beginner programme fit
+  description: Considering whether a supervised gym environment or a self-directed
+    home routine better suits a near-beginner starting structured training.
+leak_audit:
+  ll_atomic_claims:
+  - Past gym memberships ended within two months due to commute fatigue.
+  - This suggests home training would be more sustainable.
+  hh_atomic_claims:
+  - The gym is a four-minute walk from the user's front door.
+  - The user's flat is a studio.
+  - Even laying out a yoga mat requires moving the bed and coffee table.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person availability memory, no named source.
+    narrative_coherence: Specific two-month timeline, vivid gut-feel framing, first-person
+      personal history.
+    confident_assertion: '''my gut says'', ''the only format that will actually stick''
+      — strong first-instinct framing.'
+    concrete_detail: N/A — detail is about the user's past experience, not the present
+      case's merits.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 36
+  ll_word_count: 18
+  hh_word_count: 30
+  lh_word_count: 20
+  notes: 'T6 availability inference (''so home training is the only format that will
+    stick'') appears in both HL and LL as required by C1.
+
+    xbase says ''gym three streets away'' — does not specify walk time or flat size;
+    those live only in HH/LH.
+
+    HH/LH: furniture-moving detail in HH (''moving the bed and coffee table'') is
+    the vivid version; LH restates the constraint flatly without furniture names.
+
+    '
+causal_audit:
+  steelman: 'Commute friction is a documented gym-dropout cause with robust behavioural
+    research behind it. If the user has quit gyms twice before due to commute, a practitioner
+    would reasonably weight that pattern highly. The prediction that ''this gym will
+    also suffer from commute fatigue'' is a genuine availability inference with a
+    real mechanism.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase mentions 'three streets away' but does not
+    specify the walk time; the focal feature establishes that the commute is four
+    minutes, structurally ruling out commute fatigue as the operative mechanism.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User choosing gym vs home bodyweight training; availability heuristic
+    is past gym dropout due to commute; root cause of gym being better is the current
+    gym is four minutes away and the studio flat has no workout space.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

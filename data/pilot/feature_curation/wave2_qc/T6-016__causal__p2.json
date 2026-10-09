@@ -1,0 +1,9 @@
+{
+  "seed_id": "T6-016",
+  "steelman": "Fund expense ratios are a first-order diagnostic on every investment-adviser checklist for benchmark underperformance: a 1% annual fee compounds into meaningful multi-year return drag, and a senior CFP would check the total expense ratio before any other factor. The investor's own track record of correctly diagnosing fees on three prior occasions reinforces the hypothesis — repeated successful causal attribution by the same actor is legitimate Bayesian evidence. If the fund's expense ratio were even modestly above the index tracker, fees would be a fully defensible primary explanation. The past-episode pattern also suggests the investor may have previously held higher-cost funds, making the fee-drift story temporally coherent.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Fund expense ratio exceeding that of the benchmark index produces a structural annual return shortfall that compounds over multiple years, explaining benchmark lag without any active management failure.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase explicitly states the fund's expense ratio is 0.07%, 'essentially the same as the index tracker itself,' eliminating any material fee differential as an explanatory variable. The closure is clean and forecloses the mechanism to approximately 0 basis points of impact. The steelman is strong for the general case but cannot survive this specific stated constraint. Seed passes this lens. No curator repair needed."
+}

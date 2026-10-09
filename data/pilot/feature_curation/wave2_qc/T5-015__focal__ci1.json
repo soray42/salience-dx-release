@@ -1,0 +1,13 @@
+{
+  "seed_id": "T5-015",
+  "my_own_diagnosis": "From xbase plus the focal feature (Company B: $2,000/item coverage vs Company A: $100/item, plus verified positive references), a competent advisor would unambiguously recommend Company B; the direct documentary and testimonial evidence makes the recommendation clear-cut, and website aesthetics add nothing once that evidence is in hand.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature supplies specific, quantified insurance figures and verified reference outcomes that fully determine the recommendation without ambiguity.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cell oracles correctly map to the low-diagnostic oracle (redirect from website aesthetics to already-gathered insurance/reference evidence), and HH/LH correctly map to the focal oracle (recommend Company B on insurance and references).",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

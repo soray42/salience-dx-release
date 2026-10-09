@@ -1,0 +1,192 @@
+seed_id: T2-036
+template: T2
+domain: open_qa
+complexity: high
+xbase: My refrigerator has stopped keeping food properly cold over the past ten days;
+  the fridge compartment now sits around 12°C and milk is spoiling early. It is twelve
+  years old. The compressor runs almost continuously instead of cycling, the door
+  seals look intact and shut snugly, and I have vacuumed the condenser coils and left
+  clear space around it for airflow. A technician visit plus likely parts would be
+  around €260, and a comparable new fridge is about €600. I need to decide whether
+  to repair or replace. {DS}
+focal_diagnostic_feature: The freezer section has no frost buildup at all and its
+  evaporator stays at room temperature while the compressor runs, indicating the sealed
+  refrigerant system has failed — the most expensive repair on the appliance.
+low_diagnostic_proposition: The cooling problem started the same week the kitchen
+  walls were repainted a darker colour.
+oracle_action: ANSWER
+oracle_focus: Replace the fridge; a frost-free freezer with a continuously running
+  compressor points to a sealed-system (refrigerant/compressor) failure whose repair
+  cost on a twelve-year-old unit approaches the price of a new one.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the repainting to the cooling fault. Ask
+  whether the sealed cooling system is working and whether the likely failed part
+  is cheap or costly.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the repainting to the cooling fault. Ask whether the sealed
+      cooling system is working and whether the likely failed part is cheap or costly.
+  LL:
+    action: ASK
+    focus: Do not connect the repainting to the cooling fault. Ask whether the sealed
+      cooling system is working and whether the likely failed part is cheap or costly.
+  HH:
+    action: ANSWER
+    focus: Replace the fridge; a frost-free freezer with a continuously running compressor
+      points to a sealed-system (refrigerant/compressor) failure whose repair cost
+      on a twelve-year-old unit approaches the price of a new one.
+  LH:
+    action: ANSWER
+    focus: Replace the fridge; a frost-free freezer with a continuously running compressor
+      points to a sealed-system (refrigerant/compressor) failure whose repair cost
+      on a twelve-year-old unit approaches the price of a new one.
+variants:
+  HL:
+    distractor: This all began the very week we repainted the kitchen a deep slate
+      grey. Within days of the new paint going up, the temperature started creeping
+      higher.
+    diagnosticity: low
+    salience: high
+    proposition: The cooling problem started the same week the kitchen walls were
+      repainted a darker colour.
+    salience_source: B/C — confident first-person chronology ('the very week') with
+      an immediate temperature-creep following the repaint.
+    why_plausible: When only one visible thing changed, people naturally fix on it,
+      and a darker room can feel intuitively warmer.
+    why_irrelevant: Wall paint colour cannot alter a sealed refrigeration cycle; it
+      neither adds heat load that would matter nor touches the compressor or refrigerant.
+  LL:
+    distractor: The cooling problem started the same week the kitchen walls were repainted
+      a darker colour.
+    diagnosticity: low
+    salience: low
+    proposition: The cooling problem started the same week the kitchen walls were
+      repainted a darker colour.
+    matched_to: HL
+  HH:
+    distractor: Looking in the freezer, there is no frost anywhere — surfaces that
+      are normally iced over are bone dry — and the evaporator panel feels room temperature
+      even as the compressor drones on without stopping, which is the tell-tale sign
+      the sealed refrigerant system has failed.
+    diagnosticity: high
+    salience: high
+    proposition: The freezer section has no frost buildup at all and its evaporator
+      stays at room temperature while the compressor runs, indicating the sealed refrigerant
+      system has failed — the most expensive repair on the appliance.
+    salience_source: The frost-free freezer and room-temperature evaporator under
+      a running compressor name the sealed-system failure, making the replace case
+      vivid.
+  LH:
+    distractor: The freezer has no frost and its evaporator stays at room temperature
+      while the compressor runs, indicating a failed sealed refrigerant system.
+    diagnosticity: high
+    salience: low
+    proposition: The freezer section has no frost buildup at all and its evaporator
+      stays at room temperature while the compressor runs, indicating the sealed refrigerant
+      system has failed — the most expensive repair on the appliance.
+    matched_to: HH
+distractor_direction:
+  label: Repainting coincidence
+  description: Treating the kitchen repainting as connected to the refrigerator's
+    loss of cooling because the timing lined up.
+plausible_alternative_directions:
+- label: Door-seal air leak
+  description: Whether a failing or warped door gasket is letting warm air in
+  a cheaper fix that would favour repair.: null
+- label: Evaporator-fan or defrost fault
+  description: Whether a stuck evaporator fan or defrost heater is the cause
+  a mid-cost repair rather than the sealed system.: null
+leak_audit:
+  ll_atomic_claims:
+  - The cooling problem started the same week the kitchen walls were repainted a darker
+    colour.
+  hh_atomic_claims:
+  - The freezer has no frost buildup anywhere.
+  - The freezer evaporator stays at room temperature while the compressor runs.
+  - This indicates the sealed refrigerant system has failed.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Tight 'the very week' chronology tying the repaint to the
+      immediate temperature creep.
+    confident_assertion: Framed as 'the very week' with confident first-person voice.
+    concrete_detail: Detail about the repainting (deep slate grey walls) only — no
+      claim about the cooling system.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 88
+  hl_word_count: 27
+  ll_word_count: 15
+  hh_word_count: 44
+  lh_word_count: 22
+  notes: 'xbase carries the warm-fridge symptom, age, continuous compressor, intact
+    seals, cleaned coils, clear airflow,
+
+    and both prices, but withholds the freezer/evaporator state that diagnoses the
+    sealed system — the decisive fact
+
+    lives only in HH/LH, so repair-vs-replace does not compute from xbase. The ''seals
+    intact / coils cleaned / clear
+
+    space'' lines neutrally close the cheap pathways. LL carries only the repaint-coincidence
+    claim.
+
+    Repair (lint word-count): xbase trimmed from 92 to 88 by removing ''at the back''
+    and ''already'';
+
+    HL trimmed from 54 to 34 by removing the final confident-assertion sentence while
+    retaining
+
+    B/C salience via ''the very week'' chronology.
+
+    QC repair: removed ''The fridge had been fine for years, and'' from HL — that
+    phrase was a case claim
+
+    about the fridge''s prior history absent from LL (C1 leak of type other_case_content).
+    HL now reads
+
+    27 words and adds only source/setting credibility framing; LL atomic claims are
+    unchanged.
+
+    '
+causal_audit:
+  steelman: 'To steelman the repaint timing: one might argue a darker wall absorbs
+    more light and warms the room slightly, or
+
+    that during painting the fridge was pulled out, unplugged, or had its airflow
+    blocked. But xbase already states
+
+    the coils are clean and there is clear space around the unit, and a sealed system
+    maintains its setpoint against
+
+    ordinary room-temperature swings far larger than any paint colour produces; wall
+    colour adds no heat load the
+
+    thermostat cannot handle and cannot touch the refrigerant circuit. The focal evidence
+    — a frost-free freezer with
+
+    a room-temperature evaporator under a continuously running compressor — is a sealed-system
+    failure, mechanically
+
+    unrelated to the paint. No constructible mechanism links repainting to refrigerant
+    loss.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the coils are cleaned and there is clear airflow
+    space, foreclosing the disturbed-airflow pathway, while the decisive sealed-system
+    evidence lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A refrigerator repair-vs-replace decision where a failed sealed system
+    warrants replacement, coincident with an unrelated kitchen repainting.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

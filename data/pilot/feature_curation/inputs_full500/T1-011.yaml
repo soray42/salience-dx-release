@@ -1,0 +1,240 @@
+seed_id: T1-011
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'My Android app crashes on startup for a subset of users. The crash only appears
+  in the release APK — our entire team can run the debug build without any issue,
+  including on the same handsets where the release build crashes. The crash occurs
+  inside onCreate before any network call is made. {DS}
+
+  '
+focal_diagnostic_feature: 'The crash stack trace shows a java.lang.ClassNotFoundException
+  for a class accessed via reflection, and the release build.gradle enables R8 minification
+  without a keep rule for that class.
+
+  '
+low_diagnostic_proposition: 'Another company''s release-only startup crash was caused
+  by OEM-specific device customizations.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Focus on R8/ProGuard minification stripping the reflection-accessed
+  class; add an appropriate -keep rule in proguard-rules.pro to preserve the class
+  name at runtime.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Request the crash stack trace and the project''s build
+  configuration (especially minifyEnabled and proguard rules) to identify why the
+  release build crashes while the debug build succeeds; do not pursue OEM-specific
+  device customizations as a primary direction.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: 'Request the crash stack trace and the project''s build configuration (especially
+      minifyEnabled and proguard rules) to identify why the release build crashes
+      while the debug build succeeds; do not pursue OEM-specific device customizations
+      as a primary direction.
+
+      '
+  LL:
+    action: ASK
+    focus: 'Request the crash stack trace and the project''s build configuration (especially
+      minifyEnabled and proguard rules) to identify why the release build crashes
+      while the debug build succeeds; do not pursue OEM-specific device customizations
+      as a primary direction.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Focus on R8/ProGuard minification stripping the reflection-accessed class;
+      add an appropriate -keep rule in proguard-rules.pro to preserve the class name
+      at runtime.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Focus on R8/ProGuard minification stripping the reflection-accessed class;
+      add an appropriate -keep rule in proguard-rules.pro to preserve the class name
+      at runtime.
+
+      '
+variants:
+  HL:
+    distractor: 'Yusuf at Vantara Mobile — she leads Android platform there — told
+      me their release build had a startup crash last year; after their incident review
+      they confirmed it was OEM-specific device customizations.
+
+      '
+    diagnosticity: low
+    salience: high
+    proposition: 'Another company''s release-only startup crash was caused by OEM-specific
+      device customizations.
+
+      '
+    salience_source: 'A: named senior Android platform lead at a peer mobile company;
+      B: clean professional register with incident-review setting; C: "confirmed it
+      was" (confident assertion); D: "after their incident review" anchors the source''s
+      credibility without adding case content.
+
+      '
+    why_plausible: 'OEM fragmentation is a canonical Android concern; subset-of-users
+      crashes on specific handsets are textbook manufacturer-customization failures,
+      and a peer team''s direct experience lends credibility.
+
+      '
+    why_irrelevant: 'OEM system-API customizations affect both debug and release builds
+      running on the same device identically; the xbase states the debug build works
+      fine on the exact handsets where the release build crashes, which closes every
+      device-customization pathway.
+
+      '
+  LL:
+    distractor: 'Someone at another company had a release-only startup crash attributed
+      to OEM-specific device customizations.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: 'Another company''s release-only startup crash was caused by OEM-specific
+      device customizations.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'Our crash report shows java.lang.ClassNotFoundException for a class
+      loaded via reflection inside onCreate; build.gradle confirms R8 is enabled with
+      no -keep rule covering that class. The debug build succeeds because minifyEnabled
+      false leaves all class names intact.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'The crash stack trace shows a java.lang.ClassNotFoundException for
+      a class accessed via reflection, and the release build.gradle enables R8 minification
+      without a keep rule for that class.
+
+      '
+    salience_source: 'Concrete technical detail (specific exception type, reflection
+      loading, build.gradle configuration, minifyEnabled flag) stated precisely in
+      first person, grounding the focal finding in verifiable artefacts.
+
+      '
+  LH:
+    distractor: 'The release build''s R8 minification is stripping a class accessed
+      via reflection, causing a ClassNotFoundException on startup.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'The crash stack trace shows a java.lang.ClassNotFoundException for
+      a class accessed via reflection, and the release build.gradle enables R8 minification
+      without a keep rule for that class.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: OEM device customizations
+  description: 'The startup crash is caused by a device manufacturer''s custom Android
+    skin or system-API modification that affects only certain handsets. The anecdote
+    frames OEM-specific customizations as the confirmed root cause, mirroring the
+    subset-of-users symptom pattern.
+
+    '
+plausible_alternative_directions:
+- label: Release BuildConfig misconfiguration
+  description: 'The release build flavor uses a different BuildConfig constant or
+    API key that is invalid or missing, triggering an unhandled exception in onCreate
+    before any explicit network call.
+
+    '
+- label: DI graph null binding in release
+  description: 'The dependency injection graph (Dagger/Hilt) has a missing or null
+    binding that is only absent in the release build configuration, causing a NullPointerException
+    during application initialization.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - Another company had a release-only startup crash.
+  - That crash was attributed to OEM-specific device customizations.
+  hl_salience_dimensions:
+    source_credibility: Named Android platform lead (Yusuf) at a named peer company
+      (Vantara Mobile).
+    narrative_coherence: Clean chronological report — crash occurred, incident review
+      conducted, cause confirmed.
+    confident_assertion: '"confirmed it was" — strong epistemic commitment, not hedged.'
+    concrete_detail: '"after their incident review" — setting that anchors the source
+      without adding case content.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 34
+  ll_word_count: 14
+  notes: 'Stripped: no duration ("after two days"), no count ("exactly N connections"),
+
+    no impact claims ("it took down production"). "Last year" is a temporal anchor
+
+    for the source setting, not an effort descriptor for the user''s current case.
+
+    "After their incident review" is a setting/credibility anchor, not a
+
+    severity or effort claim about the user''s case. Ratio 34/14 = 2.43:1, well
+
+    under the 4:1 ceiling.
+
+    '
+causal_audit:
+  steelman: 'OEM-specific Android customizations are among the most well-documented
+    causes
+
+    of subset-of-users crashes on Android. Manufacturers including Xiaomi, Huawei,
+
+    OPPO, and Samsung override system services, modify intent handling, restrict
+
+    background processes, and in some cases alter class-loading behaviors in ways
+
+    that diverge from AOSP contracts. A senior Android engineer seeing "crashes
+
+    on a subset of users, never on developer devices" would put OEM fragmentation
+
+    near the top of their differential: developers tend to use flagship or
+
+    stock-Android devices (Pixel, Samsung Galaxy developer editions) with minimal
+
+    customization, while production users span a wide OEM spectrum. The
+
+    temporal match ("release-only") could even be explained if the OEM restriction
+
+    fires only when the app is not signed with a debug keystore or not installed
+
+    via ADB, which some OEM battery-optimization systems use as a heuristic.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states explicitly that the debug build runs without
+    issue "on the same handsets where the release build crashes." OEM customizations
+    operate at the device/OS level and affect both build types identically on the
+    same hardware; no OEM customization selectively targets the release APK while
+    exempting the debug APK on the same device (any such distinction would be a build-type
+    issue, not an OEM issue). The debug-on-same-device fact definitively closes the
+    device-customization pathway.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  topic_brief: 'An Android app crashes on startup for a subset of users only in the
+    release build; the debug build works everywhere. The third-party anecdote should
+    involve a similar-looking startup crash at another company with a root cause that
+    is structurally inapplicable here.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  generator: generator_B

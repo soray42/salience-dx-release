@@ -1,0 +1,105 @@
+seed_id: T3-008
+template: T3
+domain: open_qa
+complexity: high
+xbase: أفكر في الالتحاق ببرنامج ماجستير إدارة الأعمال (MBA) المسائي بدوام جزئي في
+  إحدى الجامعات الإقليمية. تكلفته كبيرة بالنسبة لي، وأنا حالياً مهندس في منتصف مسيرته
+  المهنية في وضع مستقر. لا أسعى الآن للانتقال إلى الإدارة أو الاستشارات. {DS}
+focal_diagnostic_feature: نتائج البرنامج تستهدف أساساً الانتقال إلى الإدارة والاستشارات،
+  في حين أن تمويله سيستنزف صندوق الطوارئ ويُضيف 20,000 يورو من القروض.
+low_diagnostic_proposition: A senior executive says an MBA should be treated as the
+  main career investment for any professional.
+oracle_action: ANSWER
+oracle_focus: Do not enrol on the current facts; cost and outcome mismatch are too
+  large without a clear target use-case.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept a generic VP endorsement. Ask for target
+  career outcome, programme placement data, and financing impact.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept a generic VP endorsement. Ask for target career outcome,
+      programme placement data, and financing impact.
+  LL:
+    action: ASK
+    focus: Do not accept a generic VP endorsement. Ask for target career outcome,
+      programme placement data, and financing impact.
+  HH:
+    action: ANSWER
+    focus: Do not enrol on the current facts; cost and outcome mismatch are too large
+      without a clear target use-case.
+  LH:
+    action: ANSWER
+    focus: Do not enrol on the current facts; cost and outcome mismatch are too large
+      without a clear target use-case.
+variants:
+  HL:
+    distractor: أخبرني نائب الرئيس في شركتي على العشاء أن ماجستير إدارة الأعمال هو
+      الاستثمار المهني الأهم الذي يمكن لأي محترف أن يقوم به.
+    diagnosticity: low
+    salience: high
+    proposition: A senior executive says an MBA should be treated as the main career
+      investment for any professional.
+    salience_source: authority title, social setting, universal career claim
+    why_plausible: A VP's career advice sounds like insider knowledge.
+    why_irrelevant: The advice is generic and does not address the user's goals or
+      financing burden.
+  LL:
+    distractor: أكد أحد المديرين التنفيذيين الكبار أن ماجستير إدارة الأعمال ينبغي
+      اعتباره الاستثمار المهني الأساسي للمحترفين.
+    diagnosticity: low
+    salience: low
+    proposition: A senior executive says an MBA should be treated as the main career
+      investment for any professional.
+    matched_to: HL
+  HH:
+    distractor: معظم النجاحات التي يُبلَّغ عنها في هذا البرنامج تخص أناساً انتقلوا
+      إلى الإدارة أو الاستشارات، وهو ما لا أريده، فضلاً عن أنني سأستنزف صندوق الطوارئ
+      وأتحمل قروضاً بقيمة 20,000 يورو.
+    diagnosticity: high
+    salience: high
+    proposition: The programme's outcomes are mainly management/consulting transitions,
+      while paying for it would drain the emergency fund and add €20k in loans.
+    salience_source: goal/outcome/financing mismatch
+  LH:
+    distractor: بيانات نتائج البرنامج تتمحور حول مسارات لا أسعى إليها، كما يستلزم
+      التمويل استنزاف صندوق الطوارئ وتحمُّل دين بقيمة 20,000 يورو.
+    diagnosticity: high
+    salience: low
+    proposition: The programme's outcomes are mainly management/consulting transitions,
+      while paying for it would drain the emergency fund and add €20k in loans.
+    matched_to: HH
+distractor_direction:
+  label: قيمة شهادة MBA
+  description: إيلاء الأولوية لماجستير إدارة الأعمال باعتباره الاستثمار المهني الأساسي
+    لأن مديراً تنفيذياً كبيراً يؤكد أن الشهادة ذات قيمة عامة.
+plausible_alternative_directions:
+- label: رعاية صاحب العمل
+  description: ما إذا كان صاحب العمل سيتحمل جزءاً من الرسوم الدراسية أو يوفر دعماً
+    في الجدول الزمني.
+- label: هدف الانتقال إلى الإدارة
+  description: ما إذا كان لدى المستخدم خطة ملموسة للانتقال إلى الإدارة أو الاستشارات
+    أو مسار آخر مرتبط بالـ MBA.
+- label: تكلفة الفرصة البديلة
+  description: قد يفوق وقت الدراسة المسائية والإجهاد والبدائل الضائعة قيمةَ الشهادة.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-008.yaml
+  source_xbase_sha256: 3683aa44c11b9344
+  translated_content_sha256: 190bc3b4e9af9c03
+  translation_notes: MBA preserved as-is (standard Arabic usage). Euro symbol €20k
+    rendered as '20,000 يورو' for natural Arabic prose. 'VP' translated as 'نائب الرئيس'
+    preserving named authority salience in HL. Social setting (dinner) preserved for
+    HL salience cue.

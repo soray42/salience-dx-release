@@ -1,0 +1,30 @@
+{
+  "seed_id": "T2-011",
+  "ll_claims_extracted": [
+    "The webhook delivery failures began right after the office desks were rearranged.",
+    "The desk rearrangement occurred last week.",
+    "An unspecified person ('someone') reported this."
+  ],
+  "hl_case_claims": [
+    "The webhook delivery failures began right after the desk rearrangement.",
+    "The desk rearrangement occurred last week."
+  ],
+  "hl_source_claims": [
+    "The reporter is the office manager.",
+    "She has coordinated facilities at this company for six years.",
+    "She is certain about the timing correlation.",
+    "She flagged this directly to the speaker."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 27,
+    "ll": 14,
+    "xbase": 55,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

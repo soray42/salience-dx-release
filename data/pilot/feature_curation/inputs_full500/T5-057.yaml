@@ -1,0 +1,189 @@
+seed_id: T5-057
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: Our CI Docker image builds have been taking around 18 minutes each, which is
+  making our deploy cycle painful. The base image has not changed, and I am running
+  the same commands locally that the pipeline runs. The total image size is not unusual
+  for this project. {DS}
+focal_diagnostic_feature: The Dockerfile copies the full source directory before the
+  dependency installation step, so every code change invalidates the dependency cache
+  layer and forces a full package reinstall from the network on each build.
+low_diagnostic_proposition: The Dockerfile is poorly formatted and hard to read, suggesting
+  it likely contains configuration mistakes that are making the builds slow.
+oracle_action: ANSWER
+oracle_focus: Reorder the Dockerfile to copy dependency manifests first, install dependencies,
+  then copy source — this restores layer caching and eliminates the full reinstall
+  on every code change.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer configuration errors from formatting alone.
+  Ask for the Dockerfile layer order and CI step timing to identify what is consuming
+  the build time.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer configuration errors from formatting alone. Ask for the Dockerfile
+      layer order and CI step timing to identify what is consuming the build time.
+  LL:
+    action: ASK
+    focus: Do not infer configuration errors from formatting alone. Ask for the Dockerfile
+      layer order and CI step timing to identify what is consuming the build time.
+  HH:
+    action: ANSWER
+    focus: Reorder the Dockerfile to copy dependency manifests first, install dependencies,
+      then copy source — this restores layer caching and eliminates the full reinstall
+      on every code change.
+  LH:
+    action: ANSWER
+    focus: Reorder the Dockerfile to copy dependency manifests first, install dependencies,
+      then copy source — this restores layer caching and eliminates the full reinstall
+      on every code change.
+variants:
+  HL:
+    distractor: The Dockerfile has no comments, inconsistent capitalization on RUN
+      directives, and indentation that wanders across four levels; a file this poorly
+      maintained almost certainly has configuration mistakes that are making the builds
+      slow.
+    diagnosticity: low
+    salience: high
+    proposition: The Dockerfile is poorly formatted and hard to read, suggesting it
+      likely contains configuration mistakes that are making the builds slow.
+    salience_source: B/C — vivid concrete enumeration of formatting failures followed
+      by a confident bridging assertion; the precision of the visual observation makes
+      the inference feel reasoned rather than speculative.
+    why_plausible: Practitioners frequently blame poor documentation or messy files
+      when something is slow or broken; a disorganized Dockerfile does carry higher
+      risk of accidental misconfiguration.
+    why_irrelevant: Docker ignores whitespace and comment presence entirely; inconsistent
+      capitalization of RUN is valid syntax; none of the named formatting issues has
+      any runtime effect, and the inferential bridge from aesthetics to configuration
+      error is structurally empty for this case.
+  LL:
+    distractor: The Dockerfile is poorly formatted and hard to read, suggesting it
+      likely has configuration mistakes causing slow builds.
+    diagnosticity: low
+    salience: low
+    proposition: The Dockerfile is poorly formatted and hard to read, suggesting it
+      likely contains configuration mistakes that are making the builds slow.
+    matched_to: HL
+  HH:
+    distractor: The COPY instruction that copies the entire source directory appears
+      before the package installation step, so every code change invalidates the dependency
+      cache layer and forces a full reinstall from the network on each build.
+    diagnosticity: high
+    salience: high
+    proposition: The Dockerfile copies the full source directory before the dependency
+      installation step, so every code change invalidates the dependency cache layer
+      and forces a full package reinstall from the network on each build.
+    salience_source: Concrete layer-order observation plus the explicit cache-invalidation
+      mechanism makes the cause immediately identifiable to a Docker practitioner.
+  LH:
+    distractor: Source directory is copied before dependency installation, busting
+      the cache and forcing a full network reinstall on each build.
+    diagnosticity: high
+    salience: low
+    proposition: The Dockerfile copies the full source directory before the dependency
+      installation step, so every code change invalidates the dependency cache layer
+      and forces a full package reinstall from the network on each build.
+    matched_to: HH
+distractor_direction:
+  label: Dockerfile formatting error
+  description: Investigating whether poor Dockerfile formatting or inconsistent style
+    is a symptom of configuration mistakes that explain the slow image builds.
+plausible_alternative_directions:
+- label: Package registry latency
+  description: Checking whether slow responses from the package registry or dependency
+    mirror are adding minutes to each build independent of caching.
+- label: Unnecessary build context size
+  description: Evaluating whether a large Docker build context is being transferred
+    to the daemon on each run, consuming build time before any layer executes.
+leak_audit:
+  ll_atomic_claims:
+  - The Dockerfile is poorly formatted and hard to read.
+  - It likely has configuration mistakes causing slow builds.
+  hh_atomic_claims:
+  - The COPY instruction copies the entire source directory.
+  - The COPY appears before the package installation step.
+  - Every code change invalidates the dependency cache layer.
+  - The cache bust forces a full reinstall from the network on each build.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Three concrete formatting observations build a coherent diagnostic
+      impression before the confident bridging claim, reads as a practitioner noting
+      what they see.
+    confident_assertion: '''almost certainly has configuration mistakes'' — strong
+      bridging assertion from aesthetic observation to causal inference.'
+    concrete_detail: '''no comments, inconsistent capitalization on RUN directives,
+      and indentation that wanders across four levels'' — detail about the file''s
+      visual properties only, not the build mechanism.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 47
+  hl_word_count: 33
+  ll_word_count: 18
+  hh_word_count: 35
+  lh_word_count: 19
+  notes: 'T5 bridge (''configuration mistakes that are making the builds slow'') appears
+
+    in both HL and LL (C1 / self-check 13 satisfied).
+
+    HL detail is entirely about the file''s visual formatting, not the layer order.
+
+    HH describes the mechanism concretely without naming the fix.
+
+    Ratio HL:LL = 1.83; HH:LH = 1.84; both within 4:1.
+
+    QC repair: LH distractor extended to include all four HH atomic claims —
+
+    previously omitted ''forcing a full package reinstall from the network on
+
+    each build''; lh_word_count updated from 17 to 19.
+
+    '
+causal_audit:
+  steelman: 'A DevOps engineer could argue: messy Dockerfiles with inconsistent style
+    are
+
+    often the product of ad-hoc edits that also introduce redundant RUN layers,
+
+    unnecessary ENV expansions, or repeated COPY steps that bloat build time.
+
+    Poor formatting is often a leading indicator of an organically grown file
+
+    with structural inefficiencies worth auditing. In principle, discovering
+
+    the formatting problem and auditing the file could surface the layer-order
+
+    issue. However, the inferential bridge (formatting → current configuration
+
+    mistake causing slowness) is not independently actionable: the formatting
+
+    itself — comments, capitalization, indentation — has zero runtime effect in
+
+    Docker. The only mechanism available is that poor formatting might co-occur
+
+    with a real issue, but that co-occurrence is not a causal mechanism for THIS
+
+    case''s slowness; the COPY ordering is a distinct, independently identifiable
+
+    problem that does not require the formatting observation to find or fix.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase establishes that the base image and commands
+    are unchanged and image size is normal, ruling out base-image bloat, but the layer-order
+    mechanism lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: CI Docker build slowness caused by Dockerfile COPY order placing source
+    before dependencies, busting the dependency cache layer on every code change.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

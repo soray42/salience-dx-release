@@ -1,0 +1,9 @@
+{
+  "seed_id": "T3-013",
+  "steelman": "A competent IT practitioner could argue that macOS and Windows automatically switch from A2DP to HFP/HSP whenever any application opens the headphone microphone channel, degrading audio from ~320 kbps stereo to 8 kHz mono in a way that can manifest as crackling or distortion. One could further argue that a misconfigured profile might cause the Bluetooth stack to poll the connection at suboptimal intervals, amplifying sensitivity to whatever ambient RF exists at the desk — making the problem appear desk-specific if ambient interference happens to be higher there. Finally, if the profile negotiation is unstable and re-triggers on each reconnection event, it could superficially correlate with sitting down (laptop lid open) versus moving away (connection dropping or re-establishing in a cleaner RF environment).",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The steelman's best mechanism (ambient RF at desk amplifying a profile-level sensitivity) actually requires a desk-local RF source independent of the laptop — but that is precisely the focal direction, so the argument collapses into confirming RF interference from the laptop rather than supporting profile misconfiguration as the root cause. Profile configuration is a session-global, distance-invariant software parameter; it cannot explain a symptom with a strict ~1-meter spatial boundary that consistently clears in the kitchen and at the printer across the room. No competent wireless practitioner would place 'check Bluetooth audio profile' on a diagnostic checklist for a spatially constrained crackling symptom. Seed passes this lens; no repair needed."
+}

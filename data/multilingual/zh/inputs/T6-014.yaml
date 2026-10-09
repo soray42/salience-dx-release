@@ -1,0 +1,253 @@
+seed_id: T6-014
+template: T6
+domain: open_qa
+complexity: medium
+xbase: '我的室内植物又遭受病虫害了。过去两年里我已经处理过三次了，每次检查土壤都确认是过度浇水，并发现了菌蚊——每次只要纠正浇水频率并使用黄色粘虫板，问题都解决了。所以这次我已经订了更多粘虫板，并计划减少浇水。{DS}
+
+  '
+focal_diagnostic_feature: 几片叶子背面和茎节处可见细小的银色蜘网，这是蜘蛛螨侵染的专属结构性特征，菌蚊无法产生这种蜘网。
+low_diagnostic_proposition: 'Every previous pest outbreak in this plant collection
+  was fungus gnats caused by overwatering.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Identify spider mites as the likely current pest based on the visible
+  webbing; recommend appropriate treatment (miticide spray, increasing humidity, isolating
+  affected plants, wiping leaves) rather than the yellow sticky traps and watering
+  reduction that target fungus gnats.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Do not assume the current problem is fungus gnats simply
+  because past outbreaks were; recommend inspecting the plants now for specific visible
+  symptoms (webbing, visible insects, sticky residue, discoloration pattern) before
+  committing to a treatment, since the correct pest determines the correct remedy.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume the current problem is fungus gnats simply because past outbreaks
+      were; recommend inspecting the plants now for specific visible symptoms (webbing,
+      visible insects, sticky residue, discoloration pattern) before committing to
+      a treatment, since the correct pest determines the correct remedy.
+  LL:
+    action: ASK
+    focus: Do not assume the current problem is fungus gnats simply because past outbreaks
+      were; recommend inspecting the plants now for specific visible symptoms (webbing,
+      visible insects, sticky residue, discoloration pattern) before committing to
+      a treatment, since the correct pest determines the correct remedy.
+  HH:
+    action: ANSWER
+    focus: Identify spider mites as the likely current pest based on the visible webbing;
+      recommend appropriate treatment (miticide spray, increasing humidity, isolating
+      affected plants, wiping leaves) rather than the yellow sticky traps and watering
+      reduction that target fungus gnats.
+  LH:
+    action: ANSWER
+    focus: Identify spider mites as the likely current pest based on the visible webbing;
+      recommend appropriate treatment (miticide spray, increasing humidity, isolating
+      affected plants, wiping leaves) rather than the yellow sticky traps and watering
+      reduction that target fungus gnats.
+variants:
+  HL:
+    distractor: 我种室内植物已经超过十年了，我遇到的每一次病虫害最终都是过度浇水导致的菌蚊，我确信这次还是同样的问题。
+    diagnosticity: low
+    salience: high
+    proposition: 'Every previous pest outbreak in this plant collection was fungus
+      gnats caused by overwatering.
+
+      '
+    salience_source: 'A: Source credibility — decade of hands-on growing experience
+      as credibility anchor. C: Confident assertion — "I''m confident this is the
+      same thing again."
+
+      '
+    why_plausible: 'A reader sees a consistent pattern (three-for-three past diagnoses,
+      as noted in xbase) from someone who has successfully resolved the problem before;
+      the logical shortcut is that the same symptom context has the same cause.
+
+      '
+    why_irrelevant: 'Fungus gnats (Bradysia spp.) are soil-dwelling flies that do
+      not spin webs; the visible webbing the user has now is structurally impossible
+      for a fungus gnat infestation and identifies a completely different pest class.
+      Past outcomes cannot override present physical evidence.
+
+      '
+  LL:
+    distractor: 我以前每次植物出现病虫害，最终都是过度浇水引起的菌蚊。
+    diagnosticity: low
+    salience: low
+    proposition: 'Every previous pest outbreak in this plant collection was fungus
+      gnats caused by overwatering.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 我刚注意到，几片叶子背面和茎节处拉着细小的银色蜘网——蜘网与植物组织明显不同，并且已经蔓延到了相邻的植物。
+    diagnosticity: high
+    salience: high
+    proposition: 'Fine silvery webbing is visible on the undersides of several leaves
+      and along the stem joints, which is a structural sign exclusive to spider mite
+      infestation and cannot be produced by fungus gnats.
+
+      '
+    salience_source: 'B: Narrative coherence — vivid, precise spatial description
+      of the webbing location. D: Concrete believable detail about the observation
+      — spreading to adjacent plants adds specificity without adding causal claim
+      beyond the focal feature.
+
+      '
+  LH:
+    distractor: 几片叶子背面和茎节处可以看到细小的银色蜘网，与植物组织明显不同，而且正在向相邻植物蔓延。
+    diagnosticity: high
+    salience: low
+    proposition: 'Fine silvery webbing is visible on the undersides of several leaves
+      and along the stem joints, which is a structural sign exclusive to spider mite
+      infestation and cannot be produced by fungus gnats.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: 过度浇水导致菌蚊
+  description: 植物主人根据多次菌蚊的历史经验，认为本次侵染与以往相同，因此采用黄色粘虫板和减少浇水的方案处理，而非先检查当前症状。
+plausible_alternative_directions:
+- label: 蓟马侵染
+  description: 蓟马是常见的室内植物害虫，会造成银色点状斑纹和叶片变形；仅凭 xbase（反复出现病虫害、植物状态不佳），在仔细检查植物之前，蓟马是一个合理的候选诊断。
+- label: 粉蚧侵染
+  description: 粉蚧是常见的室内植物害虫，会导致萎蔫和褪色；在没有观察到蜘网的情况下，对于反复出现病虫害的混合植物收藏而言，粉蚧是另一个合理的备选诊断。
+- label: 介壳虫侵染
+  description: 介壳虫常侵染室内植物，导致植物逐渐衰退；作为反复、多株出现病虫害问题的合理候选，介壳虫有别于干扰项（菌蚊）和焦点方向（蜘蛛螨）。
+leak_audit:
+  ll_atomic_claims:
+  - every previous pest outbreak in this collection was fungus gnats
+  - the fungus gnats were caused by overwatering
+  hl_salience_dimensions:
+    source_credibility: over a decade of hands-on houseplant growing experience
+    narrative_coherence: clean single-clause statement in consistent first-person
+      voice
+    confident_assertion: I'm confident this is the same thing again
+    concrete_detail: N/A — outbreak count removed from HL to eliminate case-content
+      leak; count remains in xbase only
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 31
+  ll_word_count: 14
+  notes: 'Repair (revision 2): removed "three times now" from HL.distractor — the
+
+    outbreak count is already in xbase and re-injecting it into HL made it a
+
+    case-content claim absent from LL, violating I1/I4. HL now contains only
+
+    the decade-of-experience credibility anchor and the confident-assertion
+
+    phrase, both about the SOURCE, not the current case. The concrete_detail
+
+    dimension entry updated to N/A accordingly; salience_source updated to
+
+    remove the count reference.
+
+
+    LH fix: added "clearly distinct from the plant tissue" and "spreading to
+
+    adjacent plants" in flat wording to LH.distractor, matching the two claims
+
+    present in HH.distractor and restoring HH/LH propositional equivalence
+
+    under I1. LH word count is now 21, within the 12–25 word limit.
+
+
+    Unchanged: no effort descriptors, no tunable values, no severity claims
+
+    about the current outbreak, no sensory setting detail. HL ratio 31:14 =
+
+    2.2:1, well within 4:1 limit.
+
+    '
+causal_audit:
+  steelman: 'Best-faith argument that fungus gnats (from overwatering) could be causal
+
+    for the current problem or at minimum inform it:
+
+
+    Fungus gnats thrive in persistently moist, organically rich soil.
+
+    Overwatered soil also weakens root systems, creating plant stress. A
+
+    stressed, root-compromised plant is more susceptible to multiple pest
+
+    types simultaneously. One could argue: (a) the overwatering that produced
+
+    fungus gnats in the past is still present, and (b) the same overwatering
+
+    stress has now also attracted spider mites by weakening the plant''s
+
+    natural defenses. Therefore, treating for overwatering (reducing watering)
+
+    is a shared upstream intervention that addresses a root cause common to
+
+    both pest types.
+
+
+    The counter-argument (why this steelman fails): the question is not
+
+    whether overwatering is a shared risk factor but whether "it is fungus
+
+    gnats" is the correct diagnosis of the CURRENT infestation. Fungus gnats
+
+    do not produce webbing — this is a hard biological fact. No amount of
+
+    overwatering creates webbing from fungus gnats. The distractor is the
+
+    owner''s DIAGNOSIS ("it is fungus gnats again"), not just the upstream
+
+    condition. A senior IPM (integrated pest management) practitioner would
+
+    look at visible webbing and immediately classify it as a spider mite
+
+    indicator, ruling out fungus gnats regardless of watering history. The
+
+    distractor direction is the misdiagnosis, not the overwatering itself.
+
+    Therefore no defensible mechanism exists for the distractor AS STATED.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase does not explicitly state the webbing (that is the
+    focal feature in HH/LH variants), so the closure is structural: the xbase + distractor
+    cells (HL/LL) present a scenario where a practitioner should ask about current
+    symptoms rather than accept the past-experience diagnosis — the correct oracle
+    response is ASK, which avoids the contamination issue entirely. The focal feature
+    closes the pathway decisively in HH/LH.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 2
+  topic_brief: 'A houseplant collection has a recurring pest problem. The owner: every
+    time before it was fungus gnats from overwatering, so I will treat for that again.
+    Focal: visible webbing indicates a different pest.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: qc leak p1 2026-06-11
+  generator: generator_B
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-014.yaml
+  source_xbase_sha256: f1f36cc27c1d183c
+  translated_content_sha256: 7ec2281d62c93641
+  translation_notes: 'Technical pest names translated with standard Chinese terms:
+    fungus gnats→菌蚊, spider mites→蜘蛛螨, thrips→蓟马, mealybugs→粉蚧, scale insects→介壳虫.
+    The HL salience is carried by the decade-of-experience anchor and the confident
+    assertion ''我确信这次还是同样的问题'', matching the English original.'

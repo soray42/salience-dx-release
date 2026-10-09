@@ -1,0 +1,183 @@
+seed_id: T6-027
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I am trying to cut my monthly expenses and one of my subscriptions is a weekly
+  meal-kit box at €54 a month. I barely feel like I am using it, but I keep hesitating
+  to cancel because I worry I will miss it immediately and resubscribe at a higher
+  price than today. {DS}
+focal_diagnostic_feature: Delivery history shows only 3 of the last 11 boxes were
+  opened; 8 kits remain sealed in the freezer and the service offers no pause feature
+  or price-reduction option.
+low_diagnostic_proposition: Past subscription cancellations for the user generally
+  led to quick regret and resubscription, so the same pattern probably applies here.
+oracle_action: ANSWER
+oracle_focus: Cancel the subscription; the usage data shows the service is not being
+  used, making regret unlikely. Investigate whether the eight sealed kits in the freezer
+  are still usable before cancelling to avoid waste.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not generalise from past cancellation regret to this
+  subscription. Ask about actual usage frequency and whether the service provides
+  enough value to justify the cost before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not generalise from past cancellation regret to this subscription. Ask
+      about actual usage frequency and whether the service provides enough value to
+      justify the cost before deciding.
+  LL:
+    action: ASK
+    focus: Do not generalise from past cancellation regret to this subscription. Ask
+      about actual usage frequency and whether the service provides enough value to
+      justify the cost before deciding.
+  HH:
+    action: ANSWER
+    focus: Cancel the subscription; the usage data shows the service is not being
+      used, making regret unlikely. Investigate whether the eight sealed kits in the
+      freezer are still usable before cancelling to avoid waste.
+  LH:
+    action: ANSWER
+    focus: Cancel the subscription; the usage data shows the service is not being
+      used, making regret unlikely. Investigate whether the eight sealed kits in the
+      freezer are still usable before cancelling to avoid waste.
+variants:
+  HL:
+    distractor: Every time I have cancelled a subscription in the past, I have ended
+      up regretting it within two or three weeks and resubscribed at whatever price
+      was current, so cancelling this one feels like the same trap.
+    diagnosticity: low
+    salience: high
+    proposition: Past subscription cancellations for the user generally led to quick
+      regret and resubscription, so the same pattern probably applies here.
+    salience_source: B (vivid personal history — "every time ... within two or three
+      weeks"), C (confident first-instinct framing — "feels like the same trap")
+    why_plausible: Cancellation regret followed by resubscription at a higher price
+      is a well-documented consumer pattern; someone who has experienced it consistently
+      will treat it as a reliable heuristic, especially when they already feel uncertain
+      about cancelling.
+    why_irrelevant: Past cancellation regret is a psychological pattern tied to perceived
+      value of the service at the time; the focal evidence — 8 of 11 kits unopened
+      — shows this service is not being used, which structurally removes the conditions
+      under which cancellation regret typically arises.
+  LL:
+    distractor: Past subscription cancellations for the user generally led to quick
+      regret and resubscription, so the same pattern probably applies here.
+    diagnosticity: low
+    salience: low
+    proposition: Past subscription cancellations for the user generally led to quick
+      regret and resubscription, so the same pattern probably applies here.
+    matched_to: HL
+  HH:
+    distractor: My delivery history shows I have only opened 3 of the last 11 boxes;
+      8 kits are still sealed in the freezer, and the service has not offered a pause
+      feature or price reduction option.
+    diagnosticity: high
+    salience: high
+    proposition: Delivery history shows only 3 of the last 11 boxes were opened; 8
+      kits remain sealed in the freezer and the service offers no pause feature or
+      price-reduction option.
+    salience_source: B (precise usage ratio 3 of 11, physical accumulation of 8 sealed
+      kits — vivid concrete evidence)
+  LH:
+    distractor: Only 3 of the last 11 delivered boxes were opened; 8 remain sealed
+      in the freezer with no pause or discount option available.
+    diagnosticity: high
+    salience: low
+    proposition: Delivery history shows only 3 of the last 11 boxes were opened; 8
+      kits remain sealed in the freezer and the service offers no pause feature or
+      price-reduction option.
+    matched_to: HH
+distractor_direction:
+  label: Cancellation regret pattern
+  description: Treating the user's consistent past experience of regretting subscription
+    cancellations as evidence that cancelling this meal-kit service will follow the
+    same pattern.
+plausible_alternative_directions:
+- label: Subscription pause or reduce option
+  description: The service might allow the user to pause deliveries or switch to a
+    lower frequency, reducing cost without requiring full cancellation.
+- label: Meal planning habit change
+  description: The user's low kit usage might reflect a temporary change in schedule
+    or cooking habits that could reverse, making cancellation premature.
+- label: Comparative grocery cost analysis
+  description: The meal-kit cost per serving may still compare favourably to equivalent
+    convenience alternatives, making the subscription worth keeping at a lower frequency.
+leak_audit:
+  ll_atomic_claims:
+  - Past subscription cancellations for the user generally led to quick regret.
+  - Past cancellations generally led to resubscription.
+  - The same pattern probably applies to this cancellation decision.
+  hh_atomic_claims:
+  - Delivery history shows only 3 of the last 11 boxes were opened.
+  - 8 kits remain sealed in the freezer.
+  - The service has not offered a pause feature.
+  - The service has not offered a price reduction option.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Consistent personal pattern ("every time") with a specific
+      time-to-regret ("within two or three weeks") and a concrete behavioural consequence
+      ("resubscribed at whatever price").
+    confident_assertion: '"feels like the same trap" — strong intuitive conclusion,
+      no hedging about applicability.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 52
+  hl_word_count: 37
+  ll_word_count: 20
+  hh_word_count: 35
+  lh_word_count: 23
+  notes: 'T6 availability inference ("so the same pattern probably applies here")
+    appears in both HL
+
+    ("feels like the same trap") and LL (explicit). xbase says "I barely feel like
+    I am using it"
+
+    — deliberately vague; the decisive usage fact (3 of 11 opened, 8 sealed) lives
+    only in HH/LH.
+
+    C4 verified: xbase alone does not let an expert reject the cancellation-regret
+    distractor or
+
+    compute the answer. HH/LH atomic diff: LH drops "delivery history shows," "my,"
+    and the
+
+    conditional structure, retaining the core ratio, count, and service-option facts.
+
+    '
+causal_audit:
+  steelman: 'A behavioural economist would argue that cancellation regret is a well-documented
+    pattern even
+
+    for underused services: the user may value the option of having the service available
+    (option
+
+    value) even when they rarely use it, and this psychological value is not visible
+    in usage data.
+
+    Therefore the past cancellation regret pattern could genuinely predict future
+    regret for this
+
+    service even with low utilisation, making the availability inference partially
+    applicable.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not close the cancellation-regret pathway.
+    The focal evidence in HH/LH (the 3-of-11 usage ratio and freezer accumulation)
+    is what structurally rules out the pattern being applicable to this heavily underused
+    service.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User should cancel a barely-used meal-kit subscription; delivery history
+    shows 8 of 11 kits unopened; distractor is the user's past experience of always
+    regretting subscription cancellations and resubscribing at higher prices.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

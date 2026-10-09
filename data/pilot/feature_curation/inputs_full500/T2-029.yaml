@@ -1,0 +1,179 @@
+seed_id: T2-029
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: A mobile game I play has started crashing back to the home screen the moment
+  I tap to launch it. It opens for a second, shows the loading logo, and then dies
+  before the menu appears. It happens every single time now, on the same phone I have
+  used for two years. Other apps still open normally, and I have plenty of free storage.
+  {DS}
+focal_diagnostic_feature: The crash began with the game's most recent update, whose
+  patch notes mention higher-resolution textures, and the crash log shows an out-of-memory
+  termination during asset loading on this older device.
+low_diagnostic_proposition: The crashing started right after the user rearranged their
+  home-screen icons and changed the wallpaper.
+oracle_action: ANSWER
+oracle_focus: Treat this as the updated game exceeding the older device's memory during
+  asset loading; have the user roll back or reinstall the prior version, lower in-game
+  graphics, or check whether the device meets the new build's requirements.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the home-screen and wallpaper change to
+  the crash. Ask what changed in the game itself, such as a recent update, and what
+  the crash log says before treating the cosmetic change as relevant.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the home-screen and wallpaper change to the crash. Ask what
+      changed in the game itself, such as a recent update, and what the crash log
+      says before treating the cosmetic change as relevant.
+  LL:
+    action: ASK
+    focus: Do not connect the home-screen and wallpaper change to the crash. Ask what
+      changed in the game itself, such as a recent update, and what the crash log
+      says before treating the cosmetic change as relevant.
+  HH:
+    action: ANSWER
+    focus: Treat this as the updated game exceeding the older device's memory during
+      asset loading; have the user roll back or reinstall the prior version, lower
+      in-game graphics, or check whether the device meets the new build's requirements.
+  LH:
+    action: ANSWER
+    focus: Treat this as the updated game exceeding the older device's memory during
+      asset loading; have the user roll back or reinstall the prior version, lower
+      in-game graphics, or check whether the device meets the new build's requirements.
+variants:
+  HL:
+    distractor: 'What gets me is the timing: it all started the same afternoon I finally
+      tidied my home screen, moved the game''s icon into a new folder, and switched
+      my wallpaper to a brighter photo I had taken that weekend.'
+    diagnosticity: low
+    salience: high
+    proposition: The crashing started right after the user rearranged their home-screen
+      icons and changed the wallpaper.
+    salience_source: B/C — a clean, confident first-person chronology that pins the
+      crash to a specific afternoon's tidying gives the coincidence narrative pull.
+    why_plausible: People reasonably attribute new problems to the most recent change
+      they remember making, and rearranging icons and wallpaper is exactly such a
+      change.
+    why_irrelevant: Moving an icon into a folder and changing wallpaper alter only
+      the launcher's display; they cannot change how much memory the game allocates
+      while loading its assets.
+  LL:
+    distractor: The crashing started right after the user rearranged their home-screen
+      icons and changed the wallpaper.
+    diagnosticity: low
+    salience: low
+    proposition: The crashing started right after the user rearranged their home-screen
+      icons and changed the wallpaper.
+    matched_to: HL
+  HH:
+    distractor: The crashes lined up exactly with the game's latest update, whose
+      patch notes brag about higher-resolution textures, and the crash log on my phone
+      records an out-of-memory kill while it is loading those assets on this older,
+      lower-RAM device.
+    diagnosticity: high
+    salience: high
+    proposition: The crash began with the game's most recent update, whose patch notes
+      mention higher-resolution textures, and the crash log shows an out-of-memory
+      termination during asset loading on this older device.
+    salience_source: The exact update alignment, the patch-note texture detail, and
+      the out-of-memory crash log make the memory cause concrete and traceable.
+  LH:
+    distractor: The crash began with the latest update adding higher-resolution textures,
+      and the log shows an out-of-memory kill during asset loading.
+    diagnosticity: high
+    salience: low
+    proposition: The crash began with the game's most recent update, whose patch notes
+      mention higher-resolution textures, and the crash log shows an out-of-memory
+      termination during asset loading on this older device.
+    matched_to: HH
+distractor_direction:
+  label: Home-screen cosmetic change
+  description: Investigating whether rearranging app icons and changing the wallpaper
+    is responsible for the game crashing on launch.
+plausible_alternative_directions:
+- label: Corrupt install or cache
+  description: Whether the game's local files or cache became corrupted so a clean
+    reinstall is needed.
+- label: OS version incompatibility
+  description: Whether a recent operating-system update made the current game build
+    unstable on this device.
+leak_audit:
+  ll_atomic_claims:
+  - The user rearranged their home-screen icons.
+  - The user changed the wallpaper.
+  - The crashing started right after those changes.
+  hh_atomic_claims:
+  - The crash began with the game's most recent update.
+  - The update's patch notes mention higher-resolution textures.
+  - The crash log shows an out-of-memory termination during asset loading on this
+    older device.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person account pinning the crash to one afternoon's
+      tidying.
+    confident_assertion: Confident framing ('What gets me is the timing') foregrounds
+      the coincidence.
+    concrete_detail: Detail about the cosmetic change (folder, brighter weekend photo)
+      only — no claim about the game's update or memory.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 67
+  hl_word_count: 41
+  ll_word_count: 16
+  hh_word_count: 42
+  lh_word_count: 21
+  notes: 'LL carries only the icon-rearrange-plus-wallpaper-change-then-crash claim;
+    the specific afternoon, the folder,
+
+    and the brighter weekend photo are HL-only colour about the coincidence event,
+    adding no case fact LL lacks.
+
+    xbase states symptoms (instant crash on launch, two-year-old phone, other apps
+    fine, free storage) and the free
+
+    storage closes the obvious storage-full pathway, but withholds the update timing
+    and crash-log cause, so HL/LL
+
+    cannot resolve it. The decisive update-alignment and out-of-memory log live only
+    in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One could try to argue the cosmetic change matters: a custom high-resolution
+    wallpaper consumes some memory, and
+
+    a launcher redraw could momentarily compete for resources, so on a constrained
+    device it might nudge an app over
+
+    an edge. But this fails as a mechanism for this case. A static wallpaper is decoded
+    once by the launcher and does
+
+    not run while the game loads, and moving an icon into a folder changes nothing
+    about runtime memory at all; the
+
+    game''s own asset loading allocates its memory independently. The crash is an
+    out-of-memory during the game''s
+
+    enlarged asset load after an update, which the wallpaper and icon arrangement
+    cannot influence.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states other apps open normally and storage is plentiful,
+    foreclosing the storage-full and general-device-failure pathways without revealing
+    the update timing or crash-log cause, which remain only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A mobile game crashing on launch because an update's higher-res textures
+    exhaust an old phone's memory, not the coincidental home-screen and wallpaper
+    change.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

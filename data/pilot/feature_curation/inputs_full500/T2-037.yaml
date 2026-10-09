@@ -1,0 +1,166 @@
+seed_id: T2-037
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: Our daily sales export has started arriving with exactly 1,000 rows every morning,
+  even on days when I know there were far more transactions. The job runs on schedule
+  and reports success, and the 1,000 rows it does contain are all correct and recent.
+  It used to export the full day. {DS}
+focal_diagnostic_feature: The export query still has a 'LIMIT 1000' clause that was
+  added during testing and never removed, capping every run at a thousand rows.
+low_diagnostic_proposition: The truncation began the same day the BI tool rolled out
+  its redesigned dashboard interface.
+oracle_action: ANSWER
+oracle_focus: Remove the leftover LIMIT 1000 from the export query so the job returns
+  the full day's rows instead of capping at a thousand.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the dashboard redesign to the row cap.
+  Ask whether the export query contains a row limit that bounds every run.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the dashboard redesign to the row cap. Ask whether the export
+      query contains a row limit that bounds every run.
+  LL:
+    action: ASK
+    focus: Do not connect the dashboard redesign to the row cap. Ask whether the export
+      query contains a row limit that bounds every run.
+  HH:
+    action: ANSWER
+    focus: Remove the leftover LIMIT 1000 from the export query so the job returns
+      the full day's rows instead of capping at a thousand.
+  LH:
+    action: ANSWER
+    focus: Remove the leftover LIMIT 1000 from the export query so the job returns
+      the full day's rows instead of capping at a thousand.
+variants:
+  HL:
+    distractor: The very morning the numbers came up short was the exact morning the
+      BI tool pushed its big redesigned dashboard — new panels, new colours. That
+      is when the export started returning exactly a thousand rows.
+    diagnosticity: low
+    salience: high
+    proposition: The truncation began the same day the BI tool rolled out its redesigned
+      dashboard interface.
+    salience_source: B/C — a confident same-morning chronology tying the shortfall
+      to the memorable redesign launch, with concrete detail about the new look.
+    why_plausible: A big visible tool update on the same day is a natural thing to
+      blame when output changes.
+    why_irrelevant: A dashboard's visual redesign changes presentation only; it does
+      not rewrite the export query or cap how many rows it returns.
+  LL:
+    distractor: The truncation began the same day the BI tool rolled out its redesigned
+      dashboard interface.
+    diagnosticity: low
+    salience: low
+    proposition: The truncation began the same day the BI tool rolled out its redesigned
+      dashboard interface.
+    matched_to: HL
+  HH:
+    distractor: I opened the export query and there it is near the bottom — a 'LIMIT
+      1000' line someone left in from testing — so the database hands back at most
+      a thousand rows no matter how many transactions there were, which is exactly
+      the cap I am seeing every morning.
+    diagnosticity: high
+    salience: high
+    proposition: The export query still has a 'LIMIT 1000' clause that was added during
+      testing and never removed, capping every run at a thousand rows.
+    salience_source: Reading the query and finding the leftover LIMIT 1000 names the
+      cap directly, making the cause concrete.
+  LH:
+    distractor: The export query still contains a leftover 'LIMIT 1000' clause from
+      testing, capping every run at a thousand rows.
+    diagnosticity: high
+    salience: low
+    proposition: The export query still has a 'LIMIT 1000' clause that was added during
+      testing and never removed, capping every run at a thousand rows.
+    matched_to: HH
+distractor_direction:
+  label: Dashboard-redesign coincidence
+  description: Treating the BI tool's dashboard redesign rollout as connected to the
+    export being truncated to 1,000 rows.
+plausible_alternative_directions:
+- label: Upstream data shortfall
+  description: Whether the source genuinely produced fewer rows rather than the export
+    capping them.
+- label: Export-tool page size
+  description: Whether a default pagination or fetch-size setting in the export connector
+    is limiting rows.
+leak_audit:
+  ll_atomic_claims:
+  - The truncation began the same day the BI tool rolled out its redesigned dashboard
+    interface.
+  hh_atomic_claims:
+  - The export query contains a 'LIMIT 1000' clause.
+  - It was left in from testing and never removed.
+  - It caps every run at a thousand rows regardless of transaction count.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-morning chronology tied to the redesign launch.
+    confident_assertion: Asserted as the exact morning, with concrete detail about
+      new panels and colours.
+    concrete_detail: Detail about the redesign (new panels and colours) only — no
+      claim about the export query.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 53
+  hl_word_count: 35
+  ll_word_count: 16
+  hh_word_count: 46
+  lh_word_count: 19
+  notes: 'xbase states the exact-1000-row symptom, successful job, and correct contents,
+    but withholds the LIMIT clause —
+
+    the decisive cap fact lives only in HH/LH, so HL/LL cannot resolve it. The ''rows
+    are correct and recent'' line
+
+    neutrally hints the data is fine without naming the limit. LL carries only the
+    same-day redesign coincidence.
+
+    HL repaired: condensed from 51 to 35 words by removing the ''Everyone was talking''
+    sentence and tightening
+
+    the chronology while preserving the same-morning coincidence claim and adding
+    only setting detail (new panels,
+
+    new colours) about the redesign event itself, not about the export query or its
+    behaviour.
+
+    '
+causal_audit:
+  steelman: 'To steelman the redesign timing: one could speculate the redesign shipped
+    alongside a backend update that also
+
+    altered export defaults, or that the new UI changed a row-count setting users
+    click through. But these are
+
+    guesses about other changes; the redesign itself is a presentation-layer change
+    to dashboards and has no path to
+
+    rewrite a scheduled SQL export or impose a row cap on it. The export runs server-side
+    against the database. The
+
+    focal evidence shows the real cause — a leftover ''LIMIT 1000'' in the query —
+    which is independent of any
+
+    front-end redesign and would cap the output whether or not the dashboards ever
+    changed. No mechanism links them.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive LIMIT clause lives only in HH/LH; the
+    dashboard redesign has no path to the server-side export query regardless of xbase.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A daily export capped at 1,000 rows by a leftover LIMIT clause, coincident
+    with an unrelated BI dashboard redesign.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

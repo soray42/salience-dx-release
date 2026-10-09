@@ -1,0 +1,188 @@
+seed_id: T1-032
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our iOS app sells a subscription, and a chunk of users say "Restore Purchases"
+  does nothing — it spins and then reports that nothing was found to restore, even
+  for people who clearly paid. New purchases seem to go through; it is mainly the
+  restore path that fails. We validate receipts on our own server before unlocking
+  the subscription. We have not changed our StoreKit code or our pricing in the last
+  few releases, and the failures are not tied to one app version. {DS}
+focal_diagnostic_feature: Restore works for users on the live App Store build but
+  fails for everyone on TestFlight builds, where the receipt's environment field reads
+  "Sandbox" while our server validates only against the production endpoint.
+low_diagnostic_proposition: A comparable restore outage at another app was caused
+  by a lapsed Paid Applications agreement.
+oracle_action: ANSWER
+oracle_focus: 'Fix receipt-environment handling: validate sandbox receipts against
+  the sandbox endpoint (or fall back on the production endpoint''s sandbox status
+  code), so TestFlight receipts are no longer rejected by production-only validation.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the lapsed-agreement explanation from the
+  other app. Ask whether the failing users are on TestFlight versus the App Store
+  build and what receipt environment the server sees before assuming an account-agreement
+  problem.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the lapsed-agreement explanation from the other app. Ask whether
+      the failing users are on TestFlight versus the App Store build and what receipt
+      environment the server sees before assuming an account-agreement problem.
+  LL:
+    action: ASK
+    focus: Do not adopt the lapsed-agreement explanation from the other app. Ask whether
+      the failing users are on TestFlight versus the App Store build and what receipt
+      environment the server sees before assuming an account-agreement problem.
+  HH:
+    action: ANSWER
+    focus: 'Fix receipt-environment handling: validate sandbox receipts against the
+      sandbox endpoint (or fall back on the production endpoint''s sandbox status
+      code), so TestFlight receipts are no longer rejected by production-only validation.'
+  LH:
+    action: ANSWER
+    focus: 'Fix receipt-environment handling: validate sandbox receipts against the
+      sandbox endpoint (or fall back on the production endpoint''s sandbox status
+      code), so TestFlight receipts are no longer rejected by production-only validation.'
+variants:
+  HL:
+    distractor: Ngozi, a senior iOS lead I know from a conference, said her team had
+      restores silently break across their whole user base and it turned out their
+      Paid Applications agreement had lapsed in App Store Connect; she insists that
+      agreement is the first thing to check when purchases fail.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable restore outage at another app was caused by a lapsed
+      Paid Applications agreement.
+    salience_source: A — a named senior iOS lead recounting her own team's incident
+      gives the lapsed-agreement theory expert authority.
+    why_plausible: A lapsed Paid Applications agreement really does disable in-app
+      purchase functionality, so an expert pointing to it as the first check feels
+      like solid triage.
+    why_irrelevant: A lapsed agreement disables purchases account-wide for every build;
+      here new purchases and live App Store restores still work and only TestFlight
+      restores fail, so the agreement is plainly active.
+  LL:
+    distractor: A comparable restore outage at another app was traced to a lapsed
+      Paid Applications agreement.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable restore outage at another app was caused by a lapsed
+      Paid Applications agreement.
+    matched_to: HL
+  HH:
+    distractor: Restore succeeds for everyone on the live App Store build and fails
+      only for users on TestFlight builds; when it fails, the receipt we receive carries
+      an environment of "Sandbox", yet our server only ever validates receipts against
+      the production endpoint.
+    diagnosticity: high
+    salience: high
+    proposition: Restore works for users on the live App Store build but fails for
+      everyone on TestFlight builds, where the receipt's environment field reads "Sandbox"
+      while our server validates only against the production endpoint.
+    salience_source: The exact App-Store-versus-TestFlight split plus the 'Sandbox'
+      environment field against production-only validation makes the environment mismatch
+      concrete.
+  LH:
+    distractor: Restore works on the App Store build but fails on TestFlight, where
+      receipts read "Sandbox" while the server validates only against production.
+    diagnosticity: high
+    salience: low
+    proposition: Restore works for users on the live App Store build but fails for
+      everyone on TestFlight builds, where the receipt's environment field reads "Sandbox"
+      while our server validates only against the production endpoint.
+    matched_to: HH
+distractor_direction:
+  label: Lapsed Paid Apps agreement
+  description: Investigating whether an expired or unsigned Paid Applications agreement
+    in App Store Connect has disabled in-app purchase functionality.
+plausible_alternative_directions:
+- label: Receipt-refresh failure
+  description: Whether SKReceiptRefreshRequest is failing so the device never presents
+    a valid receipt to restore against.
+- label: Product-ID mismatch
+  description: Whether the restored transactions reference product identifiers the
+    current build no longer maps to an entitlement.
+leak_audit:
+  ll_atomic_claims:
+  - Another app had a comparable restore outage.
+  - That outage was traced to a lapsed Paid Applications agreement.
+  hh_atomic_claims:
+  - Restore succeeds for users on the live App Store build.
+  - Restore fails for users on TestFlight builds.
+  - On failure the receipt's environment field reads "Sandbox".
+  - The server validates receipts only against the production endpoint.
+  hl_salience_dimensions:
+    source_credibility: Named senior iOS lead (Ngozi) recounting her own team's incident.
+    narrative_coherence: Clean whole-user-base break to agreement-lapse discovery.
+    confident_assertion: She 'insists' it is the first thing to check — confidence
+      about her generic advice, allowed under C1.
+    concrete_detail: Detail about the source (conference acquaintance, her team's
+      incident, her triage rule) only — nothing about this app's present case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 83
+  hl_word_count: 49
+  ll_word_count: 15
+  hh_word_count: 41
+  lh_word_count: 22
+  notes: 'LL carries only the other-app-lapsed-agreement claim; the named source,
+    the conference, her team''s whole-base
+
+    break and her triage rule are HL-only and concern the source, not this app''s
+    present case. xbase states symptoms
+
+    (restore fails, new purchases work, server-side validation, version-agnostic)
+    but withholds the
+
+    App-Store-versus-TestFlight split and the "Sandbox" environment field, so HL/LL
+    cannot rule the agreement in or
+
+    out. The "new purchases work" line in xbase is a symptom that narrows but does
+    not alone defeat the agreement
+
+    theory (a reader could imagine partial outages); the decisive build-split and
+    Sandbox-environment facts live
+
+    only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'An iOS specialist could argue the lapsed-agreement direction deserves
+    a top spot: Apple disables in-app purchase
+
+    APIs across an account when the Paid Applications agreement lapses, the failure
+    surfaces with no code change, and
+
+    it can present as restores returning nothing. The steelman fails on this case''s
+    evidence, though. An inactive
+
+    agreement disables purchases and restores for every build and every user, yet
+    here both new purchases and live
+
+    App Store restores succeed, and failure is confined to TestFlight builds whose
+    receipts carry a Sandbox
+
+    environment. That pattern is a receipt-environment validation mismatch, not an
+    account-level agreement lapse, so
+
+    the agreement direction has no mechanism for this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the lapsed-agreement pathway is closed by the focal
+    feature (App Store restores and new purchases work) in HH/LH, not in xbase; xbase
+    keeps only symptoms.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An iOS app's restore failures caused by validating TestFlight Sandbox
+    receipts against the production endpoint, not a peer's lapsed Paid Applications
+    agreement.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

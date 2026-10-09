@@ -1,0 +1,179 @@
+seed_id: T1-062
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'One panel on our Grafana dashboard, the per-host request rate for the payments
+  service, has had gaps in it for the past few days: the line drops to nothing for
+  a minute or two, then comes back, several times an hour. Other panels on the same
+  dashboard look continuous. The service itself is serving traffic normally and customers
+  are not complaining. Only the graph is patchy, not the underlying behaviour. {DS}'
+focal_diagnostic_feature: Prometheus reports that scrape target marked over its configured
+  per-target sample limit, dropping the whole scrape, after a new high-cardinality
+  label was added to the metric.
+low_diagnostic_proposition: A similar gappy dashboard at another team turned out to
+  be caused by the metrics exporter crashing and restarting.
+oracle_action: ANSWER
+oracle_focus: The scrapes are being dropped because the metric now exceeds the per-target
+  sample limit after a high-cardinality label was added; reduce the cardinality or
+  raise the limit rather than chasing the exporter process.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume an exporter crash from another team's case.
+  Ask what Prometheus itself reports about that scrape target's health and sample
+  counts.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume an exporter crash from another team's case. Ask what Prometheus
+      itself reports about that scrape target's health and sample counts.
+  LL:
+    action: ASK
+    focus: Do not assume an exporter crash from another team's case. Ask what Prometheus
+      itself reports about that scrape target's health and sample counts.
+  HH:
+    action: ANSWER
+    focus: The scrapes are being dropped because the metric now exceeds the per-target
+      sample limit after a high-cardinality label was added; reduce the cardinality
+      or raise the limit rather than chasing the exporter process.
+  LH:
+    action: ANSWER
+    focus: The scrapes are being dropped because the metric now exceeds the per-target
+      sample limit after a high-cardinality label was added; reduce the cardinality
+      or raise the limit rather than chasing the exporter process.
+variants:
+  HL:
+    distractor: Senthil, who runs the platform team's monitoring stack, said they
+      had the exact same gappy graphs a while back and it came down to the metrics
+      exporter sidecar crashing and restarting.
+    diagnosticity: low
+    salience: high
+    proposition: A similar gappy dashboard at another team turned out to be caused
+      by the metrics exporter crashing and restarting.
+    salience_source: A — a colleague who owns the monitoring stack lends the exporter-crash
+      story operational credibility.
+    why_plausible: An exporter crash-looping does leave exactly these scrape-shaped
+      gaps, so it is a natural first guess for a patchy panel.
+    why_irrelevant: An exporter crash would gap every metric it exports at once, but
+      only this one high-cardinality panel is affected, and Prometheus reports the
+      scrape dropped on a sample limit, not a dead target.
+  LL:
+    distractor: Another team's similar gappy dashboard was caused by the metrics exporter
+      crashing and restarting.
+    diagnosticity: low
+    salience: low
+    proposition: A similar gappy dashboard at another team turned out to be caused
+      by the metrics exporter crashing and restarting.
+    matched_to: HL
+  HH:
+    distractor: In Prometheus the target health shows this scrape being rejected for
+      going over its per-target sample limit, and it started right after someone added
+      a high-cardinality label to the metric.
+    diagnosticity: high
+    salience: high
+    proposition: Prometheus reports that scrape target marked over its configured
+      per-target sample limit, dropping the whole scrape, after a new high-cardinality
+      label was added to the metric.
+    salience_source: The exact rejection reason and the sequence of events make the
+      cause precise and verifiable.
+  LH:
+    distractor: Prometheus rejects the scrape for exceeding its per-target sample
+      limit after a high-cardinality label was added to the metric.
+    diagnosticity: high
+    salience: low
+    proposition: Prometheus reports that scrape target marked over its configured
+      per-target sample limit, dropping the whole scrape, after a new high-cardinality
+      label was added to the metric.
+    matched_to: HH
+distractor_direction:
+  label: Exporter crash-loop
+  description: Investigating whether the metrics exporter process is crashing and
+    restarting, leaving gaps while it is down.
+plausible_alternative_directions:
+- label: Scrape timeout
+  description: Whether scrapes are timing out because the endpoint responds too slowly
+    under load.
+- label: Network blips to target
+  description: Whether intermittent network loss between Prometheus and the target
+    drops scrapes.
+leak_audit:
+  ll_atomic_claims:
+  - Another team had a similar gappy dashboard.
+  - It was caused by the metrics exporter crashing and restarting.
+  hh_atomic_claims:
+  - Prometheus rejects this scrape for exceeding its per-target sample limit.
+  - The rejection began after a high-cardinality label was added to the metric.
+  hl_salience_dimensions:
+    source_credibility: Named monitoring-stack owner (Senthil) recounting his team's
+      resolved case.
+    narrative_coherence: Coherent crash-then-gaps explanation with a confident resolution.
+    confident_assertion: '''it came down to'' — confident attribution.'
+    concrete_detail: Detail about the source's case (sidecar crashing and restarting)
+      only; no new fact about this dashboard.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 70
+  hl_word_count: 31
+  ll_word_count: 14
+  hh_word_count: 30
+  lh_word_count: 19
+  notes: 'HL repair: removed effort descriptor ''in a loop'' and consequence clause
+    ''while it was down no samples
+
+    landed, which punched holes straight through their dashboards'' — both were case
+    claims absent from LL.
+
+    HL now carries only source identity/role and the bare exporter-crash attribution,
+    matching LL''s two atomic
+
+    claims. HH repair: removed specific label name ''per-customer-id'' and ''exploded
+    the series count'' — both
+
+    were specifics absent from LH. HH now says ''a high-cardinality label'' matching
+    LH exactly. hh_atomic_claims
+
+    updated to reflect the two claims now shared between HH and LH. Word counts recounted
+    after edits.
+
+    '
+causal_audit:
+  steelman: 'A platform engineer could argue an exporter crash-loop is the most likely
+    culprit: when an exporter dies and
+
+    restarts, scrapes during the down window return nothing and the dashboard line
+    drops, and a sidecar flapping
+
+    every minute or two would reproduce exactly this several-times-an-hour gap pattern.
+    That account is undone by two
+
+    things in the focal feature: an exporter crash would blank every metric that exporter
+    serves simultaneously,
+
+    whereas here only the single high-cardinality payments panel gaps while sibling
+    panels stay continuous; and
+
+    Prometheus explicitly reports the scrape rejected on a per-target sample limit,
+    not a target that went down.
+
+    Nothing in xbase independently elevates the exporter for this case, so the anecdote
+    has no mechanism here.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states other panels on the same dashboard stay continuous,
+    which is inconsistent with a shared exporter crashing for all of them, without
+    naming the sample-limit cause; the decisive Prometheus rejection lives only in
+    HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Gaps in one Grafana panel caused by Prometheus dropping scrapes over
+    a per-target sample limit after a high-cardinality label was added, not the exporter
+    crash a colleague's anecdote suggests.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator-adjudicated
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

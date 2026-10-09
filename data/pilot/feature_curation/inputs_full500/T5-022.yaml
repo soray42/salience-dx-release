@@ -1,0 +1,197 @@
+seed_id: T5-022
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I'm hiring a photographer for an event and I'm down to two. Their prices are
+  almost identical and both are free on my date. One has a breathtaking portfolio
+  site — elegant typography, immersive full-screen galleries — though a footer credit
+  shows a hired web-design studio built it. The other's site is a plain template with
+  images dropped into a basic grid. I want whoever will actually nail focus, lighting,
+  and on-time delivery on the day. {DS}
+focal_diagnostic_feature: Full delivered client galleries and reviews show the plain-site
+  photographer consistently nails focus, lighting, and delivers on time, while the
+  stunning-site photographer's complete sets are uneven with repeated complaints about
+  missed key moments and late delivery.
+low_diagnostic_proposition: The photographer with the polished, professional portfolio
+  site is the more reliable choice who will deliver better photos.
+oracle_action: ANSWER
+oracle_focus: Hire the plain-site photographer; their full delivered galleries are
+  consistently strong and on time, while the stunning site sits atop uneven complete
+  work and repeated missed-moment and late-delivery complaints.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer skill from portfolio-site design. Ask to
+  see each photographer's full delivered client galleries and their reviews on consistency
+  and delivery.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer skill from portfolio-site design. Ask to see each photographer's
+      full delivered client galleries and their reviews on consistency and delivery.
+  LL:
+    action: ASK
+    focus: Do not infer skill from portfolio-site design. Ask to see each photographer's
+      full delivered client galleries and their reviews on consistency and delivery.
+  HH:
+    action: ANSWER
+    focus: Hire the plain-site photographer; their full delivered galleries are consistently
+      strong and on time, while the stunning site sits atop uneven complete work and
+      repeated missed-moment and late-delivery complaints.
+  LH:
+    action: ANSWER
+    focus: Hire the plain-site photographer; their full delivered galleries are consistently
+      strong and on time, while the stunning site sits atop uneven complete work and
+      repeated missed-moment and late-delivery complaints.
+variants:
+  HL:
+    distractor: The polished site just feels like the safer hire — the elegant type,
+      the immersive galleries, the whole professional presentation — and a photographer
+      who invests in showing up that buttoned-up is surely the more serious, more
+      reliable operator who will deliver better photos on the day.
+    diagnosticity: low
+    salience: high
+    proposition: The photographer with the polished, professional portfolio site is
+      the more reliable choice who will deliver better photos.
+    salience_source: B/D — vivid concrete detail of the polished portfolio site carrying
+      the bridge that a professional presentation signals a more reliable operator.
+    why_plausible: A photographer who invests in a polished, professional web presence
+      seems likely to be a more serious, more reliable operator overall.
+    why_irrelevant: The polished site was built by a hired studio and shows only curated
+      highlights; presentation polish says nothing about focus, lighting, or delivery
+      timing across a full shoot.
+  LL:
+    distractor: The photographer with the polished, professional portfolio site is
+      the more reliable choice who will deliver better photos.
+    diagnosticity: low
+    salience: low
+    proposition: The photographer with the polished, professional portfolio site is
+      the more reliable choice who will deliver better photos.
+    matched_to: HL
+  HH:
+    distractor: Looking at full delivered galleries rather than the highlight reels,
+      the plain-site photographer's complete client sets are consistently sharp and
+      well-lit and arrive on schedule, while the stunning-site photographer's full
+      sets are uneven and draw repeated complaints about missed key moments and late
+      delivery.
+    diagnosticity: high
+    salience: high
+    proposition: Full delivered client galleries and reviews show the plain-site photographer
+      consistently nails focus, lighting, and delivers on time, while the stunning-site
+      photographer's complete sets are uneven with repeated complaints about missed
+      key moments and late delivery.
+    salience_source: Comparing complete delivered sets and reviews — consistency,
+      missed moments, delivery timing — makes the real skill gap concrete.
+  LH:
+    distractor: The plain-site photographer's full delivered sets are consistently
+      sharp and on time; the stunning-site photographer's sets are uneven with missed-moment
+      and late-delivery complaints.
+    diagnosticity: high
+    salience: low
+    proposition: Full delivered client galleries and reviews show the plain-site photographer
+      consistently nails focus, lighting, and delivers on time, while the stunning-site
+      photographer's complete sets are uneven with repeated complaints about missed
+      key moments and late delivery.
+    matched_to: HH
+distractor_direction:
+  label: Polished-site-implies-reliability
+  description: Choosing the photographer with the polished site because its professional
+    presentation is taken as evidence of a more reliable operator who delivers better
+    photos.
+plausible_alternative_directions:
+- label: Style-and-fit match
+  description: Whether each photographer's shooting style matches the look the user
+    wants for the event.
+- label: Backup and contract terms
+  description: Whether either offers gear redundancy
+  a clear contract: null
+  and reshoot guarantees.: null
+leak_audit:
+  ll_atomic_claims:
+  - One photographer has a polished, professional portfolio site.
+  - That polished presentation makes them the more reliable choice who will deliver
+    better photos.
+  hh_atomic_claims:
+  - The plain-site photographer's full delivered client sets are consistently sharp,
+    well-lit, and on schedule.
+  - The stunning-site photographer's full sets are uneven.
+  - The stunning-site photographer draws repeated complaints about missed key moments
+    and late delivery.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: N/A
+    confident_assertion: N/A
+    concrete_detail: Vivid concrete detail about the portfolio site (elegant type,
+      immersive galleries, professional presentation).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 74
+  hl_word_count: 45
+  ll_word_count: 18
+  hh_word_count: 44
+  lh_word_count: 23
+  notes: 'T5: the bridge "a polished, professional site signals a more reliable operator"
+    is in HL and flat in LL (self-check 13).
+
+    xbase contrasts the polished vs plain site and equal price/availability but withholds
+    the full-gallery and
+
+    review evidence — decisive — which lives only in HH/LH. Highlight-reel vs full-set
+    distinction kept out of xbase.
+
+    QC repair round 1: re-anchored the question and bridge from general "skill"/aesthetic
+    taste to operational
+
+    reliability (focus, lighting, on-time delivery), and added a neutral pathway-closure
+    to xbase — a footer credit
+
+    showing the polished site was built by a hired web-design studio — foreclosing
+    the aesthetic-transfer mechanism
+
+    (the photographer''s own design eye) without supplying any affirmative cause;
+    the decisive full-gallery/review
+
+    evidence still lives only in HH/LH (C4 boundary preserved).
+
+    '
+causal_audit:
+  steelman: 'The strongest argument was aesthetic transfer: a photographer whose own
+    portfolio site shows refined visual
+
+    composition and design taste plausibly applies the same eye to framing and editing,
+    making site craft a weak
+
+    signal of photographic skill. That mechanism is foreclosed: xbase states a footer
+    credit shows the polished site
+
+    was built by a hired web-design studio, so the design eye is not the photographer''s.
+    The residual bridge — a
+
+    professional web presence implies a more reliable operator — has no mechanism
+    for whether THIS photographer nails
+
+    focus, lighting, and on-time delivery on the day; presentation polish and shoot-day
+    execution are independent,
+
+    and the decisive consistency/delivery evidence lives only in HH/LH.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase's footer-credit line (the polished site was built
+    by a hired web-design studio) forecloses the aesthetic-transfer mechanism — the
+    photographer's own design eye — without supplying any affirmative cause; it does
+    not let xbase reject the distractor's conclusion, since the deciding full-gallery
+    and review evidence is supplied only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Choosing between two event photographers where full delivered galleries
+    and reviews favour the plain-site one, against the inference that the polished
+    portfolio site signals a more reliable operator.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

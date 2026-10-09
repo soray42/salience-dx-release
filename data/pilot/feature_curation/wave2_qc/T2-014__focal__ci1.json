@@ -1,0 +1,13 @@
+{
+  "seed_id": "T2-014",
+  "my_own_diagnosis": "Given the confirmed absence of any ingredient or schedule changes, the only uncontrolled environmental variable is the reported ~5°C kitchen temperature drop; as a fermentation practitioner I would immediately attribute the sluggish rise and early dome collapse to slowed yeast and lactic-acid-bacteria activity caused by that temperature shift.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature supplies a named, quantified environmental change with a well-established mechanistic pathway to exactly the observed symptoms, leaving no ambiguity about the correct diagnostic direction.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cells correctly receive the low-diagnostic oracle dismissing the loyalty-programme coincidence, and HH/LH cells correctly receive the focal oracle targeting the temperature drop; low_diagnostic_oracle_focus appropriately notes the absence of any mechanism while redirecting to real troubleshooting questions.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

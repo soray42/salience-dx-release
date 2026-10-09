@@ -1,0 +1,9 @@
+{
+  "seed_id": "T6-013",
+  "steelman": "Clock skew is a genuine and well-documented cause of TLS certificate failures in Kubernetes clusters. When nodes drift in time, the TLS stack validates certificate notBefore/notAfter windows against wall-clock time, and even moderate skew can cause handshake failures. A cert-manager configuration deploy triggers pod restarts, which force fresh TLS session establishment — this could expose an existing, previously dormant NTP drift problem that session resumption had masked. A senior SRE would put 'verify NTP offsets on every node' as step 1 of any cert-error runbook, and the on-call engineer's three-year institutional history of seeing clock skew as the root cause gives this hypothesis genuine evidential weight. The timing correlation (errors appearing in the first minute after rollout) is fully consistent with the clock-skew mechanism.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The clock-skew pathway is doubly closed. First, empirically: xbase states NTP was checked on every node and all offsets are under half a second — this directly forecloses the time-drift mechanism. Second, structurally: the specific error 'x509: certificate signed by unknown authority' is a trust-chain failure, not a time-validity failure. Clock skew produces 'certificate not yet valid' or 'certificate has expired' errors; it cannot produce an 'unknown authority' error, which requires the client to be missing the CA that signed the presented certificate. These two independent closures make the distractor non-causal. Seed is clean; no repair needed."
+}

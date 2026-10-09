@@ -1,0 +1,232 @@
+seed_id: T2-012
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: 'My e-reader went from lasting three weeks on a charge to dying in two days,
+  and I haven''t changed how I use it — same reading habits, same screen brightness.
+  I bought a new bedside lamp around the same time, but the e-reader never connects
+  to it or plugs into it in any way. I haven''t installed any new apps or changed
+  any settings that I can recall. {DS}
+
+  '
+focal_diagnostic_feature: 'Wi-Fi is enabled and set to sync automatically in the background,
+  and it was confirmed off before the battery drain began.
+
+  '
+low_diagnostic_proposition: 'The new bedside lamp is causing the e-reader battery
+  to drain faster.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Disable Wi-Fi or turn off background auto-sync; the enabled Wi-Fi with
+  constant background syncing is the confirmed change that explains the battery life
+  dropping from weeks to days.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Ask the user to check e-reader settings — specifically
+  Wi-Fi status, background sync, screen timeout, and whether a firmware update ran
+  recently — rather than attributing the drain to the lamp, which has no electrical
+  or physical connection to the e-reader.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: 'Ask the user to check e-reader settings — specifically Wi-Fi status, background
+      sync, screen timeout, and whether a firmware update ran recently — rather than
+      attributing the drain to the lamp, which has no electrical or physical connection
+      to the e-reader.
+
+      '
+  LL:
+    action: ASK
+    focus: 'Ask the user to check e-reader settings — specifically Wi-Fi status, background
+      sync, screen timeout, and whether a firmware update ran recently — rather than
+      attributing the drain to the lamp, which has no electrical or physical connection
+      to the e-reader.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Disable Wi-Fi or turn off background auto-sync; the enabled Wi-Fi with
+      constant background syncing is the confirmed change that explains the battery
+      life dropping from weeks to days.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Disable Wi-Fi or turn off background auto-sync; the enabled Wi-Fi with
+      constant background syncing is the confirmed change that explains the battery
+      life dropping from weeks to days.
+
+      '
+variants:
+  HL:
+    distractor: 'My neighbor, who works as a technician at a consumer electronics
+      repair shop, told me that bedside lamps like that could cause battery drain
+      in nearby devices.
+
+      '
+    diagnosticity: low
+    salience: high
+    proposition: The new bedside lamp is causing the e-reader battery to drain faster.
+    salience_source: 'A (source credibility) + C (confident assertion): neighbor identified
+      as a consumer electronics repair technician; "told me" is a direct, confident
+      first-person report of professional knowledge.
+
+      '
+    why_plausible: 'A repair technician is a recognizable authority on device hardware;
+      the claim sounds technically grounded and specific enough to take seriously.
+
+      '
+    why_irrelevant: 'The e-reader has no electrical or physical connection to the
+      lamp; passive radiated EMI from a household lamp cannot account for a roughly
+      ten-fold reduction in battery life, and the confirmed Wi-Fi/auto-sync change
+      (HH/LH) provides a complete, parsimonious explanation.
+
+      '
+  LL:
+    distractor: 'Someone suggested that the new bedside lamp could be causing the
+      e-reader battery to drain faster.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: The new bedside lamp is causing the e-reader battery to drain faster.
+    matched_to: HL
+  HH:
+    distractor: 'I just checked the settings and Wi-Fi is enabled with automatic background
+      sync turned on — I can confirm it was switched off before the battery drain
+      started.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'Wi-Fi is enabled and set to sync automatically in the background,
+      and it was confirmed off before the battery drain began.
+
+      '
+    salience_source: 'B (narrative coherence) + C (confident assertion) + D (concrete
+      believable detail): first-person verified finding with an explicit before/after
+      contrast, stated as confirmed fact rather than speculation.
+
+      '
+  LH:
+    distractor: 'Wi-Fi is on with background sync enabled, and it was off before the
+      drain started.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'Wi-Fi is enabled and set to sync automatically in the background,
+      and it was confirmed off before the battery drain began.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: bedside lamp interference
+  description: 'The new bedside lamp''s electrical emissions are interfering with
+    the e-reader and causing its battery to drain faster.
+
+    '
+plausible_alternative_directions:
+- label: firmware update background process
+  description: 'A firmware update installed automatically introduced a background
+    process or regression that drains power even when the device appears idle.
+
+    '
+- label: screen or wake settings changed
+  description: 'The screen timeout was extended or a setting is causing the device
+    to wake more frequently, keeping the display active for longer.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - The new bedside lamp could be causing the e-reader battery to drain faster.
+  hl_salience_dimensions:
+    source_credibility: neighbor identified as a consumer electronics repair technician
+    narrative_coherence: N/A
+    confident_assertion: '"told me" — direct personal communication, no hedging'
+    concrete_detail: '"consumer electronics repair shop" anchors the source setting'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 27
+  ll_word_count: 16
+  notes: 'Repair pass (qc leak p1 2026-06-11): stripped two leaks from HL.
+
+    (1) "new LED bedside lamps with high-frequency switching drivers" was
+
+    replaced with "bedside lamps like that" — the lamp-technology mechanism
+
+    phrase was other_case_content that could redirect a responder toward
+
+    asking whether the user''s specific lamp has switching drivers.
+
+    (2) "are a known cause" was replaced with "could cause" — "known cause"
+
+    escalated epistemic certainty beyond LL''s "could be causing", constituting
+
+    a severity_claim about the distractor''s causal status in the user''s case.
+
+    Post-repair HL contains only source ID (technician at repair shop),
+
+    confident speech verb ("told me"), and a tentative claim matching LL.
+
+    The why_plausible note about LED switching-driver EMI was also removed
+
+    from the field since it referenced the stripped mechanism detail.
+
+    '
+causal_audit:
+  steelman: 'LED bedside lamps with switching-mode power supplies emit electromagnetic
+
+    interference (EMI) across a broad frequency range. An e-reader on a
+
+    nightstand centimetres away could have its Wi-Fi or Bluetooth radio
+
+    disrupted, causing the radio to retry connections more aggressively and
+
+    consume more power. A consumer electronics technician could cite
+
+    documented cases of cheap LED drivers interfering with nearby wireless
+
+    devices. Some poorly shielded lamps can also emit conducted interference
+
+    if sharing a circuit — though the scenario rules out a shared electrical
+
+    connection. Even without a shared circuit, radiated EMI from a lamp
+
+    within 30 cm could in principle add marginal load to a wireless radio.
+
+    This is the strongest argument FOR the lamp hypothesis.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"the e-reader never connects to it or plugs into it in
+    any way" removes any conducted-interference pathway (shared circuit). The radiated
+    EMI pathway is not explicitly closed, but: the magnitude of the drain (roughly
+    10x) is wildly disproportionate to what household lamp EMI could cause; no mainstream
+    e-reader troubleshooting guide lists nearby lamp EMI as a checklist item; the
+    mechanism requires the e-reader radio to already be active, making it downstream
+    of the real cause rather than independent. A senior practitioner would not pursue
+    the lamp hypothesis given a confirmed Wi-Fi/sync change.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 2
+  topic_brief: 'An e-reader battery now drains in two days instead of weeks. Coincidence:
+    started right after buying a new bedside lamp. The lamp must have no mechanism
+    (the e-reader is never plugged into it; state this in xbase).
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: qc leak p1 2026-06-11
+  generator: generator_B

@@ -1,0 +1,162 @@
+seed_id: T5-095
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: My USB flash drive mounts on my Linux laptop but everything I try to write
+  to it fails with a read-only filesystem error. The drive shows up in lsblk and I
+  can browse files that are already on it. I have not reformatted the drive recently.
+  I use it across three machines without issue until this week. {DS}
+focal_diagnostic_feature: The mount output shows the drive is mounted with the ro
+  flag, and the drive has a physical write-protect slider currently in the locked
+  position.
+low_diagnostic_proposition: The drive label is visibly faded and peeling, suggesting
+  the drive may have degraded to a firmware-enforced read-only protection state.
+oracle_action: ANSWER
+oracle_focus: Slide the write-protect tab to the unlocked position and remount; the
+  ro flag in the mount output confirms hardware write-protection is engaged, not filesystem
+  corruption or firmware wear.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer firmware wear-protection from label cosmetics;
+  check for a physical write-protect switch on the drive body and inspect the mount
+  flags before diagnosing further.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer firmware wear-protection from label cosmetics; check for a
+      physical write-protect switch on the drive body and inspect the mount flags
+      before diagnosing further.
+  LL:
+    action: ASK
+    focus: Do not infer firmware wear-protection from label cosmetics; check for a
+      physical write-protect switch on the drive body and inspect the mount flags
+      before diagnosing further.
+  HH:
+    action: ANSWER
+    focus: Slide the write-protect tab to the unlocked position and remount; the ro
+      flag in the mount output confirms hardware write-protection is engaged, not
+      filesystem corruption or firmware wear.
+  LH:
+    action: ANSWER
+    focus: Slide the write-protect tab to the unlocked position and remount; the ro
+      flag in the mount output confirms hardware write-protection is engaged, not
+      filesystem corruption or firmware wear.
+variants:
+  HL:
+    distractor: The label on the drive is faded and peeling, which makes me wonder
+      whether the flash cells are wearing out and the firmware has flipped it to read-only
+      protection mode.
+    diagnosticity: low
+    salience: high
+    proposition: The drive label is visibly faded and peeling, suggesting the drive
+      may have degraded to a firmware-enforced read-only protection state.
+    salience_source: B/C — vivid physical description ('barely visible'), confident
+      inferential bridge presented as the speaker's own concern ('makes me wonder
+      whether'), narrative coherence of wear-to-protection logic.
+    why_plausible: Flash firmware does implement write-protection on worn media; a
+      physically degraded-looking drive could genuinely have depleted write cycles,
+      and the inference is technically plausible in the abstract.
+    why_irrelevant: Label condition is purely cosmetic and carries no information
+      about flash cell wear or firmware state; the physical write-protect slider —
+      not firmware — is what sets the ro mount flag in this case.
+  LL:
+    distractor: The drive label is visibly faded and peeling, suggesting the drive
+      may have degraded to a firmware-enforced read-only protection state.
+    diagnosticity: low
+    salience: low
+    proposition: The drive label is visibly faded and peeling, suggesting the drive
+      may have degraded to a firmware-enforced read-only protection state.
+    matched_to: HL
+  HH:
+    distractor: Running mount shows the device is mounted with the ro flag; a physical
+      write-protect slider on the side of the drive is in the locked position, sitting
+      right against the edge of the housing where it is easy to move accidentally.
+    diagnosticity: high
+    salience: high
+    proposition: The mount output shows the drive is mounted with the ro flag, and
+      the drive has a physical write-protect slider currently in the locked position.
+    salience_source: B/C — specific command output cited ('mount shows'), concrete
+      physical detail ('sitting right against the edge of the housing'), casual observation
+      of how the slider got there ('easy to move accidentally').
+  LH:
+    distractor: The mount output shows the ro flag; the drive's write-protect slider
+      is locked, right against the housing edge, and easy to move accidentally.
+    diagnosticity: high
+    salience: low
+    proposition: The mount output shows the drive is mounted with the ro flag, and
+      the drive has a physical write-protect slider currently in the locked position.
+    matched_to: HH
+distractor_direction:
+  label: Firmware wear-protection enforcement
+  description: Investigating whether the flash controller has detected cell exhaustion
+    and automatically enforced read-only mode to prevent further writes.
+plausible_alternative_directions:
+- label: Filesystem corruption
+  description: The filesystem metadata may be corrupted, causing the kernel to mount
+    read-only automatically as a safety measure.
+- label: Mount options mismatch
+  description: A udev rule or fstab entry may be specifying ro mount options for this
+    device class on this machine.
+leak_audit:
+  ll_atomic_claims:
+  - The drive label is visibly faded.
+  - The drive label is peeling.
+  - The fading and peeling suggest possible firmware-enforced read-only protection.
+  hh_atomic_claims:
+  - The mount command output shows the ro flag for this device.
+  - There is a physical write-protect slider on the drive.
+  - The slider is currently in the locked position.
+  - The slider is positioned against the edge of the housing.
+  - The slider can be moved accidentally.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person observation with a plausible physical-to-technical
+      inference chain.
+    confident_assertion: 'Direct causal framing: ''makes me wonder whether the flash
+      cells are wearing out and the firmware has flipped it''.'
+    concrete_detail: N/A — detail is about the drive surface (label condition), which
+      is about the subject not an external setting.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 57
+  hl_word_count: 30
+  ll_word_count: 20
+  hh_word_count: 41
+  lh_word_count: 23
+  notes: 'T5 bridge (''faded label → firmware wear-protection'') appears in both HL
+    and LL as required by C1. The inferential bridge is explicitly stated in LL as
+    a flat clause. Steelman checked: firmware read-only IS a real mechanism for worn
+    drives, but label condition has zero diagnostic value for flash cell state. HH/LH
+    diff (post-repair): LH now carries all five HH atomic claims — ro flag, physical
+    write-protect slider, locked position, positioned right against the housing edge,
+    and easy to move accidentally — stated flatly without the HH vivid framing. QC
+    repair added ''right against the housing edge'' and ''easy to move accidentally''
+    to LH to close the C10 leak.
+
+    '
+causal_audit:
+  steelman: 'A storage engineer might argue: flash memory does have a finite write-endurance
+    cycle, and many drives implement firmware-level read-only enforcement when wear-leveling
+    tables are exhausted. A visually degraded drive could plausibly have been in heavy
+    use long enough to approach that limit. The appearance could be a signal worth
+    investigating.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not mention a write-protect switch, keeping
+    the focal feature exclusively in HH/LH. The steelman's mechanism (firmware wear)
+    is real in the abstract but label condition provides zero evidence of it.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: USB drive mounts read-only on Linux; faded label is offered as evidence
+    of firmware wear-protection, but mount flags and a physical write-protect slider
+    are the actual cause.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,294 @@
+seed_id: T5-013
+template: T5
+domain: technical_troubleshooting
+complexity: high
+xbase: Nuestra aplicación móvil lleva fallando de forma intermitente desde que integramos
+  el SDK del proveedor. Los fallos ocurren aproximadamente en una de cada veinte llamadas
+  al SDK y han venido produciéndose de manera consistente durante la última semana.
+  He descargado los informes de fallos y tengo tres stack traces completos de ocurrencias
+  distintas para analizar. {DS}
+focal_diagnostic_feature: Cada uno de los tres stack traces de fallo termina dentro
+  del onCompletionCallback perteneciente a la aplicación, no dentro de ningún frame
+  del SDK, lo que indica que el fallo se origina en el código de la aplicación, no
+  en el SDK.
+low_diagnostic_proposition: 'The vendor SDK documentation contains many typos and
+  formatting errors.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'The crash stack traces all terminate in app-owned callback code while
+  mutating shared state; investigate the callback implementation for thread-safety
+  issues such as unsynchronised writes to shared mutable state from an async context.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Documentation quality is not in the causal chain of
+  runtime crashes; do not adopt the SDK-reliability inference from doc aesthetics.
+  Instead, examine the available crash evidence — stack traces, logs, and callback
+  code — to identify the actual root cause.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Documentation quality is not in the causal chain of runtime crashes; do
+      not adopt the SDK-reliability inference from doc aesthetics. Instead, examine
+      the available crash evidence — stack traces, logs, and callback code — to identify
+      the actual root cause.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Documentation quality is not in the causal chain of runtime crashes; do
+      not adopt the SDK-reliability inference from doc aesthetics. Instead, examine
+      the available crash evidence — stack traces, logs, and callback code — to identify
+      the actual root cause.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'The crash stack traces all terminate in app-owned callback code while
+      mutating shared state; investigate the callback implementation for thread-safety
+      issues such as unsynchronised writes to shared mutable state from an async context.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'The crash stack traces all terminate in app-owned callback code while
+      mutating shared state; investigate the callback implementation for thread-safety
+      issues such as unsynchronised writes to shared mutable state from an async context.
+
+      '
+variants:
+  HL:
+    distractor: Un ingeniero móvil senior de una startup similar me dijo que había
+      revisado la documentación de ese mismo SDK del proveedor y encontró erratas
+      por todas partes y un formato completamente roto.
+    diagnosticity: low
+    salience: high
+    proposition: 'The vendor SDK documentation contains many typos and formatting
+      errors.
+
+      '
+    salience_source: 'A (source credibility: senior mobile engineer at a peer startup);
+      C (confident assertion: "told me"); D (concrete detail about source/setting:
+      "at a peer startup", "reviewed the same vendor SDK documentation" anchors the
+      source''s basis without adding case facts).
+
+      '
+    why_plausible: 'The inference that poor documentation signals poor code quality
+      is a recognisable heuristic in developer culture; a credible peer vouching for
+      the pattern makes it easy to anchor on without scrutinising the actual crash
+      evidence.
+
+      '
+    why_irrelevant: 'Documentation quality is not in the causal chain of runtime crashes.
+      The SDK fires the completion handler successfully — the stack trace shows execution
+      entering the SDK, the SDK dispatching the callback normally, and the crash occurring
+      inside the app''s own callback code. The SDK''s prose quality is structurally
+      disconnected from the execution path that faults.
+
+      '
+  LL:
+    distractor: Alguien dijo que la documentación del SDK del proveedor tiene muchas
+      erratas y errores de formato.
+    diagnosticity: low
+    salience: low
+    proposition: 'The vendor SDK documentation contains many typos and formatting
+      errors.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'Al examinar los tres volcados de fallo, el stack trace de cada uno
+      es idéntico: la ejecución entra en la llamada al SDK con normalidad, el SDK
+      dispara nuestro onCompletionCallback registrado, y el fallo ocurre tres frames
+      dentro de nuestro callback mientras escribimos en un diccionario mutable compartido
+      sin bloqueo.'
+    diagnosticity: high
+    salience: high
+    proposition: 'Each of the three crash stack traces terminates inside the app-owned
+      onCompletionCallback, not within any SDK frame, indicating the crash originates
+      in application code, not the SDK.
+
+      '
+    salience_source: 'Precise technical detail (three matching stack traces, named
+      callback, specific frame depth, specific operation — unsynchronised dictionary
+      write) makes the evidence vivid and decisive.
+
+      '
+  LH:
+    distractor: Los tres stack traces idénticos muestran que el SDK se despacha con
+      normalidad; el fallo ocurre dentro de nuestro callback mientras escribimos en
+      un diccionario compartido sin bloqueo.
+    diagnosticity: high
+    salience: low
+    proposition: 'Each of the three crash stack traces terminates inside the app-owned
+      onCompletionCallback, not within any SDK frame, indicating the crash originates
+      in application code, not the SDK.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: Calidad de la documentación del SDK como señal de fiabilidad
+  description: La documentación del SDK del proveedor está llena de erratas y formato
+    roto, y esta estética superficial se ofrece como evidencia de que el código de
+    la librería SDK es poco fiable y, por tanto, probablemente la causa de los fallos
+    intermitentes.
+plausible_alternative_directions:
+- label: Violación del contrato de hilos del SDK
+  description: Es posible que el SDK invoque el callback de completado en un hilo
+    inesperado (por ejemplo, un hilo en segundo plano en lugar del hilo principal),
+    provocando comportamiento indefinido cuando el código de la aplicación asume ejecución
+    en el hilo principal.
+- label: SDK devuelve datos malformados o nulos
+  description: Es posible que el SDK devuelva ocasionalmente datos inesperados, nulos
+    o malformados al callback, causando un fallo por desreferencia nula o incompatibilidad
+    de tipos dentro del propio callback de la aplicación.
+- label: SDK invoca el callback varias veces
+  description: Un bug en el SDK podría invocar el callback de completado más de una
+    vez por llamada, haciendo que el callback de la aplicación reingrese y corrompa
+    el estado compartido mediante una doble mutación.
+leak_audit:
+  ll_atomic_claims:
+  - The vendor SDK documentation has many typos.
+  - The vendor SDK documentation has formatting errors.
+  hl_salience_dimensions:
+    source_credibility: Senior mobile engineer at a peer startup.
+    narrative_coherence: Clean, professional register; single clause reporting; no
+      tangents or restarts.
+    confident_assertion: '"told me" — direct report, no hedging.'
+    concrete_detail: '"at a peer startup", "reviewed the same vendor SDK documentation"
+      — about the source/setting, not the case.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 26
+  ll_word_count: 13
+  notes: 'Repair (revision 2): Removed the original HL closing clause "and that in
+
+    their experience, that kind of sloppiness in docs usually means the library
+
+    itself is unreliable" — this was flagged as a severity_claim (case-level
+
+    inference about the user''s SDK reliability) and as hedging_language
+
+    ("usually"). The revised HL ends after the doc-quality observation, keeping
+
+    only source-credibility and case-neutral content. Replaced dash-separated
+
+    construction with "and found" to reach 26 words (within 25–50 range).
+
+
+    HH/LH equivalence fix: LH previously stated only "The crash stack trace ends
+
+    inside our own callback code, not in the SDK," omitting four claims present in
+
+    HH — (a) SDK dispatch proceeds normally, (b) all three traces are identical,
+
+    (c) crash is inside the callback (not just the callback code boundary), (d)
+
+    the specific operation is an unsynchronised write to a shared dictionary
+
+    without a lock. New LH: "All three identical stack traces show the SDK
+
+    dispatching normally; the crash ends in our callback while writing to a shared
+
+    dictionary without a lock." (25 words) — covers all four omitted claims within
+
+    the 12–25 word limit; frame depth ("three frames deep") dropped to fit the
+
+    limit, as it is a vivid detail handled by HH salience, not a distinct
+
+    propositional claim.
+
+
+    LL word count 13 is within the 12–25 range.
+
+
+    Repair (revision 3): xbase focal-evidence removal per cell-integrity lens
+
+    2026-06-11. Original xbase narrated the decisive stack-trace finding ("each
+
+    one terminates inside our own onCompletionCallback method at the point where
+
+    we mutate shared state") — this is the focal evidence that must live only in
+
+    HH/LH. New xbase describes only the symptom (intermittent crashes since SDK
+
+    integration, rough rate, three stack traces available) without disclosing
+
+    where those traces terminate. pathway_closed_in_xbase updated accordingly.
+
+    '
+causal_audit:
+  steelman: 'Strongest argument for the distractor: Documentation quality is a proxy
+
+    signal for overall engineering discipline at the vendor. A team that ships
+
+    public-facing docs with pervasive typos and broken formatting may also be
+
+    running a careless release process for their SDK code — skipping edge-case
+
+    testing, ignoring race conditions in async dispatch, shipping unreviewed
+
+    patches. A senior practitioner evaluating a vendor relationship might
+
+    reasonably note doc quality as one data point in an overall vendor quality
+
+    assessment. If the SDK has a known quality problem, it could plausibly
+
+    produce intermittent bugs in async callbacks.
+
+
+    However, this argument is a general quality-inference about the vendor, not
+
+    a causal mechanism for this specific crash. The assessment "vendor might
+
+    ship buggy code" does not specify any pathway to the observed fault. The
+
+    stack trace already localises the crash: it terminates in app-owned code.
+
+    Even if the SDK were buggy, the crash would need to show SDK frames at fault
+
+    — and it does not. The doc-quality signal is upstream of the code pipeline
+
+    in a speculative and non-specific way; no practitioner would put "check if
+
+    vendor docs have typos" on a crash-triage checklist for a crash whose stack
+
+    trace ends in app code.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — xbase no longer discloses where the stack traces
+    terminate; that decisive finding is carried exclusively by HH/LH. The pathway
+    closure (crash site in app code, not SDK) is delivered only when HH or LH is present.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 3
+  topic_brief: 'Vendor SDK documentation is full of typos and broken formatting, offered
+    as a reason to blame the SDK for intermittent crashes. Focal: the crash stack
+    trace terminates in app-owned callback code.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-013.yaml
+  source_xbase_sha256: dfb2037b3c963836
+  translated_content_sha256: 65bf4070f2573561
+  translation_notes: ''

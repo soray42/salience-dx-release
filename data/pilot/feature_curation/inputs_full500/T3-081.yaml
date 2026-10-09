@@ -1,0 +1,186 @@
+seed_id: T3-081
+template: T3
+domain: open_qa
+complexity: low
+xbase: My basil seedlings are spindly and very pale green after two weeks growing
+  on the kitchen windowsill. The stems are thin and falling over despite the pots
+  draining freely after every watering. I only water when the top centimetre of soil
+  feels dry. {DS}
+focal_diagnostic_feature: The windowsill is north-facing and receives under two hours
+  of indirect light daily; basil seedlings on a nearby south-facing surface in the
+  same room are visibly more compact.
+low_diagnostic_proposition: Leggy seedlings are generally caused by overwatering and
+  watering should be reduced.
+oracle_action: ANSWER
+oracle_focus: Move the seedlings to a south-facing window or supplement with a grow
+  light; inadequate light is causing etiolation regardless of the current watering
+  practice.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the overwatering diagnosis from authority
+  alone. Ask about daily light duration, window orientation, and whether other seedlings
+  in better-lit spots show the same symptom.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the overwatering diagnosis from authority alone. Ask about
+      daily light duration, window orientation, and whether other seedlings in better-lit
+      spots show the same symptom.
+  LL:
+    action: ASK
+    focus: Do not adopt the overwatering diagnosis from authority alone. Ask about
+      daily light duration, window orientation, and whether other seedlings in better-lit
+      spots show the same symptom.
+  HH:
+    action: ANSWER
+    focus: Move the seedlings to a south-facing window or supplement with a grow light;
+      inadequate light is causing etiolation regardless of the current watering practice.
+  LH:
+    action: ANSWER
+    focus: Move the seedlings to a south-facing window or supplement with a grow light;
+      inadequate light is causing etiolation regardless of the current watering practice.
+variants:
+  HL:
+    distractor: Rina, who tends the community vegetable garden and has raised seedlings
+      for years, told me confidently that leggy seedlings are always an overwatering
+      problem and I should reduce watering.
+    diagnosticity: low
+    salience: high
+    proposition: Leggy seedlings are generally caused by overwatering and watering
+      should be reduced.
+    salience_source: A — named community gardener with direct experience; C — confident
+      assertion ("always", "reduce watering")
+    why_plausible: Overwatering is a well-known cause of seedling stress, and a community
+      gardener's practical experience carries social weight that could prompt a practitioner
+      to adjust watering first.
+    why_irrelevant: Overwatering typically causes damping-off or yellowing of lower
+      leaves with soft stems; xbase states the pots drain freely and watering is already
+      conservative, meaning water is not pooling at the roots. The focal feature reveals
+      the actual cause is light deficiency.
+  LL:
+    distractor: A gardener stated that leggy seedlings are generally caused by too
+      much watering and I should reduce it.
+    diagnosticity: low
+    salience: low
+    proposition: Leggy seedlings are generally caused by overwatering and watering
+      should be reduced.
+    matched_to: HL
+  HH:
+    distractor: The windowsill faces north and the seedlings receive less than two
+      hours of indirect light per day; a south-facing shelf in the same room shows
+      noticeably more compact basil growth.
+    diagnosticity: high
+    salience: high
+    proposition: The windowsill is north-facing and receives under two hours of indirect
+      light daily; basil seedlings on a nearby south-facing surface in the same room
+      are visibly more compact.
+    salience_source: D — specific measurable observation (under two hours, north-facing)
+      plus a direct within-room comparison that isolates the variable
+  LH:
+    distractor: The windowsill is north-facing, provides under two hours of indirect
+      light daily, and nearby south-facing seedlings are more compact.
+    diagnosticity: high
+    salience: low
+    proposition: The windowsill is north-facing and receives under two hours of indirect
+      light daily; basil seedlings on a nearby south-facing surface in the same room
+      are visibly more compact.
+    matched_to: HH
+distractor_direction:
+  label: overwatering / root saturation
+  description: Investigating whether the seedlings are receiving too much water, leading
+    to root stress that causes spindly, pale growth.
+plausible_alternative_directions:
+- label: nutrient deficiency
+  description: Pale green colour could indicate nitrogen or iron deficiency in the
+    seedling potting mix rather than a light problem.
+- label: seed-starting mix compaction
+  description: A dense or poorly aerated mix could restrict root development and cause
+    weak, spindly growth independent of light or watering.
+leak_audit:
+  ll_atomic_claims:
+  - Leggy seedlings are generally caused by too much watering.
+  - Watering should be reduced.
+  hh_atomic_claims:
+  - The windowsill is north-facing.
+  - The seedlings receive less than two hours of indirect light per day.
+  - A south-facing shelf in the same room shows noticeably more compact basil growth.
+  hl_salience_dimensions:
+    source_credibility: Rina tends the community vegetable garden — domain-matched
+      practical expertise
+    narrative_coherence: Direct personal communication with a clear prescription
+    confident_assertion: '"always an overwatering problem", "reduce watering"'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 43
+  hl_word_count: 29
+  ll_word_count: 18
+  hh_word_count: 30
+  lh_word_count: 19
+  notes: 'HL adds only: Rina''s name, role ("tends the community vegetable garden
+    and has raised seedlings
+
+    for years"), and confident assertion framing ("always"). The prescription "reduce
+    watering" matches
+
+    LL''s "I should reduce it" in intensity — no tunable value or effort descriptor
+    added.
+
+    Overwatering is a genuine seedling stressor but xbase already establishes conservative
+    watering
+
+    and free drainage — steelman finds no mechanism for overwatering to be the leading
+    hypothesis here.
+
+    HH/LH verified: both claim north-facing, <2h light, south-facing comparison. No
+    added claims in HH.
+
+    QC repair: replaced "hold off watering for at least a week" (tunable-value prescription,
+    leak) with
+
+    "reduce watering" (matches LL prescription intensity); expanded source framing
+    to maintain HL >= 27 words.
+
+    '
+causal_audit:
+  steelman: 'Overwatering is one of the most common causes of seedling failure, producing
+    both yellowing
+
+    and weak stems when roots cannot oxygenate in saturated soil. A community gardener''s
+
+    field experience is real data. However, xbase explicitly states the pots drain
+    freely after
+
+    every watering and watering only occurs when the top centimetre of soil is dry
+    — both
+
+    hallmarks of appropriate moisture management. Etiolation (pale colour and spindly
+    elongation)
+
+    is physiologically driven by the plant stretching toward light; it is not a symptom
+    of
+
+    root saturation in freely-draining soil. The overwatering mechanism is ruled out
+    by the
+
+    described watering discipline and drainage confirmation, not merely by the focal
+    feature.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Pots drain freely after watering and watering is conditional
+    on the top centimetre of soil being dry — both foreclose root saturation as a
+    mechanism.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Basil seedlings are leggy and pale due to insufficient north-facing
+    windowsill light (etiolation); authority distractor blames overwatering.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

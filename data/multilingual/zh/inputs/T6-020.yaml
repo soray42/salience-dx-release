@@ -1,0 +1,175 @@
+seed_id: T6-020
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: 过去一周，我们API的p99延迟每天都会出现几次严重的毛刺，我的第一反应是回滚最近一次部署。毛刺持续时间短但很严重，之后延迟会自行恢复正常。毛刺期间流量平稳，错误率也维持在低位。我们每天发布多次部署，但将毛刺时间与部署日志比对后发现，有几次毛刺发生在我们完全没有发布任何内容的时段，因此它们与任何部署都没有关联。{DS}
+focal_diagnostic_feature: 毛刺恰好在每个整点发生，与部署时间无关——包括完全没有部署的时段——且与一个每小时执行一次的物化视图刷新任务精确对齐，该任务会持有一把重锁并将数据库IOPS打满。
+low_diagnostic_proposition: Every latency regression the user has handled before was
+  caused by a bad deploy, so this one is probably a bad deploy too.
+oracle_action: ANSWER
+oracle_focus: Do not roll back; the spikes hit exactly on the hour independent of
+  deploys and match an hourly materialized-view refresh that locks and saturates DB
+  IOPS, so reschedule, incrementalise, or throttle that job.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a bad deploy from past regressions. Ask
+  whether the spikes line up with deploy times or instead recur on a fixed schedule
+  independent of deploys.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a bad deploy from past regressions. Ask whether the spikes
+      line up with deploy times or instead recur on a fixed schedule independent of
+      deploys.
+  LL:
+    action: ASK
+    focus: Do not assume a bad deploy from past regressions. Ask whether the spikes
+      line up with deploy times or instead recur on a fixed schedule independent of
+      deploys.
+  HH:
+    action: ANSWER
+    focus: Do not roll back; the spikes hit exactly on the hour independent of deploys
+      and match an hourly materialized-view refresh that locks and saturates DB IOPS,
+      so reschedule, incrementalise, or throttle that job.
+  LH:
+    action: ANSWER
+    focus: Do not roll back; the spikes hit exactly on the hour independent of deploys
+      and match an hourly materialized-view refresh that locks and saturates DB IOPS,
+      so reschedule, incrementalise, or throttle that job.
+variants:
+  HL:
+    distractor: 我被告警叫起来处理的每一次延迟回退，追根溯源都是一次糟糕的部署——一个写得很烂的查询、缺少索引、在错误时间发布的大迁移——所以p99一上涨，我的本能就是找到最近那次发布，直接回滚掉。
+    diagnosticity: low
+    salience: high
+    proposition: Every latency regression the user has handled before was caused by
+      a bad deploy, so this one is probably a bad deploy too.
+    salience_source: B/C — a vivid personal history of regressions-as-bad-deploys
+      plus the confident first instinct to roll back the latest release.
+    why_plausible: Bad deploys are a leading cause of latency regressions and a frequent-deploy
+      team makes them statistically likely, so rollback is the reflexive move.
+    why_irrelevant: The spikes recur exactly on the hour including in hours with zero
+      deploys, so they cannot be deploy-caused; rolling back would not touch a scheduled
+      job.
+  LL:
+    distractor: 用户之前处理过的每一次延迟回退都是由一次糟糕的部署引起的，所以这次也很可能是糟糕的部署导致的。
+    diagnosticity: low
+    salience: low
+    proposition: Every latency regression the user has handled before was caused by
+      a bad deploy, so this one is probably a bad deploy too.
+    matched_to: HL
+  HH:
+    distractor: 把毛刺时间叠加到时钟上一看，它们恰好落在每个整点——包括我们完全没有发布任何内容的时段——而且精确到分钟地与一个每小时执行的物化视图刷新任务对齐，该任务在运行期间会持有一把重锁，并把数据库IOPS打满至上限。
+    diagnosticity: high
+    salience: high
+    proposition: The spikes occur at exactly the top of every hour regardless of deploy
+      timing — including hours with no deploy at all — and align precisely with an
+      hourly materialized-view refresh that takes a heavy lock and saturates database
+      IOPS.
+    salience_source: Overlaying spikes on the clock and matching them to the hourly
+      refresh's lock and IOPS saturation makes the scheduled-contention cause concrete.
+  LH:
+    distractor: 毛刺发生的时间恰好在每个整点，包括没有任何部署的时段，与一个每小时执行一次的物化视图刷新任务精确对齐——该任务会持有一把重锁并将数据库IOPS打满。
+    diagnosticity: high
+    salience: low
+    proposition: The spikes occur at exactly the top of every hour regardless of deploy
+      timing — including hours with no deploy at all — and align precisely with an
+      hourly materialized-view refresh that takes a heavy lock and saturates database
+      IOPS.
+    matched_to: HH
+distractor_direction:
+  label: 最近部署存在问题
+  description: 基于最近的发布导致延迟回退的假设，回滚最新的部署。
+plausible_alternative_directions:
+- label: 垃圾回收暂停
+  description: 运行时周期性的GC暂停是否会产生短暂的严重延迟毛刺。
+- label: 嘈杂邻居基础设施
+  description: 共租户或宿主机层面的事件是否在间歇性地抢占资源。
+leak_audit:
+  ll_atomic_claims:
+  - Every latency regression the user handled before was caused by a bad deploy.
+  - Therefore this regression is probably a bad deploy too.
+  hh_atomic_claims:
+  - The spikes land at exactly the top of every hour, including hours with no deploy.
+  - They line up to the minute with an hourly materialized-view refresh.
+  - That refresh takes a heavy lock and pins database IOPS at its ceiling while it
+    runs.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent personal history of paged regressions tracing to
+      bad deploys.
+    confident_assertion: Instinct on seeing the climb is to roll the latest release
+      'straight back'.
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 87
+  hl_word_count: 48
+  ll_word_count: 22
+  hh_word_count: 50
+  lh_word_count: 25
+  notes: 'T6: the availability inference "this one is probably a bad deploy too" is
+    in HL and flat in LL. xbase says deploys
+
+    are frequent, the spikes are brief/severe and self-resolving, traffic is flat,
+    and errors stay low — symptoms
+
+    only. Repair round 1 adds a C4 pathway-closure to xbase: some spikes landed in
+    deploy-free hours, so they are not
+
+    tied to any deploy. This forecloses the rollback mechanism without naming a cause
+    — xbase still does NOT reveal the
+
+    on-the-hour regularity or the materialized-view contention, so the decisive evidence
+    (exactly-top-of-hour cadence +
+
+    scheduled refresh lock/IOPS saturation) lives only in HH/LH and the answer is
+    not computable from xbase alone.
+
+    '
+causal_audit:
+  steelman: 'An on-call engineer could argue a high-velocity team shipping many deploys
+    daily makes a bad release the single
+
+    most likely cause of a new latency regression, that brief self-resolving spikes
+    can come from a slow query under
+
+    bursty load introduced by a deploy, and that rollback is the fastest mitigation
+    — a defensible default.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase forecloses the rollback pathway directly: several
+    spikes landed in hours with zero deploys, so they are not tied to any release
+    — the deploy hypothesis is dead from xbase alone, with no affirmative cause named.
+    The decisive cause (exactly-top-of-hour cadence + hourly materialized-view refresh
+    locking and saturating IOPS) is withheld to HH/LH, so xbase still cannot compute
+    the answer.'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Hourly API latency spikes caused by an on-the-hour materialized-view
+    refresh locking and saturating DB IOPS, not the recent deploy the user's past
+    regressions bias them to roll back.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-020.yaml
+  source_xbase_sha256: 2f1bd837deb74bd2
+  translated_content_sha256: 2ac5cea0dc7185e8
+  translation_notes: 'Technical terms kept as-is: p99, IOPS, 物化视图 (materialized view
+    — standard Chinese tech term). HL salience: vivid personal history of regressions
+    traced to bad deploys (''写得很烂的查询、缺少索引、在错误时间发布的大迁移'') and first-instinct rollback
+    framing. LL is flat and source-less. HH concretely traces the cause to the hourly
+    refresh with lock and IOPS saturation. LH carries the same claims in flat prose.
+    No focal content in HL/LL.'

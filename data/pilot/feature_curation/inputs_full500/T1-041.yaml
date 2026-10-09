@@ -1,0 +1,174 @@
+seed_id: T1-041
+template: T1
+domain: open_qa
+complexity: low
+xbase: I'm choosing between two pairs of wireless earbuds at the same shop, and they
+  cost almost the same. I'd use them mostly for calls during my commute and for music
+  at my desk. I keep my phone for years, so I want the pair that will keep working
+  well with it and last. Both look fine and feel comfortable in my ears. {DS}
+focal_diagnostic_feature: Only Pair A supports Bluetooth multipoint and the aptX codec
+  that the user's phone actually uses, and it carries a two-year warranty versus Pair
+  B's six months.
+low_diagnostic_proposition: A friend's pair of earbuds from this category failed when
+  the battery stopped holding a charge.
+oracle_action: ANSWER
+oracle_focus: Choose Pair A unless an undisclosed need favours B; it has multipoint,
+  the codec the user's phone supports, and a far longer warranty, which directly serve
+  the calls-plus-desk use and the goal of lasting with the existing phone.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one friend's battery failure decide the purchase.
+  Ask about codec and multipoint support for the user's phone, warranty length, and
+  call quality before choosing between the pairs.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one friend's battery failure decide the purchase. Ask about
+      codec and multipoint support for the user's phone, warranty length, and call
+      quality before choosing between the pairs.
+  LL:
+    action: ASK
+    focus: Do not let one friend's battery failure decide the purchase. Ask about
+      codec and multipoint support for the user's phone, warranty length, and call
+      quality before choosing between the pairs.
+  HH:
+    action: ANSWER
+    focus: Choose Pair A unless an undisclosed need favours B; it has multipoint,
+      the codec the user's phone supports, and a far longer warranty, which directly
+      serve the calls-plus-desk use and the goal of lasting with the existing phone.
+  LH:
+    action: ANSWER
+    focus: Choose Pair A unless an undisclosed need favours B; it has multipoint,
+      the codec the user's phone supports, and a far longer warranty, which directly
+      serve the calls-plus-desk use and the goal of lasting with the existing phone.
+variants:
+  HL:
+    distractor: Linh, who buys a lot of audio gear, told me her last pair of earbuds
+      in this bracket just died one day when the battery stopped holding any charge,
+      and she swears that is how cheap earbuds always go in the end.
+    diagnosticity: low
+    salience: high
+    proposition: A friend's pair of earbuds from this category failed when the battery
+      stopped holding a charge.
+    salience_source: A/C — a named audio-savvy friend stating her firsthand failure
+      confidently as a general rule.
+    why_plausible: Battery death is a real, common earbud failure mode, and a confident
+      firsthand account feels like useful buying guidance.
+    why_irrelevant: Her pair was a different model and says nothing about which of
+      THESE two pairs fits the user's phone or lasts; the deciding facts are codec,
+      multipoint, and warranty, which her anecdote does not touch.
+  LL:
+    distractor: A friend's earbuds in this category stopped working when the battery
+      no longer held a charge.
+    diagnosticity: low
+    salience: low
+    proposition: A friend's pair of earbuds from this category failed when the battery
+      stopped holding a charge.
+    matched_to: HL
+  HH:
+    distractor: Reading the boxes, only Pair A does Bluetooth multipoint and the aptX
+      codec my phone actually uses, so calls and music switch cleanly between phone
+      and laptop; Pair B is SBC-only single-device, and Pair A's warranty is two years
+      against B's six months.
+    diagnosticity: high
+    salience: high
+    proposition: Only Pair A supports Bluetooth multipoint and the aptX codec that
+      the user's phone actually uses, and it carries a two-year warranty versus Pair
+      B's six months.
+    salience_source: Concrete spec comparison (multipoint, aptX, warranty months)
+      tied directly to the user's phone and dual-use pattern.
+  LH:
+    distractor: Pair A supports multipoint and the user's phone's aptX codec and has
+      a two-year warranty; Pair B is SBC single-device with six months.
+    diagnosticity: high
+    salience: low
+    proposition: Only Pair A supports Bluetooth multipoint and the aptX codec that
+      the user's phone actually uses, and it carries a two-year warranty versus Pair
+      B's six months.
+    matched_to: HH
+distractor_direction:
+  label: Battery-failure precedent
+  description: Treating a friend's earbud battery dying as evidence that should drive
+    which of the two pairs to buy.
+plausible_alternative_directions:
+- label: Active noise cancellation
+  description: Whether one pair significantly reduces commute noise for clearer calls
+  which xbase does not address.: null
+- label: Call microphone quality
+  description: Whether one pair has clearly better noise-handling mics for the commute
+    calls the user cares about.
+- label: Charging-case convenience
+  description: Whether case size
+  charge speed: null
+  or wireless charging meaningfully separates the two pairs.: null
+leak_audit:
+  ll_atomic_claims:
+  - A friend had earbuds in this category.
+  - Those earbuds failed when the battery stopped holding a charge.
+  hh_atomic_claims:
+  - Only Pair A supports Bluetooth multipoint.
+  - Only Pair A supports the aptX codec the user's phone uses; Pair B is SBC single-device.
+  - Pair A's warranty is two years; Pair B's is six months.
+  hl_salience_dimensions:
+    source_credibility: Named friend (Linh) who buys a lot of audio gear, recounting
+      her own pair's failure.
+    narrative_coherence: Clean firsthand account of how her pair died.
+    confident_assertion: She swears that is how cheap earbuds always end.
+    concrete_detail: Detail about her experience (battery stopped holding charge)
+      — about her pair, not these two.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 44
+  ll_word_count: 15
+  hh_word_count: 46
+  lh_word_count: 22
+  notes: 'xbase keeps only the user''s use-case and goal; the deciding specs (multipoint,
+    aptX, warranty months) live
+
+    only in HH/LH. The friend''s failure is a generic precedent about a different
+    model and cannot rank either
+
+    pair for this buyer.
+
+    QC repair: replaced plausible_alternative_directions[0] from "Comfort and fit"
+    (foreclosed by xbase clause
+
+    "Both look fine and feel comfortable in my ears") to "Active noise cancellation"
+    (genuinely open from xbase
+
+    alone — xbase names commute calls but says nothing about ANC or passive-isolation
+    specs of either pair).
+
+    '
+causal_audit:
+  steelman: 'A senior buyer might argue battery longevity is the dominant failure
+    mode for earbuds, so a friend''s battery
+
+    death is a real reliability signal worth weighting. But it concerns a different
+    model and brand; it gives no
+
+    information about which of these two specific pairs has better cells or fits the
+    user''s phone, and the user''s
+
+    actual deciding needs (codec, multipoint, warranty) are spec facts the anecdote
+    cannot speak to.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the anecdote concerns a different unnamed model,
+    so it never attaches to either candidate pair.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Choosing between two wireless earbuds where codec/multipoint phone
+    compatibility and warranty length decide it, against a friend's battery-death
+    anecdote about a different model.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

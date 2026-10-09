@@ -1,0 +1,166 @@
+seed_id: T2-098
+template: T2
+domain: open_qa
+complexity: medium
+xbase: My fountain pen, which I use for journaling every evening, has started skipping
+  and drying out mid-line. The ink flow stutters, lines come out pale and broken,
+  and sometimes it stops writing entirely until I scribble to coax it back. It is
+  a pen I have used reliably for two years, the nib looks undamaged, and I clean it
+  regularly. The paper is the same notebook I always use. {DS}
+focal_diagnostic_feature: The pen was recently filled with a thick, pigment-heavy
+  ink known to clog feeds and starve nib flow.
+low_diagnostic_proposition: The skipping began around the time the desk lamp was replaced.
+oracle_action: ANSWER
+oracle_focus: Treat this as an ink-flow problem from the new pigment-heavy ink; flush
+  the pen thoroughly and switch to a free-flowing, well-behaved ink, since a thick
+  clog-prone ink starves the feed and produces exactly this skipping.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a desk-lamp change to ink flow; it has
+  no mechanism. Ask what ink is currently loaded and whether it was recently changed
+  before diagnosing the pen.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a desk-lamp change to ink flow; it has no mechanism. Ask
+      what ink is currently loaded and whether it was recently changed before diagnosing
+      the pen.
+  LL:
+    action: ASK
+    focus: Do not connect a desk-lamp change to ink flow; it has no mechanism. Ask
+      what ink is currently loaded and whether it was recently changed before diagnosing
+      the pen.
+  HH:
+    action: ANSWER
+    focus: Treat this as an ink-flow problem from the new pigment-heavy ink; flush
+      the pen thoroughly and switch to a free-flowing, well-behaved ink, since a thick
+      clog-prone ink starves the feed and produces exactly this skipping.
+  LH:
+    action: ANSWER
+    focus: Treat this as an ink-flow problem from the new pigment-heavy ink; flush
+      the pen thoroughly and switch to a free-flowing, well-behaved ink, since a thick
+      clog-prone ink starves the feed and produces exactly this skipping.
+variants:
+  HL:
+    distractor: I keep coming back to the fact that the skipping started the same
+      week I replaced my old desk lamp with a bright new LED one.
+    diagnosticity: low
+    salience: high
+    proposition: The skipping began around the time the desk lamp was replaced.
+    salience_source: B/C — vivid first-person account fixing onset to the lamp swap
+      with confident assertion.
+    why_plausible: A recent, noticeable change to the writing setup coinciding with
+      onset invites treating the lamp as the trigger.
+    why_irrelevant: A desk lamp only illuminates the page; its light has no contact
+      with the pen's ink, feed, or nib and cannot affect flow.
+  LL:
+    distractor: The pen skipping began around the time the desk lamp was replaced
+      with a new one.
+    diagnosticity: low
+    salience: low
+    proposition: The skipping began around the time the desk lamp was replaced.
+    matched_to: HL
+  HH:
+    distractor: I recently filled it with a heavily saturated, pigment-heavy ink I
+      had not used before, and that ink is widely reported to be thick and prone to
+      clogging the feed and starving the nib on flow.
+    diagnosticity: high
+    salience: high
+    proposition: The pen was recently filled with a thick, pigment-heavy ink known
+      to clog feeds and starve nib flow.
+    salience_source: Concrete change to the ink (new pigment-heavy fill, known clog-prone)
+      directly explains the starved, skipping flow.
+  LH:
+    distractor: The pen was recently filled with a thick, pigment-heavy ink I had
+      not used before, known to clog feeds and starve nib flow.
+    diagnosticity: high
+    salience: low
+    proposition: The pen was recently filled with a thick, pigment-heavy ink known
+      to clog feeds and starve nib flow.
+    matched_to: HH
+distractor_direction:
+  label: Desk-lamp change
+  description: Treating the desk-lamp replacement as the trigger for the skipping
+    because the problem began around then.
+plausible_alternative_directions:
+- label: Dried or partial clog
+  description: Whether residue from prior ink has dried in the feed and needs a deep
+    clean independent of the new ink.
+- label: Nib or feed seating
+  description: Whether the nib and feed have shifted out of alignment
+  reducing flow.: null
+leak_audit:
+  ll_atomic_claims:
+  - The pen skipping began.
+  - It began around the time the desk lamp was replaced.
+  hh_atomic_claims:
+  - The pen was recently filled with a thick, pigment-heavy ink.
+  - The ink had not been used before (novel to the user).
+  - That ink is known to clog feeds and starve nib flow.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-week lamp-swap-then-skipping chronology.
+    confident_assertion: I keep coming back to the fact that the skipping started
+      the same week...
+    concrete_detail: Detail about the lamp (LED type) only; no claim about the ink.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 69
+  hl_word_count: 28
+  ll_word_count: 16
+  hh_word_count: 36
+  lh_word_count: 23
+  notes: 'LL carries only the started-around-lamp-replacement claim; the LED detail
+    is HL-only colour about the lamp.
+
+    Sensory-distractor phrase ''throws a much cooler, whiter light across the page''
+    removed from HL per C6 (forbidden
+
+    sensory_distractor_about_setting). LH updated to include ''I had not used before''
+    to match HH''s novelty claim
+
+    per C10. xbase reports symptoms (skipping, pale broken lines, undamaged nib, regular
+    cleaning, same paper) and
+
+    withholds the ink change, so HL/LL cannot reject the coincidence. The decisive
+    new-pigment-heavy-ink fact lives
+
+    only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One might argue a hotter old lamp could have kept the ink warmer and
+    thinner, so swapping to a cooler LED could
+
+    chill the ink and reduce flow. But the stated event is only that the lamp was
+    replaced, and a desk lamp warms
+
+    nothing it does not touch; ambient evening room temperature is unchanged by swapping
+    a bulb''s colour
+
+    temperature, and lamp light cannot reach inside a capped feed to alter ink viscosity.
+    There is no constructible
+
+    mechanism from a lamp change to nib flow, and the focal evidence shows a newly
+    loaded thick, clog-prone ink that
+
+    directly starves the feed.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the coincidence has no mechanism; xbase withholds
+    the ink change so the cause lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A fountain pen skipping and drying mid-line, where a newly loaded thick
+    pigment-heavy ink that clogs the feed, not a coincident desk-lamp change, is the
+    cause.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

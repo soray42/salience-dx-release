@@ -1,0 +1,9 @@
+{
+  "seed_id": "T1-013",
+  "steelman": "A relay or zone valve actuator can fail intermittently in a thermally-dependent manner: cold-soaked overnight, it may not respond when the thermostat fires the scheduled 6:30 AM signal, yet recover enough to respond when manually triggered later in the morning after the boiler room has warmed slightly. This 'cold-start relay failure' is a documented HVAC fault mode. A seasoned technician who had not yet observed the clock-offset evidence might include 'intermittent relay with thermal hysteresis' on an early differential diagnosis list, especially given the consistent morning-only pattern. The acquaintance anecdote, attributed to an HVAC engineer, lends surface plausibility to this hardware-fault framing.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Intermittent cold-start relay failure: relay stuck open when cold-soaked overnight, recovers when ambient temperature rises during daytime manual tests. Possible in principle but foreclosed by the xbase's manual-operation evidence.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase explicitly states that manual call-for-heat fires the boiler 'within thirty seconds, no problem.' Because both scheduled and manual heat calls route through the same 24V relay signal and the same downstream hardware, a working manual response is a direct, well-established diagnostic test that rules out relay and all downstream HVAC hardware faults. A competent practitioner would recognise this closure immediately. The intermittent cold-start mechanism only survives if manual tests were also performed exclusively in cold conditions, which the xbase does not suggest — the user tests manually in the morning, the same thermal environment. Seed passes this lens. No repair needed."
+}

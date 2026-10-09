@@ -1,0 +1,165 @@
+seed_id: T6-091
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I noticed discoloration on the bedroom ceiling a few months ago and assumed
+  it would sort itself out. The staining has since spread, and there is now visible
+  damp in one corner. I want to file a home contents insurance claim for the damaged
+  mattress and flooring. {DS}
+focal_diagnostic_feature: The policy explicitly excludes damage caused by gradual
+  or repeated water ingress, and the slow ceiling leak that developed over several
+  months falls squarely within that exclusion, so the claim will be rejected.
+low_diagnostic_proposition: Past home insurance claims were all settled successfully,
+  so this one will be approved too.
+oracle_action: ANSWER
+oracle_focus: Do not file the contents claim; the gradual-water-ingress exclusion
+  will defeat it. Instead address the source of the leak and consult the insurer about
+  what repair-related coverage, if any, applies.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume approval based on past claim history. Ask
+  for the policy's exclusions section, particularly gradual-damage and water-ingress
+  clauses, before advising on the claim.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume approval based on past claim history. Ask for the policy's
+      exclusions section, particularly gradual-damage and water-ingress clauses, before
+      advising on the claim.
+  LL:
+    action: ASK
+    focus: Do not assume approval based on past claim history. Ask for the policy's
+      exclusions section, particularly gradual-damage and water-ingress clauses, before
+      advising on the claim.
+  HH:
+    action: ANSWER
+    focus: Do not file the contents claim; the gradual-water-ingress exclusion will
+      defeat it. Instead address the source of the leak and consult the insurer about
+      what repair-related coverage, if any, applies.
+  LH:
+    action: ANSWER
+    focus: Do not file the contents claim; the gradual-water-ingress exclusion will
+      defeat it. Instead address the source of the leak and consult the insurer about
+      what repair-related coverage, if any, applies.
+variants:
+  HL:
+    distractor: Every home insurance claim I have ever made — the storm-damage gutters,
+      the burst pipe in the kitchen — was paid without a fight, so I feel confident
+      this one will go through the same way.
+    diagnosticity: low
+    salience: high
+    proposition: Past home insurance claims were all settled successfully, so this
+      one will be approved too.
+    salience_source: Dimension B (narrative coherence) — specific named past incidents
+      (storm-damage gutters, burst pipe) give the pattern vivid credibility; dimension
+      C (confident assertion) — 'feel confident this one will go through the same
+      way'.
+    why_plausible: A reader may accept that a good claims track record with the same
+      insurer signals a cooperative relationship and comparable outcomes; past approvals
+      are often treated as reliable predictors.
+    why_irrelevant: The past claims were sudden damage events; the present claim involves
+      gradual ingress over months, which most home policies explicitly exclude — a
+      structural distinction the approval history cannot bridge.
+  LL:
+    distractor: My past home insurance claims were all settled successfully, so I
+      expect this one will be approved too.
+    diagnosticity: low
+    salience: low
+    proposition: Past home insurance claims were all settled successfully, so this
+      one will be approved too.
+    matched_to: HL
+  HH:
+    distractor: The policy document's exclusions section explicitly rules out damage
+      from gradual or repeated water ingress, and the ceiling stain appeared and spread
+      over several months — fitting that exclusion precisely.
+    diagnosticity: high
+    salience: high
+    proposition: The policy explicitly excludes damage caused by gradual or repeated
+      water ingress, and the slow ceiling leak that developed over several months
+      falls squarely within that exclusion, so the claim will be rejected.
+    salience_source: Dimension B (narrative coherence) — traces from policy text to
+      case facts in a tight causal chain; dimension C (confident assertion) — 'fitting
+      that exclusion precisely' leaves no ambiguity.
+  LH:
+    distractor: The policy excludes gradual or repeated water ingress, and the slow
+      leak developed over several months.
+    diagnosticity: high
+    salience: low
+    proposition: The policy explicitly excludes damage caused by gradual or repeated
+      water ingress, and the slow ceiling leak that developed over several months
+      falls squarely within that exclusion, so the claim will be rejected.
+    matched_to: HH
+distractor_direction:
+  label: past-claim approval pattern
+  description: Treating the user's track record of successful insurance claims as
+    a reliable predictor that the current claim will also be approved.
+plausible_alternative_directions:
+- label: insufficient evidence of loss
+  description: The insurer may dispute the cause or extent of damage to the mattress
+    and flooring without an independent assessor's report.
+- label: failure to mitigate
+  description: The insurer may reduce or reject the claim on the grounds that the
+    user failed to act promptly when the ceiling staining first appeared.
+leak_audit:
+  ll_atomic_claims:
+  - Past home insurance claims were all settled successfully.
+  - Therefore this claim will be approved.
+  hh_atomic_claims:
+  - The policy's exclusions section rules out damage from gradual or repeated water
+    ingress.
+  - The ceiling stain appeared and spread over several months.
+  - The claim fits that exclusion precisely.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker
+    narrative_coherence: Named prior incidents (storm-damage gutters, burst pipe)
+      ground the pattern in specific memorable events.
+    confident_assertion: '''feel confident this one will go through the same way''
+      — direct prediction with no hedging.'
+    concrete_detail: N/A — detail is about the source (past incidents), which is propositional
+      content for T6.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 47
+  hl_word_count: 36
+  ll_word_count: 18
+  hh_word_count: 30
+  lh_word_count: 16
+  notes: 'T6: availability inference (''so this one will go through the same way'')
+    appears in both HL and LL as required by C1/T6 rule.
+
+    HL names specific prior incidents (storm-damage gutters, burst pipe) as source
+    detail only — these are about the speaker''s past, not about the current case.
+
+    The critical structural distinction (sudden damage vs gradual ingress) lives only
+    in HH/LH; xbase does not disclose the policy exclusion.
+
+    C4 verified: xbase names no exclusion clause and gives no policy terms; expert
+    cannot compute claim outcome from xbase alone.
+
+    '
+causal_audit:
+  steelman: 'A senior insurance broker might argue: insurers who have paid multiple
+    prior claims to the same customer have demonstrated good faith and may exercise
+    underwriting discretion favourably; some insurers also have broad ''escape of
+    water'' cover that can include gradual ingress under certain interpretations.
+    Past smooth experiences are weak positive evidence of a customer-friendly policy.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the gradual-ingress exclusion is not disclosed in
+    xbase; the steelman shows that prior claims may have been different claim types
+    (sudden events vs gradual), and the structural distinction is exposed only by
+    the focal feature.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Home contents insurance claim for damp damage will be rejected under
+    the policy's gradual-water-ingress exclusion; distractor is past smooth claim
+    approvals creating availability bias.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

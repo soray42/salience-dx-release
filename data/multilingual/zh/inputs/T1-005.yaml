@@ -1,0 +1,94 @@
+seed_id: T1-005
+template: T1
+domain: open_qa
+complexity: medium
+xbase: 我收到了一份新职位的 offer。底薪明显高于我目前的薪资，公司有公开的财务数据，其主要产品线看起来稳定。我喜欢现在的团队，但我不确定留下来是否有助于我的长期发展。{DS}
+focal_diagnostic_feature: 当前职位尽管绩效评估优秀，却没有明确的晋升路径，而新职位有书面的晋升阶梯。
+low_diagnostic_proposition: A comparable job move by an acquaintance ended badly because
+  of team culture.
+oracle_action: ANSWER
+oracle_focus: On the stated facts, the move is favourable, while still leaving room
+  to verify team culture before accepting.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one external culture story override the offer
+  facts. Ask about this specific manager, team norms, and promotion criteria.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one external culture story override the offer facts. Ask about
+      this specific manager, team norms, and promotion criteria.
+  LL:
+    action: ASK
+    focus: Do not let one external culture story override the offer facts. Ask about
+      this specific manager, team norms, and promotion criteria.
+  HH:
+    action: ANSWER
+    focus: On the stated facts, the move is favourable, while still leaving room to
+      verify team culture before accepting.
+  LH:
+    action: ANSWER
+    focus: On the stated facts, the move is favourable, while still leaving room to
+      verify team culture before accepting.
+variants:
+  HL:
+    distractor: Daniel 去年为了更高的薪资跳槽了，第二个月就受不了那个团队，在煎熬了七个月后辞职了。
+    diagnosticity: low
+    salience: high
+    proposition: A comparable job move by an acquaintance ended badly because of team
+      culture.
+    salience_source: named person, concrete timeline, bad outcome narrative
+    why_plausible: A cautionary story makes any job move feel risky.
+    why_irrelevant: The anecdote concerns another team and cannot substitute for evidence
+      about this offer's manager, role, or progression structure.
+  LL:
+    distractor: 一位熟人接受了类似的高薪跳槽，后来反映团队融入度很差。
+    diagnosticity: low
+    salience: low
+    proposition: A comparable job move by an acquaintance ended badly because of team
+      culture.
+    matched_to: HL
+  HH:
+    distractor: 我连续三年绩效优秀，职级却没有变化，也没有晋升路径；新职位有一套写明具体标准的晋升阶梯。
+    diagnosticity: high
+    salience: high
+    proposition: The current role has no defined promotion path despite strong reviews,
+      while the new role has a written promotion ladder.
+    salience_source: career-progression contrast
+  LH:
+    distractor: 当前职位尽管绩效评估优秀，却没有明确的晋升通道，而这份 offer 包含有文字记录的晋升标准。
+    diagnosticity: high
+    salience: low
+    proposition: The current role has no defined promotion path despite strong reviews,
+      while the new role has a written promotion ladder.
+    matched_to: HH
+distractor_direction:
+  label: 团队融入度差
+  description: 排查新职位尽管薪资更高，是否可能存在文化、管理风格或团队融入方面的问题。
+plausible_alternative_directions:
+- label: 公司财务稳定性
+  description: 潜在雇主的财务状况是否足以长期支撑该职位。
+- label: 现团队的留任价值
+  description: 留在现团队是否能获得导师指导、晋升支持或内部转岗机会。
+- label: 职责范围不匹配
+  description: 新职位的头衔与实际职责是否与用户的职业发展方向不符。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-005.yaml
+  source_xbase_sha256: 838093596c7d4e4d
+  translated_content_sha256: 947823187f20ea2f
+  translation_notes: Named person Daniel retained for HL salience. '七个月' for 'seven
+    months', '煎熬' conveys the 'miserable' quality. 'Offer' kept as-is (standard in
+    Chinese professional context). '绩效评估优秀' for 'strong reviews'. '晋升阶梯' for 'promotion
+    ladder', '晋升通道/路径' for 'promotion path' — consistent throughout.

@@ -1,0 +1,173 @@
+seed_id: T3-052
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: 'Our Elasticsearch cluster has gone yellow: several primary shards are unassigned.
+  The cluster had been healthy for several months before this. We recently added a
+  third data node to expand capacity, but the reassignment has stalled and the new
+  shards are sitting in INITIALIZING state indefinitely. The cluster log shows repeated
+  allocation-decision warnings on the unassigned shards. {DS}'
+focal_diagnostic_feature: The cluster-info API shows all three data nodes have disk
+  usage above 88%, exceeding Elasticsearch's high-watermark threshold of 85%, which
+  causes the allocator to stop assigning new shards and prevents the initialising
+  shards from completing.
+low_diagnostic_proposition: An unassigned-shard situation like this is always caused
+  by a network partition between nodes, which the new node introduction likely triggered.
+oracle_action: ANSWER
+oracle_focus: Free disk space below the 85% high-watermark on all data nodes — delete
+  old indices, add storage, or raise the watermark setting — before the shard allocator
+  will complete the assignments.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the network-partition diagnosis from authority;
+  ask for node disk usage percentages, the configured watermark thresholds, and the
+  detailed allocation decision reason from the cluster explain API.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the network-partition diagnosis from authority; ask for node
+      disk usage percentages, the configured watermark thresholds, and the detailed
+      allocation decision reason from the cluster explain API.
+  LL:
+    action: ASK
+    focus: Do not accept the network-partition diagnosis from authority; ask for node
+      disk usage percentages, the configured watermark thresholds, and the detailed
+      allocation decision reason from the cluster explain API.
+  HH:
+    action: ANSWER
+    focus: Free disk space below the 85% high-watermark on all data nodes — delete
+      old indices, add storage, or raise the watermark setting — before the shard
+      allocator will complete the assignments.
+  LH:
+    action: ANSWER
+    focus: Free disk space below the 85% high-watermark on all data nodes — delete
+      old indices, add storage, or raise the watermark setting — before the shard
+      allocator will complete the assignments.
+variants:
+  HL:
+    distractor: Ondrej, our staff infrastructure engineer, looked at the cluster topology
+      and said this pattern is always a network partition — the new node introduction
+      breaks the gossip quorum and the allocator stalls because it cannot confirm
+      shard placement across what it thinks are two isolated segments.
+    diagnosticity: low
+    salience: high
+    proposition: An unassigned-shard situation like this is always caused by a network
+      partition between nodes, which the new node introduction likely triggered.
+    salience_source: 'A: named staff-level engineer (Ondrej); B: clear post-review
+      framing (looked at the cluster topology); C: confident assertion (always a network
+      partition).'
+    why_plausible: Adding a new node to a running cluster genuinely disrupts gossip
+      and can cause temporary quorum instability; an experienced infrastructure engineer
+      citing this as a known failure mode sounds authoritative.
+    why_irrelevant: A network partition would surface as cluster-state divergence
+      and node unreachability; the allocator's disk-watermark refusal produces a distinct
+      decision reason visible in the cluster explain API, and all three nodes are
+      reachable and joined.
+  LL:
+    distractor: A staff engineer said unassigned shards after adding a node are always
+      caused by a network partition breaking the gossip quorum.
+    diagnosticity: low
+    salience: low
+    proposition: An unassigned-shard situation like this is always caused by a network
+      partition between nodes, which the new node introduction likely triggered.
+    matched_to: HL
+  HH:
+    distractor: 'Running GET _cluster/allocation/explain shows the decision reason
+      as ''the node is above the high watermark cluster-level setting'' for every
+      unassigned shard. Checking disk usage via GET _cat/nodes: all three nodes are
+      between 88% and 91% full, which exceeds the default 85% high-watermark that
+      blocks further shard assignments.'
+    diagnosticity: high
+    salience: high
+    proposition: The cluster-info API shows all three data nodes have disk usage above
+      88%, exceeding Elasticsearch's high-watermark threshold of 85%, which causes
+      the allocator to stop assigning new shards and prevents the initialising shards
+      from completing.
+    salience_source: 'B: exact API endpoints named, precise percentages (88-91%, 85%
+      threshold) with causal explanation; C: the blocking mechanism is stated definitively.'
+  LH:
+    distractor: The allocation explain API shows disk-watermark refusal for every
+      shard; all three nodes are 88-91% full, above the 85% high-watermark that blocks
+      new assignments.
+    diagnosticity: high
+    salience: low
+    proposition: The cluster-info API shows all three data nodes have disk usage above
+      88%, exceeding Elasticsearch's high-watermark threshold of 85%, which causes
+      the allocator to stop assigning new shards and prevents the initialising shards
+      from completing.
+    matched_to: HH
+distractor_direction:
+  label: Network partition on node addition
+  description: Investigating whether adding the third data node triggered a network
+    partition or gossip quorum disruption that prevents shard allocation from completing.
+plausible_alternative_directions:
+- label: Shard replica count mismatch
+  description: The index replica count may exceed the number of eligible nodes after
+    the new node joins with different attributes, causing the allocator to refuse
+    placement.
+- label: Allocation filter misconfiguration
+  description: Index-level or cluster-level include/exclude allocation filters could
+    be blocking placement on certain nodes independently of disk or network state.
+- label: Recovery throttle saturation
+  description: The shard recovery rate limit may be saturated by concurrent initialisation,
+    stalling the remaining shards without producing a true allocation failure.
+leak_audit:
+  ll_atomic_claims:
+  - Unassigned shards after adding a node are caused by a network partition.
+  - The partition breaks gossip quorum.
+  - A staff engineer holds this view.
+  hh_atomic_claims:
+  - The allocation explain API shows 'node is above the high watermark' as the decision
+    reason for every unassigned shard.
+  - All three nodes are between 88% and 91% disk usage.
+  - The default Elasticsearch high-watermark threshold is 85%.
+  - Being above the high-watermark blocks further shard assignments.
+  hl_salience_dimensions:
+    source_credibility: Named staff infrastructure engineer (Ondrej), professional
+      domain expertise.
+    narrative_coherence: Post-topology-review framing with mechanistic explanation
+      (gossip quorum, isolated segments).
+    confident_assertion: '''Always a network partition'' — universal unhedged assertion.'
+    concrete_detail: N/A — no case-content detail added beyond what xbase contains.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 70
+  hl_word_count: 44
+  ll_word_count: 18
+  hh_word_count: 46
+  lh_word_count: 21
+  notes: 'Root cause is disk-watermark shard allocation block — distinct from all
+    taken seeds. T3-007 was JWT clock skew; T3-003 was Redis hot-key TTL. This is
+    Elasticsearch disk watermark — unique. Ondrej is Czech/Polish, not in taken list.
+    xbase mentions allocation-decision warnings without naming the reason (that lives
+    in HH/LH). High complexity: requires knowing ES disk watermark mechanics and the
+    allocation explain API.
+
+    '
+causal_audit:
+  steelman: 'A staff infrastructure engineer could argue: when a new node joins a
+    cluster, it must negotiate cluster state updates via the gossip/zen discovery
+    protocol; if the new node''s IP or TLS certificate is not fully trusted by existing
+    nodes, the quorum can temporarily fragment. The INITIALIZING state that never
+    completes is a known symptom of partition-related allocation failures, where the
+    allocator keeps starting and aborting shard copies.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: The cluster log shows allocation-decision warnings rather
+    than node-unreachability or quorum-loss messages; a network partition produces
+    different log signatures (node_left, master_not_discovered) that are absent from
+    the described output.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Elasticsearch cluster yellow status with unassigned shards caused by
+    all data nodes exceeding the 85% disk high-watermark, against a staff engineer's
+    network-partition diagnosis.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

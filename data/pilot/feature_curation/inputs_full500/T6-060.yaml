@@ -1,0 +1,199 @@
+seed_id: T6-060
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our service A has been showing P99 latency around 900 ms on its primary endpoint,
+  up from its usual 120 ms, since we pushed a configuration change three days ago.
+  I started investigating but I am having difficulty pinpointing whether the regression
+  is genuine or a measurement artifact. The configuration change adjusted how trace
+  sampling is applied across several services. Other aggregate metrics have not flagged
+  anything obvious. {DS}
+focal_diagnostic_feature: Sampling is configured at 100% in the updated config, and
+  RED metrics from an independent instrumentation layer confirm the same elevated
+  P99; span data shows a downstream RPC to service B spiking to 800 ms on cold-start
+  requests.
+low_diagnostic_proposition: Past P99 spikes after sampling changes were sampling artifacts,
+  and that is probably what is happening here.
+oracle_action: ANSWER
+oracle_focus: Investigate service B's cold-start RPC latency; the 100% sampling rate
+  and independent RED metric confirmation rule out a sampling artifact, making the
+  800 ms cold-start spike in service B the real source of the P99 regression.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the past sampling-artifact explanation automatically.
+  Ask for the current sampling rate and whether independent non-tracing metrics confirm
+  the elevated latency before diagnosing the cause.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the past sampling-artifact explanation automatically. Ask
+      for the current sampling rate and whether independent non-tracing metrics confirm
+      the elevated latency before diagnosing the cause.
+  LL:
+    action: ASK
+    focus: Do not apply the past sampling-artifact explanation automatically. Ask
+      for the current sampling rate and whether independent non-tracing metrics confirm
+      the elevated latency before diagnosing the cause.
+  HH:
+    action: ANSWER
+    focus: Investigate service B's cold-start RPC latency; the 100% sampling rate
+      and independent RED metric confirmation rule out a sampling artifact, making
+      the 800 ms cold-start spike in service B the real source of the P99 regression.
+  LH:
+    action: ANSWER
+    focus: Investigate service B's cold-start RPC latency; the 100% sampling rate
+      and independent RED metric confirmation rule out a sampling artifact, making
+      the 800 ms cold-start spike in service B the real source of the P99 regression.
+variants:
+  HL:
+    distractor: Every time I have seen a sharp P99 spike right after a sampling config
+      change, the high P99 was a sampling artifact — only slow tail requests were
+      being traced, biasing the percentile pool — and that is exactly what I suspect
+      here.
+    diagnosticity: low
+    salience: high
+    proposition: Past P99 spikes after sampling changes were sampling artifacts, and
+      that is probably what is happening here.
+    salience_source: B — a vivid first-person pattern expressed with technical specificity
+      (biased percentile pool); C — "exactly what I suspect" frames it as a confident
+      first-instinct diagnosis.
+    why_plausible: Tail-biased sampling genuinely inflates P99 in distributed tracing,
+      and a practitioner who has seen this pattern after sampling changes has a legitimate
+      technical basis for the hypothesis.
+    why_irrelevant: Sampling is at 100% so all requests are traced, ruling out a biased
+      pool; independent RED metrics from a separate instrumentation layer independently
+      confirm the same elevated P99, making a sampling artifact structurally impossible
+      in this case.
+  LL:
+    distractor: Past P99 spikes after sampling changes were sampling artifacts, and
+      that is probably what is happening here.
+    diagnosticity: low
+    salience: low
+    proposition: Past P99 spikes after sampling changes were sampling artifacts, and
+      that is probably what is happening here.
+    matched_to: HL
+  HH:
+    distractor: Sampling is at 100% in the updated config — all requests are traced
+      — and RED metrics from an independent instrumentation layer confirm the same
+      900 ms P99; span data shows a downstream RPC to service B spiking to 800 ms
+      on cold-start requests.
+    diagnosticity: high
+    salience: high
+    proposition: Sampling is configured at 100% in the updated config, and RED metrics
+      from an independent instrumentation layer confirm the same elevated P99; span
+      data shows a downstream RPC to service B spiking to 800 ms on cold-start requests.
+    salience_source: The 100% sampling confirmation, the independent RED metric convergence,
+      and the 800 ms cold-start spike in span data together make the artifact hypothesis
+      structurally impossible and point to a concrete source.
+  LH:
+    distractor: Sampling is 100% and RED metrics confirm the 900 ms P99; service B
+      cold-start RPCs spike to 800 ms.
+    diagnosticity: high
+    salience: low
+    proposition: Sampling is configured at 100% in the updated config, and RED metrics
+      from an independent instrumentation layer confirm the same elevated P99; span
+      data shows a downstream RPC to service B spiking to 800 ms on cold-start requests.
+    matched_to: HH
+distractor_direction:
+  label: Sampling-artifact inflation
+  description: Investigating whether the updated sampling configuration is causing
+    a biased trace pool that inflates the observed P99 without reflecting real latency.
+plausible_alternative_directions:
+- label: Config change side effect on service A
+  description: Whether the sampling configuration change itself altered request routing
+    or middleware behaviour in service A, directly introducing latency.
+- label: Deployment concurrency issue
+  description: Whether service A or service B was partially deployed during the configuration
+    push, leaving some instances on the old version and causing inconsistent request
+    handling.
+- label: Clock skew across services
+  description: Whether a clock-skew difference between service A and service B is
+    causing span timestamps to misrepresent actual RPC duration in trace data.
+leak_audit:
+  ll_atomic_claims:
+  - Past P99 spikes after sampling changes were sampling artifacts.
+  - That is probably what is happening here.
+  hh_atomic_claims:
+  - Sampling is configured at 100% in the updated config.
+  - All requests are traced.
+  - RED metrics from an independent instrumentation layer confirm the same 900 ms
+    P99 for service A.
+  - Span data shows a downstream RPC to service B spiking to 800 ms on cold-start
+    requests.
+  hl_salience_dimensions:
+    source_credibility: N/A — T6 first-person availability heuristic.
+    narrative_coherence: A vivid first-person pattern described with technical mechanism
+      (biased percentile pool) presented as a tight causal account.
+    confident_assertion: '"Exactly what I suspect here" — confident first-instinct
+      framing of the availability inference applied to the current case.'
+    concrete_detail: N/A — detail concerns the user's own past, not the source.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 68
+  hl_word_count: 43
+  ll_word_count: 17
+  hh_word_count: 44
+  lh_word_count: 19
+  notes: 'T6 C1 check: the availability inference "so it''s probably the same thing
+
+    again" is propositional content and appears in both HL ("exactly what I
+
+    suspect here") and LL ("that is probably what is happening here"). HL adds
+
+    only technical vivacity (biased percentile pool mechanism) and confident
+
+    first-instinct framing — no case-specific facts about current sampling rate
+
+    or RED metrics. The 100% sampling rate, RED metric confirmation, and service
+
+    B cold-start spike live only in HH/LH. High complexity calibrated through
+
+    independent RED metrics and span-level cold-start attribution.
+
+    '
+causal_audit:
+  steelman: 'A practitioner who has seen P99 inflation from tail-biased sampling after
+
+    config changes is applying a genuinely valid technical pattern: if a sampling
+
+    configuration accidentally routes only high-latency requests to the trace
+
+    store, the computed P99 from those traces is inflated relative to true
+
+    service latency, and the inflation would appear right after a sampling
+
+    config change. This is a real and well-documented observability failure mode.
+
+    The seed is clean because the current configuration sets sampling to 100%,
+
+    meaning all requests are traced and no biased pool can exist. Additionally,
+
+    RED metrics from a separate instrumentation layer — independent of the trace
+
+    sampling path — confirm the same 900 ms P99, providing a second measurement
+
+    that a sampling artifact cannot affect. Both lines of evidence structurally
+
+    rule out an artifact for this case; the past cases were structurally
+
+    different in that they involved sampling rates that could produce a biased
+
+    pool.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — sampling rate, RED metrics, and service B span data
+    live only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Service A P99 latency regression caused by a real downstream cold-start
+    spike in service B, confirmed by 100% sampling and independent RED metrics, not
+    a sampling artifact as prior experience suggests.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

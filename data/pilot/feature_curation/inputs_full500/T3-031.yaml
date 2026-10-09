@@ -1,0 +1,169 @@
+seed_id: T3-031
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I have a firm offer for a remote-first product role. The compensation is a
+  clear step up and the work aligns closely with the direction I want my career to
+  go. I am weighing it against staying at my current job and asked a senior recruiter
+  I know well for a perspective on the opportunity. {DS}
+focal_diagnostic_feature: The current employer has no remote option, the partner cannot
+  relocate due to caregiving obligations, and the outside offer's remote-first format
+  is the only viable working arrangement for this candidate.
+low_diagnostic_proposition: Remote-only positions generally limit long-term career
+  advancement compared with in-office roles.
+oracle_action: ANSWER
+oracle_focus: 'Accept the offer: the candidate''s situation makes remote-first a structural
+  requirement, the current employer cannot accommodate it, relocation is not available,
+  and the role is a step up in pay and direction.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the generic remote-stagnation claim. Ask
+  about the candidate's specific flexibility needs, current employer options, and
+  relocation constraints before evaluating the remote format.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the generic remote-stagnation claim. Ask about the candidate's
+      specific flexibility needs, current employer options, and relocation constraints
+      before evaluating the remote format.
+  LL:
+    action: ASK
+    focus: Do not adopt the generic remote-stagnation claim. Ask about the candidate's
+      specific flexibility needs, current employer options, and relocation constraints
+      before evaluating the remote format.
+  HH:
+    action: ANSWER
+    focus: 'Accept the offer: the candidate''s situation makes remote-first a structural
+      requirement, the current employer cannot accommodate it, relocation is not available,
+      and the role is a step up in pay and direction.'
+  LH:
+    action: ANSWER
+    focus: 'Accept the offer: the candidate''s situation makes remote-first a structural
+      requirement, the current employer cannot accommodate it, relocation is not available,
+      and the role is a step up in pay and direction.'
+variants:
+  HL:
+    distractor: Obinna has placed hundreds of candidates over fifteen years and told
+      me flatly that remote-only positions consistently wall people off from sponsors
+      and informal advancement — he has watched the pattern play out the same way
+      across every industry he covers.
+    diagnosticity: low
+    salience: high
+    proposition: Remote-only positions generally limit long-term career advancement
+      compared with in-office roles.
+    salience_source: 'A: source credibility (fifteen years placing candidates, wide
+      industry exposure); C: confident assertion (''told me flatly'', ''consistently'').'
+    why_plausible: Experienced recruiter with broad pattern recognition; the sponsorship
+      and visibility argument for in-office work is real and well-documented in career
+      literature.
+    why_irrelevant: The authority pattern-matches on format without engaging the candidate's
+      specific constraints; the focal evidence shows relocation is impossible and
+      the current employer offers no remote option, making the in-office preference
+      structurally moot for this candidate.
+  LL:
+    distractor: A recruiter said remote-only roles generally limit career advancement
+      compared with in-office positions, based on industry patterns.
+    diagnosticity: low
+    salience: low
+    proposition: Remote-only positions generally limit long-term career advancement
+      compared with in-office roles.
+    matched_to: HL
+  HH:
+    distractor: My current employer has no remote option at all, and my partner cannot
+      relocate because of caregiving obligations that keep us in this city — so this
+      remote-first offer is the only format that actually works for my situation,
+      on top of better pay and career direction.
+    diagnosticity: high
+    salience: high
+    proposition: The current employer has no remote option, the partner cannot relocate
+      due to caregiving obligations, and the outside offer's remote-first format is
+      the only viable working arrangement for this candidate.
+    salience_source: 'B: personal constraint chain narrated vividly; C: decisive first-person
+      framing (''the only format that actually works'').'
+  LH:
+    distractor: The current employer has no remote option and relocation is unavailable;
+      remote-first is the only viable format for this candidate.
+    diagnosticity: high
+    salience: low
+    proposition: The current employer has no remote option, the partner cannot relocate
+      due to caregiving obligations, and the outside offer's remote-first format is
+      the only viable working arrangement for this candidate.
+    matched_to: HH
+distractor_direction:
+  label: remote-format career stagnation
+  description: Treating the remote-only format of the offer as a structural career
+    risk that should weigh against acceptance, based on general patterns the recruiter
+    has observed.
+plausible_alternative_directions:
+- label: new-company cultural fit
+  description: Investigating whether the hiring team's culture and management style
+    at the new employer are a good fit, independent of the remote format question.
+- label: compensation sustainability
+  description: Examining whether the compensation step-up reflects stable budget or
+    a temporary recruitment premium that may not persist.
+- label: role scope clarity
+  description: Clarifying whether the product role's responsibilities and growth path
+    are well-defined enough to make the career-direction alignment real.
+leak_audit:
+  ll_atomic_claims:
+  - A recruiter made the claim.
+  - The claim is that remote-only roles generally limit career advancement.
+  - The comparison is relative to in-office positions.
+  - The basis is industry patterns.
+  hh_atomic_claims:
+  - The current employer has no remote option.
+  - The partner cannot relocate due to caregiving obligations.
+  - This makes the candidate's city fixed.
+  - The remote-first offer is the only format that works for this situation.
+  - The offer also provides better pay and career direction.
+  hl_salience_dimensions:
+    source_credibility: 'A: Obinna, fifteen-plus years placing candidates across multiple
+      industries.'
+    narrative_coherence: 'B: clean professional-register report of a direct conversation.'
+    confident_assertion: 'C: ''told me flatly'', ''consistently wall people off''.'
+    concrete_detail: N/A — no case-specific facts added.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 55
+  hl_word_count: 41
+  ll_word_count: 17
+  hh_word_count: 47
+  lh_word_count: 20
+  notes: 'C4 repair: original xbase contained the employer-no-remote and partner-caregiving
+
+    facts, which violated C4. Revised xbase withholds those entirely — they now
+
+    live only in HH/LH. LL extended to 16 words (was 13, below minimum 14).
+
+    Ratios: HL:LL 43:16 = 2.7:1 OK. HH:LH 43:17 = 2.5:1 OK.
+
+    '
+causal_audit:
+  steelman: 'A senior recruiter with fifteen years of placement experience has genuine
+    empirical
+
+    basis: studies and practitioner accounts document that remote workers may be
+
+    passed over for informal sponsorship, stretch assignments, and promotion visibility.
+
+    A thoughtful reader could reasonably credit this concern as a meaningful input
+
+    to the decision without knowing the candidate''s personal constraints.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the structural impossibility of in-office alternatives
+    lives only in HH/LH, not in xbase.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Candidate holds a remote-first job offer; authority recruiter warns
+    against remote roles, but the candidate's partner caregiving obligations and current
+    employer's no-remote policy make in-office options structurally unavailable.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

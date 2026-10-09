@@ -1,0 +1,96 @@
+seed_id: T1-001
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our CI started failing on Tuesday. Unit tests, linting, and the build still
+  pass. The failures only show up when the integration stage tries to talk to the
+  staging Postgres replica; the error is just a 30-second connection timeout. We have
+  not changed the tests or the database schema recently. {DS}
+focal_diagnostic_feature: Connectivity from the CI runner to the Postgres port times
+  out before any database authentication or query runs.
+low_diagnostic_proposition: A comparable timeout at another company was attributed
+  to an ORM connection-pool setting.
+oracle_action: ASK
+oracle_focus: Treat this as a reachability problem between CI and the staging replica;
+  check DNS, firewall/security-group rules, routing, NAT/VPN, and DB port access from
+  the runner.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the outside ORM story. Ask for direct connectivity
+  checks from the CI runner to the replica before diagnosing application code.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the outside ORM story. Ask for direct connectivity checks
+      from the CI runner to the replica before diagnosing application code.
+  LL:
+    action: ASK
+    focus: Do not adopt the outside ORM story. Ask for direct connectivity checks
+      from the CI runner to the replica before diagnosing application code.
+  HH:
+    action: ASK
+    focus: Treat this as a reachability problem between CI and the staging replica;
+      check DNS, firewall/security-group rules, routing, NAT/VPN, and DB port access
+      from the runner.
+  LH:
+    action: ASK
+    focus: Treat this as a reachability problem between CI and the staging replica;
+      check DNS, firewall/security-group rules, routing, NAT/VPN, and DB port access
+      from the runner.
+variants:
+  HL:
+    distractor: Marco at a different fintech swore their CI had the same timeout last
+      month; after two days they found one ORM pool setting stuck at exactly 1 connection.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable timeout at another company was attributed to an ORM
+      connection-pool setting.
+    salience_source: named third party, exact setting value, similar error label
+    why_plausible: The same visible symptom, 'connection timeout', makes the outside
+      anecdote feel portable.
+    why_irrelevant: The story is from a different stack and points to application
+      pooling; the current failure occurs before database authentication and is isolated
+      to runner-to-replica reachability.
+  LL:
+    distractor: Someone at another company had a CI timeout that was attributed to
+      ORM connection-pool configuration.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable timeout at another company was attributed to an ORM
+      connection-pool setting.
+    matched_to: HL
+  HH:
+    distractor: From the CI runner, the socket just hangs until the 30-second timeout
+      before Postgres even gets a login attempt; it never reaches the point where
+      an ORM pool setting could matter.
+    diagnosticity: high
+    salience: high
+    proposition: Connectivity from the CI runner to the Postgres port times out before
+      any database authentication or query runs.
+    salience_source: precise protocol-stage detail
+  LH:
+    distractor: A direct TCP connection from the CI runner to the Postgres endpoint
+      times out before authentication begins.
+    diagnosticity: high
+    salience: low
+    proposition: Connectivity from the CI runner to the Postgres port times out before
+      any database authentication or query runs.
+    matched_to: HH
+distractor_direction:
+  label: ORM connection-pool misconfiguration
+  description: Application-side connection pool exhaustion, leakage, or timeout configuration
+    causing the observed CI timeout symptom.
+plausible_alternative_directions:
+- label: Staging Postgres saturation
+  description: The staging replica is at connection, CPU, IO, or lock capacity and
+    is timing out clients independently of application code.
+- label: CI runner environment drift
+  description: The runner image, secrets, environment variables, or egress configuration
+    diverged from the last passing build.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

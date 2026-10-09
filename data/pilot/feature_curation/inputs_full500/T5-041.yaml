@@ -1,0 +1,169 @@
+seed_id: T5-041
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: My home lab server cannot resolve hostnames under my private local domain suffix,
+  even though it has always worked before. Machines on the same subnet reach public
+  websites and resolve public domains without any trouble. The router's DNS forwarding
+  toggle is enabled in the settings. I have not swapped or reconfigured any network
+  hardware this week. {DS}
+focal_diagnostic_feature: DNS queries for the local-suffix zone return NXDOMAIN on
+  the home resolver while identical queries for public domains succeed immediately,
+  indicating the local zone is not being forwarded or served.
+low_diagnostic_proposition: The router admin interface has an older visual design,
+  suggesting the firmware may be too outdated to support split-zone DNS forwarding.
+oracle_action: ASK
+oracle_focus: 'Investigate DNS zone configuration: check whether the router has a
+  local-zone definition or conditional forwarding entry for the private suffix, and
+  verify that the authoritative source for the local domain is reachable and responding.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer firmware capability from admin-page aesthetics.
+  Ask for dig output against the home resolver versus a public resolver, and check
+  whether a local-zone or conditional-forwarder entry exists for the private suffix.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer firmware capability from admin-page aesthetics. Ask for dig
+      output against the home resolver versus a public resolver, and check whether
+      a local-zone or conditional-forwarder entry exists for the private suffix.
+  LL:
+    action: ASK
+    focus: Do not infer firmware capability from admin-page aesthetics. Ask for dig
+      output against the home resolver versus a public resolver, and check whether
+      a local-zone or conditional-forwarder entry exists for the private suffix.
+  HH:
+    action: ASK
+    focus: 'Investigate DNS zone configuration: check whether the router has a local-zone
+      definition or conditional forwarding entry for the private suffix, and verify
+      that the authoritative source for the local domain is reachable and responding.'
+  LH:
+    action: ASK
+    focus: 'Investigate DNS zone configuration: check whether the router has a local-zone
+      definition or conditional forwarding entry for the private suffix, and verify
+      that the authoritative source for the local domain is reachable and responding.'
+variants:
+  HL:
+    distractor: The router admin page uses a washed-out grey layout from around 2009,
+      with barely readable tiny text and broken icon fonts, which makes me suspect
+      the firmware is simply too outdated to handle modern split-zone DNS forwarding
+      at all.
+    diagnosticity: low
+    salience: high
+    proposition: The router admin interface has an older visual design, suggesting
+      the firmware may be too outdated to support split-zone DNS forwarding.
+    salience_source: B — narrative coherence (specific visual details ground the observation);
+      C — confident inferential framing ("makes me suspect").
+    why_plausible: Old firmware on consumer routers does sometimes lack advanced DNS
+      features; a practitioner skimming the ticket might reasonably flag firmware
+      age as a first hypothesis when DNS behaves unexpectedly.
+    why_irrelevant: Admin-page visual style reflects only the UI theme, not the DNS
+      engine's capabilities. The focal evidence shows public domains resolve correctly
+      on the same resolver, which means basic DNS forwarding works; the issue is zone-specific,
+      not a general firmware limitation.
+  LL:
+    distractor: The router admin interface has an older visual design, suggesting
+      the firmware may be too outdated to support split-zone DNS.
+    diagnosticity: low
+    salience: low
+    proposition: The router admin interface has an older visual design, suggesting
+      the firmware may be too outdated to support split-zone DNS forwarding.
+    matched_to: HL
+  HH:
+    distractor: Running dig from a lab machine returns NXDOMAIN for every hostname
+      ending in my local dot-lan suffix, while the same resolver returns correct answers
+      for google.com and cloudflare.com within milliseconds.
+    diagnosticity: high
+    salience: high
+    proposition: DNS queries for the local-suffix zone return NXDOMAIN on the home
+      resolver while identical queries for public domains succeed immediately, indicating
+      the local zone is not being forwarded or served.
+    salience_source: B — concrete command and precise contrast (NXDOMAIN for local,
+      correct answers for public, within milliseconds).
+  LH:
+    distractor: DNS queries for the local-suffix zone return NXDOMAIN while public
+      domain lookups succeed using the same resolver.
+    diagnosticity: high
+    salience: low
+    proposition: DNS queries for the local-suffix zone return NXDOMAIN on the home
+      resolver while identical queries for public domains succeed immediately, indicating
+      the local zone is not being forwarded or served.
+    matched_to: HH
+distractor_direction:
+  label: Outdated firmware DNS limitation
+  description: Treating the router's old admin-page appearance as evidence that the
+    firmware is too outdated to support split-horizon or local-zone DNS forwarding.
+plausible_alternative_directions:
+- label: Local DNS server misconfiguration
+  description: A separate authoritative DNS server for the home lab domain may have
+    crashed, lost its zone file, or become unreachable, causing NXDOMAIN for all local
+    records.
+- label: DNS cache poisoning or stale negative cache
+  description: The resolver may have cached a negative (NXDOMAIN) response for the
+    local zone from an earlier outage and is serving that cached failure without re-querying.
+leak_audit:
+  ll_atomic_claims:
+  - The router admin interface uses an older visual design.
+  - The older visual design suggests the firmware may be too outdated for split-zone
+    DNS.
+  hh_atomic_claims:
+  - Running dig returns NXDOMAIN for every hostname under the local dot-lan suffix.
+  - The same resolver returns correct answers for google.com and cloudflare.com.
+  - The public lookups succeed within milliseconds.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observation, no named expert
+    narrative_coherence: Specific visual details (washed-out grey, 2009 style, broken
+      icon fonts) ground the observation
+    confident_assertion: makes me suspect
+    concrete_detail: N/A — visual detail is about the router UI theme, not the case
+      outcome
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 56
+  hl_word_count: 39
+  ll_word_count: 20
+  hh_word_count: 30
+  lh_word_count: 17
+  notes: 'T5 bridge ("old appearance → too outdated for split-zone DNS") appears in
+    both HL
+
+    and LL as required by C1/self-check 13. HL visual details describe the router
+    UI
+
+    theme only — no case-specific diagnostic facts added. Focal evidence is the
+
+    NXDOMAIN/public-success contrast from a concrete dig command.
+
+    '
+causal_audit:
+  steelman: 'Some older consumer router firmware (e.g., early OpenWrt builds or ancient
+    OEM
+
+    releases) genuinely did not support conditional DNS forwarding for custom zones.
+
+    A practitioner could argue that the dated UI signals an old firmware version that
+
+    predates split-zone DNS support. This is a real cause-class — old firmware can
+
+    lack features.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — xbase notes DNS forwarding is toggled on, but does
+    not foreclose the firmware age hypothesis directly. The focal evidence (NXDOMAIN
+    for local, success for public) structurally rules it out: if the firmware lacked
+    DNS forwarding entirely, public lookups would also fail; the zone-specific failure
+    points to a configuration gap, not a firmware capability gap.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Home lab local-domain DNS resolution fails (NXDOMAIN) while public
+    lookups work, against the inference that the router's dated admin-page appearance
+    means the firmware is too old to support local-zone forwarding.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

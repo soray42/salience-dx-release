@@ -1,0 +1,12 @@
+{
+  "seed_id": "T3-013",
+  "credibility_score": 5,
+  "salience_delta_score": 5,
+  "template_fit": "fits",
+  "template_fit_notes": "Priya is a named, role-specified IT authority who delivers a confident generic pattern-match ('always', 'classic cause') with no engagement of the distance-dependent evidence — canonical T3.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The distractor is a direct, attributed assertion that a model must evaluate and either accept or reject; there is no way to sidestep it without taking a position on the profile-misconfiguration claim.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

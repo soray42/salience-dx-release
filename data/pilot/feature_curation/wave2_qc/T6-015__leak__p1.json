@@ -1,0 +1,27 @@
+{
+  "seed_id": "T6-015",
+  "ll_claims_extracted": [
+    "The user has had musty-smelling laundry on past occasions.",
+    "On those past occasions, the cause was identified as the detergent brand."
+  ],
+  "hl_case_claims": [
+    "The user has had musty-smelling laundry on past occasions.",
+    "On those past occasions, the cause was the detergent brand.",
+    "This happened every single time / each time without exception / completely consistently."
+  ],
+  "hl_source_claims": [
+    "The speaker is reflecting from personal memory ('Thinking back') — no third-party source or setting detail is introduced; T6 voice is the user themselves."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 34,
+    "ll": 17,
+    "xbase": 46,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": false,
+  "verdict": "pass",
+  "repair_hint": "No leaks, style flags, or word-count violations. One minor equivalence gap: LH distractor says 'never cleaned the door gasket' but HH says 'cannot remember ever wiping down or checking the rubber gasket seal' — the 'checking/inspecting' half of the compound behaviour is absent from LH. Both cells' proposition fields state 'never cleaned or inspected,' so LH text should add 'or inspected' (e.g., 'I always close the washer door right after unloading and have never cleaned or inspected the door gasket') to match HH exactly. This does not trigger a fail under the explicit verdict rule but should be corrected before wave-2 use."
+}

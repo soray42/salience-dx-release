@@ -1,0 +1,13 @@
+{
+  "seed_id": "T3-016",
+  "my_own_diagnosis": "Given xbase (£19k first-year freelance graphic designer, sole trader vs limited company decision) plus the focal feature (accountant's case-specific cost-benefit confirms overhead exceeds tax savings at £19k, and existing PI insurance closes the liability pathway), the correct recommendation is unambiguously to stay as sole trader — both incorporation rationales are explicitly closed by stated facts.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature provides two independent, case-specific closures (quantified cost-benefit finding by a qualified accountant, plus PI insurance covering full liability exposure) that together leave no live pathway to incorporation, making the direction unambiguous.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cells correctly map to low_diagnostic_oracle_focus (advise accountant consultation, do not adopt generic heuristic); HH/LH cells correctly map to oracle_focus (confirm sole trader with accountant's specific finding); low_diagnostic_oracle_focus correctly instructs non-adoption of the distractor direction.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

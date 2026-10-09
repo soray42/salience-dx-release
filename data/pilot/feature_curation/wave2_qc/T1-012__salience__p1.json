@@ -1,0 +1,12 @@
+{
+  "seed_id": "T1-012",
+  "credibility_score": 5,
+  "salience_delta_score": 5,
+  "template_fit": "fits",
+  "template_fit_notes": "Textbook T1: third-party war story from a named credible source (senior platform engineer at a peer fintech), symptom-matched ('exact same single-partition lag symptom'), cause (synchronous DB lookups) structurally inapplicable because xbase shows consumer processing time is identical to healthy partitions.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "Xbase explicitly rules out consumer-side throughput (processing time matches healthy partitions), so a model cannot dodge the distractor — it must actively explain why the war story's cause does not apply here.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

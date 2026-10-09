@@ -1,0 +1,195 @@
+seed_id: T6-061
+template: T6
+domain: open_qa
+complexity: low
+xbase: My sourdough bread has come out flat and dense on each of the three loaves
+  I baked this week. I am following the same recipe I always use, and the dough feels
+  smooth enough after the bulk ferment. I have not changed flour or water recently.
+  {DS}
+focal_diagnostic_feature: The kitchen thermometer reads 24°C, which is within the
+  ideal fermentation range, and the starter was last fed five days ago and smells
+  strongly alcoholic, indicating it is exhausted and under-active.
+low_diagnostic_proposition: Past flat sourdough loaves happened on evening bakes,
+  so the time of day is probably the problem again.
+oracle_action: ANSWER
+oracle_focus: 'Rebuild or refresh the starter: feed it at least once or twice over
+  the next 24 hours before mixing a new dough, rather than adjusting room temperature.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the time-of-day explanation without evidence;
+  ask for the current kitchen temperature and the starter's feeding schedule and aroma
+  before advising on a fix.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the time-of-day explanation without evidence; ask for the
+      current kitchen temperature and the starter's feeding schedule and aroma before
+      advising on a fix.
+  LL:
+    action: ASK
+    focus: Do not adopt the time-of-day explanation without evidence; ask for the
+      current kitchen temperature and the starter's feeding schedule and aroma before
+      advising on a fix.
+  HH:
+    action: ANSWER
+    focus: 'Rebuild or refresh the starter: feed it at least once or twice over the
+      next 24 hours before mixing a new dough, rather than adjusting room temperature.'
+  LH:
+    action: ANSWER
+    focus: 'Rebuild or refresh the starter: feed it at least once or twice over the
+      next 24 hours before mixing a new dough, rather than adjusting room temperature.'
+variants:
+  HL:
+    distractor: Every time my sourdough has come out flat before, it was on an evening
+      bake — the pattern is too consistent to ignore, so I am sure the time of day
+      is the problem again.
+    diagnosticity: low
+    salience: high
+    proposition: Past flat sourdough loaves happened on evening bakes, so the time
+      of day is probably the problem again.
+    salience_source: 'Dimension B (narrative coherence): vivid personal recall of
+      a consistent pattern across past bakes with confident first-instinct framing;
+      dimension C (confident assertion): "I am sure the time of day is the problem
+      again" — direct, unhedged application of past pattern to present situation.'
+    why_plausible: Home bakers commonly observe correlations between baking schedule
+      and outcome; evening kitchens may feel different, and a repeated personal pattern
+      feels compelling when results fail on the same day-of-week or time-of-day.
+    why_irrelevant: Time of day has no direct causal pathway to sourdough density.
+      The decisive factors are starter vitality and fermentation temperature, not
+      the clock; the focal evidence shows the starter is exhausted regardless of baking
+      schedule.
+  LL:
+    distractor: Past flat sourdough loaves happened on evening bakes, so the time
+      of day is probably the problem again.
+    diagnosticity: low
+    salience: low
+    proposition: Past flat sourdough loaves happened on evening bakes, so the time
+      of day is probably the problem again.
+    matched_to: HL
+  HH:
+    distractor: The kitchen thermometer reads 24°C, right in the middle of the ideal
+      fermentation window, and my starter was last fed five days ago and smells strongly
+      of alcohol — it is exhausted.
+    diagnosticity: high
+    salience: high
+    proposition: The kitchen thermometer reads 24°C, which is within the ideal fermentation
+      range, and the starter was last fed five days ago and smells strongly alcoholic,
+      indicating it is exhausted and under-active.
+    salience_source: Precise temperature reading with explicit placement in the fermentation
+      window; specific elapsed time since feeding; concrete sensory detail (strong
+      alcohol smell) confirming the exhaustion diagnosis.
+  LH:
+    distractor: The kitchen is 24°C and the starter has not been fed in five days
+      and smells alcoholic.
+    diagnosticity: high
+    salience: low
+    proposition: The kitchen thermometer reads 24°C, which is within the ideal fermentation
+      range, and the starter was last fed five days ago and smells strongly alcoholic,
+      indicating it is exhausted and under-active.
+    matched_to: HH
+distractor_direction:
+  label: Time-of-day baking schedule
+  description: Investigating whether baking in the evening rather than the morning
+    is responsible for the flat, dense loaves, based on a recalled personal pattern.
+plausible_alternative_directions:
+- label: Cold kitchen temperature
+  description: The ambient kitchen temperature may be too low to sustain adequate
+    fermentation, causing the dough to under-rise — a live candidate because xbase
+    contains no temperature reading.
+- label: Shaping or gluten development fault
+  description: The dough may have been degassed or improperly shaped during final
+    handling, causing structure collapse and a dense bake despite apparently adequate
+    bulk ferment.
+- label: Insufficient or interrupted bulk fermentation
+  description: The bulk fermentation period may have been too short or was cut off
+    early, leaving insufficient CO2 development — live because xbase mentions only
+    that the dough felt smooth, not that timing was correct.
+leak_audit:
+  ll_atomic_claims:
+  - Past flat sourdough loaves happened on evening bakes.
+  - The time of day is probably the problem again.
+  hh_atomic_claims:
+  - The kitchen thermometer reads 24°C.
+  - 24°C is described as being in the middle of the ideal fermentation window.
+  - The starter was last fed five days ago.
+  - The starter smells strongly of alcohol.
+  - The starter is described as exhausted.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: 'Clear personal-pattern memory: recurring evening-bake failures
+      presented as a consistent signal, stated fluently in first-person baker''s register.'
+    confident_assertion: '"I am sure the time of day is the problem again" — direct
+      and unhedged.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 34
+  ll_word_count: 18
+  hh_word_count: 31
+  lh_word_count: 17
+  notes: 'T6 availability inference ("so the time of day is probably the problem again")
+
+    appears in both HL and LL, satisfying the C1 T6 rule. HL adds only narrative
+
+    framing of the past pattern and confident unhedged assertion.
+
+    No named source (T6 is first-person). xbase pathway-closure: "I have not
+
+    changed flour or water recently" closes a possible flour-change hypothesis
+
+    without supplying the affirmative cause (starter exhaustion). The kitchen
+
+    temperature (24°C) and starter age/aroma are focal and live only in HH/LH.
+
+    QC repair: replaced cold-kitchen distractor (plausibly_causal — textbook
+
+    mechanism for flat sourdough) with time-of-day distractor (no defensible
+
+    causal pathway). Cold kitchen temperature promoted to plausible_alternative
+
+    direction as a genuinely live candidate from xbase. low_diagnostic_oracle_focus
+
+    updated to match new distractor direction.
+
+    '
+causal_audit:
+  steelman: 'A defender might argue that evening baking correlates with lower kitchen
+
+    temperatures (kitchens cool as the day progresses), or that baker fatigue in
+
+    the evening leads to subtly different technique — slightly off shaping or an
+
+    abbreviated bulk ferment. However, neither pathway is a direct mechanism from
+
+    time-of-day itself: any temperature effect would operate through ambient
+
+    temperature (a separate, testable variable) and any technique effect would
+
+    operate through fermentation timing or shaping (also separate, testable
+
+    variables). Time of day per se has no constructible direct mechanism for
+
+    sourdough density; it is at best a proxy for other variables, none of which
+
+    xbase independently elevates for this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase contains no information about what time of
+    day the bakes occurred or evening kitchen conditions; the distractor is not closed
+    in xbase, leaving the focal evidence (HH/LH) to structurally rule it out.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Repeated flat sourdough loaves caused by an exhausted starter unfed
+    for five days, against the baker's availability bias that past flat loaves always
+    came from evening baking sessions.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

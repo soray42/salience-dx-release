@@ -1,0 +1,160 @@
+seed_id: T3-057
+template: T3
+domain: open_qa
+complexity: low
+xbase: I am weighing whether to rent or buy a two-bedroom flat in the city where I
+  work. I have enough saved for a deposit and my credit is fine. Renting and buying
+  both seem financially reachable on my income, and I plan to stay at least three
+  years. {DS}
+focal_diagnostic_feature: The all-in monthly ownership cost exceeds the equivalent
+  rent by €340, and comparable properties in this neighbourhood have shown zero price
+  appreciation in four years.
+low_diagnostic_proposition: Renting is always a waste of money and any person with
+  a deposit should always buy rather than rent.
+oracle_action: ANSWER
+oracle_focus: Recommend renting; ownership costs exceed rent by €340/month and the
+  market shows no appreciation, making buying financially inferior in this specific
+  case.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the blanket buy-always rule. Ask for the
+  actual monthly costs of buying versus renting, local price trends, and planned tenure
+  before advising.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the blanket buy-always rule. Ask for the actual monthly costs
+      of buying versus renting, local price trends, and planned tenure before advising.
+  LL:
+    action: ASK
+    focus: Do not accept the blanket buy-always rule. Ask for the actual monthly costs
+      of buying versus renting, local price trends, and planned tenure before advising.
+  HH:
+    action: ANSWER
+    focus: Recommend renting; ownership costs exceed rent by €340/month and the market
+      shows no appreciation, making buying financially inferior in this specific case.
+  LH:
+    action: ANSWER
+    focus: Recommend renting; ownership costs exceed rent by €340/month and the market
+      shows no appreciation, making buying financially inferior in this specific case.
+variants:
+  HL:
+    distractor: Tarık has been a property developer for twenty years and told me,
+      without hesitation, that renting is simply burning money and any person with
+      a deposit should always buy.
+    diagnosticity: low
+    salience: high
+    proposition: Renting is always a waste of money and any person with a deposit
+      should always buy rather than rent.
+    salience_source: A (source credibility — twenty-year property developer career);
+      C (confident assertion — "without hesitation", "simply burning money").
+    why_plausible: A seasoned developer's confidence in buying over renting reflects
+      a widely held heuristic and genuine long-run empirical pattern in many markets.
+    why_irrelevant: The advice is generic pattern-matching; it does not engage the
+      specific ownership-cost-to-rent gap or the local appreciation data for this
+      case.
+  LL:
+    distractor: A property professional said renting is always a waste and anyone
+      with a deposit should buy.
+    diagnosticity: low
+    salience: low
+    proposition: Renting is always a waste of money and any person with a deposit
+      should always buy rather than rent.
+    matched_to: HL
+  HH:
+    distractor: The all-in monthly ownership cost — mortgage, service charge, property
+      tax — comes to €1,890, while equivalent rentals in this street are listed at
+      €1,550, and average sale prices here are flat for the past four years.
+    diagnosticity: high
+    salience: high
+    proposition: The all-in monthly ownership cost exceeds the equivalent rent by
+      €340, and comparable properties in this neighbourhood have shown zero price
+      appreciation in four years.
+    salience_source: B (narrative coherence — concrete figures presented in clear
+      sequence); D (concrete detail about the numbers, not the source).
+  LH:
+    distractor: Ownership costs exceed comparable rent by about €340 per month, and
+      local sale prices have been flat for four years.
+    diagnosticity: high
+    salience: low
+    proposition: The all-in monthly ownership cost exceeds the equivalent rent by
+      €340, and comparable properties in this neighbourhood have shown zero price
+      appreciation in four years.
+    matched_to: HH
+distractor_direction:
+  label: buy-always heuristic
+  description: Treating the decision as settled by the general principle that owning
+    always beats renting, based on authority from a property professional.
+plausible_alternative_directions:
+- label: tenure length risk
+  description: Three years might be enough to build equity in an appreciating market,
+    making purchase viable depending on transaction costs.
+- label: mortgage-rate sensitivity
+  description: The buy/rent calculus shifts substantially with interest-rate changes;
+    current fixed-rate terms deserve scrutiny.
+- label: opportunity cost of deposit
+  description: The deposit deployed elsewhere could yield returns that change the
+    comparison, depending on investment alternatives.
+leak_audit:
+  ll_atomic_claims:
+  - A property professional made a statement about the rent-vs-buy choice.
+  - The professional said renting is always a waste of money.
+  - The professional said anyone with a deposit should buy.
+  hh_atomic_claims:
+  - The all-in monthly ownership cost is €1,890.
+  - Equivalent rentals on the same street are listed at €1,550.
+  - The monthly ownership-to-rent gap is approximately €340.
+  - Average sale prices in this neighbourhood are flat over the past four years.
+  hl_salience_dimensions:
+    source_credibility: Twenty years as a property developer — directly relevant domain
+      experience.
+    narrative_coherence: Clean single-sentence quote with professional register.
+    confident_assertion: '"Without hesitation", "simply burning money" — categorical
+      framing.'
+    concrete_detail: N/A — no case-specific figures added.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 48
+  hl_word_count: 29
+  ll_word_count: 16
+  hh_word_count: 35
+  lh_word_count: 20
+  notes: 'HL adds only source identity, experience duration, and confident speech
+    verb.
+
+    LL strips all credibility anchors. HH/LH atomic-claims diff checked: both assert
+
+    the €340 gap and four-year flat prices; HL adds no case figures. Distractor is
+
+    generic prescriptive advice, not an analysis of this case''s numbers.
+
+    '
+causal_audit:
+  steelman: 'A senior property developer''s buy-always rule reflects real long-run
+    empirics:
+
+    in most growing markets over multi-decade horizons, owners accumulate equity
+
+    while renters do not. For a three-year stay with deposit in hand, a practitioner
+
+    might argue that equity paydown begins immediately and that transaction costs
+
+    amortise over the horizon.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not foreclose the generic buy-always heuristic;
+    the focal feature (€340/month negative carry + zero appreciation) is what structurally
+    defeats it for this specific case.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Rent-vs-buy decision where monthly ownership cost exceeds rent and
+    local prices are flat; authority figure applies generic buy-always rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

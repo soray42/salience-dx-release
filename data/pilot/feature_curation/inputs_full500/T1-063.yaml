@@ -1,0 +1,175 @@
+seed_id: T1-063
+template: T1
+domain: open_qa
+complexity: medium
+xbase: My homemade yogurt keeps coming out runny and barely set, more like thin drinkable
+  kefir than the thick spoonable yogurt I want. I heat the milk first, let it cool,
+  stir in a spoon of live culture, and leave it overnight before chilling it. I use
+  whole milk and a fresh tub of plain live yogurt as the starter each time. Every
+  batch turns out the same loose consistency. {DS}
+focal_diagnostic_feature: A thermometer in the incubating jar shows it holding around
+  22°C overnight, well below the roughly 43°C the cultures need to set.
+low_diagnostic_proposition: A similar runny-yogurt problem for someone else was caused
+  by a dead or inactive starter culture.
+oracle_action: ANSWER
+oracle_focus: The incubation temperature is far too low for the cultures to thicken
+  the milk; hold the jar near 43°C with a warm method rather than replacing the starter.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a dead starter from another person's case.
+  Ask what temperature the milk is actually held at during incubation.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a dead starter from another person's case. Ask what temperature
+      the milk is actually held at during incubation.
+  LL:
+    action: ASK
+    focus: Do not assume a dead starter from another person's case. Ask what temperature
+      the milk is actually held at during incubation.
+  HH:
+    action: ANSWER
+    focus: The incubation temperature is far too low for the cultures to thicken the
+      milk; hold the jar near 43°C with a warm method rather than replacing the starter.
+  LH:
+    action: ANSWER
+    focus: The incubation temperature is far too low for the cultures to thicken the
+      milk; hold the jar near 43°C with a warm method rather than replacing the starter.
+variants:
+  HL:
+    distractor: Vasanthi, who makes yogurt every week, told me she traced the same
+      runny-batch problem to a dead starter — the tub had been frozen and the live
+      cultures were gone.
+    diagnosticity: low
+    salience: high
+    proposition: A similar runny-yogurt problem for someone else was caused by a dead
+      or inactive starter culture.
+    salience_source: A — a weekly home yogurt-maker reporting from her own experience
+      lends the dead-starter claim credibility.
+    why_plausible: A starter with no live cultures genuinely cannot set milk, so it
+      is a standard first suspect for thin yogurt.
+    why_irrelevant: Her dead-starter fix assumes the cultures never activate, but
+      here active cultures are simply held at 22°C, far below the temperature they
+      need to work.
+  LL:
+    distractor: Someone else's similar runny-yogurt problem was caused by a dead or
+      inactive starter culture.
+    diagnosticity: low
+    salience: low
+    proposition: A similar runny-yogurt problem for someone else was caused by a dead
+      or inactive starter culture.
+    matched_to: HL
+  HH:
+    distractor: I left a thermometer in the jar overnight, and it sat around 22°C
+      the whole time instead of the roughly 43°C live yogurt cultures need to ferment;
+      at that cool a temperature the cultures barely work, so the milk never thickens
+      into a set.
+    diagnosticity: high
+    salience: high
+    proposition: A thermometer in the incubating jar shows it holding around 22°C
+      overnight, well below the roughly 43°C the cultures need to set.
+    salience_source: The measured 22°C versus the needed 43°C makes the thermal shortfall
+      concrete and decisive.
+  LH:
+    distractor: The jar held 22°C overnight — far below 43°C — so the cultures barely
+      work and the milk never sets.
+    diagnosticity: high
+    salience: low
+    proposition: A thermometer in the incubating jar shows it holding around 22°C
+      overnight, well below the roughly 43°C the cultures need to set.
+    matched_to: HH
+distractor_direction:
+  label: Dead starter culture
+  description: Treating the runny yogurt as caused by a starter whose live cultures
+    are dead or inactive.
+plausible_alternative_directions:
+- label: Milk not heated enough
+  description: Whether under-heating the milk first left proteins that do not set
+    firmly.
+- label: Incubation too short
+  description: Whether the overnight time was too brief for a proper set.
+leak_audit:
+  ll_atomic_claims:
+  - Someone else had a similar runny-yogurt problem.
+  - It was caused by a dead or inactive starter culture.
+  hh_atomic_claims:
+  - A thermometer shows the incubating jar holding around 22°C overnight.
+  - That is far below the roughly 43°C the cultures need to set.
+  - At that cool temperature the cultures barely work.
+  - The milk never thickens into a set.
+  hl_salience_dimensions:
+    source_credibility: Named weekly yogurt-maker (Vasanthi) reporting from her own
+      experience.
+    narrative_coherence: Coherent identified-and-fixed arc.
+    confident_assertion: '''traced ... to'' — confident attribution.'
+    concrete_detail: Detail about the source's case (her frozen tub, absent live cultures)
+      only; no new fact about this user's batch.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 73
+  hl_word_count: 29
+  ll_word_count: 14
+  hh_word_count: 44
+  lh_word_count: 18
+  notes: 'HL trimmed from 53 to 29 words (was over the 50-word hard bound). Removed
+    "for her family", the
+
+    "fought-it-for-ages" effort arc, and the resolution clause ("bought fresh active
+    culture") — all
+
+    HL-only source framing that is not propositional content. The two ll_atomic_claims
+    (same runny problem,
+
+    dead-starter cause) are preserved. LL carries only the someone-else / dead-starter
+    claim; Vasanthi,
+
+    her weekly habit, and her frozen-tub history are HL-only and concern the source.
+    xbase notes the user
+
+    uses a fresh tub of live yogurt each time, which is a neutral context fact weakening
+    the dead-starter
+
+    angle, but withholds the incubation temperature; the decisive 22°C-vs-43°C reading
+    lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A regular yogurt-maker could argue a dead starter is the obvious cause:
+    yogurt sets only because live cultures
+
+    ferment the milk, and if the starter tub has been frozen, left past date, or pasteurised,
+    the cultures are gone
+
+    and every batch stays thin no matter what else you do, which fits the consistent
+    runniness here. That account is
+
+    defeated by the incubation temperature: the focal feature shows active cultures
+    held at around 22°C overnight,
+
+    far below the roughly 43°C they need, so they are alive but barely working — a
+    thermal problem, not a dead
+
+    culture. Nothing in xbase elevates the starter for this user, who uses a fresh
+    live tub each time, so the
+
+    anecdote has no mechanism for this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the user uses a fresh tub of plain live yogurt
+    as the starter each time, weakening the dead-starter pathway without naming the
+    incubation temperature; the decisive thermometer reading lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Runny homemade yogurt caused by incubating at ~22°C instead of ~43°C
+    (shown by a thermometer), not the dead starter culture a regular yogurt-maker's
+    anecdote suggests.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

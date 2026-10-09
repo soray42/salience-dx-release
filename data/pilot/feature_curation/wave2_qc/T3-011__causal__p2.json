@@ -1,0 +1,9 @@
+{
+  "seed_id": "T3-011",
+  "steelman": "Privacy manifests (PrivacyInfo.xcprivacy) became mandatory for App Store submissions in Spring 2024, and an absent or incomplete manifest is a well-documented, frequent cause of App Store rejections that a senior iOS architect who has reviewed dozens of submissions would legitimately cite as a high-prior explanation. One might argue that Apple's review pipeline could flag multiple independent violations, so the privacy manifest could be a co-occurring defect even if the rejection email foregrounds the crash — a developer fixing only the crash might still be rejected on a second pass for a manifest issue. The 'always comes down to' heuristic from a credible senior source represents a rational Bayesian prior given genuine prevalence of manifest rejections post-2024.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The steelman collapses on domain structure: privacy manifest deficiencies produce policy-category rejections (Guideline 5.1.x series), not Guideline 4.0 Design rejections. Guideline 4.0 Design is exclusively a runtime-behavior category requiring crash logs and reproducible steps, which the reviewer explicitly provided with identical reproduction steps across two submissions. A static XML privacy manifest file has no runtime effect whatsoever — it cannot cause a UIKit/SwiftUI orientation-handling crash. The two failure modes are orthogonally separated by Apple's own review taxonomy: manifest compliance is a pre-runtime metadata check; Guideline 4.0 is a post-launch interactive-testing finding. No competent iOS practitioner would put 'check privacy manifest' on the checklist for a Guideline 4.0 crash rejection. The xbase's pathway closure is effective: the explicit Guideline 4.0 citation with identical crash reproduction steps structurally forecloses the privacy manifest explanation. Seed passes this lens."
+}

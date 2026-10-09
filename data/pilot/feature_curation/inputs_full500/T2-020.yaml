@@ -1,0 +1,166 @@
+seed_id: T2-020
+template: T2
+domain: open_qa
+complexity: high
+xbase: I'm close to selling my rental flat because the bank statement shows it bleeding
+  cash every month now, where it used to roughly break even. Rent is unchanged, the
+  tenant is reliable, and there have been no big repairs. The property itself is in
+  a steady neighbourhood I have no other complaints about. Watching money leave the
+  account each month is wearing me down. {DS}
+focal_diagnostic_feature: Six months ago the mortgage was refinanced from a 25-year
+  to a 15-year term, so the larger monthly payment is mostly extra principal repayment,
+  which builds the owner's equity rather than being a true expense.
+low_diagnostic_proposition: The monthly shortfall began right after the city repainted
+  the crosswalks and replaced the street signage outside the building.
+oracle_action: ANSWER
+oracle_focus: Do not sell on the cash-flow figure alone; the higher payment is mostly
+  principal from the 15-year refinance and is building equity, so separate principal
+  from true expense before treating the flat as loss-making.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect city street works to the flat's finances.
+  Ask what changed in the mortgage payment and how much of the new outflow is principal
+  versus interest.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect city street works to the flat's finances. Ask what changed
+      in the mortgage payment and how much of the new outflow is principal versus
+      interest.
+  LL:
+    action: ASK
+    focus: Do not connect city street works to the flat's finances. Ask what changed
+      in the mortgage payment and how much of the new outflow is principal versus
+      interest.
+  HH:
+    action: ANSWER
+    focus: Do not sell on the cash-flow figure alone; the higher payment is mostly
+      principal from the 15-year refinance and is building equity, so separate principal
+      from true expense before treating the flat as loss-making.
+  LH:
+    action: ANSWER
+    focus: Do not sell on the cash-flow figure alone; the higher payment is mostly
+      principal from the 15-year refinance and is building equity, so separate principal
+      from true expense before treating the flat as loss-making.
+variants:
+  HL:
+    distractor: The red months started almost exactly when the city repainted every
+      crosswalk and swapped all the signage on our street — new signs up outside,
+      account in the red. The timing lined up so cleanly it stuck with me.
+    diagnosticity: low
+    salience: high
+    proposition: The monthly shortfall began right after the city repainted the crosswalks
+      and replaced the street signage outside the building.
+    salience_source: B/C — a confident first-person timeline tying the financial change
+      to a vivid, disruptive public works event.
+    why_plausible: Visible neighbourhood disruption feels like it should affect a
+      property, so the owner instinctively reaches for it as the trigger.
+    why_irrelevant: Repainted crosswalks and new signs do not touch rent, costs, or
+      financing; they cannot alter the cash flowing through a mortgage account.
+  LL:
+    distractor: The shortfall began around the time the city repainted the crosswalks
+      and replaced the street signage outside.
+    diagnosticity: low
+    salience: low
+    proposition: The monthly shortfall began right after the city repainted the crosswalks
+      and replaced the street signage outside the building.
+    matched_to: HL
+  HH:
+    distractor: 'Pulling the loan papers, six months ago I refinanced from a 25-year
+      to a 15-year term to clear it faster. The payment jumped, but the amortisation
+      schedule shows most of that jump is extra principal: money moving into my own
+      equity, not a cost, exactly when the account "went red".'
+    diagnosticity: high
+    salience: high
+    proposition: Six months ago the mortgage was refinanced from a 25-year to a 15-year
+      term, so the larger monthly payment is mostly extra principal repayment, which
+      builds the owner's equity rather than being a true expense.
+    salience_source: Reading the amortisation schedule and naming the 25-to-15-year
+      refinance makes the principal-not-expense mechanism concrete.
+  LH:
+    distractor: A six-month-old refinance shortened the mortgage from 25 to 15 years;
+      most of the higher payment is equity-building principal, not expense.
+    diagnosticity: high
+    salience: low
+    proposition: Six months ago the mortgage was refinanced from a 25-year to a 15-year
+      term, so the larger monthly payment is mostly extra principal repayment, which
+      builds the owner's equity rather than being a true expense.
+    matched_to: HH
+distractor_direction:
+  label: Street-works timing
+  description: Associating the monthly shortfall with the recent city street works
+    because the two coincided.
+plausible_alternative_directions:
+- label: Rising holding costs
+  description: Whether insurance
+  property tax: null
+  or management fees quietly increased and turned the flat cash-negative.: null
+- label: Rent below market
+  description: Whether the unchanged rent has fallen behind market and should be raised
+    to restore margin.
+leak_audit:
+  ll_atomic_claims:
+  - The shortfall began around the time the city repainted the crosswalks and replaced
+    the street signage outside.
+  hh_atomic_claims:
+  - Six months ago the mortgage was refinanced from a 25-year to a 15-year term.
+  - The payment jumped and most of the jump is extra principal per the amortisation
+    schedule.
+  - That principal builds the owner's equity rather than being a true cost, coinciding
+    with when the account went red.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent street-works-then-red-account timeline.
+    confident_assertion: States the timing lined up 'almost exactly'.
+    concrete_detail: Concrete detail about the public works (repainted crosswalks,
+      swapped signage, new signs) — about the event, not the finances.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 67
+  hl_word_count: 38
+  ll_word_count: 17
+  hh_word_count: 48
+  lh_word_count: 21
+  notes: 'LH preserves full propositional equivalence with HH (the 25-to-15-year refinance,
+    the principal-not-expense
+
+    point, and the equity consequence) as a single flat clause. T2 coincidence: street
+    works have no mechanism for a
+
+    mortgage account''s cash flow. xbase says rent unchanged, tenant reliable, no
+    big repairs — all symptoms; the
+
+    refinance (decisive) is HH/LH-only.
+
+    '
+causal_audit:
+  steelman: 'One could speculate that street works reduced parking or curb appeal
+    and pressured rent or raised vacancy — but
+
+    rent is explicitly unchanged and the tenant is stable, so no rent or occupancy
+    channel is open, and cosmetic
+
+    municipal works do not impose costs on a private landlord. There is no path from
+    new crosswalk paint to the
+
+    mortgage account.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states rent is unchanged, the tenant is reliable,
+    and there have been no big repairs, closing the rent/vacancy/repair channels a
+    neighbourhood-disruption story would need.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A rental flat that appears cash-negative because a 25-to-15-year refinance
+    shifted payments into equity-building principal, coincidentally timed with city
+    street works, prompting a needless sale.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

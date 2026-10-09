@@ -1,0 +1,176 @@
+seed_id: T5-096
+template: T5
+domain: open_qa
+complexity: high
+xbase: I am choosing between two travel backpacks for a planned six-month trip through
+  Southeast Asia and Central America. I will carry roughly 14 kg most days. Pack A
+  costs $180 and Pack B costs $320. I need the bag to survive being checked on flights,
+  dragged over rough ground, and heavy rain. I have narrowed to these two after ruling
+  out seven others on size and organisational layout. {DS}
+focal_diagnostic_feature: Pack A carries a lifetime warranty against manufacturing
+  defects, is load-rated to 25 kg, and scores 4.7 out of 5 on durability across more
+  than 3,000 long-trip reviews, while Pack B carries a one-year warranty and averages
+  2.9 out of 5 on the durability sub-rating from reviewers who used it beyond three
+  months.
+low_diagnostic_proposition: Pack B has a more polished and premium-looking build aesthetic
+  than Pack A, suggesting stronger underlying engineering.
+oracle_action: ANSWER
+oracle_focus: Choose Pack A; its lifetime warranty, higher load rating, and substantially
+  better long-trip durability reviews outweigh Pack B's premium appearance and higher
+  price for a six-month demanding-use trip.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not use aesthetic finish as an engineering proxy;
+  ask for warranty terms, load rating, and long-trip user reviews before deciding
+  between the two packs.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not use aesthetic finish as an engineering proxy; ask for warranty terms,
+      load rating, and long-trip user reviews before deciding between the two packs.
+  LL:
+    action: ASK
+    focus: Do not use aesthetic finish as an engineering proxy; ask for warranty terms,
+      load rating, and long-trip user reviews before deciding between the two packs.
+  HH:
+    action: ANSWER
+    focus: Choose Pack A; its lifetime warranty, higher load rating, and substantially
+      better long-trip durability reviews outweigh Pack B's premium appearance and
+      higher price for a six-month demanding-use trip.
+  LH:
+    action: ANSWER
+    focus: Choose Pack A; its lifetime warranty, higher load rating, and substantially
+      better long-trip durability reviews outweigh Pack B's premium appearance and
+      higher price for a six-month demanding-use trip.
+variants:
+  HL:
+    distractor: Pack B looks genuinely premium — the stitching is clean and tight,
+      the hardware feels machined rather than moulded, and the fabric has a matte
+      technical finish that signals serious outdoor engineering to me.
+    diagnosticity: low
+    salience: high
+    proposition: Pack B has a more polished and premium-looking build aesthetic than
+      Pack A, suggesting stronger underlying engineering.
+    salience_source: B/C — vivid tactile and visual inventory ('machined rather than
+      moulded', 'matte technical finish'), confident first-person inferential conclusion
+      ('signals serious outdoor engineering to me'), coherent sensory register.
+    why_plausible: Workmanship cues like tight stitching and quality hardware are
+      real proxies for construction quality in apparel and gear; a careful buyer could
+      reasonably treat these as positive signals.
+    why_irrelevant: Surface finish and hardware feel do not predict durability under
+      six months of rough travel; the inferential bridge (aesthetic → engineering
+      quality) is explicitly offered but unvalidated, and the review record inverts
+      the implied conclusion.
+  LL:
+    distractor: Pack B has a more polished and premium-looking build aesthetic than
+      Pack A, suggesting stronger underlying engineering.
+    diagnosticity: low
+    salience: low
+    proposition: Pack B has a more polished and premium-looking build aesthetic than
+      Pack A, suggesting stronger underlying engineering.
+    matched_to: HL
+  HH:
+    distractor: Pack A carries a lifetime warranty, is load-rated to 25 kg, and scores
+      4.7 out of 5 on durability across more than three thousand long-trip reviews;
+      Pack B has a one-year warranty and averages 2.9 out of 5 on the durability sub-rating
+      from reviewers past three months.
+    diagnosticity: high
+    salience: high
+    proposition: Pack A carries a lifetime warranty against manufacturing defects,
+      is load-rated to 25 kg, and scores 4.7 out of 5 on durability across more than
+      3,000 long-trip reviews, while Pack B carries a one-year warranty and averages
+      2.9 out of 5 on the durability sub-rating from reviewers who used it beyond
+      three months.
+    salience_source: B/C — specific numbers for both packs (warranty length, load
+      rating, review score and volume), parallel structure creates a clear head-to-head
+      comparison, reviewer qualification ('past three months') makes the Pack B score
+      particularly credible.
+  LH:
+    distractor: Pack A has a lifetime warranty, 25 kg load rating, and 4.7/5 durability
+      score; Pack B has a one-year warranty and 2.9/5 durability rating.
+    diagnosticity: high
+    salience: low
+    proposition: Pack A carries a lifetime warranty against manufacturing defects,
+      is load-rated to 25 kg, and scores 4.7 out of 5 on durability across more than
+      3,000 long-trip reviews, while Pack B carries a one-year warranty and averages
+      2.9 out of 5 on the durability sub-rating from reviewers who used it beyond
+      three months.
+    matched_to: HH
+distractor_direction:
+  label: Aesthetic-as-engineering signal
+  description: Treating Pack B's premium visual and tactile finish as evidence of
+    superior construction quality and long-term durability.
+plausible_alternative_directions:
+- label: Price premium justification
+  description: Pack B costs $140 more, which could reflect genuine material or manufacturing
+    differences not captured in early reviews.
+- label: Brand reputation difference
+  description: The two brands may have different track records for honouring warranties
+    and customer service on international trips.
+- label: Weight distribution ergonomics
+  description: One pack may fit the user's torso length or carry 14 kg more comfortably,
+    which matters more than warranty on a six-month trip.
+leak_audit:
+  ll_atomic_claims:
+  - Pack B has a more polished and premium-looking build aesthetic than Pack A.
+  - This aesthetic is offered as suggesting stronger underlying engineering.
+  hh_atomic_claims:
+  - Pack A has a lifetime warranty against manufacturing defects.
+  - Pack A is load-rated to 25 kg.
+  - Pack A scores 4.7 out of 5 on durability.
+  - The durability score is across more than 3,000 long-trip reviews.
+  - Pack B has a one-year warranty.
+  - Pack B averages 2.9 out of 5 on the durability sub-rating.
+  - The Pack B durability score is from reviewers who used it beyond three months.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person tactile inspection narrated in a coherent register
+      — touching hardware, observing fabric, drawing inference.
+    confident_assertion: '''Signals serious outdoor engineering to me'' — confident
+      personal conclusion presented as a reason.'
+    concrete_detail: 'Specific tactile distinctions: ''machined rather than moulded'',
+      ''matte technical finish'' — these are about the subject of evaluation, not
+      a setting, and are permitted by C6 as detail about the source or subject being
+      evaluated. (T5 context: the surface property IS the distractor content.)'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 68
+  hl_word_count: 33
+  ll_word_count: 16
+  hh_word_count: 47
+  lh_word_count: 23
+  notes: 'T5 bridge (''aesthetic → engineering quality'') appears in both HL (implied
+    through ''signals serious outdoor engineering'') and in LL explicitly (''suggesting
+    stronger underlying engineering''). HH/LH diff: HH adds review count (3,000+),
+    the reviewer qualification (''past three months''), and the load rating (25 kg)
+    as salience additions; LH carries all five factual claims flatly. LH is 23 words
+    — at operational ceiling, acceptable.
+
+    '
+causal_audit:
+  steelman: 'A gear reviewer could argue: tactile hardware quality (solid zippers,
+    bar-tacked stitching, reinforced base) genuinely predicts durability because it
+    reflects manufacturing attention to detail. Premium packs often source better
+    components and QC at the factory level. The visible finish is a real, if imperfect,
+    proxy used by experienced travel-gear buyers and journalists.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not mention warranty, load rating, or
+    review scores; those live only in HH/LH. The steelman's proxy argument is real
+    in general but the actual review record in HH/LH inverts the implied conclusion,
+    and aesthetic finish alone carries no mechanism to predict durability on a six-month
+    rough-travel trip.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User choosing between two travel backpacks for a six-month trip; Pack
+    B's premium aesthetic is offered as evidence of better engineering, but Pack A
+    has a lifetime warranty and far superior long-trip durability reviews.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

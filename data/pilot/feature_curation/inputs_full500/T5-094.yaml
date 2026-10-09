@@ -1,0 +1,189 @@
+seed_id: T5-094
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I bought a laptop sixteen months ago with a two-year manufacturer warranty.
+  Last week the screen developed a horizontal blinking line across the middle. The
+  local repair shop inspected it and said it is a hardware defect rather than impact
+  damage. The repair quote came to €280. {DS}
+focal_diagnostic_feature: The warranty terms explicitly cover display hardware defects
+  and exclude only accidental impact damage; the repair shop's written diagnosis confirms
+  a manufacturing panel fault with no sign of physical trauma.
+low_diagnostic_proposition: The warranty claim form is long and dense, suggesting
+  it is designed to discourage most claims.
+oracle_action: ANSWER
+oracle_focus: File the warranty claim; the defect is explicitly covered under the
+  manufacturer terms and the independent diagnosis confirms a manufacturing fault
+  rather than accidental damage.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer claim outcome from form length or visual
+  complexity; ask what the warranty actually covers and whether the shop's diagnosis
+  matches the covered fault categories.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer claim outcome from form length or visual complexity; ask what
+      the warranty actually covers and whether the shop's diagnosis matches the covered
+      fault categories.
+  LL:
+    action: ASK
+    focus: Do not infer claim outcome from form length or visual complexity; ask what
+      the warranty actually covers and whether the shop's diagnosis matches the covered
+      fault categories.
+  HH:
+    action: ANSWER
+    focus: File the warranty claim; the defect is explicitly covered under the manufacturer
+      terms and the independent diagnosis confirms a manufacturing fault rather than
+      accidental damage.
+  LH:
+    action: ANSWER
+    focus: File the warranty claim; the defect is explicitly covered under the manufacturer
+      terms and the independent diagnosis confirms a manufacturing fault rather than
+      accidental damage.
+variants:
+  HL:
+    distractor: The warranty claim form runs fourteen pages of dense legalese, with
+      footnotes referencing clauses I cannot locate — it looks designed to discourage
+      most claims rather than help customers file them successfully.
+    diagnosticity: low
+    salience: high
+    proposition: The warranty claim form is long and dense, suggesting it is designed
+      to discourage most claims.
+    salience_source: B/C — vivid concrete description of the form’s physical properties
+      (fourteen pages, footnotes, unreachable clauses) combined with a confident first-person
+      inference delivered as settled judgment.
+    why_plausible: Dense consumer-warranty forms often do contain coverage-limiting
+      language, and a 14-page form full of cross-references plausibly signals that
+      the manufacturer invests in avoiding payouts.
+    why_irrelevant: Form length is a bureaucratic artifact, not a predictor of claim
+      eligibility; coverage terms and the independent diagnostic report are the decisive
+      facts, and neither is addressed by the form's page count.
+  LL:
+    distractor: The warranty claim form is long and dense, suggesting it is designed
+      to discourage most claims.
+    diagnosticity: low
+    salience: low
+    proposition: The warranty claim form is long and dense, suggesting it is designed
+      to discourage most claims.
+    matched_to: HL
+  HH:
+    distractor: The warranty booklet lists display hardware defects under covered
+      faults and explicitly excludes only accidental impact damage. The repair shop
+      gave me a written assessment stating the blinking line is a panel manufacturing
+      defect with no sign of physical trauma.
+    diagnosticity: high
+    salience: high
+    proposition: The warranty terms explicitly cover display hardware defects and
+      exclude only accidental impact damage; the repair shop's written diagnosis confirms
+      a manufacturing panel fault with no sign of physical trauma.
+    salience_source: B/C — precise citation of warranty booklet language and a written
+      third-party technical assessment provide concrete, document-grounded evidence
+      that forecloses ambiguity about coverage.
+  LH:
+    distractor: The warranty covers display hardware defects, excluding only impact
+      damage; the shop's written report diagnoses a manufacturing defect with no physical
+      trauma.
+    diagnosticity: high
+    salience: low
+    proposition: The warranty terms explicitly cover display hardware defects and
+      exclude only accidental impact damage; the repair shop's written diagnosis confirms
+      a manufacturing panel fault with no sign of physical trauma.
+    matched_to: HH
+distractor_direction:
+  label: Claim form discourages filing
+  description: Treating the warranty claim form's length and legal density as evidence
+    that the manufacturer is unlikely to approve the claim, making filing not worth
+    the effort.
+plausible_alternative_directions:
+- label: Accidental damage misclassification
+  description: The repair shop may have missed subtle signs of impact damage that
+    the warranty inspector could later use to deny the claim.
+- label: Out-of-pocket cost-benefit
+  description: Even if eligible, warranty processing time or a potential co-pay could
+    make paying the €280 repair quote directly a faster and simpler outcome.
+- label: Warranty expiry proximity
+  description: At sixteen months into a two-year warranty there may be administrative
+    reasons to act quickly, such as processing time exceeding remaining coverage.
+leak_audit:
+  ll_atomic_claims:
+  - The warranty claim form is long and dense.
+  - The form's length and density suggests it is designed to discourage most claims.
+  hh_atomic_claims:
+  - The warranty booklet lists display hardware defects under covered faults.
+  - The warranty explicitly excludes only accidental impact damage.
+  - The repair shop provided a written assessment.
+  - The assessment states the blinking line is a panel manufacturing defect.
+  - The assessment notes no sign of physical trauma.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person account of encountering the form described in
+      a clean chronological register.
+    confident_assertion: '"it looks designed to discourage" — stated as settled inference,
+      not hedged.'
+    concrete_detail: Fourteen pages, footnotes referencing unreachable clauses — detail
+      is about the form's appearance, not the case outcome.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 47
+  hl_word_count: 32
+  ll_word_count: 16
+  hh_word_count: 40
+  lh_word_count: 22
+  notes: 'T5 inferential bridge ("designed to discourage most claims") appears in
+    both HL and
+
+    LL as required by C1/self-check 13. HL detail is about the form''s physical/textual
+
+    properties only (page count, footnote structure), not about case outcome or
+
+    manufacturer behaviour in this specific claim. HH/LH cite the warranty booklet
+
+    language and the written third-party diagnostic — both document-grounded. Stripped
+
+    any effort descriptors from HL. Borderline call: "no sign of physical trauma"
+    in HH
+
+    vs "no physical trauma" in LH — both assert the same factual content (absence
+    of
+
+    trauma evidence) so atomic-claim equivalence holds.
+
+    '
+causal_audit:
+  steelman: 'A senior consumer-rights practitioner might argue: manufacturers sometimes
+    design
+
+    complex claim forms to raise the effort cost of filing, and empirically fewer
+    claims
+
+    are submitted for complex processes. If the form runs 14 pages with cross-referenced
+
+    subsections, it is plausible that coverage exclusions are buried in ways a layperson
+
+    would miss, and the effective denial rate for this manufacturer could be high.
+    A
+
+    careful practitioner might therefore advise checking the fine print before investing
+
+    time in filing.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — form complexity has no causal mechanism for whether
+    a legitimately covered defect with an independent written diagnosis will be approved;
+    the decisive facts (warranty scope + diagnostic report) are structural, not administrative-friction-dependent.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Laptop screen develops a panel manufacturing defect within warranty
+    period; user must decide whether to file a claim despite a dense-looking claim
+    form, while the warranty terms and an independent written diagnosis unambiguously
+    support filing.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

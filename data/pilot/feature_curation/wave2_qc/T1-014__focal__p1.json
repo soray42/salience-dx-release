@@ -1,0 +1,13 @@
+{
+  "seed_id": "T1-014",
+  "my_own_diagnosis": "With a repair quote at 29% of replacement cost and a failure isolated to the control board (no motor or pump involvement), the evidence strongly supports recommending repair; the cost ratio is well inside the 50% threshold and the fault type carries no systemic-deterioration signal.",
+  "focal_decisive": true,
+  "focal_notes": "Two independent signals — favorable cost ratio and isolated failure mode — converge on the same repair recommendation, leaving no ambiguity for a competent practitioner.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracles correctly route HL/LL to the low-diagnostic focus (warranty argument is inapplicable at 8 years) and HH/LH to the focal repair-recommendation focus.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

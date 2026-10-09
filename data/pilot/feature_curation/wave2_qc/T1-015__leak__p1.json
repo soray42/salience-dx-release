@@ -1,0 +1,38 @@
+{
+  "seed_id": "T1-015",
+  "ll_claims_extracted": [
+    "Someone else's tomato plants had lower-leaf yellowing",
+    "The cause of their yellowing was attributed to overly alkaline soil",
+    "The alkaline soil blocked iron uptake"
+  ],
+  "hl_case_claims": [
+    "Those tomato plants had lower-leaf yellowing",
+    "Their lower-leaf yellowing looked identical to the user's current symptom presentation",
+    "The cause was soil that had gone too alkaline",
+    "The alkaline soil prevented the tomatoes from taking up iron properly"
+  ],
+  "hl_source_claims": [
+    "The source is named Priya",
+    "Priya runs the community garden",
+    "The community garden is two streets over",
+    "Priya told the user directly (first-person report)",
+    "The diagnosis was definitive ('turned out to be')"
+  ],
+  "leaks": [
+    {
+      "text": "identical-looking",
+      "category": "other_case_content"
+    }
+  ],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 32,
+    "ll": 17,
+    "xbase": 64,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": false,
+  "verdict": "fail",
+  "repair_hint": "1. LEAK — remove 'identical-looking' from HL distractor (change to 'their lower-leaf yellowing turned out to be soil that had gone too alkaline'); LL already asserts lower-leaf yellowing and the comparison claim is implicit. 2. HH/LH equivalence — add the diagnostic interpretation to LH distractor, e.g. change LH to 'The yellowing is on the lowest, oldest leaves and progresses upward while new growth stays green — the classic ascending pattern of mobile-nutrient depletion.' so that LH flatly states the same claims as HH."
+}

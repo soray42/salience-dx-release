@@ -1,0 +1,271 @@
+seed_id: T1-016
+template: T1
+domain: open_qa
+complexity: high
+xbase: 我的房贷将在六周后到期续签，我在考虑是锁定10年固定利率还是保持浮动利率。我和伴侣都有长期劳动合同，我们的合计收入无论哪种还款情景都绰绰有余。两者利率差距为0.7个百分点——固定利率更高。一位同事最近提到了他们自己的续签经历。{DS}
+focal_diagnostic_feature: 用户名下没有与该房产挂钩的房屋净值信贷额度或浮动利率债务，这排除了决策中的任何整合理由，使固定与浮动的选择完全取决于所呈现的利率差距、收入稳定性和持有期限。
+low_diagnostic_proposition: 'A colleague fixed their mortgage at renewal by rolling
+  a home equity line of credit into a single consolidated fixed-rate product.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Evaluate fixed-versus-variable on the basis of the 0.7-percentage-point
+  rate differential, the couple''s income stability, their indefinite holding horizon,
+  and the absence of any variable-rate debt to consolidate; note that the colleague''s
+  HELOC consolidation experience is structurally inapplicable and should not influence
+  the rate-type decision.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Acknowledge the colleague''s experience but identify
+  that it involved a HELOC consolidation absent from the user''s situation; address
+  the fixed-versus-variable decision on the presented cash-flow facts alone without
+  treating the anecdote as informative for this case.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Acknowledge the colleague''s experience but identify that it involved
+      a HELOC consolidation absent from the user''s situation; address the fixed-versus-variable
+      decision on the presented cash-flow facts alone without treating the anecdote
+      as informative for this case.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Acknowledge the colleague''s experience but identify that it involved
+      a HELOC consolidation absent from the user''s situation; address the fixed-versus-variable
+      decision on the presented cash-flow facts alone without treating the anecdote
+      as informative for this case.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Evaluate fixed-versus-variable on the basis of the 0.7-percentage-point
+      rate differential, the couple''s income stability, their indefinite holding
+      horizon, and the absence of any variable-rate debt to consolidate; note that
+      the colleague''s HELOC consolidation experience is structurally inapplicable
+      and should not influence the rate-type decision.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Evaluate fixed-versus-variable on the basis of the 0.7-percentage-point
+      rate differential, the couple''s income stability, their indefinite holding
+      horizon, and the absence of any variable-rate debt to consolidate; note that
+      the colleague''s HELOC consolidation experience is structurally inapplicable
+      and should not influence the rate-type decision.
+
+      '
+variants:
+  HL:
+    distractor: Priya——在一家地区性养老基金担任金融分析师，也是我们团队里金融素养最高的人——告诉我，她在去年续签时，把房屋净值信贷额度并入了一笔统一的固定利率房贷。
+    diagnosticity: low
+    salience: high
+    proposition: 'A colleague fixed their mortgage at renewal by rolling a home equity
+      line of credit into a single consolidated fixed-rate product.
+
+      '
+    salience_source: 'A (source credibility): Priya is named, given a domain-relevant
+      professional role (financial analyst at a pension fund), and positioned as the
+      most financially literate person on the team; B (narrative coherence): clean
+      single-clause report in professional register; C (confident assertion): "told
+      me she had rolled" — direct, unhedged.
+
+      '
+    why_plausible: 'A financially literate colleague describing a concrete mortgage
+      action at renewal sounds like directly applicable peer experience; a busy reader
+      might assume the consolidation-plus-fix strategy is the recommended approach
+      for anyone facing a similar renewal decision.
+
+      '
+    why_irrelevant: 'Priya''s decision was driven by the existence of a HELOC she
+      needed to consolidate — a structural precondition the user does not share. Without
+      a HELOC, the consolidation pathway does not exist and her experience offers
+      no transferable lesson about the rate-type decision.
+
+      '
+  LL:
+    distractor: 一位同事在续签时把房屋净值信贷额度并入了一笔固定利率产品，选择了固定利率。
+    diagnosticity: low
+    salience: low
+    proposition: 'A colleague fixed their mortgage at renewal by rolling a home equity
+      line of credit into a single consolidated fixed-rate product.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 我的房贷经纪人以书面形式确认，档案显示该房产名下没有任何担保信贷额度或浮动利率产品——续签是一个纯粹的固定与浮动利率选择，没有任何需要考虑的整合因素。
+    diagnosticity: high
+    salience: high
+    proposition: 'The user holds no home equity line of credit or variable-rate debt
+      secured against the property, removing any consolidation rationale from the
+      decision and leaving the fixed-versus-variable choice to be resolved by the
+      presented rate differential, income stability, and holding horizon.
+
+      '
+    salience_source: 'A (source credibility): the mortgage broker as an authoritative
+      third-party professional; C (confident assertion): "confirmed in writing" —
+      unambiguous documentary authority; D (concrete detail about setting): "the file
+      shows" grounds the claim in a professional document review.
+
+      '
+  LH:
+    distractor: 该房产名下没有任何担保信贷额度或浮动利率产品；这是一个直接的固定与浮动利率选择问题。
+    diagnosticity: high
+    salience: low
+    proposition: 'The user holds no home equity line of credit or variable-rate debt
+      secured against the property, removing any consolidation rationale from the
+      decision and leaving the fixed-versus-variable choice to be resolved by the
+      presented rate differential, income stability, and holding horizon.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: HELOC整合作为策略
+  description: 建议正确做法是在续签时将房屋净值信贷额度（HELOC）整合入固定利率房贷，如同事所做的那样。这一方向将同事的整合经历视为适用于用户利率类型决策的可借鉴模式。
+plausible_alternative_directions:
+- label: 利率差距盈亏平衡分析
+  description: 在0.7个百分点的溢价下，固定利率只有在浮动利率在有效持有期内上升幅度超过该差距时才在经济上更合算；实务人员会测算多少次加息才能达到盈亏平衡。
+- label: 劳动合同收入稳定性
+  description: 双方均有长期劳动合同，降低了收入中断导致浮动利率还款困难的概率；顾问可能会权衡这种稳定性是否有利于承担浮动利率风险。
+- label: 10年锁定期与持有期限的匹配度
+  description: 10年固定期限异常之长；顾问可能会评估用户的生活状况（家庭计划、职业流动性、可能的房产升级）是否使10年锁定在结构上合适，或者较短的固定期限是否更可取。
+leak_audit:
+  ll_atomic_claims:
+  - A colleague fixed their mortgage at renewal
+  - The colleague rolled a home equity line of credit into a single fixed-rate product
+  hl_salience_dimensions:
+    source_credibility: 'Priya is named, identified as a financial analyst at a regional
+      pension fund, and characterised as "easily the most financially literate person
+      in our team"
+
+      '
+    narrative_coherence: 'Single clean clause in professional register; no interruptions,
+      restarts, or tangents
+
+      '
+    confident_assertion: '"told me she had rolled" — direct, unhedged speech verb
+
+      '
+    concrete_detail: '"at her renewal last year" — temporal setting anchor about the
+      source''s context, not about the case outcome
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 40
+  ll_word_count: 20
+  notes: 'Stripped: no mention of how the consolidation affected the colleague''s
+    financial
+
+    outcome (would be a severity/impact claim); no specific rate figures from
+
+    the colleague''s renewal (would be a tunable value); no description of the setting
+
+    in which she told the user (coffee, office environment — sensory distractor).
+
+    Borderline call: "last year" retained as a temporal credibility anchor for
+
+    the source''s experience currency; it does not add case-outcome information.
+
+    "easily the most financially literate person in our team" is a source
+
+    characterisation, not a case fact — retained as a pure salience lever (I5-A).
+
+    Cell-integrity repair 2026-06-11: focal evidence ("no home equity line or other
+
+    debt tied to the property") removed from xbase; it now lives exclusively in
+
+    HH/LH variants. The xbase retains only income stability and rate-differential
+
+    facts that do not foreclose the consolidation story on their own.
+
+    '
+causal_audit:
+  steelman: 'Best-faith argument that HELOC consolidation could inform the user''s
+
+    fixed-versus-variable decision:
+
+
+    A HELOC is itself a variable-rate product. A practitioner might reason:
+
+    even though the user currently has no HELOC, the existence of the colleague''s
+
+    experience demonstrates that consolidation of variable-rate debt into a
+
+    fixed mortgage is a viable strategy when such debt exists. A forward-looking
+
+    advisor might ask whether the user plans to open a HELOC in the future (e.g.,
+
+    for home renovation), in which case the colleague''s experience would be
+
+    pre-emptively relevant. Furthermore, the consolidation implicitly required
+
+    choosing a fixed-rate product — so the experience provides indirect evidence
+
+    that fixed rates were economically favourable in a similar rate environment,
+
+    which might have Bayesian relevance for anyone choosing between fixed and
+
+    variable.
+
+
+    However: the focal evidence (confirmed by the broker in HH/LH) shows zero
+
+    secured lines of credit on this property, which forecloses the consolidation
+
+    pathway entirely. The indirect inference (the colleague chose fixed and it
+
+    was presumably favourable) conflates two separate decisions: the rate-type
+
+    choice was constrained by and motivated by debt consolidation, not by a pure
+
+    rate-type optimisation identical to the user''s situation. A senior financial
+
+    planner would immediately distinguish these cases and note that the anecdote
+
+    provides no independent signal about fixed vs variable for a borrower with
+
+    no HELOC.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — focal evidence (no HELOC or secured debt) removed
+    from xbase per cell-integrity repair; the closure is now carried exclusively by
+    the HH/LH variants (broker confirmation in HH; flat statement in LH).
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 1
+  topic_brief: 'Choosing between fixing the interest rate for 10 years vs staying
+    variable at a mortgage renewal, given specific personal cash-flow facts. Anecdote:
+    a rate-choice war story from a colleague, from a structurally different market
+    period.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-016.yaml
+  source_xbase_sha256: c4e7580ff43cb5de
+  translated_content_sha256: 62c9342d52947e7e
+  translation_notes: HELOC kept as HELOC (standard financial acronym recognized in
+    Chinese financial contexts, or rendered as 房屋净值信贷额度 on first use). Priya retained
+    as named source for HL salience. '养老基金' (pension fund) is the standard Chinese
+    term. '0.7个百分点' preserves the exact rate differential. No culture-bound salience
+    issues; mortgage renewal concepts translate directly.

@@ -1,0 +1,13 @@
+{
+  "seed_id": "T5-016",
+  "my_own_diagnosis": "The fee (1.8% AUM, 35x index cost) and ten-year net return (5.2% vs S&P 500's 13.1%) constitute an ~8 percentage point annual underperformance gap that is decisive against this advisor; the polished office and presentation materials are marketing spend with no causal connection to investment skill or fee discipline, and should be disregarded in favour of those numbers.",
+  "focal_decisive": true,
+  "focal_notes": "The quantitative inputs in xbase are stark and unambiguous — a decade of >8 pp annual underperformance at 35x the cost of a passive alternative leaves no room for a competent practitioner to reach a different primary conclusion.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cells correctly map to low_diagnostic_oracle_focus (redirect from aesthetics to quantitative criteria) and HH/LH cells correctly map to the focal oracle_focus (fee-and-performance analysis with bespoke-services caveat).",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

@@ -1,0 +1,95 @@
+seed_id: T3-001
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: My ML training job takes about six hours per epoch on a single A100. A colleague
+  using the same model and dataset on an otherwise comparable A100 setup finishes
+  an epoch in about 90 minutes. {DS}
+focal_diagnostic_feature: Profiling shows low GPU utilisation with most time spent
+  in the dataloader, and the dataset is on a network-mounted drive.
+low_diagnostic_proposition: A senior lab member states that the CUDA driver version
+  is the main cause of this kind of slowdown.
+oracle_action: ANSWER
+oracle_focus: Treat this as an input pipeline/storage bottleneck; move data to local
+  NVMe and tune dataloader workers/prefetching.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the driver diagnosis from authority alone.
+  Ask for profiler output, GPU utilisation, and storage location.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the driver diagnosis from authority alone. Ask for profiler
+      output, GPU utilisation, and storage location.
+  LL:
+    action: ASK
+    focus: Do not accept the driver diagnosis from authority alone. Ask for profiler
+      output, GPU utilisation, and storage location.
+  HH:
+    action: ANSWER
+    focus: Treat this as an input pipeline/storage bottleneck; move data to local
+      NVMe and tune dataloader workers/prefetching.
+  LH:
+    action: ANSWER
+    focus: Treat this as an input pipeline/storage bottleneck; move data to local
+      NVMe and tune dataloader workers/prefetching.
+variants:
+  HL:
+    distractor: My senior PI glanced at the run time and said, very confidently, that
+      this is always a wrong CUDA-driver-version problem.
+    diagnosticity: low
+    salience: high
+    proposition: A senior lab member states that the CUDA driver version is the main
+      cause of this kind of slowdown.
+    salience_source: authority title, confident universal claim, technical-sounding
+      cause
+    why_plausible: CUDA mismatches are real and the PI's status makes the explanation
+      feel reliable.
+    why_irrelevant: The profiler points to data loading and under-utilised GPU, which
+      is not the signature of a driver-version bottleneck.
+  LL:
+    distractor: A senior lab member stated that CUDA driver version is the main cause
+      of this type of slowdown.
+    diagnosticity: low
+    salience: low
+    proposition: A senior lab member states that the CUDA driver version is the main
+      cause of this kind of slowdown.
+    matched_to: HL
+  HH:
+    distractor: GPU utilisation keeps bouncing between 5% and 30%, and the profiler
+      shows the job waiting in the dataloader while the data sit on a network-mounted
+      SSD.
+    diagnosticity: high
+    salience: high
+    proposition: Profiling shows low GPU utilisation with most time spent in the dataloader,
+      and the dataset is on a network-mounted drive.
+    salience_source: profiler attribution and resource-utilisation pattern
+  LH:
+    distractor: Profiling shows low GPU utilisation and dataloader-bound execution;
+      the dataset is stored on a network-mounted volume.
+    diagnosticity: high
+    salience: low
+    proposition: Profiling shows low GPU utilisation with most time spent in the dataloader,
+      and the dataset is on a network-mounted drive.
+    matched_to: HH
+distractor_direction:
+  label: CUDA driver mismatch
+  description: Investigating whether the installed CUDA driver version is wrong or
+    incompatible, causing the training slowdown.
+plausible_alternative_directions:
+- label: Mixed-precision disabled
+  description: The job is training in full precision while the comparison run uses
+    mixed precision.
+- label: Batch-size mismatch
+  description: The local run uses a different effective batch size or gradient-accumulation
+    setting.
+- label: CPU preprocessing bottleneck
+  description: Data decoding or preprocessing is saturated before tensors reach the
+    GPU.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

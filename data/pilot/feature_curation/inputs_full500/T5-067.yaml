@@ -1,0 +1,156 @@
+seed_id: T5-067
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our application's LDAP authentication is taking eight to ten seconds per login
+  attempt, even for accounts that are definitely in the directory. The same LDAP server
+  handles read requests for several other internal services without complaint. No
+  changes were made to the server configuration this sprint. {DS}
+focal_diagnostic_feature: LDAP profiling shows each uid lookup performs a sequential
+  scan of all 50,000 directory entries; no equality index is defined on the uid attribute.
+low_diagnostic_proposition: The LDAP admin console looks visually cluttered and disorganised,
+  suggesting directory disorganisation is causing the slow query performance.
+oracle_action: ANSWER
+oracle_focus: Add an equality index on the uid attribute in the LDAP configuration;
+  the sequential scan of 50,000 entries is the direct cause of the 8-10 second lookup
+  time.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer query performance from admin console appearance.
+  Ask for LDAP profiling output and whether an index is configured on the uid attribute.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer query performance from admin console appearance. Ask for LDAP
+      profiling output and whether an index is configured on the uid attribute.
+  LL:
+    action: ASK
+    focus: Do not infer query performance from admin console appearance. Ask for LDAP
+      profiling output and whether an index is configured on the uid attribute.
+  HH:
+    action: ANSWER
+    focus: Add an equality index on the uid attribute in the LDAP configuration; the
+      sequential scan of 50,000 entries is the direct cause of the 8-10 second lookup
+      time.
+  LH:
+    action: ANSWER
+    focus: Add an equality index on the uid attribute in the LDAP configuration; the
+      sequential scan of 50,000 entries is the direct cause of the 8-10 second lookup
+      time.
+variants:
+  HL:
+    distractor: The LDAP admin console is packed with collapsed trees, obsolete OUs
+      nobody has cleaned up, and labels that overflow their columns — the directory
+      looks disorganised enough that slow query performance seems like the natural
+      result.
+    diagnosticity: low
+    salience: high
+    proposition: The LDAP admin console looks visually cluttered and disorganised,
+      suggesting directory disorganisation is causing the slow query performance.
+    salience_source: 'B (narrative coherence — specific visual inventory: collapsed
+      trees, obsolete OUs, overflowing labels); C (confident inferential bridge —
+      ''seems like the natural result'')'
+    why_plausible: A visually cluttered admin console may indicate accumulated directory
+      cruft — extra OUs, obsolete entries — which could plausibly increase search
+      space and slow queries, making the inference feel technically grounded.
+    why_irrelevant: The LDAP console's visual appearance reflects how an admin has
+      arranged the tree view, not the indexing configuration; query performance depends
+      on attribute indexes, not on how many OUs are visible in the UI.
+  LL:
+    distractor: The LDAP admin console looks visually cluttered and disorganised,
+      suggesting directory disorganisation is causing the slow query performance.
+    diagnosticity: low
+    salience: low
+    proposition: The LDAP admin console looks visually cluttered and disorganised,
+      suggesting directory disorganisation is causing the slow query performance.
+    matched_to: HL
+  HH:
+    distractor: Running an ldapsearch with the LDAP profiling overlay shows the uid
+      lookup scanning all 50,000 directory entries sequentially and taking 8.4 seconds;
+      there is no equality index defined on the uid attribute.
+    diagnosticity: high
+    salience: high
+    proposition: LDAP profiling shows each uid lookup performs a sequential scan of
+      all 50,000 directory entries; no equality index is defined on the uid attribute.
+    salience_source: B (narrative coherence — specific diagnostic method, precise
+      entry count and elapsed time, named missing configuration element)
+  LH:
+    distractor: LDAP profiling shows a sequential scan of 50,000 entries per uid lookup
+      taking 8.4 seconds; no equality index exists on the uid attribute.
+    diagnosticity: high
+    salience: low
+    proposition: LDAP profiling shows each uid lookup performs a sequential scan of
+      all 50,000 directory entries; no equality index is defined on the uid attribute.
+    matched_to: HH
+distractor_direction:
+  label: Directory visual disorganisation
+  description: Treating the cluttered visual appearance of the LDAP admin console
+    as evidence of directory disorganisation that is causing the slow query performance.
+plausible_alternative_directions:
+- label: Concurrent connection saturation
+  description: Investigating whether the LDAP server is hitting a connection or thread
+    limit during peak login load from this application.
+- label: Network latency to LDAP host
+  description: Checking whether the path from the application server to the LDAP host
+    has degraded, adding round-trip time to each bind.
+- label: Schema or filter complexity
+  description: Examining whether the application's search filter is too broad or uses
+    attributes the server cannot efficiently match.
+leak_audit:
+  ll_atomic_claims:
+  - The LDAP admin console looks visually cluttered and disorganised.
+  - This suggests directory disorganisation is causing the slow query performance.
+  hh_atomic_claims:
+  - The ldapsearch profiling overlay shows the uid lookup scanning all 50,000 directory
+    entries sequentially.
+  - The scan takes 8.4 seconds.
+  - No equality index is defined on the uid attribute.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person aesthetic observation, no named source.
+    narrative_coherence: Specific visual inventory of console elements; bridge expressed
+      confidently ('seems like the natural result').
+    confident_assertion: '''seems like the natural result'' — presented as obvious
+      inferential outcome, not speculation.'
+    concrete_detail: N/A — detail describes console appearance, not any query or configuration
+      fact.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 43
+  hl_word_count: 35
+  ll_word_count: 18
+  hh_word_count: 30
+  lh_word_count: 23
+  notes: 'T5 inferential bridge (console disorganisation → slow query performance)
+    appears in both HL and LL per C1/self-check 13.
+
+    HH includes three atomic claims; LH carries all three: sequential scan, 50k entries,
+    8.4 seconds elapsed, no uid equality index. QC repair (2026-06-14): added ''taking
+    8.4 seconds'' to LH to satisfy HH/LH atomic-claim equivalence (C10); lh_word_count
+    updated from 22 to 23.
+
+    '
+causal_audit:
+  steelman: 'A cluttered LDAP directory with many OUs, obsolete entries, and an unorganised
+    tree structure could plausibly increase the search space and slow down attribute
+    lookups — more objects to traverse even with indexing, or a very large flat OU
+    forcing sequential scan behaviour regardless of index hints. An admin seeing a
+    messy console might reasonably suspect that accumulated cruft is degrading performance.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — console appearance does not determine whether an
+    attribute index exists; the two facts are independent of each other.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: LDAP authentication 8-10 seconds per login; aesthetic distractor is
+    cluttered admin console appearance; root cause is missing equality index on uid
+    attribute forcing 50,000-entry sequential scans.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

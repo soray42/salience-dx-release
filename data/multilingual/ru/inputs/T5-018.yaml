@@ -1,0 +1,182 @@
+seed_id: T5-018
+template: T5
+domain: open_qa
+complexity: medium
+xbase: 'Я выбираю между двумя электриками для перепрокладки проводки в части дома.
+  Их коммерческие предложения отличаются лишь на несколько процентов, и оба могут
+  начать работу на той же неделе. Один, Voltarepair, обладает великолепным брендом:
+  современный сайт, фирменный фургон, matching-форма — всё как надо. Другой работает
+  скромно: просто номер телефона и обычная электронная почта. Мне важно, чтобы работа
+  была выполнена безопасно и качественно. {DS}'
+focal_diagnostic_feature: Скромно представленный электрик имеет лицензию, полную страховку
+  и дюжину надёжных недавних рекомендаций; Voltarepair не имеет лицензии на данный
+  вид работ, не имеет страховки ответственности и смог предоставить лишь два расплывчатых
+  отзыва.
+low_diagnostic_proposition: Voltarepair's polished, professional branding indicates
+  it is the higher-quality, more reliable electrician.
+oracle_action: ANSWER
+oracle_focus: Hire the plainly presented electrician; licensing, full insurance, and
+  a dozen strong references decide a rewiring job, and the polished competitor lacks
+  the licence, insurance, and references that actually matter.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer competence from branding polish. Ask each
+  electrician for licence, liability insurance, and recent verifiable references.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer competence from branding polish. Ask each electrician for
+      licence, liability insurance, and recent verifiable references.
+  LL:
+    action: ASK
+    focus: Do not infer competence from branding polish. Ask each electrician for
+      licence, liability insurance, and recent verifiable references.
+  HH:
+    action: ANSWER
+    focus: Hire the plainly presented electrician; licensing, full insurance, and
+      a dozen strong references decide a rewiring job, and the polished competitor
+      lacks the licence, insurance, and references that actually matter.
+  LH:
+    action: ANSWER
+    focus: Hire the plainly presented electrician; licensing, full insurance, and
+      a dozen strong references decide a rewiring job, and the polished competitor
+      lacks the licence, insurance, and references that actually matter.
+variants:
+  HL:
+    distractor: Voltarepair просто выглядит как более надёжный вариант — чёткий логотип,
+      безупречный фирменный фургон, matching-форма — всё это излучает уверенность
+      компании, которая гордится своей работой, а те, кто вкладывают столько усилий
+      в профессиональный вид, как правило, и работают профессионально.
+    diagnosticity: low
+    salience: high
+    proposition: Voltarepair's polished, professional branding indicates it is the
+      higher-quality, more reliable electrician.
+    salience_source: B/D — vivid concrete branding detail (logo, wrapped van, uniforms)
+      carrying the bridge that polish signals professional work.
+    why_plausible: Investment in presentation often does correlate with established,
+      careful businesses, so polish reads as a competence signal.
+    why_irrelevant: Branding is a marketing spend, not a credential; it tells you
+      nothing about licensing, insurance, or workmanship, which are what make a rewire
+      safe.
+  LL:
+    distractor: Отполированный, профессиональный бренд Voltarepair говорит о том,
+      что это более качественный и надёжный электрик.
+    diagnosticity: low
+    salience: low
+    proposition: Voltarepair's polished, professional branding indicates it is the
+      higher-quality, more reliable electrician.
+    matched_to: HL
+  HH:
+    distractor: Когда я реально проверил документы, оказалось, что скромный оператор
+      полностью лицензирован для данной перепрокладки, имеет страховку ответственности
+      и передал мне дюжину недавних рекомендаций, которые все подтвердились. Voltarepair
+      не имеет лицензии для данного класса работ, не имеет страхового покрытия ответственности
+      и смог предоставить лишь два расплывчатых отзыва.
+    diagnosticity: high
+    salience: high
+    proposition: The plainly presented electrician is licensed, fully insured, and
+      has a dozen strong recent references; Voltarepair is unlicensed for this work,
+      carries no liability insurance, and could supply only two vague references.
+    salience_source: Verifying licence, insurance, and references for both makes the
+      real quality gap concrete and decisive.
+  LH:
+    distractor: Скромный электрик имеет лицензию, страховку и дюжину надёжных отзывов;
+      Voltarepair не имеет лицензии на данный вид работ, не застрахован и предоставил
+      лишь два расплывчатых отзыва.
+    diagnosticity: high
+    salience: low
+    proposition: The plainly presented electrician is licensed, fully insured, and
+      has a dozen strong recent references; Voltarepair is unlicensed for this work,
+      carries no liability insurance, and could supply only two vague references.
+    matched_to: HH
+distractor_direction:
+  label: Бренд как сигнал качества
+  description: Выбор Voltarepair, потому что его отполированный бренд воспринимается
+    как свидетельство более высокого мастерства.
+plausible_alternative_directions:
+- label: Соответствие объёма работ в коммерческих предложениях
+  description: Покрывает ли одно из коммерческих предложений объём работ более полно
+    или содержит скрытые исключения.
+- label: Доступность и сроки
+  description: Существенно ли отличаются условия по срокам, последующему обслуживанию
+    и гарантийным обязательствам между двумя исполнителями.
+  follow-up: null
+  and warranty terms differ meaningfully between them.: null
+leak_audit:
+  ll_atomic_claims:
+  - Voltarepair's branding is polished and professional.
+  - That polish indicates it is the higher-quality, more reliable electrician.
+  hh_atomic_claims:
+  - The plain electrician is licensed for this rewiring, insured, and has a dozen
+    solid recent references.
+  - Voltarepair is not licensed for this class of work.
+  - Voltarepair carries no liability insurance and offered only two vague references.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: N/A
+    confident_assertion: N/A
+    concrete_detail: Vivid concrete detail about Voltarepair's branding (logo, wrapped
+      van, uniforms).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 67
+  hl_word_count: 43
+  ll_word_count: 13
+  hh_word_count: 46
+  lh_word_count: 25
+  notes: 'LH is 25 words (hard cap) to keep equivalence with HH across both electricians''
+    licence/insurance/references;
+
+    single flat clause-set, borderline. T5: the bridge "investing in looks signals
+    professional work" is in HL and
+
+    flat in LL (self-check 13). xbase describes the branding contrast but withholds
+    the licence/insurance/reference
+
+    facts — decisive — which live only in HH/LH. Quotes-within-a-few-percent neutralises
+    price as a discriminator.
+
+    '
+causal_audit:
+  steelman: 'One could argue that a tradesperson who invests in a wrapped van, uniforms,
+    and a real website is likely an
+
+    established, organised, repeat-business operation with a reputation to protect,
+    whereas a phone-number-only
+
+    operator might be informal or transient — so branding is a weak proxy for professionalism
+    worth some weight.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the licence, insurance, and reference facts that
+    overturn the branding inference are supplied only in HH/LH; xbase does not foreclose
+    the branding argument.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Choosing between two electricians where licensing, insurance, and references
+    favour the plain operator, against the inference that the slickly branded one
+    must be better.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-018.yaml
+  source_xbase_sha256: d8b183ed3de875fa
+  translated_content_sha256: 67acae2dfbd67eae
+  translation_notes: Brand name 'Voltarepair' kept as-is throughout (proper name).
+    'Matching-форма' used for 'matching uniforms' — the English 'matching' is commonly
+    used in Russian fashion/branding contexts as a loan word; alternatively could
+    be 'единая форма' but 'matching' better preserves the vivid brand-detail salience
+    of the original HL. 'Лицензия' / 'страховка ответственности' for license/liability
+    insurance are standard Russian terms. First-person register preserved.

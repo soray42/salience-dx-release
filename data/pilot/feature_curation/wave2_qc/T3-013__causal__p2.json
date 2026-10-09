@@ -1,0 +1,9 @@
+{
+  "seed_id": "T3-013",
+  "steelman": "When Windows or macOS automatically switches from A2DP to HFP/HSP — which happens whenever an application opens the headphone microphone channel — audio quality degrades sharply (from high-bitrate stereo to 8 kHz mono) and can manifest as crackling or distortion. A practitioner could argue that if the profile negotiation is unstable, the stack might re-negotiate to HFP mid-session; if the desk position also has some ambient RF noise (from unrelated sources such as a crowded 2.4 GHz environment), the combination of a flaky profile and ambient RF could appear spatially correlated with the desk. Additionally, some Bluetooth host adapter firmware handles codec polling differently under HFP, potentially amplifying sensitivity to whatever interference is present at that location.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase establishes a strictly distance-dependent symptom: crackling only occurs within approximately one meter of the laptop and disappears entirely when the user walks to the kitchen or printer. Audio profile configuration (A2DP vs HFP) is a session-level parameter that is distance-invariant — profile state does not change based on physical proximity to the laptop hardware. The steelman's HFP-flip argument requires an independent ambient RF source located only at the desk; that argument collapses into confirming that something physically at the desk (i.e., the laptop) is emitting RF, which is the focal explanation, not a defense of profile misconfiguration. A competent practitioner would not list profile misconfiguration as a working hypothesis for a symptom that is purely spatial. Seed passes this lens."
+}

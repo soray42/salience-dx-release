@@ -1,0 +1,101 @@
+seed_id: T2-008
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: Mi lavadora ha dejado la ropa empapada al final de cada ciclo durante la última
+  semana. La máquina llega al final del programa sin mostrar ningún código de error.
+  {DS}
+focal_diagnostic_feature: El paso de centrifugado ahora suena más lento, con un tono
+  más grave y dura menos que antes.
+low_diagnostic_proposition: The issue began around the time of a higher utility bill.
+oracle_action: ANSWER
+oracle_focus: The spin stage is failing mechanically or being interrupted; check load
+  balance, belt/motor, and call service if it repeats.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer appliance cause from a bill. Ask what changed
+  in the spin cycle and whether the machine drains/spins properly.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer appliance cause from a bill. Ask what changed in the spin
+      cycle and whether the machine drains/spins properly.
+  LL:
+    action: ASK
+    focus: Do not infer appliance cause from a bill. Ask what changed in the spin
+      cycle and whether the machine drains/spins properly.
+  HH:
+    action: ANSWER
+    focus: The spin stage is failing mechanically or being interrupted; check load
+      balance, belt/motor, and call service if it repeats.
+  LH:
+    action: ANSWER
+    focus: The spin stage is failing mechanically or being interrupted; check load
+      balance, belt/motor, and call service if it repeats.
+variants:
+  HL:
+    distractor: Esto empezó justo después de recibir una factura de energía un 40%
+      más alta que el mes anterior, impresa en un recuadro de advertencia rojo.
+    diagnosticity: low
+    salience: high
+    proposition: The issue began around the time of a higher utility bill.
+    salience_source: specific percentage, bill warning visual, temporal overlap
+    why_plausible: A big bill makes appliance malfunction feel energy-related.
+    why_irrelevant: The bill does not identify which machine component is failing;
+      the altered spin behaviour directly does.
+  LL:
+    distractor: El problema comenzó alrededor del momento en que llegó un aumento
+      notable en la factura de servicios públicos.
+    diagnosticity: low
+    salience: low
+    proposition: The issue began around the time of a higher utility bill.
+    matched_to: HL
+  HH:
+    distractor: El paso de centrifugado produce ahora un sonido más grave y lento,
+      y termina antes; la ropa sale tan pesada que gotea en el suelo.
+    diagnosticity: high
+    salience: high
+    proposition: The spin step now sounds slower, lower-pitched, and shorter than
+      it used to.
+    salience_source: changed mechanical sound during spin
+  LH:
+    distractor: El paso de centrifugado se escucha más lento y corto que antes, y
+      la ropa retiene una cantidad considerable de agua.
+    diagnosticity: high
+    salience: low
+    proposition: The spin step now sounds slower, lower-pitched, and shorter than
+      it used to.
+    matched_to: HH
+distractor_direction:
+  label: Anomalía en la factura de servicios
+  description: Investigar si cambios más amplios en el consumo eléctrico o de agua
+    explican el problema de la lavadora.
+plausible_alternative_directions:
+- label: Obstrucción en la bomba de drenaje
+  description: El agua permanece porque la bomba de drenaje, la manguera o el filtro
+    están parcialmente obstruidos.
+- label: Desequilibrio de la carga
+  description: La máquina interrumpe el centrifugado porque la carga está desequilibrada.
+- label: Error en la configuración del programa
+  description: El ciclo seleccionado o la configuración de centrifugado impide una
+    etapa de centrifugado normal.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-008.yaml
+  source_xbase_sha256: 1a7d32950a5e2017
+  translated_content_sha256: 6152c98a1d840786
+  translation_notes: No culture-bound salience issues. 'Utility bill' rendered as
+    'factura de servicios públicos' (standard in Latin American Spanish); 'factura
+    de energía' used in HL for natural variation matching the original's slightly
+    different phrasing. Spin step translated as 'paso de centrifugado' consistently.

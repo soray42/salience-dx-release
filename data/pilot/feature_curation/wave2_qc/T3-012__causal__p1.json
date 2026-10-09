@@ -1,0 +1,9 @@
+{
+  "seed_id": "T3-012",
+  "steelman": "PgBouncer in transaction-pooling mode controls all client connections to the primary and could theoretically enable a burst of concurrent writers at 02:15 when a scheduled batch job starts, increasing write contention and WAL generation. One might also hypothesize that PgBouncer's pool-management operations (connection resets, session teardown, server_reset_query execution) could create unusual load patterns on the primary at a fixed schedule. If pool exhaustion caused client sessions to queue and then flood in simultaneously, the resulting concurrent DML could generate a WAL spike. A senior DBA unfamiliar with replication internals might conflate 'connection layer issues' with 'replication layer issues' and list PgBouncer as worth checking.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "not_applicable",
+  "notes": "The steelman collapses under scrutiny: streaming replication uses a dedicated walsender process that connects to the standby via the replication protocol, completely bypassing PgBouncer. PgBouncer operates only in the client-application-to-primary connection layer. Even if PgBouncer somehow increased DML volume on the primary (which it cannot cause on its own — it can only multiplex existing client load), the walsender path to the standby is unaffected by PgBouncer configuration. No Postgres replication troubleshooting guide lists PgBouncer pool settings as a candidate for replay_lag spikes. The distractor is structurally inapplicable to the replication stack; pathway_closure_check is not_applicable because there is no pathway to close. Seed passes this lens cleanly."
+}

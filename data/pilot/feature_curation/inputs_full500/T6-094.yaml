@@ -1,0 +1,199 @@
+seed_id: T6-094
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our CDN has been serving stale product images to customers for two days. When
+  we upload replacement files directly to the origin, the new versions appear there
+  immediately. Cache-Control headers on all origin image responses are set to max-age=86400.
+  Our deployment script calls the CDN purge API after each upload. {DS}
+focal_diagnostic_feature: Every purge API call from the deployment script returns
+  HTTP 403 because the API token lacks the Cache Purge permission scope, so invalidation
+  requests are silently rejected after each upload.
+low_diagnostic_proposition: The user's past stale-CDN incidents were caused by missing
+  or misconfigured Cache-Control headers on the origin, and this is probably the same
+  issue.
+oracle_action: ANSWER
+oracle_focus: Grant the Cache Purge permission scope to the API token used by the
+  deployment script, or rotate to a token that already holds it, then verify purge
+  calls return 200 and confirm edge nodes serve fresh images.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the past Cache-Control explanation to a
+  case where headers are already set; ask for the HTTP response codes returned by
+  the CDN purge API calls and review the token's permission scopes before touching
+  header configuration.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the past Cache-Control explanation to a case where headers
+      are already set; ask for the HTTP response codes returned by the CDN purge API
+      calls and review the token's permission scopes before touching header configuration.
+  LL:
+    action: ASK
+    focus: Do not apply the past Cache-Control explanation to a case where headers
+      are already set; ask for the HTTP response codes returned by the CDN purge API
+      calls and review the token's permission scopes before touching header configuration.
+  HH:
+    action: ANSWER
+    focus: Grant the Cache Purge permission scope to the API token used by the deployment
+      script, or rotate to a token that already holds it, then verify purge calls
+      return 200 and confirm edge nodes serve fresh images.
+  LH:
+    action: ANSWER
+    focus: Grant the Cache Purge permission scope to the API token used by the deployment
+      script, or rotate to a token that already holds it, then verify purge calls
+      return 200 and confirm edge nodes serve fresh images.
+variants:
+  HL:
+    distractor: Every time I have seen stale CDN content before, it was Cache-Control
+      headers missing or misconfigured on the origin, so my instinct is that the same
+      thing is happening here.
+    diagnosticity: low
+    salience: high
+    proposition: The user's past stale-CDN incidents were caused by missing or misconfigured
+      Cache-Control headers on the origin, and this is probably the same issue.
+    salience_source: B/C — vivid personal history phrased as a confident first-instinct
+      with "every time" universalising the pattern and "my instinct" framing it as
+      settled practitioner intuition.
+    why_plausible: Cache-Control misconfiguration is a genuine and common root cause
+      of stale CDN content, and a practitioner with repeated past experience of this
+      class of issue would reasonably anchor on it as a first hypothesis.
+    why_irrelevant: xbase confirms Cache-Control headers are already set to max-age=86400
+      on all origin responses, ruling out the missing-or-misconfigured header mechanism;
+      the purge pathway is structurally distinct and the focal feature shows it is
+      the actual failure point.
+  LL:
+    distractor: Past stale CDN incidents for the user were caused by missing or misconfigured
+      Cache-Control headers, and this is probably the same issue.
+    diagnosticity: low
+    salience: low
+    proposition: The user's past stale-CDN incidents were caused by missing or misconfigured
+      Cache-Control headers on the origin, and this is probably the same issue.
+    matched_to: HL
+  HH:
+    distractor: Every purge API call from our deployment script is returning HTTP
+      403; the API token we use has the Cache Purge permission missing from its scope,
+      so new uploads trigger an invalidation request that the CDN silently rejects.
+    diagnosticity: high
+    salience: high
+    proposition: Every purge API call from the deployment script returns HTTP 403
+      because the API token lacks the Cache Purge permission scope, so invalidation
+      requests are silently rejected after each upload.
+    salience_source: B/C — specific HTTP status code (403), named permission scope,
+      and the mechanism of silent rejection are presented as directly observed operational
+      facts with confident present-tense framing.
+  LH:
+    distractor: The CDN purge API returns HTTP 403; the API token lacks the Cache
+      Purge permission scope, so invalidation requests are silently rejected.
+    diagnosticity: high
+    salience: low
+    proposition: Every purge API call from the deployment script returns HTTP 403
+      because the API token lacks the Cache Purge permission scope, so invalidation
+      requests are silently rejected after each upload.
+    matched_to: HH
+distractor_direction:
+  label: Cache-Control header misconfiguration
+  description: Investigating whether missing or incorrectly set Cache-Control headers
+    on the origin are causing the CDN to serve stale images, based on the user's prior
+    experience with identical symptoms.
+plausible_alternative_directions:
+- label: CDN origin-pull configuration
+  description: The CDN may not be configured to respect Cache-Control headers from
+    this origin, or the origin-pull settings may be overriding them with a different
+    TTL policy.
+- label: Partial edge propagation
+  description: Purge commands may succeed for some edge nodes but not propagate to
+    all PoPs, leaving certain geographic regions serving stale content.
+- label: Upload path mismatch
+  description: Replacement files may be written to a different path or bucket prefix
+    than the one the CDN origin pull is configured to serve, so the origin appears
+    updated but the CDN fetches from the old location.
+leak_audit:
+  ll_atomic_claims:
+  - The user's past stale-CDN incidents were caused by missing or misconfigured Cache-Control
+    headers.
+  - The current incident is probably the same issue.
+  hh_atomic_claims:
+  - Every purge API call from the deployment script returns HTTP 403.
+  - The API token lacks the Cache Purge permission scope.
+  - New uploads trigger an invalidation request.
+  - The CDN silently rejects the invalidation request.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, no named external source.
+    narrative_coherence: Vivid personal history framed as a consistent pattern across
+      all prior incidents, stated in clean first-person register.
+    confident_assertion: '"every time" and "my instinct is" — universalising and first-instinct
+      framing present the past pattern as settled experiential knowledge.'
+    concrete_detail: N/A — detail is about the pattern of past incidents, not about
+      this case's evidence; no case-specific content added beyond LL.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 50
+  hl_word_count: 30
+  ll_word_count: 22
+  hh_word_count: 38
+  lh_word_count: 19
+  notes: 'T6 availability inference ("this is probably the same issue") is propositional
+    content
+
+    under C1 and appears in both HL and LL as required. xbase explicitly states
+
+    Cache-Control headers are set to max-age=86400, which narrows but does not fully
+
+    close the distractor pathway (the value could still be considered a misconfiguration
+
+    by some practitioners, keeping C4 clean). Decisive focal content lives only in
+    HH/LH.
+
+    HH atomic claims 3 and 4 (invalidation request triggered, silently rejected) are
+
+    mechanistic elaborations of claims 1+2 that LH captures implicitly through the
+
+    causal structure; they are not independently testable claims beyond the 403+scope
+
+    combination. Steelman verdict confirmed as no_defensible_mechanism: xbase confirms
+
+    headers are present and the deployment script already calls the purge API, so
+    the
+
+    Cache-Control hypothesis has no remaining explanatory gap to fill for this case.
+
+    '
+causal_audit:
+  steelman: 'A senior CDN engineer might argue: setting Cache-Control to max-age=86400
+    does not
+
+    guarantee the CDN respects that header — some CDN configurations override origin
+
+    headers with their own TTL rules, and "misconfigured" could include a CDN-side
+
+    override rather than a missing origin header. Under this reading, the past Cache-Control
+
+    pattern remains a live hypothesis even when the origin header value appears correct.
+
+    Additionally, a new image path might carry a different Vary or Cache-Control value
+
+    that behaves differently at edge nodes.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: The deployment script is already calling the CDN purge
+    API after every upload, which means the team is actively performing invalidation
+    — a CDN-side TTL override would still yield fresh content once a purge succeeded.
+    The relevant question is why purges are not working, not why headers are set as
+    they are. xbase thus forecloses the Cache-Control mechanism as the explanatory
+    gap.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: CDN serves stale images despite origin updates; deployment script calls
+    purge API but the API token lacks the Cache Purge scope, silently failing every
+    invalidation request — user's availability heuristic points to past Cache-Control
+    misconfiguration instead.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

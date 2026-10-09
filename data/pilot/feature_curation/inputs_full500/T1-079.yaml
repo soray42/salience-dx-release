@@ -1,0 +1,181 @@
+seed_id: T1-079
+template: T1
+domain: open_qa
+complexity: medium
+xbase: 'I planted a clematis against my back fence last spring hoping for a wall of
+  summer flowers. It has gone absolutely wild with growth: thick stems, masses of
+  big dark-green leaves, and it has already climbed past the top of the fence. The
+  trouble is there is hardly a single flower bud on the whole thing. Last year it
+  bloomed reasonably well in its first season, so I know the plant can flower. I tested
+  the soil last month and potassium is adequate. {DS}'
+focal_diagnostic_feature: The plant sits in a strip receiving regular high-nitrogen
+  lawn feed and shows lush dark foliage and vigorous leafy growth with almost no flower
+  buds, the signature of nitrogen overload.
+low_diagnostic_proposition: An experienced gardener said a non-flowering climber like
+  this needs a high-potassium bloom feed to start flowering.
+oracle_action: ANSWER
+oracle_focus: Stop the nitrogen reaching the plant — keep the lawn feed off this strip
+  — rather than adding more fertiliser; the lush leaf-heavy, bud-poor growth shows
+  it has excess nitrogen, and a bloom feed will not fix an oversupply of the wrong
+  nutrient.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the add-a-bloom-feed advice. Ask what fertiliser
+  the plant is already receiving and whether its growth is leaf-heavy and bud-poor
+  before recommending more feeding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the add-a-bloom-feed advice. Ask what fertiliser the plant
+      is already receiving and whether its growth is leaf-heavy and bud-poor before
+      recommending more feeding.
+  LL:
+    action: ASK
+    focus: Do not adopt the add-a-bloom-feed advice. Ask what fertiliser the plant
+      is already receiving and whether its growth is leaf-heavy and bud-poor before
+      recommending more feeding.
+  HH:
+    action: ANSWER
+    focus: Stop the nitrogen reaching the plant — keep the lawn feed off this strip
+      — rather than adding more fertiliser; the lush leaf-heavy, bud-poor growth shows
+      it has excess nitrogen, and a bloom feed will not fix an oversupply of the wrong
+      nutrient.
+  LH:
+    action: ANSWER
+    focus: Stop the nitrogen reaching the plant — keep the lawn feed off this strip
+      — rather than adding more fertiliser; the lush leaf-heavy, bud-poor growth shows
+      it has excess nitrogen, and a bloom feed will not fix an oversupply of the wrong
+      nutrient.
+variants:
+  HL:
+    distractor: Indah, who has won prizes at our district horticultural show and gives
+      talks at the garden club, said firmly that a shy-flowering climber like this
+      almost always just needs a high-potassium bloom feed, and that she rescues non-flowering
+      plants every season by switching them onto a tomato-style fertiliser.
+    diagnosticity: low
+    salience: high
+    proposition: An experienced gardener said a non-flowering climber like this needs
+      a high-potassium bloom feed to start flowering.
+    salience_source: A — a prize-winning local show gardener who gives club talks,
+      firmly recommending a bloom feed from her own repeated success.
+    why_plausible: Potassium genuinely supports flowering and bloom feeds are standard
+      advice for shy bloomers, so a decorated gardener's confident recommendation
+      is easy to act on.
+    why_irrelevant: The plant is not short of flowering nutrients; it is leaf-heavy
+      and bud-poor from nitrogen excess, so adding more fertiliser treats the wrong
+      direction and may worsen the imbalance.
+  LL:
+    distractor: An experienced gardener said a non-flowering climber like this needs
+      a high-potassium bloom feed to start flowering.
+    diagnosticity: low
+    salience: low
+    proposition: An experienced gardener said a non-flowering climber like this needs
+      a high-potassium bloom feed to start flowering.
+    matched_to: HL
+  HH:
+    distractor: 'The bed it sits in is the same strip where I spread a high-nitrogen
+      lawn feed every few weeks, and the run-off plainly reaches it: the foliage is
+      enormous, lush, and dark, with leafy shoots everywhere and almost no buds, the
+      classic signature of nitrogen overload.'
+    diagnosticity: high
+    salience: high
+    proposition: The plant sits in a strip receiving regular high-nitrogen lawn feed
+      and shows lush dark foliage and vigorous leafy growth with almost no flower
+      buds, the signature of nitrogen overload.
+    salience_source: The user connecting the lawn-feed strip to the plant's exaggerated
+      leafy, bud-poor growth, naming the nitrogen-overload pattern.
+  LH:
+    distractor: The plant sits in a strip getting regular high-nitrogen lawn feed
+      and shows lush dark foliage and leafy growth with almost no buds.
+    diagnosticity: high
+    salience: low
+    proposition: The plant sits in a strip receiving regular high-nitrogen lawn feed
+      and shows lush dark foliage and vigorous leafy growth with almost no flower
+      buds, the signature of nitrogen overload.
+    matched_to: HH
+distractor_direction:
+  label: Add a bloom feed
+  description: Investigating whether the plant lacks flowering nutrients and should
+    be fed a high-potassium bloom fertiliser to induce flowers.
+plausible_alternative_directions:
+- label: Excess nitrogen supply
+  description: Whether nearby lawn fertiliser is driving vegetative growth at the
+    expense of flowers.
+- label: Wrong pruning timing
+  description: Whether the climber was pruned at a time that removed the wood that
+    would have carried this year's flowers.
+leak_audit:
+  ll_atomic_claims:
+  - An experienced gardener gave advice about this non-flowering climber.
+  - The advice was that it needs a high-potassium bloom feed to start flowering.
+  hh_atomic_claims:
+  - The plant grows in the same strip where high-nitrogen lawn feed is applied regularly.
+  - The lawn-feed run-off reaches the plant.
+  - The foliage is enormous, lush, dark, and leaf-heavy with almost no flower buds.
+  - This leaf-heavy, bud-poor growth is the signature of nitrogen overload.
+  hl_salience_dimensions:
+    source_credibility: Named prize-winning show gardener (Indah) who lectures at
+      the garden club.
+    narrative_coherence: Coherent expert-gives-confident-remedy framing.
+    confident_assertion: Said firmly it almost always just needs a bloom feed.
+    concrete_detail: N/A — only the source's standing and confident generic claim;
+      no case content LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 83
+  hl_word_count: 48
+  ll_word_count: 17
+  hh_word_count: 46
+  lh_word_count: 23
+  notes: 'xbase reports that the plant is wildly leafy and barely budding, bloomed
+    in year one, and that a recent soil
+
+    test showed potassium is adequate — the last item closes the K-deficiency pathway
+    that would make a bloom feed
+
+    plausible. The decisive cause (lawn-derived nitrogen overload with the overload
+    growth signature) still lives
+
+    only in HH/LH. HL adds only Indah''s standing and confident framing around the
+    same bloom-feed proposition
+
+    LL carries flatly.
+
+    '
+causal_audit:
+  steelman: 'A keen gardener could argue that potassium is the flowering nutrient,
+    that bloom feeds reliably push reluctant
+
+    plants into flower, and that a decorated grower who repeatedly rescues shy bloomers
+    this way is giving proven,
+
+    low-risk advice — a coherent, conventional remedy worth trying before anything
+    more drastic. However, xbase
+
+    now states that a recent soil test showed potassium is adequate, which structurally
+    closes the K-deficiency
+
+    pathway: a practitioner reading xbase cannot argue potassium shortage is the cause,
+    so the bloom-feed
+
+    direction has no defensible mechanism for this specific case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: A soil test result in xbase shows potassium is adequate,
+    closing the K-deficiency mechanism that would make a bloom feed relevant; the
+    nitrogen-overload cause still lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A climbing plant growing lush but refusing to flower because of nitrogen
+    overload from adjacent lawn feed, misattributed to a need for a high-potassium
+    bloom feed.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

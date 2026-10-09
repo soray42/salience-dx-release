@@ -1,0 +1,182 @@
+seed_id: T3-022
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: 我们的Web应用在本地开发环境中显示正常，但在生产构建中有几个组件样式缺失——间距、颜色和徽章的样式都消失了。两个环境的HTML和数据完全一致，控制台和构建过程均无报错。只有某些组件受影响，页面大部分区域显示正常。我们从同一个分支进行开发和部署。我们已经对CDN进行了强制刷新，并确认浏览器加载的是当前的生产样式表，因此缓存过期的可能性已被排除。{DS}
+focal_diagnostic_feature: 出问题的组件在运行时通过JavaScript变量拼接工具类名，而生产环境的CSS清除步骤只保留源码中字面量写出的类名，因此那些动态构建的类名在生产样式表中根本不存在。
+low_diagnostic_proposition: A senior frontend lead says environment-specific styling
+  breakage is always a stale CDN cache and is fixed by busting the cache.
+oracle_action: ANSWER
+oracle_focus: Safelist the dynamically composed class names (or write them statically)
+  so the production CSS purge retains them; the broken components build class names
+  at runtime, which the purge cannot see — this is not a stale cache.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the stale-cache diagnosis on authority.
+  Ask whether the affected components' class names are built dynamically and whether
+  the production CSS purge keeps them.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the stale-cache diagnosis on authority. Ask whether the affected
+      components' class names are built dynamically and whether the production CSS
+      purge keeps them.
+  LL:
+    action: ASK
+    focus: Do not accept the stale-cache diagnosis on authority. Ask whether the affected
+      components' class names are built dynamically and whether the production CSS
+      purge keeps them.
+  HH:
+    action: ANSWER
+    focus: Safelist the dynamically composed class names (or write them statically)
+      so the production CSS purge retains them; the broken components build class
+      names at runtime, which the purge cannot see — this is not a stale cache.
+  LH:
+    action: ANSWER
+    focus: Safelist the dynamically composed class names (or write them statically)
+      so the production CSS purge retains them; the broken components build class
+      names at runtime, which the purge cannot see — this is not a stale cache.
+variants:
+  HL:
+    distractor: 我们的前端负责人扫了一眼报告就说，这肯定是CDN缓存过期——「本地正常、生产异常」是缓存陈旧的教科书式特征——并让我清除CDN缓存、加上缓存破坏哈希，说这样就能解决。
+    diagnosticity: low
+    salience: high
+    proposition: A senior frontend lead says environment-specific styling breakage
+      is always a stale CDN cache and is fixed by busting the cache.
+    salience_source: A/C — a senior frontend lead confidently invoking a 'textbook'
+      cause from the local-vs-prod symptom without inspecting the build.
+    why_plausible: Stale CDN caches genuinely cause local-vs-prod discrepancies, so
+      cache-busting is a common and often-correct first move.
+    why_irrelevant: A stale cache would break styles uniformly or randomly; here only
+      components that build class names at runtime fail, which is a build-time purge
+      issue a cache flush cannot fix.
+  LL:
+    distractor: 一位高级前端负责人表示，因环境差异导致样式异常历来是CDN缓存过期所致，解决方法是破坏缓存。
+    diagnosticity: low
+    salience: low
+    proposition: A senior frontend lead says environment-specific styling breakage
+      is always a stale CDN cache and is fixed by busting the cache.
+    matched_to: HL
+  HH:
+    distractor: 所有出问题的组件都是在运行时从JavaScript变量中拼接类名。生产环境会运行CSS清除，只保留源码中字面量写出的类名，因此这些运行时构建的类名永远进不了生产样式表——而开发环境则不经清除直接输出所有类。
+    diagnosticity: high
+    salience: high
+    proposition: The broken components compose their utility class names from JavaScript
+      variables at runtime, and the production CSS purge step keeps only statically
+      written class names, so those dynamically built classes are absent from the
+      production stylesheet.
+    salience_source: Tracing the broken components to runtime-built class names and
+      the purge's static-only retention makes the build-time cause concrete.
+  LH:
+    distractor: 出问题的组件在运行时从JavaScript变量中拼接类名；生产环境的CSS清除步骤只保留源码中字面量写出的类名，因此那些动态拼接的类名根本不会出现在生产样式表中。
+    diagnosticity: high
+    salience: low
+    proposition: The broken components compose their utility class names from JavaScript
+      variables at runtime, and the production CSS purge step keeps only statically
+      written class names, so those dynamically built classes are absent from the
+      production stylesheet.
+    matched_to: HH
+distractor_direction:
+  label: CDN缓存过期
+  description: 排查生产环境是否正在提供一个过期的缓存样式表，并通过破坏缓存来修复。
+plausible_alternative_directions:
+- label: 构建压缩差异
+  description: 生产环境专用的压缩器或后处理器是否以与开发环境不同的方式删改或重写了样式。
+- label: 资源路径/加载顺序不匹配
+  description: 样式表在生产环境中是否以不同的顺序或路径加载，从而改变了CSS层叠关系。
+  changing the cascade.: null
+leak_audit:
+  ll_atomic_claims:
+  - A senior frontend lead stated that environment-specific styling breakage is always
+    a stale CDN cache.
+  - The lead's prescribed fix is busting the cache.
+  hh_atomic_claims:
+  - The broken components assemble their class names from JavaScript variables at
+    runtime.
+  - The production CSS purge keeps only class names written literally in the source.
+  - Those runtime-built classes are therefore absent from the production stylesheet,
+    while dev ships everything unpurged.
+  hl_salience_dimensions:
+    source_credibility: Senior frontend lead at the user's company.
+    narrative_coherence: N/A
+    confident_assertion: Says it is 'always' the cache and 'textbook'; prescribes
+      a cache purge.
+    concrete_detail: Concrete detail about the source's directive (purge CDN, add
+      cache-busting hash) only.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 85
+  hl_word_count: 44
+  ll_word_count: 20
+  hh_word_count: 50
+  lh_word_count: 25
+  word_count_note: 'HH=50 and LH=25 sit at the C9 hard ceiling (legal: HH≤50, LH≤25);
+    original recorded 47/19/etc were undercounts now corrected to the true C9 token
+    counts. These focal/flat cells passed equivalence and are preserved verbatim per
+    the repair scope; only xbase changed this round.'
+  notes: 'LH is 25 words, preserving equivalence with HH (runtime-built names, purge
+    keeps only literals, classes dropped
+
+    from the stylesheet) as a single flat clause-set. T3 authority: the lead pattern-matches
+    to stale
+
+    cache from "works local, broken prod" without inspecting the build. xbase notes
+    only certain components break and
+
+    no build errors — symptoms only; the runtime-class/purge mechanism (decisive)
+    is HH/LH-only. xbase adds a neutral
+
+    pathway-closure (CDN hard-flushed, current stylesheet confirmed loading) that
+    forecloses ONLY the stale-cache
+
+    mechanism — it names no affirmative cause (no purge step, no runtime classes),
+    so the decisive content stays HH/LH-only (C4-safe).
+
+    '
+causal_audit:
+  steelman: 'A senior frontend engineer could argue that "works locally, broken in
+    production" is a hallmark of CDN cache
+
+    staleness — an old stylesheet pinned at the edge would leave new markup unstyled
+    — and that cache-busting hashes
+
+    are the standard guard, making the stale-cache hypothesis a reasonable opening
+    move for env-specific style breakage.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'Yes: xbase states the CDN was hard-flushed and the browser
+    is confirmed loading the current production stylesheet, so the stale-cache pathway
+    is explicitly foreclosed; this is reinforced by the breakage being confined to
+    specific components rather than the whole page. The closure names no affirmative
+    cause — the CSS-purge/runtime-class mechanism is given only in HH/LH.'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Production-only unstyled components caused by a CSS purge dropping
+    runtime-composed class names, not the stale CDN cache a frontend lead pattern-matched
+    to.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-022.yaml
+  source_xbase_sha256: 78270aaf2fae8a26
+  translated_content_sha256: 2e40b64791f56574
+  translation_notes: 'Technical terms kept as-is: CDN, HTML, CSS, JavaScript, CSS
+    purge. ''缓存破坏哈希'' is the standard Chinese rendering of ''cache-busting hash''.
+    ''工具类名'' is used for ''utility class names'' (common in Tailwind/CSS-framework
+    context). The HL preserves high-salience through the named ''frontend lead'' role,
+    the ''textbook signature'' confident assertion, and the concrete directive (purge
+    CDN, add cache-busting hash). xbase neutral pathway-closure (CDN flushed, current
+    stylesheet confirmed) is faithfully rendered.'

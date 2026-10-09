@@ -1,0 +1,186 @@
+seed_id: T6-062
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our inventory microservice pods have been OOM-crashing every few hours for
+  the past two weeks. They have run at 512 MB memory limits for six months with no
+  changes to traffic volume or memory configuration. Heap dumps and container metrics
+  are available. {DS}
+focal_diagnostic_feature: Heap dumps show HTTP client connection objects growing monotonically
+  from under 20 MB to over 480 MB across a two-hour run, and a code change three weeks
+  ago disabled connection-pool eviction by setting the eviction interval to zero.
+low_diagnostic_proposition: Past OOM crashes I debugged were always from a memory
+  limit set too low, so 512 MB is probably insufficient now.
+oracle_action: ANSWER
+oracle_focus: Restore the connection-pool eviction interval to a non-zero value in
+  the HTTP client configuration; the leak is in unbounded connection accumulation,
+  not in the memory limit.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not raise the memory limit without evidence the limit
+  is the cause; ask for heap dump analysis and any recent code changes before concluding
+  the limit is insufficient.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not raise the memory limit without evidence the limit is the cause;
+      ask for heap dump analysis and any recent code changes before concluding the
+      limit is insufficient.
+  LL:
+    action: ASK
+    focus: Do not raise the memory limit without evidence the limit is the cause;
+      ask for heap dump analysis and any recent code changes before concluding the
+      limit is insufficient.
+  HH:
+    action: ANSWER
+    focus: Restore the connection-pool eviction interval to a non-zero value in the
+      HTTP client configuration; the leak is in unbounded connection accumulation,
+      not in the memory limit.
+  LH:
+    action: ANSWER
+    focus: Restore the connection-pool eviction interval to a non-zero value in the
+      HTTP client configuration; the leak is in unbounded connection accumulation,
+      not in the memory limit.
+variants:
+  HL:
+    distractor: Every OOM kill I have debugged before came down to a memory limit
+      set too low for the actual workload, so my first instinct is that 512 MB is
+      just not enough anymore and we should raise the limit and move on.
+    diagnosticity: low
+    salience: high
+    proposition: Past OOM crashes I debugged were always from a memory limit set too
+      low, so 512 MB is probably insufficient now.
+    salience_source: 'Dimension B (narrative coherence): confident engineer''s voice
+      recounting a clear personal diagnostic pattern; dimension C (confident assertion):
+      "every OOM kill," "just not enough anymore," "raise the limit and move on" —
+      categorical, dismissive confidence.'
+    why_plausible: Memory limit misconfiguration is the most common first-pass explanation
+      for Kubernetes OOM kills, and an engineer who has consistently found this to
+      be the root cause would have strong reason to check it first.
+    why_irrelevant: The pods ran stably for six months at 512 MB with unchanged traffic,
+      so the limit has not become "too low" due to load growth. The heap dump shows
+      monotonic growth in HTTP connection objects after a specific code change; the
+      limit is not the bottleneck — the unbounded pool is.
+  LL:
+    distractor: Past OOM crashes I debugged were always from a memory limit set too
+      low, so 512 MB is probably insufficient now.
+    diagnosticity: low
+    salience: low
+    proposition: Past OOM crashes I debugged were always from a memory limit set too
+      low, so 512 MB is probably insufficient now.
+    matched_to: HL
+  HH:
+    distractor: In the heap dump, HTTP client connection objects grow from under 20
+      MB to over 480 MB across a typical two-hour run, and a code change three weeks
+      ago disabled connection-pool eviction by setting the eviction interval to zero.
+    diagnosticity: high
+    salience: high
+    proposition: Heap dumps show HTTP client connection objects growing monotonically
+      from under 20 MB to over 480 MB across a two-hour run, and a code change three
+      weeks ago disabled connection-pool eviction by setting the eviction interval
+      to zero.
+    salience_source: Precise numeric trajectory (20 MB to 480 MB) over a specific
+      window (two hours); named object type (HTTP client connection); specific config
+      change (eviction interval set to zero) with timeline (three weeks ago) — a complete
+      causal chain in concrete detail.
+  LH:
+    distractor: Heap dumps show HTTP connection objects consuming nearly all available
+      memory over two hours, and a recent change set connection-pool eviction to disabled.
+    diagnosticity: high
+    salience: low
+    proposition: Heap dumps show HTTP client connection objects growing monotonically
+      from under 20 MB to over 480 MB across a two-hour run, and a code change three
+      weeks ago disabled connection-pool eviction by setting the eviction interval
+      to zero.
+    matched_to: HH
+distractor_direction:
+  label: Memory limit undersized
+  description: Investigating whether the 512 MB Kubernetes memory limit is now insufficient
+    for the pod's working set, requiring an increase to stop the OOM kills.
+plausible_alternative_directions:
+- label: Traffic or data volume growth
+  description: Even without a configuration change, gradual growth in request payload
+    size or concurrent connections could push the pod beyond its memory limit.
+- label: JVM heap or GC misconfiguration
+  description: The JVM's heap settings may have drifted out of proportion to the container
+    limit, causing GC overhead to spike and eventually exhaust container memory.
+- label: Third-party library update
+  description: A transitive dependency update three weeks ago introduced a regression
+    that increases per-request object retention, gradually inflating heap usage.
+leak_audit:
+  ll_atomic_claims:
+  - Past OOM crashes the user debugged were always from a memory limit set too low.
+  - 512 MB is probably insufficient now.
+  hh_atomic_claims:
+  - Heap dump evidence is the basis for this finding.
+  - HTTP client connection objects are the growing object type.
+  - They grow from under 20 MB to over 480 MB.
+  - The growth occurs across a typical two-hour run.
+  - A code change three weeks ago is the cause.
+  - That change disabled connection-pool eviction.
+  - Disabling eviction was done by setting the eviction interval to zero.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Engineer's confident first-person diagnostic memory leading
+      directly to an action recommendation, with a dismissive "move on" that signals
+      pattern certainty.
+    confident_assertion: '"Every OOM kill," "just not enough anymore," "raise the
+      limit and move on" — emphatic and unhedged.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 42
+  hl_word_count: 42
+  ll_word_count: 21
+  hh_word_count: 39
+  lh_word_count: 23
+  notes: 'T6 availability inference ("so 512 MB is probably insufficient now") appears
+
+    in both HL and LL. HL adds only vivid narrative framing and confident assertion
+
+    around the same propositional content. No named source (first-person T6).
+
+    xbase pathway-closure: "no changes to traffic volume" weakly undermines the
+
+    "workload grew beyond limit" mechanism but does not supply the affirmative
+
+    cause (pool leak from the code change). The code-change timeline (three weeks
+
+    ago, matching the start of crashes) lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'Memory limit too low is the correct first hypothesis for Kubernetes OOM
+    kills:
+
+    if the application''s working set has grown beyond 512 MB for any reason,
+
+    the kernel will OOM-kill the container regardless of code correctness. Even
+
+    with flat traffic and no explicit config change, a JVM application''s working
+
+    set can grow over time due to caching, class loading, or retained objects.
+
+    An experienced K8s engineer who has debugged this pattern repeatedly has
+
+    strong inductive grounds to check the limit before investing in heap analysis.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"No changes to traffic volume or memory configuration"
+    partially closes the most tempting mechanism (workload grew beyond the limit)
+    without naming the actual cause. The heap dump evidence showing monotonic object
+    growth from a specific code change lives only in HH/LH.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Kubernetes OOM kills caused by a memory leak from connection-pool eviction
+    disabled in a three-week-old code change, against the engineer's availability
+    bias that past OOM crashes were always from an undersized memory limit.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

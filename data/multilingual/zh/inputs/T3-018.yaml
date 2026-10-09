@@ -1,0 +1,182 @@
+seed_id: T3-018
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: 我们API中有一个GraphQL端点偶发性地很慢——通常响应很快，但偶尔一个请求需要三到四秒才能返回。该端点解析用户的个人信息以及他们当前的积分等级。慢响应发生在通常很快的同一查询形态上，团队自有的数据库负载很轻。我们启用了分布式链路追踪，追踪结果显示每个数据库解析器均在个位数毫秒内完成，没有查询扇出。{DS}
+focal_diagnostic_feature: 链路追踪显示，慢响应的时间消耗在对第三方积分服务商REST API的单次出站调用上，该调用偶尔需要约3秒；数据库解析器均在个位数毫秒内完成。
+low_diagnostic_proposition: A senior engineer says intermittent GraphQL slowness is
+  classically an N+1 query problem and should be addressed with batching.
+oracle_action: ANSWER
+oracle_focus: Address the slow third-party loyalty REST call shown in traces — add
+  a timeout, cache, or circuit breaker around it; the database resolvers are fast,
+  so this is not an N+1 query problem.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Reject the N+1 diagnosis: the traces already show the
+  database resolvers finishing in single-digit milliseconds with no fan-out, so batching
+  is misdirected. Ask what the traces attribute the remaining slow time to.'
+cell_oracles:
+  HL:
+    action: ASK
+    focus: 'Reject the N+1 diagnosis: the traces already show the database resolvers
+      finishing in single-digit milliseconds with no fan-out, so batching is misdirected.
+      Ask what the traces attribute the remaining slow time to.'
+  LL:
+    action: ASK
+    focus: 'Reject the N+1 diagnosis: the traces already show the database resolvers
+      finishing in single-digit milliseconds with no fan-out, so batching is misdirected.
+      Ask what the traces attribute the remaining slow time to.'
+  HH:
+    action: ANSWER
+    focus: Address the slow third-party loyalty REST call shown in traces — add a
+      timeout, cache, or circuit breaker around it; the database resolvers are fast,
+      so this is not an N+1 query problem.
+  LH:
+    action: ANSWER
+    focus: Address the slow third-party loyalty REST call shown in traces — add a
+      timeout, cache, or circuit breaker around it; the database resolvers are fast,
+      so this is not an N+1 query problem.
+variants:
+  HL:
+    distractor: 我们的首席工程师在站会上只瞥了一眼，就说这是教科书级别的N+1问题——他说GraphQL间歇性慢响应"总是"解析器对每一项触发一次查询——让我去加DataLoader批处理然后继续干别的。
+    diagnosticity: low
+    salience: high
+    proposition: A senior engineer says intermittent GraphQL slowness is classically
+      an N+1 query problem and should be addressed with batching.
+    salience_source: A/C — a principal engineer confidently pattern-matching to a
+      textbook GraphQL anti-pattern without examining the traces.
+    why_plausible: N+1 is the most famous GraphQL performance pitfall, so reaching
+      for it on hearing 'slow GraphQL' is a reflex many engineers share.
+    why_irrelevant: N+1 is a database-fan-out problem, but the database resolvers
+      are fast; the latency lives in an external call, which batching local queries
+      would not touch.
+  LL:
+    distractor: 一位高级工程师说，GraphQL间歇性慢响应从经典意义上就是N+1查询问题，应该用批处理来解决。
+    diagnosticity: low
+    salience: low
+    proposition: A senior engineer says intermittent GraphQL slowness is classically
+      an N+1 query problem and should be addressed with batching.
+    matched_to: HL
+  HH:
+    distractor: 打开一条慢链路追踪，数据库解析器每个都在个位数毫秒内完成；整整三秒全都耗在了对第三方积分服务商REST API的一次出站HTTP span上，该服务偶尔会在返回等级数据前停滞。
+    diagnosticity: high
+    salience: high
+    proposition: Traces show the slow time is spent in a single outbound call to a
+      third-party loyalty provider's REST API that intermittently takes ~3 seconds;
+      the database resolvers complete in single-digit milliseconds.
+    salience_source: The trace breakdown — fast DB spans, one ~3-second external HTTP
+      span — pinpoints the bottleneck unambiguously.
+  LH:
+    distractor: 链路追踪显示，约3秒的延迟来自对第三方积分服务商REST API的一次出站调用；数据库解析器均在个位数毫秒内完成。
+    diagnosticity: high
+    salience: low
+    proposition: Traces show the slow time is spent in a single outbound call to a
+      third-party loyalty provider's REST API that intermittently takes ~3 seconds;
+      the database resolvers complete in single-digit milliseconds.
+    matched_to: HH
+distractor_direction:
+  label: N+1查询批处理
+  description: 排查解析器是否对每一项数据库查询都触发一次，并用批处理来解决。
+plausible_alternative_directions:
+- label: 响应序列化尖峰
+  description: GraphQL层中偶发的大型响应组装或序列化操作是否导致了间歇性的多秒延迟。
+- label: 运行时GC暂停
+  description: API进程中的间歇性垃圾回收或运行时暂停是否产生了突发性的多秒响应。
+leak_audit:
+  ll_atomic_claims:
+  - A senior engineer stated that intermittent GraphQL slowness is classically an
+    N+1 query problem.
+  - The recommended fix is query batching.
+  hh_atomic_claims:
+  - In a slow trace the database resolvers each finish in single-digit milliseconds.
+  - The full ~3-second latency sits inside one outbound HTTP span.
+  - That span is a call to the third-party loyalty provider's REST API, which intermittently
+    stalls.
+  hl_salience_dimensions:
+    source_credibility: Principal engineer at the user's own company.
+    narrative_coherence: N/A
+    confident_assertion: Says it is 'textbook' and 'always'; tells the user to just
+      add batching.
+    concrete_detail: Concrete detail about the source's directive (DataLoader, standup)
+      only.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 78
+  hl_word_count: 41
+  ll_word_count: 18
+  hh_word_count: 36
+  lh_word_count: 22
+  notes: 'T3 authority: the principal pattern-matches to N+1 without reading the traces.
+    Repair round 1 (causal_a/causal_b):
+
+    xbase now discloses the narrow pathway-closure that the traces show every DB resolver
+    completing in single-digit
+
+    milliseconds with no query fan-out — this forecloses the N+1/DB-fan-out mechanism
+    (matching the T2-003 closure
+
+    pattern) so the distractor is non-causal on the shared context, WITHOUT naming
+    the affirmative cause. The decisive
+
+    focal finding — that the full ~3 seconds sits inside one outbound third-party
+    loyalty REST span — lives only in
+
+    HH/LH, so xbase alone still cannot compute the answer (it rules out the DB but
+    not which non-DB path is at fault;
+
+    serialization spikes and runtime GC pauses remain live). The "DB resolvers in
+    single-digit ms" fact now appears in
+
+    both xbase (as pathway closure) and HH/LH (as contrast for the external span);
+    the focal decisive content stays
+
+    HH/LH-only.
+
+    '
+causal_audit:
+  steelman: 'A senior engineer could reasonably note that GraphQL''s nested resolvers
+    are the classic source of hidden N+1
+
+    fan-out, that such fan-out is bursty and intermittent, and that it often hides
+    on a lightly loaded database
+
+    because each query is individually cheap — so N+1 is a legitimate first hypothesis
+    for intermittent GraphQL latency.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase discloses that the traces show every database resolver
+    completing in single-digit milliseconds with no query fan-out, which neutralises
+    the N+1/DB-fan-out mechanism on the shared context. This is a narrow pathway-closure
+    (it rules out the distractor's mechanism) and names no affirmative cause; the
+    decisive focal evidence that the ~3 seconds sits inside one outbound third-party
+    loyalty REST span remains only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Intermittent GraphQL slowness caused by a slow third-party loyalty
+    REST call shown in traces, not the N+1 query problem a principal engineer pattern-matched
+    to.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-018.yaml
+  source_xbase_sha256: e9f3f35f7f44085b
+  translated_content_sha256: 1bd2aaab28cfa23a
+  translation_notes: 'Technical terms kept in English/conventional form: GraphQL,
+    API, REST, N+1, DataLoader, HTTP, GC (垃圾回收 used for ''garbage collection'' in
+    description but ''GC'' in label), CI. ''个位数毫秒'' is the standard Chinese rendering
+    of ''single-digit milliseconds''. ''积分等级'' used for ''loyalty tier''. ''分布式链路追踪''
+    for ''distributed tracing''. ''查询扇出'' for ''query fan-out''. No culture-bound
+    salience cues that fail to transfer.'

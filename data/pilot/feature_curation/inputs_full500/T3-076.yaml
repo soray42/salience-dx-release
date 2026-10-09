@@ -1,0 +1,176 @@
+seed_id: T3-076
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our payment-processing service pods are being OOMKilled on Kubernetes roughly
+  every four to six hours. Memory limits are set to 2 GB per pod. The service handles
+  about 400 requests per second and memory climbs from under 300 MB at startup regardless
+  of traffic level, including during overnight low-load windows. There have been no
+  recent infrastructure changes. {DS}
+focal_diagnostic_feature: Heap profiling shows monotonic memory growth from startup
+  to the 2 GB limit with no GC reclaim, driven by HTTP session objects that are never
+  evicted from the application cache.
+low_diagnostic_proposition: A senior SRE stated that memory limits are under-provisioned
+  and any service at this throughput requires at least 4 GB.
+oracle_action: ANSWER
+oracle_focus: Fix the application-level memory leak by implementing cache eviction
+  for HTTP session objects; raising limits would only delay the OOMKill without resolving
+  the unbounded growth.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the limit-sizing claim from authority alone;
+  ask for heap profiles and GC logs to determine whether memory is growing monotonically
+  or fluctuating near a stable ceiling before deciding on limits.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the limit-sizing claim from authority alone; ask for heap
+      profiles and GC logs to determine whether memory is growing monotonically or
+      fluctuating near a stable ceiling before deciding on limits.
+  LL:
+    action: ASK
+    focus: Do not accept the limit-sizing claim from authority alone; ask for heap
+      profiles and GC logs to determine whether memory is growing monotonically or
+      fluctuating near a stable ceiling before deciding on limits.
+  HH:
+    action: ANSWER
+    focus: Fix the application-level memory leak by implementing cache eviction for
+      HTTP session objects; raising limits would only delay the OOMKill without resolving
+      the unbounded growth.
+  LH:
+    action: ANSWER
+    focus: Fix the application-level memory leak by implementing cache eviction for
+      HTTP session objects; raising limits would only delay the OOMKill without resolving
+      the unbounded growth.
+variants:
+  HL:
+    distractor: Our senior SRE looked at the graphs and said this is invariably a
+      case of under-provisioned limits, insisting that any production service at our
+      throughput needs at least 4 GB to avoid OOMKills.
+    diagnosticity: low
+    salience: high
+    proposition: A senior SRE stated that memory limits are under-provisioned and
+      any service at this throughput requires at least 4 GB.
+    salience_source: A — senior SRE is domain-matched authority; C — "invariably"
+      signals categorical confidence; B — professional register, graph review context.
+    why_plausible: Under-provisioned limits are a genuine and common Kubernetes OOMKill
+      cause; a senior SRE citing throughput is a believable rule of thumb that a busy
+      team might act on immediately.
+    why_irrelevant: The focal evidence shows memory grows monotonically without GC
+      reclaim, which cannot be explained by under-provisioning alone; a correctly
+      functioning service at 400 RPS would stabilise, not grow continuously until
+      the limit.
+  LL:
+    distractor: Memory limits are under-provisioned; any service at this throughput
+      needs at least 4 GB to avoid OOMKills.
+    diagnosticity: low
+    salience: low
+    proposition: A senior SRE stated that memory limits are under-provisioned and
+      any service at this throughput requires at least 4 GB.
+    matched_to: HL
+  HH:
+    distractor: A heap profile taken 30 minutes before an OOMKill shows memory growing
+      steadily from 400 MB at startup to just over 2 GB with no GC reclaim; object
+      count is dominated by cached HTTP session objects that are never evicted.
+    diagnosticity: high
+    salience: high
+    proposition: Heap profiling shows monotonic memory growth from startup to the
+      2 GB limit with no GC reclaim, driven by HTTP session objects that are never
+      evicted from the application cache.
+    salience_source: Precise trajectory (400 MB to 2 GB), explicit GC absence, and
+      named object type (HTTP session) create a vivid, mechanistically complete picture.
+  LH:
+    distractor: Heap profiling shows monotonic memory growth to the limit boundary
+      driven by HTTP session objects that are never evicted from the cache.
+    diagnosticity: high
+    salience: low
+    proposition: Heap profiling shows monotonic memory growth from startup to the
+      2 GB limit with no GC reclaim, driven by HTTP session objects that are never
+      evicted from the application cache.
+    matched_to: HH
+distractor_direction:
+  label: under-provisioned memory limits
+  description: Treating the OOMKills as a Kubernetes resource-limit sizing problem,
+    recommending an increase to 4 GB or more per pod.
+plausible_alternative_directions:
+- label: traffic burst mis-attribution
+  description: A brief traffic spike not captured in aggregate RPS metrics could cause
+    transient memory pressure; memory profiling timed to an OOMKill would distinguish
+    this.
+- label: off-heap or native memory growth
+  description: Native or off-heap memory (e.g. direct buffers, JNI, or OS-level allocations)
+    could grow independently of the JVM heap and evade standard GC metrics.
+leak_audit:
+  ll_atomic_claims:
+  - a senior SRE stated memory limits are under-provisioned
+  - any service at this throughput requires at least 4 GB
+  hh_atomic_claims:
+  - heap profile shows memory growing from 400 MB at startup to just over 2 GB
+  - the growth is monotonic with no GC reclaim
+  - object count is dominated by cached HTTP session objects
+  - those objects are never evicted
+  hl_salience_dimensions:
+    source_credibility: A — senior SRE is an authority whose graph review provides
+      a domain-appropriate credibility anchor.
+    narrative_coherence: Professional standup context and a categorical rule ("invariably")
+      give the claim a clean, rehearsed register.
+    confident_assertion: '"invariably" and "insisting" signal strong confident assertion.'
+    concrete_detail: The 4 GB figure is about the authority's stated threshold, not
+      a measurement of the actual case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 57
+  hl_word_count: 33
+  ll_word_count: 17
+  hh_word_count: 40
+  lh_word_count: 22
+  notes: 'The SRE''s 4 GB figure is framed as a general throughput rule, not a
+
+    measurement of this service''s heap. The heap profile timeline and eviction
+
+    absence, present only in HH/LH, are what make monotonic growth vs
+
+    steady-state distinguishable. xbase now includes a pathway-closure
+
+    (memory climbs from under 300 MB at startup regardless of traffic level,
+
+    including overnight low-load windows) that forecloses the throughput
+
+    working-set ceiling mechanism without supplying the affirmative cause.
+
+    '
+causal_audit:
+  steelman: 'A senior Kubernetes operator could argue that at 400 RPS, 2 GB is tight
+
+    for many JVM-based services, and that the OOMKill timing (every 4-6 hours
+
+    at steady traffic) is consistent with hitting a true working-set ceiling
+
+    rather than a leak. The GC might be functioning but unable to keep up with
+
+    allocation rate at this throughput, and raising limits might genuinely
+
+    resolve the kills.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase now states that memory climbs from under 300 MB
+    at startup regardless of traffic level, including during overnight low-load windows.
+    This forecloses the throughput working-set ceiling mechanism: if the process grows
+    even under minimal overnight traffic, a 400-RPS steady-state ceiling cannot explain
+    the pattern. The monotonic-vs-ceiling distinction is reinforced by HH/LH heap
+    profile detail only.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Kubernetes OOMKilled pods caused by an application-level HTTP session
+    cache that never evicts, showing monotonic heap growth; authority distractor is
+    a senior SRE pattern-matching to under-provisioned limits.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator
+  generator: generator_B
+  generation_mode: generator_B_batches

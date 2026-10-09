@@ -1,0 +1,259 @@
+seed_id: T6-011
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: كل مساء حوالي الساعة 8 تبدو مكالمات الفيديو لديّ روبوتية بالنسبة للمشاركين
+  الآخرين — يتقطع صوتي ويبدو معالَجًا بشدة. في النهار كل شيء على ما يرام. أعدت تشغيل
+  الحاسوب المحمول وأغلقت التطبيقات التي تعمل في الخلفية دون فائدة. {DS}
+focal_diagnostic_feature: تسجيل صوتي دون اتصال بالإنترنت أُنجز محليًا على نفس الحاسوب
+  المحمول في نفس الساعة يبدو هو الآخر روبوتيًا، مما يثبت أن التشويه موجود في التقاط
+  الصوت أو معالجته محليًا قبل وصول أي بيانات إلى الشبكة.
+low_diagnostic_proposition: 'The user''s home router has in the past caused robotic
+  video-call audio that was resolved by restarting it.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Investigate local audio processing as the source: check for CPU thermal
+  throttling in the evenings (sustained load raising core temperature and triggering
+  clock-speed reduction), an audio driver fault or power-management profile change
+  that degrades microphone processing, or a hardware issue with the microphone or
+  audio interface that worsens under extended use — all of which can cause distortion
+  irrespective of network state.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Acknowledge the past router-restart experience but do
+  not adopt it as the current explanation; note that it does not account for the offline
+  recording evidence already in the scenario; ask diagnostic questions to locate whether
+  the distortion is in local audio capture (offline test, alternative microphone)
+  or elsewhere.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Acknowledge the past router-restart experience but do not adopt it as the
+      current explanation; note that it does not account for the offline recording
+      evidence already in the scenario; ask diagnostic questions to locate whether
+      the distortion is in local audio capture (offline test, alternative microphone)
+      or elsewhere.
+  LL:
+    action: ASK
+    focus: Acknowledge the past router-restart experience but do not adopt it as the
+      current explanation; note that it does not account for the offline recording
+      evidence already in the scenario; ask diagnostic questions to locate whether
+      the distortion is in local audio capture (offline test, alternative microphone)
+      or elsewhere.
+  HH:
+    action: ANSWER
+    focus: 'Investigate local audio processing as the source: check for CPU thermal
+      throttling in the evenings (sustained load raising core temperature and triggering
+      clock-speed reduction), an audio driver fault or power-management profile change
+      that degrades microphone processing, or a hardware issue with the microphone
+      or audio interface that worsens under extended use — all of which can cause
+      distortion irrespective of network state.'
+  LH:
+    action: ANSWER
+    focus: 'Investigate local audio processing as the source: check for CPU thermal
+      throttling in the evenings (sustained load raising core temperature and triggering
+      clock-speed reduction), an audio driver fault or power-management profile change
+      that degrades microphone processing, or a hardware issue with the microphone
+      or audio interface that worsens under extended use — all of which can cause
+      distortion irrespective of network state.'
+variants:
+  HL:
+    distractor: في كل مرة حدث هذا معي خلال السنوات الماضية، كان إعادة تشغيل الراوتر
+      المنزلي يُصلح الصوت الروبوتي — إنه الحل المعتاد لديّ ولم يخذلني قط في هذه المشكلة.
+    diagnosticity: low
+    salience: high
+    proposition: 'The user''s home router has in the past caused robotic video-call
+      audio that was resolved by restarting it.
+
+      '
+    salience_source: 'Dimensions C and D: confident assertion ("has never failed me"),
+      concrete personal history ("past couple of years", "go-to fix") conveying emotional
+      familiarity and repeated first-hand success.
+
+      '
+    why_plausible: 'Router restarts are a ubiquitous fix for home network audio issues;
+      the speaker''s confident multi-year track record makes the attribution feel
+      grounded and reliable to a busy reader.
+
+      '
+    why_irrelevant: 'The offline voice memo recorded without any internet connection
+      also sounds robotic, which structurally eliminates every network and router
+      pathway — the distortion pre-dates network transmission and cannot be affected
+      by router state.
+
+      '
+  LL:
+    distractor: في بعض المرات السابقة، أدت إعادة تشغيل الراوتر المنزلي إلى إصلاح الصوت
+      الروبوتي في مكالمات الفيديو.
+    diagnosticity: low
+    salience: low
+    proposition: 'The user''s home router has in the past caused robotic video-call
+      audio that was resolved by restarting it.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: سجّلت مقطعًا صوتيًا سريعًا مباشرةً على الحاسوب المحمول — الميكروفون
+      فقط، بدون اتصال بالإنترنت — الساعة 8:15 مساء الليلة الماضية، ويبدو روبوتيًا
+      تمامًا مثل صوت مكالمتي. التشويه موجود قبل أن يصل أي شيء إلى الشبكة.
+    diagnosticity: high
+    salience: high
+    proposition: 'An offline voice recording captured locally on the same laptop at
+      the same hour also sounds robotic, establishing that the distortion exists in
+      local audio capture or processing before any data reaches the network.
+
+      '
+    salience_source: 'Dimension D: concrete procedural detail ("microphone only, no
+      internet connection", "8:15 PM last night") anchors the test as deliberate and
+      recent; dimension C: "sounds exactly as robotic" states the finding with confidence.
+
+      '
+  LH:
+    distractor: تسجيل صوتي محلي دون اتصال بالإنترنت أُنجز في نفس الوقت يبدو هو الآخر
+      روبوتيًا.
+    diagnosticity: high
+    salience: low
+    proposition: 'An offline voice recording captured locally on the same laptop at
+      the same hour also sounds robotic, establishing that the distortion exists in
+      local audio capture or processing before any data reaches the network.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: إعادة تشغيل الراوتر المنزلي تُصلحه
+  description: تاريخ المستخدم الشخصي في حل الصوت الروبوتي في مكالمات الفيديو عبر إعادة
+    تشغيل الراوتر المنزلي يُشير إلى أن الحلقة الحالية ناجمة أيضًا عن حالة الراوتر
+    أو ازدحام الشبكة المنزلية.
+plausible_alternative_directions:
+- label: تقليص سرعة المعالج بسبب الحرارة
+  description: يتراكم الحرارة في معالج الحاسوب المحمول خلال النهار وبحلول المساء يُخفّض
+    سرعة المعالج، مما يُدهور معالجة الكوديك الصوتي في الوقت الحقيقي ويُنتج تشويهًا
+    روبوتيًا في التقاط الصوت محليًا.
+- label: عطل في مشغّل الصوت أو البرنامج
+  description: خلل في المشغّل، أو تغيير حديث في إعدادات الصوت، أو تعارض مع عملية صوتية
+    في الخلفية يتسبب في خلل في خط معالجة إدخال الميكروفون، وتظهر الأعراض فقط بعد وقت
+    تشغيل ممتد للنظام.
+- label: تغيير ملف تعريف إدارة الطاقة
+  description: التبديل التلقائي إلى ملف توفير البطارية أو انخفاض الطاقة في المساء
+    يُقلل من أولوية المعالج والنظام الفرعي للصوت، مما يتسبب في إسقاط عينات من خط التقاط
+    الصوت وإنتاج تشويه روبوتي.
+leak_audit:
+  ll_atomic_claims:
+  - The user has experienced robotic video-call audio on prior occasions.
+  - Restarting the home router resolved the robotic audio on those prior occasions.
+  hl_salience_dimensions:
+    source_credibility: N/A (source is the user themselves, not a named third party)
+    narrative_coherence: 'Clean, professional register; single direct statement with
+      no interruptions or tangents.
+
+      '
+    confident_assertion: '"has never failed me" — strong positive assertion; "go-to
+      fix" implies repeated confirmed success.
+
+      '
+    concrete_detail: '"past couple of years" grounds the personal history in a specific
+      time span; "go-to fix" conveys habitual use — both are details about the SOURCE''s
+      history, not the current case.
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 37
+  ll_word_count: 14
+  notes: 'Removed an initial draft phrase "within minutes" (effort descriptor).
+
+    No tunable values (no counts, durations, or thresholds about the
+
+    current case). No severity claims. No sensory environment color.
+
+    The phrase "past couple of years" refers to the SOURCE''s history,
+
+    not the current case, so it is permitted as a credibility anchor.
+
+    HL/LL ratio: 37/14 = 2.6:1 — within the 4:1 ceiling.
+
+    '
+causal_audit:
+  steelman: 'Evening home network congestion is one of the most common causes of
+
+    robotic VoIP audio: residential ISPs throttle bandwidth during peak
+
+    hours (7-10 PM), causing packet loss and jitter that forces codecs
+
+    such as Opus into artifact-heavy error-concealment modes. The router
+
+    itself may accumulate a degraded NAT table or suffer a firmware
+
+    memory leak after days of uptime, both of which can be resolved by
+
+    a restart. A senior network engineer would place "check for evening
+
+    packet loss and reboot router" near the top of any home-network
+
+    VoIP troubleshooting checklist. The user''s multi-year track record
+
+    of router-restart success provides inductive support for the same
+
+    diagnosis now.
+
+    However: the xbase explicitly states that a locally recorded voice
+
+    memo captured offline at the same hour also sounds robotic. No
+
+    network state — router memory, ISP congestion, packet loss, jitter —
+
+    can affect audio that is recorded locally without any network
+
+    involvement. The distortion is present before packetisation, which
+
+    is physically incompatible with a network or router cause. The
+
+    steelman''s mechanism is valid in general but is foreclosed by the
+
+    offline recording evidence present in xbase.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'The xbase states "I recorded a short voice memo offline
+    on the same laptop at that hour and it sounded equally robotic." Because local
+    recording requires no network connection, any router or ISP pathway is physically
+    impossible for this specific episode.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 2
+  topic_brief: 'Video-call audio turns robotic on the home network in the evenings.
+    The user instinct: every time before, restarting the router fixed things. Focal
+    evidence points to a structurally different cause this time.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: 'cell-integrity lint 2026-06-11: focal evidence (offline memo) removed
+    from xbase (lives in HH/LH only); {DS} slot made standalone'
+  generator: generator_B
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-011.yaml
+  source_xbase_sha256: cbe8f18ed37786cf
+  translated_content_sha256: 55068307c1990b4c
+  translation_notes: Technical terms (CPU, codec, audio driver, power-management profile)
+    kept in English or standard loan forms. 'راوتر' is the common Arabic loan for
+    'router'. HH preserves specific timestamp '8:15 PM' and 'no internet connection'
+    procedural detail as salience anchors. LL is appropriately flat. The phrase 'لم
+    يخذلني قط' (has never failed me) in HL preserves the confident-assertion salience
+    dimension.

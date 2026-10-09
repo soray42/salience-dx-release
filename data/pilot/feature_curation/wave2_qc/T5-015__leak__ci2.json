@@ -1,0 +1,29 @@
+{
+  "seed_id": "T5-015",
+  "ll_claims_extracted": [
+    "Company A has a more modern website than Company B.",
+    "Company A has a more professional-looking website than Company B."
+  ],
+  "hl_case_claims": [
+    "Company A's website looks far more modern than Company B's.",
+    "Company A's website looks polished (professionally presented)."
+  ],
+  "hl_source_claims": [
+    "The speaker's neighbor is named Petra.",
+    "Petra has moved three times in the past five years.",
+    "Petra looked at both websites.",
+    "Petra told the speaker her conclusion directly."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 28,
+    "ll": 12,
+    "xbase": 47,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

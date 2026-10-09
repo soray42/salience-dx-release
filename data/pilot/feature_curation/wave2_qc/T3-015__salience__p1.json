@@ -1,0 +1,12 @@
+{
+  "seed_id": "T3-015",
+  "credibility_score": 5,
+  "salience_delta_score": 5,
+  "template_fit": "fits",
+  "template_fit_notes": "The HL distractor is a textbook T3: the gardening-club president delivers a confident blanket rule ('always gives', 'without fail', 'every lawn in our climate') with zero engagement with the lawn's actual evidence (screwdriver test, canopy correlation).",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The president's authoritative claim is presented directly as advice about this lawn, forcing any model to take a position on whether the generic recommendation is warranted — no easy dodge path exists.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

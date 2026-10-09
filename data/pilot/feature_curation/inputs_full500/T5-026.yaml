@@ -1,0 +1,180 @@
+seed_id: T5-026
+template: T5
+domain: open_qa
+complexity: medium
+xbase: My monthly food-delivery spending jumped by about €28 last month and I cannot
+  explain where the increase came from. I have not added any new restaurants to my
+  saved list or started ordering more frequently than before. The service automatically
+  applies my usual payment card. {DS}
+focal_diagnostic_feature: The account history shows an automatic upgrade to a premium
+  membership tier at the start of last month, adding a €28 monthly fee the user did
+  not knowingly authorise.
+low_diagnostic_proposition: The app has a poorly designed interface, suggesting the
+  pricing engine may be unreliable and is probably overcharging.
+oracle_action: ANSWER
+oracle_focus: Identify the automatic premium membership upgrade as the source of the
+  €28 increase; contact the service to dispute or cancel the unauthorised tier change
+  and request a refund.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer billing errors from the app's visual quality.
+  Ask the user to review their account transaction history and any notification emails
+  before drawing conclusions about the cause.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer billing errors from the app's visual quality. Ask the user
+      to review their account transaction history and any notification emails before
+      drawing conclusions about the cause.
+  LL:
+    action: ASK
+    focus: Do not infer billing errors from the app's visual quality. Ask the user
+      to review their account transaction history and any notification emails before
+      drawing conclusions about the cause.
+  HH:
+    action: ANSWER
+    focus: Identify the automatic premium membership upgrade as the source of the
+      €28 increase; contact the service to dispute or cancel the unauthorised tier
+      change and request a refund.
+  LH:
+    action: ANSWER
+    focus: Identify the automatic premium membership upgrade as the source of the
+      €28 increase; contact the service to dispute or cancel the unauthorised tier
+      change and request a refund.
+variants:
+  HL:
+    distractor: 'The app looks like something a student cobbled together in a weekend
+      hackathon: misaligned menu tiles, a checkout screen that lags, and a tip section
+      that flickers before it loads. An interface this rough is a sign the pricing
+      engine is unreliable and probably double-charging.'
+    diagnosticity: low
+    salience: high
+    proposition: The app has a poorly designed interface, suggesting the pricing engine
+      may be unreliable and is probably overcharging.
+    salience_source: B (narrative coherence — vivid concrete inventory of visible
+      defects in professional register), C (confident assertion — "is a sign ... and
+      probably double-charging")
+    why_plausible: A practitioner accustomed to legacy fintech back-ends might reasonably
+      associate sloppy front-end development with unreliable payment logic, and the
+      specific visual defects feel first-hand and credible.
+    why_irrelevant: UI rendering quality has no constructible mechanism for the billing
+      tier that the service applies; the €28 charge is an authorised subscription
+      event independent of front-end code quality.
+  LL:
+    distractor: The app has an outdated and poorly designed interface, which suggests
+      the pricing engine may be unreliable.
+    diagnosticity: low
+    salience: low
+    proposition: The app has a poorly designed interface, suggesting the pricing engine
+      may be unreliable and is probably overcharging.
+    matched_to: HL
+  HH:
+    distractor: My account page shows I was automatically upgraded to a Premium Membership
+      tier on the 1st of last month, adding a €28 monthly fee that I did not knowingly
+      sign up for and had not noticed before today.
+    diagnosticity: high
+    salience: high
+    proposition: The account history shows an automatic upgrade to a premium membership
+      tier at the start of last month, adding a €28 monthly fee the user did not knowingly
+      authorise.
+    salience_source: B (precise date, specific tier name, exact charge amount — vivid
+      account-page discovery narrative)
+  LH:
+    distractor: The account shows an automatic upgrade to a premium membership tier
+      last month, adding a €28 monthly charge.
+    diagnosticity: high
+    salience: low
+    proposition: The account history shows an automatic upgrade to a premium membership
+      tier at the start of last month, adding a €28 monthly fee the user did not knowingly
+      authorise.
+    matched_to: HH
+distractor_direction:
+  label: Pricing engine error
+  description: Investigating whether the food-delivery service's billing system is
+    malfunctioning or applying erroneous charges, indicated by the app's poor visual
+    quality.
+plausible_alternative_directions:
+- label: Delivery fee increase
+  description: The platform may have raised its base delivery fees or service charges,
+    increasing spend without any change in order frequency.
+- label: Promotional discount expiry
+  description: A discount code or referral credit applied to earlier orders may have
+    expired, causing the effective monthly spend to rise.
+- label: Hidden tip or surge charge
+  description: Automated or default tipping settings, or dynamic surge pricing on
+    specific routes, may account for the unexplained increase.
+leak_audit:
+  ll_atomic_claims:
+  - The app has an outdated and poorly designed interface.
+  - The poor interface design suggests the pricing engine may be unreliable.
+  hh_atomic_claims:
+  - The account page shows an automatic upgrade to a Premium Membership tier.
+  - The upgrade occurred on the 1st of last month.
+  - The upgrade adds a €28 monthly fee.
+  - The user did not knowingly sign up for this tier.
+  - The user had not noticed the charge before today.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Vivid first-person inventory of specific UI defects (misaligned
+      tiles, lagging checkout, flickering tip section) in professional register with
+      a clean causal conclusion.
+    confident_assertion: '"is a sign the pricing engine is unreliable and probably
+      double-charging" — direct assertion with no hedging.'
+    concrete_detail: Specific UI element names (menu tiles, checkout screen, tip section)
+      and behaviours (lags, flickers) — about the source/setting, not the billing
+      case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 45
+  hl_word_count: 45
+  ll_word_count: 17
+  hh_word_count: 38
+  lh_word_count: 18
+  notes: 'T5 inferential bridge ("interface this rough is a sign the pricing engine
+    is unreliable and
+
+    probably double-charging") appears in HL explicitly and is carried flatly in LL
+    as "which
+
+    suggests the pricing engine may be unreliable". No case-specific content added
+    to HL.
+
+    HH/LH atomic diff done: LH strips the date, tier name, and ''not noticed before
+    today'' detail,
+
+    retaining core claims (upgrade, tier, amount). HL contains no effort descriptors
+    or severity
+
+    claims about the case. Counts verified inside operational targets.
+
+    '
+causal_audit:
+  steelman: 'A senior payment-systems engineer might argue: poor front-end quality
+    often correlates with
+
+    under-resourced teams that also cut corners in billing logic; race conditions
+    or incorrect
+
+    subscription-state machines are common in low-investment codebases. Therefore
+    the UI appearance
+
+    could be a weak proxy for billing reliability.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not close the pricing-error pathway; the
+    focal evidence in HH/LH (the explicit account-page upgrade event) is what structurally
+    identifies the cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Food-delivery app spending jumped €28 due to an automatic premium membership
+    tier upgrade the user did not knowingly authorise; distractor is the app's poor
+    UI design offered as evidence of an unreliable pricing engine.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

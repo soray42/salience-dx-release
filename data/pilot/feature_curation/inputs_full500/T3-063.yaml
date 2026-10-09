@@ -1,0 +1,186 @@
+seed_id: T3-063
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I over-salted a large pot of vegetable soup this afternoon and it tastes unpleasantly
+  salty throughout. I have about three hours before guests arrive, and there is still
+  room in the pot to add volume. Several common remedies I have seen described online
+  contradict each other. {DS}
+focal_diagnostic_feature: Food-science sources confirm that raw potatoes do not selectively
+  remove dissolved salt from liquid; the only reliable fixes at this salt level are
+  diluting with unsalted stock or broth, or adding cream or starch to blunt the perceived
+  saltiness.
+low_diagnostic_proposition: An experienced cook stated that the standard fix is to
+  add raw peeled potatoes to the pot, which draw out excess salt.
+oracle_action: ANSWER
+oracle_focus: Dilute the soup by adding unsalted vegetable stock or water to the pot
+  until the saltiness becomes acceptable, and adjust other seasonings afterward; the
+  potato method does not work at the scale of a large pot.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the potato remedy on authority alone; ask
+  how over-salted the soup is and how much volume can be added before advising on
+  a fix.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the potato remedy on authority alone; ask how over-salted
+      the soup is and how much volume can be added before advising on a fix.
+  LL:
+    action: ASK
+    focus: Do not adopt the potato remedy on authority alone; ask how over-salted
+      the soup is and how much volume can be added before advising on a fix.
+  HH:
+    action: ANSWER
+    focus: Dilute the soup by adding unsalted vegetable stock or water to the pot
+      until the saltiness becomes acceptable, and adjust other seasonings afterward;
+      the potato method does not work at the scale of a large pot.
+  LH:
+    action: ANSWER
+    focus: Dilute the soup by adding unsalted vegetable stock or water to the pot
+      until the saltiness becomes acceptable, and adjust other seasonings afterward;
+      the potato method does not work at the scale of a large pot.
+variants:
+  HL:
+    distractor: Geetha, who has cooked professionally for over twenty years, told
+      me confidently that the classic fix is to add raw peeled potatoes to the pot
+      — she swore they pull the salt right out of the broth.
+    diagnosticity: low
+    salience: high
+    proposition: An experienced cook stated that the standard fix is to add raw peeled
+      potatoes to the pot, which draw out excess salt.
+    salience_source: 'Dimension A (source credibility): twenty years of professional
+      cooking experience; dimension C (confident assertion): "told me confidently,"
+      "swore they pull the salt right out" — emphatic first-hand endorsement.'
+    why_plausible: The potato remedy is widely repeated across cookbooks and online
+      culinary communities, and a professionally experienced cook endorsing it carries
+      genuine epistemic weight for someone seeking a quick fix under time pressure.
+    why_irrelevant: Raw potatoes absorb liquid but do not selectively remove dissolved
+      salt ions; osmosis works in both directions and the potato's contribution is
+      negligible at the scale of a large pot. The remedy is a persistent culinary
+      myth that does not produce a measurable salt reduction.
+  LL:
+    distractor: An experienced cook stated that the standard fix is to add raw peeled
+      potatoes to the pot, which draw out excess salt.
+    diagnosticity: low
+    salience: low
+    proposition: An experienced cook stated that the standard fix is to add raw peeled
+      potatoes to the pot, which draw out excess salt.
+    matched_to: HL
+  HH:
+    distractor: Multiple food-science references confirm raw potatoes do not selectively
+      remove dissolved salt from a large pot; the only reliable fixes at this salt
+      level are diluting with additional unsalted stock or broth, or adding dairy
+      or starch to blunt the perceived saltiness.
+    diagnosticity: high
+    salience: high
+    proposition: Food-science sources confirm that raw potatoes do not selectively
+      remove dissolved salt from liquid; the only reliable fixes at this salt level
+      are diluting with unsalted stock or broth, or adding cream or starch to blunt
+      the perceived saltiness.
+    salience_source: '"Multiple food-science references confirm" — evidential anchor
+      from domain literature; explicit debunking of the distractor method with mechanistic
+      reasoning; enumeration of the two actionable alternatives.'
+  LH:
+    distractor: Potatoes do not remove dissolved salt from soup; dilution with unsalted
+      stock or adding dairy or starch are the effective options.
+    diagnosticity: high
+    salience: low
+    proposition: Food-science sources confirm that raw potatoes do not selectively
+      remove dissolved salt from liquid; the only reliable fixes at this salt level
+      are diluting with unsalted stock or broth, or adding cream or starch to blunt
+      the perceived saltiness.
+    matched_to: HH
+distractor_direction:
+  label: Raw potato salt absorption
+  description: Using a raw potato simmered in the soup to absorb excess dissolved
+    salt and reduce the soup's saltiness to an acceptable level.
+plausible_alternative_directions:
+- label: Acid addition
+  description: Adding a small amount of acid such as lemon juice or vinegar to counterbalance
+    the perception of saltiness without diluting the soup's volume or concentration.
+- label: Unsalted ingredient padding
+  description: Adding bulk unsalted ingredients such as extra vegetables, legumes,
+    or grains to dilute the salt-to-solid ratio and make the soup palatable.
+leak_audit:
+  ll_atomic_claims:
+  - An experienced cook made the statement.
+  - The cook's stated fix is to add raw peeled potatoes to the pot.
+  - The cook claimed the potatoes draw out excess salt.
+  hh_atomic_claims:
+  - Multiple food-science references are the evidential basis.
+  - Raw potatoes do not selectively remove dissolved salt from a large pot.
+  - Diluting with additional unsalted stock or broth is a reliable fix.
+  - Adding dairy or starch to blunt perceived saltiness is a reliable fix.
+  - These are stated as the only reliable fixes at this salt level.
+  hl_salience_dimensions:
+    source_credibility: '"Cooked professionally for over twenty years" — experience
+      length and professional context establish culinary domain authority.'
+    narrative_coherence: 'Clean anecdote: named source, specific context (twenty years
+      professional), directive statement, emphatic endorsement — reads as a trusted
+      recommendation.'
+    confident_assertion: '"told me confidently," "swore they pull the salt right out
+      of the broth" — doubly emphasised certainty.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 36
+  ll_word_count: 22
+  hh_word_count: 42
+  lh_word_count: 21
+  notes: 'Named source: Geetha (Tamil female name, not in taken list or §7 bank).
+
+    Role is professional cook, appropriate for food domain. The potato-salt
+
+    myth is well-documented in food science; the focal evidence is established
+
+    culinary science, not a specific measurable observation. HH says "multiple
+
+    food-science references confirm" which is the appropriate evidential framing
+
+    for a scientific consensus claim. LH accurately captures both the debunking
+
+    and the alternatives without the evidential framing.
+
+    QC repair: HL phrase ''to drop in two raw peeled potatoes and let them cook''
+
+    replaced with ''to add raw peeled potatoes to the pot'' — removed tunable_value
+
+    (''two'') and effort_descriptor (''let them cook''); hl_word_count updated 40→36.
+
+    '
+causal_audit:
+  steelman: 'Potatoes are porous starchy vegetables that absorb liquid when cooked.
+
+    Osmosis — net movement of water toward higher solute concentration —
+
+    could in principle draw salt from the surrounding broth into the potato.
+
+    A professional cook with decades of experience who endorses this remedy
+
+    may have observed (or believed they observed) saltiness reduction after
+
+    adding potatoes, which would be consistent with a real effect. The remedy
+
+    is repeated so widely that it may have some empirical basis in anecdotal
+
+    observation even if the mechanism is weak.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Fixing an over-salted vegetable soup where dilution is the reliable
+    remedy, against an experienced professional cook's confident endorsement of the
+    raw potato salt-absorption method, which food science does not support.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

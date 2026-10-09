@@ -1,0 +1,179 @@
+seed_id: T2-032
+template: T2
+domain: open_qa
+complexity: high
+xbase: A recruiter reached out about joining an early-stage startup as one of its
+  first employees, and the pitch is exciting. The founders are likeable and the product
+  vision genuinely appeals to me. I currently have a stable, well-paid job, so leaving
+  would be a real gamble, but the idea of getting in early keeps pulling at me. I
+  have a week to tell them whether I want to move forward. {DS}
+focal_diagnostic_feature: The startup has roughly five months of runway, no signed
+  revenue and no institutional investors, the offer pays thirty percent below the
+  user's current salary, and the equity is 0.3% with a one-year cliff while the user
+  has a mortgage on a single income.
+low_diagnostic_proposition: The recruiter's message arrived the same week a startup-success
+  story was trending across the user's social feeds.
+oracle_action: ANSWER
+oracle_focus: Lean against joining on these terms; five months of runway with no revenue
+  or institutional backing, a thirty percent pay cut, thin cliffed equity, and a mortgage
+  on one income make the downside severe relative to the upside.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a trending success story set the answer. Ask
+  for the startup's runway, revenue, funding, the pay change, and the equity terms
+  relative to the user's financial obligations before judging the move.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a trending success story set the answer. Ask for the startup's
+      runway, revenue, funding, the pay change, and the equity terms relative to the
+      user's financial obligations before judging the move.
+  LL:
+    action: ASK
+    focus: Do not let a trending success story set the answer. Ask for the startup's
+      runway, revenue, funding, the pay change, and the equity terms relative to the
+      user's financial obligations before judging the move.
+  HH:
+    action: ANSWER
+    focus: Lean against joining on these terms; five months of runway with no revenue
+      or institutional backing, a thirty percent pay cut, thin cliffed equity, and
+      a mortgage on one income make the downside severe relative to the upside.
+  LH:
+    action: ANSWER
+    focus: Lean against joining on these terms; five months of runway with no revenue
+      or institutional backing, a thirty percent pay cut, thin cliffed equity, and
+      a mortgage on one income make the downside severe relative to the upside.
+variants:
+  HL:
+    distractor: Part of why it feels like fate is that the recruiter's message landed
+      the same week my whole feed was full of that viral thread about an early employee
+      who joined a tiny startup and retired rich; I could not scroll past it.
+    diagnosticity: low
+    salience: high
+    proposition: The recruiter's message arrived the same week a startup-success story
+      was trending across the user's social feeds.
+    salience_source: B/C — a vivid, confident first-person account tying the offer's
+      arrival to an inescapable trending success story gives the coincidence pull.
+    why_plausible: Survivorship stories are emotionally sticky, and their arrival
+      in the same week can feel like a sign that this is the moment to take the leap.
+    why_irrelevant: A stranger's success going viral says nothing about this startup's
+      runway, revenue, funding, pay, or equity, which are the facts that determine
+      whether this particular gamble is sound.
+  LL:
+    distractor: The recruiter's message arrived the same week a startup-success story
+      was trending across the user's social feeds.
+    diagnosticity: low
+    salience: low
+    proposition: The recruiter's message arrived the same week a startup-success story
+      was trending across the user's social feeds.
+    matched_to: HL
+  HH:
+    distractor: On the numbers, the startup has about five months of runway, no signed
+      revenue and no institutional investors, the offer is thirty percent below my
+      current pay, and the equity is 0.3% with a one-year cliff, all while I carry
+      a mortgage on a single income.
+    diagnosticity: high
+    salience: high
+    proposition: The startup has roughly five months of runway, no signed revenue
+      and no institutional investors, the offer pays thirty percent below the user's
+      current salary, and the equity is 0.3% with a one-year cliff while the user
+      has a mortgage on a single income.
+    salience_source: The concrete runway, no-revenue, no-investor, pay-cut, equity,
+      and mortgage figures make the financial downside vivid and checkable.
+  LH:
+    distractor: The startup has five months runway, no revenue or institutional investors,
+      pays thirty percent below market with 0.3% cliffed equity, against a mortgage
+      on one income.
+    diagnosticity: high
+    salience: low
+    proposition: The startup has roughly five months of runway, no signed revenue
+      and no institutional investors, the offer pays thirty percent below the user's
+      current salary, and the equity is 0.3% with a one-year cliff while the user
+      has a mortgage on a single income.
+    matched_to: HH
+distractor_direction:
+  label: Trending success-story timing
+  description: Treating a viral startup-success story arriving the same week as a
+    reason to take the early-employee gamble.
+plausible_alternative_directions:
+- label: Founder track record
+  description: Whether the founders' prior experience and execution history change
+    the risk profile.
+- label: Career optionality
+  description: Whether the early-stage experience itself opens future opportunities
+    that offset the pay cut.
+leak_audit:
+  ll_atomic_claims:
+  - A startup-success story was trending across the user's social feeds.
+  - It was trending the same week the recruiter's message arrived.
+  hh_atomic_claims:
+  - The startup has roughly five months of runway.
+  - It has no signed revenue and no institutional investors.
+  - The offer pays thirty percent below the user's current salary.
+  - The equity is 0.3% with a one-year cliff.
+  - The user carries a mortgage on a single income.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person account tying the offer to the trending
+      thread's week.
+    confident_assertion: Confident framing ('Part of why it feels like fate') foregrounds
+      the coincidence.
+    concrete_detail: Detail about the viral thread (early employee who retired rich,
+      could not scroll past) only — no claim about this startup's finances.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 78
+  hl_word_count: 41
+  ll_word_count: 18
+  hh_word_count: 44
+  lh_word_count: 24
+  notes: 'LL carries only the success-story-trending-same-week claim; the early employee
+    who retired rich and the
+
+    couldn''t-scroll-past detail are HL-only colour about the coincidence event, adding
+    no financial fact LL lacks.
+
+    xbase states the dilemma (early-employee pitch, likeable founders, appealing product,
+    stable current job,
+
+    deadline) but withholds runway, revenue, funding, pay change, equity, and the
+    mortgage, so HL/LL cannot resolve
+
+    it. The decisive financial facts live only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One could argue the trending story is weak evidence that early-startup
+    bets pay off, so its timing is a nudge
+
+    toward seizing a rare window. But a single viral success is survivorship bias,
+    not data about this opportunity,
+
+    and its appearing in the same week is pure coincidence with no causal link to
+    the startup''s prospects. Whether
+
+    this specific gamble is wise turns on this startup''s runway, revenue, funding,
+    the user''s pay cut, the equity
+
+    terms, and the user''s mortgage exposure; the trending thread informs none of
+    these, so it has no mechanism to
+
+    bear on the decision.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the coincidence has no mechanism on the decision;
+    xbase keeps only the emotional pull and the stable-job context, withholding the
+    decisive financial facts, which remain only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A user weighing an early-startup offer whose weak runway, pay cut,
+    and thin equity decide it, not a coincidentally trending startup-success story.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

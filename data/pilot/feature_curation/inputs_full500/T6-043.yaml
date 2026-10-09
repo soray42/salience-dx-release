@@ -1,0 +1,179 @@
+seed_id: T6-043
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I am shopping for a new wireless Bluetooth speaker for use at my desk. Every
+  wireless speaker I have owned over the past few years dropped the connection regularly,
+  often mid-song, which made me unreliable as the person controlling audio. My previous
+  three speakers were all different brands but had the same dropout problem. Now I
+  am looking at a specific model that reviewers recommend, and I am unsure whether
+  to trust wireless again or just get a wired option. {DS}
+focal_diagnostic_feature: The model ranks first in its price tier in an independent
+  Bluetooth connectivity benchmark, and 340 verified reviews across the retailer and
+  three audio forums report zero connectivity dropout incidents.
+low_diagnostic_proposition: All of the user's previous wireless speakers had repeated
+  dropout problems, so this model will likely drop out too.
+oracle_action: ANSWER
+oracle_focus: Trust this wireless speaker; its benchmark connectivity ranking and
+  clean review record across 340 sources structurally distinguish it from the user's
+  past devices. Recommend buying it.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not rely on past dropout history from different speakers
+  to judge this model. Ask for technical specifications and model-specific connectivity
+  reviews before dismissing wireless.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not rely on past dropout history from different speakers to judge this
+      model. Ask for technical specifications and model-specific connectivity reviews
+      before dismissing wireless.
+  LL:
+    action: ASK
+    focus: Do not rely on past dropout history from different speakers to judge this
+      model. Ask for technical specifications and model-specific connectivity reviews
+      before dismissing wireless.
+  HH:
+    action: ANSWER
+    focus: Trust this wireless speaker; its benchmark connectivity ranking and clean
+      review record across 340 sources structurally distinguish it from the user's
+      past devices. Recommend buying it.
+  LH:
+    action: ANSWER
+    focus: Trust this wireless speaker; its benchmark connectivity ranking and clean
+      review record across 340 sources structurally distinguish it from the user's
+      past devices. Recommend buying it.
+variants:
+  HL:
+    distractor: Every wireless speaker I've bought over the past four years has dropped
+      out repeatedly — three different brands, same maddening result — so wired is
+      the only thing I'd trust now.
+    diagnosticity: low
+    salience: high
+    proposition: All of the user's previous wireless speakers had repeated dropout
+      problems, so this model will likely drop out too.
+    salience_source: B/C — vivid personal chronology spanning four years; confident
+      first-instinct framing ('the only thing I'd trust'); three-brand pattern gives
+      narrative weight.
+    why_plausible: Multi-brand dropout history spanning years is a reasonable inductive
+      base; a busy reader could accept it as strong evidence of generic Bluetooth
+      unreliability.
+    why_irrelevant: The past devices used older Bluetooth standards and different
+      chipsets; dropout behaviour is chipset- and firmware-specific, so prior device
+      failures provide no mechanism to predict this model's performance.
+  LL:
+    distractor: All of the user's previous wireless speakers had repeated dropout
+      problems, suggesting budget wireless speakers cannot provide reliable connectivity.
+    diagnosticity: low
+    salience: low
+    proposition: All of the user's previous wireless speakers had repeated dropout
+      problems, so this model will likely drop out too.
+    matched_to: HL
+  HH:
+    distractor: This model uses a Bluetooth 5.3 Qualcomm aptX chip, and across 340
+      verified reviews on the retailer site and three independent audio forums, not
+      one report mentions a connectivity dropout.
+    diagnosticity: high
+    salience: high
+    proposition: The model ranks first in its price tier in an independent Bluetooth
+      connectivity benchmark, and 340 verified reviews across the retailer and three
+      audio forums report zero connectivity dropout incidents.
+    salience_source: B/C — precise chip spec and large verified review count give
+      concrete evidential detail; confident declarative phrasing ('not one report
+      mentions').
+  LH:
+    distractor: The model uses a Bluetooth 5.3 Qualcomm aptX chip; 340 verified reviews
+      across the retailer and three audio forums report no connectivity dropout.
+    diagnosticity: high
+    salience: low
+    proposition: The model ranks first in its price tier in an independent Bluetooth
+      connectivity benchmark, and 340 verified reviews across the retailer and three
+      audio forums report zero connectivity dropout incidents.
+    matched_to: HH
+distractor_direction:
+  label: wireless dropout risk
+  description: Treating the user's personal history of dropout problems across multiple
+    wireless speakers as predictive of this specific model's connectivity behaviour.
+plausible_alternative_directions:
+- label: wired audio quality
+  description: Comparing objective audio fidelity between the recommended wireless
+    model and a wired alternative at the same price point.
+- label: desk use ergonomics
+  description: Considering whether a wireless speaker suits the desk placement context
+    better than wired given cable management and positioning flexibility.
+- label: retailer return policy
+  description: Checking whether the retailer offers a trial period or easy return
+    so the user can test connectivity empirically before committing.
+leak_audit:
+  ll_atomic_claims:
+  - All of the user's previous wireless speakers had repeated dropout problems.
+  - This implies budget wireless speakers cannot provide reliable connectivity.
+  hh_atomic_claims:
+  - The model uses a Bluetooth 5.3 Qualcomm aptX chip.
+  - 340 verified reviews exist across the retailer site and three independent audio
+    forums.
+  - Not one report among those reviews mentions a connectivity dropout.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person T6 speaker
+    narrative_coherence: Clean chronological span (four years, three brands), professional
+      casual register, coherent inductive framing.
+    confident_assertion: '''wired is the only thing I''d trust now'' — firm first-instinct
+      claim'
+    concrete_detail: N/A — detail is about speaker history (source), not case-specific
+      facts
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 29
+  ll_word_count: 16
+  hh_word_count: 30
+  lh_word_count: 23
+  notes: 'LL restated "this model will likely drop out too" as the implied conclusion
+    to stay
+
+    propositionally equivalent with HL without adding case-specific facts. HH/LH drop
+
+    "first in price tier" from focal_diagnostic_feature because the chip spec + 340
+    zero-dropout
+
+    reviews are sufficient for decisiveness and keep word counts clean. HL:LL ratio
+    1.8:1;
+
+    HH:LH ratio 1.3:1.
+
+    '
+causal_audit:
+  steelman: 'Multi-brand dropout history spanning four years gives an inductive base.
+    Different brands
+
+    sharing the same symptom could indicate a broader Bluetooth stack or frequency-congestion
+
+    issue in the user''s environment (desk near other 2.4 GHz devices). A senior audio
+    reviewer
+
+    might say: "user''s environment rather than device quality caused the drops —
+    same environment
+
+    will affect this model too."
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: The xbase notes the user's prior speakers were "different
+    brands" — the shared dropout symptom could plausibly be environment-specific.
+    However, the focal feature (Bluetooth 5.3 chip + 340 independent reviews with
+    zero dropouts, implying testing across diverse environments) structurally rules
+    out the environment-as-cause hypothesis for this model.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing a wireless Bluetooth speaker where past multi-brand dropout
+    experience creates availability bias against wireless, but this specific model's
+    Bluetooth 5.3 chipset and 340 zero-dropout reviews structurally distinguish it
+    from the user's prior devices.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

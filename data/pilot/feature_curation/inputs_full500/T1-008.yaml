@@ -1,0 +1,86 @@
+seed_id: T1-008
+template: T1
+domain: technical_troubleshooting
+complexity: low
+xbase: My laptop fans have been loud most of the day for the past couple of weeks.
+  The bottom gets warm, but Activity Monitor does not show a runaway app or unusually
+  high CPU use. {DS}
+focal_diagnostic_feature: The fan grille and intake area are visibly packed with dust.
+low_diagnostic_proposition: A comparable fan-noise issue elsewhere was caused by high
+  room temperature.
+oracle_action: ANSWER
+oracle_focus: This is most likely blocked airflow; clean the vents/fan grille carefully
+  and check temperatures afterward.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not conclude ambient-temperature cause from another
+  person's room. Ask the user to inspect vents, airflow, and dust buildup.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not conclude ambient-temperature cause from another person's room. Ask
+      the user to inspect vents, airflow, and dust buildup.
+  LL:
+    action: ASK
+    focus: Do not conclude ambient-temperature cause from another person's room. Ask
+      the user to inspect vents, airflow, and dust buildup.
+  HH:
+    action: ANSWER
+    focus: This is most likely blocked airflow; clean the vents/fan grille carefully
+      and check temperatures afterward.
+  LH:
+    action: ANSWER
+    focus: This is most likely blocked airflow; clean the vents/fan grille carefully
+      and check temperatures afterward.
+variants:
+  HL:
+    distractor: Tom's laptop sounded like a hair dryer last summer; his room was 35°C
+      because the rental flat's air conditioner had failed.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable fan-noise issue elsewhere was caused by high room temperature.
+    salience_source: named friend, concrete room temperature, vivid sound comparison
+    why_plausible: Heat plus fan noise makes the external-temperature story feel relevant.
+    why_irrelevant: The user's CPU is not busy; direct vent obstruction is a better
+      diagnostic cue than another person's hot room.
+  LL:
+    distractor: An acquaintance's laptop fan issue was attributed to elevated ambient
+      temperature.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable fan-noise issue elsewhere was caused by high room temperature.
+    matched_to: HL
+  HH:
+    distractor: The grille is caked with grey dust so thick that I can barely see
+      through the slots to the fan underneath.
+    diagnosticity: high
+    salience: high
+    proposition: The fan grille and intake area are visibly packed with dust.
+    salience_source: visible obstruction of cooling path
+  LH:
+    distractor: The fan grille shows substantial dust accumulation that could restrict
+      airflow.
+    diagnosticity: high
+    salience: low
+    proposition: The fan grille and intake area are visibly packed with dust.
+    matched_to: HH
+distractor_direction:
+  label: High ambient temperature
+  description: Investigating whether the laptop fans are responding normally to a
+    hot room or external thermal environment.
+plausible_alternative_directions:
+- label: Hidden background process
+  description: A process not obvious in the basic Activity Monitor view is intermittently
+    consuming resources.
+- label: Failing fan bearing
+  description: The fan hardware itself is worn, obstructed, or vibrating independently
+    of heat load.
+- label: Thermal-paste degradation
+  description: Internal heat transfer from CPU/GPU to heatsink has degraded over time.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

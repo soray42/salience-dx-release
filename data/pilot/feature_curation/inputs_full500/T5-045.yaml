@@ -1,0 +1,170 @@
+seed_id: T5-045
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: My home internet browsing has been noticeably slow for about a week, while
+  video streaming works fine. Speed tests show I am getting the full bandwidth I pay
+  for. The slowness only shows up when loading new websites, not when reloading pages
+  I have visited before. I cannot figure out what changed. {DS}
+focal_diagnostic_feature: The router's resolver responds in under 3ms, but the browser
+  has overridden the system resolver and is using its own DNS-over-HTTPS provider
+  averaging 800ms per uncached lookup.
+low_diagnostic_proposition: The router admin interface looks dated and disorganised,
+  suggesting DNS settings have probably never been configured correctly.
+oracle_action: ANSWER
+oracle_focus: Disable the browser's custom DNS-over-HTTPS override and revert to the
+  system resolver; verify that new-page load times return to normal.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer DNS misconfiguration from the router admin
+  page's visual appearance. Measure actual DNS resolution times at the system and
+  browser levels before changing any settings.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer DNS misconfiguration from the router admin page's visual appearance.
+      Measure actual DNS resolution times at the system and browser levels before
+      changing any settings.
+  LL:
+    action: ASK
+    focus: Do not infer DNS misconfiguration from the router admin page's visual appearance.
+      Measure actual DNS resolution times at the system and browser levels before
+      changing any settings.
+  HH:
+    action: ANSWER
+    focus: Disable the browser's custom DNS-over-HTTPS override and revert to the
+      system resolver; verify that new-page load times return to normal.
+  LH:
+    action: ANSWER
+    focus: Disable the browser's custom DNS-over-HTTPS override and revert to the
+      system resolver; verify that new-page load times return to normal.
+variants:
+  HL:
+    distractor: My router admin page looks like something from 2009 — white background,
+      tiny text, settings buried in unlabelled dropdowns — that kind of messy interface
+      usually hides DNS settings that nobody has ever touched correctly.
+    diagnosticity: low
+    salience: high
+    proposition: The router admin interface looks dated and disorganised, suggesting
+      DNS settings have probably never been configured correctly.
+    salience_source: B/C — specific year reference (2009) and concrete visual details
+      (white background, tiny text, unlabelled dropdowns); confident bridge claim
+      ('usually hides').
+    why_plausible: ISP-provided routers with dated admin UIs often ship with default
+      or poorly documented DNS settings; a user who has seen such interfaces correlate
+      with misconfiguration might treat the appearance as a meaningful signal.
+    why_irrelevant: Router admin UI age and DNS resolver performance are independently
+      determined; a dated interface does not change what the resolver actually does,
+      and the focal measurement shows the router's resolver is performing correctly
+      at under 3ms.
+  LL:
+    distractor: The router admin interface looks dated and disorganised, suggesting
+      DNS settings have probably never been configured correctly.
+    diagnosticity: low
+    salience: low
+    proposition: The router admin interface looks dated and disorganised, suggesting
+      DNS settings have probably never been configured correctly.
+    matched_to: HL
+  HH:
+    distractor: Running dig shows the router's resolver returns results in under 3ms
+      consistently, but the browser's advanced settings reveal it has overridden the
+      system resolver and is using its own DNS-over-HTTPS provider, which averages
+      800ms per uncached lookup.
+    diagnosticity: high
+    salience: high
+    proposition: The router's resolver responds in under 3ms, but the browser has
+      overridden the system resolver and is using its own DNS-over-HTTPS provider
+      averaging 800ms per uncached lookup.
+    salience_source: B/C — precise measurements (3ms vs 800ms); concrete browser UI
+      finding ('advanced settings reveal'); clear contrast structure.
+  LH:
+    distractor: The router's resolver returns under 3ms; the browser overrides the
+      system resolver and uses a DoH provider averaging 800ms per uncached lookup.
+    diagnosticity: high
+    salience: low
+    proposition: The router's resolver responds in under 3ms, but the browser has
+      overridden the system resolver and is using its own DNS-over-HTTPS provider
+      averaging 800ms per uncached lookup.
+    matched_to: HH
+distractor_direction:
+  label: router DNS misconfiguration
+  description: Investigating whether the router's DNS settings are misconfigured or
+    using a poor upstream resolver, causing slow name resolution for new domains.
+plausible_alternative_directions:
+- label: ISP upstream resolver degradation
+  description: Checking whether the ISP's DNS infrastructure is experiencing elevated
+    latency that only affects uncached domains, consistent with the new-site-only
+    symptom pattern.
+- label: browser cache or extension interference
+  description: Investigating whether a recently installed browser extension or expired
+    cache policy is adding latency to initial page loads for new domains.
+leak_audit:
+  ll_atomic_claims:
+  - The router admin interface looks dated and disorganised.
+  - This suggests DNS settings have probably never been configured correctly.
+  hh_atomic_claims:
+  - The router's resolver returns results in under 3ms consistently (measured via
+    dig).
+  - The browser's advanced settings reveal it has overridden the system resolver.
+  - The browser is using its own DNS-over-HTTPS provider.
+  - That provider averages 800ms per uncached lookup.
+  hl_salience_dimensions:
+    source_credibility: N/A — no named source; aesthetic impression is the salience
+      vehicle
+    narrative_coherence: Specific visual inventory (year, colour, text size, dropdown
+      style) followed by a confident general implication gives the claim a coherent
+      inference chain.
+    confident_assertion: '''usually hides DNS settings that nobody has ever touched
+      correctly'' — strong generalisation with confident phrasing.'
+    concrete_detail: Detail is about the UI appearance (year 2009, visual elements),
+      not case-specific diagnostic data — C6 compliant.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 50
+  hl_word_count: 33
+  ll_word_count: 17
+  hh_word_count: 37
+  lh_word_count: 22
+  notes: 'T5 inferential bridge ("dated/messy interface → DNS probably misconfigured")
+    appears in both
+
+    HL and LL per C1. xbase establishes new-vs-cached asymmetry, pointing to DNS caching
+    as the
+
+    mechanism without revealing which resolver layer is at fault. HL:LL 1.9:1; HH:LH
+    1.7:1.
+
+    "unlabelled" spelling kept (British English consistent with xbase context).
+
+    '
+causal_audit:
+  steelman: 'Router admin page quality is a weak proxy for firmware maintenance quality.
+    ISP-provided
+
+    routers with dated interfaces often have stale DNS configurations pointing to
+    overloaded
+
+    upstream forwarders. In a home setting with a single ISP box, the router IS the
+    DNS layer
+
+    for the user, so suspecting it is the first logical step even before measurement.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the focal evidence (dig confirms <3ms from router
+    resolver; browser DoH override at 800ms) directly rules out the router's DNS configuration
+    as the problem. The xbase symptom pattern (new pages slow, cached pages fine)
+    is consistent with either hypothesis so neither is closed in xbase.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Slow new-page browsing caused by the browser's DNS-over-HTTPS override
+    using a congested provider at 800ms per lookup, against the aesthetic inference
+    that the router's dated admin page signals a misconfigured DNS resolver.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,98 @@
+{
+  "n_key_items": 186,
+  "n_proxy_items": 186,
+  "missing": 0,
+  "distractor_role": {
+    "n": 186,
+    "pct_agree": 87.6,
+    "pct_agree_ci": [
+      82.8,
+      92.3
+    ],
+    "gwet_ac1": 0.816,
+    "gwet_ac1_ci": [
+      0.743,
+      0.885
+    ],
+    "cohen_kappa_paradox_ref": 0.812,
+    "deepseek_dist": {
+      "primary": 62,
+      "considered_rejected": 70,
+      "absent": 54
+    },
+    "proxy_dist": {
+      "primary": 63,
+      "considered_rejected": 78,
+      "absent": 45
+    },
+    "confusion": {
+      "judge=primary|proxy=primary": 54,
+      "judge=primary|proxy=considered_rejected": 8,
+      "judge=considered_rejected|proxy=primary": 6,
+      "judge=considered_rejected|proxy=considered_rejected": 64,
+      "judge=absent|proxy=primary": 3,
+      "judge=absent|proxy=considered_rejected": 6,
+      "judge=absent|proxy=absent": 45
+    }
+  },
+  "focal_role": {
+    "n": 186,
+    "pct_agree": 73.7,
+    "pct_agree_ci": [
+      66.1,
+      80.9
+    ],
+    "gwet_ac1": 0.642,
+    "gwet_ac1_ci": [
+      0.543,
+      0.739
+    ],
+    "cohen_kappa_paradox_ref": 0.528,
+    "deepseek_dist": {
+      "absent": 92,
+      "primary": 87,
+      "considered_rejected": 7
+    },
+    "proxy_dist": {
+      "considered_rejected": 14,
+      "primary": 128,
+      "absent": 44
+    },
+    "confusion": {
+      "judge=primary|proxy=primary": 86,
+      "judge=primary|proxy=considered_rejected": 1,
+      "judge=considered_rejected|proxy=considered_rejected": 7,
+      "judge=absent|proxy=primary": 42,
+      "judge=absent|proxy=considered_rejected": 6,
+      "judge=absent|proxy=absent": 44
+    }
+  },
+  "pair_rederivation": {
+    "n_pairs_with_both_cells": 62,
+    "pair_bucket_agreement_pct": 72.6,
+    "proxy_ISB_n": 14,
+    "proxy_vig_n": 13,
+    "proxy_bucket_dist": {
+      "stable_adopt": 16,
+      "vigilance": 13,
+      "stable_reject": 16,
+      "proto_vigilance": 2,
+      "ISB": 14,
+      "proto_ISB": 1
+    },
+    "deepseek_bucket_dist": {
+      "stable_adopt": 12,
+      "vigilance": 15,
+      "stable_reject": 12,
+      "proto_ISB": 4,
+      "ISB": 15,
+      "proto_vigilance": 4
+    },
+    "DFA_proxy": {
+      "k": 55,
+      "n": 62,
+      "pct": 88.7
+    },
+    "note": "Counts on the labelled sample, in which flips are over-sampled; not population rates."
+  }
+}

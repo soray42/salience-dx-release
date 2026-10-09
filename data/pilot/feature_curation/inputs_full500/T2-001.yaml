@@ -1,0 +1,89 @@
+seed_id: T2-001
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: My iPhone has been hot and losing battery quickly for four days. Background
+  App Refresh is off and the phone is otherwise behaving normally. I have not installed
+  a new iOS version this week. {DS}
+focal_diagnostic_feature: Battery settings show one third-party photo editor accounts
+  for most background activity.
+low_diagnostic_proposition: The battery drain began shortly after an Apple ID password
+  change.
+oracle_action: ANSWER
+oracle_focus: The photo editor is the direct suspect; force-quit it, restrict/remove
+  it, or reinstall it and recheck battery telemetry.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not anchor on the account-change timing. Ask for per-app
+  battery usage before diagnosing the cause.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not anchor on the account-change timing. Ask for per-app battery usage
+      before diagnosing the cause.
+  LL:
+    action: ASK
+    focus: Do not anchor on the account-change timing. Ask for per-app battery usage
+      before diagnosing the cause.
+  HH:
+    action: ANSWER
+    focus: The photo editor is the direct suspect; force-quit it, restrict/remove
+      it, or reinstall it and recheck battery telemetry.
+  LH:
+    action: ANSWER
+    focus: The photo editor is the direct suspect; force-quit it, restrict/remove
+      it, or reinstall it and recheck battery telemetry.
+variants:
+  HL:
+    distractor: This started exactly the morning after I changed my Apple ID password,
+      down to the first full charge cycle after the change.
+    diagnosticity: low
+    salience: high
+    proposition: The battery drain began shortly after an Apple ID password change.
+    salience_source: exact temporal sequence with security-related account event
+    why_plausible: Account changes can trigger sync behaviour, so the timing feels
+      causal.
+    why_irrelevant: A password change does not explain one specific third-party app
+      dominating background activity.
+  LL:
+    distractor: The issue began shortly after an account credential update.
+    diagnosticity: low
+    salience: low
+    proposition: The battery drain began shortly after an Apple ID password change.
+    matched_to: HL
+  HH:
+    distractor: Battery settings shows one photo-editing app sitting at 64% of background
+      activity while nearly every other app is near zero.
+    diagnosticity: high
+    salience: high
+    proposition: Battery settings show one third-party photo editor accounts for most
+      background activity.
+    salience_source: per-app telemetry concentration
+  LH:
+    distractor: Per-app battery telemetry shows a single third-party photo editor
+      accounts for 64% of background activity.
+    diagnosticity: high
+    salience: low
+    proposition: Battery settings show one third-party photo editor accounts for most
+      background activity.
+    matched_to: HH
+distractor_direction:
+  label: Apple ID account change
+  description: Investigating whether account reauthentication, iCloud sync, or credential-related
+    background activity explains the battery drain.
+plausible_alternative_directions:
+- label: Battery aging
+  description: The phone battery is degraded and now loses charge quickly under ordinary
+    use.
+- label: iOS background indexing
+  description: The operating system is doing temporary background indexing or sync
+    unrelated to a single app.
+- label: Weak cellular signal
+  description: Poor reception is increasing radio power use and heat.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

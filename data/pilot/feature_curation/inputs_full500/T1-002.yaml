@@ -1,0 +1,91 @@
+seed_id: T1-002
+template: T1
+domain: technical_troubleshooting
+complexity: low
+xbase: My phone says it is charging when I plug it in, but the battery percentage
+  does not move. It is a two-year-old phone and there is no warning message on screen.
+  I have not noticed any recent drop or spill. {DS}
+focal_diagnostic_feature: The same charging behaviour occurs with multiple known-good
+  cables and wall adapters.
+low_diagnostic_proposition: A relative's similar charging symptom was caused by liquid
+  contact.
+oracle_action: ASK
+oracle_focus: 'Focus on the phone side: battery health or charging-port hardware.
+  Ask about port debris/damage, heat while plugged in, and battery-health diagnostics.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer liquid damage from someone else's phone.
+  First isolate cable/adapter versus phone-side failure.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer liquid damage from someone else's phone. First isolate cable/adapter
+      versus phone-side failure.
+  LL:
+    action: ASK
+    focus: Do not infer liquid damage from someone else's phone. First isolate cable/adapter
+      versus phone-side failure.
+  HH:
+    action: ASK
+    focus: 'Focus on the phone side: battery health or charging-port hardware. Ask
+      about port debris/damage, heat while plugged in, and battery-health diagnostics.'
+  LH:
+    action: ASK
+    focus: 'Focus on the phone side: battery health or charging-port hardware. Ask
+      about port debris/damage, heat while plugged in, and battery-health diagnostics.'
+variants:
+  HL:
+    distractor: Priya had a phone that showed the lightning icon but sat frozen at
+      12%; she later found it had slipped into a sink full of soapy water the previous
+      Sunday.
+    diagnosticity: low
+    salience: high
+    proposition: A relative's similar charging symptom was caused by liquid contact.
+    salience_source: named relative, vivid liquid detail, exact battery percentage
+      in anecdote
+    why_plausible: Liquid damage is a familiar cause of charging problems, so the
+      anecdote is easy to over-map.
+    why_irrelevant: No liquid contact is reported for this device; the needed diagnostic
+      step is phone-side isolation using known-good chargers.
+  LL:
+    distractor: A relative had a similar charging symptom that was later attributed
+      to liquid exposure.
+    diagnosticity: low
+    salience: low
+    proposition: A relative's similar charging symptom was caused by liquid contact.
+    matched_to: HL
+  HH:
+    distractor: I tried my normal cable, a brand-new cable from the shop, and two
+      different wall plugs; the phone detects all of them but the percentage stays
+      fixed.
+    diagnosticity: high
+    salience: high
+    proposition: The same charging behaviour occurs with multiple known-good cables
+      and wall adapters.
+    salience_source: multiple concrete test substitutions
+  LH:
+    distractor: The symptom is reproduced with multiple cables and adapters, while
+      charging detection still occurs.
+    diagnosticity: high
+    salience: low
+    proposition: The same charging behaviour occurs with multiple known-good cables
+      and wall adapters.
+    matched_to: HH
+distractor_direction:
+  label: Liquid exposure damage
+  description: Investigating whether liquid contact damaged the phone charging path,
+    battery, or port circuitry.
+plausible_alternative_directions:
+- label: Cable or adapter failure
+  description: The charger cable or wall adapter is defective, incompatible, or not
+    delivering enough current.
+- label: Battery calibration glitch
+  description: The software battery percentage indicator is stale or miscalibrated
+    despite charging detection.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

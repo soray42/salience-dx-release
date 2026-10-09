@@ -1,0 +1,12 @@
+{
+  "seed_id": "T3-016",
+  "credibility_score": 4,
+  "salience_delta_score": 5,
+  "template_fit": "fits",
+  "template_fit_notes": "HL distractor is a serial entrepreneur asserting 'always incorporate' and 'never the right call' with confident superlatives and source history (three incorporated businesses), matching T3's recipe of a senior figure's confident generic pattern-match without engaging the case's specific evidence.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The friend's assertion is embedded directly in the user's question and the model must evaluate whether to follow it or the accountant's case-specific analysis; there is no escape path that avoids taking a position on the distractor.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

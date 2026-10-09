@@ -1,0 +1,103 @@
+seed_id: T6-008
+template: T6
+domain: open_qa
+complexity: medium
+xbase: أختار بين باقتَي هاتف. الباقة A أرخص وبها حد بيانات محدد، والباقة B أغلى وغير
+  محدودة. أستخدم الواي فاي في المنزل والعمل في معظم الأوقات. {DS}
+focal_diagnostic_feature: الباقة A بتكلفة 12 يورو شهريًا مع 20 جيجابايت من البيانات،
+  والباقة B بتكلفة 35 يورو شهريًا غير محدودة، واستخدام المستخدم ظل بين 8 و12 جيجابايت
+  على مدى 18 شهرًا.
+low_diagnostic_proposition: The user recalls peers having bad outcomes after choosing
+  cheaper capped phone plans.
+oracle_action: ANSWER
+oracle_focus: Choose Plan A unless expected usage changes materially; the unlimited
+  plan's premium is not justified by the usage history.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let friends' overage stories decide it. Ask for
+  actual monthly usage, overage rules, and expected changes.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let friends' overage stories decide it. Ask for actual monthly usage,
+      overage rules, and expected changes.
+  LL:
+    action: ASK
+    focus: Do not let friends' overage stories decide it. Ask for actual monthly usage,
+      overage rules, and expected changes.
+  HH:
+    action: ANSWER
+    focus: Choose Plan A unless expected usage changes materially; the unlimited plan's
+      premium is not justified by the usage history.
+  LH:
+    action: ANSWER
+    focus: Choose Plan A unless expected usage changes materially; the unlimited plan's
+      premium is not justified by the usage history.
+variants:
+  HL:
+    distractor: في كل مرة اختار فيها أصدقائي باقات هاتف رخيصة، وجدوا أنفسهم بلا بيانات
+      في أسوأ لحظة ممكنة، لذلك تبدو الباقة غير المحدودة أكثر أمانًا.
+    diagnosticity: low
+    salience: high
+    proposition: The user recalls peers having bad outcomes after choosing cheaper
+      capped phone plans.
+    salience_source: friend availability stories, worst-moment framing, safety language
+    why_plausible: Stories about losing connectivity are vivid and easy to imagine.
+    why_irrelevant: The user's own usage distribution is the relevant evidence for
+      a recurring plan choice.
+  LL:
+    distractor: يتذكر المستخدم أن أصدقاءه عانوا من نتائج سلبية بعد اختيار باقات هاتف
+      أرخص محدودة البيانات.
+    diagnosticity: low
+    salience: low
+    proposition: The user recalls peers having bad outcomes after choosing cheaper
+      capped phone plans.
+    matched_to: HL
+  HH:
+    distractor: الباقة A بسعر 12 يورو مقابل 20 جيجابايت، والباقة B بسعر 35 يورو غير
+      محدودة، وسجل استخدامي يتراوح بين 8 و12 جيجابايت كل شهر منذ سنة ونصف.
+    diagnosticity: high
+    salience: high
+    proposition: Plan A costs €12/month with 20GB data, Plan B costs €35/month unlimited,
+      and the user's usage has stayed between 8 and 12GB for 18 months.
+    salience_source: usage history versus plan cap
+  LH:
+    distractor: الباقة A بسعر 12 يورو شهريًا مقابل 20 جيجابايت؛ والباقة B بسعر 35
+      يورو شهريًا غير محدودة؛ والاستخدام التاريخي بين 8 و12 جيجابايت شهريًا على مدى
+      18 شهرًا.
+    diagnosticity: high
+    salience: low
+    proposition: Plan A costs €12/month with 20GB data, Plan B costs €35/month unlimited,
+      and the user's usage has stayed between 8 and 12GB for 18 months.
+    matched_to: HH
+distractor_direction:
+  label: ندم اختيار الباقة المحدودة
+  description: التحقيق فيما إذا كانت النتائج السلبية التي عاناها أصدقاء المستخدم مع
+    الباقات الرخيصة المحدودة تعني أنه ينبغي له اختيار الباقة غير المحدودة.
+plausible_alternative_directions:
+- label: تغطية الشبكة
+  description: قد يختلف مزودا الخدمة في جودة التغطية حيث يعيش المستخدم ويعمل.
+- label: الحاجة إلى التجوال
+  description: قد تغير متطلبات السفر الدولي أو التجوال من قيمة البيانات غير المحدودة.
+- label: مرونة العقد
+  description: قد تؤثر شروط العقد شهريًا مقابل الاشتراك المقيّد على اختيار الباقة.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-008.yaml
+  source_xbase_sha256: 1657145944d2333c
+  translated_content_sha256: f717156f816ded83
+  translation_notes: Euro (€) currency symbol kept as-is since it appears in concrete
+    figures. Wi-Fi kept in English/loan form. HL preserves the vivid 'stranded at
+    worst moment' framing. LL remains flat and third-person. No culture-specific salience
+    cues that fail to carry into Arabic.

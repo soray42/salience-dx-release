@@ -1,0 +1,179 @@
+seed_id: T1-029
+template: T1
+domain: open_qa
+complexity: low
+xbase: I have an offer to join a company that would require me to relocate to another
+  region, and I need to give an answer by Friday. The base pay is a clear step up
+  from what I earn now, and the work is squarely in my field. I like where I live,
+  but I have no lease I cannot break and no family tying me to this city. I keep hesitating
+  because uprooting feels like a big swing. {DS}
+focal_diagnostic_feature: The role is permanent at a profitable twenty-year-old firm,
+  the signed contract includes a six-month severance clause, and the user's specialty
+  is in demand in the new region too.
+low_diagnostic_proposition: A friend relocated for a job and was laid off within a
+  few months, regretting the move.
+oracle_action: ANSWER
+oracle_focus: On these facts the move is favourable; the role is stable, the contract
+  carries strong severance protection, and the user's skills are portable, so accepting
+  or negotiating from strength is reasonable.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one friend's layoff story decide this. Ask
+  about this company's financial stability, the contract's severance terms, and demand
+  for the user's skills in the new region.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one friend's layoff story decide this. Ask about this company's
+      financial stability, the contract's severance terms, and demand for the user's
+      skills in the new region.
+  LL:
+    action: ASK
+    focus: Do not let one friend's layoff story decide this. Ask about this company's
+      financial stability, the contract's severance terms, and demand for the user's
+      skills in the new region.
+  HH:
+    action: ANSWER
+    focus: On these facts the move is favourable; the role is stable, the contract
+      carries strong severance protection, and the user's skills are portable, so
+      accepting or negotiating from strength is reasonable.
+  LH:
+    action: ANSWER
+    focus: On these facts the move is favourable; the role is stable, the contract
+      carries strong severance protection, and the user's skills are portable, so
+      accepting or negotiating from strength is reasonable.
+variants:
+  HL:
+    distractor: Folake from my running group relocated across the country for a new
+      job two years ago, and she told me her division was cut barely three months
+      in; she still says pulling up her whole life for that role was the biggest regret
+      of her career.
+    diagnosticity: low
+    salience: high
+    proposition: A friend relocated for a job and was laid off within a few months,
+      regretting the move.
+    salience_source: A — a named acquaintance recounting her own dated, first-hand
+      relocation experience lends the cautionary story weight.
+    why_plausible: Relocating for a role that then disappears is a genuine risk, so
+      a vivid first-hand account of exactly that outcome feels directly relevant.
+    why_irrelevant: Her layoff describes a different employer's instability; it says
+      nothing about this firm's stability, this contract's severance, or demand for
+      the user's skills, which are the deciding facts.
+  LL:
+    distractor: A friend relocated for a job and was laid off within a few months,
+      regretting the move.
+    diagnosticity: low
+    salience: low
+    proposition: A friend relocated for a job and was laid off within a few months,
+      regretting the move.
+    matched_to: HL
+  HH:
+    distractor: The role is a permanent position at a firm that has been profitably
+      trading for twenty years, the signed contract spells out six months of severance,
+      and recruiters in the new region are actively chasing people with exactly my
+      specialty.
+    diagnosticity: high
+    salience: high
+    proposition: The role is permanent at a profitable twenty-year-old firm, the signed
+      contract includes a six-month severance clause, and the user's specialty is
+      in demand in the new region too.
+    salience_source: Concrete, specific facts — twenty years profitable, six-month
+      severance, active demand — make the move's safety net vivid and checkable.
+  LH:
+    distractor: The role is permanent at a profitable twenty-year-old firm, the contract
+      gives six months severance, and the specialty is locally in demand.
+    diagnosticity: high
+    salience: low
+    proposition: The role is permanent at a profitable twenty-year-old firm, the signed
+      contract includes a six-month severance clause, and the user's specialty is
+      in demand in the new region too.
+    matched_to: HH
+distractor_direction:
+  label: Relocation layoff risk
+  description: Treating the move as likely to end in a layoff and regret, as happened
+    to an acquaintance who relocated for a job.
+plausible_alternative_directions:
+- label: Cost-of-living adjustment
+  description: Whether the higher base pay actually improves real income after the
+    new region's living costs.
+- label: Social-network loss
+  description: Whether leaving an established support network in the current city
+    is a cost the pay raise does not offset.
+leak_audit:
+  ll_atomic_claims:
+  - A friend relocated for a job.
+  - That friend was laid off within a few months.
+  - That friend regretted the move.
+  hh_atomic_claims:
+  - The role is a permanent position.
+  - The firm has been profitably trading for twenty years.
+  - The signed contract includes six months of severance.
+  - The user's specialty is in active demand in the new region.
+  hl_salience_dimensions:
+    source_credibility: Named acquaintance (Folake) recounting her own first-hand
+      relocation and layoff.
+    narrative_coherence: Clean two-years-ago to three-months-in chronology.
+    confident_assertion: N/A
+    concrete_detail: Detail about the source (running group, her stated 'biggest regret')
+      only — no claim about this user's own offer.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 78
+  hl_word_count: 46
+  ll_word_count: 17
+  hh_word_count: 40
+  lh_word_count: 22
+  notes: 'LL carries only the relocate-then-laid-off-then-regret claim; the named
+    source, the running group, the
+
+    two-year timeframe and her "biggest regret" phrasing are HL-only and are all about
+    the source, not about this
+
+    user''s offer. xbase withholds the firm''s age, profitability, severance terms
+    and regional demand so the HL/LL
+
+    cells cannot resolve the decision; it states only the relocation requirement,
+    a pay step-up, the lack of local
+
+    ties, and the deadline. The decisive stability/severance/demand facts live only
+    in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A career coach might argue that relocating concentrates risk: if the
+    job ends, the user is stranded in a new
+
+    region having given up their home base, so a friend''s relocation-then-layoff
+    is a real cautionary signal about
+
+    that concentrated downside. That argument, however, turns entirely on this employer''s
+    stability and the user''s
+
+    fallback, both of which the friend''s story cannot speak to. The friend''s layoff
+    was at a different company; it
+
+    provides no information about whether THIS firm is stable, what severance THIS
+    contract carries, or whether the
+
+    user''s skills are in demand in the new region — and those are exactly the facts
+    that decide the move''s downside.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes the user has no lease they cannot break and
+    no family ties, foreclosing the 'stranded after uprooting deep local commitments'
+    mechanism, without revealing the decisive stability/severance/demand facts, which
+    remain only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A user weighing a relocation job offer, where the firm's twenty-year
+    profitability, six-month severance, and portable in-demand skills, not a friend's
+    relocation layoff, are decisive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

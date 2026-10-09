@@ -1,0 +1,157 @@
+seed_id: T2-086
+template: T2
+domain: open_qa
+complexity: medium
+xbase: My road bike has been jumping unpredictably between gears on the rear cassette
+  for the past two weeks. It skips most when I push hard up inclines and happens across
+  several gears, not just one. I recently serviced the chain and cleaned the drivetrain
+  thoroughly. {DS}
+focal_diagnostic_feature: The barrel adjuster has no remaining inward travel and the
+  shift cable shows fraying at the housing endpoint, indicating severe cable stretch
+  that cannot be corrected by the adjuster alone.
+low_diagnostic_proposition: The gear jumping began around the time the user replaced
+  the handlebar tape.
+oracle_action: ANSWER
+oracle_focus: Replace the shift cable and housing; the frayed cable and fully wound-in
+  barrel adjuster confirm cable stretch is the cause of the indexing failure.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect handlebar tape to gear indexing. Ask about
+  cable condition, barrel adjuster travel, and whether the derailleur moves cleanly
+  by hand.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect handlebar tape to gear indexing. Ask about cable condition,
+      barrel adjuster travel, and whether the derailleur moves cleanly by hand.
+  LL:
+    action: ASK
+    focus: Do not connect handlebar tape to gear indexing. Ask about cable condition,
+      barrel adjuster travel, and whether the derailleur moves cleanly by hand.
+  HH:
+    action: ANSWER
+    focus: Replace the shift cable and housing; the frayed cable and fully wound-in
+      barrel adjuster confirm cable stretch is the cause of the indexing failure.
+  LH:
+    action: ANSWER
+    focus: Replace the shift cable and housing; the frayed cable and fully wound-in
+      barrel adjuster confirm cable stretch is the cause of the indexing failure.
+variants:
+  HL:
+    distractor: Zahra, a certified mechanic at the local independent shop, told me
+      the gear trouble began the morning after I wrapped fresh handlebar tape and
+      that she would look into whether that was the trigger.
+    diagnosticity: low
+    salience: high
+    proposition: The gear jumping began around the time the user replaced the handlebar
+      tape.
+    salience_source: 'A: domain-matched source (certified bike mechanic); B: clean
+      professional chronology; C: confident present-tense verb ''investigating'''
+    why_plausible: Handlebar tape wrapping can route or kink cable housing; a busy
+      reader might accept a mechanic's suspicion without checking cable wear.
+    why_irrelevant: Handlebar tape changes surface grip and aesthetics; they do not
+      alter cable tension or cause cable stretch, and no housing rerouting is described
+      in xbase.
+  LL:
+    distractor: The gear jumping began around the time I replaced the handlebar tape
+      on the bike.
+    diagnosticity: low
+    salience: low
+    proposition: The gear jumping began around the time the user replaced the handlebar
+      tape.
+    matched_to: HL
+  HH:
+    distractor: When I pull the cable anchor bolt and push the derailleur by hand,
+      the barrel adjuster is fully wound in with no remaining travel, and the cable
+      has visibly frayed strands at the pinch point where the housing ends.
+    diagnosticity: high
+    salience: high
+    proposition: The barrel adjuster has no remaining inward travel and the shift
+      cable shows fraying at the housing endpoint, indicating severe cable stretch
+      that cannot be corrected by the adjuster alone.
+    salience_source: 'B: precise physical inspection sequence with concrete observable
+      facts; C: declarative present-tense findings'
+  LH:
+    distractor: The barrel adjuster has no remaining inward travel and the cable shows
+      fraying at the housing endpoint.
+    diagnosticity: high
+    salience: low
+    proposition: The barrel adjuster has no remaining inward travel and the shift
+      cable shows fraying at the housing endpoint, indicating severe cable stretch
+      that cannot be corrected by the adjuster alone.
+    matched_to: HH
+distractor_direction:
+  label: Handlebar tape cable routing
+  description: Investigating whether the recent handlebar tape replacement altered
+    cable housing routing or geometry and is causing the gear indexing failure.
+plausible_alternative_directions:
+- label: Derailleur hanger alignment
+  description: A bent or misaligned derailleur hanger causes cross-gear jumping
+  especially under load: null
+  and is a common cause of indexing inconsistency.: null
+- label: Cassette or chain wear
+  description: Worn cassette teeth or a stretched chain can cause skipping under power
+  particularly after a service that cleaned but did not replace worn components.: null
+- label: Limit screw over-tightened
+  description: An incorrectly set limit screw can prevent the derailleur reaching
+    certain gears and create apparent skipping at the extremes of the cassette.
+leak_audit:
+  ll_atomic_claims:
+  - The gear jumping began around the same time the handlebar tape was replaced.
+  hh_atomic_claims:
+  - The barrel adjuster is fully wound in with no remaining inward travel.
+  - The cable has visibly frayed strands at the pinch point where the housing ends.
+  hl_salience_dimensions:
+    source_credibility: Zahra is a certified mechanic at a local independent shop
+      — domain-matched, professional credential
+    narrative_coherence: Clean professional report with a specific morning-of timing
+    confident_assertion: '''investigating'' — present-tense confident action verb'
+    concrete_detail: N/A — no case-content detail added beyond LL
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 45
+  hl_word_count: 34
+  ll_word_count: 15
+  hh_word_count: 39
+  lh_word_count: 17
+  notes: 'LL extended by one prepositional phrase to reach 14+ words without adding
+    new claims.
+
+    Handlebar tape has a surface plausibility (tape covers cables at bars) but no
+    mechanism for cable stretch at the cable end — steelman confirmed no_defensible_mechanism.
+
+    xbase ends cleanly before {DS}; barrel-adjuster detail lives only in HH/LH.
+
+    QC repair: removed ''so she is investigating whether the new tape shifted cable
+    housing routing near the stem'' from HL — this was a mechanism claim about the
+    case absent from LL (C1 leak). HL now carries only the temporal coincidence claim
+    plus source credibility framing. hl_word_count updated from 41 to 34.
+
+    '
+causal_audit:
+  steelman: 'Re-wrapping handlebar tape requires removing the bar-end plugs and potentially
+    the brake/shift lever hoods, which involves moving cable housing at the bars.
+    In theory, if the cable routing was incorrectly re-threaded through a cable stop,
+    it could introduce extra friction or an acute bend that mimics lost tension. However,
+    this would affect only the cable path geometry near the bars and would not produce
+    fraying at the cassette-end housing pinch point, which is physically distant.
+    Moreover, the symptom is cross-gear skipping under load rather than a single direction
+    of indexing drift, which does not match routing friction as a cause.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the distractor has no plausible mechanism reaching
+    cable stretch at the housing endpoint; no closure needed in xbase
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Road bike gear jumping caused by shift cable stretch and fraying, with
+    temporal coincidence distractor of handlebar tape replacement.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

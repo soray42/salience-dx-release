@@ -1,0 +1,100 @@
+seed_id: T3-006
+template: T3
+domain: open_qa
+complexity: medium
+xbase: 我正在两套公寓之间做选择。两个社区我都能接受，入住时间也相同。我的预算比较紧张，因此月费用和通勤时间对我来说都很重要。{DS}
+focal_diagnostic_feature: 公寓A每月850欧元，距工作地点15分钟，暖气费用已包含；公寓B每月1050欧元，距工作地点45分钟，暖气另计。
+low_diagnostic_proposition: A relative with architectural expertise says Apartment
+  B's exterior architecture should be treated as the main sign it is the better place
+  to live.
+oracle_action: ANSWER
+oracle_focus: Choose Apartment A unless an undisclosed constraint dominates; it is
+  cheaper, closer, and has heating included.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let architectural prestige substitute for the
+  actual living-cost and commute variables. Ask for rent, commute, included utilities,
+  and lease terms.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let architectural prestige substitute for the actual living-cost
+      and commute variables. Ask for rent, commute, included utilities, and lease
+      terms.
+  LL:
+    action: ASK
+    focus: Do not let architectural prestige substitute for the actual living-cost
+      and commute variables. Ask for rent, commute, included utilities, and lease
+      terms.
+  HH:
+    action: ANSWER
+    focus: Choose Apartment A unless an undisclosed constraint dominates; it is cheaper,
+      closer, and has heating included.
+  LH:
+    action: ANSWER
+    focus: Choose Apartment A unless an undisclosed constraint dominates; it is cheaper,
+      closer, and has heating included.
+variants:
+  HL:
+    distractor: 我阿姨是建筑学老师，她说公寓B的1930年代石质外立面、拱形门廊和黄铜门把手，才是判断它更宜居的真正标志。
+    diagnosticity: low
+    salience: high
+    proposition: A relative with architectural expertise says Apartment B's exterior
+      architecture should be treated as the main sign it is the better place to live.
+    salience_source: authority figure plus vivid architectural details
+    why_plausible: Architecture can feel like a proxy for building quality and long-term
+      satisfaction.
+    why_irrelevant: The decision variables named by the user are budget and commute;
+      façade details do not change rent, travel time, or included utilities.
+  LL:
+    distractor: 一位有建筑学专业背景的亲戚表示，公寓B的外部建筑风格使其成为更优选的居所。
+    diagnosticity: low
+    salience: low
+    proposition: A relative with architectural expertise says Apartment B's exterior
+      architecture should be treated as the main sign it is the better place to live.
+    matched_to: HL
+  HH:
+    distractor: 公寓A每月850欧元，距工作地点15分钟，暖气已包含在内；公寓B每月1050欧元，距工作地点45分钟，暖气另外收费。
+    diagnosticity: high
+    salience: high
+    proposition: Apartment A is €850/month, 15 minutes from work, and includes heating;
+      Apartment B is €1,050/month, 45 minutes from work, and heating is extra.
+    salience_source: concrete rent/commute/utility contrast
+  LH:
+    distractor: 公寓A的租金更低、通勤更短，且暖气费用已包含在内，与公寓B相比各方面均更有优势。
+    diagnosticity: high
+    salience: low
+    proposition: Apartment A is €850/month, 15 minutes from work, and includes heating;
+      Apartment B is €1,050/month, 45 minutes from work, and heating is extra.
+    matched_to: HH
+distractor_direction:
+  label: 外部建筑美观度
+  description: 因公寓B的外部建筑风格显示其更宜居而优先选择该公寓。
+plausible_alternative_directions:
+- label: 租约灵活性
+  description: 租约期限、提前终止条款或续租风险等差异，可能比月租金更为重要。
+- label: 周边生活便利性
+  description: 各公寓附近的商店、交通和日常配套设施可能影响生活质量。
+- label: 楼宇维护质量
+  description: 建筑维护状况、供暖可靠性或房东的响应能力，可能比表面建筑风格更为关键。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-006.yaml
+  source_xbase_sha256: 5ff838eb9437e64b
+  translated_content_sha256: '3042902132807460'
+  translation_notes: Currency amounts (€850, €1,050) and commute times kept as concrete
+    figures to preserve salience contrast in HH vs LH. '1930s stone façade, arched
+    lobby, and brass door handles' translated faithfully to preserve the vivid architectural-detail
+    salience of HL — these are not culture-bound and carry naturally into zh-CN. '阿姨'
+    (aunt) is natural and preserves the named-relative authority salience.

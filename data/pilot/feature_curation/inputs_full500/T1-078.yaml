@@ -1,0 +1,175 @@
+seed_id: T1-078
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'On our news site the article page visibly jumps around for the first second
+  or two after it opens. A reader starts reading the headline, then the whole text
+  lurches downward and they lose their place; sometimes they tap the wrong link because
+  a button slides under their thumb just as they reach for it. It happens on phones
+  and on desktop, and our Core Web Vitals report flags a poor layout-stability score.
+  Our fonts use font-display: optional and are preloaded, so no font swap occurs.
+  {DS}'
+focal_diagnostic_feature: Each layout shift coincides with an image or ad slot finishing
+  its load, and those elements declare no width or height, so the browser reserves
+  no space for them until they arrive.
+low_diagnostic_proposition: A peer's site had the same jumping behaviour that was
+  traced to a web font swapping in after the fallback rendered.
+oracle_action: ANSWER
+oracle_focus: Reserve layout space for the late-loading media before it arrives —
+  set explicit width/height (or aspect-ratio) on the images and fixed dimensions on
+  the ad slots — so the browser no longer reflows the text as each element loads.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the web-font-swap explanation from the peer's
+  site. Ask what each shift coincides with and whether the images and ad slots declare
+  explicit dimensions.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the web-font-swap explanation from the peer's site. Ask what
+      each shift coincides with and whether the images and ad slots declare explicit
+      dimensions.
+  LL:
+    action: ASK
+    focus: Do not adopt the web-font-swap explanation from the peer's site. Ask what
+      each shift coincides with and whether the images and ad slots declare explicit
+      dimensions.
+  HH:
+    action: ANSWER
+    focus: Reserve layout space for the late-loading media before it arrives — set
+      explicit width/height (or aspect-ratio) on the images and fixed dimensions on
+      the ad slots — so the browser no longer reflows the text as each element loads.
+  LH:
+    action: ANSWER
+    focus: Reserve layout space for the late-loading media before it arrives — set
+      explicit width/height (or aspect-ratio) on the images and fixed dimensions on
+      the ad slots — so the browser no longer reflows the text as each element loads.
+variants:
+  HL:
+    distractor: 'Bayu, a front-end lead at a publisher I respect, told me confidently
+      that his team chased the identical jumping behaviour and it came down to a web
+      font: the page rendered in a fallback face, then reflowed everything the instant
+      the custom font finished downloading.'
+    diagnosticity: low
+    salience: high
+    proposition: A peer's site had the same jumping behaviour that was traced to a
+      web font swapping in after the fallback rendered.
+    salience_source: A — a respected front-end lead at a peer publisher confidently
+      recounting the identical visual jump on his own site.
+    why_plausible: Font swap (FOUT) genuinely causes reflow and is a well-known layout-shift
+      source, so a confident peer naming it is a defensible hypothesis.
+    why_irrelevant: A font swap reflows once when text re-renders; here each shift
+      is tied to a different image or ad slot arriving, and those elements declare
+      no dimensions, which a font change cannot explain.
+  LL:
+    distractor: A peer's site had the same jumping behaviour that was traced to a
+      web font swapping in after the fallback rendered.
+    diagnosticity: low
+    salience: low
+    proposition: A peer's site had the same jumping behaviour that was traced to a
+      web font swapping in after the fallback rendered.
+    matched_to: HL
+  HH:
+    distractor: 'Profiling the layout shifts, every jump lines up with an image or
+      ad slot finishing its load: the article''s inline photos and the top banner
+      have no width or height set, so the browser reserves no space and shoves the
+      text down as each one arrives.'
+    diagnosticity: high
+    salience: high
+    proposition: Each layout shift coincides with an image or ad slot finishing its
+      load, and those elements declare no width or height, so the browser reserves
+      no space for them until they arrive.
+    salience_source: Layout-shift profiling tying each individual jump to a specific
+      image or ad load and exposing the missing dimension attributes.
+  LH:
+    distractor: The layout shifts coincide with images and ad slots loading, and those
+      elements set no width or height, reserving no space before arrival.
+    diagnosticity: high
+    salience: low
+    proposition: Each layout shift coincides with an image or ad slot finishing its
+      load, and those elements declare no width or height, so the browser reserves
+      no space for them until they arrive.
+    matched_to: HH
+distractor_direction:
+  label: Web-font swap reflow
+  description: Investigating whether a late-loading custom web font replaces the fallback
+    and reflows the page, causing the layout instability.
+plausible_alternative_directions:
+- label: Late-applied stylesheet
+  description: Whether a render-blocking or async CSS file applies after first paint
+    and changes element sizing or positioning, reflowing the page.
+- label: Late-injected DOM
+  description: Whether scripts insert banners or modules above existing content after
+    first paint.
+leak_audit:
+  ll_atomic_claims:
+  - A peer's site had the same page-jumping behaviour.
+  - It was traced to a web font swapping in after the fallback rendered.
+  hh_atomic_claims:
+  - Every layout shift lines up with an image or ad slot finishing its load.
+  - The article's inline photos and the top banner have no width or height set.
+  - With no reserved space, the browser pushes the text down as each element arrives.
+  hl_salience_dimensions:
+    source_credibility: Named front-end lead (Bayu) at a respected peer publisher.
+    narrative_coherence: Clean source-recounts-identical-symptom chronology.
+    confident_assertion: Told me confidently it came down to the font swap.
+    concrete_detail: N/A — only the source's role and confident speech; the fallback-then-swap
+      detail is the shared proposition, not extra case content.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 86
+  hl_word_count: 45
+  ll_word_count: 21
+  hh_word_count: 46
+  lh_word_count: 23
+  notes: 'xbase carries only the symptom (text lurching, mis-taps, poor layout-stability
+    score) and never names what each
+
+    shift coincides with or whether media declares dimensions, so a reader cannot
+    reject the font story from xbase
+
+    alone. The decisive coincidence-with-media-load plus missing-dimensions evidence
+    lives only in HH/LH. HL adds only
+
+    Bayu''s role and confident framing around the same font-swap proposition LL states
+    flatly.
+
+    '
+causal_audit:
+  steelman: 'A front-end engineer could argue that font swapping is a textbook layout-shift
+    cause: with font-display: swap, the
+
+    browser paints a fallback, then re-lays out every line when the web font loads,
+    producing exactly the early jump
+
+    described — a real, common, worth-ruling-out mechanism that a credible peer has
+    personally confirmed. However,
+
+    xbase explicitly states the fonts use font-display: optional and are preloaded,
+    which prevents any font swap from
+
+    occurring (optional never causes FOUT; preloading ensures the font is ready before
+    first paint). With this
+
+    pathway closed, no constructible mechanism remains for FOUT to be causal in this
+    case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states ''Our fonts use font-display: optional and
+    are preloaded, so no font swap occurs'' — this forecloses the FOUT mechanism without
+    naming the affirmative cause (missing image/ad dimensions), which lives only in
+    HH/LH.'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A web page's cumulative layout shift caused by images and ad slots
+    lacking reserved dimensions, misattributed to a web-font swap reflow.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator (focal/alternative de-overlap)
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

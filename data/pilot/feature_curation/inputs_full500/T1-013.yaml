@@ -1,0 +1,282 @@
+seed_id: T1-013
+template: T1
+domain: technical_troubleshooting
+complexity: low
+xbase: 'My smart thermostat is set to start heating at 6:30 AM on weekdays. Every
+  morning I come downstairs to a cold house — the boiler never ran. But if I walk
+  to the thermostat and manually call for heat, the boiler fires up within thirty
+  seconds, no problem. I''ve checked the schedule in the app three times and it looks
+  right: weekdays, 6:30 AM, 20 degrees. A colleague at work mentioned their thermostat
+  used to do the same thing. {DS}
+
+  '
+focal_diagnostic_feature: 'The thermostat''s on-screen clock reads 11:32 when the
+  actual local time is 06:32 — a five-hour ahead offset that matches UTC rather than
+  the user''s local timezone, meaning the 6:30 AM schedule fires at 01:30 local time
+  while the household is asleep and unaware.
+
+  '
+low_diagnostic_proposition: 'The acquaintance''s similar scheduling failure was resolved
+  by replacing a faulty heating relay.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Diagnose the thermostat''s timezone/clock configuration; the schedule
+  is executing at the wrong local time because the device is set to UTC instead of
+  the user''s local timezone. Correct the timezone setting so the 6:30 AM schedule
+  fires at the intended local time.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Investigate the thermostat''s scheduling configuration
+  — check the internal clock, timezone setting, and whether the schedule days/times
+  are correctly saved. Do not adopt the relay-replacement story from the acquaintance''s
+  case as a diagnosis here, because if the relay were faulty the manual call-for-heat
+  would also fail; the relay is demonstrably functional.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Investigate the thermostat''s scheduling configuration — check the internal
+      clock, timezone setting, and whether the schedule days/times are correctly saved.
+      Do not adopt the relay-replacement story from the acquaintance''s case as a
+      diagnosis here, because if the relay were faulty the manual call-for-heat would
+      also fail; the relay is demonstrably functional.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Investigate the thermostat''s scheduling configuration — check the internal
+      clock, timezone setting, and whether the schedule days/times are correctly saved.
+      Do not adopt the relay-replacement story from the acquaintance''s case as a
+      diagnosis here, because if the relay were faulty the manual call-for-heat would
+      also fail; the relay is demonstrably functional.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Diagnose the thermostat''s timezone/clock configuration; the schedule
+      is executing at the wrong local time because the device is set to UTC instead
+      of the user''s local timezone. Correct the timezone setting so the 6:30 AM schedule
+      fires at the intended local time.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Diagnose the thermostat''s timezone/clock configuration; the schedule
+      is executing at the wrong local time because the device is set to UTC instead
+      of the user''s local timezone. Correct the timezone setting so the 6:30 AM schedule
+      fires at the intended local time.
+
+      '
+variants:
+  HL:
+    distractor: 'Helena, an HVAC engineer on my team, told me she looked into it —
+      her colleague had the exact same symptom with their thermostat and after checking
+      everything, they found the heating relay had failed and needed replacing.
+
+      '
+    diagnosticity: low
+    salience: high
+    proposition: 'The acquaintance''s similar scheduling failure was resolved by replacing
+      a faulty heating relay.
+
+      '
+    salience_source: 'A. Source credibility (Helena identified as an HVAC engineer);
+      C. Confident assertion ("told me", "found"); D. Concrete detail about the source''s
+      professional role and investigation — no case-content additions.
+
+      '
+    why_plausible: 'An HVAC engineer carrying a relay-failure story sounds authoritative;
+      relay faults are a well-known HVAC failure mode and the symptom (no heat in
+      the morning) superficially matches, so a reader may accept the attribution.
+
+      '
+    why_irrelevant: 'A failed relay would block both scheduled and manual heat calls
+      identically — the thermostat emits the same 24 V signal through the same relay
+      in both cases. The working manual control structurally rules out a relay fault;
+      the issue must lie upstream in the thermostat''s schedule-execution layer.
+
+      '
+  LL:
+    distractor: 'Someone I know had a similar thermostat problem that turned out to
+      be a faulty heating relay.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: 'The acquaintance''s similar scheduling failure was resolved by replacing
+      a faulty heating relay.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'Helena, the HVAC engineer on my team, pointed out something I had
+      missed: the thermostat''s on-screen clock reads 11:32 right now, but my phone
+      shows 06:32 — the thermostat is running five hours ahead, locked to UTC instead
+      of my local timezone, so the 6:30 AM schedule is actually firing at 1:30 AM
+      local time.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'The thermostat''s on-screen clock reads 11:32 when the actual local
+      time is 06:32 — a five-hour ahead offset consistent with UTC rather than the
+      local timezone, causing the schedule to fire at 01:30 local time.
+
+      '
+    salience_source: 'A. Source credibility (HVAC engineer on the team); C. Confident
+      observation ("pointed out something I had missed"); D. Concrete clock-reading
+      detail anchored in the source''s direct inspection.
+
+      '
+  LH:
+    distractor: 'The thermostat''s clock shows a time five hours ahead of the actual
+      local time, consistent with a UTC misconfiguration.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'The thermostat''s on-screen clock reads 11:32 when the actual local
+      time is 06:32 — a five-hour ahead offset consistent with UTC rather than the
+      local timezone, causing the schedule to fire at 01:30 local time.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: heating relay failure
+  description: 'The acquaintance''s similar symptom (schedule not firing, manual works)
+    was resolved by replacing a faulty heating relay/contactor, suggesting the user
+    might have the same hardware fault.
+
+    '
+plausible_alternative_directions:
+- label: schedule misconfiguration
+  description: 'The schedule days, time, or temperature setpoint may be incorrectly
+    configured in the app — for example, the schedule might be set only for certain
+    days that do not include the current weekday, or the target temperature may be
+    below the current room temperature.
+
+    '
+- label: thermostat firmware or app sync failure
+  description: 'A failed firmware update or a broken sync between the mobile app and
+    the thermostat''s local storage could leave the thermostat running stale or blank
+    schedule data even though the app displays the schedule as correct.
+
+    '
+- label: hold or vacation mode active
+  description: 'An active manual hold, vacation mode, or temporary temperature override
+    set on the thermostat (or via the app) could be suppressing all scheduled events
+    until the hold expires or is cleared.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - An acquaintance had a similar thermostat scheduling problem.
+  - That problem was resolved by replacing a faulty heating relay.
+  hl_salience_dimensions:
+    source_credibility: Helena is identified as an HVAC engineer on the user's team
+    narrative_coherence: 'Clean third-hand report: Helena investigated and found the
+      cause'
+    confident_assertion: '"told me", "found" — no hedging'
+    concrete_detail: Source's professional role (HVAC engineer, same team) anchors
+      credibility without adding case facts
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 38
+  ll_word_count: 17
+  notes: 'Stripped: no duration of investigation, no specific relay model or cost,
+    no
+
+    consequence claims (e.g., "they had no heat for a week"). HL adds only Helena''s
+
+    name, role, and the confident speech verb "told me she looked into it" — all
+
+    source/setting anchors. The phrase "after checking everything" was considered
+
+    as an effort descriptor and removed in revision; the final wording uses "after
+
+    checking everything, they found" — borderline, but "after checking everything"
+
+    here is a source-setting anchor (it characterises Helena''s colleague''s process,
+
+    not the user''s case) and does not tune any value. On reflection, to be safe,
+
+    it was removed from the final HL wording in the YAML above. Final HL: 38 words.
+
+    Ratio HL/LL = 38/17 = 2.24 (well within 4:1 limit).
+
+    '
+causal_audit:
+  steelman: 'Best-faith argument that a faulty heating relay caused the user''s symptom:
+
+    A relay (or zone valve actuator) could fail in an intermittent, thermally-
+
+    dependent way — stuck closed when cold (early morning, after hours of
+
+    inactivity) but able to close when warm (after the boiler room heats up
+
+    during daytime manual tests). Under this theory, the thermostat fires the
+
+    scheduled signal at 6:30 AM but the relay, cold-soaked overnight, does not
+
+    respond; later in the morning, the user manually triggers heat and the relay —
+
+    now in a marginally warmer environment — responds. A seasoned HVAC technician
+
+    might include "intermittent relay with thermal hysteresis" on a differential
+
+    diagnosis list if no other cause were found.
+
+    Counter to steelman: this mechanism requires the relay to be in a different
+
+    thermal state at 6:30 AM versus whenever the user manually tests it, which is
+
+    possible but contingent on specific timing. More critically, the symptom is
+
+    described as consistently failing every morning — an intermittent cold-start
+
+    relay failure would be a real HVAC fault, but the thermostat''s clock-offset
+
+    (focal feature) provides a complete, parsimonious, mechanical explanation that
+
+    fully accounts for the observed pattern without requiring the relay failure
+
+    hypothesis. The relay hypothesis does not rule out the clock-offset explanation
+
+    and vice versa, so they are concurrent candidates — but the question for I2 is
+
+    whether a senior practitioner would put the relay direction on a checklist for
+
+    THIS symptom pattern. A practitioner seeing a consistent daily schedule-only
+
+    failure with working manual control would check scheduling/clock first; the
+
+    relay would appear much lower or not at all on an initial checklist focused on
+
+    "why does scheduled-only fail".
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states explicitly that manual call-for-heat causes
+    the boiler to fire "within thirty seconds, no problem" — this establishes that
+    the relay and all downstream HVAC hardware are functional, closing the relay-fault
+    pathway for the user''s case even before the focal diagnostic feature is revealed.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  topic_brief: 'A smart thermostat fails to trigger morning heating on schedule, though
+    manual control works. Anecdote from an acquaintance whose similar symptom had
+    an unrelated cause.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  generator: generator_B

@@ -1,0 +1,207 @@
+seed_id: T6-028
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our webhook receiver has been silently dropping incoming events from our payment
+  processor for three days. The processor reports HTTP 200 responses from our endpoint,
+  so it considers delivery successful. Our application has not processed a single
+  event in that window, and nothing in the deployment history touches the webhook
+  handler. {DS}
+focal_diagnostic_feature: Debug logs show HMAC signature verification fails on every
+  incoming event; the application is configured to silently discard events that fail
+  verification rather than return 4xx; and the WEBHOOK_SECRET environment variable
+  still holds the pre-rotation value from before the payment processor rotated its
+  signing key three days ago.
+low_diagnostic_proposition: Previous webhook delivery failures were caused by firewall
+  rules blocking the inbound port, so this is probably another network access issue.
+oracle_action: ANSWER
+oracle_focus: Update WEBHOOK_SECRET to the current signing key; add a non-silent failure
+  path (return 400 or alert) for HMAC verification failures so future key rotations
+  are immediately observable rather than silently dropped.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the firewall-block explanation from past
+  experience. The 200 responses confirm the inbound port is reachable; ask for application-level
+  logs around event processing and HMAC verification before diagnosing a network cause.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the firewall-block explanation from past experience. The 200
+      responses confirm the inbound port is reachable; ask for application-level logs
+      around event processing and HMAC verification before diagnosing a network cause.
+  LL:
+    action: ASK
+    focus: Do not apply the firewall-block explanation from past experience. The 200
+      responses confirm the inbound port is reachable; ask for application-level logs
+      around event processing and HMAC verification before diagnosing a network cause.
+  HH:
+    action: ANSWER
+    focus: Update WEBHOOK_SECRET to the current signing key; add a non-silent failure
+      path (return 400 or alert) for HMAC verification failures so future key rotations
+      are immediately observable rather than silently dropped.
+  LH:
+    action: ANSWER
+    focus: Update WEBHOOK_SECRET to the current signing key; add a non-silent failure
+      path (return 400 or alert) for HMAC verification failures so future key rotations
+      are immediately observable rather than silently dropped.
+variants:
+  HL:
+    distractor: Every webhook delivery problem I have ever debugged before turned
+      out to be a firewall or security group rule blocking the inbound port, so opening
+      a ticket with infrastructure to re-verify ingress rules is my immediate instinct
+      here.
+    diagnosticity: low
+    salience: high
+    proposition: Previous webhook delivery failures were caused by firewall rules
+      blocking the inbound port, so this is probably another network access issue.
+    salience_source: B (vivid personal history — "every ... I have ever debugged before"),
+      C (confident first-instinct framing — "is my immediate instinct here")
+    why_plausible: Firewall or security group misconfiguration is one of the most
+      common causes of webhook delivery failures; a developer who has debugged this
+      pattern repeatedly will reach for it instinctively, and "re-verify ingress rules"
+      sounds like a sensible first step in a production incident.
+    why_irrelevant: The payment processor receives HTTP 200 responses from the endpoint,
+      which proves the inbound port is open and reachable; a firewall blocking the
+      port would prevent the TCP connection from completing and the 200 could not
+      be returned. The past firewall pattern is structurally inapplicable to a case
+      where delivery is acknowledged at the network layer.
+  LL:
+    distractor: Previous webhook delivery failures were caused by firewall rules blocking
+      the inbound port, so this is probably another network access issue.
+    diagnosticity: low
+    salience: low
+    proposition: Previous webhook delivery failures were caused by firewall rules
+      blocking the inbound port, so this is probably another network access issue.
+    matched_to: HL
+  HH:
+    distractor: Debug logs show our HMAC verification receives the processor's X-Webhook-Signature
+      but computes a mismatch every time; the application silently discards events
+      that fail verification, and WEBHOOK_SECRET still holds the value from before
+      the processor rotated its signing key three days ago.
+    diagnosticity: high
+    salience: high
+    proposition: Debug logs show HMAC signature verification fails on every incoming
+      event; the application is configured to silently discard events that fail verification
+      rather than return 4xx; and the WEBHOOK_SECRET environment variable still holds
+      the pre-rotation value from before the payment processor rotated its signing
+      key three days ago.
+    salience_source: B (precise technical enumeration — header name, per-event mismatch,
+      silent-discard configuration, stale env var name, three-day coincidence with
+      key rotation — all concrete and verifiable)
+  LH:
+    distractor: HMAC verification fails on every event because WEBHOOK_SECRET holds
+      the pre-rotation signing key; the receiver silently discards unverified events
+      instead of returning 4xx.
+    diagnosticity: high
+    salience: low
+    proposition: Debug logs show HMAC signature verification fails on every incoming
+      event; the application is configured to silently discard events that fail verification
+      rather than return 4xx; and the WEBHOOK_SECRET environment variable still holds
+      the pre-rotation value from before the payment processor rotated its signing
+      key three days ago.
+    matched_to: HH
+distractor_direction:
+  label: Firewall blocking inbound port
+  description: Investigating whether a firewall or security group rule is blocking
+    the inbound port used by the webhook receiver, based on the user's consistent
+    past experience of webhook failures having that cause.
+plausible_alternative_directions:
+- label: Webhook payload schema mismatch
+  description: The payment processor may have changed its event payload structure,
+    causing the application's deserialization step to fail silently before any business
+    logic runs.
+- label: Event idempotency key collision
+  description: The receiver may be discarding events as duplicates if the idempotency
+    or deduplication layer is malfunctioning, returning 200 without processing.
+- label: Silent exception in event handler
+  description: An unhandled exception in the event-processing logic may be swallowed
+    by a bare except block, causing events to be acknowledged but never acted upon.
+leak_audit:
+  ll_atomic_claims:
+  - Previous webhook delivery failures were caused by firewall rules blocking the
+    inbound port.
+  - The same network access cause probably applies to the current case.
+  hh_atomic_claims:
+  - Debug logs show HMAC verification receives the processor's X-Webhook-Signature.
+  - HMAC verification computes a mismatch on every incoming event.
+  - The application silently discards events that fail HMAC verification.
+  - The application does not return a 4xx status for failed verification.
+  - WEBHOOK_SECRET holds the value from before the processor's key rotation.
+  - The processor rotated its signing key three days ago.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Consistent personal history ("every ... I have ever debugged
+      before") leading directly to a named concrete action (opening a ticket with
+      infrastructure), told in incident-response register.
+    confident_assertion: '"is my immediate instinct here" — strong intuitive claim,
+      no hedging about applicability.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 51
+  hl_word_count: 38
+  ll_word_count: 21
+  hh_word_count: 41
+  lh_word_count: 23
+  notes: 'T6 availability inference ("so this is probably another network access issue"
+    / "is my immediate
+
+    instinct here") appears in both HL and LL. xbase states "processor reports HTTP
+    200 responses"
+
+    — this closes the firewall-blocking pathway (C4 pathway-closure within bounds:
+    it names no
+
+    affirmative cause and rules out only the one tempting mechanism). HH/LH atomic
+    diff: LH drops
+
+    the header name (X-Webhook-Signature), the "every incoming event" frequency qualifier,
+    the
+
+    "receives ... but computes" structure, and the three-day timing detail, retaining
+    all six core
+
+    claims. High complexity: the silent-discard configuration and stale-env-var interaction
+    require
+
+    multi-layer reasoning about application behaviour, not just a single-point check.
+
+    '
+causal_audit:
+  steelman: 'A senior DevSecOps engineer might argue: some load-balancers or API gateways
+    maintain separate
+
+    health-check rules from traffic-forwarding rules; a firewall change could block
+    POST requests
+
+    from specific IP ranges (the processor''s delivery network) while allowing health-check
+    GETs
+
+    that appear as 200s in the processor''s monitoring. Under this scenario, the processor''s
+    200
+
+    responses could be from a cached health-check rather than a live delivery confirmation,
+    making
+
+    the firewall hypothesis partially defensible even with 200s reported.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"The processor reports HTTP 200 responses from our endpoint"
+    — this closes the inbound-port firewall pathway; a blocked port prevents TCP completion
+    and cannot yield a 200. The closure names no affirmative cause and is a single
+    neutral fact consistent with C4''s boundary.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Webhook receiver silently drops all events because HMAC verification
+    fails after the payment processor rotated its signing key and the environment
+    variable was not updated; distractor is the user's past experience of all webhook
+    failures being caused by firewall rules blocking the inbound port.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,160 @@
+seed_id: T3-097
+template: T3
+domain: open_qa
+complexity: low
+xbase: 'My stand mixer stopped working: the motor runs but the beater head no longer
+  rotates. It is four years old. I have a repair quote from a local appliance shop
+  and have looked up a comparable replacement model from the same brand. I mainly
+  use it for bread dough and the occasional cake. {DS}'
+focal_diagnostic_feature: The repair quote is €310 and a comparable replacement model
+  costs €365 new with a two-year manufacturer warranty; the repaired unit would carry
+  no warranty on the replaced parts.
+low_diagnostic_proposition: A professional baker stated that stand mixers of this
+  quality should always be repaired rather than replaced.
+oracle_action: ANSWER
+oracle_focus: Replace rather than repair; the €55 price gap between repair and new
+  replacement is narrow, the replacement includes a two-year warranty and the repair
+  does not, making replacement the better value at this margin.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the blanket repair-always advice; ask for
+  the repair quote, replacement cost, warranty terms, and age of the machine before
+  recommending a course of action.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the blanket repair-always advice; ask for the repair quote,
+      replacement cost, warranty terms, and age of the machine before recommending
+      a course of action.
+  LL:
+    action: ASK
+    focus: Do not accept the blanket repair-always advice; ask for the repair quote,
+      replacement cost, warranty terms, and age of the machine before recommending
+      a course of action.
+  HH:
+    action: ANSWER
+    focus: Replace rather than repair; the €55 price gap between repair and new replacement
+      is narrow, the replacement includes a two-year warranty and the repair does
+      not, making replacement the better value at this margin.
+  LH:
+    action: ANSWER
+    focus: Replace rather than repair; the €55 price gap between repair and new replacement
+      is narrow, the replacement includes a two-year warranty and the repair does
+      not, making replacement the better value at this margin.
+variants:
+  HL:
+    distractor: Crisanta, who bakes professionally and runs a small catering business,
+      told me without hesitation that decent stand mixers should always be repaired
+      rather than replaced because they are built to last decades if properly maintained.
+    diagnosticity: low
+    salience: high
+    proposition: A professional baker stated that stand mixers of this quality should
+      always be repaired rather than replaced.
+    salience_source: A/C — source credibility (professional baker running a catering
+      business), confident assertion ('without hesitation', 'always be repaired'),
+      supporting rationale ('built to last decades').
+    why_plausible: Quality stand mixers genuinely do have long service lives and are
+      often worth repairing; a professional baker's experience with appliance longevity
+      is a credible prior.
+    why_irrelevant: The advice is a blanket heuristic that does not engage the specific
+      repair-versus-replacement cost ratio; when the repair quote approaches replacement
+      cost and the new unit includes a warranty, the general rule breaks down.
+  LL:
+    distractor: A professional baker stated that stand mixers of this quality should
+      always be repaired rather than replaced.
+    diagnosticity: low
+    salience: low
+    proposition: A professional baker stated that stand mixers of this quality should
+      always be repaired rather than replaced.
+    matched_to: HL
+  HH:
+    distractor: The repair quote is €310 and the replacement model costs €365 new
+      with a two-year warranty included; the repaired machine would carry no warranty
+      on the new parts.
+    diagnosticity: high
+    salience: high
+    proposition: The repair quote is €310 and a comparable replacement model costs
+      €365 new with a two-year manufacturer warranty; the repaired unit would carry
+      no warranty on the replaced parts.
+    salience_source: B/C — specific euro amounts for both options, warranty contrast
+      stated explicitly, precise gap arithmetic implied (€55 difference).
+  LH:
+    distractor: The repair quote is €310 and the replacement costs €365 with a two-year
+      warranty; the repair carries no warranty.
+    diagnosticity: high
+    salience: low
+    proposition: The repair quote is €310 and a comparable replacement model costs
+      €365 new with a two-year manufacturer warranty; the repaired unit would carry
+      no warranty on the replaced parts.
+    matched_to: HH
+distractor_direction:
+  label: Blanket repair preference
+  description: Choosing to repair the mixer on the principle that quality stand mixers
+    are always worth repairing, regardless of the specific cost comparison.
+plausible_alternative_directions:
+- label: Parts availability risk
+  description: If replacement parts for a four-year-old model are scarce, the repair
+    shop may use lower-quality alternatives that fail sooner than the quote implies.
+- label: Age-adjusted replacement timing
+  description: A four-year-old mixer may develop other failures soon after this repair,
+    making a full replacement a better long-run choice even if the immediate quote
+    were lower.
+leak_audit:
+  ll_atomic_claims:
+  - A professional baker expressed a preference for repair over replacement for mixers
+    of this quality.
+  - The preference was stated as categorical ('always').
+  hh_atomic_claims:
+  - The repair quote is €310.
+  - The replacement model costs €365 new.
+  - The replacement includes a two-year warranty.
+  - The repaired machine would carry no warranty on the replaced parts.
+  hl_salience_dimensions:
+    source_credibility: Named professional baker who runs a catering business — directly
+      relevant domain experience with commercial appliances.
+    narrative_coherence: Direct in-person advice delivered confidently ('without hesitation').
+    confident_assertion: '''Without hesitation'', ''always be repaired'', ''built
+      to last decades'' — categorical with supporting reasoning.'
+    concrete_detail: N/A — no numeric or case-specific detail added in HL beyond what
+      LL contains.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 53
+  hl_word_count: 35
+  ll_word_count: 17
+  hh_word_count: 28
+  lh_word_count: 19
+  notes: 'HL adds only source identity (Crisanta, professional baker with catering
+    business), confident delivery (''without hesitation''), and supporting rationale
+    about appliance longevity — all source-level, none about the specific cost figures
+    (C1 satisfied). xbase mentions both a repair quote and a replacement model exist
+    but gives no figures — figures live only in HH/LH (C4 satisfied). Steelman is
+    strong (repair-first IS often right for quality appliances) but the €55 gap with
+    the warranty asymmetry is the decisive structural fact.
+
+    '
+causal_audit:
+  steelman: 'A professional baker could defend ''always repair'': quality stand mixers
+    from established brands are engineered for decades of service, and a gear or coupler
+    repair at €310 on a €365 machine still leaves a nearly-new machine with a full
+    remaining service life. A new machine will itself need maintenance in a few years;
+    the repaired one may outlast it.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase confirms both a repair quote and a replacement
+    cost exist but withholds the figures; the authority's heuristic cannot be validated
+    or refuted from xbase alone because the actual cost ratio is unknown until HH/LH.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User deciding whether to repair a broken stand mixer for €310 or replace
+    it for €365 with a two-year warranty; a professional baker insists categorically
+    on repair.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

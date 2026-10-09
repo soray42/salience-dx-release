@@ -1,0 +1,178 @@
+seed_id: T1-077
+template: T1
+domain: open_qa
+complexity: low
+xbase: My greenhouse tomatoes looked perfect until this week. The plants are tall,
+  the foliage is a healthy green, and the upper fruit are ripening normally. But several
+  of the larger fruit lower on the vines have developed an ugly dark patch, and a
+  couple have started to look unappetising where that patch sits. I have grown tomatoes
+  for three summers and never seen this exact thing. None of the patches look wet
+  or feel soft, and they have not spread to neighbouring fruit. {DS}
+focal_diagnostic_feature: The dark patch is confined to the blossom end of each affected
+  fruit, is dry, sunken, and leathery rather than mouldy, and the foliage shows no
+  lesions.
+low_diagnostic_proposition: Another grower's tomatoes developed similar dark spots
+  that were attributed to a fungal blight requiring spraying.
+oracle_action: ANSWER
+oracle_focus: 'Treat this as blossom-end rot: a calcium-availability problem driven
+  by uneven watering, not an infection. Even out soil moisture, mulch, and avoid heavy
+  nitrogen; do not spray fungicide for it.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the fungal-blight story from another grower's
+  crop. Ask where on the fruit the patch sits, whether it is moist or dry, and whether
+  the leaves show any lesions.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the fungal-blight story from another grower's crop. Ask where
+      on the fruit the patch sits, whether it is moist or dry, and whether the leaves
+      show any lesions.
+  LL:
+    action: ASK
+    focus: Do not adopt the fungal-blight story from another grower's crop. Ask where
+      on the fruit the patch sits, whether it is moist or dry, and whether the leaves
+      show any lesions.
+  HH:
+    action: ANSWER
+    focus: 'Treat this as blossom-end rot: a calcium-availability problem driven by
+      uneven watering, not an infection. Even out soil moisture, mulch, and avoid
+      heavy nitrogen; do not spray fungicide for it.'
+  LH:
+    action: ANSWER
+    focus: 'Treat this as blossom-end rot: a calcium-availability problem driven by
+      uneven watering, not an infection. Even out soil moisture, mulch, and avoid
+      heavy nitrogen; do not spray fungicide for it.'
+variants:
+  HL:
+    distractor: Wulan, who runs the heritage-variety stall at our market and has grown
+      tomatoes commercially for years, said with real certainty that her crop once
+      got those same dark spots and it turned out to be a fungal blight she had to
+      spray for.
+    diagnosticity: low
+    salience: high
+    proposition: Another grower's tomatoes developed similar dark spots that were
+      attributed to a fungal blight requiring spraying.
+    salience_source: A — a confident commercial tomato grower at the local market
+      recounting the same-looking dark spots on her own crop.
+    why_plausible: Tomato fruit fungal diseases are real and common, so a grower confidently
+      naming blight from matching photos is a defensible first thought.
+    why_irrelevant: Fungal lesions are moist, spreading, and appear on leaves and
+      across the fruit surface; a dry sunken patch confined to the blossom end with
+      clean foliage is the signature of a physiological calcium disorder, not an infection.
+  LL:
+    distractor: Another grower's tomatoes developed similar dark spots that were attributed
+      to a fungal blight requiring spraying.
+    diagnosticity: low
+    salience: low
+    proposition: Another grower's tomatoes developed similar dark spots that were
+      attributed to a fungal blight requiring spraying.
+    matched_to: HL
+  HH:
+    distractor: Looking closely, the dark patch sits only at the very bottom of each
+      affected fruit, directly opposite the stem; it is sunken, leathery, and dry
+      rather than mouldy, the rest of each fruit's skin is flawless, and the leaves
+      carry no spots at all.
+    diagnosticity: high
+    salience: high
+    proposition: The dark patch is confined to the blossom end of each affected fruit,
+      is dry, sunken, and leathery rather than mouldy, and the foliage shows no lesions.
+    salience_source: Direct close inspection pinning the patch to the blossom end
+      and noting its dry leathery texture and the clean leaves.
+  LH:
+    distractor: Each affected fruit has a dry, sunken, leathery blossom-end patch
+      rather than mould; surrounding skin is unblemished and leaves are lesion-free.
+    diagnosticity: high
+    salience: low
+    proposition: The dark patch is confined to the blossom end of each affected fruit,
+      is dry, sunken, and leathery rather than mouldy, and the foliage shows no lesions.
+    matched_to: HH
+distractor_direction:
+  label: Fungal fruit blight
+  description: Investigating whether a spreading fungal or bacterial disease is causing
+    the dark patches and whether fungicide is required.
+plausible_alternative_directions:
+- label: Pesticide/herbicide phytotoxicity
+  description: Whether a chemical spray applied in or near the greenhouse has caused
+    localised necrotic patches on the fruit skin.
+- label: Sunscald
+  description: Whether excessive direct light through the greenhouse glazing is bleaching
+    and killing exposed tissue on the fruit surface.
+leak_audit:
+  ll_atomic_claims:
+  - Another grower's tomatoes developed similar dark spots.
+  - Those spots were attributed to a fungal blight that required spraying.
+  hh_atomic_claims:
+  - The dark patch sits only at the blossom (bottom) end of each affected fruit, opposite
+    the stem.
+  - The patch is sunken, leathery, and dry rather than mouldy.
+  - The rest of each fruit's skin is unblemished.
+  - The leaves carry no spots.
+  hl_salience_dimensions:
+    source_credibility: Named commercial tomato grower (Wulan) running the heritage
+      stall at the user's market.
+    narrative_coherence: Clean source-recounts-matching-symptom framing.
+    confident_assertion: Said with real certainty it turned out to be a blight she
+      sprayed for.
+    concrete_detail: N/A — only the source's identity, role, and confident speech;
+      no case detail LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 83
+  hl_word_count: 43
+  ll_word_count: 16
+  hh_word_count: 44
+  lh_word_count: 21
+  notes: 'xbase keeps only symptoms (healthy plants, dark patch low on larger fruit,
+    some fruit unappetising) and adds a
+
+    narrow pathway-closure: no wet or soft patches and no spread to neighbours. This
+    forecloses the moist-spreading
+
+    fungal mechanism without naming BER or supplying blossom-end location/texture.
+    The decisive blossom-end-only,
+
+    dry-and-sunken, clean-foliage signature still lives only in HH/LH. HL adds only
+    Wulan''s identity, role, and
+
+    confident speech; it carries the same blight proposition as LL with no extra case
+    facts. LH expanded to flatly
+
+    state all four HH claims: blossom-end location, dry/sunken/leathery texture, not
+    mouldy, skin elsewhere
+
+    unblemished, no leaf lesions. Alternative directions replaced with genuinely competing
+    diagnoses (phytotoxicity
+
+    and sunscald) that are live from xbase but structurally separate from BER.
+
+    '
+causal_audit:
+  steelman: 'A market gardener could argue that dark patches on tomato fruit are frequently
+    early or late blight or anthracnose,
+
+    that warm humid greenhouse air favours fungal spread, and that a grower who has
+    seen the same-looking spots and
+
+    sprayed successfully is offering hard-won, pattern-matched experience worth acting
+    on before the lesions multiply.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the patches do not look wet or feel soft and
+    have not spread to neighbouring fruit — this forecloses the moist-spreading lesion
+    pathway that is the hallmark of fungal blight (anthracnose, late blight) without
+    naming BER or revealing the blossom-end location.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Tomato fruit showing blossom-end rot (a calcium/watering physiological
+    disorder), misattributed by a confident grower to a fungal blight.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

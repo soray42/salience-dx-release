@@ -1,0 +1,165 @@
+seed_id: T2-066
+template: T2
+domain: open_qa
+complexity: medium
+xbase: For about three weeks I've been dragging through my afternoons, low on energy
+  and yawning at my desk by two o'clock. My diet and caffeine are unchanged, I still
+  get up at the same time for work, and my weekends feel just as tired. I keep meaning
+  to get to the bottom of it because it's starting to affect how much I get done.
+  I'd like to fix whatever habit slipped rather than just push through. {DS}
+focal_diagnostic_feature: The user's sleep log shows their average bedtime has slipped
+  from 10:30pm to midnight since they joined a weekday evening class three weeks ago,
+  cutting nightly sleep from about 7.5 hours to about 6.
+low_diagnostic_proposition: The tiredness began the same week the user bought a new
+  pillow.
+oracle_action: ANSWER
+oracle_focus: Restore an earlier bedtime; since the evening class pushed lights-out
+  to midnight while the wake time held, the user lost roughly ninety minutes of sleep
+  a night, which accounts for the afternoon slump.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not attribute the tiredness to a new pillow on timing
+  alone. Ask how the user's actual sleep duration and bedtime have changed over this
+  period.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not attribute the tiredness to a new pillow on timing alone. Ask how
+      the user's actual sleep duration and bedtime have changed over this period.
+  LL:
+    action: ASK
+    focus: Do not attribute the tiredness to a new pillow on timing alone. Ask how
+      the user's actual sleep duration and bedtime have changed over this period.
+  HH:
+    action: ANSWER
+    focus: Restore an earlier bedtime; since the evening class pushed lights-out to
+      midnight while the wake time held, the user lost roughly ninety minutes of sleep
+      a night, which accounts for the afternoon slump.
+  LH:
+    action: ANSWER
+    focus: Restore an earlier bedtime; since the evening class pushed lights-out to
+      midnight while the wake time held, the user lost roughly ninety minutes of sleep
+      a night, which accounts for the afternoon slump.
+variants:
+  HL:
+    distractor: It strikes me that the slump began the very same week I finally replaced
+      my flat old pillow with a new one; the timing lines up almost to the day, and
+      I remember the first night sleeping on it clearly.
+    diagnosticity: low
+    salience: high
+    proposition: The tiredness began the same week the user bought a new pillow.
+    salience_source: B/C — a clean, confident first-person chronology pinning the
+      onset to a vivid, dated purchase.
+    why_plausible: A new pillow can change comfort, and onset that coincides with
+      a sleep-surface change is a tempting thing to blame.
+    why_irrelevant: The pillow is unchanged in firmness type and the user still wakes
+      at the same time; the cause is lost sleep duration from a later bedtime, which
+      a pillow does not control.
+  LL:
+    distractor: The tiredness began the same week the user bought a new pillow.
+    diagnosticity: low
+    salience: low
+    proposition: The tiredness began the same week the user bought a new pillow.
+    matched_to: HL
+  HH:
+    distractor: 'I pulled up my sleep log and the pattern is plain: since I started
+      a weekday evening class three weeks ago my average bedtime slid from 10:30 to
+      midnight, while my wake time never moved, so I''m now getting about six hours
+      instead of seven and a half.'
+    diagnosticity: high
+    salience: high
+    proposition: The user's sleep log shows their average bedtime has slipped from
+      10:30pm to midnight since they joined a weekday evening class three weeks ago,
+      cutting nightly sleep from about 7.5 hours to about 6.
+    salience_source: Concrete retrieval of the logged bedtime slip and the resulting
+      hours makes the lost-sleep cause vivid and quantified.
+  LH:
+    distractor: The sleep log shows bedtime slipped from 10:30pm to midnight after
+      an evening class began, cutting sleep from 7.5 to 6 hours.
+    diagnosticity: high
+    salience: low
+    proposition: The user's sleep log shows their average bedtime has slipped from
+      10:30pm to midnight since they joined a weekday evening class three weeks ago,
+      cutting nightly sleep from about 7.5 hours to about 6.
+    matched_to: HH
+distractor_direction:
+  label: New pillow timing
+  description: Investigating whether the recently purchased pillow is degrading the
+    user's sleep quality and causing the afternoon tiredness.
+plausible_alternative_directions:
+- label: Caffeine or diet shift
+  description: Whether a change in caffeine timing or eating habits is driving the
+    afternoon energy dip.
+- label: Hydration or activity drop
+  description: Whether reduced water intake or daytime movement contributes to the
+    slump.
+leak_audit:
+  ll_atomic_claims:
+  - The tiredness began the same week the user bought a new pillow.
+  hh_atomic_claims:
+  - The user started a weekday evening class three weeks ago.
+  - Their average bedtime slipped from 10:30pm to midnight.
+  - Their wake time did not change.
+  - Nightly sleep fell from about 7.5 hours to about 6.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-week onset tied to a dated purchase.
+    confident_assertion: It strikes me that the slump began the very same week — confident
+      first-person framing.
+    concrete_detail: Detail about the event (the old flat pillow, the first night
+      on the new one) only — no claim about bedtime or sleep duration.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 82
+  hl_word_count: 38
+  ll_word_count: 14
+  hh_word_count: 49
+  lh_word_count: 23
+  notes: 'LL carries only the same-week-as-pillow timing claim; the old-pillow and
+    first-night details are HL-only and
+
+    about the event. xbase states the symptom (afternoon slump, stable diet/caffeine,
+    same wake time) but withholds
+
+    the bedtime log and the evening class, so HL/LL cannot resolve it. The decisive
+    bedtime-slip/lost-sleep fact
+
+    lives only in HH/LH. Non-medical: this is a sleep-schedule habit drift, not a
+    clinical complaint.
+
+    '
+causal_audit:
+  steelman: 'One could argue a pillow genuinely affects sleep quality: poor neck support
+    fragments sleep and leaves you tired
+
+    despite adequate time in bed, so a new pillow that does not suit the sleeper could
+    plausibly cause afternoon
+
+    fatigue from the week it was introduced. The quality-of-sleep mechanism is real
+    in general. But it cannot inform
+
+    THIS case: the decisive change is duration, not surface comfort — the user''s
+    logged bedtime moved an hour and a
+
+    half later while wake time held constant, so they are simply sleeping less. A
+    pillow cannot shorten time in bed,
+
+    so the pillow-timing coincidence has no mechanism for the observed sleep loss.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase fixes the wake time as unchanged and frames the issue
+    as a slipped habit, foreclosing a comfort-only explanation while leaving the bedtime
+    change unstated; the decisive lost-sleep fact lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Afternoon tiredness caused by a bedtime that slipped 90 minutes later
+    after an evening class started, coincident with buying a new pillow.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

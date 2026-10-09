@@ -1,0 +1,86 @@
+seed_id: T5-006
+template: T5
+domain: open_qa
+complexity: low
+xbase: I'm choosing a bakery to buy regular bread from. Both sell sourdough that I
+  like well enough. I usually go before work and do not want the errand to become
+  a project. {DS}
+focal_diagnostic_feature: Bakery A is closer, cheaper, opens earlier, and has a loyalty
+  card; Bakery B is farther, later, more expensive, and has no loyalty programme.
+low_diagnostic_proposition: Bakery B has a more charming vintage storefront than Bakery
+  A.
+oracle_action: ANSWER
+oracle_focus: Choose Bakery A; it wins on all recurring-use variables.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not use storefront charm as a quality proxy. Ask about
+  distance, price, opening time, and loyalty discounts.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not use storefront charm as a quality proxy. Ask about distance, price,
+      opening time, and loyalty discounts.
+  LL:
+    action: ASK
+    focus: Do not use storefront charm as a quality proxy. Ask about distance, price,
+      opening time, and loyalty discounts.
+  HH:
+    action: ANSWER
+    focus: Choose Bakery A; it wins on all recurring-use variables.
+  LH:
+    action: ANSWER
+    focus: Choose Bakery A; it wins on all recurring-use variables.
+variants:
+  HL:
+    distractor: Bakery B has hand-painted gold lettering, an old wooden door, and
+      that warm vintage shopfront people stop to photograph.
+    diagnosticity: low
+    salience: high
+    proposition: Bakery B has a more charming vintage storefront than Bakery A.
+    salience_source: attractive shopfront, hand-painted detail, social visibility
+    why_plausible: Charm can be confused with product or experience quality.
+    why_irrelevant: Decor does not change recurring cost, distance, opening hours,
+      or loyalty terms.
+  LL:
+    distractor: Bakery B has a more traditional storefront design than Bakery A.
+    diagnosticity: low
+    salience: low
+    proposition: Bakery B has a more charming vintage storefront than Bakery A.
+    matched_to: HL
+  HH:
+    distractor: Bakery A is 200 metres away, opens at 7, costs €4 a loaf, and gives
+      every tenth loaf free; Bakery B is 1.5 km away, opens at 9, costs €5, and has
+      no loyalty card.
+    diagnosticity: high
+    salience: high
+    proposition: Bakery A is closer, cheaper, opens earlier, and has a loyalty card;
+      Bakery B is farther, later, more expensive, and has no loyalty programme.
+    salience_source: multi-variable dominance for repeated errand
+  LH:
+    distractor: Bakery A is closer, opens earlier, costs less per loaf, and provides
+      a loyalty discount compared with Bakery B.
+    diagnosticity: high
+    salience: low
+    proposition: Bakery A is closer, cheaper, opens earlier, and has a loyalty card;
+      Bakery B is farther, later, more expensive, and has no loyalty programme.
+    matched_to: HH
+distractor_direction:
+  label: Storefront charm
+  description: Investigating whether Bakery B’s more charming storefront should drive
+    the regular bakery choice.
+plausible_alternative_directions:
+- label: Bread consistency
+  description: Whether one bakery has more reliable bread quality across repeated
+    purchases.
+- label: Queue length
+  description: Morning wait time may dominate a before-work errand.
+- label: Product variety
+  description: One bakery may offer more useful options beyond the sourdough already
+    liked.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

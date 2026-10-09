@@ -1,0 +1,9 @@
+{
+  "seed_id": "T1-011",
+  "steelman": "OEM-specific Android customizations are among the most well-documented causes of subset-of-users crashes on Android. Manufacturers including Xiaomi, Samsung (One UI), OPPO, and Huawei override system services, modify intent handling, and in some cases alter class-loading or process-management behaviors in ways that diverge from AOSP contracts. A senior Android engineer seeing 'crashes on a subset of users, debug build works fine' would legitimately put OEM fragmentation on their differential, since developer devices typically skew toward Pixel/stock-Android hardware while production users span a wide OEM spectrum. Some OEM battery-optimization or security systems also distinguish between ADB-sideloaded (debug) and Play-Store-installed (release) apps, or between debug-signed and release-signed APKs, which could in principle produce a release-only crash pattern on certain handsets.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "OEM battery-optimization or security heuristics that distinguish debug-keystore-signed vs. release-signed APKs — but this mechanism is actually a build-configuration artifact (signing/install path), not a device-level OEM customization, and it does not constitute a genuine OEM-customization pathway.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase closure is strong and correctly placed: 'including on the same handsets where the release build crashes' eliminates every device-level OEM pathway, because OEM customizations are applied by firmware uniformly across APK types on the same hardware. Any hypothetical mechanism that distinguishes debug vs. release on the same device (e.g., signing certificate heuristics used by OEM battery managers) is actually a proxy for build-configuration differences — i.e., the R8/signing root cause — not a separate OEM-customization pathway. The seed is clean; no repair needed."
+}

@@ -1,0 +1,173 @@
+seed_id: T5-050
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I'm choosing between two operators for a five-day guided hiking trip in the
+  Tatra Mountains next summer. Both offer similar mountain routes, roughly comparable
+  pricing, and similar advertised group sizes of around eight to ten people. I want
+  a safe, well-organised experience and have budget for either option. {DS}
+focal_diagnostic_feature: Operator A's lead guides hold mountain rescue certification,
+  their actual group cap is six people despite the advertised ten, and their safety
+  record is twelve years without a serious incident; Operator B's guides carry no
+  equivalent rescue qualifications.
+low_diagnostic_proposition: Operator B's website looks more professional than Operator
+  A's, suggesting it is the better-run company.
+oracle_action: ANSWER
+oracle_focus: Choose Operator A; certified guides, a smaller actual group size, and
+  a twelve-year incident-free safety record outweigh website aesthetics by every operationally
+  meaningful metric.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not choose based on website design; ask for guide
+  certifications, actual group size limits, and documented safety track record before
+  deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not choose based on website design; ask for guide certifications, actual
+      group size limits, and documented safety track record before deciding.
+  LL:
+    action: ASK
+    focus: Do not choose based on website design; ask for guide certifications, actual
+      group size limits, and documented safety track record before deciding.
+  HH:
+    action: ANSWER
+    focus: Choose Operator A; certified guides, a smaller actual group size, and a
+      twelve-year incident-free safety record outweigh website aesthetics by every
+      operationally meaningful metric.
+  LH:
+    action: ANSWER
+    focus: Choose Operator A; certified guides, a smaller actual group size, and a
+      twelve-year incident-free safety record outweigh website aesthetics by every
+      operationally meaningful metric.
+variants:
+  HL:
+    distractor: 'Operator B''s site is clearly built by professionals: crisp full-bleed
+      photos, a smooth booking flow, live chat, and a branding style that makes Operator
+      A''s page look like a hobby blog from 2014 — and that level of production investment
+      usually signals a well-organised operation.'
+    diagnosticity: low
+    salience: high
+    proposition: Operator B's website looks more professional than Operator A's, suggesting
+      it is the better-run company.
+    salience_source: B — clean chronological description with confident register;
+      D — specific concrete aesthetic details about the website (full-bleed photos,
+      live chat, hobby-blog comparison).
+    why_plausible: Web design investment is often correlated with organisational professionalism,
+      and a vivid contrast between the two sites makes the inference feel natural
+      to a reader scanning quickly.
+    why_irrelevant: Website production quality has no constructible mechanism for
+      guide certifications, group size policies, or mountain safety records; the focal
+      evidence is entirely independent of digital marketing spend.
+  LL:
+    distractor: Operator B's website looks more professional than Operator A's, suggesting
+      it is the better-run company.
+    diagnosticity: low
+    salience: low
+    proposition: Operator B's website looks more professional than Operator A's, suggesting
+      it is the better-run company.
+    matched_to: HL
+  HH:
+    distractor: Operator A lead guides carry mountain rescue certification, their
+      hard group cap is six people, and their safety record is twelve years without
+      a serious incident; Operator B guides hold no equivalent rescue qualifications.
+    diagnosticity: high
+    salience: high
+    proposition: Operator A's lead guides hold mountain rescue certification, their
+      actual group cap is six people despite the advertised ten, and their safety
+      record is twelve years without a serious incident; Operator B's guides carry
+      no equivalent rescue qualifications.
+    salience_source: Precise certification type (mountain rescue), a specific hard
+      group cap contrasting with the advertised ten, and the twelve-year incident-free
+      record make the evidence vivid and directly checkable.
+  LH:
+    distractor: Operator A guides hold mountain rescue certification, cap groups at
+      six, and have a twelve-year incident-free record; Operator B lacks equivalent
+      qualifications.
+    diagnosticity: high
+    salience: low
+    proposition: Operator A's lead guides hold mountain rescue certification, their
+      actual group cap is six people despite the advertised ten, and their safety
+      record is twelve years without a serious incident; Operator B's guides carry
+      no equivalent rescue qualifications.
+    matched_to: HH
+distractor_direction:
+  label: website professionalism inference
+  description: Treating Operator B as the better-run company because its website is
+    visually more polished and professionally produced than Operator A's.
+plausible_alternative_directions:
+- label: customer review quality
+  description: Verified customer reviews and ratings could reveal systematic satisfaction
+    gaps between the two operators that neither surface nor certifications capture.
+- label: itinerary route difficulty match
+  description: The actual terrain difficulty and route content could differ meaningfully
+    between operators despite similar advertised summaries.
+- label: cancellation and flexibility policy
+  description: For a trip booked well in advance, each operator's cancellation terms
+    and rebooking flexibility could be decisive for the user's financial risk.
+leak_audit:
+  ll_atomic_claims:
+  - Operator B's website looks more professional than Operator A's.
+  - This suggests Operator B is the better-run company.
+  hh_atomic_claims:
+  - Operator A guides hold mountain rescue certification.
+  - Operator A's group cap is six people.
+  - Operator A's safety record is twelve years without a serious incident.
+  - Operator B guides hold no equivalent rescue qualifications.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean descriptive register presenting concrete website features
+      in confident, professional tone.
+    confident_assertion: '''clearly built by professionals'' and ''usually signals
+      a well-organised operation'' — confident inferential framing.'
+    concrete_detail: 'Specific aesthetic features: full-bleed photos, smooth booking
+      flow, live chat, hobby-blog 2014 comparison.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 48
+  hl_word_count: 43
+  ll_word_count: 15
+  hh_word_count: 34
+  lh_word_count: 22
+  notes: 'HL:LL ratio = 2.87; HH:LH ratio = 1.55. Both within 4:1.
+
+    T5 bridge confirmed in both HL (''usually signals a well-organised operation'')
+    and LL (''suggesting it is the better-run company'').
+
+    HH revised to remove ''despite the advertised ten'' as a separate atomic claim;
+    focal_diagnostic_feature retains it for context. HH and LH now share four atomic
+    claims cleanly: rescue cert, group cap six, twelve-year record, B has no equivalent
+    qualifications.
+
+    The ''advertised ten'' contrast (xbase says groups of 8-10; actual cap is 6) is
+    a vividness detail for HH, not a separate LH-level atomic claim — consistent with
+    reference-bank practice for HH elaboration.
+
+    '
+causal_audit:
+  steelman: 'A sophisticated traveller might argue: companies that invest heavily
+    in web design and digital marketing often have better operational processes overall
+    — both signal organisational investment and attention to detail. If Operator B
+    budgets for a premium website, perhaps they also budget for well-trained guides
+    and careful trip management. This is a plausible positive correlation in some
+    industries.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not mention either operator's certifications
+    or the website; the aesthetic inference fails structurally because the focal evidence
+    (certifications, group cap, safety record) is entirely orthogonal to digital marketing
+    investment.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: A glossy hiking-tour website cannot substitute for guide rescue certifications,
+    honest group-size caps, and a verified safety record when choosing between two
+    Tatra Mountain operators.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

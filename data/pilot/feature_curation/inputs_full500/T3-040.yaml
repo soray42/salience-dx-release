@@ -1,0 +1,178 @@
+seed_id: T3-040
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our nightly ETL pipeline has been silently dropping rows for twelve days. The
+  destination table row count is consistently 8 to 11 percent lower than the source
+  after each run. No error is raised and the pipeline status shows green. We have
+  not changed the source system or the destination schema. {DS}
+focal_diagnostic_feature: The source table added a NOT NULL column with no default
+  two weeks ago; rows with NULL in that column are silently filtered by the pipeline's
+  SQL WHERE clause that guards type coercion.
+low_diagnostic_proposition: A senior data engineer asserts that silent row loss in
+  ETL pipelines is almost always a database connectivity or credential issue.
+oracle_action: ANSWER
+oracle_focus: Identify the NOT NULL column added to the source schema, audit the pipeline's
+  type-coercion guard clause, and fix or handle the NULL rows explicitly before reprocessing.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the credential-issue explanation from authority.
+  Ask for row-level reconciliation counts by batch, recent source schema changes,
+  and pipeline filter logic.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the credential-issue explanation from authority. Ask for
+      row-level reconciliation counts by batch
+    recent source schema changes: null
+    and pipeline filter logic.: null
+  LL:
+    action: ASK
+    focus: Do not accept the credential-issue explanation from authority. Ask for
+      row-level reconciliation counts by batch
+    recent source schema changes: null
+    and pipeline filter logic.: null
+  HH:
+    action: ANSWER
+    focus: Identify the NOT NULL column added to the source schema, audit the pipeline's
+      type-coercion guard clause, and fix or handle the NULL rows explicitly before
+      reprocessing.
+  LH:
+    action: ANSWER
+    focus: Identify the NOT NULL column added to the source schema, audit the pipeline's
+      type-coercion guard clause, and fix or handle the NULL rows explicitly before
+      reprocessing.
+variants:
+  HL:
+    distractor: Lasse, our principal data architect, looked at the ticket and said
+      confidently that in his experience silent drops in ETL almost always trace back
+      to a flapping database connection or a credential quietly expiring mid-run.
+    diagnosticity: low
+    salience: high
+    proposition: A senior data engineer asserts that silent row loss in ETL pipelines
+      is almost always a database connectivity or credential issue.
+    salience_source: A — named principal data architect (senior title), B — clean
+      confident assertion referencing broad personal experience, C — 'said confidently',
+      'almost always'.
+    why_plausible: Credential expiry and connection instability are real causes of
+      partial ETL failures; a principal architect's pattern-match carries institutional
+      weight.
+    why_irrelevant: The pipeline status is green and consistent with a filter silently
+      discarding rows, not with connection drops that would produce errors or variable
+      loss rates; the focal evidence shows a schema change and SQL filter as the mechanism.
+  LL:
+    distractor: A senior data engineer stated that silent row loss in ETL pipelines
+      is almost always a database connectivity or credential issue.
+    diagnosticity: low
+    salience: low
+    proposition: A senior data engineer asserts that silent row loss in ETL pipelines
+      is almost always a database connectivity or credential issue.
+    matched_to: HL
+  HH:
+    distractor: The source team's schema changelog shows a NOT NULL column added thirteen
+      days ago with no default value; in the pipeline's transformation SQL, a WHERE
+      clause that enforces type-safe coercion silently excludes any row where that
+      column is NULL — and the NULL-valued rows account for exactly the 8 to 11 percent
+      gap.
+    diagnosticity: high
+    salience: high
+    proposition: The source table added a NOT NULL column with no default two weeks
+      ago; rows with NULL in that column are silently filtered by the pipeline's SQL
+      WHERE clause that guards type coercion.
+    salience_source: B/C — precise timeline correlation (thirteen days vs twelve-day
+      symptom), specific mechanism (WHERE clause + NULL rows), and exact match to
+      the observed gap percentage.
+  LH:
+    distractor: A NOT NULL column was added to the source schema around the time symptoms
+      started; the pipeline's type-coercion WHERE clause silently drops rows where
+      that column is NULL, matching the gap.
+    diagnosticity: high
+    salience: low
+    proposition: The source table added a NOT NULL column with no default two weeks
+      ago; rows with NULL in that column are silently filtered by the pipeline's SQL
+      WHERE clause that guards type coercion.
+    matched_to: HH
+distractor_direction:
+  label: Database connectivity or credential expiry
+  description: Investigating whether a flapping connection or quietly expired database
+    credential is causing partial row drops in the ETL pipeline.
+plausible_alternative_directions:
+- label: Upstream deduplication change
+  description: The source system began deduplicating records before export
+  reducing row count without raising errors.: null
+- label: Partitioning boundary misalignment
+  description: A time-based partition filter in the pipeline is clipping rows at the
+    boundary due to a timezone or offset mismatch.
+- label: Destination write idempotency collision
+  description: An upsert key collision in the destination is silently overwriting
+    rather than inserting new rows.
+leak_audit:
+  ll_atomic_claims:
+  - A senior data engineer stated that silent row loss in ETL pipelines is almost
+    always a database connectivity or credential issue.
+  hh_atomic_claims:
+  - The source schema changelog shows a NOT NULL column added thirteen days ago with
+    no default value.
+  - The pipeline's transformation SQL has a WHERE clause enforcing type-safe coercion.
+  - That WHERE clause silently excludes rows where the new column is NULL.
+  - The NULL-valued rows account for the 8 to 11 percent gap observed.
+  hl_salience_dimensions:
+    source_credibility: A — named principal data architect (Lasse), senior institutional
+      role.
+    narrative_coherence: Clean professional recounting with clear causation chain
+      from expert's experience.
+    confident_assertion: '''said confidently'', ''almost always trace back'' — strong
+      confident framing.'
+    concrete_detail: N/A — the detail is about the source's experience pattern, not
+      the case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 62
+  hl_word_count: 40
+  ll_word_count: 20
+  hh_word_count: 67
+  lh_word_count: 29
+  notes: 'xbase states consistent green status and consistent loss rate — this forecloses
+    the intermittent-connection pathway without naming the cause (C4 boundary respected).
+
+    HL adds only Lasse''s name, title, and confident framing over LL — no case-specific
+    content added (C1 clean).
+
+    HH/LH: same atomic claims confirmed. HH ratio 67:29 = 2.31 ≤ 4. HL:LL = 40:20
+    = 2.0 ≤ 4.
+
+    Steelman for credential/connection: real cause class. Rebuttal: xbase says no
+    errors, green status, consistent 8-11% — this pattern is inconsistent with connection
+    drops (which produce errors) and consistent with a deterministic filter. Pathway
+    structurally closed.
+
+    '
+causal_audit:
+  steelman: 'A senior practitioner could argue: some credential expiry scenarios produce
+    partial failures mid-batch without raising top-level errors, particularly if the
+    pipeline swallows exceptions per-row. A quiet credential rotation could hit some
+    shards but not others. This is a real failure mode worth checking. However, xbase
+    notes a consistent loss rate of 8 to 11 percent across twelve nightly runs with
+    a consistent green status — this regularity is structurally inconsistent with
+    connection flapping (which produces variable gaps and typically some logged errors)
+    and directly consistent with a deterministic filter condition. The focal evidence
+    (schema change + NULL filter matching the gap exactly) structurally forecloses
+    the credential/connectivity direction.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Consistent 8-11% loss over twelve nights with green status
+    forecloses intermittent-connection explanation without naming the actual cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Nightly ETL silently drops 8-11% of rows — authority blames credentials,
+    actual root cause is a NOT NULL schema column added to source table filtering
+    rows via a type-coercion WHERE clause.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

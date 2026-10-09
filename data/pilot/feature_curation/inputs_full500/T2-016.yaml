@@ -1,0 +1,288 @@
+seed_id: T2-016
+template: T2
+domain: open_qa
+complexity: high
+xbase: 'I''m a freelancer and my invoices to my main client used to be paid within
+  about 15 days. For the past two months they''ve been arriving around day 45. The
+  timing lines up with when I refreshed my invoice template — I updated the fonts,
+  color scheme, and logo, but the payment terms line still says net-15 and all the
+  same fields are in the same positions. {DS}
+
+  '
+focal_diagnostic_feature: 'The template redesign is confirmed purely cosmetic (no
+  field or content changes) and the client restructured their accounts-payable approval
+  chain around the time the delays began, making the AP chain restructuring the decisive
+  causal factor; the visual redesign is structurally irrelevant.
+
+  '
+low_diagnostic_proposition: 'Clients can slow down payments when an invoice design
+  looks unfamiliar.
+
+  '
+oracle_action: ASK
+oracle_focus: 'Ask the client what changed on their side around two months ago — new
+  payment approver, changed approval cycle, cash flow constraints, or invoice routing
+  change — since the template change was purely cosmetic and the AP approval chain
+  restructuring is the decisive client-side factor.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Do not adopt the visual-redesign story; the template
+  change was cosmetic with no field or content changes, so the design cannot be the
+  cause. Ask the client what changed on their end around the time delays began.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the visual-redesign story; the template change was cosmetic
+      with no field or content changes, so the design cannot be the cause. Ask the
+      client what changed on their end around the time delays began.
+  LL:
+    action: ASK
+    focus: Do not adopt the visual-redesign story; the template change was cosmetic
+      with no field or content changes, so the design cannot be the cause. Ask the
+      client what changed on their end around the time delays began.
+  HH:
+    action: ASK
+    focus: Ask the client what changed on their side around two months ago — new payment
+      approver, changed approval cycle, cash flow constraints, or invoice routing
+      change — since the template change was purely cosmetic and the AP approval chain
+      restructuring is the decisive client-side factor.
+  LH:
+    action: ASK
+    focus: Ask the client what changed on their side around two months ago — new payment
+      approver, changed approval cycle, cash flow constraints, or invoice routing
+      change — since the template change was purely cosmetic and the AP approval chain
+      restructuring is the decisive client-side factor.
+variants:
+  HL:
+    distractor: 'My accountant — who handles billing for a dozen freelancers — told
+      me she''s seen this happen before: clients sometimes slow down when an invoice
+      looks unfamiliar.
+
+      '
+    diagnosticity: low
+    salience: high
+    proposition: 'Clients can slow down payments when an invoice design looks unfamiliar.
+
+      '
+    salience_source: 'A (source credibility + confident assertion): accountant with
+      a stated portfolio of freelancer clients vouches from prior experience ("she''s
+      seen this happen before"), lending institutional weight to the claim.
+
+      '
+    why_plausible: 'An accountant who manages many freelancers'' billing sounds like
+      an authoritative source on client payment behaviour; "seen this happen before"
+      frames it as empirical pattern rather than speculation.
+
+      '
+    why_irrelevant: 'The template change was purely cosmetic — same fields, same positions,
+      same content — so no pathway exists by which the visual refresh could affect
+      payment timing; the decisive factor is the AP chain restructuring carried in
+      HH/LH.
+
+      '
+  LL:
+    distractor: 'My accountant said unfamiliar invoice designs can make clients slow
+      down payments.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: 'Clients can slow down payments when an invoice design looks unfamiliar.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'A fellow freelancer who bills the same client told me they noticed
+      their own invoices also started arriving late about two months ago, and that
+      the client mentioned they had recently restructured their accounts-payable approval
+      chain.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'The client restructured their accounts-payable approval chain around
+      the time the delays began.
+
+      '
+    salience_source: 'A (source credibility): a peer freelancer with direct billing
+      experience at the same client provides first-hand corroborating evidence of
+      the same delay pattern and a concrete client-side structural change.
+
+      '
+  LH:
+    distractor: 'Another freelancer billing the same client said their payments also
+      started late about two months ago and that the client restructured their accounts-payable
+      approval chain.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'The client restructured their accounts-payable approval chain around
+      the time the delays began.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: unfamiliar invoice visual design
+  description: 'The redesigned invoice template looks different to the client, and
+    this visual unfamiliarity causes them to process or approve it more slowly.
+
+    '
+plausible_alternative_directions:
+- label: client cash flow constraints
+  description: 'The client is experiencing financial difficulty and is stretching
+    payment cycles across all vendors, unrelated to invoice format.
+
+    '
+- label: invoice delivery or routing failure
+  description: 'Invoices are not reaching the correct recipient — going to spam, a
+    changed email address, or the wrong department — causing queuing delays before
+    processing even begins.
+
+    '
+- label: payment platform verification hold
+  description: The freelancer's payments have been placed under additional bank- or
+    platform-side verification or fraud review, adding processing days independently
+    of the client's internal approval flow.
+leak_audit:
+  ll_atomic_claims:
+  - An accountant made this claim
+  - Unfamiliar invoice designs can cause clients to slow down payments
+  hl_salience_dimensions:
+    source_credibility: accountant who handles billing for a dozen freelancers — establishes
+      domain expertise and portfolio breadth
+    narrative_coherence: clean single sentence, professional register, no tangents
+    confident_assertion: told me she's seen this happen before — asserts prior empirical
+      observation, not speculation
+    concrete_detail: a dozen freelancers — detail about the source's client portfolio,
+      not about the recounted case
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 25
+  ll_word_count: 12
+  notes: 'Stripped: no tunable values (no "exactly X days" or percentages added in
+
+    HL); no effort descriptors; no severity claims; no sensory environment
+
+    color; no hedging language in HL (LL uses flat "said", HL uses "told me
+
+    she''s seen" — this is confident assertion, not hedge). Borderline call:
+
+    "sometimes" in HL ("clients sometimes slow down") — retained because it
+
+    appears in the propositional claim itself and mirrors the LL wording; it
+
+    is not a hedge added by HL to soften the source''s confidence.
+
+
+    Repair (revision 2): LH distractor was missing the core diagnostic claim
+
+    carried by HH — that the client restructured their accounts-payable
+
+    approval chain. LH now flatly states both co-claims from HH: (1) another
+
+    freelancer billing the same client experienced the same late-payment pattern
+
+    starting about two months ago, and (2) the client restructured their AP
+
+    approval chain. LH word count is 25 (within 12-25 limit). hl_word_count
+
+    corrected from 27 to 25 (recount of HL distractor text).
+
+
+    Repair (revision 3, cell-integrity lens): Removed "client confirmed their
+
+    invoicing process hasn''t changed" from xbase — this collided with the
+
+    focal AP-restructuring evidence carried in HH/LH (if xbase already states
+
+    the client''s process is unchanged, HH/LH introducing AP chain restructuring
+
+    becomes contradictory). Narrow pathway closure retained: payment terms still
+
+    net-15 and all fields/positions unchanged (forecloses OCR/template-matching
+
+    mechanism without claiming client-side stasis). cell_oracles HL/LL,
+
+    low_diagnostic_oracle_focus, why_irrelevant, and pathway_closed_in_xbase
+
+    updated to remove references to the removed xbase closure.
+
+    '
+causal_audit:
+  steelman: 'ATTEMPT 1 (distractor: invoice visual template redesign, general framing):
+
+    A competent accounts-payable manager would note that AP automation systems
+
+    — OCR-based invoice ingestion, template-matching parsers, or structured
+
+    data extraction tools — can fail when a supplier changes their invoice
+
+    layout. If the redesign moved field positions, altered bounding boxes, or
+
+    changed the visual structure that the client''s parser keys on, invoices
+
+    could fall into a manual exception queue, adding 20-30 days. This is a
+
+    documented operational failure mode. Verdict: defensible_mechanism_found.
+
+    Restarting with additional pathway closure.
+
+
+    ATTEMPT 2 (distractor: unfamiliar visual design, purely cosmetic framing;
+
+    xbase closes AP automation pathway by specifying the redesign was
+
+    fonts/color/logo only — no field or position changes):
+
+    With fields and positions confirmed identical, OCR and template-matching
+
+    parsers would continue to extract the same structured data regardless of
+
+    visual styling changes. For manual processing, a human reviewer reads the
+
+    same field labels and values; visual style (font, color, logo placement)
+
+    carries no information about payment terms, amount, or routing. No
+
+    spam-filter or email-routing rule would trigger differently on a PDF with
+
+    changed fonts. No ERP vendor-matching rule keys on visual style. A senior
+
+    AP manager, given the explicit field/position closure in xbase, would have
+
+    no checklist item for "cosmetic invoice redesign."
+
+    Verdict: no_defensible_mechanism.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'One closure: "I updated the fonts, color scheme, and logo"
+    with "all the same fields are in the same positions" specifies the redesign was
+    purely cosmetic — no field, position, or content changes that could affect automated
+    or manual parsing. This forecloses the OCR/template-matching mechanism. The client-process-change
+    pathway is deliberately left open in xbase so that HH/LH can deliver it as the
+    focal diagnostic evidence.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 4
+  topic_brief: 'Invoices of a freelancer are now paid in about 45 days instead of
+    15. Coincidence: started right after a redesign of the invoice visual template.
+    xbase must state payment terms and recipient process unchanged (pathway closure).
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: 'qc focal ci1 2026-06-11: alternative direction reframed to remove
+    overlap with AP-restructuring focal'
+  generator: generator_B

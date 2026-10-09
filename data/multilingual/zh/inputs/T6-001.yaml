@@ -1,0 +1,93 @@
+seed_id: T6-001
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: 我的 Jupyter notebook 内核在运行某一个特定的数据加载单元格时会崩溃。其他使用较小数据集的 notebook 仍然可以正常运行。本周我没有更改过
+  Python 环境。{DS}
+focal_diagnostic_feature: 该单元格在内存为 8GB 的笔记本电脑上用 pandas 加载一个 4GB 的 CSV 文件，内核在约 10 秒内崩溃。
+low_diagnostic_proposition: The user's previous Jupyter crashes were attributed to
+  Anaconda installation corruption.
+oracle_action: ANSWER
+oracle_focus: This is likely memory exhaustion from loading the CSV; use chunking,
+  dtypes, Parquet/Arrow, or a machine with more RAM.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the previous Anaconda explanation automatically.
+  Ask what the failing cell loads and what memory is available.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the previous Anaconda explanation automatically. Ask what
+      the failing cell loads and what memory is available.
+  LL:
+    action: ASK
+    focus: Do not apply the previous Anaconda explanation automatically. Ask what
+      the failing cell loads and what memory is available.
+  HH:
+    action: ANSWER
+    focus: This is likely memory exhaustion from loading the CSV; use chunking, dtypes,
+      Parquet/Arrow, or a machine with more RAM.
+  LH:
+    action: ANSWER
+    focus: This is likely memory exhaustion from loading the CSV; use chunking, dtypes,
+      Parquet/Arrow, or a machine with more RAM.
+variants:
+  HL:
+    distractor: 我之前每次 Jupyter 崩溃，原因都是 Anaconda 安装损坏，所以我的第一反应是把整个环境重新装一遍。
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous Jupyter crashes were attributed to Anaconda installation
+      corruption.
+    salience_source: first-person pattern, repeated prior cause, drastic repair impulse
+    why_plausible: Availability of a familiar past fix makes it feel like the same
+      failure.
+    why_irrelevant: This crash is tied to a large data load, not a general environment
+      failure.
+  LL:
+    distractor: 该用户此前的 Jupyter 崩溃问题通常被归因于环境安装方面的问题。
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous Jupyter crashes were attributed to Anaconda installation
+      corruption.
+    matched_to: HL
+  HH:
+    distractor: 该单元格用 pandas 在一台只有 8GB 内存的笔记本电脑上读取一个 4GB 的 CSV 文件，内核在读取开始后大约十秒钟就崩溃了。
+    diagnosticity: high
+    salience: high
+    proposition: The cell loads a 4GB CSV with pandas on an 8GB-RAM laptop and the
+      kernel dies within about 10 seconds.
+    salience_source: data-size to RAM mismatch
+  LH:
+    distractor: 出故障的单元格通过 pandas 在一台内存为 8GB 的机器上加载了一个 4GB 的 CSV 文件，启动后不久便终止了。
+    diagnosticity: high
+    salience: low
+    proposition: The cell loads a 4GB CSV with pandas on an 8GB-RAM laptop and the
+      kernel dies within about 10 seconds.
+    matched_to: HH
+distractor_direction:
+  label: Anaconda 安装损坏
+  description: 调查 Python/Anaconda 环境安装是否已损坏或出现问题。
+plausible_alternative_directions:
+- label: CSV 解析器问题
+  description: 数据加载单元格可能遇到格式错误的行、编码问题或解析器缺陷。
+- label: 包版本冲突
+  description: 库版本不匹配可能导致内核进程崩溃。
+- label: 磁盘 IO 瓶颈
+  description: 从速度较慢或远程存储读取 CSV 文件可能导致 notebook 不稳定。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-001.yaml
+  source_xbase_sha256: 2147c1bf909bdcff
+  translated_content_sha256: 0b70f8b457f0ddde
+  translation_notes: ''

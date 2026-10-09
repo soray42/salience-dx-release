@@ -1,0 +1,179 @@
+seed_id: T5-021
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: أستخدم إضافة متصفح لإدارة كلمات المرور وأنا مغري بالتبديل إلى إضافة تجارية
+  أكثر أناقة. الإضافة التي لديّ تعمل جيدًا، لكن واجهتها تبدو مصنوعة يدويًا — أيقونة
+  بسيطة، مربعات حوار أساسية، لا رسوم متحركة، لا شيء أنيق. البديل يبدو رائعًا وعصريًا.
+  بما أن هذه الأداة تحمي كل حساباتي، أريد أيهما الأكثر أمانًا فعليًا. {DS}
+focal_diagnostic_feature: الإضافة البسيطة مفتوحة المصدر وخضعت مؤخرًا لتدقيق أمني مستقل
+  نُشرت نتائجه دون أي اكتشافات حرجة، في حين أن البديل الأنيق مغلق المصدر ولم يخضع
+  قط لأي تدقيق مستقل.
+low_diagnostic_proposition: The polished, modern-looking extension is the more secure
+  and trustworthy choice because of how refined it looks.
+oracle_action: ANSWER
+oracle_focus: Keep the plain extension; an open-source tool with a clean published
+  independent audit is the stronger security choice, and the flashy alternative's
+  unaudited closed source is what actually matters, not its visual polish.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not equate a refined interface with security. Ask
+  whether each extension is open-source and whether it has a published independent
+  security audit.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not equate a refined interface with security. Ask whether each extension
+      is open-source and whether it has a published independent security audit.
+  LL:
+    action: ASK
+    focus: Do not equate a refined interface with security. Ask whether each extension
+      is open-source and whether it has a published independent security audit.
+  HH:
+    action: ANSWER
+    focus: Keep the plain extension; an open-source tool with a clean published independent
+      audit is the stronger security choice, and the flashy alternative's unaudited
+      closed source is what actually matters, not its visual polish.
+  LH:
+    action: ANSWER
+    focus: Keep the plain extension; an open-source tool with a clean published independent
+      audit is the stronger security choice, and the flashy alternative's unaudited
+      closed source is what actually matters, not its visual polish.
+variants:
+  HL:
+    distractor: الإضافة التجارية تبدو ببساطة أكثر جديرية بالثقة — رسوم متحركة سلسة،
+      تخطيط عصري وحاد، إحساس مصقول ومتناسق في كل مكان — ومنتج أمني بهذا المستوى من
+      الصقل والتقديم الجيد يعكس نفس العناية والدقة في الكود الذي يحمي كلمات مرورك.
+    diagnosticity: low
+    salience: high
+    proposition: The polished, modern-looking extension is the more secure and trustworthy
+      choice because of how refined it looks.
+    salience_source: B/D — vivid concrete detail of the polished UI carrying the bridge
+      that visual refinement reflects rigorous, secure code.
+    why_plausible: Polish signals investment and professionalism, so a refined security
+      tool intuitively feels like one built with care.
+    why_irrelevant: Interface polish is front-end design effort; it is orthogonal
+      to cryptographic soundness, which only source transparency and independent audits
+      can establish.
+  LL:
+    distractor: الإضافة المصقولة ذات المظهر العصري هي الخيار الأكثر أمانًا وجديرية
+      بالثقة بسبب مستوى صقلها.
+    diagnosticity: low
+    salience: low
+    proposition: The polished, modern-looking extension is the more secure and trustworthy
+      choice because of how refined it looks.
+    matched_to: HL
+  HH:
+    distractor: 'بالنظر إلى حقائق الأمان بدلًا من المظهر: الإضافة البسيطة مفتوحة المصدر
+      بالكامل ونشرت للتو تدقيقًا مستقلًا من طرف ثالث دون أي اكتشافات حرجة. أما الإضافة
+      التجارية الأنيقة فمغلقة المصدر ولم تخضع قط لأي تدقيق مستقل على الإطلاق.'
+    diagnosticity: high
+    salience: high
+    proposition: The plain extension is open-source and has a recent independent security
+      audit published with no critical findings, while the flashy alternative is closed-source
+      and has never been independently audited.
+    salience_source: Naming the open source, the clean published audit, and the rival's
+      unaudited closed source makes the real security basis concrete.
+  LH:
+    distractor: الإضافة البسيطة مفتوحة المصدر وخضعت مؤخرًا لتدقيق أمني مستقل نُشرت
+      نتائجه دون أي اكتشافات حرجة؛ أما البديل الأنيق فمغلق المصدر ولم يخضع قط لأي
+      تدقيق مستقل.
+    diagnosticity: high
+    salience: low
+    proposition: The plain extension is open-source and has a recent independent security
+      audit published with no critical findings, while the flashy alternative is closed-source
+      and has never been independently audited.
+    matched_to: HH
+distractor_direction:
+  label: الصقل يعني الأمان
+  description: التبديل إلى الإضافة الأنيقة لأن واجهتها المصقولة تُؤخذ دليلًا على أمان
+    أقوى.
+plausible_alternative_directions:
+- label: سجل الاختراقات وتحديثات الأمان
+  description: هل تعرضت أي من الأداتين لاختراقات سابقة، وما مدى التزام كل منهما بإصدار
+    تحديثات أمنية في الوقت المناسب.
+- label: نموذج التشفير والاسترداد
+  description: هل تختلف الأداتان في نموذج التشفير أو الاسترداد أو التصميم الصفري المعرفة
+    بما قد يكون مهمًا للمستخدم.
+  recovery: null
+  and zero-knowledge design matter for the user.: null
+leak_audit:
+  ll_atomic_claims:
+  - The commercial extension is polished and modern-looking.
+  - That refinement makes it the more secure and trustworthy choice.
+  hh_atomic_claims:
+  - The plain extension is fully open-source.
+  - It has a recently published independent third-party audit with no critical findings.
+  - The flashy commercial alternative is closed-source and has never been independently
+    audited.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: N/A
+    confident_assertion: N/A
+    concrete_detail: Vivid concrete detail about the commercial UI (animations, modern
+      layout, polished feel).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 39
+  ll_word_count: 17
+  hh_word_count: 42
+  lh_word_count: 23
+  notes: 'T5: the bridge "a refined, well-presented product reflects rigorous secure
+    code" is in HL and flat in LL
+
+    (self-check 13). xbase describes the homemade vs gorgeous look and the stakes
+    but withholds the open-source/audit
+
+    facts — decisive — which live only in HH/LH. Appearance is offered AS the reason
+    to switch, not as decoration.
+
+    QC repair round 1: removed the hedging word "surely" from the HL bridge clause
+    ("surely reflects" → "reflects")
+
+    so no hedging_language appears in HL that is absent from LL; the propositional
+    bridge is unchanged, preserving
+
+    HL/LL equivalence. Recount after edit: HL drops to 39 (also corrects a prior off-by-one
+    in the recorded count).
+
+    '
+causal_audit:
+  steelman: 'One could argue that a polished, well-funded commercial security product
+    likely has a larger team, formal QA,
+
+    and resources to harden its code, whereas a homemade-looking tool might be a hobby
+    project with little review —
+
+    so polish is a weak proxy for organisational maturity and, indirectly, security.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the open-source status and independent audit that
+    decide security are supplied only in HH/LH; xbase does not foreclose the switch.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to keep an audited open-source password-manager extension or
+    switch to a flashier closed-source one judged more secure purely on its polished
+    interface.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-021.yaml
+  source_xbase_sha256: d1497ada962aa07d
+  translated_content_sha256: 98bc5b8c922053a8
+  translation_notes: Technical terms (open-source, closed-source) rendered as مفتوحة
+    المصدر / مغلق المصدر (standard Arabic). 'تدقيق أمني مستقل' is the conventional
+    term for independent security audit. No culture-bound salience cues.

@@ -1,0 +1,185 @@
+seed_id: T6-080
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Next.js app has a Time to Interactive above 7 seconds on initial page load
+  for authenticated users. The bundle sizes look normal in webpack-bundle-analyzer,
+  and static pages on the same domain load fine. The problem only appears after login
+  and only on the main dashboard route. {DS}
+focal_diagnostic_feature: The getServerSideProps function on the dashboard route executes
+  four database queries sequentially rather than in parallel; each takes 600-800 ms,
+  adding approximately 2.8 seconds of server-side latency before any HTML is delivered
+  to the client.
+low_diagnostic_proposition: Past high TTI cases for this user were consistently caused
+  by oversized vendor bundles requiring code-splitting, suggesting the same cause
+  here.
+oracle_action: ANSWER
+oracle_focus: Parallelise the four database queries in getServerSideProps using Promise.all;
+  instrument server-side request timing to confirm the 2.8-second reduction, then
+  consider caching where the data is stable enough.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to code-splitting when the bundle analyser
+  shows normal sizes. Ask for server-side request traces or timing logs on the dashboard
+  route's getServerSideProps to check for sequential data fetching.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to code-splitting when the bundle analyser shows normal
+      sizes. Ask for server-side request traces or timing logs on the dashboard route's
+      getServerSideProps to check for sequential data fetching.
+  LL:
+    action: ASK
+    focus: Do not default to code-splitting when the bundle analyser shows normal
+      sizes. Ask for server-side request traces or timing logs on the dashboard route's
+      getServerSideProps to check for sequential data fetching.
+  HH:
+    action: ANSWER
+    focus: Parallelise the four database queries in getServerSideProps using Promise.all;
+      instrument server-side request timing to confirm the 2.8-second reduction, then
+      consider caching where the data is stable enough.
+  LH:
+    action: ANSWER
+    focus: Parallelise the four database queries in getServerSideProps using Promise.all;
+      instrument server-side request timing to confirm the 2.8-second reduction, then
+      consider caching where the data is stable enough.
+variants:
+  HL:
+    distractor: Every high TTI issue I've ever debugged has come down to an oversized
+      vendor bundle — my instinct here is still code-splitting, even though the analyser
+      isn't shouting at me the way it usually does.
+    diagnosticity: low
+    salience: high
+    proposition: Past high TTI cases for this user were consistently caused by oversized
+      vendor bundles requiring code-splitting, suggesting the same cause here.
+    salience_source: B (narrative coherence — specific recurring pattern from personal
+      history, consistent first-person voice); C (confident assertion — 'every high
+      TTI issue I've ever debugged', first-instinct framing).
+    why_plausible: Oversized vendor bundles causing high TTI is genuinely one of the
+      most common causes; a practitioner who has fixed it repeatedly will pattern-match
+      first, especially when the symptom looks identical.
+    why_irrelevant: The past bundle cases were client-side parse bottlenecks; the
+      focal feature shows the delay is server-side HTML generation time before any
+      client-side parsing begins — code-splitting cannot reduce server processing
+      latency.
+  LL:
+    distractor: Past high TTI cases for this user were consistently caused by oversized
+      vendor bundles requiring code-splitting, suggesting the same cause here.
+    diagnosticity: low
+    salience: low
+    proposition: Past high TTI cases for this user were consistently caused by oversized
+      vendor bundles requiring code-splitting, suggesting the same cause here.
+    matched_to: HL
+  HH:
+    distractor: The server-side trace shows getServerSideProps running four database
+      queries back to back — user profile, permissions, widgets, and activity log
+      — each taking 600 to 800 ms; the HTML response doesn't start streaming until
+      all four finish, 2.8 seconds after the request arrives.
+    diagnosticity: high
+    salience: high
+    proposition: The getServerSideProps function on the dashboard route executes four
+      database queries sequentially rather than in parallel; each takes 600-800 ms,
+      adding approximately 2.8 seconds of server-side latency before any HTML is delivered
+      to the client.
+    salience_source: Server-side trace named as evidence source, four queries enumerated
+      by name (profile/permissions/widgets/activity log), precise timing (600-800
+      ms each, 2.8 s total), concrete streaming behaviour described.
+  LH:
+    distractor: Server-side tracing shows four sequential database queries in getServerSideProps,
+      each 600-800 ms, delaying HTML response by approximately 2.8 seconds.
+    diagnosticity: high
+    salience: low
+    proposition: The getServerSideProps function on the dashboard route executes four
+      database queries sequentially rather than in parallel; each takes 600-800 ms,
+      adding approximately 2.8 seconds of server-side latency before any HTML is delivered
+      to the client.
+    matched_to: HH
+distractor_direction:
+  label: Oversized vendor bundle
+  description: Investigating whether the main JavaScript bundle size exceeds optimal
+    limits and requires code-splitting or lazy loading to reduce Time to Interactive.
+plausible_alternative_directions:
+- label: Auth middleware latency
+  description: The authentication middleware validating the session token on each
+    dashboard request could be making a slow external call, adding latency only for
+    logged-in users.
+- label: Client-side hydration cost
+  description: A large server-rendered HTML payload with many interactive components
+    could produce a heavy React hydration phase on the client, raising TTI after HTML
+    arrives.
+- label: Missing CDN edge caching for SSR
+  description: If the dashboard route is not cached at the CDN edge and requires a
+    cold origin fetch on each request, round-trip time to the origin server could
+    inflate TTFB for authenticated users.
+leak_audit:
+  ll_atomic_claims:
+  - Past high TTI cases for this user were consistently caused by oversized vendor
+    bundles requiring code-splitting.
+  - This past pattern suggests the same cause applies to the current case.
+  hh_atomic_claims:
+  - The server-side trace shows getServerSideProps running four database queries back
+    to back.
+  - 'The four queries are: user profile, permissions, widgets, and activity log.'
+  - Each query takes 600 to 800 ms.
+  - The HTML response does not start streaming until all four queries finish.
+  - This delay is approximately 2.8 seconds after the request arrives.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, T6 availability heuristic.
+    narrative_coherence: Consistent pattern across all past TTI cases, clear before-and-after
+      framing (past resolution vs current uncertainty).
+    confident_assertion: '"Every high TTI issue I''ve ever debugged" — universal quantifier
+      over personal history; "my instinct here is still code-splitting" — direct first-instinct
+      application.'
+    concrete_detail: N/A — no case-specific bundle size or query data added beyond
+      LL.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 47
+  hl_word_count: 34
+  ll_word_count: 21
+  hh_word_count: 41
+  lh_word_count: 19
+  notes: 'T6 availability inference verified in both HL and LL: HL says "my instinct
+    here is still code-splitting"; LL says "suggesting the same cause here." Both
+    carry the application-to-now inference per C1/T6. Xbase notes "bundle sizes look
+    normal in webpack-bundle-analyzer" and "static pages on the same domain load fine"
+    — these close the bundle-size mechanism without naming the actual cause (both
+    are observations about symptoms, not root cause identification). The "static pages
+    load fine" observation is decisive because static pages use the same bundle but
+    bypass getServerSideProps; this narrows candidates to SSR-specific latency without
+    identifying the sequential queries (which live only in HH/LH). C4 boundary: the
+    xbase narrowing is a symptom fact, not a root-cause disclosure.
+
+    '
+causal_audit:
+  steelman: 'The webpack-bundle-analyzer may display gzipped or compressed sizes,
+    masking a large uncompressed bundle. If the analyser is misconfigured to show
+    only the compressed figure, a 2.3 MB uncompressed bundle could look normal at
+    600 KB compressed. Additionally, authenticated routes often load more feature-specific
+    code (account widgets, permission-gated components) that could be handled by dynamic
+    imports. This is the strongest steelman available. However, xbase notes that static
+    pages on the same domain load fine — static pages share the same vendor bundle
+    chunks as the dashboard route. If the vendor bundle size caused the TTI issue,
+    static pages using the same chunks would also exhibit elevated TTI. This rules
+    out the bundle size as the differentiating cause. The focal then confirms the
+    differentiator is server-side sequential data fetching, which affects only the
+    SSR route.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Static pages on the same domain load fine — these share
+    the same bundle but skip getServerSideProps; this observation rules out bundle
+    size as the route-specific cause without naming the actual culprit.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Next.js dashboard high TTI caused by four sequential database queries
+    in getServerSideProps adding 2.8 seconds of server-side latency, misattributed
+    by the user's availability heuristic to past vendor bundle problems.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

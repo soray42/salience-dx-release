@@ -1,0 +1,41 @@
+{
+  "mode": "random_pairs",
+  "n_pairs": 75,
+  "cells": [
+    "LL",
+    "HL"
+  ],
+  "rng_seed": "human-gold-sampling-v1",
+  "n_items": 150,
+  "models": [
+    "claude-sonnet-4-6",
+    "gemini-3.5-flash",
+    "llama3.1:8b",
+    "google/gemma-4-31B-it"
+  ],
+  "shuffle_tag": "human-gold-v1",
+  "rubric_path": "prompts/v4.3/judge_categorical_v3_1.md",
+  "rubric_sha256": "8ba6038c92f2577f9bbcac8a6cb18baecd5bce3d3dbddbf3425b940d979bcac3",
+  "v31_source": "data/full/judge_deepseek_v31.ndjson",
+  "packet_sha256": "cca660b2e89c78d5c8f1f57a71bee064902c262af71469e5bfa4166b3aada84b",
+  "key_sha256": "cc9df1d293e44ecfb7235f82251c4f5bee85a87be50b1b46c7493d3281044070",
+  "cell_counts": {
+    "LL": 75,
+    "HL": 75
+  },
+  "model_counts": {
+    "claude-sonnet-4-6": 40,
+    "gemini-3.5-flash": 30,
+    "llama3.1:8b": 44,
+    "google/gemma-4-31B-it": 36
+  },
+  "pair_bucket_counts": {
+    "stable_reject": 66,
+    "stable_adopt": 46,
+    "vigilance": 14,
+    "ISB": 16,
+    "proto_ISB": 4,
+    "mixed_other": 2,
+    "proto_vigilance": 2
+  }
+}

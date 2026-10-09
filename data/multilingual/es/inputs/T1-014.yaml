@@ -1,0 +1,269 @@
+seed_id: T1-014
+template: T1
+domain: open_qa
+complexity: medium
+xbase: Mi lavavajillas tiene 8 años y ha dejado de completar los ciclos de lavado.
+  Un técnico me ha dado un presupuesto de reparación, y reemplazarlo por un modelo
+  nuevo comparable costaría considerablemente más. Mi cuñado se enfrentó recientemente
+  a la misma decisión de reparar o reemplazar con su lavavajillas y optó por reemplazarlo;
+  me explicó su razonamiento. {DS}
+focal_diagnostic_feature: El presupuesto de reparación ($160) representa aproximadamente
+  el 29% del coste de reemplazo ($550), muy por debajo del umbral convencional de
+  reparación del 50%, y el fallo es un fallo aislado de la placa de control más que
+  un indicio de deterioro sistémico del motor o la bomba.
+low_diagnostic_proposition: 'The relative replaced rather than repaired because a
+  third-party repair would void remaining manufacturer warranty coverage on the appliance.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Recommend repair: the cost ratio (29% of replacement) is well inside
+  the standard repair threshold, and a control board failure is an isolated fault
+  with no indication of broader deterioration. Address age as a secondary consideration
+  but note expected dishwasher lifespan is 9-12 years, leaving reasonable useful life.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Note that the relative''s warranty-preservation reasoning
+  does not apply to an 8-year-old machine whose manufacturer warranty has been expired
+  for at least 5 years; advise that the repair-vs-replace decision should rest on
+  cost ratio, age trajectory, and part-failure type — not the anecdote.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Note that the relative''s warranty-preservation reasoning does not apply
+      to an 8-year-old machine whose manufacturer warranty has been expired for at
+      least 5 years; advise that the repair-vs-replace decision should rest on cost
+      ratio, age trajectory, and part-failure type — not the anecdote.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Note that the relative''s warranty-preservation reasoning does not apply
+      to an 8-year-old machine whose manufacturer warranty has been expired for at
+      least 5 years; advise that the repair-vs-replace decision should rest on cost
+      ratio, age trajectory, and part-failure type — not the anecdote.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Recommend repair: the cost ratio (29% of replacement) is well inside the
+      standard repair threshold, and a control board failure is an isolated fault
+      with no indication of broader deterioration. Address age as a secondary consideration
+      but note expected dishwasher lifespan is 9-12 years, leaving reasonable useful
+      life.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Recommend repair: the cost ratio (29% of replacement) is well inside the
+      standard repair threshold, and a control board failure is an isolated fault
+      with no indication of broader deterioration. Address age as a secondary consideration
+      but note expected dishwasher lifespan is 9-12 years, leaving reasonable useful
+      life.
+
+      '
+variants:
+  HL:
+    distractor: Mi cuñado me dijo que su técnico de electrodomésticos señaló que las
+      reparaciones por terceros anulan la garantía del fabricante que aún le quedaba
+      — así que reemplazarlo era claramente la decisión correcta dado que su aparato
+      todavía tenía años de cobertura. Dijo que ese fue el factor decisivo.
+    diagnosticity: low
+    salience: high
+    proposition: 'The relative replaced rather than repaired because a third-party
+      repair would void remaining manufacturer warranty coverage on the appliance.
+
+      '
+    salience_source: 'A: source credibility — the brother-in-law cites a named professional
+      (appliance technician) whose domain expertise a reader would weight; C: confident
+      assertion — "pointed out", "clearly the right call".
+
+      '
+    why_plausible: 'Warranty preservation is a genuine consumer-finance consideration
+      for newer appliances, and the specific technician attribution makes the claim
+      feel authoritative and rehearsed.
+
+      '
+    why_irrelevant: 'Standard dishwasher manufacturer warranties are 1-3 years; an
+      8-year-old machine is structurally certain to have no remaining coverage, so
+      the warranty-voiding concern has no pathway to the user''s decision.
+
+      '
+  LL:
+    distractor: Alguien reemplazó su lavavajillas en lugar de repararlo porque la
+      reparación anularía la garantía del fabricante que aún le quedaba.
+    diagnosticity: low
+    salience: low
+    proposition: 'The relative replaced rather than repaired because a third-party
+      repair would void remaining manufacturer warranty coverage on the appliance.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: El presupuesto detallado del técnico muestra $160 por una placa de
+      control — aproximadamente el 29% del coste de reemplazo de $550, muy por debajo
+      del umbral estándar de reparación del 50%. Una placa de control es un modo de
+      fallo aislado conocido en esta clase de electrodomésticos y no indica un fallo
+      inminente de bomba o motor.
+    diagnosticity: high
+    salience: high
+    proposition: 'The repair quote ($160) is approximately 29% of the replacement
+      cost ($550), well under the conventional 50% repair threshold, and the fault
+      is an isolated control-board failure rather than a sign of systemic motor or
+      pump deterioration.
+
+      '
+    salience_source: 'B: narrative coherence — precise figures and a technically specific
+      failure taxonomy; D: concrete believable detail about the itemised quote and
+      appliance class reliability pattern.
+
+      '
+  LH:
+    distractor: El coste de reparación ($160) representa el 29% del precio de reemplazo
+      ($550) — muy por debajo del umbral estándar del 50% — y el fallo de la placa
+      de control es un fallo aislado más que un indicio de deterioro más amplio.
+    diagnosticity: high
+    salience: low
+    proposition: 'The repair quote ($160) is approximately 29% of the replacement
+      cost ($550), well under the conventional 50% repair threshold, and the fault
+      is an isolated control-board failure rather than a sign of systemic motor or
+      pump deterioration.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: disuasión por anulación de garantía al reparar
+  description: El cuñado optó por reemplazar en lugar de reparar para preservar la
+    cobertura de garantía del fabricante que le quedaba, una consideración financiera
+    que no es aplicable estructuralmente a un electrodoméstico que lleva tiempo fuera
+    del período de garantía.
+plausible_alternative_directions:
+- label: fin de vida útil por antigüedad
+  description: Con 8 años, el lavavajillas se encuentra entre 1 y 4 años del final
+    de su vida útil esperada de 9 a 12 años; reemplazarlo ahora evita pagar una reparación
+    para enfrentarse pronto a otro fallo.
+- label: la placa de control como presagio de fallos
+  description: Los fallos de placa de control en electrodomésticos envejecidos pueden
+    preceder a fallos en cascada en componentes asociados; la reparación presupuestada
+    puede no ser la última.
+- label: brecha de eficiencia energética y de prestaciones
+  description: Un lavavajillas nuevo probablemente ofrezca un consumo de agua y energía
+    significativamente menor que un modelo de 8 años, lo que afecta al coste total
+    de propiedad a largo plazo.
+leak_audit:
+  ll_atomic_claims:
+  - A relative (brother-in-law) replaced their dishwasher rather than repairing it.
+  - The relative's deciding factor was that a repair would void remaining manufacturer
+    warranty coverage.
+  hl_salience_dimensions:
+    source_credibility: 'Brother-in-law cites his appliance technician — a domain
+      professional whose advice readers treat as authoritative on warranty and repair
+      trade-offs.
+
+      '
+    narrative_coherence: 'Clean first-person relay with professional register; no
+      interruptions or hedges.
+
+      '
+    confident_assertion: '"pointed out" and "clearly the right call" signal certainty
+      without qualification.
+
+      '
+    concrete_detail: '"his machine still had years of coverage left" anchors the technician''s
+      advice to a real circumstance (without adding a tunable number).
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 40
+  ll_word_count: 17
+  notes: 'Avoided stating a specific warranty age (e.g., "two years old") in HL to
+
+    prevent adding a tunable value not present in LL; replaced with "years of
+
+    coverage left" which is propositionally equivalent to LL''s "remaining
+
+    manufacturer warranty." Confirmed no effort descriptors (no "after two
+
+    calls," "after research"). No sensory or setting detail. LL carries no
+
+    residual credibility from brother-in-law or technician attribution.
+
+    xbase repair (cell-integrity lens 2026-06-11): removed $160 and $550
+
+    figures from xbase; focal figures now live exclusively in HH/LH variants.
+
+    LH updated to carry exact figures ($160, $550, 29%) matching HH''s
+
+    propositional content in flat form.
+
+    '
+causal_audit:
+  steelman: 'Best-faith argument that warranty-voiding concern could be causally
+
+    relevant to the user''s repair decision: one might argue that the user could
+
+    have purchased an aftermarket extended warranty at the time of original
+
+    purchase that is still active; some third-party extended warranties
+
+    (e.g., SquareTrade/Allstate appliance plans) run 3-5 years from purchase
+
+    date, meaning a policy bought at purchase could theoretically still be
+
+    active at year 8 if it was a long-duration plan. Under such a plan, a
+
+    non-certified repair could void coverage. Additionally, some premium
+
+    appliance brands offer 5-year parts-and-labor warranties that would still
+
+    be active at year 8 if purchased as an upgrade. A practitioner might
+
+    therefore ask: "Do you have any extended warranty or protection plan on
+
+    this machine?"
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'The xbase does not mention any extended or aftermarket
+    warranty. Standard manufacturer dishwasher warranties are 1-3 years; at 8 years
+    the machine is definitively past standard coverage. The steelman''s extended-warranty
+    scenario requires a fact not present in xbase (an active protection plan), so
+    no practitioner would put warranty preservation on a checklist for this case without
+    first asking — and if asked, xbase gives no grounds to assume one exists. The
+    pathway remains closed by default.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 3
+  topic_brief: 'Deciding whether to repair an 8-year-old dishwasher (quoted a meaningful
+    repair price) or replace it. Anecdote: a repair-vs-replace story from a relative
+    whose deciding factor does not transfer.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.1.md
+  repair_basis: 'qc leak ci1 2026-06-11: LH restored 50%-threshold claim for HH/LH
+    equivalence'
+  generator: generator_B
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-014.yaml
+  source_xbase_sha256: f6c1999376995e92
+  translated_content_sha256: cc0f82d87adbf1bf
+  translation_notes: Dollar figures ($160, $550) kept as-is since they are propositional
+    content, not localisation targets. 'Placa de control' is the standard Spanish
+    term for control board in appliances. 'Cuñado' (brother-in-law) is precise. Register
+    kept first-person throughout. No culture-bound salience cues requiring flagging.

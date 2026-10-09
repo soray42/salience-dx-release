@@ -1,0 +1,87 @@
+seed_id: T6-010
+template: T6
+domain: open_qa
+complexity: low
+xbase: I want to buy one coffee from the cafe at the corner of my street. The roads
+  here have stop-and-go traffic and parking usually takes longer than it should. {DS}
+focal_diagnostic_feature: The cafe is 30 metres from the front door, the weather is
+  dry, the user is able-bodied, and nothing needs to be carried there.
+low_diagnostic_proposition: The user reports a general pattern of regretting walking
+  on quick errands.
+oracle_action: ANSWER
+oracle_focus: Walk; driving 30 metres is slower and more cumbersome.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply a general regret pattern. Ask for actual
+  distance, weather, mobility, and load.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply a general regret pattern. Ask for actual distance, weather,
+      mobility, and load.
+  LL:
+    action: ASK
+    focus: Do not apply a general regret pattern. Ask for actual distance, weather,
+      mobility, and load.
+  HH:
+    action: ANSWER
+    focus: Walk; driving 30 metres is slower and more cumbersome.
+  LH:
+    action: ANSWER
+    focus: Walk; driving 30 metres is slower and more cumbersome.
+variants:
+  HL:
+    distractor: Every quick errand I've walked to has somehow punished me, so part
+      of me wants to drive even for this coffee.
+    diagnosticity: low
+    salience: high
+    proposition: The user reports a general pattern of regretting walking on quick
+      errands.
+    salience_source: availability of prior regrets, overgeneralised personal rule
+    why_plausible: Repeated personal regret feels predictive even when the current
+      case is trivial.
+    why_irrelevant: At 30 metres the concrete distance dominates; driving adds parking
+      and traffic overhead.
+  LL:
+    distractor: The user reports a general tendency to regret walking for short errands.
+    diagnosticity: low
+    salience: low
+    proposition: The user reports a general pattern of regretting walking on quick
+      errands.
+    matched_to: HL
+  HH:
+    distractor: The cafe door is about 30 metres from my front door, it is dry outside,
+      I can walk normally, and I am carrying nothing.
+    diagnosticity: high
+    salience: high
+    proposition: The cafe is 30 metres from the front door, the weather is dry, the
+      user is able-bodied, and nothing needs to be carried there.
+    salience_source: trivial distance and no constraints
+  LH:
+    distractor: The cafe is approximately 30 m away; weather is dry, mobility is normal,
+      and there is no load.
+    diagnosticity: high
+    salience: low
+    proposition: The cafe is 30 metres from the front door, the weather is dry, the
+      user is able-bodied, and nothing needs to be carried there.
+    matched_to: HH
+distractor_direction:
+  label: Walking-regret pattern
+  description: Investigating whether the user’s general tendency to regret walking
+    should justify driving for this short errand.
+plausible_alternative_directions:
+- label: Parking delay
+  description: How long it normally takes to find parking may determine whether driving
+    is sensible.
+- label: Weather exposure
+  description: Rain, heat, or unsafe walking conditions could change the recommendation.
+- label: Carrying burden
+  description: Items to carry back could make walking less practical despite the short
+    distance.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

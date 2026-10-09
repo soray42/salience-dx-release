@@ -1,0 +1,29 @@
+{
+  "seed_id": "T3-012",
+  "ll_claims_extracted": [
+    "The DBA lead attributed the replication lag to PgBouncer connection pool configuration.",
+    "The replication lag occurs on a fixed schedule (described as 'scheduled')."
+  ],
+  "hl_case_claims": [
+    "PgBouncer connection pool configuration is causing the scheduled replication lag.",
+    "The replication lag occurs on a fixed schedule."
+  ],
+  "hl_source_claims": [
+    "The DBA lead has run Postgres infrastructure at three companies.",
+    "The DBA lead 'took a look' and evaluated the situation.",
+    "The DBA lead 'told me straight away' (confident, immediate assertion).",
+    "The DBA lead asserts a general heuristic: 'whenever replication lags on a fixed schedule it's always the connection layer' (pattern-match experience claim)."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 39,
+    "ll": 15,
+    "xbase": 58,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

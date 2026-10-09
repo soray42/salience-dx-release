@@ -1,0 +1,277 @@
+seed_id: T6-013
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: 'Our service mesh started throwing mTLS handshake failures across all sidecars
+  immediately after this afternoon''s deploy. The rollout updated our cert-manager
+  configuration and restarted all affected pods. I''ve already checked NTP on every
+  node — all offsets are under half a second. The errors appeared in the first minute
+  after rollout completion. {DS}
+
+  '
+focal_diagnostic_feature: 'The sidecar error is ''x509: certificate signed by unknown
+  authority'' — a trust-chain failure that clock skew cannot produce.
+
+  '
+low_diagnostic_proposition: 'Past cert errors in this environment have always been
+  caused by clock skew.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Investigate the cert-manager configuration change in the deploy: the
+  ''x509: certificate signed by unknown authority'' error indicates the sidecars cannot
+  verify the CA chain, which means the new configuration is likely missing or corrupted
+  in the CA bundle or trust store update. Review what changed in the cert-manager
+  ConfigMap or Secret during this rollout.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Clock skew is not the issue — NTP confirms sub-second
+  offsets across all nodes, and the ''certificate signed by unknown authority'' error
+  is a trust-chain failure that clock skew cannot produce. The correct focus is the
+  cert-manager configuration change in the deploy, not NTP drift.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Clock skew is not the issue — NTP confirms sub-second offsets across all
+      nodes, and the ''certificate signed by unknown authority'' error is a trust-chain
+      failure that clock skew cannot produce. The correct focus is the cert-manager
+      configuration change in the deploy, not NTP drift.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Clock skew is not the issue — NTP confirms sub-second offsets across all
+      nodes, and the ''certificate signed by unknown authority'' error is a trust-chain
+      failure that clock skew cannot produce. The correct focus is the cert-manager
+      configuration change in the deploy, not NTP drift.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Investigate the cert-manager configuration change in the deploy: the ''x509:
+      certificate signed by unknown authority'' error indicates the sidecars cannot
+      verify the CA chain, which means the new configuration is likely missing or
+      corrupted in the CA bundle or trust store update. Review what changed in the
+      cert-manager ConfigMap or Secret during this rollout.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Investigate the cert-manager configuration change in the deploy: the ''x509:
+      certificate signed by unknown authority'' error indicates the sidecars cannot
+      verify the CA chain, which means the new configuration is likely missing or
+      corrupted in the CA bundle or trust store update. Review what changed in the
+      cert-manager ConfigMap or Secret during this rollout.
+
+      '
+variants:
+  HL:
+    distractor: I've been the on-call engineer here for three full years now, and
+      every mTLS cert error I've personally seen has eventually traced back to clock
+      skew.
+    diagnosticity: low
+    salience: high
+    proposition: 'Past cert errors in this environment have always been caused by
+      clock skew.
+
+      '
+    salience_source: 'A: source credibility (three years of on-call experience in
+      this cluster); C: confident assertion (''every...has traced back''). T6 personal-history
+      framing grounded in institutional tenure.
+
+      '
+    why_plausible: 'Clock skew is a well-known real cause of TLS certificate errors,
+      and the engineer''s multi-year pattern claim is exactly the kind of institutional
+      knowledge a busy responder would defer to under time pressure.
+
+      '
+    why_irrelevant: 'Clock skew produces time-validity errors (''certificate not yet
+      valid'' or ''certificate has expired''), not trust-chain errors (''unknown authority'').
+      Furthermore, NTP confirms all nodes are within half a second — the clock-skew
+      causal pathway is structurally closed by both the error type and the NTP check.
+
+      '
+  LL:
+    distractor: 'In my experience, cert errors like this have previously been caused
+      by clock skew.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: 'Past cert errors in this environment have always been caused by
+      clock skew.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'Checking the sidecar logs, every failed handshake shows ''x509: certificate
+      signed by unknown authority'' — a trust-chain error, not a time-validity error.
+      That error type means the client cannot find a valid CA to verify the server
+      certificate against.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'The sidecar error is ''x509: certificate signed by unknown authority''
+      — a trust-chain failure that clock skew cannot produce.
+
+      '
+    salience_source: 'B: clean technical narrative with precise log quote; C: confident
+      assertion (''every failed handshake shows''); D: concrete log evidence (''x509:
+      certificate signed by unknown authority'') with mechanism explanation.
+
+      '
+  LH:
+    distractor: 'The sidecar error is ''x509: certificate signed by unknown authority'',
+      indicating a CA trust problem.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'The sidecar error is ''x509: certificate signed by unknown authority''
+      — a trust-chain failure that clock skew cannot produce.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: clock skew / NTP drift
+  description: 'The hypothesis that the mTLS failures are caused by time synchronisation
+    drift between nodes, as has occurred in past incidents in this environment. This
+    is the on-call engineer''s first instinct based on personal incident history.
+
+    '
+plausible_alternative_directions:
+- label: wrong certificate mounted
+  description: 'The deploy misconfigured the cert Secret reference or volume mount
+    path, causing sidecars to load a stale or wrong certificate that does not match
+    the expected CA.
+
+    '
+- label: SAN mismatch
+  description: 'The new cert-manager configuration issued certificates with Subject
+    Alternative Names that do not include the current service hostnames or IP addresses,
+    causing peer verification to fail.
+
+    '
+- label: stale CRL or OCSP endpoint
+  description: 'The updated cert-manager config points to a certificate revocation
+    endpoint that is unreachable or returns an error, causing the TLS stack to reject
+    the certificate as unverifiable.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - The speaker has prior personal experience with cert errors of this type.
+  - Those prior cert errors were caused by clock skew.
+  hl_salience_dimensions:
+    source_credibility: Three years of on-call experience in this specific cluster.
+    narrative_coherence: Clean professional register, single declarative statement
+      of institutional pattern.
+    confident_assertion: '''every mTLS cert error we''ve ever seen...has traced back''
+      — universal past-tense claim.'
+    concrete_detail: N/A — environment anchor ('in this cluster') removed to preserve
+      LL parity; credibility carried by tenure claim alone.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 26
+  ll_word_count: 14
+  notes: 'REPAIR (revision 2, qc leak p1 2026-06-11):
+
+    Removed ''in this cluster'' — QC verdict flagged this as an environment anchor
+
+    absent from LL, which would let a smart responder weight the distractor more
+
+    heavily because the specific cluster has a demonstrated history (case-content
+
+    leak, category: other_case_content).
+
+    Removed ''This feels like the same pattern again.'' — QC verdict flagged this
+    as
+
+    a direct case-referential inference (applies historical pattern to the current
+
+    incident) not present in LL, and as hedging_language (''feels like''). Removing
+
+    the sentence leaves the T6 personal-history claim intact without asserting a
+
+    case-level match.
+
+    Salience_source concrete_detail updated to N/A since the environment anchor
+
+    was the only D-dimension element; source credibility (dimension A) and
+
+    confident assertion (dimension C) remain sufficient for HL salience.
+
+    Remaining HL = 23 words; ratio 23/14 = 1.6, within 4:1 limit.
+
+    No tunable values, effort descriptors, severity claims, sensory details, or
+
+    rambling markers present. All ll_atomic_claims still covered by HL.
+
+
+    rev3 2026-06-11: HL hand-repaired per QC r2 verdict (orchestrator edit); word
+    count 25.
+
+    rev4 2026-06-11: effort-descriptor strip per QC r3.
+
+    rev5 2026-06-11: first-person scope per QC r4 (collective ''we''ve seen'' -> ''I''ve
+    personally seen'').'
+causal_audit:
+  steelman: 'Clock skew is a genuine and common root cause of mTLS certificate validation
+
+    failures. When there is significant time drift between a client and server node,
+
+    TLS handshake validation can fail because the verifying party''s clock places
+    the
+
+    certificate''s validity window (notBefore / notAfter) outside the current time.
+
+    In a Kubernetes cluster, NTP misconfiguration after a node restart or a VM
+
+    live-migration event could cause sudden clock drift. A cert-manager configuration
+
+    update might coincidentally coincide with such an event. Furthermore, if the
+
+    cert-manager update triggered a pod restart that exposed an existing clock-drift
+
+    problem that only manifests on fresh TLS session establishment (rather than
+
+    session resumption), the timing correlation would be exact. A senior SRE would
+
+    absolutely put ''check NTP offsets on all nodes'' on their runbook for any cert
+
+    failure. The engineer''s three-year history of seeing clock skew as the culprit
+
+    is plausible institutional knowledge that gives this hypothesis real weight.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states ''I''ve already checked NTP on every node
+    — all offsets are under half a second'', which directly rules out the clock-skew
+    time-drift mechanism. Additionally, the focal feature specifies the error is ''x509:
+    certificate signed by unknown authority'' — a trust-chain error structurally distinct
+    from the time-validity errors (certificate not yet valid / certificate has expired)
+    that clock skew produces. Both the empirical NTP check and the error type independently
+    close the clock-skew causal pathway.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 5
+  topic_brief: 'After a routine deploy, a service mesh starts throwing mTLS certificate
+    errors. The on-call engineer: every cert error we have ever had was clock skew.
+    Focal evidence shows a different mechanism this time.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: qc leak r2 2026-06-11 (orchestrator hand-edit)
+  generator: generator_B

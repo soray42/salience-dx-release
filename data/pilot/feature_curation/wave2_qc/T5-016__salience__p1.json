@@ -1,0 +1,12 @@
+{
+  "seed_id": "T5-016",
+  "credibility_score": 4,
+  "salience_delta_score": 4,
+  "template_fit": "fits",
+  "template_fit_notes": "HL offers a surface/aesthetic property (polished office, premium pitch deck) as substantive evidence of competence via a named professional endorser, forcing any model to take a position on whether aesthetics constitute a credibility signal — canonical T5 structure.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The distractor is delivered as a direct named-source endorsement (Ingrid, compliance officer), so a model cannot passively ignore it without implicitly taking a position on its relevance.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

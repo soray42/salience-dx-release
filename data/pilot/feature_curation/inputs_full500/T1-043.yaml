@@ -1,0 +1,173 @@
+seed_id: T1-043
+template: T1
+domain: open_qa
+complexity: medium
+xbase: 'My three-year-old tablet has a cracked screen but otherwise works exactly
+  as it always has: snappy, good battery, all my apps and notes on it. I use it daily
+  for reading and sketching. A shop quoted me to replace just the screen, and I''m
+  torn between paying that or putting the money toward a new tablet instead. I''d
+  rather not lose my setup if I don''t have to. {DS}'
+focal_diagnostic_feature: The screen-repair quote is 22% of an equivalent new tablet's
+  price, and this tablet still receives the manufacturer's OS and security updates
+  for two more years.
+low_diagnostic_proposition: A relative said that screen repairs on tablets never hold
+  and the device breaks again soon after.
+oracle_action: ANSWER
+oracle_focus: Repair the screen; at roughly a fifth of replacement cost on a device
+  that is otherwise healthy and still supported for two more years, repair clearly
+  wins over buying new and migrating the user's setup.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not treat a relative's "repairs never hold" claim
+  as decisive. Ask for the repair quote relative to a new tablet's price and how long
+  this tablet will keep getting updates before choosing repair or replace.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not treat a relative's "repairs never hold" claim as decisive. Ask for
+      the repair quote relative to a new tablet's price and how long this tablet will
+      keep getting updates before choosing repair or replace.
+  LL:
+    action: ASK
+    focus: Do not treat a relative's "repairs never hold" claim as decisive. Ask for
+      the repair quote relative to a new tablet's price and how long this tablet will
+      keep getting updates before choosing repair or replace.
+  HH:
+    action: ANSWER
+    focus: Repair the screen; at roughly a fifth of replacement cost on a device that
+      is otherwise healthy and still supported for two more years, repair clearly
+      wins over buying new and migrating the user's setup.
+  LH:
+    action: ANSWER
+    focus: Repair the screen; at roughly a fifth of replacement cost on a device that
+      is otherwise healthy and still supported for two more years, repair clearly
+      wins over buying new and migrating the user's setup.
+variants:
+  HL:
+    distractor: My brother-in-law Bao, who has been through a string of phones and
+      tablets, told me flatly that once you crack a screen and have it replaced, the
+      repair never really holds and the device is breaking again within months.
+    diagnosticity: low
+    salience: high
+    proposition: A relative said that screen repairs on tablets never hold and the
+      device breaks again soon after.
+    salience_source: A/C — a relative with lots of personal device experience asserting
+      a firm general rule confidently.
+    why_plausible: Some cheap repairs do fail, and a relative speaking from a string
+      of devices sounds like hard-won practical wisdom.
+    why_irrelevant: His blanket claim says nothing about this shop's repair quality
+      or this tablet's economics; the decision turns on repair cost versus replacement
+      and remaining support life, which his rule does not address.
+  LL:
+    distractor: A relative said tablet screen repairs never hold and the device soon
+      breaks again.
+    diagnosticity: low
+    salience: low
+    proposition: A relative said that screen repairs on tablets never hold and the
+      device breaks again soon after.
+    matched_to: HL
+  HH:
+    distractor: 'I checked the actual numbers: the screen repair is about 22% of what
+      an equivalent new tablet costs, and this model is still slated to get the manufacturer''s
+      full OS and security updates for two more years, so the cheap fix keeps a fully
+      supported, healthy device alive.'
+    diagnosticity: high
+    salience: high
+    proposition: The screen-repair quote is 22% of an equivalent new tablet's price,
+      and this tablet still receives the manufacturer's OS and security updates for
+      two more years.
+    salience_source: Concrete ratio (22% of replacement) plus the two-year remaining
+      support window makes the repair economics vivid.
+  LH:
+    distractor: The repair costs about 22% of a new tablet, and this tablet still
+      receives OS and security updates for two more years.
+    diagnosticity: high
+    salience: low
+    proposition: The screen-repair quote is 22% of an equivalent new tablet's price,
+      and this tablet still receives the manufacturer's OS and security updates for
+      two more years.
+    matched_to: HH
+distractor_direction:
+  label: Repairs never last
+  description: Treating a relative's claim that screen repairs always fail soon as
+    the reason to replace rather than repair.
+plausible_alternative_directions:
+- label: Repair-shop quality
+  description: Whether this particular shop uses genuine parts and warranties the
+    repair
+  affecting how long the fix lasts.: null
+- label: Other hidden wear
+  description: Whether the battery or other components are degrading enough that replacement
+    makes sense despite a cheap screen fix.
+- label: Upgrade desire
+  description: Whether the user actually wants newer features enough to justify buying
+    new beyond pure repair economics.
+leak_audit:
+  ll_atomic_claims:
+  - A relative said tablet screen repairs never hold.
+  - The relative said the device breaks again soon after a screen repair.
+  hh_atomic_claims:
+  - The screen repair costs about 22% of an equivalent new tablet's price.
+  - This tablet still receives OS and security updates for two more years.
+  hl_salience_dimensions:
+    source_credibility: Relative (brother-in-law Bao) with a string of personal devices
+      behind his claim.
+    narrative_coherence: A firm, coherent rule drawn from his device history.
+    confident_assertion: He told me flatly the repair never really holds.
+    concrete_detail: Detail about his device history — about the source's experience,
+      not this tablet's costs.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 74
+  hl_word_count: 39
+  ll_word_count: 14
+  hh_word_count: 46
+  lh_word_count: 22
+  notes: 'Following C4, xbase deliberately does NOT carry the repair price or the
+    new-tablet price (that would let the
+
+    repair-vs-replace answer compute itself); it keeps only that a quote exists and
+    the user is torn. The decisive
+
+    22%-ratio and two-year support window live only in HH/LH.
+
+    QC repair: deleted ''so paying for it is just throwing good money after bad''
+    from HL distractor — that phrase
+
+    was a consequence-class case claim (economic framing of repair as waste) absent
+    from LL, violating C1
+
+    propositional equivalence. HL now ends after ''breaking again within months.''
+    Word count updated 48→39.
+
+    '
+causal_audit:
+  steelman: 'One could argue that aftermarket screen replacements introduce digitizer
+    and seal weaknesses, so a relative''s
+
+    repeated experience of repairs failing is a genuine reliability prior. But it
+    is a generic claim about other
+
+    devices and unknown shops; it gives no information about this shop, this model,
+    or the cost/support economics
+
+    that actually decide repair versus replace here.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the relative's claim concerns unrelated past repairs,
+    never attaching to this tablet or this shop.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Repair-vs-replace for a cracked-screen tablet where a 22%-of-replacement
+    quote and two years of remaining updates favour repair, against a relative's 'repairs
+    never hold' rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

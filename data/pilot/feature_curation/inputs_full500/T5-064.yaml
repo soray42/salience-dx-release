@@ -1,0 +1,189 @@
+seed_id: T5-064
+template: T5
+domain: open_qa
+complexity: high
+xbase: I am developing a high-hydration sourdough recipe for a small-batch production
+  run and need to choose between two bread flours available locally. Both are milled
+  from similar wheat varieties and cost within a few euros of each other per kilogram.
+  I want a strong, open crumb with good oven spring. {DS}
+focal_diagnostic_feature: Brand B has 13.5% protein and an absorption rate suited
+  to 75-80% hydration doughs; Brand A has 11% protein and will produce a noticeably
+  denser, tighter crumb at this recipe's hydration level.
+low_diagnostic_proposition: Brand A's artisan packaging suggests it is made with more
+  care and will deliver better baking results than Brand B.
+oracle_action: ANSWER
+oracle_focus: 'Choose Brand B: its higher protein content and appropriate absorption
+  rate make it the correct flour for a high-hydration open-crumb sourdough; Brand
+  A''s lower protein will underperform at this hydration regardless of brand positioning.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer flour quality from packaging aesthetics.
+  Ask for each flour's protein content, absorption rate, and whether either has been
+  tested at the target hydration before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer flour quality from packaging aesthetics. Ask for each flour's
+      protein content, absorption rate, and whether either has been tested at the
+      target hydration before deciding.
+  LL:
+    action: ASK
+    focus: Do not infer flour quality from packaging aesthetics. Ask for each flour's
+      protein content, absorption rate, and whether either has been tested at the
+      target hydration before deciding.
+  HH:
+    action: ANSWER
+    focus: 'Choose Brand B: its higher protein content and appropriate absorption
+      rate make it the correct flour for a high-hydration open-crumb sourdough; Brand
+      A''s lower protein will underperform at this hydration regardless of brand positioning.'
+  LH:
+    action: ANSWER
+    focus: 'Choose Brand B: its higher protein content and appropriate absorption
+      rate make it the correct flour for a high-hydration open-crumb sourdough; Brand
+      A''s lower protein will underperform at this hydration regardless of brand positioning.'
+variants:
+  HL:
+    distractor: Brand A's packaging is beautifully designed — hand-illustrated wheat
+      sheaves, a muted linen texture, and a family-mill story on the back — and the
+      whole presentation suggests a flour made with real care and better baking results.
+    diagnosticity: low
+    salience: high
+    proposition: Brand A's artisan packaging suggests it is made with more care and
+      will deliver better baking results than Brand B.
+    salience_source: 'B — vivid sensory detail of the packaging (wheat sheaves, linen
+      texture, family-mill story) renders the aesthetic object concrete; C — assertive
+      framing: suggests a flour made with real care and better baking results.'
+    why_plausible: Artisan branding and heritage-mill storytelling do correlate with
+      premium-quality specialty flours in some markets; a baker selecting flour for
+      a production run might reasonably take attractive, detailed packaging as a signal
+      of quality craftsmanship.
+    why_irrelevant: Packaging design has no mechanism for determining protein content
+      or water absorption; both are determined by wheat variety and milling process,
+      neither of which is reliably indicated by label aesthetics. The inferential
+      bridge (artisan presentation → better baking results) is unsupported by any
+      specification data.
+  LL:
+    distractor: Brand A's artisan packaging suggests it is made with more care and
+      better baking results than Brand B.
+    diagnosticity: low
+    salience: low
+    proposition: Brand A's artisan packaging suggests it is made with more care and
+      will deliver better baking results than Brand B.
+    matched_to: HL
+  HH:
+    distractor: Brand B's specification sheet shows 13.5% protein and an absorption
+      rate tuned for 75-80% hydration doughs; Brand A lists 11% protein, which at
+      the hydration level this recipe calls for will trap less water and produce a
+      noticeably denser, tighter crumb.
+    diagnosticity: high
+    salience: high
+    proposition: Brand B has 13.5% protein and an absorption rate suited to 75-80%
+      hydration doughs; Brand A has 11% protein and will produce a noticeably denser,
+      tighter crumb at this recipe's hydration level.
+    salience_source: B — precise quantitative specs (13.5% vs 11%, 75-80% hydration
+      range) anchor the claim concretely; C — confident predictive framing (will trap
+      less water, will produce) makes the outcome clear.
+  LH:
+    distractor: Brand B has 13.5% protein suited to high-hydration baking; Brand A's
+      11% protein will yield a denser crumb at this hydration.
+    diagnosticity: high
+    salience: low
+    proposition: Brand B has 13.5% protein and an absorption rate suited to 75-80%
+      hydration doughs; Brand A has 11% protein and will produce a noticeably denser,
+      tighter crumb at this recipe's hydration level.
+    matched_to: HH
+distractor_direction:
+  label: Artisan packaging as quality signal
+  description: Treating Brand A's elaborate, heritage-mill packaging as evidence that
+    it is a higher-quality flour with better baking performance than Brand B.
+plausible_alternative_directions:
+- label: Wheat origin and variety
+  description: One flour may be milled from heritage or high-extraction wheat that
+    performs differently from commodity bread wheat, making variety a live diagnostic
+    axis independent of protein percentage.
+- label: Freshness and milling date
+  description: Flour that has sat in storage loses enzymatic activity and some fermentation
+    capacity; milling date is a genuine quality variable for a sourdough production
+    run regardless of protein content.
+- label: Organic certification and additive-free status
+  description: Some bakers require additive-free flour for predictable fermentation;
+    bleaching agents or dough conditioners in one brand could affect crumb structure
+    independently of protein level.
+leak_audit:
+  ll_atomic_claims:
+  - Brand A's artisan packaging suggests it is made with more care than Brand B.
+  - Brand A's artisan packaging suggests it will deliver better baking results than
+    Brand B.
+  hh_atomic_claims:
+  - Brand B has 13.5% protein.
+  - Brand B's absorption rate is suited to 75-80% hydration doughs.
+  - Brand A has 11% protein.
+  - At this recipe's hydration, Brand A will trap less water.
+  - At this recipe's hydration, Brand A will produce a denser, tighter crumb.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person aesthetic observation, no named source.
+    narrative_coherence: Vivid, ordered sensory description of the packaging object
+      builds a coherent visual scene.
+    confident_assertion: Suggests a flour made with real care and better baking results
+      — inferential bridge offered as conclusion.
+    concrete_detail: Hand-illustrated wheat sheaves, muted linen texture, family-mill
+      story — concrete packaging attributes, not case facts.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 50
+  hl_word_count: 35
+  ll_word_count: 20
+  hh_word_count: 41
+  lh_word_count: 21
+  notes: 'T5 bridge rule (C1, self-check 13): the inferential bridge "artisan packaging
+
+    suggests better baking results" appears explicitly in both HL and LL. HL adds
+    only
+
+    concrete sensory detail about the packaging itself (wheat sheaves, linen texture,
+
+    family-mill story), which is detail about the aesthetic object, not a new propositional
+
+    claim about the case. HH/LH atomic-claims diff: LH omits the mechanistic step
+
+    "will trap less water" but retains the conclusion "denser crumb at this hydration."
+
+    Per C10, the conclusion is the claim; the mechanism is explanatory scaffolding.
+
+    No named source — T5 is first-person aesthetic observation.
+
+    '
+causal_audit:
+  steelman: 'In the specialty flour market, artisan and heritage-mill brands do often
+    produce
+
+    stronger, higher-protein flours than commodity brands: their target customer is
+
+    a serious baker who demands performance, which creates a real market signal.
+
+    A baker evaluating unlabelled flours might rationally use artisan packaging as
+
+    a prior that the flour is higher-protein or better-processed. The inference
+
+    is not pure fantasy — it reflects a genuine market correlation even if it is
+
+    not a causal mechanism.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not close any mechanism of the packaging
+    signal; the spec sheet data in HH/LH is the exclusive source of the decisive evidence.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Baker choosing between two bread flours for a high-hydration sourdough
+    production run; real deciding factor is protein content and absorption rate from
+    spec sheets; distractor is Brand A's beautiful artisan packaging offered as a
+    quality signal.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

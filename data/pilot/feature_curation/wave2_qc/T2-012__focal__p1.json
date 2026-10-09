@@ -1,0 +1,13 @@
+{
+  "seed_id": "T2-012",
+  "my_own_diagnosis": "Given xbase + focal_diagnostic_feature, the confirmed change of Wi-Fi being switched on with background auto-sync fully explains a ~10x battery life reduction; I would advise disabling Wi-Fi or background sync and would dismiss the lamp hypothesis because the device has no electrical or physical connection to it.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature supplies a confirmed before/after change (Wi-Fi was off, now on with auto-sync) that unambiguously points to the correct direction and rules out the distractor.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cells correctly map to the ASK/lamp-rejection oracle; HH/LH cells correctly map to the ANSWER/Wi-Fi-fix oracle; low_diagnostic_oracle_focus rejects the lamp without adopting it.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

@@ -1,0 +1,88 @@
+seed_id: T2-004
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: My MacBook's external 4K monitor disconnects and reconnects every few minutes.
+  The monitor itself powers on normally, and the problem is intermittent rather than
+  a complete failure. The HDMI cable is a couple of years old. {DS}
+focal_diagnostic_feature: Bending the HDMI cable near the monitor end reproduces the
+  flicker, and the same monitor works with another cable.
+low_diagnostic_proposition: The issue began after a thunderstorm passed through the
+  area.
+oracle_action: ANSWER
+oracle_focus: Replace the HDMI cable; the physical bend test and known-good cable
+  comparison isolate the fault.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume storm damage from timing alone. Ask whether
+  moving the cable reproduces the fault and whether a known-good cable works.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume storm damage from timing alone. Ask whether moving the cable
+      reproduces the fault and whether a known-good cable works.
+  LL:
+    action: ASK
+    focus: Do not assume storm damage from timing alone. Ask whether moving the cable
+      reproduces the fault and whether a known-good cable works.
+  HH:
+    action: ANSWER
+    focus: Replace the HDMI cable; the physical bend test and known-good cable comparison
+      isolate the fault.
+  LH:
+    action: ANSWER
+    focus: Replace the HDMI cable; the physical bend test and known-good cable comparison
+      isolate the fault.
+variants:
+  HL:
+    distractor: This started right after a thunderstorm that shook the windows and
+      cut the lights for half a second.
+    diagnosticity: low
+    salience: high
+    proposition: The issue began after a thunderstorm passed through the area.
+    salience_source: dramatic weather event, immediate timing
+    why_plausible: Storms are familiar explanations for electronics problems.
+    why_irrelevant: Direct mechanical reproduction at the cable is stronger than a
+      coincidental weather event.
+  LL:
+    distractor: The issue began around the time of severe weather in the area.
+    diagnosticity: low
+    salience: low
+    proposition: The issue began after a thunderstorm passed through the area.
+    matched_to: HL
+  HH:
+    distractor: If I bend the cable slightly near the monitor connector, the screen
+      flickers immediately; my colleague's cable on the same monitor works perfectly.
+    diagnosticity: high
+    salience: high
+    proposition: Bending the HDMI cable near the monitor end reproduces the flicker,
+      and the same monitor works with another cable.
+    salience_source: physical reproduction plus known-good substitution
+  LH:
+    distractor: Physical manipulation of the cable reproduces the flicker, and the
+      monitor works normally with a different cable.
+    diagnosticity: high
+    salience: low
+    proposition: Bending the HDMI cable near the monitor end reproduces the flicker,
+      and the same monitor works with another cable.
+    matched_to: HH
+distractor_direction:
+  label: Storm-related damage
+  description: Investigating whether nearby severe weather, power fluctuation, or
+    surge damage caused the monitor disconnects.
+plausible_alternative_directions:
+- label: Monitor port fault
+  description: The monitor input port is loose or intermittently failing independent
+    of the cable.
+- label: MacBook display settings
+  description: Resolution, refresh-rate, GPU, or sleep settings on the MacBook are
+    causing intermittent display negotiation.
+- label: Adapter or dock fault
+  description: An intermediate adapter, dongle, or dock is failing intermittently.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

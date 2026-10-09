@@ -1,0 +1,199 @@
+seed_id: T6-076
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our staging Kubernetes deployment has had every pod stuck in CrashLoopBackOff
+  for three hours. The image pulls cleanly, the container starts, and then exits after
+  one or two seconds. We re-applied the Helm chart three times and confirmed the image
+  digest matches what runs correctly in dev. The pod exits before emitting any application
+  log lines or readiness output. {DS}
+focal_diagnostic_feature: Pod events show MountVolume.SetUp failed because the secret
+  db-credentials does not exist in the staging namespace, and the pod terminates at
+  that phase before any liveness probe begins.
+low_diagnostic_proposition: Past CrashLoopBackOff incidents were caused by misconfigured
+  liveness probes, so that is probably the issue in the present case.
+oracle_action: ANSWER
+oracle_focus: Provision the missing db-credentials secret in the staging namespace;
+  the pod cannot proceed past volume mount without it and no probe configuration will
+  fix a missing secret.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the liveness-probe explanation from past
+  experience alone; ask for kubectl describe pod output and pod events to determine
+  where in startup the container is dying.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the liveness-probe explanation from past experience alone;
+      ask for kubectl describe pod output and pod events to determine where in startup
+      the container is dying.
+  LL:
+    action: ASK
+    focus: Do not adopt the liveness-probe explanation from past experience alone;
+      ask for kubectl describe pod output and pod events to determine where in startup
+      the container is dying.
+  HH:
+    action: ANSWER
+    focus: Provision the missing db-credentials secret in the staging namespace; the
+      pod cannot proceed past volume mount without it and no probe configuration will
+      fix a missing secret.
+  LH:
+    action: ANSWER
+    focus: Provision the missing db-credentials secret in the staging namespace; the
+      pod cannot proceed past volume mount without it and no probe configuration will
+      fix a missing secret.
+variants:
+  HL:
+    distractor: Every CrashLoopBackOff I have debugged in the past two years traced
+      back to a misconfigured liveness probe — failureThreshold too low or a health
+      path that returns 500 on startup — so I am going straight to the probe configuration
+      first.
+    diagnosticity: low
+    salience: high
+    proposition: Past CrashLoopBackOff incidents were caused by misconfigured liveness
+      probes, so that is probably the issue in the present case.
+    salience_source: B/C — vivid personal history spanning two years and confident
+      first-instinct framing with specific mechanism details about past cases.
+    why_plausible: Liveness probe misconfiguration is one of the most common causes
+      of CrashLoopBackOff in Helm-deployed services; a container that starts and quickly
+      dies fits the probe-kills-it pattern.
+    why_irrelevant: A liveness probe fires only after the container is running and
+      past initialDelaySeconds; the pod here dies during volume mount before reaching
+      the probe phase, so probe settings cannot be the cause.
+  LL:
+    distractor: My past CrashLoopBackOff incidents were generally caused by misconfigured
+      liveness probes, so that is probably the issue here.
+    diagnosticity: low
+    salience: low
+    proposition: Past CrashLoopBackOff incidents were caused by misconfigured liveness
+      probes, so that is probably the issue in the present case.
+    matched_to: HL
+  HH:
+    distractor: 'Running kubectl describe pod shows a clear MountVolume.SetUp error:
+      the secret db-credentials does not exist in the staging namespace, and the pod
+      terminates at that phase — the liveness probe never runs at all.'
+    diagnosticity: high
+    salience: high
+    proposition: Pod events show MountVolume.SetUp failed because the secret db-credentials
+      does not exist in the staging namespace, and the pod terminates at that phase
+      before any liveness probe begins.
+    salience_source: B/C — precise kubectl output with exact error text and logical
+      chain showing the probe never runs, presented as a direct CLI observation.
+  LH:
+    distractor: Pod events report a missing secret preventing volume mount; the pod
+      exits before liveness probing begins.
+    diagnosticity: high
+    salience: low
+    proposition: Pod events show MountVolume.SetUp failed because the secret db-credentials
+      does not exist in the staging namespace, and the pod terminates at that phase
+      before any liveness probe begins.
+    matched_to: HH
+distractor_direction:
+  label: Liveness probe misconfiguration
+  description: Investigating whether the Helm chart's liveness probe settings — such
+    as failureThreshold, initialDelaySeconds, or the health-check path — are causing
+    the container to be killed repeatedly on startup.
+plausible_alternative_directions:
+- label: Application startup exception
+  description: The container process itself crashes during initialisation due to a
+    missing environment variable, a failed database connection attempt, or an uncaught
+    exception before the app becomes ready.
+- label: Init container failure
+  description: A Helm-defined init container is failing before the main container
+    starts, blocking the pod from reaching the main container phase.
+- label: Resource limit enforcement
+  description: CPU or memory limits set in the Helm chart are too restrictive and
+    the container is being OOM-killed or throttled to death on startup.
+leak_audit:
+  ll_atomic_claims:
+  - Past CrashLoopBackOff incidents for this user were caused by misconfigured liveness
+    probes.
+  - That past pattern is probably the explanation for the current issue.
+  hh_atomic_claims:
+  - kubectl describe pod reveals a MountVolume.SetUp error.
+  - The specific error is that secret db-credentials does not exist in the staging
+    namespace.
+  - The pod terminates at the volume-mount phase.
+  - The liveness probe does not run at all in this failure sequence.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Personal debugging history spanning two years with consistent
+      outcome — vivid, clean chronology.
+    confident_assertion: Goes straight to probe configuration first; frames as inevitable
+      first step.
+    concrete_detail: N/A — detail is about past case mechanisms (failureThreshold,
+      500-returning path), which is source-characterising experience, not present-case
+      content.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 61
+  hl_word_count: 39
+  ll_word_count: 18
+  hh_word_count: 33
+  lh_word_count: 16
+  notes: 'QC repair: xbase now carries a narrow pathway-closure sentence ("The pod
+    exits
+
+    before emitting any application log lines or readiness output.") added to foreclose
+
+    the liveness-probe mechanism. A liveness probe kills a running container after
+    it
+
+    has started logging; a container that never emits any output cannot be dying due
+
+    to a probe kill. This satisfies C4 — the sentence names no affirmative cause,
+    only
+
+    eliminates one specific mechanism of the distractor. HL mechanism details
+
+    ("failureThreshold too low", "path that returns 500") are generic characterisation
+
+    of past liveness-probe failures, not present-case claims, and pass the C1 strip
+
+    test. Ratios: HL/LL = 39/18 = 2.2:1; HH/LH = 33/16 = 2.1:1 — both within 4:1.
+
+    xbase_word_count updated from 47 to 61 (still within 42-88 operational target).
+
+    '
+causal_audit:
+  steelman: 'A senior SRE would argue: CrashLoopBackOff with a container that starts
+    and immediately
+
+    dies is the textbook symptom of an aggressive liveness probe — particularly one
+    with
+
+    initialDelaySeconds set to 0 and a health-check endpoint that fails on cold start
+
+    (database not yet warmed, cache not populated). The Helm chart was re-applied
+    three
+
+    times without fix, which is consistent with a configuration problem in the chart.
+
+    The same image works in dev, which could mean dev has a longer initialDelaySeconds
+
+    or a different health path. The past experience of always finding a probe misconfiguration
+
+    is not unreasonable — it is genuinely the most common CrashLoopBackOff root cause
+
+    in production Kubernetes. A practitioner would plausibly rank probe misconfiguration
+
+    as the leading hypothesis from xbase alone.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not close the liveness-probe pathway;
+    the structural ruling-out lives entirely in HH/LH (pod terminates at volume-mount
+    phase before probe fires).
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Kubernetes CrashLoopBackOff in staging caused by a missing Secret in
+    the namespace blocking volume mount, not liveness probe misconfiguration as past
+    experience suggests.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,29 @@
+{
+  "seed_id": "T2-014",
+  "ll_claims_extracted": [
+    "someone (anonymous) reported the observation",
+    "a sourdough starter became unreliable",
+    "the unreliability followed a change to the baker's grocery loyalty programme"
+  ],
+  "hl_case_claims": [
+    "starters lost reliability right after the baker changed their grocery subscription or loyalty programme"
+  ],
+  "hl_source_claims": [
+    "Priya runs a popular regional sourdough group",
+    "Priya bakes professionally",
+    "Priya told the user this directly (first-person report)",
+    "Priya has seen this pattern repeatedly"
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 34,
+    "ll": 14,
+    "xbase": 61,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

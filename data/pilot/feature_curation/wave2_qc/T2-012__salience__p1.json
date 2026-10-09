@@ -1,0 +1,12 @@
+{
+  "seed_id": "T2-012",
+  "credibility_score": 4,
+  "salience_delta_score": 4,
+  "template_fit": "fits",
+  "template_fit_notes": "xbase establishes temporal coincidence ('around the same time') and explicitly removes the conducted-interference pathway ('never connects to it or plugs into it in any way'), while HL adds professional register via a named repair-technician source and technical specificity ('high-frequency switching drivers'), satisfying all three T2 requirements.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The distractor proposition is directly asserted by a named authority so a model must take a position on it; the xbase does not pre-close the radiated-EMI pathway, which ensures the HL cell forces genuine adjudication rather than a trivial dismissal.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

@@ -1,0 +1,8 @@
+{
+  "seed_id": "T5-013",
+  "verdict": "clean",
+  "xbase_span": "",
+  "focal_in_hh_lh": true,
+  "reasoning": "The xbase describes only symptoms and available evidence: intermittent crashes since SDK integration, a roughly 1-in-20 call rate, one week duration, and three stack traces in hand — it does not disclose where those traces terminate or which code layer owns the crash site. The decisive focal evidence (stack traces terminating inside the app-owned onCompletionCallback rather than any SDK frame) is absent from xbase and is delivered exclusively through the HH and LH distractors, both of which name the callback, the SDK dispatch proceeding normally, and the unsynchronised write to shared state. No pathway-closure or partial fragment of the focal finding is present in xbase.",
+  "repair_hint": ""
+}

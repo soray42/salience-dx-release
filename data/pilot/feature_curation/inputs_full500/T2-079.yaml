@@ -1,0 +1,163 @@
+seed_id: T2-079
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our single-page app has had noticeable scroll jank and GPU memory climbing
+  past 700 MB on mid-range laptops for about a week. The main page reloads cleanly
+  and the network waterfall looks fine. We are not running any heavy canvas or video
+  elements. {DS}
+focal_diagnostic_feature: The browser DevTools Layers panel shows over 180 compositor
+  layers, each card element carrying a will-change transform declaration introduced
+  in the styling refactor.
+low_diagnostic_proposition: The performance regression began around the time of an
+  update to the error-logging dependency.
+oracle_action: ANSWER
+oracle_focus: 'Identify and remove the overly broad will-change: transform declarations
+  applied to card elements in the stylesheet refactor; audit all will-change usage
+  and restrict it to elements that genuinely animate.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect an error-logging dependency bump to GPU
+  layer promotion or scroll jank. Ask for DevTools Layers panel data, will-change
+  usage in CSS, and per-element compositor layer counts.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect an error-logging dependency bump to GPU layer promotion
+      or scroll jank. Ask for DevTools Layers panel data, will-change usage in CSS,
+      and per-element compositor layer counts.
+  LL:
+    action: ASK
+    focus: Do not connect an error-logging dependency bump to GPU layer promotion
+      or scroll jank. Ask for DevTools Layers panel data, will-change usage in CSS,
+      and per-element compositor layer counts.
+  HH:
+    action: ANSWER
+    focus: 'Identify and remove the overly broad will-change: transform declarations
+      applied to card elements in the stylesheet refactor; audit all will-change usage
+      and restrict it to elements that genuinely animate.'
+  LH:
+    action: ANSWER
+    focus: 'Identify and remove the overly broad will-change: transform declarations
+      applied to card elements in the stylesheet refactor; audit all will-change usage
+      and restrict it to elements that genuinely animate.'
+variants:
+  HL:
+    distractor: This started the same afternoon we merged the error-logging SDK update,
+      and I genuinely cannot write off the timing as coincidence no matter how many
+      times I look at it.
+    diagnosticity: low
+    salience: high
+    proposition: The performance regression began around the time of an update to
+      the error-logging dependency.
+    salience_source: B (narrative coherence — clean chronology, first-person account
+      with specific timing); C (confident assertion — 'I genuinely cannot write off
+      the timing as coincidence').
+    why_plausible: Temporal coincidence is strong and a dependency bump is a plausible
+      change event; a busy reviewer might assume the SDK added overhead.
+    why_irrelevant: An error-logging SDK intercepts JS exceptions and network events;
+      it has no code path that creates compositor layers or affects GPU memory allocation.
+  LL:
+    distractor: The issue began around the time of a dependency update to the error-logging
+      library.
+    diagnosticity: low
+    salience: low
+    proposition: The performance regression began around the time of an update to
+      the error-logging dependency.
+    matched_to: HL
+  HH:
+    distractor: 'The DevTools Layers panel shows 183 active compositor layers — every
+      product card on the page has will-change: transform in the new stylesheet, and
+      GPU memory matches the layer count almost exactly.'
+    diagnosticity: high
+    salience: high
+    proposition: The browser DevTools Layers panel shows over 180 compositor layers,
+      each card element carrying a will-change transform declaration introduced in
+      the styling refactor.
+    salience_source: Precise numeric evidence (183 layers, memory correlation), concrete
+      tool name and panel location, direct causal link between CSS declaration and
+      symptom.
+  LH:
+    distractor: 'DevTools shows 183 compositor layers; each card element has will-change:
+      transform in the refactored stylesheet; GPU memory tracks the layer count closely.'
+    diagnosticity: high
+    salience: low
+    proposition: The browser DevTools Layers panel shows over 180 compositor layers,
+      each card element carrying a will-change transform declaration introduced in
+      the styling refactor.
+    matched_to: HH
+distractor_direction:
+  label: Error-logging SDK regression
+  description: Investigating whether the error-logging dependency update introduced
+    JavaScript overhead or background activity that causes the scroll jank and elevated
+    GPU memory.
+plausible_alternative_directions:
+- label: Unvirtualised list rendering
+  description: A long unvirtualised DOM list could cause layout thrashing and memory
+    growth during scroll, independent of compositor layers.
+- label: Memory leak in event listeners
+  description: Accumulating detached DOM nodes or unremoved event listeners from the
+    page lifecycle could grow memory over time without a CSS cause.
+- label: Stale service worker cache
+  description: A cached outdated asset bundle could be serving an older build with
+    a known rendering regression that predates the current deploy.
+leak_audit:
+  ll_atomic_claims:
+  - The issue began around the time of a dependency update.
+  - The dependency updated was the error-logging library.
+  hh_atomic_claims:
+  - The DevTools Layers panel shows 183 active compositor layers.
+  - 'Every product card on the page has will-change: transform in the new stylesheet.'
+  - GPU memory matches the layer count almost exactly.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, no named third party.
+    narrative_coherence: 'Clean chronology: specific event (SDK merge), specific timing
+      (same afternoon), confident first-person recollection.'
+    confident_assertion: '"I genuinely cannot write off the timing as coincidence
+      no matter how many times I look at it" — unhedged conviction about the temporal
+      link.'
+    concrete_detail: N/A — no case-content detail added beyond LL.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 43
+  hl_word_count: 30
+  ll_word_count: 14
+  hh_word_count: 31
+  lh_word_count: 22
+  notes: 'QC repair: removed ''it was a one-line package bump'' from HL (effort_descriptor
+    / case-content leak under C1); replaced with confident-assertion framing that
+    adds no case facts. Added GPU memory claim to LH to match HH atomic claim 3 (C10
+    violation repair). HL still voices coincidence first-person per T2 recipe. No
+    case-content facts added beyond LL. The error-logging SDK has zero mechanism for
+    compositor layer creation. Pathway closure not needed in xbase — the mechanism
+    gap is structural. Distractor direction is clearly orthogonal to compositor layer
+    promotion.
+
+    '
+causal_audit:
+  steelman: 'An error-logging SDK might patch XMLHttpRequest or fetch, adding synchronous
+    wrappers that execute on every network response. If the refactored page makes
+    many API calls concurrently during scroll, SDK overhead could slow the main thread,
+    causing jank. Some SDKs also use MutationObserver to detect DOM changes, which
+    could interfere with rendering. However, none of these mechanisms create compositor
+    layers or elevate GPU memory — they operate entirely on the CPU/main thread. The
+    steelman reaches only CPU jank, not the specific GPU memory symptom described.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the steelman does not reach GPU memory or layer explosion
+    through any error-logging code path, so no xbase closure is required.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: 'SPA scroll jank and GPU memory bloat caused by overly broad will-change:
+    transform on every card element in a stylesheet refactor, coinciding with an unrelated
+    error-logging SDK bump.'
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

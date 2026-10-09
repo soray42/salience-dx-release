@@ -1,0 +1,45 @@
+{
+  "order_by_total_params": [
+    "E4B (~4B act/8B)",
+    "12B dense",
+    "26B-A4B MoE(~4B act)",
+    "31B dense"
+  ],
+  "total_sensitivity_trend": {
+    "flip_pct": [
+      23.59,
+      20.0,
+      20.84,
+      19.64
+    ],
+    "cochran_armitage": {
+      "z": -1.345,
+      "p": 0.1785
+    },
+    "logistic_trend": {
+      "beta": -0.065,
+      "LR_chi2_1": 1.809,
+      "p": 0.1787
+    },
+    "verdict": "no reliable trend"
+  },
+  "direction_trend": {
+    "isb_share_of_flips_pct": [
+      48.72,
+      60.0,
+      60.58,
+      43.88
+    ],
+    "cochran_armitage": {
+      "z": -0.468,
+      "p": 0.6395
+    },
+    "logistic_trend": {
+      "beta": 0.04,
+      "LR_chi2_1": -1.18,
+      "p": 1.0
+    },
+    "verdict": "no reliable trend"
+  },
+  "note": "Cochran-Armitage and logistic likelihood-ratio trend tests against size rank."
+}

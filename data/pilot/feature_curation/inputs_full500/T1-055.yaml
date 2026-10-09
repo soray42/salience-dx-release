@@ -1,0 +1,175 @@
+seed_id: T1-055
+template: T1
+domain: open_qa
+complexity: medium
+xbase: I have two flats I could move into next month, both within my budget and in
+  neighbourhoods I like. The leases are the same length and the rents are close enough
+  that money is not the deciding factor. One is a ground floor unit and one is on
+  the fourth floor of a building with no lift. I work from home and carry very little
+  in and out, so I am mainly trying to figure out which one fits my actual life. {DS}
+focal_diagnostic_feature: The user uses a wheelchair and the fourth-floor unit is
+  reachable only by stairs, while the ground-floor unit is step-free throughout.
+low_diagnostic_proposition: An acquaintance chose a ground-floor flat and disliked
+  it because of street noise and reduced privacy.
+oracle_action: ANSWER
+oracle_focus: Choose the ground-floor step-free unit; the user uses a wheelchair and
+  the fourth-floor flat is reachable only by stairs, which makes it inaccessible regardless
+  of any noise or privacy trade-offs.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one acquaintance's ground-floor regret decide
+  this. Ask about the user's own mobility and access needs before weighing noise or
+  privacy.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one acquaintance's ground-floor regret decide this. Ask about
+      the user's own mobility and access needs before weighing noise or privacy.
+  LL:
+    action: ASK
+    focus: Do not let one acquaintance's ground-floor regret decide this. Ask about
+      the user's own mobility and access needs before weighing noise or privacy.
+  HH:
+    action: ANSWER
+    focus: Choose the ground-floor step-free unit; the user uses a wheelchair and
+      the fourth-floor flat is reachable only by stairs, which makes it inaccessible
+      regardless of any noise or privacy trade-offs.
+  LH:
+    action: ANSWER
+    focus: Choose the ground-floor step-free unit; the user uses a wheelchair and
+      the fourth-floor flat is reachable only by stairs, which makes it inaccessible
+      regardless of any noise or privacy trade-offs.
+variants:
+  HL:
+    distractor: Kerem, a colleague who has rented all over the city, told me he took
+      a ground-floor flat once and came to hate it, because passers-by drifted past
+      his windows at all hours and he never shook the feeling that the street could
+      see straight into his living room.
+    diagnosticity: low
+    salience: high
+    proposition: An acquaintance chose a ground-floor flat and disliked it because
+      of street noise and reduced privacy.
+    salience_source: A — a named colleague with broad renting experience recounting
+      a coherent first-hand ground-floor regret.
+    why_plausible: Ground-floor flats really can suffer more street noise and overlooking,
+      so the cautionary note feels like genuine renting wisdom.
+    why_irrelevant: Noise and privacy preferences are irrelevant if the upper unit
+      is physically unreachable; the user's wheelchair access need overrides any such
+      trade-off.
+  LL:
+    distractor: Someone chose a ground-floor flat and disliked it because of street
+      noise and reduced privacy.
+    diagnosticity: low
+    salience: low
+    proposition: An acquaintance chose a ground-floor flat and disliked it because
+      of street noise and reduced privacy.
+    matched_to: HL
+  HH:
+    distractor: I use a wheelchair full time, and the fourth-floor flat can only be
+      reached by stairs with no lift in the building, so I simply could not get into
+      my own home; the ground-floor unit is step-free from the street through every
+      room.
+    diagnosticity: high
+    salience: high
+    proposition: The user uses a wheelchair and the fourth-floor unit is reachable
+      only by stairs, while the ground-floor unit is step-free throughout.
+    salience_source: The first-person disclosure of wheelchair use against the no-lift
+      fourth floor makes the access barrier vivid and decisive.
+  LH:
+    distractor: The user uses a wheelchair; the fourth-floor unit is stair-only, while
+      the ground-floor unit is step-free throughout.
+    diagnosticity: high
+    salience: low
+    proposition: The user uses a wheelchair and the fourth-floor unit is reachable
+      only by stairs, while the ground-floor unit is step-free throughout.
+    matched_to: HH
+distractor_direction:
+  label: Ground-floor noise and privacy
+  description: Treating the choice as disfavouring the ground-floor unit because ground-floor
+    flats tend to have more street noise and less privacy.
+plausible_alternative_directions:
+- label: Natural light and view
+  description: Whether the upper unit's light and outlook would meaningfully improve
+    daily comfort.
+- label: Security and entry risk
+  description: Whether ground-floor entry points raise break-in exposure worth weighing.
+leak_audit:
+  ll_atomic_claims:
+  - Someone chose a ground-floor flat.
+  - They disliked it because of street noise and reduced privacy.
+  hh_atomic_claims:
+  - The user uses a wheelchair.
+  - The fourth-floor unit is reachable only by stairs with no lift.
+  - The ground-floor unit is step-free throughout.
+  hl_salience_dimensions:
+    source_credibility: Named colleague (Kerem) with broad citywide renting experience.
+    narrative_coherence: Clean single-flat retrospective with a consistent noise-and-overlooking
+      complaint.
+    confident_assertion: States he came to hate it.
+    concrete_detail: Detail about the source (passers-by at his windows, his living-room
+      feeling) only — no fact about the user's own mobility.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 82
+  hl_word_count: 48
+  ll_word_count: 15
+  hh_word_count: 43
+  lh_word_count: 17
+  notes: 'LL carries only the chose-ground-floor and disliked-for-noise-and-privacy
+    claims; the named source, his citywide
+
+    renting history, and the overlooking detail are HL-only and about the source.
+    xbase states only that the user
+
+    works from home, carries little, and finds the flats otherwise comparable — it
+    deliberately omits the user''s
+
+    wheelchair use, so the HL/LL cells cannot resolve the choice. The decisive access
+    fact lives only in HH/LH.
+
+    xbase trimmed from 93 to 82 words to satisfy C9 hard bound (40-90); removed ''both''
+    before ''in neighbourhoods'',
+
+    ''would be happy in'' -> ''I like'', ''full time'' and ''day to day'' (stylistic
+    only, no case facts altered).
+
+    '
+causal_audit:
+  steelman: 'A relocation consultant might argue the ground-floor regret is worth
+    weighing: ground-floor units genuinely do
+
+    experience more pavement noise and passer-by overlooking, these are common sources
+    of lasting dissatisfaction,
+
+    and the colleague reports exactly that outcome from lived experience, so it could
+    be a real mark against the
+
+    ground-floor option. That reasoning holds only when both units are actually usable
+    by the occupant. The focal
+
+    fact is that the user uses a wheelchair and the fourth-floor unit is stair-only
+    with no lift, making it
+
+    physically inaccessible; once one option cannot be entered at all, comparative
+    noise and privacy preferences are
+
+    moot. The anecdote therefore has no mechanism to bear on this user''s decision.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive wheelchair-access fact is withheld from
+    xbase and lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A renter choosing between two flats where wheelchair use makes the
+    no-lift fourth floor inaccessible, overriding a colleague's ground-floor noise-and-privacy
+    regret.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

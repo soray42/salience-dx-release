@@ -1,0 +1,107 @@
+seed_id: T6-008
+template: T6
+domain: open_qa
+complexity: medium
+xbase: Я выбираю между двумя тарифными планами на телефон. Тариф А — более дешёвый
+  с фиксированным пакетом данных. Тариф Б — более дорогой безлимитный. Дома и на работе
+  я в основном пользуюсь Wi-Fi. {DS}
+focal_diagnostic_feature: Тариф А стоит €12/мес при 20 ГБ данных, тариф Б — €35/мес
+  безлимит, а потребление пользователя стабильно держится в диапазоне 8–12 ГБ на протяжении
+  18 месяцев.
+low_diagnostic_proposition: The user recalls peers having bad outcomes after choosing
+  cheaper capped phone plans.
+oracle_action: ANSWER
+oracle_focus: Choose Plan A unless expected usage changes materially; the unlimited
+  plan's premium is not justified by the usage history.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let friends' overage stories decide it. Ask for
+  actual monthly usage, overage rules, and expected changes.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let friends' overage stories decide it. Ask for actual monthly usage,
+      overage rules, and expected changes.
+  LL:
+    action: ASK
+    focus: Do not let friends' overage stories decide it. Ask for actual monthly usage,
+      overage rules, and expected changes.
+  HH:
+    action: ANSWER
+    focus: Choose Plan A unless expected usage changes materially; the unlimited plan's
+      premium is not justified by the usage history.
+  LH:
+    action: ANSWER
+    focus: Choose Plan A unless expected usage changes materially; the unlimited plan's
+      premium is not justified by the usage history.
+variants:
+  HL:
+    distractor: Каждый раз, когда мои друзья выбирали дешёвые тарифы с ограниченным
+      трафиком, они оказывались без интернета в самый неподходящий момент — так что
+      безлимит кажется надёжнее.
+    diagnosticity: low
+    salience: high
+    proposition: The user recalls peers having bad outcomes after choosing cheaper
+      capped phone plans.
+    salience_source: friend availability stories, worst-moment framing, safety language
+    why_plausible: Stories about losing connectivity are vivid and easy to imagine.
+    why_irrelevant: The user's own usage distribution is the relevant evidence for
+      a recurring plan choice.
+  LL:
+    distractor: Пользователь вспоминает, что его знакомые, как правило, получали неблагоприятный
+      опыт после выбора более дешёвых тарифов с ограниченным пакетом данных.
+    diagnosticity: low
+    salience: low
+    proposition: The user recalls peers having bad outcomes after choosing cheaper
+      capped phone plans.
+    matched_to: HL
+  HH:
+    distractor: Тариф А — €12 за 20 ГБ, тариф Б — €35 безлимит, а мой журнал использования
+      держится в диапазоне 8–12 ГБ каждый месяц полтора года подряд.
+    diagnosticity: high
+    salience: high
+    proposition: Plan A costs €12/month with 20GB data, Plan B costs €35/month unlimited,
+      and the user's usage has stayed between 8 and 12GB for 18 months.
+    salience_source: usage history versus plan cap
+  LH:
+    distractor: Тариф А стоит €12/мес за 20 ГБ; тариф Б — €35/мес безлимит; исторический
+      расход данных — 8–12 ГБ/мес на протяжении 18 месяцев.
+    diagnosticity: high
+    salience: low
+    proposition: Plan A costs €12/month with 20GB data, Plan B costs €35/month unlimited,
+      and the user's usage has stayed between 8 and 12GB for 18 months.
+    matched_to: HH
+distractor_direction:
+  label: Сожаление о тарифе с ограниченным трафиком
+  description: Проверка того, должен ли неудачный опыт знакомых с дешёвыми тарифами
+    с пакетом данных склонить пользователя к выбору безлимитного тарифа.
+plausible_alternative_directions:
+- label: Качество покрытия сети
+  description: Операторы могут отличаться качеством покрытия там, где живёт и работает
+    пользователь.
+- label: Потребность в роуминге
+  description: Международные поездки или требования роуминга могут изменить ценность
+    безлимитного интернета.
+- label: Гибкость договора
+  description: Условия помесячного контракта в сравнении с долгосрочным могут повлиять
+    на выбор тарифа.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-008.yaml
+  source_xbase_sha256: 1657145944d2333c
+  translated_content_sha256: 24e3175f4947ede2
+  translation_notes: Currency symbol €retained as-is (context is clearly European
+    and the figure is a concrete salience cue — do not localise to rubles). 'Wi-Fi'
+    retained. 'Plan A / Plan B' rendered as 'Тариф А / Тариф Б' — natural Russian
+    wording for phone plan comparison. No culture-bound salience issues.

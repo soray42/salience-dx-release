@@ -1,0 +1,8 @@
+{
+  "seed_id": "T1-014",
+  "verdict": "clean",
+  "xbase_span": "",
+  "focal_in_hh_lh": true,
+  "reasoning": "xbase mentions only that 'a technician has quoted me a repair price' and that replacement 'would cost considerably more' — no dollar figures, no percentage ratio, and no fault characterisation are present. The decisive focal evidence (the $160/$550 cost ratio at 29% of replacement, and the isolated control-board failure type) lives exclusively in the HH and LH variant distractors, exactly as required. The vague relative-cost reference in xbase is an ordinary contextual symptom, not the conclusive diagnostic detail.",
+  "repair_hint": ""
+}

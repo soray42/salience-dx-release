@@ -1,0 +1,179 @@
+seed_id: T6-045
+template: T6
+domain: open_qa
+complexity: low
+xbase: I am looking to buy my first dash cam, mainly for recording overnight parking
+  incidents. My budget is around £60 and the model I have been looking at is well
+  within that. My only previous experience with dash cams is one cheap unit a friend
+  lent me two years ago, which produced unusable dark footage at night. {DS}
+focal_diagnostic_feature: The model under consideration ranks first in its price tier
+  in an independent night-recording benchmark, with published sample footage showing
+  legible licence plates at 50 metres under standard car-park illumination.
+low_diagnostic_proposition: The user's only prior dash cam was a cheap unit with poor
+  night image quality, suggesting budget cameras cannot provide usable overnight footage.
+oracle_action: ANSWER
+oracle_focus: Buy the model; its benchmark ranking and published sample footage show
+  it performs substantially better than the prior device, making the availability
+  concern inapplicable to this specific product.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not generalise from a two-year-old borrowed unit to
+  this specific model. Ask for independent night-recording benchmark results and sample
+  footage before dismissing it.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not generalise from a two-year-old borrowed unit to this specific model.
+      Ask for independent night-recording benchmark results and sample footage before
+      dismissing it.
+  LL:
+    action: ASK
+    focus: Do not generalise from a two-year-old borrowed unit to this specific model.
+      Ask for independent night-recording benchmark results and sample footage before
+      dismissing it.
+  HH:
+    action: ANSWER
+    focus: Buy the model; its benchmark ranking and published sample footage show
+      it performs substantially better than the prior device, making the availability
+      concern inapplicable to this specific product.
+  LH:
+    action: ANSWER
+    focus: Buy the model; its benchmark ranking and published sample footage show
+      it performs substantially better than the prior device, making the availability
+      concern inapplicable to this specific product.
+variants:
+  HL:
+    distractor: The only cheap dash cam I ever tried turned every night clip into
+      a wall of grain — my friend's unit could not show a licence plate in a well-lit
+      car park — so I would not trust any camera in that price range for overnight
+      recording.
+    diagnosticity: low
+    salience: high
+    proposition: The user's only prior dash cam was a cheap unit with poor night image
+      quality, suggesting budget cameras cannot provide usable overnight footage.
+    salience_source: B/C — vivid specific failure detail (grain, licence plate in
+      a well-lit car park); confident absolute framing ('would not trust any camera
+      in that price range').
+    why_plausible: Budget dash cam night quality has historically varied widely; a
+      concrete personal failure at the same price point is a natural reference for
+      expected performance.
+    why_irrelevant: The prior unit was a different model using older sensor technology;
+      image-sensor quality has improved significantly at budget price points, and
+      the focal benchmark directly evaluates this specific model's night performance.
+  LL:
+    distractor: The user's only prior dash cam was a cheap unit with poor night image
+      quality, suggesting budget cameras cannot provide usable overnight footage.
+    diagnosticity: low
+    salience: low
+    proposition: The user's only prior dash cam was a cheap unit with poor night image
+      quality, suggesting budget cameras cannot provide usable overnight footage.
+    matched_to: HL
+  HH:
+    distractor: An independent night-recording benchmark places this model first in
+      its price tier, and reviewers' sample footage captures clearly legible licence
+      plates at 50 metres under standard car-park illumination.
+    diagnosticity: high
+    salience: high
+    proposition: The model under consideration ranks first in its price tier in an
+      independent night-recording benchmark, with published sample footage showing
+      legible licence plates at 50 metres under standard car-park illumination.
+    salience_source: B/C — specific benchmark ranking (first in price tier); concrete
+      test condition (50 metres, car-park illumination); 'clearly legible' as vivid
+      precision.
+  LH:
+    distractor: An independent night-recording benchmark places this model first in
+      its price tier; sample footage shows legible plates at 50 metres in car-park
+      light.
+    diagnosticity: high
+    salience: low
+    proposition: The model under consideration ranks first in its price tier in an
+      independent night-recording benchmark, with published sample footage showing
+      legible licence plates at 50 metres under standard car-park illumination.
+    matched_to: HH
+distractor_direction:
+  label: budget camera night-quality risk
+  description: Treating the user's single prior experience with a cheap dash cam's
+    poor night footage as predictive of this model's night-recording performance.
+plausible_alternative_directions:
+- label: parking-mode battery drain
+  description: Checking whether this model supports continuous parking-mode recording
+    without draining the vehicle battery, which is critical for overnight use.
+- label: storage and loop recording
+  description: Verifying whether the model automatically overwrites old footage and
+    what memory card capacity is required for unattended overnight recording.
+leak_audit:
+  ll_atomic_claims:
+  - The user's only prior dash cam was a cheap unit with poor night image quality.
+  - This suggests budget cameras cannot provide usable overnight footage.
+  hh_atomic_claims:
+  - An independent night-recording benchmark was consulted.
+  - This model places first in its price tier in that benchmark.
+  - Sample footage shows legible licence plates at 50 metres.
+  - The test condition is standard car-park illumination.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person T6 speaker
+    narrative_coherence: Specific failure scenario (licence plate in a well-lit car
+      park) anchors the personal experience with concrete detail; confident absolute
+      conclusion follows naturally.
+    confident_assertion: '''would not trust any camera in that price range'' — categorical
+      refusal'
+    concrete_detail: N/A — detail is about the prior borrowed unit (source history),
+      not this model's specifications.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 57
+  hl_word_count: 47
+  ll_word_count: 23
+  hh_word_count: 28
+  lh_word_count: 23
+  notes: 'LL is exactly 23 words (at the operational target ceiling). HL at 47 words
+    is within 27-48
+
+    range. HL:LL = 2.0:1; HH:LH = 1.2:1. xbase notes the user''s prior experience
+    ("unusable
+
+    dark footage") without giving sensor specs for the current model, preserving C4.
+    The
+
+    distractor and the focal feature both address night-vision quality but through
+    different
+
+    evidence bases — past device failure vs this model''s measured benchmark.
+
+    '
+causal_audit:
+  steelman: 'Budget dash cam image sensors at a given price point share manufacturing
+    cost constraints
+
+    that historically produce similar noise-floor performance in low light. A user
+    who borrowed
+
+    a budget unit in the same price tier two years ago has direct hands-on evidence
+    of the
+
+    quality ceiling. Sensor advances may not have reached the entry price tier the
+    user is
+
+    considering.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the focal benchmark result (first in price tier,
+    legible plates at 50 metres) directly demonstrates that the specific model exceeds
+    the availability-bias prediction. The prior device was a different model from
+    two years ago; the mechanism (same sensor quality class) is ruled out by model-specific
+    benchmark evidence in HH/LH.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing a budget dash cam for overnight parking recording where a
+    prior bad experience with a different cheap unit creates availability bias against
+    the category, but this specific model ranks first in its price tier on an independent
+    night benchmark with legible footage at 50 metres.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

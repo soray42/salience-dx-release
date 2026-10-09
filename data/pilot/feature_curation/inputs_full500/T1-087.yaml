@@ -1,0 +1,179 @@
+seed_id: T1-087
+template: T1
+domain: open_qa
+complexity: medium
+xbase: My car has started cranking slowly in the mornings, and twice this week it
+  barely turned over before catching. I'm trying to decide whether to just replace
+  the battery now or hold off and keep an eye on it, since money is a little tight
+  this month. The car is six years old and the battery is the original one that came
+  with it. {DS}
+focal_diagnostic_feature: A load test failed the battery under cranking load, where
+  its voltage sagged well below the pass threshold, while charging voltage with the
+  engine running measured normal at the terminals.
+low_diagnostic_proposition: Someone's identical slow-cranking turned out to be a failing
+  alternator rather than the battery.
+oracle_action: ANSWER
+oracle_focus: Replace the battery now; at six years it is original, it failed a load
+  test under cranking load, and the charging system is delivering normal voltage,
+  so the battery itself is the worn-out component, not the alternator.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the alternator explanation from someone
+  else's car. Ask for a battery load test and a charging-voltage check before deciding
+  whether the battery or the charging system is at fault.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the alternator explanation from someone else's car. Ask for
+      a battery load test and a charging-voltage check before deciding whether the
+      battery or the charging system is at fault.
+  LL:
+    action: ASK
+    focus: Do not adopt the alternator explanation from someone else's car. Ask for
+      a battery load test and a charging-voltage check before deciding whether the
+      battery or the charging system is at fault.
+  HH:
+    action: ANSWER
+    focus: Replace the battery now; at six years it is original, it failed a load
+      test under cranking load, and the charging system is delivering normal voltage,
+      so the battery itself is the worn-out component, not the alternator.
+  LH:
+    action: ANSWER
+    focus: Replace the battery now; at six years it is original, it failed a load
+      test under cranking load, and the charging system is delivering normal voltage,
+      so the battery itself is the worn-out component, not the alternator.
+variants:
+  HL:
+    distractor: Shirin, whose brother runs an auto shop, told me her car did the exact
+      same slow-crank thing and it turned out the battery was perfectly fine; the
+      real problem was a failing alternator that simply was not recharging it as she
+      drove.
+    diagnosticity: low
+    salience: high
+    proposition: Someone's identical slow-cranking turned out to be a failing alternator
+      rather than the battery.
+    salience_source: A — a relative with a direct line to an auto shop, recounting
+      a closely matching symptom and its surprising cause.
+    why_plausible: A failing alternator really can leave a battery undercharged and
+      cause slow cranking, so the matching story makes the alternator a tempting place
+      to point.
+    why_irrelevant: Here the charging voltage with the engine running is normal, ruling
+      the alternator out, while the battery itself failed a load test under cranking
+      load.
+  LL:
+    distractor: Someone said her identical slow-cranking turned out to be a failing
+      alternator rather than the battery.
+    diagnosticity: low
+    salience: low
+    proposition: Someone's identical slow-cranking turned out to be a failing alternator
+      rather than the battery.
+    matched_to: HL
+  HH:
+    distractor: 'At the parts shop they put a load tester on it: resting voltage was
+      fine, but under cranking load it sagged well below the pass threshold and failed
+      the test outright, and the charging voltage with the engine running measured
+      normal at the terminals.'
+    diagnosticity: high
+    salience: high
+    proposition: A load test failed the battery under cranking load, where its voltage
+      sagged well below the pass threshold, while charging voltage with the engine
+      running measured normal at the terminals.
+    salience_source: The explicit failed load test under load combined with normal
+      charging voltage makes the battery-versus-alternator split concrete and decisive.
+  LH:
+    distractor: A load test failed the battery under load while charging voltage with
+      the engine running measured normal.
+    diagnosticity: high
+    salience: low
+    proposition: A load test failed the battery under cranking load, where its voltage
+      sagged well below the pass threshold, while charging voltage with the engine
+      running measured normal at the terminals.
+    matched_to: HH
+distractor_direction:
+  label: Failing alternator
+  description: Treating the slow cranking as a charging-system fault where the alternator
+    is not recharging the battery.
+plausible_alternative_directions:
+- label: Worn-out battery
+  description: Whether the six-year-old original battery has lost cranking capacity
+    and should be replaced.
+- label: Corroded terminals/cables
+  description: Whether poor connections at the battery posts are dropping cranking
+    current.
+- label: Parasitic drain
+  description: Whether something is draining the battery overnight
+  leaving it low each morning.: null
+leak_audit:
+  ll_atomic_claims:
+  - Someone had identical slow-cranking.
+  - It turned out to be a failing alternator rather than the battery.
+  hh_atomic_claims:
+  - A load test was run; resting voltage was fine but the battery sagged below the
+    pass threshold under cranking load and failed.
+  - Charging voltage with the engine running measured normal at the terminals.
+  hl_salience_dimensions:
+    source_credibility: A relative with a direct connection to an auto shop.
+    narrative_coherence: A clean matching-symptom-then-surprising-cause story.
+    confident_assertion: '''It turned out'', ''the real problem was'' — confident
+      attribution.'
+    concrete_detail: Detail about the alternator not recharging while driving — about
+      the source's car, not this one.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 42
+  ll_word_count: 16
+  hh_word_count: 44
+  lh_word_count: 17
+  notes: 'Clean T1: a failing alternator is a real general cause of slow cranking
+    (it leaves the battery undercharged), so
+
+    the anecdote is reasonable — but the focal feature (failed load test under load
+    plus normal charging voltage)
+
+    structurally rules the alternator out and confirms the battery. xbase states the
+    battery''s age and the symptom,
+
+    which makes a worn battery plausible, but does NOT report the load-test result
+    or charging voltage, so a reader
+
+    cannot conclusively choose battery over alternator from xbase alone; both remain
+    live until the HH measurements.
+
+    '
+causal_audit:
+  steelman: 'A mechanic could argue that an alternator with worn brushes or a bad
+    diode undercharges the battery, so the car
+
+    starts the day with a partially depleted battery and cranks slowly — and that
+    replacing the battery without fixing
+
+    the alternator would just leave the new battery undercharged too. This is a genuine
+    failure mode. But it does not
+
+    fit this car: the focal test shows normal charging voltage at the terminals with
+    the engine running, which
+
+    exonerates the alternator, while the battery failed a load test under cranking
+    load. The alternator direction
+
+    therefore cannot inform this decision.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive load-test and charging-voltage results
+    are intentionally withheld from xbase, which carries only the symptom, the car's
+    age, and the original-battery context.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to replace a six-year-old original car battery that failed
+    a load test with normal charging voltage, against a relative's story that identical
+    slow-cranking was a failing alternator.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

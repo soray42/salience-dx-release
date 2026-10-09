@@ -1,0 +1,221 @@
+seed_id: T5-090
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I booked a package holiday last spring that includes flights, hotel, and a
+  guided glacier trek I paid extra for. A week before departure the trek operator
+  cancelled the trek due to poor conditions and I am now deciding whether my travel
+  insurance will reimburse the trek fee. The insurer's claims form looks complicated
+  and the portal feels slow to navigate. {DS}
+focal_diagnostic_feature: The travel insurance policy covers cancellations only for
+  the core package components listed at booking; the glacier trek was added as a separate
+  optional activity after the policy was issued and is not listed in the covered itinerary.
+low_diagnostic_proposition: The insurance portal looks complicated and slow, which
+  suggests the insurer handles claims poorly and may reject valid claims on a technicality.
+oracle_action: ANSWER
+oracle_focus: The trek is almost certainly not covered because it was added after
+  the policy was issued and is not listed in the covered itinerary; the user should
+  pursue the refund directly from the trek operator or through the payment card's
+  purchase protection rather than expecting the travel insurer to cover it.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer claims handling quality from portal appearance.
+  Ask for the specific policy schedule, what activities and components are listed
+  as covered, and whether the trek booking predates or postdates the policy.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer claims handling quality from portal appearance. Ask for the
+      specific policy schedule, what activities and components are listed as covered,
+      and whether the trek booking predates or postdates the policy.
+  LL:
+    action: ASK
+    focus: Do not infer claims handling quality from portal appearance. Ask for the
+      specific policy schedule, what activities and components are listed as covered,
+      and whether the trek booking predates or postdates the policy.
+  HH:
+    action: ANSWER
+    focus: The trek is almost certainly not covered because it was added after the
+      policy was issued and is not listed in the covered itinerary; the user should
+      pursue the refund directly from the trek operator or through the payment card's
+      purchase protection rather than expecting the travel insurer to cover it.
+  LH:
+    action: ANSWER
+    focus: The trek is almost certainly not covered because it was added after the
+      policy was issued and is not listed in the covered itinerary; the user should
+      pursue the refund directly from the trek operator or through the payment card's
+      purchase protection rather than expecting the travel insurer to cover it.
+variants:
+  HL:
+    distractor: The claims portal has a wall of dense dropdown menus, a submit button
+      that takes fifteen seconds to respond, and a reference number field that rejects
+      valid-looking codes — the kind of friction that makes me think this insurer
+      is designed to exhaust claimants before they succeed.
+    diagnosticity: low
+    salience: high
+    proposition: The insurance portal looks complicated and slow, which suggests the
+      insurer handles claims poorly and may reject valid claims on a technicality.
+    salience_source: B — detailed first-person description of each friction point
+      building to a coherent processing-quality inference; C — concluding confident
+      judgment about the insurer's intent toward claimants.
+    why_plausible: Deliberately obstructive claims interfaces are a documented tactic
+      of some insurers, and a practitioner could reasonably treat portal friction
+      as a signal of bad-faith claims handling.
+    why_irrelevant: Portal usability has no bearing on whether a specific activity
+      is listed in the covered itinerary; the coverage gap is a policy-schedule issue
+      that exists independently of how the portal behaves.
+  LL:
+    distractor: The insurer's claims portal is complicated and slow, suggesting the
+      company handles claims poorly.
+    diagnosticity: low
+    salience: low
+    proposition: The insurance portal looks complicated and slow, which suggests the
+      insurer handles claims poorly and may reject valid claims on a technicality.
+    matched_to: HL
+  HH:
+    distractor: Comparing the policy schedule against my booking records shows the
+      policy was issued in spring when only the core package was confirmed; the glacier
+      trek was booked separately two months later and appears nowhere on the covered-itinerary
+      list attached to the policy document.
+    diagnosticity: high
+    salience: high
+    proposition: The travel insurance policy covers cancellations only for the core
+      package components listed at booking; the glacier trek was added as a separate
+      optional activity after the policy was issued and is not listed in the covered
+      itinerary.
+    salience_source: Direct comparison of the policy schedule against booking records,
+      with a concrete timeline (spring vs two months later) and the specific absence
+      of the trek from the covered-itinerary list.
+  LH:
+    distractor: The policy was issued before the trek was booked and the trek does
+      not appear on the covered-itinerary schedule.
+    diagnosticity: high
+    salience: low
+    proposition: The travel insurance policy covers cancellations only for the core
+      package components listed at booking; the glacier trek was added as a separate
+      optional activity after the policy was issued and is not listed in the covered
+      itinerary.
+    matched_to: HH
+distractor_direction:
+  label: Insurer bad-faith portal friction
+  description: Treating the slow and complex claims portal as evidence that the insurer
+    handles claims in bad faith or rejects valid claims on technicalities.
+plausible_alternative_directions:
+- label: Operator cancellation refund path
+  description: The trek operator cancelled the activity, so the user may have a direct
+    refund right from the operator under consumer protection rules before involving
+    insurance at all.
+- label: Package organiser liability
+  description: If the trek was sold as part of a package by the tour operator, package
+    travel regulations may require the organiser to refund it regardless of the insurance
+    schedule.
+leak_audit:
+  ll_atomic_claims:
+  - The insurer's claims portal is complicated and slow.
+  - This suggests the company handles claims poorly.
+  hh_atomic_claims:
+  - The policy was issued when only the core package was confirmed.
+  - The glacier trek was booked separately two months after policy issuance.
+  - The trek does not appear on the covered-itinerary list in the policy document.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person aesthetic observation.
+    narrative_coherence: Sequential list of portal friction points building to a quality
+      inference.
+    confident_assertion: Confident concluding characterisation of the insurer's design
+      intent.
+    concrete_detail: Specific portal UI details (dropdown count, submit-button lag,
+      reference-number field rejection) — about the interface, not the policy terms.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 61
+  hl_word_count: 46
+  ll_word_count: 14
+  hh_word_count: 43
+  lh_word_count: 19
+  notes: 'T5 rule: the inferential bridge (portal friction → insurer rejects valid
+    claims on technicality)
+
+    is propositional content and appears in both HL (concluding sentence) and LL ("suggesting
+    the
+
+    company handles claims poorly"). HL is within target at 52 words; the hard upper
+    bound is 50
+
+    so let me recount carefully.
+
+    HL token count: The(1) claims(2) portal(3) has(4) a(5) wall(6) of(7) dense(8)
+    dropdown(9)
+
+    menus(10) a(11) submit(12) button(13) that(14) takes(15) fifteen(16) seconds(17)
+    to(18)
+
+    respond(19) and(20) a(21) reference(22) number(23) field(24) that(25) rejects(26)
+
+    valid-looking(27) codes(28) the(29) kind(30) of(31) friction(32) that(33) makes(34)
+    me(35)
+
+    think(36) this(37) insurer(38) is(39) designed(40) to(41) exhaust(42) claimants(43)
+
+    before(44) they(45) succeed(46) = 46 words. Within 27-48 target (operational).
+    Good.
+
+    HH count: Comparing(1) the(2) policy(3) schedule(4) against(5) my(6) booking(7)
+    records(8)
+
+    shows(9) the(10) policy(11) was(12) issued(13) in(14) spring(15) when(16) only(17)
+    the(18)
+
+    core(19) package(20) was(21) confirmed(22) the(23) glacier(24) trek(25) was(26)
+    booked(27)
+
+    separately(28) two(29) months(30) later(31) and(32) appears(33) nowhere(34) on(35)
+    the(36)
+
+    covered-itinerary(37) list(38) attached(39) to(40) the(41) policy(42) document(43)
+    = 43 words.
+
+    Correcting hl_word_count to 46, hh_word_count to 43.
+
+    HL:LL = 46:14 = 3.3:1 ≤ 4:1. HH:LH = 43:15 ≈ 2.9:1 ≤ 4:1.
+
+    '
+causal_audit:
+  steelman: 'A consumer advocate could argue that insurers with poor portal UX often
+    also have under-
+
+    resourced claims departments that apply exclusions liberally and deny borderline
+    claims;
+
+    so portal friction could correlate with, if not cause, technical rejections. This
+    is a
+
+    real correlation in some markets. However, the focal feature reveals the trek
+    is not
+
+    listed in the covered itinerary because it was booked after policy issuance —
+    a structural
+
+    coverage gap that is independent of claims-handling quality. Even an insurer with
+    perfect
+
+    claims handling would apply the same exclusion. Portal friction has no mechanism
+    to change
+
+    whether an activity appears on a policy schedule.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Travel insurance does not cover a cancelled glacier trek because it
+    was booked after the policy was issued and is absent from the covered-itinerary
+    schedule; an aesthetic inference about portal friction is the distractor.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

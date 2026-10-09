@@ -1,0 +1,179 @@
+seed_id: T1-090
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: After our latest frontend deploy, a chunk of users are still seeing the old
+  stylesheet and the old bundled JavaScript, so the new layout looks broken for them.
+  A hard refresh fixes it for any given user, but new visitors keep hitting the stale
+  assets. The deploy itself succeeded and the origin server is serving the correct
+  new files when I curl it directly. Our assets are fronted by a CDN. Our deploy pipeline
+  has no purge step; we rely on versioned URL fingerprinting alone. {DS}
+focal_diagnostic_feature: The CDN cache key is configured to ignore the query string,
+  so the fingerprinted versioned asset URLs all collapse to one cached entry that
+  never refreshes on deploy.
+low_diagnostic_proposition: A peer team's stale-asset incident on their CDN was traced
+  to a failed cache-purge API call during their deploy.
+oracle_action: ANSWER
+oracle_focus: Fix the CDN cache-key configuration so the asset version query string
+  is part of the key; once each versioned URL caches independently, the new deploy's
+  fingerprinted assets will be fetched fresh.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the failed-purge explanation from another
+  team. Ask how the CDN builds its cache key and whether the versioned asset URLs
+  are being treated as distinct objects.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the failed-purge explanation from another team. Ask how the
+      CDN builds its cache key and whether the versioned asset URLs are being treated
+      as distinct objects.
+  LL:
+    action: ASK
+    focus: Do not adopt the failed-purge explanation from another team. Ask how the
+      CDN builds its cache key and whether the versioned asset URLs are being treated
+      as distinct objects.
+  HH:
+    action: ANSWER
+    focus: Fix the CDN cache-key configuration so the asset version query string is
+      part of the key; once each versioned URL caches independently, the new deploy's
+      fingerprinted assets will be fetched fresh.
+  LH:
+    action: ANSWER
+    focus: Fix the CDN cache-key configuration so the asset version query string is
+      part of the key; once each versioned URL caches independently, the new deploy's
+      fingerprinted assets will be fetched fresh.
+variants:
+  HL:
+    distractor: Csaba, who runs the platform team next door, said they fought almost
+      this exact stale-asset problem last quarter, and after a long post-mortem they
+      found their deploy pipeline's automated cache-purge call to the CDN had been
+      silently failing for weeks.
+    diagnosticity: low
+    salience: high
+    proposition: A peer team's stale-asset incident on their CDN was traced to a failed
+      cache-purge API call during their deploy.
+    salience_source: A — a named lead on a peer platform team citing their own post-mortem
+      makes the purge-failure explanation feel authoritative.
+    why_plausible: Failed purge calls are a real and common cause of post-deploy staleness,
+      so it sounds like a strong lead for this incident too.
+    why_irrelevant: Whether their purge call failed says nothing about how THIS CDN
+      keys its cache; if versioned URLs collapse to one key, even a perfect purge
+      would not fix the staleness.
+  LL:
+    distractor: Another team's stale-asset incident was caused by a failed cache-purge
+      call during their deploy.
+    diagnosticity: low
+    salience: low
+    proposition: A peer team's stale-asset incident on their CDN was traced to a failed
+      cache-purge API call during their deploy.
+    matched_to: HL
+  HH:
+    distractor: Looking at the CDN config, the cache key is set to ignore the query
+      string, so the fingerprinted URLs like app.css?v=8a1 and app.css?v=9f2 all resolve
+      to one cached object; the new deploy's filenames never register as different
+      resources.
+    diagnosticity: high
+    salience: high
+    proposition: The CDN cache key is configured to ignore the query string, so the
+      fingerprinted versioned asset URLs all collapse to one cached entry that never
+      refreshes on deploy.
+    salience_source: Naming the exact misconfiguration and showing two version strings
+      folding to one object makes the cause concrete and decisive.
+  LH:
+    distractor: The CDN cache key ignores the query string, so all versioned asset
+      URLs collapse to a single cached object.
+    diagnosticity: high
+    salience: low
+    proposition: The CDN cache key is configured to ignore the query string, so the
+      fingerprinted versioned asset URLs all collapse to one cached entry that never
+      refreshes on deploy.
+    matched_to: HH
+distractor_direction:
+  label: Failed cache purge
+  description: Investigating whether a failed or missing CDN cache-purge step during
+    deploy is leaving the old assets cached.
+plausible_alternative_directions:
+- label: Long browser cache TTL
+  description: Whether aggressive client-side Cache-Control max-age on the assets
+    is keeping old files in user browsers.
+- label: Origin not redeployed
+  description: Whether the origin is still serving old files to the CDN despite the
+    deploy reporting success.
+leak_audit:
+  ll_atomic_claims:
+  - Another team had a stale-asset incident on their CDN.
+  - That incident was caused by a failed cache-purge call during their deploy.
+  hh_atomic_claims:
+  - The CDN cache key is set to ignore the query string.
+  - The fingerprinted versioned URLs all resolve to one cached object.
+  - The new deploy's filenames never register as different resources.
+  hl_salience_dimensions:
+    source_credibility: Named peer-team lead (Csaba) citing their own post-mortem.
+    narrative_coherence: Clean last-quarter incident with an investigation and a found
+      root cause.
+    confident_assertion: States the purge call had been silently failing for weeks.
+    concrete_detail: Detail about the source's incident (their pipeline, their timeline)
+      only — no claim about this user's CDN config.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 85
+  hl_word_count: 40
+  ll_word_count: 14
+  hh_word_count: 38
+  lh_word_count: 19
+  notes: 'xbase establishes the symptom (stale CSS/JS post-deploy), that the origin
+    serves correct files, that a CDN
+
+    fronts the assets, and explicitly that the pipeline has no purge step (relying
+    on versioned fingerprinting) —
+
+    this forecloses the purge pathway without revealing the cache-key collapse, which
+    lives only in HH/LH. xbase''s
+
+    ''hard refresh fixes it per user'' is a symptom detail, not the focal feature,
+    and does not by itself identify
+
+    the keying bug. HL adds only the source and their separate incident; LL strips
+    to the bare purge-failure claim.
+
+    '
+causal_audit:
+  steelman: 'A senior CDN engineer would note that failed purge calls are the textbook
+    cause of post-deploy staleness: if the
+
+    pipeline''s invalidation never lands, the edge keeps serving the previous version
+    exactly as described. But xbase
+
+    now states explicitly that the deploy pipeline has no programmatic purge step
+    and relies entirely on versioned URL
+
+    fingerprinting. That directly forecloses the purge-failure pathway: there is no
+    purge call to fail. A competent
+
+    practitioner reading xbase cannot treat a failed purge as a leading hypothesis
+    because the pipeline, by design,
+
+    never issues one. The anecdote describes a mechanism that is architecturally absent
+    in this system.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the deploy pipeline has no purge step and
+    relies on versioned URL fingerprinting, directly foreclosing the purge-failure
+    pathway; xbase also states the origin serves correct new files, foreclosing the
+    'origin never redeployed' pathway; the cache-key collapse that causes the staleness
+    still lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A frontend team serving stale CDN assets after deploy, where a query-string-ignoring
+    cache key collapsing versioned URLs, not a failed cache purge, is decisive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

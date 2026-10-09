@@ -1,0 +1,172 @@
+seed_id: T2-080
+template: T2
+domain: open_qa
+complexity: high
+xbase: I overseeded my lawn two weeks ago and almost none of the new grass has germinated.
+  I bought quality seed for my climate, watered twice daily as instructed, and the
+  weather has been mild and damp — good conditions for germination. Nothing else in
+  the garden looks wrong. {DS}
+focal_diagnostic_feature: The existing lawn has a dense thatch layer over 2 cm thick
+  that was not removed before overseeding, blocking seed-to-soil contact and preventing
+  germination.
+low_diagnostic_proposition: The germination failure began the same weekend a new garden
+  gate was installed at the property.
+oracle_action: ANSWER
+oracle_focus: Scarify the lawn to remove the thatch layer, then re-overseed with fresh
+  seed; without soil contact the seed cannot germinate regardless of watering or weather
+  conditions.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a gate installation to lawn germination
+  failure. Ask whether the soil surface was prepared — scarified or de-thatched —
+  before overseeding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a gate installation to lawn germination failure. Ask whether
+      the soil surface was prepared — scarified or de-thatched — before overseeding.
+  LL:
+    action: ASK
+    focus: Do not connect a gate installation to lawn germination failure. Ask whether
+      the soil surface was prepared — scarified or de-thatched — before overseeding.
+  HH:
+    action: ANSWER
+    focus: Scarify the lawn to remove the thatch layer, then re-overseed with fresh
+      seed; without soil contact the seed cannot germinate regardless of watering
+      or weather conditions.
+  LH:
+    action: ANSWER
+    focus: Scarify the lawn to remove the thatch layer, then re-overseed with fresh
+      seed; without soil contact the seed cannot germinate regardless of watering
+      or weather conditions.
+variants:
+  HL:
+    distractor: This all started the same weekend we put up a new garden gate — I
+      fitted it on Saturday, overseeded Sunday, and the germination has been near
+      zero ever since.
+    diagnosticity: low
+    salience: high
+    proposition: The germination failure began the same weekend a new garden gate
+      was installed at the property.
+    salience_source: B (narrative coherence — clean day-by-day chronology, Saturday/Sunday
+      sequencing); C (confident assertion — 'near zero ever since', unhedged causal
+      implication).
+    why_plausible: The temporal co-occurrence is tight and concrete; a reader could
+      assume the gate work disturbed soil, compacted the area, or introduced material
+      that affected conditions.
+    why_irrelevant: A garden gate installation has no constructible mechanism to affect
+      seed germination across a whole lawn surface; it does not contact the seeded
+      area, alter soil moisture uniformly, or change soil chemistry.
+  LL:
+    distractor: The issue began the same weekend a new garden gate was installed at
+      the property.
+    diagnosticity: low
+    salience: low
+    proposition: The germination failure began the same weekend a new garden gate
+      was installed at the property.
+    matched_to: HL
+  HH:
+    distractor: When I press a finger into the lawn, I hit a spongy thatch mat about
+      2.5 centimetres deep before reaching soil — the seeds are lying in dead organic
+      material with no contact with the actual soil underneath, which is what grass
+      seed needs to germinate.
+    diagnosticity: high
+    salience: high
+    proposition: The existing lawn has a dense thatch layer over 2 cm thick that was
+      not removed before overseeding, blocking seed-to-soil contact and preventing
+      germination.
+    salience_source: Physical test performed (finger press), precise measurement (2.5
+      cm thatch depth), concrete description of seed location (lying in dead organic
+      material), explicit causal mechanism stated.
+  LH:
+    distractor: The lawn has a thatch layer over 2 cm thick that was not removed before
+      overseeding, preventing seed-to-soil contact.
+    diagnosticity: high
+    salience: low
+    proposition: The existing lawn has a dense thatch layer over 2 cm thick that was
+      not removed before overseeding, blocking seed-to-soil contact and preventing
+      germination.
+    matched_to: HH
+distractor_direction:
+  label: Gate installation disturbance
+  description: Investigating whether the gate installation that weekend disturbed
+    the soil, altered conditions near the seeded area, or otherwise contributed to
+    poor germination.
+plausible_alternative_directions:
+- label: Seed depth error
+  description: Grass seed broadcast without light raking-in may have sat exposed on
+    the surface and been washed away or dried out before germinating, even on a prepared
+    bed.
+- label: Dormant weed competition
+  description: A soil-surface disturbance can trigger weed seed germination that outcompetes
+    newly sown grass, suppressing visible grass emergence while appearing as bare
+    soil.
+- label: Soil pH or fertility barrier
+  description: Strongly acidic or alkaline soil conditions — or residual herbicide
+    from a previous treatment — could inhibit germination even in correct weather
+    with good seed and watering.
+leak_audit:
+  ll_atomic_claims:
+  - The germination failure began the same weekend as the gate installation.
+  - A new garden gate was installed at the property that weekend.
+  hh_atomic_claims:
+  - A finger pressed into the lawn hits a spongy thatch mat about 2.5 centimetres
+    deep before reaching soil.
+  - The seeds are lying in dead organic material, not in contact with the actual soil.
+  - Grass seed requires soil contact to germinate.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, T2 temporal coincidence voiced
+      by the user.
+    narrative_coherence: Day-by-day sequencing (Saturday gate, Sunday overseeding)
+      makes the temporal overlap vivid and memorable.
+    confident_assertion: '"Near zero ever since" — unhedged causal framing linking
+      the gate timing to the outcome.'
+    concrete_detail: N/A — no case-content facts added beyond LL (no claim about gate
+      material affecting soil chemistry, no mechanism stated).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 47
+  hl_word_count: 29
+  ll_word_count: 15
+  hh_word_count: 45
+  lh_word_count: 19
+  notes: 'QC repair: removed ''timber'' (gate material) and ''at the side entrance''
+    (location) from HL distractor — both were case-content claims absent from LL.
+    Replaced with ''a new garden gate'', retaining the Saturday/Sunday sequencing
+    and ''near zero ever since'' severity qualifier. HL word count updated from 33
+    to 29. No preservative-runoff or soil-compaction mechanism can be constructed
+    from xbase alone; the coincidence is timing-only. HH presents the user''s physical
+    test result (finger press) rather than a third-party fact, consistent with first-person
+    scenario. Thatch layer root cause is distinct from all §6 entries (no taken seed
+    covers thatch-blocked overseeding).
+
+    '
+causal_audit:
+  steelman: 'A gate installation involves digging post holes, mixing concrete, and
+    heavy foot traffic in the immediate area, which could theoretically compact soil
+    or introduce foreign material near the gate. If the gate were adjacent to a seeded
+    strip, mechanical disturbance during installation could disrupt seed placement
+    or surface moisture. However, xbase gives no indication that the gate installation
+    was adjacent to the seeded lawn surface, and the failure is described as near-zero
+    germination across the entire overseeded area — not a localised edge effect. No
+    constructible mechanism links a standalone gate installation to uniform germination
+    failure across a whole lawn.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"Nothing else in the garden looks wrong" implicitly rules
+    out widespread soil disruption or chemical contamination across the lawn surface.'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Lawn overseeding failure caused by an unremoved dense thatch layer
+    blocking seed-to-soil contact, with the user noting a temporally coincident gate
+    installation on the same weekend.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

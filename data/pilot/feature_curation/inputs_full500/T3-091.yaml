@@ -1,0 +1,196 @@
+seed_id: T3-091
+template: T3
+domain: open_qa
+complexity: medium
+xbase: My dishwasher stopped heating water during cycles about three weeks ago. Dishes
+  come out cool and still greasy. The machine is four years old and still under the
+  manufacturer's extended warranty, so I want to use that before paying for a repair.
+  I contacted the manufacturer's warranty line and they are reviewing my claim before
+  deciding whether to send a technician. {DS}
+focal_diagnostic_feature: Six months ago a local repair shop opened the dishwasher
+  and replaced the door latch without manufacturer authorisation, and the warranty
+  terms void coverage for units that have undergone unauthorised third-party repair.
+low_diagnostic_proposition: Warranty claims for heating faults are frequently rejected
+  because the heating element is classified as a wear part and excluded from coverage.
+oracle_action: ANSWER
+oracle_focus: The unauthorised third-party repair is the decisive issue; the warranty
+  is very likely void under that clause regardless of what component failed, so the
+  user should verify the repair record and terms before expecting coverage and should
+  budget for an out-of-pocket repair.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply a generic wear-parts exclusion rule. Ask
+  for the specific warranty terms, the fault type, and whether the appliance has had
+  any third-party service that could affect coverage.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply a generic wear-parts exclusion rule. Ask for the specific
+      warranty terms, the fault type, and whether the appliance has had any third-party
+      service that could affect coverage.
+  LL:
+    action: ASK
+    focus: Do not apply a generic wear-parts exclusion rule. Ask for the specific
+      warranty terms, the fault type, and whether the appliance has had any third-party
+      service that could affect coverage.
+  HH:
+    action: ANSWER
+    focus: The unauthorised third-party repair is the decisive issue; the warranty
+      is very likely void under that clause regardless of what component failed, so
+      the user should verify the repair record and terms before expecting coverage
+      and should budget for an out-of-pocket repair.
+  LH:
+    action: ANSWER
+    focus: The unauthorised third-party repair is the decisive issue; the warranty
+      is very likely void under that clause regardless of what component failed, so
+      the user should verify the repair record and terms before expecting coverage
+      and should budget for an out-of-pocket repair.
+variants:
+  HL:
+    distractor: Zoltán, the insurance and warranty broker my company uses for appliance
+      fleet contracts, told me without hesitation that heating elements are always
+      classified as consumable wear parts and get excluded from extended warranties
+      as a matter of standard industry practice.
+    diagnosticity: low
+    salience: high
+    proposition: Warranty claims for heating faults are frequently rejected because
+      the heating element is classified as a wear part and excluded from coverage.
+    salience_source: A — professional warranty broker with fleet-contract experience;
+      C — "told me without hesitation" and "always" and "as a matter of standard industry
+      practice" layer authoritative confidence.
+    why_plausible: Wear-part exclusions are real and common in extended warranty contracts,
+      and a broker handling fleet contracts would have seen many such rejections,
+      making the claim feel like informed professional guidance.
+    why_irrelevant: The focal feature shows the warranty is voided by an unauthorised
+      third-party repair, a separate coverage clause that applies before the wear-part
+      question is even reached; whether heating elements are wear parts is irrelevant
+      once the policy is void.
+  LL:
+    distractor: A warranty broker stated that heating elements are typically excluded
+      from extended warranties as consumable wear parts.
+    diagnosticity: low
+    salience: low
+    proposition: Warranty claims for heating faults are frequently rejected because
+      the heating element is classified as a wear part and excluded from coverage.
+    matched_to: HL
+  HH:
+    distractor: I found the receipt from six months ago showing a local shop opened
+      the machine to replace the door latch; the warranty terms have a clause voiding
+      all coverage if the appliance was ever serviced by anyone other than an authorised
+      manufacturer technician.
+    diagnosticity: high
+    salience: high
+    proposition: Six months ago a local repair shop opened the dishwasher and replaced
+      the door latch without manufacturer authorisation, and the warranty terms void
+      coverage for units that have undergone unauthorised third-party repair.
+    salience_source: First-person retrieval of the repair receipt paired with a direct
+      quote of the coverage-voiding warranty clause makes the unauthorised-repair
+      problem concrete and traceable.
+  LH:
+    distractor: A third-party shop serviced the dishwasher six months ago, and the
+      warranty terms void coverage following any unauthorised repair.
+    diagnosticity: high
+    salience: low
+    proposition: Six months ago a local repair shop opened the dishwasher and replaced
+      the door latch without manufacturer authorisation, and the warranty terms void
+      coverage for units that have undergone unauthorised third-party repair.
+    matched_to: HH
+distractor_direction:
+  label: Wear-part exclusion
+  description: Treating the heating element as a consumable wear part categorically
+    excluded from the extended warranty, based on generic industry practice.
+plausible_alternative_directions:
+- label: Claim documentation gap
+  description: The warranty claim might stall if the user cannot produce the original
+    purchase receipt or proof of the extended warranty registration.
+- label: Out-of-warranty age classification
+  description: The manufacturer may attempt to argue the four-year-old model has aged
+    out of the extended coverage window depending on the warranty start date.
+leak_audit:
+  ll_atomic_claims:
+  - A warranty broker stated heating elements are typically excluded from extended
+    warranties.
+  - The exclusion is based on classification as consumable wear parts.
+  hh_atomic_claims:
+  - The user found a receipt showing a local independent shop serviced the dishwasher
+    six months ago.
+  - That service involved opening the machine and replacing the door latch.
+  - The extended warranty terms contain a clause voiding coverage after any unauthorised
+    third-party service.
+  hl_salience_dimensions:
+    source_credibility: Named professional warranty broker handling fleet-contract
+      work (Zoltán).
+    narrative_coherence: Clean professional-advice setting; the broker's fleet experience
+      grounds the claim.
+    confident_assertion: told me without hesitation; always; as a matter of standard
+      industry practice.
+    concrete_detail: N/A — no case-specific detail added beyond the broker's general
+      professional context.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 61
+  hl_word_count: 40
+  ll_word_count: 17
+  hh_word_count: 43
+  lh_word_count: 19
+  notes: 'xbase mentions a manufacturer extended warranty is in force and that the
+    manufacturer is
+
+    reviewing the claim, but withholds the third-party repair history entirely — that
+    decisive
+
+    fact lives only in HH/LH. The wear-part distractor is a real exclusion category
+    but is
+
+    downstream of the void-coverage clause; once the policy is voided, component classification
+
+    becomes moot. The broker''s claim is pattern-matching ("always", "standard industry
+    practice")
+
+    rather than analysis of this case''s terms. HL:LL = 43:15 ≈ 2.9:1 ≤ 4:1.
+
+    HH:LH = 55:15 ≈ 3.7:1 ≤ 4:1.
+
+    '
+causal_audit:
+  steelman: 'A warranty specialist could argue that many extended warranties do categorically
+    exclude
+
+    heating elements as consumable components, citing industry-standard exclusion
+    lists, so
+
+    even without the unauthorised repair, the claim could still be denied. This argument
+    is
+
+    valid as a general claim about warranty markets. However, the focal feature shows
+    that
+
+    the warranty in this case is voided entirely by the third-party repair clause
+    — which is
+
+    a prior, more sweeping exclusion. The wear-part argument would only be relevant
+    if the
+
+    warranty remained in force, but the focal feature shows it does not. The broker''s
+
+    categorical claim about wear parts therefore cannot inform what happens to THIS
+    claim
+
+    under these specific terms.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Extended warranty claim for dishwasher heating fault voided because
+    an unauthorised third-party repair opened the unit six months earlier, not because
+    of a wear-part exclusion.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

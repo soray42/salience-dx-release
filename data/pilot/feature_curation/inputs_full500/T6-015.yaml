@@ -1,0 +1,246 @@
+seed_id: T6-015
+template: T6
+domain: open_qa
+complexity: low
+xbase: 'My front-load washer has been leaving laundry smelling musty straight out
+  of the cycle — started a few weeks ago. I haven''t switched anything: same detergent
+  I''ve been using for over three years, same load size, same temperature settings.
+  Nothing about my routine has changed at all. {DS}
+
+  '
+focal_diagnostic_feature: 'The user always shuts the washer door immediately after
+  unloading and has never cleaned or inspected the rubber door gasket.
+
+  '
+low_diagnostic_proposition: 'In the user''s past experience, musty laundry smell was
+  always caused by the detergent brand.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'The door gasket is the primary suspect: keeping the door closed traps
+  moisture and the uncleaned gasket has accumulated mold or mildew that transfers
+  odour onto clothes each cycle. Advise the user to clean the gasket thoroughly and
+  establish a habit of leaving the door ajar between washes.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'The user''s past-experience attribution to detergent
+  brand is not supported by the current case facts — the detergent is unchanged over
+  three-plus years and the problem is new. Do not adopt the detergent-brand hypothesis.
+  Instead, ask about machine maintenance habits: specifically whether the door is
+  left open between cycles and when the gasket was last cleaned.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: 'The user''s past-experience attribution to detergent brand is not supported
+      by the current case facts — the detergent is unchanged over three-plus years
+      and the problem is new. Do not adopt the detergent-brand hypothesis. Instead,
+      ask about machine maintenance habits: specifically whether the door is left
+      open between cycles and when the gasket was last cleaned.'
+  LL:
+    action: ASK
+    focus: 'The user''s past-experience attribution to detergent brand is not supported
+      by the current case facts — the detergent is unchanged over three-plus years
+      and the problem is new. Do not adopt the detergent-brand hypothesis. Instead,
+      ask about machine maintenance habits: specifically whether the door is left
+      open between cycles and when the gasket was last cleaned.'
+  HH:
+    action: ANSWER
+    focus: 'The door gasket is the primary suspect: keeping the door closed traps
+      moisture and the uncleaned gasket has accumulated mold or mildew that transfers
+      odour onto clothes each cycle. Advise the user to clean the gasket thoroughly
+      and establish a habit of leaving the door ajar between washes.'
+  LH:
+    action: ANSWER
+    focus: 'The door gasket is the primary suspect: keeping the door closed traps
+      moisture and the uncleaned gasket has accumulated mold or mildew that transfers
+      odour onto clothes each cycle. Advise the user to clean the gasket thoroughly
+      and establish a habit of leaving the door ajar between washes.'
+variants:
+  HL:
+    distractor: 'Thinking back, every single time I''ve had musty-smelling laundry
+      before, it came down to the detergent brand — each time, without exception.
+      That pattern has been completely consistent every time I''ve run into this problem.
+
+      '
+    diagnosticity: low
+    salience: high
+    proposition: 'In the user''s past experience, musty laundry smell was always caused
+      by the detergent brand.
+
+      '
+    salience_source: 'C (confident assertion: "every single time...without exception...completely
+      consistent") + B (clean first-person narrative, definitive register, no hedging)
+      — personal emotional familiarity and "first instinct" framing characteristic
+      of T6.
+
+      '
+    why_plausible: 'Detergent brand is a widely recognised factor in laundry odour;
+      a user''s confident streak of past diagnoses pointing to it creates a compelling
+      heuristic that a reader might accept at face value before checking the case
+      facts.
+
+      '
+    why_irrelevant: 'The xbase explicitly states the detergent brand and formulation
+      are unchanged for over three years, and the problem only started recently. A
+      cause that has been constant cannot explain a new symptom; the detergent-brand
+      pathway is structurally closed for this case.
+
+      '
+  LL:
+    distractor: 'Every time I''ve had musty-smelling laundry in the past, it turned
+      out to be the detergent brand.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: 'In the user''s past experience, musty laundry smell was always caused
+      by the detergent brand.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'I always push the door shut right after pulling laundry out — I never
+      leave it open to air out. And thinking back, I genuinely cannot remember ever
+      wiping down or checking the rubber gasket seal around the door, not once since
+      I got the machine.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'The user always shuts the washer door immediately after unloading
+      and has never cleaned or inspected the rubber door gasket.
+
+      '
+    salience_source: 'B (vivid first-person chronological recall, active verbs) +
+      C (confident assertion: "always push", "genuinely cannot remember...not once")
+      + D (concrete behavioural detail about the user''s own practice).
+
+      '
+  LH:
+    distractor: 'I always close the washer door right after unloading and have never
+      cleaned the door gasket.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'The user always shuts the washer door immediately after unloading
+      and has never cleaned or inspected the rubber door gasket.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: detergent brand attribution
+  description: 'The user attributes the musty smell to the detergent brand, based
+    on a consistent pattern from past laundry problems. In the current case this hypothesis
+    is structurally ruled out because the brand and usage have been constant for over
+    three years while the symptom only recently appeared.
+
+    '
+plausible_alternative_directions:
+- label: drum filter or pump trap buildup
+  description: 'Debris and residue accumulating in the machine''s drum filter or pump
+    trap can cause foul odours that transfer to laundry; a first-time owner might
+    never have cleaned these components.
+
+    '
+- label: drain hose or standpipe issue
+  description: 'A partially blocked or incorrectly positioned drain hose can allow
+    wastewater to siphon back into the drum, leaving residual dirty water that produces
+    musty odours.
+
+    '
+- label: drum interior mould or detergent residue
+  description: 'Mould can grow on the drum interior or on a film of built-up detergent
+    residue inside the machine, separate from the gasket, particularly in machines
+    run primarily on cold or short cycles.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - The user has, on past occasions, had laundry that smelled musty.
+  - On each of those past occasions, the cause was identified as the detergent brand.
+  hl_salience_dimensions:
+    source_credibility: N/A — T6 template; the voice is the user themselves, not a
+      third party
+    narrative_coherence: 'Clean, first-person retrospective statement; professional
+      register; no interruptions or tangents.
+
+      '
+    confident_assertion: '"every single time", "without exception", "completely consistent
+      every time" — highly confident iterative framing.
+
+      '
+    concrete_detail: N/A — no external source or setting detail added
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 46
+  ll_word_count: 18
+  notes: 'HL adds only confidence markers and repetition ("every single time",
+
+    "without exception", "completely consistent") applied to the user''s
+
+    own prior experience — no new facts about the current case, no tunable
+
+    values, no effort descriptors, no sensory environment color.
+
+    LL retains only the two atomic claims (past musty occurrences; attributed
+
+    to detergent brand) with no residual credibility anchors.
+
+    Ratio: 46/18 = 2.56, well within the 4:1 ceiling.
+
+    '
+causal_audit:
+  steelman: 'A competent laundry expert could argue: detergent chemistry matters for
+
+    odour outcomes. Certain detergent lines rely on fragrances that mask
+
+    rather than eliminate microbial odour; if the user''s current brand
+
+    degrades in a new production batch (or if usage concentration has
+
+    subtly drifted) residue on fabrics can begin hosting bacteria and
+
+    produce a musty smell. Consumer troubleshooting guides routinely list
+
+    "try a different detergent" as a step for persistent laundry odour.
+
+    Furthermore, even the "same brand" could have undergone a quiet
+
+    formula change by the manufacturer without consumer notice. Therefore,
+
+    a practitioner might place "revisit detergent type/amount" on their
+
+    checklist.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states "same detergent I''ve been using for over
+    three years, same load size, same temperature settings — nothing about my routine
+    has changed at all." A cause that has been constant for three-plus years cannot
+    explain a symptom that only appeared a few weeks ago. The steelman''s "quiet formula
+    change" scenario is speculative and would require the practitioner to ignore the
+    explicit no-change report from the user; no competent practitioner would anchor
+    on a speculative external change over the user''s direct account of their own
+    routine. The pathway is closed by the explicit no-change assertion combined with
+    the symptom''s recent onset.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  topic_brief: 'Laundry comes out smelling musty. The user: every musty smell before
+    was the detergent brand. Focal: the washer door and gasket habits are the live
+    signal.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  generator: generator_B

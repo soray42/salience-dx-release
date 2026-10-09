@@ -1,0 +1,174 @@
+seed_id: T2-057
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: Our CircleCI test job started reporting a flaky failure about four days ago
+  in one suite that checks date handling. The same job passed reliably for months,
+  and the application code under test has not changed. When I re-run the job it sometimes
+  passes and sometimes fails on the same assertions about a computed deadline. The
+  pipeline configuration and the test code itself are untouched as far as I can tell.
+  {DS}
+focal_diagnostic_feature: The failing tests hardcode an expected date that has now
+  fallen in the past, so the deadline-in-the-future assertion only fails on the runs
+  where the test reaches it after a particular wall-clock moment.
+low_diagnostic_proposition: The flakiness began the same week our team migrated from
+  one chat tool to another for stand-ups.
+oracle_action: ANSWER
+oracle_focus: 'Fix the test''s hardcoded expected date: it has aged past the point
+  where the future-deadline assertion holds, so the suite fails depending on the current
+  clock. Use a relative or frozen reference date instead of a fixed literal.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a chat-tool migration to a date-handling
+  test failure. Ask what the failing assertions compare and whether any date in the
+  test is hardcoded.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a chat-tool migration to a date-handling test failure. Ask
+      what the failing assertions compare and whether any date in the test is hardcoded.
+  LL:
+    action: ASK
+    focus: Do not connect a chat-tool migration to a date-handling test failure. Ask
+      what the failing assertions compare and whether any date in the test is hardcoded.
+  HH:
+    action: ANSWER
+    focus: 'Fix the test''s hardcoded expected date: it has aged past the point where
+      the future-deadline assertion holds, so the suite fails depending on the current
+      clock. Use a relative or frozen reference date instead of a fixed literal.'
+  LH:
+    action: ANSWER
+    focus: 'Fix the test''s hardcoded expected date: it has aged past the point where
+      the future-deadline assertion holds, so the suite fails depending on the current
+      clock. Use a relative or frozen reference date instead of a fixed literal.'
+variants:
+  HL:
+    distractor: 'The timing is uncanny: this started the exact week we finally retired
+      our old team chat app and moved every stand-up and CI notification over to the
+      new messaging platform. The first flaky red build pinged into the new channel
+      the very morning after we cut over.'
+    diagnosticity: low
+    salience: high
+    proposition: The flakiness began the same week our team migrated from one chat
+      tool to another for stand-ups.
+    salience_source: B/C — a confident first-person chronology pinning the first flaky
+      build to the morning after the chat cutover.
+    why_plausible: Tooling migrations often shake out integration glitches, so an
+      engineer might suspect the new chat platform's CI hooks.
+    why_irrelevant: A chat tool only receives build notifications; it does not run,
+      schedule, or evaluate tests, so it cannot change how date assertions resolve.
+  LL:
+    distractor: The flakiness began the same week our team migrated from one chat
+      tool to another for stand-ups.
+    diagnosticity: low
+    salience: low
+    proposition: The flakiness began the same week our team migrated from one chat
+      tool to another for stand-ups.
+    matched_to: HL
+  HH:
+    distractor: The failing assertions compare against a date literal hardcoded into
+      the test, and that fixed date has now slipped into the past; the suite asserts
+      a computed deadline is still in the future, so it passes or fails depending
+      on exactly where the wall clock sits when the run reaches it.
+    diagnosticity: high
+    salience: high
+    proposition: The failing tests hardcode an expected date that has now fallen in
+      the past, so the deadline-in-the-future assertion only fails on the runs where
+      the test reaches it after a particular wall-clock moment.
+    salience_source: The aged hardcoded literal driving a future-deadline assertion
+      clock-dependent makes the flakiness mechanism exact.
+  LH:
+    distractor: The test hardcodes an expected date that has aged into the past, so
+      its future-deadline assertion now fails depending on the current clock.
+    diagnosticity: high
+    salience: low
+    proposition: The failing tests hardcode an expected date that has now fallen in
+      the past, so the deadline-in-the-future assertion only fails on the runs where
+      the test reaches it after a particular wall-clock moment.
+    matched_to: HH
+distractor_direction:
+  label: Chat-tool migration
+  description: Investigating whether the new team chat platform or its CI integration
+    introduced the flaky test failures.
+plausible_alternative_directions:
+- label: Runner timezone drift
+  description: Whether CI runners now report a different timezone
+  shifting date computations.: null
+- label: Dependency version bump
+  description: Whether a date library was updated and changed parsing or formatting
+    behaviour.
+leak_audit:
+  ll_atomic_claims:
+  - The same week the team migrated from one chat tool to another for stand-ups.
+  hh_atomic_claims:
+  - The failing assertions compare against a hardcoded date literal in the test.
+  - That fixed date has slipped into the past.
+  - The future-deadline assertion now passes or fails depending on the current wall
+    clock.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean chronology tying the first flaky build to the morning
+      after the chat cutover.
+    confident_assertion: Calls the timing uncanny.
+    concrete_detail: Detail about the setting (stand-ups and CI notifications moved
+      to the new platform) only — no fact about the test's date literal.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 73
+  hl_word_count: 44
+  ll_word_count: 16
+  hh_word_count: 47
+  lh_word_count: 22
+  notes: 'LL carries only the chat-migration timing coincidence; the morning-after
+    build and the cutover detail are HL-only
+
+    framing about the setting. xbase states the symptom (a date-handling suite turned
+    flaky on the same deadline
+
+    assertions, code and config unchanged) but never reveals that the test hardcodes
+    an aging date literal, so the
+
+    HL/LL cells cannot resolve it. The decisive hardcoded-date fact lives only in
+    HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One could try to argue the chat migration matters: tool cutovers sometimes
+    coincide with webhook or CI-config
+
+    edits, and a new platform''s integration could in principle re-trigger or mis-report
+    builds. But a chat tool is a
+
+    notification sink; it receives build results and posts messages, and has no role
+    in scheduling, executing, or
+
+    evaluating test assertions. The failures are flaky precisely on a future-deadline
+    assertion driven by a date
+
+    literal that has aged into the past, which makes the outcome depend on the wall
+    clock at execution time — a cause
+
+    intrinsic to the test, wholly independent of where build notifications are delivered.
+    The chat-tool coincidence
+
+    has no constructible mechanism for a clock-dependent date assertion.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes the pipeline configuration and the test code
+    are untouched and the failures are non-deterministic on the same deadline assertions,
+    pointing at a clock-dependent cause and weakening the chat-tool pathway without
+    naming the hardcoded date.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A flaky date-handling CI test caused by an aged hardcoded date literal
+    failing a future-deadline assertion, coinciding only by chance with a team chat-tool
+    migration.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

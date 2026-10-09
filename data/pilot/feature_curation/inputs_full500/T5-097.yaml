@@ -1,0 +1,181 @@
+seed_id: T5-097
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: My USB flash drive will not mount after I unplugged it mid-transfer yesterday.
+  The drive shows up in the disk utility but every attempt to access it fails. The
+  error output in the utility panel looks like scrambled hex codes mixed with partial
+  path strings, nothing readable. The same failure occurs when I try the drive on
+  a second computer. {DS}
+focal_diagnostic_feature: fsck on the drive finds only a dirty bit from the unclean
+  unmount and no other filesystem damage, and the drive mounts cleanly after the check
+  completes.
+low_diagnostic_proposition: The garbled error output in the disk utility suggests
+  a kernel driver problem.
+oracle_action: ANSWER
+oracle_focus: Run fsck on the drive to clear the dirty bit from the unclean unmount;
+  the filesystem is intact and will mount cleanly once the check completes.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer a kernel driver fault from garbled error
+  display. Ask whether fsck has been run and whether the drive was ejected cleanly
+  before diagnosing deeper.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer a kernel driver fault from garbled error display. Ask whether
+      fsck has been run and whether the drive was ejected cleanly before diagnosing
+      deeper.
+  LL:
+    action: ASK
+    focus: Do not infer a kernel driver fault from garbled error display. Ask whether
+      fsck has been run and whether the drive was ejected cleanly before diagnosing
+      deeper.
+  HH:
+    action: ANSWER
+    focus: Run fsck on the drive to clear the dirty bit from the unclean unmount;
+      the filesystem is intact and will mount cleanly once the check completes.
+  LH:
+    action: ANSWER
+    focus: Run fsck on the drive to clear the dirty bit from the unclean unmount;
+      the filesystem is intact and will mount cleanly once the check completes.
+variants:
+  HL:
+    distractor: The error panel is showing raw hex fragments and truncated paths that
+      look nothing like a normal OS message — output that garbled almost always means
+      the kernel driver has lost track of the device state entirely.
+    diagnosticity: low
+    salience: high
+    proposition: The garbled error output in the disk utility suggests a kernel driver
+      problem.
+    salience_source: B — clean confident causal inference with confident assertion
+      ('almost always means'); C — assertive present-tense claim about device state.
+    why_plausible: Garbled error output genuinely can indicate driver-layer trouble;
+      a practitioner who hasn't tried fsck first might plausibly investigate the driver
+      stack.
+    why_irrelevant: The dirty-bit result from fsck is a complete, structural account
+      of the mount failure; a driver fault would not produce a clean fsck pass and
+      successful mount afterward.
+  LL:
+    distractor: The error output in the disk utility looks corrupted, which might
+      indicate a driver problem.
+    diagnosticity: low
+    salience: low
+    proposition: The garbled error output in the disk utility suggests a kernel driver
+      problem.
+    matched_to: HL
+  HH:
+    distractor: Running fsck on the device shows only a dirty bit set from the unclean
+      unmount; no bad sectors, no structure damage — the filesystem is otherwise intact
+      and mounts cleanly after the check completes.
+    diagnosticity: high
+    salience: high
+    proposition: fsck on the drive finds only a dirty bit from the unclean unmount
+      and no other filesystem damage, and the drive mounts cleanly after the check
+      completes.
+    salience_source: B — precise technical sequence (dirty bit → clean fsck → successful
+      mount) with a clear causal chain; concrete observed outcome.
+  LH:
+    distractor: fsck finds only a dirty bit from the unclean unmount; no other damage
+      is found and the drive mounts cleanly.
+    diagnosticity: high
+    salience: low
+    proposition: fsck on the drive finds only a dirty bit from the unclean unmount
+      and no other filesystem damage, and the drive mounts cleanly after the check
+      completes.
+    matched_to: HH
+distractor_direction:
+  label: Kernel driver fault
+  description: Investigating whether the USB kernel driver or OS device layer has
+    lost track of the device state, producing garbled error output and preventing
+    the mount.
+plausible_alternative_directions:
+- label: Physical media damage
+  description: The drive sustained hardware damage during the hot-unplug, causing
+    bad sectors or controller failure rather than just filesystem state.
+- label: Partition table corruption
+  description: The unclean unmount may have corrupted the partition table or MBR/GPT,
+    preventing the OS from enumerating volumes regardless of filesystem state.
+- label: USB controller or port fault
+  description: A fault in the host USB controller or the specific port could prevent
+    stable enumeration and explain the mount failure independently of the filesystem.
+leak_audit:
+  ll_atomic_claims:
+  - The error output in the disk utility looks corrupted.
+  - The corrupted output might indicate a driver problem.
+  hh_atomic_claims:
+  - fsck on the drive reports only a dirty bit from the unclean unmount.
+  - No bad sectors are found.
+  - No structural filesystem damage is found.
+  - The drive mounts cleanly after the fsck check completes.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: B — causal chain stated confidently with specific technical
+      framing (hex fragments, truncated paths, device state).
+    confident_assertion: C — 'almost always means' is a strong assertion about the
+      class of garbled output.
+    concrete_detail: D — 'raw hex fragments and truncated paths' as specific observable
+      properties of the error display, not of the case cause.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 60
+  hl_word_count: 36
+  ll_word_count: 15
+  hh_word_count: 33
+  lh_word_count: 20
+  notes: 'Inferential bridge (surface property → quality conclusion) appears in both
+    HL and LL per C1 T5 rule:
+
+    HL and LL both assert the garbled appearance implies a driver problem.
+
+    HL adds confident assertion and specific visual description of the error output
+    (source/setting detail only).
+
+    HH/LH: LH now explicitly includes the "mounts cleanly" outcome to match all four
+    hh_atomic_claims (C10 repair).
+
+    xbase now carries a pathway-closure clause ("same failure on a second computer,
+    ruling out a host-driver issue")
+
+    that forecloses the kernel-driver mechanism before focal evidence is introduced
+    (causal lens repair).
+
+    Pathway-closure is narrow: names no affirmative cause, blocks only the driver
+    mechanism (C4 compliant).
+
+    '
+causal_audit:
+  steelman: 'A USB kernel driver that loses device state during hot-unplug could present
+    garbled
+
+    sysfs or udev error messages that look like scrambled hex — this happens with
+    some
+
+    USB 3.x host controllers under heavy I/O. If the driver is confused, subsequent
+
+    mount attempts would fail with opaque errors regardless of filesystem state. A
+
+    practitioner encountering this symptom would be justified in checking dmesg for
+
+    driver bind/unbind errors and testing on a different port or host.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the same failure occurs on a second computer,
+    ruling out a host-driver issue. A driver fault is host-specific; persistence across
+    two independent hosts forecloses the mechanism before focal evidence is introduced.
+    No affirmative cause is named (C4 compliant).
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: USB flash drive fails to mount after hot-unplug due to dirty bit (unclean
+    unmount); distractor is garbled error-panel appearance suggesting kernel driver
+    fault.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator
+  generator: generator_B
+  generation_mode: generator_B_batches

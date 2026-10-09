@@ -1,0 +1,205 @@
+seed_id: T3-028
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our nginx-proxied Node.js API is returning 502 Bad Gateway on roughly five
+  percent of requests. The errors are not tied to any specific time of day and occur
+  across multiple client types. Our TLS certificates renewed automatically three weeks
+  ago without incident, and the renewal logs show no errors. nginx is configured with
+  proxy_ssl_verify off, so upstream certificate chains are never verified. {DS}
+focal_diagnostic_feature: The nginx error log records 'upstream sent too big header'
+  on every failing request; all affected responses carry HTTP headers exceeding 8
+  kilobytes, while nginx proxy_buffer_size is set to 4k.
+low_diagnostic_proposition: A senior infrastructure engineer stated that the 502 errors
+  are a TLS certificate trust-chain problem.
+oracle_action: ASK
+oracle_focus: Increase nginx proxy_buffer_size and proxy_buffers to accommodate large
+  response headers, or identify and trim the upstream headers generating payloads
+  above 8 KB.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the TLS trust-chain explanation from authority
+  alone. Ask for nginx error log entries and whether failures correlate with specific
+  response characteristics.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the TLS trust-chain explanation from authority alone. Ask
+      for nginx error log entries and whether failures correlate with specific response
+      characteristics.
+  LL:
+    action: ASK
+    focus: Do not adopt the TLS trust-chain explanation from authority alone. Ask
+      for nginx error log entries and whether failures correlate with specific response
+      characteristics.
+  HH:
+    action: ASK
+    focus: Increase nginx proxy_buffer_size and proxy_buffers to accommodate large
+      response headers, or identify and trim the upstream headers generating payloads
+      above 8 KB.
+  LH:
+    action: ASK
+    focus: Increase nginx proxy_buffer_size and proxy_buffers to accommodate large
+      response headers, or identify and trim the upstream headers generating payloads
+      above 8 KB.
+variants:
+  HL:
+    distractor: Leandro, our principal infrastructure engineer, reviewed the error
+      rate and told us confidently that this is a classic TLS trust-chain problem
+      — he has seen nginx drop exactly this percentage of requests when certificate
+      chains are incomplete.
+    diagnosticity: low
+    salience: high
+    proposition: A senior infrastructure engineer stated that the 502 errors are a
+      TLS certificate trust-chain problem.
+    salience_source: A/C — named principal-level engineer with explicit role credibility,
+      confident assertion ('told us confidently'), and a pattern-matching claim ('classic',
+      'exactly this percentage').
+    why_plausible: A senior engineer citing a familiar symptom percentage and calling
+      it 'classic' carries real authority; TLS trust-chain issues are a known nginx
+      502 cause that practitioners routinely include on their checklist.
+    why_irrelevant: xbase establishes that proxy_ssl_verify is off, so nginx never
+      performs upstream certificate verification; a trust-chain fault has no mechanism
+      to produce 502s in this configuration regardless of chain completeness.
+  LL:
+    distractor: A senior infrastructure engineer stated that the 502 errors are a
+      TLS certificate trust-chain problem.
+    diagnosticity: low
+    salience: low
+    proposition: A senior infrastructure engineer stated that the 502 errors are a
+      TLS certificate trust-chain problem.
+    matched_to: HL
+  HH:
+    distractor: The nginx error log shows 'upstream sent too big header' on every
+      failing request; when we grep the access log, every 502 correlates with a response
+      whose combined HTTP headers exceed 8 kilobytes, and our proxy_buffer_size directive
+      is set to only 4k.
+    diagnosticity: high
+    salience: high
+    proposition: The nginx error log records 'upstream sent too big header' on every
+      failing request; all affected responses carry HTTP headers exceeding 8 kilobytes,
+      while nginx proxy_buffer_size is set to 4k.
+    salience_source: B/C — a verbatim nginx error string, a concrete byte threshold
+      (8 KB), and a specific mismatched config value (4k), forming a complete mechanistic
+      chain.
+  LH:
+    distractor: Nginx logs 'upstream sent too big header' on each 502; failing responses
+      carry headers above 8 KB against a 4k proxy buffer limit.
+    diagnosticity: high
+    salience: low
+    proposition: The nginx error log records 'upstream sent too big header' on every
+      failing request; all affected responses carry HTTP headers exceeding 8 kilobytes,
+      while nginx proxy_buffer_size is set to 4k.
+    matched_to: HH
+distractor_direction:
+  label: TLS certificate trust-chain fault
+  description: Investigating whether an incomplete or mis-ordered TLS certificate
+    chain causes nginx to drop upstream connections and return 502 to clients.
+plausible_alternative_directions:
+- label: upstream process crash or restart
+  description: The Node.js upstream process is crashing or restarting intermittently,
+    causing nginx to receive no response and emit 502 on in-flight requests.
+- label: upstream connection pool exhaustion
+  description: The Node.js server's connection concurrency limit or keepalive pool
+    is being exhausted under load, causing nginx to fail to acquire an upstream connection.
+- label: nginx upstream timeout
+  description: nginx proxy_read_timeout or proxy_connect_timeout is too short for
+    a subset of slow upstream responses, causing premature 502s that look like random
+    failures.
+leak_audit:
+  ll_atomic_claims:
+  - A senior infrastructure engineer stated the cause is a TLS certificate trust-chain
+    problem.
+  hh_atomic_claims:
+  - nginx error log records the message 'upstream sent too big header' on every failing
+    request.
+  - All failing responses carry HTTP headers exceeding 8 kilobytes.
+  - The nginx proxy_buffer_size is set to 4k.
+  hl_salience_dimensions:
+    source_credibility: Named principal engineer with an explicit seniority label
+      ('principal infrastructure engineer').
+    narrative_coherence: Clean professional register with a confident pattern-recognition
+      claim framed as direct reported speech.
+    confident_assertion: '''Told us confidently'', ''classic'', ''exactly this percentage''
+      — no hedging.'
+    concrete_detail: N/A — no concrete detail about the source's setting beyond role
+      and action.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 62
+  hl_word_count: 36
+  ll_word_count: 15
+  hh_word_count: 42
+  lh_word_count: 23
+  notes: 'QC repair: xbase extended to include ''nginx is configured with proxy_ssl_verify
+    off,
+
+    so upstream certificate chains are never verified.'' This adds a second pathway
+    closure
+
+    that forecloses the trust-chain mechanism directly — proxy_ssl_verify off means
+    nginx
+
+    never evaluates the upstream cert chain regardless of its completeness, so an
+    incomplete
+
+    chain has no mechanism to produce 502s. The previous single closure (''renewed
+    without
+
+    incident'') only blocked the botched-renewal sub-mechanism; the pre-existing
+
+    incomplete-chain hypothesis remained open in xbase. The new closure is a narrow
+    neutral
+
+    fact about the config (names no cause) and stays within C4 bounds.
+
+    xbase updated from 49 to 62 words; still within the 42-88 operational target.
+
+    HH/LH diff: LH covers all three HH claims — verbatim error string, 8 KB threshold,
+
+    4k buffer — with no additions or omissions.
+
+    '
+causal_audit:
+  steelman: 'TLS certificate trust-chain issues do cause nginx 502s in real deployments
+    when
+
+    proxy_ssl_verify is enabled. If the upstream Node.js server presents a certificate
+
+    signed by an intermediate CA not in nginx''s trust store, nginx will fail the
+
+    upstream TLS handshake and emit a 502. A senior engineer citing a specific failure
+
+    rate with pattern recognition has genuine expertise to draw on. However, this
+
+    mechanism requires proxy_ssl_verify to be on. xbase states that proxy_ssl_verify
+
+    is off, so nginx does not perform upstream certificate verification at all; an
+
+    incomplete or broken certificate chain on the upstream has no code path through
+
+    which to produce a 502 in this configuration. The trust-chain hypothesis therefore
+
+    has no defensible mechanism given xbase alone.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'Two closures: (1) ''TLS certificates renewed automatically
+    three weeks ago without incident'' rules out the botched-renewal sub-mechanism;
+    (2) ''nginx is configured with proxy_ssl_verify off, so upstream certificate chains
+    are never verified'' eliminates the residual pre-existing incomplete-chain hypothesis
+    by removing the verification code path entirely.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: nginx 502 errors caused by oversized upstream response headers exceeding
+    the proxy buffer limit, misdiagnosed by a senior engineer as a TLS trust-chain
+    problem.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

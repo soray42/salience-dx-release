@@ -1,0 +1,165 @@
+seed_id: T5-075
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our serverless order-confirmation Lambda function has p99 response times above
+  8 seconds during low-traffic hours, while warm invocations complete in under 300
+  milliseconds. The function handles checkout events and has been running unchanged
+  in production for six weeks since its last deployment. {DS}
+focal_diagnostic_feature: The deployment package is 58 MB and includes nine unused
+  library imports; X-Ray init-phase traces show 7.4-second cold-start durations.
+low_diagnostic_proposition: The Lambda console for this function displays the older
+  legacy editor view, suggesting the function setup is outdated and unmaintained.
+oracle_action: ANSWER
+oracle_focus: Reduce the deployment package by removing unused dependencies; the 58
+  MB package inflates cold-start init time to 7.4 seconds, which directly produces
+  the observed p99 spikes at low traffic.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer function quality or maintenance status from
+  console UI version; ask for deployment package size, dependency list, and X-Ray
+  cold-start traces before diagnosing.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer function quality or maintenance status from console UI version;
+      ask for deployment package size, dependency list, and X-Ray cold-start traces
+      before diagnosing.
+  LL:
+    action: ASK
+    focus: Do not infer function quality or maintenance status from console UI version;
+      ask for deployment package size, dependency list, and X-Ray cold-start traces
+      before diagnosing.
+  HH:
+    action: ANSWER
+    focus: Reduce the deployment package by removing unused dependencies; the 58 MB
+      package inflates cold-start init time to 7.4 seconds, which directly produces
+      the observed p99 spikes at low traffic.
+  LH:
+    action: ANSWER
+    focus: Reduce the deployment package by removing unused dependencies; the 58 MB
+      package inflates cold-start init time to 7.4 seconds, which directly produces
+      the observed p99 spikes at low traffic.
+variants:
+  HL:
+    distractor: The Lambda console for this function still uses the legacy editor
+      pane with its dated dark-blue sidebar and cramped layout. Functions stuck on
+      that old console view tend to be the ones nobody has touched in years, and the
+      whole setup feels unmaintained.
+    diagnosticity: low
+    salience: high
+    proposition: The Lambda console for this function displays the older legacy editor
+      view, suggesting the function setup is outdated and unmaintained.
+    salience_source: B/D — vivid concrete interface detail (dark-blue sidebar, cramped
+      layout) combined with a confident generalisation ("tend to be the ones nobody
+      has touched") delivered in first-person professional register.
+    why_plausible: Console UI version can loosely correlate with deployment tool vintage,
+      and a busy engineer might treat an old-looking console view as a signal of legacy
+      configuration that could hide performance problems.
+    why_irrelevant: Lambda console UI presentation is a cosmetic distinction that
+      carries no information about package size, cold-start duration, or dependency
+      configuration; the inferential bridge (old console → unmaintained → performance
+      issues) is aesthetically grounded with no causal path to cold-start latency.
+  LL:
+    distractor: The Lambda console for this function displays the older legacy editor
+      view, suggesting the function setup is outdated and unmaintained.
+    diagnosticity: low
+    salience: low
+    proposition: The Lambda console for this function displays the older legacy editor
+      view, suggesting the function setup is outdated and unmaintained.
+    matched_to: HL
+  HH:
+    distractor: The deployment package is 58 MB; the function imports twelve libraries,
+      nine of which are unused by the handler, and init-phase traces in X-Ray show
+      7.4 seconds of cold-start time.
+    diagnosticity: high
+    salience: high
+    proposition: The deployment package is 58 MB and includes nine unused library
+      imports; X-Ray init-phase traces show 7.4-second cold-start durations.
+    salience_source: Specific package size (58 MB), library count differential (twelve
+      total, nine unused), and exact measured duration (7.4 seconds) form a precise
+      causal chain.
+  LH:
+    distractor: The deployment package is 58 MB with nine unused library imports;
+      X-Ray traces show 7.4-second cold-start init phases.
+    diagnosticity: high
+    salience: low
+    proposition: The deployment package is 58 MB and includes nine unused library
+      imports; X-Ray init-phase traces show 7.4-second cold-start durations.
+    matched_to: HH
+distractor_direction:
+  label: outdated console UI as quality signal
+  description: Treating the Lambda console's legacy editor view as evidence that the
+    function is unmaintained, implying the configuration needs a broader overhaul.
+plausible_alternative_directions:
+- label: concurrency limit exhaustion
+  description: Reserved concurrency set too low could throttle executions during transient
+    bursts, causing delays that look like cold starts.
+- label: downstream service latency
+  description: The Lambda itself may be fast but waiting on a slow downstream call
+    (database, payment API) that inflates p99 independently of init time.
+leak_audit:
+  ll_atomic_claims:
+  - the Lambda console displays the older legacy editor view
+  - this suggests the function setup is outdated and unmaintained
+  hh_atomic_claims:
+  - the deployment package is 58 MB
+  - the function imports twelve libraries
+  - nine of those libraries are unused by the handler
+  - X-Ray init-phase traces show 7.4 seconds of cold-start time
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person observation of the console interface followed
+      by a confident generalisation creates a coherent professional assessment.
+    confident_assertion: '"tend to be the ones nobody has touched" asserts the inference
+      with confident generalisation.'
+    concrete_detail: Specific interface elements (dark-blue sidebar, cramped layout)
+      are concrete detail about the console surface, not about performance metrics.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 42
+  hl_word_count: 43
+  ll_word_count: 20
+  hh_word_count: 30
+  lh_word_count: 18
+  notes: 'Per C1 for T5: the inferential bridge (legacy console view → unmaintained
+
+    → problematic setup) appears in both HL and LL. HL adds concrete visual
+
+    details about the console UI only. The 58 MB package size and X-Ray traces
+
+    live exclusively in HH/LH; xbase gives only the symptom pattern (high p99
+
+    at low traffic, fast warm invocations) which is consistent with cold starts
+
+    but does not name the cause.
+
+    '
+causal_audit:
+  steelman: 'A cloud platform engineer could argue that legacy editor retention
+
+    sometimes indicates a function was created before modern IaC tooling was
+
+    adopted, which in turn correlates with manual configuration and potentially
+
+    oversized or poorly managed deployment packages. If so, the console UI view
+
+    is a weak leading indicator of package-hygiene problems.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the console-to-performance causal path is closed
+    by the X-Ray evidence in HH/LH, not in xbase.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: AWS Lambda cold-start p99 latency caused by a 58 MB overweight deployment
+    package with nine unused libraries; aesthetic distractor is the Lambda console's
+    legacy editor view offered as evidence the function is unmaintained.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,9 @@
+{
+  "seed_id": "T3-014",
+  "steelman": "A moderator who has observed hundreds of families over eight years may have distilled genuine empirical regularities into the categorical rule: daycare centres provide licensed oversight, structured developmental programming, peer interaction, and built-in backup coverage that nanny shares structurally lack. The moderator may have witnessed many two-family nanny shares dissolve when one family exits, leaving parents in crisis; their blanket preference could encode a real reliability signal about long-run stability and developmental outcomes. A competent childcare advisor might note 'consult experienced practitioners' as one checklist item, and this moderator's confident categorical assertion, grounded in stated extensive experience, is exactly the kind of input such an advisor would consider. One could argue the moderator's rule implicitly encodes the risk asymmetry between a robust institutional provider and a fragile two-family arrangement.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "No case-specific causal mechanism exists. The distractor is a categorical authority assertion ('always') that does not engage this family's Mon-Thu schedule or the $650/month cost differential. Even granting the moderator's empirical observations about daycare reliability, those observations concern a general population of families — not a mechanism that changes this family's specific numbers. The xbase explicitly states both care options are considered 'acceptable' in quality, foreclosing the one dimension (quality/reliability difference) that might give the moderator's view case-specific traction. The Friday slot being structurally unused is an arithmetic fact immune to categorical rules. Seed passes this lens."
+}

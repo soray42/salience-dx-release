@@ -1,0 +1,171 @@
+seed_id: T1-038
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our daily revenue dashboard suddenly shows total bookings about 35% higher
+  than finance's own ledger, starting with the report that ran after Monday's model
+  and transform changes. The numbers were matching for months before that. The pipeline
+  pulls bookings, joins them to a campaign-attribution table, and sums the amounts.
+  The raw bookings table on its own still has the correct count of rows. {DS}
+focal_diagnostic_feature: A booking can match multiple rows in the campaign-attribution
+  table, so the join fans out and the same booking amount is summed several times,
+  inflating the total above the true figure.
+low_diagnostic_proposition: A colleague's revenue numbers were once overstated because
+  their currency-conversion rates were loaded a day stale.
+oracle_action: ANSWER
+oracle_focus: 'Fix the fan-out join: deduplicate or pre-aggregate the campaign-attribution
+  side so each booking contributes its amount once before summing.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a stale FX-rate issue from the colleague's
+  case. Ask whether the join multiplies booking rows so amounts are counted more than
+  once.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a stale FX-rate issue from the colleague's case. Ask whether
+      the join multiplies booking rows so amounts are counted more than once.
+  LL:
+    action: ASK
+    focus: Do not assume a stale FX-rate issue from the colleague's case. Ask whether
+      the join multiplies booking rows so amounts are counted more than once.
+  HH:
+    action: ANSWER
+    focus: 'Fix the fan-out join: deduplicate or pre-aggregate the campaign-attribution
+      side so each booking contributes its amount once before summing.'
+  LH:
+    action: ANSWER
+    focus: 'Fix the fan-out join: deduplicate or pre-aggregate the campaign-attribution
+      side so each booking contributes its amount once before summing.'
+variants:
+  HL:
+    distractor: Torvald, who built the finance warehouse at my last company, said
+      he once chased an almost identical overstatement for a week and it turned out
+      their currency-conversion rates had been loaded a day stale, quietly marking
+      up every foreign booking until the totals drifted high.
+    diagnosticity: low
+    salience: high
+    proposition: A colleague's revenue numbers were once overstated because their
+      currency-conversion rates were loaded a day stale.
+    salience_source: A — a named former finance-warehouse builder recounting a matching
+      overstatement lends the FX-rate story credibility.
+    why_plausible: Stale FX rates genuinely inflate multi-currency revenue, so the
+      symptom-match makes it a tempting first suspect.
+    why_irrelevant: The colleague's stale rates say nothing about whether THIS pipeline's
+      join is double-counting rows; that is what the focal evidence isolates.
+  LL:
+    distractor: A colleague's revenue numbers were once overstated because their currency-conversion
+      rates were loaded a day stale.
+    diagnosticity: low
+    salience: low
+    proposition: A colleague's revenue numbers were once overstated because their
+      currency-conversion rates were loaded a day stale.
+    matched_to: HL
+  HH:
+    distractor: I grouped the joined result by booking id and found many bookings
+      now appear on several rows, one per campaign touch, and the SUM adds each booking's
+      amount once per duplicated row — so a booking that touched three campaigns is
+      counted three times in the total.
+    diagnosticity: high
+    salience: high
+    proposition: A booking can match multiple rows in the campaign-attribution table,
+      so the join fans out and the same booking amount is summed several times, inflating
+      the total above the true figure.
+    salience_source: Grouping the joined output by booking id and showing repeated
+      rows makes the fan-out double-count concrete.
+  LH:
+    distractor: After the join, bookings appear on multiple campaign rows, so the
+      SUM counts each booking amount once per duplicate, inflating the total.
+    diagnosticity: high
+    salience: low
+    proposition: A booking can match multiple rows in the campaign-attribution table,
+      so the join fans out and the same booking amount is summed several times, inflating
+      the total above the true figure.
+    matched_to: HH
+distractor_direction:
+  label: Stale currency conversion
+  description: Investigating whether out-of-date currency-conversion rates marked
+    up foreign bookings and inflated the revenue total.
+plausible_alternative_directions:
+- label: Join key or filter change
+  description: Whether Monday's transform changes altered the join key or a filter
+  pulling in booking rows that were previously excluded and inflating the total.: null
+- label: Refund or cancellation exclusion
+  description: Whether refunds and cancellations stopped being subtracted
+  leaving gross instead of net revenue.: null
+leak_audit:
+  ll_atomic_claims:
+  - A colleague's revenue numbers were once overstated.
+  - The cause was currency-conversion rates loaded a day stale.
+  hh_atomic_claims:
+  - After the join, individual bookings appear on multiple rows (one per campaign
+    touch).
+  - The SUM adds each booking's amount once per duplicated row.
+  - A booking that touched three campaigns is therefore counted three times.
+  hl_salience_dimensions:
+    source_credibility: Named former finance-warehouse builder (Torvald) recounting
+      a matching overstatement.
+    narrative_coherence: Coherent week-long-chase-then-found-it account.
+    confident_assertion: N/A
+    concrete_detail: Detail about the source's incident (their FX rates, marked-up
+      foreign bookings) only — no claim about THIS pipeline's join.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 45
+  ll_word_count: 16
+  hh_word_count: 46
+  lh_word_count: 22
+  notes: 'xbase states the overstatement, the join-and-sum shape, and that the raw
+    bookings count is correct, but does NOT
+
+    reveal that the join multiplies rows — the decisive fan-out fact lives only in
+    HH/LH, so HL/LL cannot resolve the
+
+    case. LL carries only the colleague-stale-FX claim; the name and chase detail
+    are HL-only.
+
+    Word counts recounted at repair: xbase 63, HL 45, LL 16, HH 46, LH 22; previous
+    recorded counts were incorrect.
+
+    '
+causal_audit:
+  steelman: 'A data engineer might argue that stale currency-conversion rates are
+    a classic, easily missed cause of revenue
+
+    overstatement in any multi-currency pipeline, and that Torvald''s case matched
+    these symptoms closely, so the FX
+
+    layer deserves first inspection. But that is reasoning from a different pipeline''s
+    defect. Nothing in xbase says
+
+    revenue is multi-currency or that an FX step exists, and the raw bookings count
+    is stated to be correct. The
+
+    focal evidence shows the actual mechanism: a one-to-many join to the attribution
+    table duplicates each booking''s
+
+    row and the SUM counts its amount once per duplicate. That fan-out fully explains
+    a 35% inflation with the raw
+
+    data intact, and stale FX rates have no mechanism to produce row duplication.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: The raw-bookings-row-count statement in xbase is a narrow
+    C4-compliant closure of the source-duplication mechanism only; it does not foreclose
+    the stale-FX distractor, the join-key/filter alternative, or the refund-exclusion
+    alternative. The decisive join fan-out lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A revenue dashboard overstated by a many-to-many fan-out join double-counting
+    bookings, not the stale FX rates a colleague once hit.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

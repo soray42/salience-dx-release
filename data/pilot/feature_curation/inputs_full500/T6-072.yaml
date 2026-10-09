@@ -1,0 +1,177 @@
+seed_id: T6-072
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our production Terraform apply has been failing for two days with a provider
+  schema mismatch error after we upgraded the AWS provider from 4.x to 5.x. Every
+  other infrastructure change landed cleanly this sprint. Running terraform init clears
+  no errors, and the state lock table shows nothing held — the failure is consistent
+  on every apply regardless of which engineer runs it. {DS}
+focal_diagnostic_feature: The error traces to an aws_s3_bucket resource block using
+  the acl argument, which the AWS provider v5 changelog documents as a breaking removal
+  requiring an explicit config migration before apply will succeed.
+low_diagnostic_proposition: The Terraform failure is probably caused by a stale state
+  lock, as past failures for this user were generally due to interrupted applies leaving
+  a lock unreleased.
+oracle_action: ANSWER
+oracle_focus: 'Migrate the aws_s3_bucket resource blocks: move the acl argument to
+  the separate aws_s3_bucket_acl resource as documented in the AWS provider v5 migration
+  guide, then re-run apply.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the stale-lock explanation automatically.
+  The error type (provider schema mismatch) is structurally distinct from a lock error;
+  check the provider changelog and inspect the specific failing resource argument
+  before reaching for force-unlock.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the stale-lock explanation automatically. The error type (provider
+      schema mismatch) is structurally distinct from a lock error; check the provider
+      changelog and inspect the specific failing resource argument before reaching
+      for force-unlock.
+  LL:
+    action: ASK
+    focus: Do not apply the stale-lock explanation automatically. The error type (provider
+      schema mismatch) is structurally distinct from a lock error; check the provider
+      changelog and inspect the specific failing resource argument before reaching
+      for force-unlock.
+  HH:
+    action: ANSWER
+    focus: 'Migrate the aws_s3_bucket resource blocks: move the acl argument to the
+      separate aws_s3_bucket_acl resource as documented in the AWS provider v5 migration
+      guide, then re-run apply.'
+  LH:
+    action: ANSWER
+    focus: 'Migrate the aws_s3_bucket resource blocks: move the acl argument to the
+      separate aws_s3_bucket_acl resource as documented in the AWS provider v5 migration
+      guide, then re-run apply.'
+variants:
+  HL:
+    distractor: Every time Terraform has blown up on me before, it was a stale state
+      lock left by someone who killed a terminal mid-apply, so my first instinct is
+      to try terraform force-unlock and see if that clears it.
+    diagnosticity: low
+    salience: high
+    proposition: The Terraform failure is probably caused by a stale state lock, as
+      past failures for this user were generally due to interrupted applies leaving
+      a lock unreleased.
+    salience_source: 'B: vivid personal history with a clear recurring pattern; C:
+      confident first-instinct framing ("I keep reaching for terraform force-unlock").'
+    why_plausible: State lock contention is a genuine and common Terraform failure
+      mode in team environments; a user who has encountered it repeatedly will have
+      a strong availability heuristic pulling them toward that diagnosis.
+    why_irrelevant: The error is a provider schema mismatch, not a lock error — these
+      produce different error messages and different remediation paths; the lock table
+      itself shows nothing held, structurally ruling out an unreleased lock.
+  LL:
+    distractor: Past Terraform failures for this user were generally attributed to
+      stale state locks from interrupted applies.
+    diagnosticity: low
+    salience: low
+    proposition: The Terraform failure is probably caused by a stale state lock, as
+      past failures for this user were generally due to interrupted applies leaving
+      a lock unreleased.
+    matched_to: HL
+  HH:
+    distractor: 'The error traces to the aws_s3_bucket resource block: version 5 removed
+      the deprecated acl argument that is still set in our config, and the provider
+      changelog lists it as a breaking removal requiring a config migration before
+      apply will succeed.'
+    diagnosticity: high
+    salience: high
+    proposition: The error traces to an aws_s3_bucket resource block using the acl
+      argument, which the AWS provider v5 changelog documents as a breaking removal
+      requiring an explicit config migration before apply will succeed.
+    salience_source: Specific resource type (aws_s3_bucket), specific argument (acl),
+      precise version context (v5 breaking removal), actionable remediation path.
+  LH:
+    distractor: The error originates in an aws_s3_bucket block using the acl argument
+      removed as a breaking change in the AWS provider v5 upgrade.
+    diagnosticity: high
+    salience: low
+    proposition: The error traces to an aws_s3_bucket resource block using the acl
+      argument, which the AWS provider v5 changelog documents as a breaking removal
+      requiring an explicit config migration before apply will succeed.
+    matched_to: HH
+distractor_direction:
+  label: Stale Terraform state lock
+  description: Investigating whether an unreleased state lock from a previous interrupted
+    apply is blocking the current Terraform operation.
+plausible_alternative_directions:
+- label: Backend state corruption
+  description: The remote state file may have been corrupted during the provider upgrade,
+    causing plan/apply divergence that manifests as a schema error.
+- label: Provider version pin conflict
+  description: A module or dependency may be constraining the provider version in
+    a way that conflicts with the upgraded AWS provider, producing schema inconsistency.
+- label: Resource config drift from v5 defaults
+  description: Other arguments deprecated or defaulted differently in v5 may be producing
+    the mismatch beyond just the acl field, requiring a broader migration audit.
+leak_audit:
+  ll_atomic_claims:
+  - Past Terraform failures for this user were generally attributed to stale state
+    locks.
+  - The stale locks came from interrupted applies leaving a lock unreleased.
+  hh_atomic_claims:
+  - The error traces to an aws_s3_bucket resource block.
+  - The failing argument is acl.
+  - AWS provider version 5 removed the acl argument as a breaking change.
+  - The provider changelog documents this removal explicitly.
+  - A config migration is required before apply will succeed.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person availability narrative, no named source.
+    narrative_coherence: Personal pattern of repeated past lock failures drives first-instinct
+      action, even with present contradicting evidence (lock table shows nothing held).
+    confident_assertion: '"I keep reaching for terraform force-unlock"'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 62
+  hl_word_count: 38
+  ll_word_count: 16
+  hh_word_count: 40
+  lh_word_count: 22
+  notes: '"Lock table shows nothing held" moved to xbase as a narrow pathway closure
+
+    (C4: blocks the stale-lock mechanism without naming the cause). HL revised
+
+    to carry only the availability pattern and first-instinct framing, with no
+
+    current-case observations (C1 compliant). LL unchanged — states past
+
+    failures attributed to stale locks, propositionally equivalent to HL.
+
+    '
+causal_audit:
+  steelman: 'Stale state locks produce apply failures in team Terraform environments
+
+    regularly, and the specific symptom (consistent failure across engineers)
+
+    could match a lock held at the backend level that is not visible in the
+
+    standard lock table UI. A thorough practitioner might argue that
+
+    backend-level locks sometimes appear only in cloud-storage metadata,
+
+    not in the Terraform Cloud lock UI.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states "the state lock table shows nothing held,"
+    closing the stale-lock pathway without identifying the actual cause. Additionally
+    the error type (provider schema mismatch) is structurally distinct from a lock
+    error.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Terraform apply fails after AWS provider 4.x to 5.x upgrade because
+    the acl argument was removed as a breaking change from aws_s3_bucket, not because
+    of a stale state lock as past failure experience suggests.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

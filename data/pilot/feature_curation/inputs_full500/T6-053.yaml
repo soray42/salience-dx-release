@@ -1,0 +1,173 @@
+seed_id: T6-053
+template: T6
+domain: open_qa
+complexity: low
+xbase: I am deciding whether to buy a flat in a neighbourhood outside the city centre.
+  The price is below anything I could afford inside the ring road, and the flat itself
+  has everything I need. I currently rent and take the metro to work in under twenty
+  minutes. {DS}
+focal_diagnostic_feature: The new neighbourhood has no metro access within 4 km; the
+  only transit route requires two buses and a transfer, adding 80 minutes each way,
+  and the user has no driving licence.
+low_diagnostic_proposition: Past moves to new neighbourhoods worked out well after
+  an adjustment period, so this move will probably also work out.
+oracle_action: ANSWER
+oracle_focus: Do not buy; the 80-minute one-way commute with no driving alternative
+  is a structural daily cost that past neighbourhood-adaptation experience cannot
+  resolve.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not generalise from past neighbourhood moves. Ask
+  about commute time, transit options, driving ability, and whether the new location
+  is workably connected before advising.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not generalise from past neighbourhood moves. Ask about commute time,
+      transit options, driving ability, and whether the new location is workably connected
+      before advising.
+  LL:
+    action: ASK
+    focus: Do not generalise from past neighbourhood moves. Ask about commute time,
+      transit options, driving ability, and whether the new location is workably connected
+      before advising.
+  HH:
+    action: ANSWER
+    focus: Do not buy; the 80-minute one-way commute with no driving alternative is
+      a structural daily cost that past neighbourhood-adaptation experience cannot
+      resolve.
+  LH:
+    action: ANSWER
+    focus: Do not buy; the 80-minute one-way commute with no driving alternative is
+      a structural daily cost that past neighbourhood-adaptation experience cannot
+      resolve.
+variants:
+  HL:
+    distractor: Every time I have uprooted to a new neighbourhood — twice in the last
+      seven years — I grumbled for a month and then genuinely preferred the new place,
+      so my instinct says this move will work out too.
+    diagnosticity: low
+    salience: high
+    proposition: Past moves to new neighbourhoods worked out well after an adjustment
+      period, so this move will probably also work out.
+    salience_source: B (narrative coherence — vivid personal history with specific
+      count and timeline); C (confident first-instinct framing — "my instinct says").
+    why_plausible: Hedonic adaptation to new locations is a real and well-documented
+      phenomenon; two successful prior moves constitutes non-trivial personal evidence.
+    why_irrelevant: The prior moves were structurally different — they did not involve
+      the loss of metro access with no driving alternative; adaptation cannot reduce
+      an 80-minute daily commute to a manageable level.
+  LL:
+    distractor: My past moves to new areas worked out well, so this move will probably
+      also work out.
+    diagnosticity: low
+    salience: low
+    proposition: Past moves to new neighbourhoods worked out well after an adjustment
+      period, so this move will probably also work out.
+    matched_to: HL
+  HH:
+    distractor: There is no metro station within 4 km of the flat; the only option
+      is two buses with a transfer, adding up to 80 minutes each way, and I do not
+      have a driving licence.
+    diagnosticity: high
+    salience: high
+    proposition: The new neighbourhood has no metro access within 4 km; the only transit
+      route requires two buses and a transfer, adding 80 minutes each way, and the
+      user has no driving licence.
+    salience_source: B (narrative coherence — specific distance threshold, route described
+      step-by-step, time stated precisely); C (definitive assertion — "I do not have
+      a driving licence").
+  LH:
+    distractor: No metro within 4 km; two buses with a transfer add 80 minutes each
+      way; the user has no driving licence.
+    diagnosticity: high
+    salience: low
+    proposition: The new neighbourhood has no metro access within 4 km; the only transit
+      route requires two buses and a transfer, adding 80 minutes each way, and the
+      user has no driving licence.
+    matched_to: HH
+distractor_direction:
+  label: neighbourhood-adaptation optimism
+  description: Relying on the user's personal track record of adapting to and preferring
+    new neighbourhoods as evidence this move will succeed.
+plausible_alternative_directions:
+- label: affordability and equity upside
+  description: The lower price point may allow the user to build equity while the
+    metro network expands, if planned infrastructure reaches the area.
+- label: remote-work feasibility
+  description: If the role allows significant remote working, the commute time may
+    matter less than the stated figures imply.
+- label: total cost of ownership
+  description: Buying outside the ring road may still lose money relative to renting
+    inside if service charges, maintenance, and opportunity cost are factored in.
+leak_audit:
+  ll_atomic_claims:
+  - The user's past moves to new areas worked out well.
+  - Therefore this move will probably also work out.
+  hh_atomic_claims:
+  - There is no metro station within 4 km of the new flat.
+  - The only transit route uses two buses with a transfer.
+  - The total transit time is 80 minutes each way.
+  - The user does not have a driving licence.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker; T6 template.
+    narrative_coherence: Specific count (twice in seven years), personal timeline,
+      emotional arc (grumbled then preferred) create vivid personal history.
+    confident_assertion: '"My instinct says this move will work out too" — direct
+      first-person prediction applied to the present case.'
+    concrete_detail: N/A — details are about past moves, not the present case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 48
+  hl_word_count: 37
+  ll_word_count: 17
+  hh_word_count: 35
+  lh_word_count: 21
+  notes: 'T6 availability inference ("past pattern → same outcome now") appears in
+    both
+
+    HL and LL. HL adds only personal history detail and count; no case-specific
+
+    facts about the new location added. HH/LH diff checked: both assert the 4 km
+
+    metro gap, two-bus-with-transfer route, 80 min each way, no driving licence;
+
+    HH adds vivid ordering (no metro → only option → adding up to) while LH is a
+
+    flat clause list. QC repair: LH rewritten to include all four HH atomic claims
+
+    (was missing ''4 km'' specificity and ''two buses with a transfer'').
+
+    '
+causal_audit:
+  steelman: 'Hedonic adaptation is empirically real: people consistently underestimate
+    how
+
+    well they adjust to new living situations. Two successful prior moves constitute
+
+    personal evidence of above-average adaptability. A practitioner might argue
+
+    that the user''s history predicts successful adjustment to any neighbourhood
+
+    friction.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase notes the current commute is under twenty minutes
+    via metro but does not reveal whether the new neighbourhood has metro access;
+    the structural difference between past moves and this one lives entirely in the
+    focal feature.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Flat purchase outside city centre where no metro access forces an 80-minute
+    daily commute and user has no driving licence; availability distractor is prior
+    successful neighbourhood moves.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,170 @@
+seed_id: T2-058
+template: T2
+domain: open_qa
+complexity: medium
+xbase: We moved into our new rented flat about six weeks ago and the kitchen has had
+  a steady low-level fruit-fly problem almost since the first week. We keep the surfaces
+  clean, take the rubbish out regularly, and store fruit in the fridge, yet there
+  is always a small cloud of them near the sink by evening. The rest of the flat is
+  clear. I want to work out where they are actually breeding so I can stop them at
+  the source. {DS}
+focal_diagnostic_feature: The kitchen sink's drain trap is clogged with old organic
+  residue from the previous tenants, and the flies are breeding in that biofilm inside
+  the drain.
+low_diagnostic_proposition: The problem seemed to coincide with us putting up a new
+  set of houseplants on the kitchen windowsill.
+oracle_action: ANSWER
+oracle_focus: 'The breeding site is the kitchen drain: old organic residue in the
+  sink trap is harbouring the larvae. Clean or flush the drain and trap thoroughly
+  to remove the biofilm rather than treating the surfaces or the plants.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame the new windowsill plants. Ask where the
+  flies cluster and whether the sink drain or trap has been checked for organic residue.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame the new windowsill plants. Ask where the flies cluster and
+      whether the sink drain or trap has been checked for organic residue.
+  LL:
+    action: ASK
+    focus: Do not blame the new windowsill plants. Ask where the flies cluster and
+      whether the sink drain or trap has been checked for organic residue.
+  HH:
+    action: ANSWER
+    focus: 'The breeding site is the kitchen drain: old organic residue in the sink
+      trap is harbouring the larvae. Clean or flush the drain and trap thoroughly
+      to remove the biofilm rather than treating the surfaces or the plants.'
+  LH:
+    action: ANSWER
+    focus: 'The breeding site is the kitchen drain: old organic residue in the sink
+      trap is harbouring the larvae. Clean or flush the drain and trap thoroughly
+      to remove the biofilm rather than treating the surfaces or the plants.'
+variants:
+  HL:
+    distractor: My flatmate is certain it ties back to the houseplants we lined up
+      on the kitchen windowsill in our first week — she brought them over from our
+      old place and the flies appeared within the same few days.
+    diagnosticity: low
+    salience: high
+    proposition: The problem seemed to coincide with us putting up a new set of houseplants
+      on the kitchen windowsill.
+    salience_source: B/C — a confident flatmate tying the fly onset to the same days
+      the plant pots arrived.
+    why_plausible: Potting soil can host fungus gnats, so a recent batch of plants
+      feels like a natural suspect for kitchen insects.
+    why_irrelevant: Fungus gnats from soil are a different insect from drain-breeding
+      fruit flies, and the flies cluster at the sink, not the windowsill plants.
+  LL:
+    distractor: The problem seemed to coincide with us putting a new set of houseplants
+      on the kitchen windowsill.
+    diagnosticity: low
+    salience: low
+    proposition: The problem seemed to coincide with us putting up a new set of houseplants
+      on the kitchen windowsill.
+    matched_to: HL
+  HH:
+    distractor: When I unscrewed and looked into the kitchen sink's drain trap, it
+      was packed with old slimy organic gunk left by the previous tenants, and that
+      is where the flies are coming from; they hover over the plughole and breed in
+      the biofilm sitting inside the drain.
+    diagnosticity: high
+    salience: high
+    proposition: The kitchen sink's drain trap is clogged with old organic residue
+      from the previous tenants, and the flies are breeding in that biofilm inside
+      the drain.
+    salience_source: The opened trap packed with residue, with flies hovering over
+      the plughole, makes the drain breeding site vivid and decisive.
+  LH:
+    distractor: The kitchen sink's drain trap is clogged with old organic residue,
+      and the flies are breeding in the biofilm inside the drain.
+    diagnosticity: high
+    salience: low
+    proposition: The kitchen sink's drain trap is clogged with old organic residue
+      from the previous tenants, and the flies are breeding in that biofilm inside
+      the drain.
+    matched_to: HH
+distractor_direction:
+  label: New windowsill plants
+  description: Treating the recently added kitchen houseplants and their soil as the
+    source of the fruit-fly problem.
+plausible_alternative_directions:
+- label: Hidden fallen fruit
+  description: Whether a piece of fruit or food scrap has rolled out of sight and
+    is breeding flies.
+- label: Rubbish or recycling residue
+  description: Whether sticky residue in the bin or recycling is sustaining the flies.
+leak_audit:
+  ll_atomic_claims:
+  - Around the same period the user put a new set of houseplants on the kitchen windowsill.
+  hh_atomic_claims:
+  - The kitchen sink's drain trap is clogged with old organic residue from previous
+    tenants.
+  - The flies hover over the plughole.
+  - They are breeding in the biofilm inside the drain.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent first-week chronology tying the flies to the plants'
+      arrival.
+    confident_assertion: Flatmate is certain it ties back to the plants.
+    concrete_detail: Detail about the setting (plants brought from the old place)
+      only — no fact about the drain.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 81
+  hl_word_count: 38
+  ll_word_count: 17
+  hh_word_count: 47
+  lh_word_count: 22
+  notes: 'LL carries only the windowsill-plants timing coincidence; the flatmate''s
+    certainty and the brought-from-old-place
+
+    detail are HL-only framing about the setting. xbase states the symptom (persistent
+    fruit flies clustering near
+
+    the sink despite clean surfaces and fridge-stored fruit) but never reveals the
+    clogged drain trap, so the HL/LL
+
+    cells cannot identify the breeding site. The decisive drain-residue fact lives
+    only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One could try to argue the new plants are the source: potting soil commonly
+    harbours fungus gnats, a fresh batch
+
+    of plants is a recognised way to import flying insects into a kitchen, and the
+    timing fits the first week. But
+
+    the insects here cluster at the sink and behave like drain-breeding fruit flies,
+    not soil-dwelling fungus gnats
+
+    that swarm around pots, and the two are biologically distinct with different breeding
+    sites. The focal evidence
+
+    shows a drain trap packed with old organic residue with flies emerging from the
+    plughole — a self-sufficient
+
+    breeding source independent of the windowsill plants. The plant coincidence therefore
+    has no constructible
+
+    mechanism for fruit flies emerging from the kitchen drain.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes the flies persistently cluster near the sink
+    while the rest of the flat is clear, which the windowsill plants would not produce,
+    weakening the plant pathway without naming the clogged-drain cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Persistent kitchen fruit flies in a new rental breeding in a residue-clogged
+    sink drain trap, coinciding only by chance with adding windowsill houseplants.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

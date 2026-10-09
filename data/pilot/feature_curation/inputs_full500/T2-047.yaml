@@ -1,0 +1,174 @@
+seed_id: T2-047
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our Elasticsearch cluster started rejecting a portion of bulk indexing requests
+  with 429 errors about four days ago. Search queries still work, and the rejections
+  come and go rather than being constant. We have not changed the indexing client
+  or the mappings recently, and the cluster has the same node count it has had for
+  months. {DS}
+focal_diagnostic_feature: The bulk thread pool's queue is full during the spikes,
+  and its rejected-execution counter rises in lockstep with the 429s while bulk requests
+  arrive faster than the pool can drain them.
+low_diagnostic_proposition: The 429 errors began the same week the team replaced the
+  office's wall-mounted status dashboard television.
+oracle_action: ANSWER
+oracle_focus: 'Address bulk thread-pool saturation: the write queue is overflowing
+  during spikes, so throttle or batch the client, increase the queue or pool capacity,
+  or smooth the ingest rate.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a wall-display swap to indexing rejections.
+  Ask for bulk thread-pool queue depth, rejected-execution counts, and the ingest
+  rate during the spikes.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a wall-display swap to indexing rejections. Ask for bulk
+      thread-pool queue depth, rejected-execution counts, and the ingest rate during
+      the spikes.
+  LL:
+    action: ASK
+    focus: Do not connect a wall-display swap to indexing rejections. Ask for bulk
+      thread-pool queue depth, rejected-execution counts, and the ingest rate during
+      the spikes.
+  HH:
+    action: ANSWER
+    focus: 'Address bulk thread-pool saturation: the write queue is overflowing during
+      spikes, so throttle or batch the client, increase the queue or pool capacity,
+      or smooth the ingest rate.'
+  LH:
+    action: ANSWER
+    focus: 'Address bulk thread-pool saturation: the write queue is overflowing during
+      spikes, so throttle or batch the client, increase the queue or pool capacity,
+      or smooth the ingest rate.'
+variants:
+  HL:
+    distractor: The whole thing seems to have started the same week we swapped the
+      big status-board television on the office wall for a newer one; the timing was
+      so neat that the on-call engineer keeps mentioning it, since the first 429 alert
+      landed the very afternoon the new screen went up.
+    diagnosticity: low
+    salience: high
+    proposition: The 429 errors began the same week the team replaced the office's
+      wall-mounted status dashboard television.
+    salience_source: B/C — a clean, confidently recounted chronology with a memorable
+      same-afternoon coincidence makes the timing feel meaningful.
+    why_plausible: Humans latch onto sharp 'started right after' coincidences, and
+      a hardware swap in the same week is the kind of change-event teams instinctively
+      suspect.
+    why_irrelevant: A passive display television on the office wall is not in the
+      indexing path or the network to the cluster; it has no mechanism to affect Elasticsearch's
+      write queue.
+  LL:
+    distractor: The 429 errors began the same week the office's wall-mounted status
+      dashboard television was replaced.
+    diagnosticity: low
+    salience: low
+    proposition: The 429 errors began the same week the team replaced the office's
+      wall-mounted status dashboard television.
+    matched_to: HL
+  HH:
+    distractor: During every spike, the bulk thread pool's queue is completely full
+      and its rejected-execution counter climbs exactly in step with the 429 responses;
+      the bulk requests are simply arriving faster than the pool can drain them, so
+      the queue overflows and sheds the excess.
+    diagnosticity: high
+    salience: high
+    proposition: The bulk thread pool's queue is full during the spikes, and its rejected-execution
+      counter rises in lockstep with the 429s while bulk requests arrive faster than
+      the pool can drain them.
+    salience_source: Concrete internal metrics (full bulk queue, rejected-execution
+      counter tracking the 429s) make the saturation cause vivid.
+  LH:
+    distractor: The bulk thread pool's queue is full during the spikes and its rejected-execution
+      counter rises in step with the 429s as requests outpace draining.
+    diagnosticity: high
+    salience: low
+    proposition: The bulk thread pool's queue is full during the spikes, and its rejected-execution
+      counter rises in lockstep with the 429s while bulk requests arrive faster than
+      the pool can drain them.
+    matched_to: HH
+distractor_direction:
+  label: Display-swap timing
+  description: Treating the coincident replacement of the office status-board television
+    as connected to the indexing rejections.
+plausible_alternative_directions:
+- label: Shard rebalancing pressure
+  description: Whether shard relocation is consuming write capacity and causing rejections
+    during spikes.
+- label: Mapping or refresh overhead
+  description: Whether refresh interval or heavy field mappings are slowing indexing
+    throughput.
+leak_audit:
+  ll_atomic_claims:
+  - The 429 errors began the same week.
+  - That week the office's wall-mounted status dashboard television was replaced.
+  hh_atomic_claims:
+  - During the spikes the bulk thread pool's queue is full.
+  - The pool's rejected-execution counter rises in step with the 429 responses.
+  - Bulk requests arrive faster than the pool can drain them.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-week, same-afternoon chronology.
+    confident_assertion: The on-call engineer keeps mentioning the timing.
+    concrete_detail: Detail about the setting event (newer screen going up that afternoon)
+      only — no claim about the indexing path.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 48
+  ll_word_count: 16
+  hh_word_count: 44
+  lh_word_count: 24
+  notes: 'LL carries only the same-week-display-replacement timing claim. The on-call
+    engineer''s repetition and the
+
+    same-afternoon detail are HL-only and about the coincidence event, not the indexing
+    path. xbase withholds the
+
+    thread-pool metrics, stating only the symptom, that client/mappings/node count
+    are unchanged; the decisive
+
+    bulk-queue saturation lives only in HH/LH. The coincidence is a passive wall television
+    with no path to the
+
+    cluster — C2 absolute is satisfied.
+
+    '
+causal_audit:
+  steelman: 'To steelman, one might imagine the new television drew power on a shared
+    circuit or added a device to the office
+
+    network. But the television is a passive display on the office wall, not part
+    of the indexing client, the
+
+    cluster''s hosts, or their network fabric; an office display does not participate
+    in how bulk write requests are
+
+    queued and executed inside Elasticsearch''s thread pools. There is no path — electrical,
+    network, or logical — by
+
+    which swapping a status-board screen could change the rate at which the bulk pool
+    drains. The coincidence has no
+
+    constructible mechanism for the 429 rejections.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the coincidence (office display swap) has no mechanism
+    to close; xbase withholds the bulk-thread-pool saturation evidence, which lives
+    only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Elasticsearch bulk-indexing 429s from bulk thread-pool queue saturation
+    during ingest spikes, coincidentally timed with replacing the office status-board
+    television, which has no mechanism.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

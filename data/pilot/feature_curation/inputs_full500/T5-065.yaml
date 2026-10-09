@@ -1,0 +1,146 @@
+seed_id: T5-065
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: My SSH key-based login to our staging server stopped working this morning.
+  Password authentication still works for the same account, and I have not touched
+  the key pair or the server config. The key worked without any issue until yesterday,
+  and I am the only person who manages that account's configuration. {DS}
+focal_diagnostic_feature: The authorized_keys file has permissions 644; the SSH daemon
+  logs a bad-ownership warning and refuses to load the file.
+low_diagnostic_proposition: The .ssh directory looks disorganised with multiple files,
+  suggesting something in it is probably broken.
+oracle_action: ANSWER
+oracle_focus: Fix the authorized_keys file permissions to 600 and verify SSH reloads
+  the key; this is a standard permission-enforcement failure.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer a broken configuration from directory appearance.
+  Ask for SSH daemon logs and the permissions on the authorized_keys file.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer a broken configuration from directory appearance. Ask for
+      SSH daemon logs and the permissions on the authorized_keys file.
+  LL:
+    action: ASK
+    focus: Do not infer a broken configuration from directory appearance. Ask for
+      SSH daemon logs and the permissions on the authorized_keys file.
+  HH:
+    action: ANSWER
+    focus: Fix the authorized_keys file permissions to 600 and verify SSH reloads
+      the key; this is a standard permission-enforcement failure.
+  LH:
+    action: ANSWER
+    focus: Fix the authorized_keys file permissions to 600 and verify SSH reloads
+      the key; this is a standard permission-enforcement failure.
+variants:
+  HL:
+    distractor: The listing of my .ssh directory looks like a junk drawer — mismatched
+      filenames, dated backup copies, and multiple key files piled together — and
+      that kind of disorder signals to me that something in there is almost certainly
+      broken.
+    diagnosticity: low
+    salience: high
+    proposition: The .ssh directory looks disorganised with multiple files, suggesting
+      something in it is probably broken.
+    salience_source: B (narrative coherence — vivid concrete description of directory
+      contents); C (confident assertion — 'almost certainly broken')
+    why_plausible: A cluttered .ssh directory could contain conflicting key files,
+      duplicate entries, or misnamed files that confuse the daemon — a busy reader
+      would feel this warrants investigation.
+    why_irrelevant: Visual appearance of a directory listing has no causal connection
+      to file permission bits; the permission value 644 is independently set and cannot
+      be inferred from how many files are present.
+  LL:
+    distractor: The .ssh directory looks disorganised with multiple files, which suggests
+      something in it is probably broken.
+    diagnosticity: low
+    salience: low
+    proposition: The .ssh directory looks disorganised with multiple files, suggesting
+      something in it is probably broken.
+    matched_to: HL
+  HH:
+    distractor: Running stat on the authorized_keys file shows permissions 644, world-readable;
+      the SSH daemon error log contains 'bad ownership or modes for authorized_keys'
+      and refuses to load the file entirely.
+    diagnosticity: high
+    salience: high
+    proposition: The authorized_keys file has permissions 644; the SSH daemon logs
+      a bad-ownership warning and refuses to load the file.
+    salience_source: B (narrative coherence — specific command, specific log message,
+      precise permission value linked to failure mechanism)
+  LH:
+    distractor: The authorized_keys file has permissions 644; SSH logs a bad-modes
+      warning and ignores the file.
+    diagnosticity: high
+    salience: low
+    proposition: The authorized_keys file has permissions 644; the SSH daemon logs
+      a bad-ownership warning and refuses to load the file.
+    matched_to: HH
+distractor_direction:
+  label: Disorganised .ssh directory
+  description: Treating the visual disorder of the .ssh directory as evidence that
+    the configuration is broken and responsible for the key authentication failure.
+plausible_alternative_directions:
+- label: Wrong public key in authorized_keys
+  description: Checking whether the correct public key is present and matches the
+    private key being offered.
+- label: SSH daemon config change
+  description: Investigating whether PubkeyAuthentication or AuthorizedKeysFile settings
+    were modified on the server.
+leak_audit:
+  ll_atomic_claims:
+  - The .ssh directory looks disorganised with multiple files.
+  - This disorganisation suggests something in it is probably broken.
+  hh_atomic_claims:
+  - The authorized_keys file has permissions 644 (world-readable).
+  - The SSH daemon error log contains 'bad ownership or modes for authorized_keys'.
+  - The SSH daemon refuses to load the file entirely.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person aesthetic observation, no named source.
+    narrative_coherence: Vivid listing ('junk drawer', 'mismatched filenames', 'dated
+      backup copies') presented in confident first-person voice.
+    confident_assertion: '''almost certainly broken'' — strong unhedged inference.'
+    concrete_detail: N/A — detail is about directory appearance, not the case root
+      cause.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 51
+  hl_word_count: 38
+  ll_word_count: 16
+  hh_word_count: 29
+  lh_word_count: 15
+  notes: 'T5 inferential bridge (disorder → broken) appears in both HL and LL as required
+    by C1/self-check 13.
+
+    HH does not include the password-fallback explanation to keep atomic claims clean;
+    LH matches HH exactly on all three focal claims.
+
+    HL detail (''mismatched filenames, dated backup copies'') is about directory appearance
+    only — no case-diagnostic content added.
+
+    '
+causal_audit:
+  steelman: 'A disorganised .ssh directory could plausibly contain conflicting authorized_keys
+    files, misnamed key files, or duplicate entries with format errors that would
+    cause SSH to fail or ignore certain keys. A practitioner might reasonably want
+    to review the directory contents before checking permissions.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — directory appearance has no causal link to permission
+    bits; the visual clutter cannot determine whether permission values are correct.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: SSH key auth failing on staging server; aesthetic distractor is cluttered
+    .ssh directory appearance; root cause is authorized_keys file at 644 permissions,
+    causing SSH daemon to refuse it.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

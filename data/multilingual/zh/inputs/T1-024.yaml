@@ -1,0 +1,181 @@
+seed_id: T1-024
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: 我们的 REST API 间歇性地向一小部分客户端返回 502 Bad Gateway，大约每五十个请求中出现一次，且没有明显的端点规律。负载均衡器后端的应用服务器对受影响的请求没有记录任何异常，整体流量也远在容量限制以内。过去两周我们既未部署新代码，也未更改负载均衡器配置。快速检查确认所有后端
+  TLS 证书均在有效期内，且在每个实例上保持一致。{DS}
+focal_diagnostic_feature: 502 仅发生在负载均衡器复用了上游已关闭的空闲 keep-alive 连接的请求上，原因是后端的 keep-alive
+  超时时间短于负载均衡器的。
+low_diagnostic_proposition: A similar 502 problem at another company was traced to
+  an expired TLS certificate on the upstream service.
+oracle_action: ANSWER
+oracle_focus: Align the keep-alive timeouts so the backend's idle timeout is longer
+  than the load balancer's, or disable upstream keep-alive reuse; the load balancer
+  is reusing connections the backend has already closed, producing the intermittent
+  502s.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not import the other company's certificate-expiry
+  explanation. Ask whether the 502s correlate with reused idle connections and how
+  the backend and load balancer keep-alive timeouts compare.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not import the other company's certificate-expiry explanation. Ask whether
+      the 502s correlate with reused idle connections and how the backend and load
+      balancer keep-alive timeouts compare.
+  LL:
+    action: ASK
+    focus: Do not import the other company's certificate-expiry explanation. Ask whether
+      the 502s correlate with reused idle connections and how the backend and load
+      balancer keep-alive timeouts compare.
+  HH:
+    action: ANSWER
+    focus: Align the keep-alive timeouts so the backend's idle timeout is longer than
+      the load balancer's, or disable upstream keep-alive reuse; the load balancer
+      is reusing connections the backend has already closed, producing the intermittent
+      502s.
+  LH:
+    action: ANSWER
+    focus: Align the keep-alive timeouts so the backend's idle timeout is longer than
+      the load balancer's, or disable upstream keep-alive reuse; the load balancer
+      is reusing connections the backend has already closed, producing the intermittent
+      502s.
+variants:
+  HL:
+    distractor: Renata 是我上一份工作中信任的平台工程师，她告诉我她的团队曾追查过类似的 502 问题，最终发现是上游服务的 TLS 证书过期了。
+    diagnosticity: low
+    salience: high
+    proposition: A similar 502 problem at another company was traced to an expired
+      TLS certificate on the upstream service.
+    salience_source: A — a trusted platform engineer recounting a closely symptom-matched
+      502 investigation.
+    why_plausible: Certificate problems do cause gateway errors and the symptom-match
+      (random 502s, nothing in app logs) makes the anecdote feel directly applicable.
+    why_irrelevant: An expired upstream certificate fails handshakes consistently
+      for the affected period, not one request in fifty with no pattern; the focal
+      evidence ties the 502s to reused stale keep-alive connections, a different mechanism.
+  LL:
+    distractor: 另一家公司出现过类似的 502 问题，原因被追溯到上游服务的 TLS 证书过期。
+    diagnosticity: low
+    salience: low
+    proposition: A similar 502 problem at another company was traced to an expired
+      TLS certificate on the upstream service.
+    matched_to: HL
+  HH:
+    distractor: 抓包结果显示，502 精确地落在负载均衡器复用了一个后端已经关闭的空闲连接池连接的请求上：后端的 keep-alive 空闲超时时间短于负载均衡器的，导致均衡器往一个半死的套接字写入数据并收到
+      reset。
+    diagnosticity: high
+    salience: high
+    proposition: The 502s occur only on requests where the load balancer reused an
+      idle keep-alive connection whose upstream had already closed it, because the
+      backend keep-alive timeout is shorter than the load balancer's.
+    salience_source: The packet-level correlation to reused-closed connections plus
+      the timeout ordering names the mechanism precisely.
+  LH:
+    distractor: 502 只发生在负载均衡器复用了后端已关闭连接的情况下，因为后端的 keep-alive 超时时间短于负载均衡器的。
+    diagnosticity: high
+    salience: low
+    proposition: The 502s occur only on requests where the load balancer reused an
+      idle keep-alive connection whose upstream had already closed it, because the
+      backend keep-alive timeout is shorter than the load balancer's.
+    matched_to: HH
+distractor_direction:
+  label: 上游 TLS 证书过期
+  description: 排查上游服务的 TLS 证书是否过期或无效，从而导致间歇性的 502 Bad Gateway 响应。
+plausible_alternative_directions:
+- label: 特定请求导致后端崩溃
+  description: 某些特定请求是否会导致工作进程崩溃，使负载均衡器检测到连接断开。
+- label: 负载均衡器健康检查抖动
+  description: 某个后端是否间歇性地未通过健康检查，被短暂摘除，导致正在处理的请求被丢弃。
+  dropping in-flight requests.: null
+leak_audit:
+  ll_atomic_claims:
+  - A similar 502 problem occurred at another company.
+  - It was traced to an expired TLS certificate on the upstream service.
+  hh_atomic_claims:
+  - The 502s occur only on requests where the load balancer reused an idle pooled
+    connection the backend had already closed.
+  - The backend keep-alive idle timeout is shorter than the load balancer's.
+  - The balancer writes onto the half-dead socket and receives a reset.
+  hl_salience_dimensions:
+    source_credibility: Named trusted platform engineer (Renata) from a previous job.
+    narrative_coherence: Coherent investigation narrative that resolved cleanly to
+      a certificate cause.
+    confident_assertion: Told me it finally turned out to be the certificate.
+    concrete_detail: N/A — HL adds only Renata's identity and the certificate mechanism,
+      no fact about the user's own case that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 77
+  hl_word_count: 32
+  ll_word_count: 18
+  hh_word_count: 46
+  lh_word_count: 24
+  notes: 'xbase keeps only symptoms (random 502s, clean app logs, within capacity,
+    no recent changes) plus the TLS
+
+    certificate closure that forecloses the cert pathway — a competent engineer cannot
+    tell from xbase alone
+
+    whether the remaining cause is keep-alive reuse or something else. The decisive
+    reused-stale-connection
+
+    evidence and timeout ordering live only in HH/LH. HL adds only the source identity
+    and her certificate story;
+
+    effort_descriptor ''for days'' and upgraded symptom-match ''nearly identical random''
+    removed (QC repair).
+
+    '
+causal_audit:
+  steelman: 'A senior engineer could argue that TLS handshakes can fail probabilistically
+    across a multi-backend fleet if
+
+    only some upstream instances serve a stale or near-expiry certificate, or if a
+    renewed cert propagated unevenly;
+
+    roughly one-in-fifty requests hitting an unlucky instance would receive a TLS
+    handshake failure and appear as a
+
+    502 with clean app logs (if TLS terminates at the LB). This is a genuine practitioner
+    checklist item for the
+
+    symptom pattern described in xbase alone — the steelman is defensible.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase now carries an explicit closure: ''A quick check
+    confirmed all backend TLS certificates are current and consistent across every
+    instance.'' This sentence forecloses the uneven-cert-propagation pathway without
+    naming the real cause (C4 compliant — it neutrally rules out ONE tempting mechanism).'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Intermittent REST 502s caused by the load balancer reusing idle keep-alive
+    connections the backend already closed (backend keep-alive timeout shorter than
+    the balancer's), not an expired upstream TLS certificate.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator-adjudicated
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-024.yaml
+  source_xbase_sha256: 75c5cdc0e0b40a82
+  translated_content_sha256: 9663df30004aeeb2
+  translation_notes: 'Technical terms REST API, 502 Bad Gateway, TLS, keep-alive,
+    reset, ANN, TCP all kept in English or as conventional loan terms in Chinese.
+    ''Packet captures'' rendered as ''抓包结果'' (standard Chinese sysadmin/networking
+    term). ''Half-dead socket'' rendered as ''半死的套接字'' — vivid technical register
+    preserved. Renata kept as named engineer for salience. The plausible_alternative_directions
+    second entry in the English YAML had a malformed key (''dropping in-flight requests.:
+    null''); translated the intended label and description faithfully.'

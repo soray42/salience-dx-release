@@ -1,0 +1,173 @@
+seed_id: T2-075
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our cloud storage bill for one bucket has roughly tripled over the last month,
+  even though the application writing to it has not changed and the amount of new
+  data we store is about the same as before. The object count is growing only slowly.
+  We use the same region and storage class we always have. I want to find what is
+  driving the cost before finance asks me to explain it. {DS}
+focal_diagnostic_feature: A new analytics workload runs a full-bucket list-and-scan
+  every few minutes, and the bill increase is entirely in per-request and data-retrieval
+  charges, not storage.
+low_diagnostic_proposition: The cost jump began the same week the office moved the
+  team to a new floor.
+oracle_action: ANSWER
+oracle_focus: The extra cost is request and retrieval charges from a new analytics
+  job scanning the whole bucket every few minutes, not storage growth; throttle or
+  cache that job and scope its listing so the per-request and egress charges fall.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the office floor move to the storage bill.
+  Ask for a breakdown of the charges by type and whether request or retrieval costs,
+  not storage, are driving it.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the office floor move to the storage bill. Ask for a breakdown
+      of the charges by type and whether request or retrieval costs, not storage,
+      are driving it.
+  LL:
+    action: ASK
+    focus: Do not connect the office floor move to the storage bill. Ask for a breakdown
+      of the charges by type and whether request or retrieval costs, not storage,
+      are driving it.
+  HH:
+    action: ANSWER
+    focus: The extra cost is request and retrieval charges from a new analytics job
+      scanning the whole bucket every few minutes, not storage growth; throttle or
+      cache that job and scope its listing so the per-request and egress charges fall.
+  LH:
+    action: ANSWER
+    focus: The extra cost is request and retrieval charges from a new analytics job
+      scanning the whole bucket every few minutes, not storage growth; throttle or
+      cache that job and scope its listing so the per-request and egress charges fall.
+variants:
+  HL:
+    distractor: The coincidence I keep circling back to is that the bill started climbing
+      the same week the company moved our whole team up to the new fifth floor; the
+      dates line up almost exactly, and it is the one notable thing that changed for
+      us in that stretch.
+    diagnosticity: low
+    salience: high
+    proposition: The cost jump began the same week the office moved the team to a
+      new floor.
+    salience_source: B/C — clean first-person chronology and confident first-instinct
+      framing make the coincidence feel like the lead.
+    why_plausible: When the only memorable change lines up in time with a cost spike,
+      it is tempting to suspect a connection even when none is obvious.
+    why_irrelevant: A team's physical office floor has no relationship to a cloud
+      bucket's charges, which are billed on storage, requests, and data transfer in
+      the cloud region.
+  LL:
+    distractor: The cost jump began around the same week the office moved the team
+      to a new floor.
+    diagnosticity: low
+    salience: low
+    proposition: The cost jump began the same week the office moved the team to a
+      new floor.
+    matched_to: HL
+  HH:
+    distractor: I broke the bill down by line item and storage is flat; the entire
+      increase is in per-request and data-retrieval charges, traced to a new analytics
+      job that lists and scans the whole bucket every few minutes, hammering the API
+      and pulling objects repeatedly.
+    diagnosticity: high
+    salience: high
+    proposition: A new analytics workload runs a full-bucket list-and-scan every few
+      minutes, and the bill increase is entirely in per-request and data-retrieval
+      charges, not storage.
+    salience_source: Concrete line-item breakdown isolating request and retrieval
+      charges and naming the scanning job exposes the real driver.
+  LH:
+    distractor: The increase is entirely request and retrieval charges from a new
+      job scanning the whole bucket every few minutes.
+    diagnosticity: high
+    salience: low
+    proposition: A new analytics workload runs a full-bucket list-and-scan every few
+      minutes, and the bill increase is entirely in per-request and data-retrieval
+      charges, not storage.
+    matched_to: HH
+distractor_direction:
+  label: Office floor move
+  description: Attributing the cloud storage cost increase to the team's physical
+    office move because the timing coincided.
+plausible_alternative_directions:
+- label: Storage-class change
+  description: Whether objects landed in a more expensive storage class than intended.
+- label: Cross-region egress
+  description: Whether data is being read from another region
+  adding transfer cost.: null
+leak_audit:
+  ll_atomic_claims:
+  - The cost jump began around the same week the office moved the team to a new floor.
+  hh_atomic_claims:
+  - Storage charges are flat while request and retrieval charges account for the entire
+    increase.
+  - A new analytics job lists and scans the whole bucket every few minutes.
+  - That job repeatedly hits the API and pulls objects.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person chronology placing the cost climb at the
+      floor-move week.
+    confident_assertion: Confident framing that the dates line up almost exactly and
+      it is the one notable change.
+    concrete_detail: Detail about the change itself (moving to the fifth floor) only
+      — no claim about the bill's composition.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 72
+  hl_word_count: 48
+  ll_word_count: 17
+  hh_word_count: 44
+  lh_word_count: 19
+  notes: 'LL carries only the timing-coincidence claim with the floor move; the dates-line-up
+    and one-notable-change
+
+    framing are HL-only salience. xbase gives the symptom (bill tripled, writes unchanged,
+    object count slow, same
+
+    region/class) but withholds the line-item breakdown and the scanning job, so HL/LL
+    cannot resolve the driver; the
+
+    decisive request/retrieval mechanism lives only in HH/LH. Same region and storage
+    class in xbase pre-empts two
+
+    alternatives but does not point at the scanning job, which lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'The strongest case for the office move: maybe relocating shifted people
+    to a network path with different egress
+
+    routing. But a cloud bucket is billed on storage volume, request counts, and data
+    transfer measured in the cloud
+
+    provider''s region — none of which depends on which floor employees sit on. Office
+    moves do not change a bucket''s
+
+    request rate or its storage class. There is no mechanism by which a team''s desk
+    location can triple object-storage
+
+    charges. The real cause, a new analytics job scanning the bucket continuously,
+    is entirely server-side and
+
+    independent of the office, so the coincidence is non-causal.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the coincidence (office floor move) has no mechanism
+    for a cloud storage bill; the real request/retrieval driver lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A tripled cloud storage bill is driven by a new analytics job's per-request
+    and retrieval charges from full-bucket scans, not by the coincidental office floor
+    move.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,177 @@
+seed_id: T1-089
+template: T1
+domain: open_qa
+complexity: low
+xbase: My two-year-old laptop's screen cracked yesterday after it slid off the sofa
+  arm onto a tiled floor. The display now has a spreading dark blotch and dead pixels,
+  though the machine still boots and runs fine. I bought it with the standard manufacturer
+  warranty that came in the box, and I never added any separate protection plan. I'm
+  wondering whether I should file a warranty claim to get the screen replaced for
+  free. {DS}
+focal_diagnostic_feature: The damage is a physical drop impact, and the manufacturer
+  warranty covers only manufacturing defects, explicitly excluding accidental damage.
+low_diagnostic_proposition: A friend's cracked-screen warranty claim on a similar
+  laptop was approved without difficulty.
+oracle_action: ANSWER
+oracle_focus: Do not expect a free repair under this warranty; drop-induced accidental
+  damage is outside its scope, so price a paid screen replacement or check whether
+  any separate accidental-damage coverage exists.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume approval from a friend's outcome. Ask what
+  caused the damage and what the user's specific warranty actually covers before predicting
+  a claim result.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume approval from a friend's outcome. Ask what caused the damage
+      and what the user's specific warranty actually covers before predicting a claim
+      result.
+  LL:
+    action: ASK
+    focus: Do not assume approval from a friend's outcome. Ask what caused the damage
+      and what the user's specific warranty actually covers before predicting a claim
+      result.
+  HH:
+    action: ANSWER
+    focus: Do not expect a free repair under this warranty; drop-induced accidental
+      damage is outside its scope, so price a paid screen replacement or check whether
+      any separate accidental-damage coverage exists.
+  LH:
+    action: ANSWER
+    focus: Do not expect a free repair under this warranty; drop-induced accidental
+      damage is outside its scope, so price a paid screen replacement or check whether
+      any separate accidental-damage coverage exists.
+variants:
+  HL:
+    distractor: Zoltán in my office had nearly the same cracked screen on his laptop
+      a few months ago and told me the manufacturer replaced the whole display panel
+      for free without any fuss at all.
+    diagnosticity: low
+    salience: high
+    proposition: A friend's cracked-screen warranty claim on a similar laptop was
+      approved without difficulty.
+    salience_source: A — a named coworker recounting a concrete, recent first-hand
+      claim experience lends the reassurance credibility.
+    why_plausible: Manufacturers do sometimes approve screen claims, so a confident
+      success story makes a free repair feel like the expected outcome.
+    why_irrelevant: Another person's claim outcome reveals nothing about whether THIS
+      user's warranty covers accidental drop damage; coverage scope, not precedent,
+      decides it.
+  LL:
+    distractor: A friend had a similar cracked laptop screen replaced for free under
+      warranty without any difficulty.
+    diagnosticity: low
+    salience: low
+    proposition: A friend's cracked-screen warranty claim on a similar laptop was
+      approved without difficulty.
+    matched_to: HL
+  HH:
+    distractor: The crack came purely from the drop onto the tile, and when I reread
+      the warranty card it says in plain terms that it covers defects in materials
+      and workmanship only, and that accidental physical damage is expressly not covered.
+    diagnosticity: high
+    salience: high
+    proposition: The damage is a physical drop impact, and the manufacturer warranty
+      covers only manufacturing defects, explicitly excluding accidental damage.
+    salience_source: Pairing the concrete cause of the crack with the warranty's exact
+      exclusion language makes the mismatch vivid and decisive.
+  LH:
+    distractor: The damage was caused by a drop, and the warranty covers only manufacturing
+      defects, not accidental damage.
+    diagnosticity: high
+    salience: low
+    proposition: The damage is a physical drop impact, and the manufacturer warranty
+      covers only manufacturing defects, explicitly excluding accidental damage.
+    matched_to: HH
+distractor_direction:
+  label: Claim-approval precedent
+  description: Treating a friend's successful free-repair claim as evidence that this
+    user's claim is likely to be approved.
+plausible_alternative_directions:
+- label: Paid out-of-pocket repair
+  description: Whether paying for a third-party or manufacturer screen replacement
+    is the realistic path given the cause of damage.
+- label: Separate accidental coverage
+  description: Whether any home-contents policy or card benefit might cover accidental
+    damage where the manufacturer warranty does not.
+leak_audit:
+  ll_atomic_claims:
+  - A friend had a similar cracked laptop screen.
+  - That screen was replaced for free under warranty without difficulty.
+  hh_atomic_claims:
+  - The crack was caused by the drop onto the tile.
+  - The warranty covers defects in materials and workmanship only.
+  - The warranty expressly excludes accidental physical damage.
+  hl_salience_dimensions:
+    source_credibility: Named coworker (Zoltán) recounting his own recent claim.
+    narrative_coherence: 'Clean claim-outcome sequence: had the same problem, manufacturer
+      replaced the panel for free.'
+    confident_assertion: States the free replacement happened without any fuss.
+    concrete_detail: Detail about the source's claim (a few months ago, whole panel
+      replaced) only — no claim about this user's warranty terms.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 34
+  ll_word_count: 15
+  hh_word_count: 43
+  lh_word_count: 20
+  notes: 'xbase states the cause of damage (a drop) and the warranty type (standard
+    manufacturer, no add-on) but never
+
+    states the coverage exclusion, so the HL/LL cells cannot resolve whether a claim
+    would succeed; the decisive
+
+    exclusion fact lives only in HH/LH. HL adds only source identity and his claim
+    experience; LL carries just the
+
+    success claim. The drop cause in xbase is context the user already knows, not
+    the focal feature — the focal
+
+    feature is the coverage-scope mismatch, which xbase withholds.
+
+    QC repair: removed ''sent it in, and'' from HL — that phrase was an effort_descriptor
+    case claim (claim-submission
+
+    process) absent from LL and in the forbidden category under C1. hl_word_count
+    updated from 38 to 34.
+
+    '
+causal_audit:
+  steelman: 'A consumer-rights adviser might argue the friend''s smooth approval is
+    genuinely informative: same laptop maker,
+
+    same defect type, and manufacturers sometimes apply goodwill or honour borderline
+    accidental cases, so a recent
+
+    in-warranty success could predict a similar result here. But that mechanism assumes
+    the user''s damage falls
+
+    within coverage. The damage is an unambiguous drop impact and the warranty text
+    excludes accidental damage by
+
+    its terms, so the friend''s outcome — whatever drove it — cannot make THIS claim
+    covered. The precedent has no
+
+    mechanism to change what this specific warranty covers.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase fixes that the user holds only the standard manufacturer
+    warranty with no separate protection plan, foreclosing the 'maybe an add-on covers
+    it' pathway; the exclusion of accidental damage still lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A user weighing a cracked-screen warranty claim, where the manufacturer
+    warranty's exclusion of accidental drop damage, not a friend's approved claim,
+    is decisive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

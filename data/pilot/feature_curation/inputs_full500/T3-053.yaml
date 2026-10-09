@@ -1,0 +1,167 @@
+seed_id: T3-053
+template: T3
+domain: open_qa
+complexity: low
+xbase: I'm deciding whether to rent or buy a home in the city I just moved to for
+  a fixed-term contract. Buying is possible because I have a deposit saved, and prices
+  here are not unreasonable. Renting is straightforward and flexible. I keep going
+  back and forth because both options seem defensible, and I want to make the choice
+  that actually fits my situation rather than a general rule. {DS}
+focal_diagnostic_feature: The user's contract is a non-renewable two-year posting
+  after which they are required to return to their home country, giving a fixed two-year
+  horizon.
+low_diagnostic_proposition: A senior colleague says renting is always throwing money
+  away and that buying is the only sensible choice.
+oracle_action: ANSWER
+oracle_focus: Rent; a fixed, non-renewable two-year horizon with a required return
+  home is far too short to recover buying and selling transaction costs, so renting
+  fits the user's actual time in the city.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the blanket renting-is-wasted-money rule.
+  Ask how long the user will actually stay in this city before judging rent versus
+  buy.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the blanket renting-is-wasted-money rule. Ask how long the
+      user will actually stay in this city before judging rent versus buy.
+  LL:
+    action: ASK
+    focus: Do not accept the blanket renting-is-wasted-money rule. Ask how long the
+      user will actually stay in this city before judging rent versus buy.
+  HH:
+    action: ANSWER
+    focus: Rent; a fixed, non-renewable two-year horizon with a required return home
+      is far too short to recover buying and selling transaction costs, so renting
+      fits the user's actual time in the city.
+  LH:
+    action: ANSWER
+    focus: Rent; a fixed, non-renewable two-year horizon with a required return home
+      is far too short to recover buying and selling transaction costs, so renting
+      fits the user's actual time in the city.
+variants:
+  HL:
+    distractor: Cem, the most senior person on my new team and someone everyone defers
+      to, told me flatly that renting is just throwing money away every month and
+      that any adult with a deposit should always buy — he says it is the only financially
+      sensible choice, full stop.
+    diagnosticity: low
+    salience: high
+    proposition: A senior colleague says renting is always throwing money away and
+      that buying is the only sensible choice.
+    salience_source: A — the most senior, widely deferred-to team member asserting
+      the rule with flat confidence.
+    why_plausible: Renting-versus-buying maxims are common folk wisdom, so a confident
+      senior voice repeating one feels authoritative.
+    why_irrelevant: The maxim is a generic rule that ignores horizon; it never engages
+      the user's fixed two-year stay, which is what actually decides this case.
+  LL:
+    distractor: A senior colleague stated that renting is always wasted money and
+      buying is the only sensible choice.
+    diagnosticity: low
+    salience: low
+    proposition: A senior colleague says renting is always throwing money away and
+      that buying is the only sensible choice.
+    matched_to: HL
+  HH:
+    distractor: My contract is a fixed two-year posting that cannot be renewed, and
+      at the end of it I am required to return to my home country; so whatever I buy
+      here I would have to sell again within two years, with no option to stay on
+      and ride out the costs.
+    diagnosticity: high
+    salience: high
+    proposition: The user's contract is a non-renewable two-year posting after which
+      they are required to return to their home country, giving a fixed two-year horizon.
+    salience_source: The non-renewable two-year posting with a required return makes
+      the short, hard horizon concrete and binding.
+  LH:
+    distractor: The user's contract is a non-renewable two-year posting after which
+      they must return home, fixing the horizon at two years.
+    diagnosticity: high
+    salience: low
+    proposition: The user's contract is a non-renewable two-year posting after which
+      they are required to return to their home country, giving a fixed two-year horizon.
+    matched_to: HH
+distractor_direction:
+  label: Renting-is-wasted-money rule
+  description: Treating the decision as favouring purchase because renting is generically
+    framed as throwing money away.
+plausible_alternative_directions:
+- label: Local price trajectory
+  description: Whether expected short-term appreciation could offset transaction costs
+    over the stay.
+- label: Flexibility value
+  description: Whether the user places independent value on the ease of leaving a
+    rental.
+leak_audit:
+  ll_atomic_claims:
+  - A senior colleague stated that renting is always wasted money.
+  - The same colleague stated that buying is the only sensible choice.
+  hh_atomic_claims:
+  - The user's contract is a non-renewable two-year posting.
+  - At its end the user is required to return to their home country.
+  - This fixes the user's horizon in the city at two years.
+  hl_salience_dimensions:
+    source_credibility: Most senior, widely deferred-to member of the user's new team.
+    narrative_coherence: A single flat assertion delivered confidently and directly.
+    confident_assertion: Says it is the only sensible choice, full stop.
+    concrete_detail: Detail about the source (his seniority, the team's deference)
+      only — no fact about the user's contract horizon.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 68
+  hl_word_count: 47
+  ll_word_count: 17
+  hh_word_count: 51
+  lh_word_count: 20
+  notes: 'LL carries only the renting-is-wasted and buying-is-only-choice claims;
+    the source''s seniority and the team''s
+
+    deference are HL-only and about the source. xbase states the user has a deposit
+    and
+
+    that both options seem defensible, but never reveals the fixed two-year contract
+    horizon, so the HL/LL cells
+
+    cannot resolve the choice. The decisive horizon fact lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A wealth coach might defend the rule: over long horizons, buying often
+    does beat renting because mortgage
+
+    principal builds equity while rent does not, and a confident senior colleague
+    invoking that pattern is not
+
+    obviously wrong in the general case. But the rule is exactly that — general —
+    and its validity depends entirely
+
+    on the holding period, which it never examines. The focal fact is a non-renewable
+    two-year posting with a
+
+    required return home, fixing the horizon at two years; over that span the round-trip
+    transaction costs of buying
+
+    and selling almost certainly exceed any equity built or appreciation captured.
+    The blanket maxim engages none of
+
+    the user''s actual situation, so it has no defensible application to this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive two-year horizon is withheld from xbase
+    and lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A rent-versus-buy choice settled by a fixed non-renewable two-year
+    posting, not a senior colleague's blanket renting-is-wasted-money rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

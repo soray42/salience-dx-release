@@ -1,0 +1,194 @@
+seed_id: T1-036
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our recommendation model's offline evaluation looks great, but live click-through
+  is far below what the offline metrics predicted, and it has been that way since
+  we shipped this version. The serving stack reads features at request time from an
+  online store, while training reads the same feature names from a nightly batch warehouse.
+  The model code is unchanged and the online store is healthy. Candidate generation
+  is upstream and shared identically by the offline run and live serving; this model
+  only scores a fixed candidate set. {DS}
+focal_diagnostic_feature: One heavily weighted feature, a 30-day purchase count, is
+  computed with a different aggregation window in the online store than in the training
+  warehouse, so the serving value is systematically lower than the trained-on value.
+low_diagnostic_proposition: A peer team's recommendation model underperformed live
+  and the cause turned out to be that their candidate retrieval index was stale.
+oracle_action: ANSWER
+oracle_focus: 'Fix the training-serving skew on the 30-day purchase-count feature:
+  align the online aggregation window to the training window so the served feature
+  matches what the model learned on.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not import the stale-index explanation from the other
+  team. Ask whether the feature values served at request time match the values the
+  model was trained on.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not import the stale-index explanation from the other team. Ask whether
+      the feature values served at request time match the values the model was trained
+      on.
+  LL:
+    action: ASK
+    focus: Do not import the stale-index explanation from the other team. Ask whether
+      the feature values served at request time match the values the model was trained
+      on.
+  HH:
+    action: ANSWER
+    focus: 'Fix the training-serving skew on the 30-day purchase-count feature: align
+      the online aggregation window to the training window so the served feature matches
+      what the model learned on.'
+  LH:
+    action: ANSWER
+    focus: 'Fix the training-serving skew on the 30-day purchase-count feature: align
+      the online aggregation window to the training window so the served feature matches
+      what the model learned on.'
+variants:
+  HL:
+    distractor: Henrik, who runs the ranking team in the other division, told me they
+      had almost identical symptoms last quarter — offline numbers beautiful, live
+      engagement flat — and after a long hunt they found their candidate retrieval
+      index had quietly gone stale and was serving yesterday's catalogue.
+    diagnosticity: low
+    salience: high
+    proposition: A peer team's recommendation model underperformed live and the cause
+      turned out to be that their candidate retrieval index was stale.
+    salience_source: A — a named lead of a peer ranking team recounting a symptom-matched
+      incident lends the story credibility.
+    why_plausible: A stale retrieval index is a genuine cause of live underperformance
+      with healthy offline metrics, so the match feels diagnostic.
+    why_irrelevant: The other team's index staleness says nothing about whether THIS
+      system's served feature values match its trained values; that is the property
+      the focal evidence checks.
+  LL:
+    distractor: A peer team's recommendation model underperformed live and was traced
+      to a stale candidate retrieval index.
+    diagnosticity: low
+    salience: low
+    proposition: A peer team's recommendation model underperformed live and the cause
+      turned out to be that their candidate retrieval index was stale.
+    matched_to: HL
+  HH:
+    distractor: 'I logged the raw feature vector for the same user at serve time and
+      at train time and diffed them: the 30-day purchase count, one of the highest-weighted
+      inputs, comes back consistently lower online because the store aggregates it
+      over a 7-day window while training aggregates it over 30.'
+    diagnosticity: high
+    salience: high
+    proposition: One heavily weighted feature, a 30-day purchase count, is computed
+      with a different aggregation window in the online store than in the training
+      warehouse, so the serving value is systematically lower than the trained-on
+      value.
+    salience_source: A side-by-side serve-vs-train diff naming the exact mismatched
+      window makes the skew concrete and decisive.
+  LH:
+    distractor: The 30-day purchase-count, one of the highest-weighted inputs, aggregates
+      over 7 days online versus 30 in training, making served values systematically
+      lower.
+    diagnosticity: high
+    salience: low
+    proposition: One heavily weighted feature, a 30-day purchase count, is computed
+      with a different aggregation window in the online store than in the training
+      warehouse, so the serving value is systematically lower than the trained-on
+      value.
+    matched_to: HH
+distractor_direction:
+  label: Stale retrieval index
+  description: Investigating whether a stale or lagging candidate retrieval index
+    is serving an out-of-date catalogue and causing the live underperformance.
+plausible_alternative_directions:
+- label: Online-store data freshness
+  description: Whether the online feature store itself is serving lagged or partially
+    populated values rather than mismatched-window values.
+- label: Logging or ranking bug at serve time
+  description: Whether the scoring or impression-logging path differs from the offline
+    evaluation harness.
+- label: Position or presentation bias
+  description: Whether live ranking is affected by UI position effects absent from
+    the offline replay.
+leak_audit:
+  ll_atomic_claims:
+  - A peer team's recommendation model underperformed live.
+  - The cause was a stale candidate retrieval index.
+  hh_atomic_claims:
+  - The 30-day purchase-count feature is a highly weighted input.
+  - The online store aggregates it over a 7-day window.
+  - Training aggregates it over a 30-day window.
+  - Consequently served values are systematically lower than trained values.
+  hl_salience_dimensions:
+    source_credibility: Named peer ranking-team lead (Henrik) recounting a symptom-matched
+      incident.
+    narrative_coherence: Coherent last-quarter offline-good/live-flat sequence ending
+      in the stale-index find.
+    confident_assertion: N/A
+    concrete_detail: Detail about the source's incident (their retrieval index, yesterday's
+      catalogue) only — no claim about THIS system's feature values.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 86
+  hl_word_count: 45
+  ll_word_count: 16
+  hh_word_count: 49
+  lh_word_count: 22
+  notes: 'xbase establishes the offline-good/live-bad gap, the split train/serve feature
+    paths, and a healthy online store,
+
+    but does NOT reveal that a feature''s values diverge between the two paths — that
+    decisive fact lives only in
+
+    HH/LH. The HL/LL cells therefore cannot resolve the case. LL carries only the
+    peer-team stale-index claim; the
+
+    name, division, and ''long hunt'' are HL-only and about the source''s incident.
+
+    QC repair: LH was missing the ''highest-weighted input'' claim present in HH (C10
+    leak). Added ''one of the
+
+    highest-weighted inputs'' to LH; reworded to stay within 14-23 word target (new
+    count: 22). lh_word_count
+
+    corrected from 23 to 22 (original text was 24 words; prior count was also off
+    by one).
+
+    '
+causal_audit:
+  steelman: 'A senior ML engineer could argue that a stale retrieval index is a textbook
+    cause of exactly this pattern —
+
+    excellent offline metrics computed on a fresh catalogue, weak live engagement
+    because users are shown outdated
+
+    candidates — so Henrik''s incident looks like a strong analogy worth checking
+    first. The analogy, however, is a
+
+    fact about a different system. Nothing in xbase indicates retrieval is involved
+    or that the catalogue is lagging.
+
+    The focal evidence shows the actual defect: a high-weight feature is computed
+    over mismatched windows so the
+
+    model is scored on inputs unlike its training inputs, a training-serving skew
+    that fully accounts for the gap and
+
+    is independent of the retrieval layer. The stale-index story has no mechanism
+    for this skew.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states candidate generation is upstream/shared and
+    the model only scores a fixed set, ruling out the stale-retrieval-index mechanism.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A recommendation model underperforming live due to training-serving
+    skew (mismatched feature aggregation windows), not the stale retrieval index a
+    peer team blamed.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator-adjudicated
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

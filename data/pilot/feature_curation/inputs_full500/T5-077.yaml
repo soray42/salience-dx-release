@@ -1,0 +1,179 @@
+seed_id: T5-077
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: Our product listing page feels sluggish and unresponsive during scroll. Chrome
+  DevTools shows repeated purple layout bars consuming most of each frame. The page
+  has a wide data table with thirty columns and no explicit column widths set anywhere
+  in the CSS or markup. {DS}
+focal_diagnostic_feature: DevTools flamechart shows the table layout step consuming
+  94% of each frame's layout budget, triggered by the browser recalculating all column
+  widths on every scroll event because table-layout fixed is absent.
+low_diagnostic_proposition: The site's garish color scheme signals that its front
+  end was built without performance consideration and is likely slow.
+oracle_action: ANSWER
+oracle_focus: Add table-layout fixed to the wide table and declare explicit column
+  widths via colgroup or CSS; this forces one-pass layout and eliminates the per-scroll
+  full recalculation.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer rendering performance from color-scheme
+  aesthetics; ask for DevTools performance flamechart output and per-step frame timing
+  before diagnosing.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer rendering performance from color-scheme aesthetics; ask for
+      DevTools performance flamechart output and per-step frame timing before diagnosing.
+  LL:
+    action: ASK
+    focus: Do not infer rendering performance from color-scheme aesthetics; ask for
+      DevTools performance flamechart output and per-step frame timing before diagnosing.
+  HH:
+    action: ANSWER
+    focus: Add table-layout fixed to the wide table and declare explicit column widths
+      via colgroup or CSS; this forces one-pass layout and eliminates the per-scroll
+      full recalculation.
+  LH:
+    action: ANSWER
+    focus: Add table-layout fixed to the wide table and declare explicit column widths
+      via colgroup or CSS; this forces one-pass layout and eliminates the per-scroll
+      full recalculation.
+variants:
+  HL:
+    distractor: Every scrollable panel in this site is loud neon green on a charcoal
+      background, with clashing orange headers — a color scheme so thoughtless it
+      makes me suspect the whole front end was thrown together without any performance
+      consideration.
+    diagnosticity: low
+    salience: high
+    proposition: The site's garish color scheme signals that its front end was built
+      without performance consideration and is likely slow.
+    salience_source: B/C/D — vivid concrete sensory detail about the visual presentation
+      (neon green, charcoal, clashing orange) carries the inferential bridge as a
+      first-person confident observation about code quality.
+    why_plausible: A developer inheriting an unfamiliar codebase might reasonably
+      assume that poor aesthetic choices signal rushed or low-quality implementation
+      overall, making performance-carelessness feel plausible.
+    why_irrelevant: CSS color values are entirely decoupled from layout algorithm
+      selection; a site can use garish colors with perfectly optimised table layout,
+      and no color choice causes or prevents the browser from performing full-width
+      recalculation per scroll.
+  LL:
+    distractor: The site uses a garish color scheme, suggesting its front end was
+      built without performance consideration.
+    diagnosticity: low
+    salience: low
+    proposition: The site's garish color scheme signals that its front end was built
+      without performance consideration and is likely slow.
+    matched_to: HL
+  HH:
+    distractor: The DevTools flamechart shows the table layout step eating 94% of
+      each frame's layout budget; with no table-layout fixed set, the browser recalculates
+      every column width on every scroll update, and that alone accounts for all the
+      dropped frames.
+    diagnosticity: high
+    salience: high
+    proposition: DevTools flamechart shows the table layout step consuming 94% of
+      each frame's layout budget, triggered by the browser recalculating all column
+      widths on every scroll event because table-layout fixed is absent.
+    salience_source: B/C — precise percentage (94%), specific DevTools view named,
+      direct causal chain from absent CSS property to per-scroll recalculation stated
+      confidently.
+  LH:
+    distractor: The table layout step takes 94% of each frame; absent table-layout
+      fixed, the browser recalculates all thirty column widths on every scroll.
+    diagnosticity: high
+    salience: low
+    proposition: DevTools flamechart shows the table layout step consuming 94% of
+      each frame's layout budget, triggered by the browser recalculating all column
+      widths on every scroll event because table-layout fixed is absent.
+    matched_to: HH
+distractor_direction:
+  label: aesthetic quality signal
+  description: Treating the site's garish color scheme as evidence of careless implementation
+    that likely extends to poor rendering performance choices.
+plausible_alternative_directions:
+- label: JavaScript scroll handler thrashing
+  description: A scroll event listener calling offsetHeight or getBoundingClientRect
+    inside the handler could force synchronous layout recalculation independently
+    of the table CSS.
+- label: excessive DOM size
+  description: A very large DOM with thousands of nodes can slow layout globally across
+    all elements, not just the table, and would be visible in the flamechart as broader
+    layout cost.
+- label: unvirtualised row rendering
+  description: If many rows in the table are rendered simultaneously without virtualisation,
+    both layout cost and paint cost would increase regardless of column-width strategy.
+leak_audit:
+  ll_atomic_claims:
+  - The site uses a garish color scheme.
+  - The garish color scheme suggests the front end was built without performance consideration.
+  hh_atomic_claims:
+  - The DevTools flamechart shows the table layout step consuming 94% of each frame's
+    layout budget.
+  - No table-layout fixed is set on the table.
+  - The browser recalculates every column width on every scroll update.
+  - This recalculation alone accounts for all the dropped frames.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person observation flows from sensory detail to inference
+      in a single confident sequence.
+    confident_assertion: '"so thoughtless it makes me suspect" — the inference is
+      stated as a personal strong conclusion, not a hedge.'
+    concrete_detail: Specific colors named (neon green, charcoal, clashing orange)
+      as concrete detail about the visual presentation (source/setting, not case content).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 38
+  ll_word_count: 16
+  hh_word_count: 39
+  lh_word_count: 22
+  notes: 'T5 bridge ("garish color scheme → front end built without performance
+
+    consideration") appears in both HL and LL. HL adds only vivid color specifics
+
+    and the confident first-person inference delivery; LL states the bridge flatly.
+
+    xbase mentions no explicit column widths as context but not the consequence;
+
+    decisive quantification lives in HH/LH only. Confirmed no sensory distractor
+
+    about unrelated environmental setting — colors are the diagnostic surface
+
+    property being offered as evidence.
+
+    '
+causal_audit:
+  steelman: 'A thoughtful senior developer could argue that color-scheme carelessness
+    is a
+
+    weak signal of overall engineering discipline: teams that choose clashing
+
+    colors without a design system may also skip CSS best practices like fixed
+
+    table layout. This is a plausible institutional-quality proxy argument.
+
+    However, this is a generic correlation about teams, not a specific mechanism
+
+    by which any color choice causes layout thrashing in this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — xbase does not close the aesthetic pathway. The
+    closure is structural: CSS color properties have no causal path to table layout
+    algorithm selection. The flamechart in HH provides the affirmative cause.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Scroll jank on a product listing page is caused by a wide data table
+    without table-layout fixed forcing full column-width recalculation on every scroll
+    frame, not by the site's garish color scheme that appears to signal poor implementation.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

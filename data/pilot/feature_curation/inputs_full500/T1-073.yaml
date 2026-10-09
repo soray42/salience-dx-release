@@ -1,0 +1,174 @@
+seed_id: T1-073
+template: T1
+domain: open_qa
+complexity: low
+xbase: I'm trying to pick between two language-learning app subscriptions to finally
+  get conversational in Portuguese. Both cost roughly the same per year and both have
+  large user bases. I can study about twenty minutes a day on my commute. I want to
+  choose well because I tend to stick with whatever I start. {DS}
+focal_diagnostic_feature: Only App A includes live tutor conversation sessions; App
+  B is entirely solo drills with no speaking practice, which the user's spoken-fluency
+  goal requires.
+low_diagnostic_proposition: A friend used one of these apps and found its review-scheduling
+  algorithm frustratingly aggressive.
+oracle_action: ANSWER
+oracle_focus: Choose App A; the user's goal is conversational fluency, and only App
+  A offers live speaking practice, while App B is solo drills that cannot build spoken
+  fluency.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one friend's annoyance with scheduling decide
+  it. Ask which app actually offers speaking practice, since the user's goal is conversational
+  fluency.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one friend's annoyance with scheduling decide it. Ask which
+      app actually offers speaking practice, since the user's goal is conversational
+      fluency.
+  LL:
+    action: ASK
+    focus: Do not let one friend's annoyance with scheduling decide it. Ask which
+      app actually offers speaking practice, since the user's goal is conversational
+      fluency.
+  HH:
+    action: ANSWER
+    focus: Choose App A; the user's goal is conversational fluency, and only App A
+      offers live speaking practice, while App B is solo drills that cannot build
+      spoken fluency.
+  LH:
+    action: ANSWER
+    focus: Choose App A; the user's goal is conversational fluency, and only App A
+      offers live speaking practice, while App B is solo drills that cannot build
+      spoken fluency.
+variants:
+  HL:
+    distractor: Selamawit, who has been learning Italian for a year, used one of these
+      two apps and told me its spaced-repetition scheduler was relentless — it kept
+      piling on review cards faster than she could clear them, and she said the daily
+      backlog made the app feel like a chore.
+    diagnosticity: low
+    salience: high
+    proposition: A friend used one of these apps and found its review-scheduling algorithm
+      frustratingly aggressive.
+    salience_source: A — a named friend with a year of self-study recounting her own
+      hands-on experience lends the complaint credibility.
+    why_plausible: An aggressive review scheduler is a real source of churn in learning
+      apps, so the warning feels like useful firsthand intel.
+    why_irrelevant: Scheduling annoyance is orthogonal to whether an app can build
+      SPOKEN fluency; the deciding fact is which app offers live conversation practice,
+      which her story does not address.
+  LL:
+    distractor: A friend used one of these apps and found its review-scheduling algorithm
+      frustratingly aggressive.
+    diagnosticity: low
+    salience: low
+    proposition: A friend used one of these apps and found its review-scheduling algorithm
+      frustratingly aggressive.
+    matched_to: HL
+  HH:
+    distractor: I went through both feature lists and App A includes weekly live tutor
+      sessions where you actually speak with a person, while App B is entirely solo
+      flashcards and typing drills with no speaking component at all — and conversation
+      is exactly what I am trying to build.
+    diagnosticity: high
+    salience: high
+    proposition: Only App A includes live tutor conversation sessions; App B is entirely
+      solo drills with no speaking practice, which the user's spoken-fluency goal
+      requires.
+    salience_source: Direct feature comparison naming the presence and absence of
+      live speaking practice makes the decisive difference concrete.
+  LH:
+    distractor: App A includes live tutor speaking sessions; App B has no speaking
+      practice, only solo drills.
+    diagnosticity: high
+    salience: low
+    proposition: Only App A includes live tutor conversation sessions; App B is entirely
+      solo drills with no speaking practice, which the user's spoken-fluency goal
+      requires.
+    matched_to: HH
+distractor_direction:
+  label: Review-scheduler frustration
+  description: Treating the choice as mainly about avoiding an aggressive spaced-repetition
+    scheduler that frustrated a friend.
+plausible_alternative_directions:
+- label: Content depth
+  description: Whether one app has more thorough Portuguese-specific grammar and vocabulary
+    coverage.
+- label: Daily-time fit
+  description: Whether either app's lessons map cleanly onto twenty-minute commute
+    sessions.
+leak_audit:
+  ll_atomic_claims:
+  - A friend used one of these apps.
+  - That friend found its review-scheduling algorithm frustratingly aggressive.
+  hh_atomic_claims:
+  - App A includes live tutor speaking sessions.
+  - App B has no speaking practice and is solo drills only.
+  - Speaking practice is what the user's conversational goal requires.
+  hl_salience_dimensions:
+    source_credibility: Named friend (Selamawit) with a year of language self-study
+      recounting hands-on use.
+    narrative_coherence: Coherent account of card backlog building up and the app
+      feeling like a chore.
+    confident_assertion: Stated plainly as her own experience.
+    concrete_detail: Detail about the source (her Italian study, the backlog she felt)
+      only — no claim about either app's speaking features.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 53
+  hl_word_count: 48
+  ll_word_count: 14
+  hh_word_count: 47
+  lh_word_count: 16
+  notes: 'LL carries only the used-app and aggressive-scheduler claims; the named
+    friend, her Italian study, and the chore
+
+    feeling are HL-only and about the source. xbase states the conversational goal
+    and study time but withholds the
+
+    speaking-feature comparison, so HL/LL cannot resolve the choice; the decisive
+    live-conversation difference lives
+
+    only in HH/LH. The user''s spoken-fluency goal in xbase is the standing context
+    against which the focal feature
+
+    becomes decisive; it does not by itself name which app wins.
+
+    '
+causal_audit:
+  steelman: 'A language-app reviewer might argue scheduler aggressiveness matters:
+    spaced repetition that overwhelms a learner
+
+    drives abandonment, and since the user says they stick with what they start, an
+    app that becomes a daily chore
+
+    could undermine the whole effort, making the friend''s report decision-relevant.
+    But that bears on retention
+
+    comfort, not on capability: the user''s stated goal is conversational fluency,
+    and an app with no speaking practice
+
+    cannot deliver it no matter how gentle its scheduling. The decisive feature is
+    the presence of live conversation,
+
+    which the friend''s scheduling complaint does not touch, so it has no mechanism
+    to pick the right app here.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase withholds the speaking-feature comparison;
+    the decisive live-conversation difference appears only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A user choosing a language app for conversational Portuguese should
+    pick the one with live speaking practice, not be swayed by a friend's complaint
+    about another app's review scheduler.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,167 @@
+seed_id: T3-043
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I need to choose between two pairs of wireless earbuds before starting a louder
+  daily train commute next month. Both support active noise cancellation, connect
+  via Bluetooth 5.3, and have a companion app for EQ adjustments. The price difference
+  is about thirty euros. {DS}
+focal_diagnostic_feature: The budget pair has a lab-tested ANC attenuation rating
+  of 28 dB, roughly double the battery life, and a warranty period three times longer
+  than the premium model's.
+low_diagnostic_proposition: A professional audio engineer states that the premium
+  brand consistently delivers better sound quality for daily commuters.
+oracle_action: ANSWER
+oracle_focus: Recommend the budget pair; its measured ANC performance, battery life,
+  and warranty coverage are all superior for daily commute use.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept a blanket brand preference from authority.
+  Ask for measured ANC ratings, battery life, warranty terms, and return policy before
+  deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept a blanket brand preference from authority. Ask for measured
+      ANC ratings, battery life, warranty terms, and return policy before deciding.
+  LL:
+    action: ASK
+    focus: Do not accept a blanket brand preference from authority. Ask for measured
+      ANC ratings, battery life, warranty terms, and return policy before deciding.
+  HH:
+    action: ANSWER
+    focus: Recommend the budget pair; its measured ANC performance, battery life,
+      and warranty coverage are all superior for daily commute use.
+  LH:
+    action: ANSWER
+    focus: Recommend the budget pair; its measured ANC performance, battery life,
+      and warranty coverage are all superior for daily commute use.
+variants:
+  HL:
+    distractor: My aunt Loan spent fifteen years as a senior audio engineer for a
+      national broadcast studio and told me flatly that the premium brand consistently
+      delivers better sound quality for commuters who wear earbuds every single day.
+    diagnosticity: low
+    salience: high
+    proposition: A professional audio engineer states that the premium brand consistently
+      delivers better sound quality for daily commuters.
+    salience_source: A — source credibility (15 years senior audio engineer, named
+      institution); C — confident assertion ("told me flatly").
+    why_plausible: A broadcast audio professional's brand recommendation carries genuine
+      weight; many commuters rely on expert word-of-mouth for audio gear rather than
+      reading spec sheets.
+    why_irrelevant: The authority makes a generic brand claim without engaging the
+      tested ANC attenuation, battery, or warranty figures that directly determine
+      commute suitability; her expertise in broadcast production does not transfer
+      to consumer ANC measurement or battery longevity comparisons.
+  LL:
+    distractor: A relative with professional audio engineering experience stated that
+      the premium brand consistently delivers better sound for daily commuters.
+    diagnosticity: low
+    salience: low
+    proposition: A professional audio engineer states that the premium brand consistently
+      delivers better sound quality for daily commuters.
+    matched_to: HL
+  HH:
+    distractor: The budget pair has a lab-tested ANC attenuation rating of 28 dB versus
+      19 dB for the premium model, twelve hours of battery life against the premium
+      model's six, and a two-year warranty replacing its six-month coverage.
+    diagnosticity: high
+    salience: high
+    proposition: The budget pair has a lab-tested ANC attenuation rating of 28 dB,
+      roughly double the battery life, and a warranty period three times longer than
+      the premium model's.
+    salience_source: B — precise numeric measurements (28 dB vs 19 dB, 12 h vs 6 h,
+      2-year vs 6-month) with concrete comparative framing.
+  LH:
+    distractor: The budget model has a higher measured ANC rating, nearly double the
+      battery life, and a longer warranty than the premium model.
+    diagnosticity: high
+    salience: low
+    proposition: The budget pair has a lab-tested ANC attenuation rating of 28 dB,
+      roughly double the battery life, and a warranty period three times longer than
+      the premium model's.
+    matched_to: HH
+distractor_direction:
+  label: Premium brand audio superiority
+  description: Treating the premium brand's general audio reputation as decisive evidence
+    that it will outperform the budget model for daily commute use.
+plausible_alternative_directions:
+- label: Comfort and fit comparison
+  description: Earbuds worn for a long daily commute may differ significantly in ear-tip
+    fit, seal quality, and wearing fatigue — a live concern not resolved by spec sheets
+    alone.
+- label: App and codec support
+  description: EQ customisation depth and supported audio codecs (aptX, LDAC) could
+    matter for sound quality beyond raw ANC figures, and this has not been investigated.
+- label: Microphone call quality
+  description: If the user takes calls during commute, microphone performance and
+    wind rejection are separate variables that the focal ANC and battery specs do
+    not address.
+leak_audit:
+  ll_atomic_claims:
+  - A relative with professional audio engineering experience made the claim.
+  - The premium brand consistently delivers better sound for daily commuters.
+  hh_atomic_claims:
+  - The budget pair has a lab-tested ANC attenuation rating of 28 dB.
+  - The premium model's ANC rating is 19 dB.
+  - The budget pair has twelve hours of battery life.
+  - The premium model has six hours of battery life.
+  - The budget pair has a two-year warranty.
+  - The premium model has a six-month warranty.
+  hl_salience_dimensions:
+    source_credibility: 15 years senior audio engineer at a national broadcast studio
+    narrative_coherence: Clean single-sentence delivery, professional register
+    confident_assertion: told me flatly
+    concrete_detail: N/A — no case-specific detail added
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 43
+  hl_word_count: 37
+  ll_word_count: 19
+  hh_word_count: 37
+  lh_word_count: 21
+  notes: 'LH trimmed from 24 to 21 words by shortening "nearly double" phrasing.
+
+    All HL-only content is about Aunt Loan''s role and institution; no case-specific
+
+    claims added. The authority''s claim is generic ("the brand") not a review of
+
+    these particular specs.
+
+    '
+causal_audit:
+  steelman: 'A senior broadcast audio engineer has likely evaluated dozens of consumer
+    earbuds
+
+    and formed calibrated views on brand consistency. Premium brands often invest
+    more
+
+    in driver tuning, acoustics research, and quality control — a practitioner could
+
+    reasonably argue that lab ANC ratings do not capture overall sound fidelity or
+
+    resonance quality. The claim could be directionally valid even if not specific
+    to
+
+    these models.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the authority makes a generic brand claim; focal
+    evidence (measured ANC, battery, warranty) directly compares these specific models
+    and the premium model loses on all three dimensions relevant to the user's stated
+    commute priorities.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing between two wireless earbuds for a noisy commute, against
+    an audio engineer aunt's blanket premium-brand claim, where the budget model has
+    higher tested ANC, double the battery, and triple the warranty.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

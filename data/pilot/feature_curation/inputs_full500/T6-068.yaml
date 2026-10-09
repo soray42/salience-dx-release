@@ -1,0 +1,178 @@
+seed_id: T6-068
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our release pipeline's code signing step has failed for every build since we
+  rotated our signing credentials last Tuesday. The signing tool and its configuration
+  file have not changed, and I have confirmed the key file path in the config still
+  resolves correctly to the new key's location. The build steps before signing all
+  complete without error. {DS}
+focal_diagnostic_feature: The rotated private key is RSA-4096, but the pinned signing
+  tool version supports only RSA-2048; the tool logs an unsupported-key-length error
+  before it reads the key path.
+low_diagnostic_proposition: Past code signing failures here were caused by an incorrect
+  key file path; the path is probably wrong again.
+oracle_action: ANSWER
+oracle_focus: Upgrade the signing tool to a version that supports RSA-4096, or regenerate
+  the signing key as RSA-2048 to match the tool's capability; the key-length mismatch
+  is the direct cause and the path is confirmed correct.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to checking the key file path — it has
+  already been confirmed correct. Ask what error the signing tool logs and what key
+  algorithm and length the rotated credential uses.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to checking the key file path — it has already been confirmed
+      correct. Ask what error the signing tool logs and what key algorithm and length
+      the rotated credential uses.
+  LL:
+    action: ASK
+    focus: Do not default to checking the key file path — it has already been confirmed
+      correct. Ask what error the signing tool logs and what key algorithm and length
+      the rotated credential uses.
+  HH:
+    action: ANSWER
+    focus: Upgrade the signing tool to a version that supports RSA-4096, or regenerate
+      the signing key as RSA-2048 to match the tool's capability; the key-length mismatch
+      is the direct cause and the path is confirmed correct.
+  LH:
+    action: ANSWER
+    focus: Upgrade the signing tool to a version that supports RSA-4096, or regenerate
+      the signing key as RSA-2048 to match the tool's capability; the key-length mismatch
+      is the direct cause and the path is confirmed correct.
+variants:
+  HL:
+    distractor: Every time signing has broken in this pipeline before, it came down
+      to the key file path being wrong in the signing.conf — I have fixed that exact
+      same mistake three times and it is where my head goes first every single time.
+    diagnosticity: low
+    salience: high
+    proposition: Past code signing failures here were caused by an incorrect key file
+      path; the path is probably wrong again.
+    salience_source: B/C — vivid personal history of three prior identical fixes,
+      confident first-person instinct framing ("it is where my head goes first every
+      single time"), and a coherent track record of the same-path mistake.
+    why_plausible: Key file path errors are the most common issue when rotating credentials
+      into an existing config; a practitioner who has fixed this three times would
+      naturally check it first.
+    why_irrelevant: The xbase explicitly confirms the key file path resolves correctly
+      to the new key, eliminating path as the cause; the focal evidence shows the
+      tool fails on key algorithm before it even opens the file.
+  LL:
+    distractor: Past code signing failures here were caused by an incorrect key file
+      path in the configuration; that is the likely problem now.
+    diagnosticity: low
+    salience: low
+    proposition: Past code signing failures here were caused by an incorrect key file
+      path; the path is probably wrong again.
+    matched_to: HL
+  HH:
+    distractor: The tool's error log shows unsupported key length 4096 immediately
+      after loading the certificate metadata; the rotated key is RSA-4096 while the
+      tool version pinned in the pipeline supports only RSA-2048, so the path is never
+      even reached.
+    diagnosticity: high
+    salience: high
+    proposition: The rotated private key is RSA-4096, but the pinned signing tool
+      version supports only RSA-2048; the tool logs an unsupported-key-length error
+      before it reads the key path.
+    salience_source: B/C — concrete log message ("unsupported key length 4096"), precise
+      version constraint (RSA-2048 ceiling), and the mechanistic detail that "the
+      path is never even reached" create a vivid and definitive account.
+  LH:
+    distractor: The rotated key is RSA-4096; the pinned signing tool supports only
+      RSA-2048, logging an unsupported-key-length error before the path is read.
+    diagnosticity: high
+    salience: low
+    proposition: The rotated private key is RSA-4096, but the pinned signing tool
+      version supports only RSA-2048; the tool logs an unsupported-key-length error
+      before it reads the key path.
+    matched_to: HH
+distractor_direction:
+  label: incorrect key file path
+  description: Investigating whether the signing configuration points to a wrong or
+    inaccessible file path for the newly rotated private key.
+plausible_alternative_directions:
+- label: key file permission error
+  description: The rotated key file may have been written with permissions that the
+    signing tool's runtime user cannot read, producing an access-denied failure.
+- label: key format or encoding mismatch
+  description: The new key may be in a different encoding or wrapping format (e.g.
+    PKCS#8 vs PKCS#1) that the signing tool does not accept.
+- label: signing certificate chain mismatch
+  description: If the signing operation requires a matched certificate, the certificate
+    stored in the config may no longer correspond to the new private key.
+leak_audit:
+  ll_atomic_claims:
+  - Past code signing failures here were caused by an incorrect key file path.
+  - The path is probably wrong again now.
+  hh_atomic_claims:
+  - The tool's error log shows "unsupported key length 4096".
+  - The error appears immediately after loading certificate metadata.
+  - The rotated key is RSA-4096.
+  - The pinned signing tool supports only RSA-2048.
+  - The key path is never reached by the tool.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, no named external source
+    narrative_coherence: Coherent track record of three prior path-fix incidents,
+      confident first-instinct framing, clean sequence from past pattern to current
+      diagnosis.
+    confident_assertion: '''it is where my head goes first every single time'''
+    concrete_detail: N/A — vivid detail is about the speaker's history, not the present
+      case
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 57
+  hl_word_count: 42
+  ll_word_count: 22
+  hh_word_count: 38
+  lh_word_count: 21
+  notes: 'The key file path is explicitly closed in xbase ("confirmed the key file
+    path
+
+    in the config still resolves correctly to the new key''s location"), ruling out
+
+    the distractor pathway per C2/C4. This is a narrow closure that names no positive
+
+    cause. The distractor remains psychologically salient because path errors are
+    the
+
+    most common rotation failure mode. High complexity reflects the need to understand
+
+    signing-tool version pinning and RSA key-length constraints.
+
+    '
+causal_audit:
+  steelman: 'After a credential rotation, the new key is placed at a new path or with
+    a new
+
+    name, and the signing.conf must be updated to point to it. Even with a nominal
+
+    path check, symlinks, environment variable interpolation, or Docker volume mounts
+
+    could cause the config to resolve correctly in a shell check but point elsewhere
+
+    during pipeline execution. Three prior incidents of this exact failure give strong
+
+    prior probability that path issues remain the most likely root cause.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"I have confirmed the key file path in the config still
+    resolves correctly to the new key''s location" — this closes the incorrect-path
+    mechanism without naming the actual cause.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Release pipeline code signing fails because the rotated key is RSA-4096
+    but the pinned signing tool supports only RSA-2048, against the availability bias
+    that past signing failures were always a wrong key file path.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

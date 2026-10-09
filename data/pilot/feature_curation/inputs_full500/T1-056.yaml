@@ -1,0 +1,179 @@
+seed_id: T1-056
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our monorepo's CI build time has crept from about nine minutes to over forty
+  minutes over the past two months, even though the codebase has grown only modestly.
+  We use a build tool with remote caching enabled, and the slowdown shows up across
+  most pull requests rather than a single project. Nothing obvious changed in our
+  runner configuration, and developers are starting to complain that the wait is killing
+  their flow. {DS}
+focal_diagnostic_feature: Build logs show the remote cache hit rate has collapsed
+  to near zero because a recently added timestamp in a generated file makes every
+  build input unique, defeating caching.
+low_diagnostic_proposition: A comparable CI slowdown at another company was caused
+  by under-provisioned runner machines.
+oracle_action: ANSWER
+oracle_focus: 'Fix the cache-busting input: a generated file now embeds a build timestamp,
+  making every cache key unique and forcing full rebuilds. Make that input deterministic
+  so remote cache hits return, then confirm build time drops.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the under-provisioned-runner story. Ask
+  for the remote cache hit rate and what build inputs changed before assuming a hardware
+  capacity problem.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the under-provisioned-runner story. Ask for the remote cache
+      hit rate and what build inputs changed before assuming a hardware capacity problem.
+  LL:
+    action: ASK
+    focus: Do not adopt the under-provisioned-runner story. Ask for the remote cache
+      hit rate and what build inputs changed before assuming a hardware capacity problem.
+  HH:
+    action: ANSWER
+    focus: 'Fix the cache-busting input: a generated file now embeds a build timestamp,
+      making every cache key unique and forcing full rebuilds. Make that input deterministic
+      so remote cache hits return, then confirm build time drops.'
+  LH:
+    action: ANSWER
+    focus: 'Fix the cache-busting input: a generated file now embeds a build timestamp,
+      making every cache key unique and forcing full rebuilds. Make that input deterministic
+      so remote cache hits return, then confirm build time drops.'
+variants:
+  HL:
+    distractor: Deniz, a staff engineer I worked with at a previous company, said
+      they hit a near-identical creeping CI slowdown last quarter and after a long
+      hunt found their CI runners had been silently downsized to fewer cores and less
+      memory, so every build was simply starved of compute.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable CI slowdown at another company was caused by under-provisioned
+      runner machines.
+    salience_source: A — a named staff engineer recounting a closely matched, methodically
+      diagnosed incident at a prior employer.
+    why_plausible: Runner under-provisioning genuinely does slow builds across the
+      board, so the across-the-org pattern superficially fits.
+    why_irrelevant: Starved runners would slow even cache-hit builds proportionally,
+      whereas here the cache hit rate has collapsed to near zero, so builds are doing
+      full work no amount of compute would shortcut.
+  LL:
+    distractor: A comparable CI build slowdown at another company was attributed to
+      under-provisioned runner machines.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable CI slowdown at another company was caused by under-provisioned
+      runner machines.
+    matched_to: HL
+  HH:
+    distractor: The build logs show the remote cache hit rate has cratered from around
+      ninety percent to nearly zero; a generated config file now embeds the build
+      timestamp, so every build's input hash is unique and nothing is ever reused
+      from cache, forcing full rebuilds each time.
+    diagnosticity: high
+    salience: high
+    proposition: Build logs show the remote cache hit rate has collapsed to near zero
+      because a recently added timestamp in a generated file makes every build input
+      unique, defeating caching.
+    salience_source: The ninety-to-zero hit-rate collapse tied to a specific cache-busting
+      timestamp makes the root cause precise and unambiguous.
+  LH:
+    distractor: The remote cache hit rate has collapsed to near zero because a generated
+      file now embeds a build timestamp, making every input unique.
+    diagnosticity: high
+    salience: low
+    proposition: Build logs show the remote cache hit rate has collapsed to near zero
+      because a recently added timestamp in a generated file makes every build input
+      unique, defeating caching.
+    matched_to: HH
+distractor_direction:
+  label: Under-provisioned runners
+  description: Investigating whether the CI runner machines were downsized or are
+    under-resourced, slowing every build.
+plausible_alternative_directions:
+- label: Test-suite growth
+  description: Whether newly added or slow tests account for the longer wall-clock
+    time.
+- label: Dependency-resolution slowdown
+  description: Whether package installation or resolution time has grown across projects.
+leak_audit:
+  ll_atomic_claims:
+  - A comparable CI slowdown occurred elsewhere.
+  - It was attributed to under-provisioned runner machines.
+  hh_atomic_claims:
+  - The remote cache hit rate collapsed from roughly ninety percent to nearly zero.
+  - A generated config file now embeds the build timestamp.
+  - The unique input hash forces full rebuilds every run.
+  hl_salience_dimensions:
+    source_credibility: Named staff engineer (Deniz) from a prior employer recounting
+      a methodical diagnosis.
+    narrative_coherence: Coherent quarter-long creeping-slowdown story ending in a
+      downsizing finding.
+    confident_assertion: States the cause was the silent runner downsizing.
+    concrete_detail: Detail about the source's incident (fewer cores, less memory)
+      only — no fact about the user's own cache or inputs.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 74
+  hl_word_count: 45
+  ll_word_count: 14
+  hh_word_count: 44
+  lh_word_count: 22
+  notes: 'LL carries only the elsewhere-slowdown and under-provisioned-runner claims;
+    the named source, the long hunt, and
+
+    the cores-and-memory detail are HL-only and about the source''s incident. xbase
+    reports the symptom (build time
+
+    crept from nine to forty minutes across most PRs) and that remote caching is enabled,
+    but never reports the cache
+
+    hit rate or any input change, so the HL/LL cells cannot localise the regression.
+    The decisive cache-collapse fact
+
+    lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A platform lead could argue under-provisioned runners is a strong hypothesis:
+    an org-wide, gradual slowdown that
+
+    touches most pull requests is exactly what compute starvation looks like, runners
+    do get silently re-tiered by
+
+    cloud changes or quota shifts, and the timeline fits a quiet downsizing. That
+    mechanism predicts a roughly
+
+    proportional slowdown of work the runner actually performs. The focal evidence
+    shows the remote cache hit rate
+
+    has collapsed from ninety percent to near zero because a generated file now embeds
+    a build timestamp, so builds
+
+    are no longer reusing cached outputs at all and are doing full work every time.
+    That fourfold increase is
+
+    explained by lost cache reuse, not by per-core throughput; faster runners would
+    not restore the cache hits.
+
+    Under-provisioning therefore has no defensible mechanism for this specific collapse.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive cache-hit-rate collapse is withheld
+    from xbase and lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A creeping monorepo CI slowdown caused by a build-timestamp cache-buster
+    collapsing the remote cache hit rate, not the runner under-provisioning a staff
+    engineer's anecdote describes.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

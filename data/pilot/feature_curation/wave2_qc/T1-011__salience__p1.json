@@ -1,0 +1,12 @@
+{
+  "seed_id": "T1-011",
+  "credibility_score": 5,
+  "salience_delta_score": 5,
+  "template_fit": "fits",
+  "template_fit_notes": "Classic T1 war-story: named peer (Priya, Vantara Mobile Android platform lead) with incident-review authority, symptom-matched (release-only startup crash on subset of users), cause (OEM customizations) closed by the debug-on-same-device fact in xbase.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The distractor is a direct first-person conversational claim that compels the model to accept or dismiss OEM customizations as a direction; no decorative sensory noise that can be bypassed without taking a position.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

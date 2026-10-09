@@ -1,0 +1,288 @@
+seed_id: T1-015
+template: T1
+domain: open_qa
+complexity: low
+xbase: 'My balcony tomato plants have had some leaves turning yellow over the past
+  few weeks, even though I have kept to the same watering routine throughout. The
+  soil stays consistently moist but never waterlogged, and the rest of the plant looks
+  healthy and is still setting fruit. My next-door neighbour had a similar yellowing
+  problem with their tomatoes last summer. {DS}
+
+  '
+focal_diagnostic_feature: 'The yellowing begins on the oldest, lowest leaves and progresses
+  upward while new growth remains green — the definitive pattern of a mobile-nutrient
+  (nitrogen) deficiency, which structurally excludes iron-uptake or pH problems that
+  always present first on young upper leaves.
+
+  '
+low_diagnostic_proposition: 'Someone else''s tomato plants had lower-leaf yellowing
+  caused by soil that was too alkaline, which blocked iron uptake.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'The bottom-up progression from oldest to newest leaves is the textbook
+  signature of nitrogen deficiency (a mobile nutrient the plant relocates upward).
+  Recommend a nitrogen-rich liquid feed or balanced tomato fertiliser, and consider
+  whether the container potting mix is depleted. The neighbour''s alkaline-soil/iron-lockout
+  cause is excluded by symptom location: iron deficiency (immobile nutrient) always
+  manifests first as interveinal chlorosis on the youngest, uppermost leaves, not
+  on old lower leaves.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Acknowledge the neighbour''s anecdote but note it does
+  not apply here: alkaline-soil iron lockout produces interveinal chlorosis on new
+  upper growth, not uniform yellowing ascending from the oldest lower leaves. Ask
+  about feeding history and potting mix age to identify whether the actual cause is
+  nitrogen depletion, magnesium deficiency, or natural senescence, and give guidance
+  based on that information.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Acknowledge the neighbour''s anecdote but note it does not apply here:
+      alkaline-soil iron lockout produces interveinal chlorosis on new upper growth,
+      not uniform yellowing ascending from the oldest lower leaves. Ask about feeding
+      history and potting mix age to identify whether the actual cause is nitrogen
+      depletion, magnesium deficiency, or natural senescence, and give guidance based
+      on that information.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Acknowledge the neighbour''s anecdote but note it does not apply here:
+      alkaline-soil iron lockout produces interveinal chlorosis on new upper growth,
+      not uniform yellowing ascending from the oldest lower leaves. Ask about feeding
+      history and potting mix age to identify whether the actual cause is nitrogen
+      depletion, magnesium deficiency, or natural senescence, and give guidance based
+      on that information.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'The bottom-up progression from oldest to newest leaves is the textbook
+      signature of nitrogen deficiency (a mobile nutrient the plant relocates upward).
+      Recommend a nitrogen-rich liquid feed or balanced tomato fertiliser, and consider
+      whether the container potting mix is depleted. The neighbour''s alkaline-soil/iron-lockout
+      cause is excluded by symptom location: iron deficiency (immobile nutrient) always
+      manifests first as interveinal chlorosis on the youngest, uppermost leaves,
+      not on old lower leaves.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'The bottom-up progression from oldest to newest leaves is the textbook
+      signature of nitrogen deficiency (a mobile nutrient the plant relocates upward).
+      Recommend a nitrogen-rich liquid feed or balanced tomato fertiliser, and consider
+      whether the container potting mix is depleted. The neighbour''s alkaline-soil/iron-lockout
+      cause is excluded by symptom location: iron deficiency (immobile nutrient) always
+      manifests first as interveinal chlorosis on the youngest, uppermost leaves,
+      not on old lower leaves.
+
+      '
+variants:
+  HL:
+    distractor: 'Andrei, who runs the community garden two streets over, told me their
+      lower-leaf yellowing turned out to be soil that had gone too alkaline — the
+      tomatoes couldn''t take up iron properly.
+
+      '
+    diagnosticity: low
+    salience: high
+    proposition: 'Someone else''s tomato plants had lower-leaf yellowing caused by
+      soil that was too alkaline, which blocked iron uptake.
+
+      '
+    salience_source: 'A (source credibility): Andrei is named and identified as running
+      a community garden — a role a gardening reader would weight as hands-on expertise.
+      C (confident assertion): "told me" is direct and certain. D (concrete detail
+      about setting): "two streets over" anchors the source without adding case-content.
+
+      '
+    why_plausible: 'Alkaline soil blocking iron is a real and common container-tomato
+      problem, the symptom description ("lower-leaf yellowing") sounds like a match,
+      and the source is a credible local practitioner speaking with first-hand knowledge.
+
+      '
+    why_irrelevant: 'Iron deficiency from high pH is an immobile-nutrient problem:
+      it always presents first on the youngest, uppermost leaves as interveinal chlorosis.
+      The user''s yellowing starts at the oldest, lowest leaves and progresses upward
+      — the structural signature of a mobile-nutrient (nitrogen) deficiency, which
+      structurally excludes the pH/iron pathway.
+
+      '
+  LL:
+    distractor: 'Someone else''s tomato plants had lower-leaf yellowing that was attributed
+      to overly alkaline soil blocking iron uptake.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: 'Someone else''s tomato plants had lower-leaf yellowing caused by
+      soil that was too alkaline, which blocked iron uptake.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'I have noticed the yellowing is strictly on the oldest, lowest leaves
+      and moves upward leaf by leaf, while the newest growth at the shoot tips stays
+      bright green — the classic ascending pattern of mobile-nutrient depletion.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'The yellowing begins on the oldest, lowest leaves and progresses
+      upward while new growth remains green — the definitive pattern of a mobile-nutrient
+      (nitrogen) deficiency, which structurally excludes iron-uptake or pH problems
+      that always present first on young upper leaves.
+
+      '
+    salience_source: 'C (confident, precise observation) and D (concrete detail: "shoot
+      tips", "leaf by leaf") make the focal evidence vivid and technically specific
+      without adding new case facts — all content mirrors the focal diagnostic feature.
+
+      '
+  LH:
+    distractor: 'The yellowing is on the lowest, oldest leaves and progresses upward
+      while new growth stays green — the classic ascending pattern of mobile-nutrient
+      depletion.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'The yellowing begins on the oldest, lowest leaves and progresses
+      upward while new growth remains green — the definitive pattern of a mobile-nutrient
+      (nitrogen) deficiency, which structurally excludes iron-uptake or pH problems
+      that always present first on young upper leaves.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: alkaline soil iron lockout
+  description: 'The neighbour''s tomato yellowing was caused by soil pH rising too
+    high, which prevented the plants from absorbing iron — a hypothesis the user might
+    apply to their own case by analogy.
+
+    '
+plausible_alternative_directions:
+- label: magnesium deficiency
+  description: 'Magnesium is also a mobile nutrient that produces lower-leaf yellowing
+    (often interveinal) in container tomatoes when depleted; a real differential diagnosis
+    alongside nitrogen.
+
+    '
+- label: natural senescence
+  description: 'Lower leaves on fruiting tomato plants naturally yellow and drop as
+    the plant matures and redirects energy to fruit; the rate and extent distinguish
+    this from a deficiency.
+
+    '
+- label: root restriction or compaction
+  description: 'Balcony containers can become root-bound or develop compacted soil
+    over a season, limiting nutrient and water uptake and causing lower-leaf yellowing
+    even with a regular watering routine.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - Someone else's tomato plants had lower-leaf yellowing
+  - The cause of their yellowing was soil that was too alkaline
+  - The alkaline soil blocked iron uptake
+  hl_salience_dimensions:
+    source_credibility: 'Andrei is named and identified as running a community garden
+      — a role domain readers associate with hands-on growing experience.
+
+      '
+    narrative_coherence: 'Single clean clause reporting a resolved past case; professional
+      register; no interruptions or tangents.
+
+      '
+    confident_assertion: '"told me … turned out to be" — direct first-person report
+      of a concluded finding, no hedging.
+
+      '
+    concrete_detail: '"two streets over" — locates the source in the user''s neighbourhood
+      without adding any fact about the user''s case.
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 32
+  ll_word_count: 17
+  notes: 'Avoided any tunable values (no pH numbers, no specific nutrient dose).
+
+    Avoided effort descriptors ("after three days of testing").
+
+    Avoided severity claims about the neighbour''s damage or loss.
+
+    REPAIR (qc leak p1 2026-06-11): removed "identical-looking" from HL
+
+    distractor — the QC verdict classified it as other_case_content because
+
+    it asserts the other plants'' symptom presentation matched the user''s
+
+    current case, adding a case-content claim absent from LL. The anecdote
+
+    reads naturally without it; LL''s "lower-leaf yellowing" fully covers the
+
+    shared propositional claim.
+
+    REPAIR (cell-integrity lens 2026-06-11): removed bottom-up progression
+
+    narration from xbase — "lowest, oldest leaves — starting from the base
+
+    and working upward" was the decisive mobile-nutrient pattern and must
+
+    live only in HH/LH. Replaced with non-directional "some leaves turning
+
+    yellow." HH/LH already carry the full progression detail.
+
+    '
+causal_audit:
+  steelman: 'A competent gardening practitioner could argue: balcony containers are
+
+    routinely watered with calcium-heavy tap water, which raises soil pH over
+
+    a season. pH above 7.0–7.5 locks out iron (and manganese) even when
+
+    those minerals are physically present in the compost. Iron deficiency
+
+    causes leaf chlorosis that is visually described as "yellowing." The
+
+    neighbour diagnosed this same issue in similar tomato plants. Therefore
+
+    the pH/iron-lockout mechanism is a live hypothesis for this user''s case
+
+    too, and a careful gardener would check soil pH before dismissing it.
+
+    This is not an exotic pathway — it appears in standard RHS and university
+
+    extension guides for container tomatoes.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — after the cell-integrity repair, xbase no longer
+    narrates the bottom-up progression. The progression pattern (lowest-to-newest,
+    upward) lives exclusively in the HH/LH cells, where it structurally excludes the
+    iron/pH pathway. The steelman verdict stands because the mechanism is refuted
+    at the cell level by the focal evidence.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 3
+  topic_brief: 'Balcony tomato plants yellowing from the lower leaves despite regular
+    watering. Anecdote: yellowing plants of a neighbour had a cause that cannot apply
+    here.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B

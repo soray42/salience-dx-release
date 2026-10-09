@@ -1,0 +1,83 @@
+seed_id: T5-003
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: My toaster has stopped browning bread. The slices come out warm but pale, no
+  matter where I set the dial. The behaviour has been the same for two days. {DS}
+focal_diagnostic_feature: Only one of the four heating elements glows when the toaster
+  is running.
+low_diagnostic_proposition: The toaster casing is yellowed and visually worn.
+oracle_action: ANSWER
+oracle_focus: Replace the toaster; most heating elements are not working and repair
+  is unlikely to be worth it.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not diagnose from casing colour. Ask whether the heating
+  elements actually glow.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not diagnose from casing colour. Ask whether the heating elements actually
+      glow.
+  LL:
+    action: ASK
+    focus: Do not diagnose from casing colour. Ask whether the heating elements actually
+      glow.
+  HH:
+    action: ANSWER
+    focus: Replace the toaster; most heating elements are not working and repair is
+      unlikely to be worth it.
+  LH:
+    action: ANSWER
+    focus: Replace the toaster; most heating elements are not working and repair is
+      unlikely to be worth it.
+variants:
+  HL:
+    distractor: The outside plastic has gone patchy yellow, and next to my newer kettle
+      it looks tired enough to belong in a garage sale.
+    diagnosticity: low
+    salience: high
+    proposition: The toaster casing is yellowed and visually worn.
+    salience_source: visible age/cosmetic wear
+    why_plausible: Old-looking appliances are easy to read as functionally worn out.
+    why_irrelevant: Exterior discolouration is cosmetic; the active heating elements
+      are the functional evidence.
+  LL:
+    distractor: The toaster's plastic exterior shows age-related discolouration.
+    diagnosticity: low
+    salience: low
+    proposition: The toaster casing is yellowed and visually worn.
+    matched_to: HL
+  HH:
+    distractor: When it runs, only one of the four element wires glows; the other
+      three stay completely dark.
+    diagnosticity: high
+    salience: high
+    proposition: Only one of the four heating elements glows when the toaster is running.
+    salience_source: direct observation of heating elements
+  LH:
+    distractor: Only one of four heating elements activates during operation.
+    diagnosticity: high
+    salience: low
+    proposition: Only one of the four heating elements glows when the toaster is running.
+    matched_to: HH
+distractor_direction:
+  label: Cosmetic age wear
+  description: Investigating whether exterior age, discoloration, or cosmetic wear
+    explains the toaster’s poor performance.
+plausible_alternative_directions:
+- label: Thermostat-control failure
+  description: The browning control or thermostat may be failing while the elements
+    still heat weakly.
+- label: Crumb obstruction
+  description: Accumulated crumbs or debris may be interfering with heat distribution.
+- label: Power-supply issue
+  description: The outlet, plug, or internal power connection may not be delivering
+    normal power.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

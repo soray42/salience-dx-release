@@ -1,0 +1,196 @@
+seed_id: T3-100
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our primary application server has had its root ext4 filesystem remount itself
+  read-only twice in the past ten days, crashing all running services. The server
+  stays online but every write fails until we reboot. SMART reports zero reallocated
+  sectors and the disk surface tests pass cleanly. The partition was formatted with
+  the ext4 defaults about three years ago. {DS}
+focal_diagnostic_feature: dmesg records journal-layer abort errors with no accompanying
+  block-device I/O errors, and e2fsck finds orphaned journal inodes alongside zero
+  bad blocks, isolating the fault to journal corruption rather than disk hardware.
+low_diagnostic_proposition: The ext4 read-only remount is caused by a failing drive
+  that should be replaced.
+oracle_action: ANSWER
+oracle_focus: 'Repair or reinitialise the ext4 journal: run e2fsck -f to clear the
+  orphaned inode and journal state; after clean remount, investigate the unclean shutdown
+  path (unexpected power loss, kernel crash) that left the journal in an aborted state.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the disk-replacement diagnosis from authority
+  alone; ask for dmesg output, e2fsck results, and block-layer error events to distinguish
+  disk hardware from filesystem journal failure.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the disk-replacement diagnosis from authority alone; ask for
+      dmesg output, e2fsck results, and block-layer error events to distinguish disk
+      hardware from filesystem journal failure.
+  LL:
+    action: ASK
+    focus: Do not adopt the disk-replacement diagnosis from authority alone; ask for
+      dmesg output, e2fsck results, and block-layer error events to distinguish disk
+      hardware from filesystem journal failure.
+  HH:
+    action: ANSWER
+    focus: 'Repair or reinitialise the ext4 journal: run e2fsck -f to clear the orphaned
+      inode and journal state; after clean remount, investigate the unclean shutdown
+      path (unexpected power loss, kernel crash) that left the journal in an aborted
+      state.'
+  LH:
+    action: ANSWER
+    focus: 'Repair or reinitialise the ext4 journal: run e2fsck -f to clear the orphaned
+      inode and journal state; after clean remount, investigate the unclean shutdown
+      path (unexpected power loss, kernel crash) that left the journal in an aborted
+      state.'
+variants:
+  HL:
+    distractor: Efren, a senior infrastructure architect who ran storage for a major
+      telco, told me he has seen this pattern many times and it is always a drive
+      going bad — pull it and image to a replacement before doing anything else.
+    diagnosticity: low
+    salience: high
+    proposition: The ext4 read-only remount is caused by a failing drive that should
+      be replaced.
+    salience_source: 'A: source credibility (senior infrastructure architect, major
+      telco storage background); C: confident assertion (always, told me).'
+    why_plausible: ext4 remounting read-only is a classic kernel self-protection response
+      to I/O errors from a failing block device; a storage expert citing repeated
+      experience makes this the intuitive first hypothesis.
+    why_irrelevant: The focal feature shows dmesg records only journal-layer abort
+      errors with no block-layer read/write errors, and e2fsck confirms zero bad blocks
+      — evidence that isolates the fault to journal corruption, not hardware.
+  LL:
+    distractor: A peer attributed this ext4 read-only remount to a failing drive that
+      should be pulled and replaced.
+    diagnosticity: low
+    salience: low
+    proposition: The ext4 read-only remount is caused by a failing drive that should
+      be replaced.
+    matched_to: HL
+  HH:
+    distractor: 'In dmesg, both remount events follow ''EXT4-fs: journal commit I/O
+      error'' with no block-layer error lines; e2fsck on the unmounted partition shows
+      two orphaned journal inodes and reports zero bad blocks on the surface scan.'
+    diagnosticity: high
+    salience: high
+    proposition: dmesg records journal-layer abort errors with no accompanying block-device
+      I/O errors, and e2fsck finds orphaned journal inodes alongside zero bad blocks,
+      isolating the fault to journal corruption rather than disk hardware.
+    salience_source: 'B: clean chronology anchoring each remount to a specific dmesg
+      error class; D: concrete tool names (e2fsck, dmesg), exact error string, and
+      quantified findings (two orphaned inodes, zero bad blocks).'
+  LH:
+    distractor: dmesg shows journal commit errors with no block-layer errors before
+      each remount; e2fsck finds orphaned journal inodes and zero bad blocks.
+    diagnosticity: high
+    salience: low
+    proposition: dmesg records journal-layer abort errors with no accompanying block-device
+      I/O errors, and e2fsck finds orphaned journal inodes alongside zero bad blocks,
+      isolating the fault to journal corruption rather than disk hardware.
+    matched_to: HH
+distractor_direction:
+  label: Failing disk hardware
+  description: Investigating whether one or more block devices are failing and returning
+    I/O errors that trigger the ext4 errors=remount-ro self-protection mechanism,
+    requiring drive replacement.
+plausible_alternative_directions:
+- label: Storage controller intermittent errors
+  description: The HBA or SATA/SAS controller may return transient I/O errors that
+    SMART does not capture, causing the kernel to propagate errors into the filesystem
+    layer.
+- label: Kernel ext4 module regression
+  description: A kernel update may have introduced a bug in the ext4 journal commit
+    path that causes spurious aborts unrelated to hardware.
+- label: Mount option misconfiguration
+  description: The errors=remount-ro mount option combined with a reproducible filesystem-level
+    trigger (e.g. a specific application write pattern) may be causing premature journal
+    aborts.
+leak_audit:
+  ll_atomic_claims:
+  - The ext4 read-only remount is attributed to a failing drive
+  - The remedy is to pull and replace the failing drive
+  hh_atomic_claims:
+  - 'Both remount events in dmesg follow the string ''EXT4-fs: journal commit I/O
+    error'''
+  - There are no block-layer error lines in dmesg preceding or accompanying the remount
+    events
+  - e2fsck run on the unmounted partition finds two orphaned journal inodes
+  - e2fsck reports zero bad blocks on the surface scan
+  hl_salience_dimensions:
+    source_credibility: Senior infrastructure architect who ran storage at a major
+      telco
+    narrative_coherence: Clean declarative report with professional framing and recommended
+      action
+    confident_assertion: told me... always a drive going bad
+    concrete_detail: N/A — no case-specific details added beyond source identification
+      and generic experience
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 58
+  hl_word_count: 40
+  ll_word_count: 17
+  hh_word_count: 35
+  lh_word_count: 21
+  notes: 'Stripped: no severity/urgency claim ("before you lose the array" removed
+    from early HL draft).
+
+    SMART-clean context in xbase partially reduces but does not eliminate disk-hardware
+    hypothesis
+
+    (intermittent errors can precede SMART accumulation); the focal feature is decisive.
+
+    Borderline: "pull it and image to a replacement" in HL mirrors the LL''s "should
+    be pulled and
+
+    replaced" — both carry the same propositional content (drive replacement). Accepted
+    as
+
+    action-framing consistent with the proposition, not a new case-specific claim.
+
+    '
+causal_audit:
+  steelman: 'ext4''s errors=remount-ro mount option causes the kernel to remount read-only
+    when the block
+
+    device returns I/O errors. A failing drive can produce intermittent I/O errors
+    that do not
+
+    immediately accumulate SMART reallocated sectors — particularly if the errors
+    are on sectors
+
+    that have not yet been reallocated, or if errors are at the SATA/SAS command level
+    before
+
+    SMART tracking. A clean SMART report and passing surface test are necessary but
+    not sufficient
+
+    to rule out intermittent hardware failure under specific I/O patterns. A senior
+    storage
+
+    architect citing repeated experience with this exact symptom pattern has genuine
+    domain
+
+    authority for this hypothesis.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: SMART zero reallocated sectors and clean disk surface test
+    reduce (but do not eliminate) the disk-hardware hypothesis; the focal feature
+    (journal-layer errors only, no block-layer errors, e2fsck zero bad blocks) is
+    what makes it structurally implausible.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Linux application server ext4 root filesystem remounts read-only; authority
+    says replace the failing disk, but dmesg and e2fsck reveal journal corruption
+    from an unclean shutdown with no block-layer errors and zero bad blocks.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_B
+  generation_mode: generator_B_batches

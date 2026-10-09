@@ -1,0 +1,187 @@
+seed_id: T2-094
+template: T2
+domain: open_qa
+complexity: medium
+xbase: My washing machine's motor failed at 13 months old, and the retailer told me
+  the one-year manufacturer guarantee has expired, so they will not repair it for
+  free. I am deciding whether to just pay for the repair myself or push back on the
+  retailer. The machine was used normally in a household of two and has had no abuse
+  or DIY tampering. I bought it new from a major retailer and still have the receipt
+  and the order confirmation email. {DS}
+focal_diagnostic_feature: Statutory consumer-protection law lets the buyer hold the
+  seller liable for an inherent fault well beyond the 12-month commercial guarantee,
+  so the user has a valid basis to require a free repair from the retailer.
+low_diagnostic_proposition: The washing machine failed the same weekend the household
+  repainted the utility room where it sits.
+oracle_action: ANSWER
+oracle_focus: Push back on the retailer citing statutory consumer rights, which make
+  the seller liable for an inherent fault beyond the 12-month guarantee; do not pay
+  out of pocket on the assumption that the expired guarantee ends your remedies.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect repainting the room to the motor failure.
+  Ask what statutory rights against the seller apply beyond the manufacturer's 12-month
+  guarantee before deciding to pay.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect repainting the room to the motor failure. Ask what statutory
+      rights against the seller apply beyond the manufacturer's 12-month guarantee
+      before deciding to pay.
+  LL:
+    action: ASK
+    focus: Do not connect repainting the room to the motor failure. Ask what statutory
+      rights against the seller apply beyond the manufacturer's 12-month guarantee
+      before deciding to pay.
+  HH:
+    action: ANSWER
+    focus: Push back on the retailer citing statutory consumer rights, which make
+      the seller liable for an inherent fault beyond the 12-month guarantee; do not
+      pay out of pocket on the assumption that the expired guarantee ends your remedies.
+  LH:
+    action: ANSWER
+    focus: Push back on the retailer citing statutory consumer rights, which make
+      the seller liable for an inherent fault beyond the 12-month guarantee; do not
+      pay out of pocket on the assumption that the expired guarantee ends your remedies.
+variants:
+  HL:
+    distractor: What I keep coming back to is that the motor died the same weekend
+      we repainted the utility room where the machine lives — by Monday it would not
+      spin, so the two events feel knotted together.
+    diagnosticity: low
+    salience: high
+    proposition: The washing machine failed the same weekend the household repainted
+      the utility room where it sits.
+    salience_source: B/C — a confident first-person 'keep coming back to' framing
+      with a vivid repainting scene knots the failure to the weekend.
+    why_plausible: Moving and repainting around an appliance is physical and disruptive,
+      so a same-weekend failure feels causally entangled.
+    why_irrelevant: Repainting a room and pulling the machine out does not act on
+      its internal motor windings; it has no path to an inherent motor failure and
+      no bearing on the warranty remedy.
+  LL:
+    distractor: The washing machine failed the same weekend the household repainted
+      the utility room where it sits.
+    diagnosticity: low
+    salience: low
+    proposition: The washing machine failed the same weekend the household repainted
+      the utility room where it sits.
+    matched_to: HL
+  HH:
+    distractor: Statutory consumer law lets me hold the seller responsible for an
+      inherent fault for years beyond the 12-month manufacturer guarantee, so a motor
+      that fails at 13 months under normal use gives me a solid basis to demand a
+      free repair from the retailer rather than paying myself.
+    diagnosticity: high
+    salience: high
+    proposition: Statutory consumer-protection law lets the buyer hold the seller
+      liable for an inherent fault well beyond the 12-month commercial guarantee,
+      so the user has a valid basis to require a free repair from the retailer.
+    salience_source: Stating the statutory remedy against the seller beyond the 12-month
+      guarantee makes the valid push-back basis concrete and decisive.
+  LH:
+    distractor: Statutory law makes the seller liable for an inherent fault beyond
+      the 12-month guarantee, giving a valid basis to require a free repair.
+    diagnosticity: high
+    salience: low
+    proposition: Statutory consumer-protection law lets the buyer hold the seller
+      liable for an inherent fault well beyond the 12-month commercial guarantee,
+      so the user has a valid basis to require a free repair from the retailer.
+    matched_to: HH
+distractor_direction:
+  label: Repainting-weekend timing
+  description: Treating the same-weekend utility-room repainting as connected to the
+    washing machine's motor failure.
+plausible_alternative_directions:
+- label: Out-of-pocket repair
+  description: Whether simply paying an independent technician is the most practical
+    route given the expired guarantee.
+- label: Manufacturer goodwill
+  description: Whether appealing directly to the manufacturer for an out-of-guarantee
+    goodwill repair is worth trying.
+leak_audit:
+  ll_atomic_claims:
+  - The household repainted the utility room where the machine sits.
+  - The washing machine failed that same weekend.
+  hh_atomic_claims:
+  - Statutory consumer law holds the seller liable for an inherent fault beyond the
+    12-month guarantee.
+  - A motor failing at 13 months under normal use is such a fault.
+  - This gives a solid basis to demand a free repair from the retailer.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person same-weekend chronology around the repainting.
+    confident_assertion: Frames the two events as knotted together.
+    concrete_detail: Detail about the setting event (pulling the machine out from
+      the wall) only — no claim about consumer rights or warranty.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 81
+  hl_word_count: 36
+  ll_word_count: 16
+  hh_word_count: 48
+  lh_word_count: 23
+  notes: 'xbase establishes normal use, no abuse/tampering, proof of purchase, and
+    the retailer''s expired-guarantee
+
+    refusal — but never states that statutory rights extend liability beyond the guarantee,
+    so HL/LL cannot resolve
+
+    whether pushing back is justified; that decisive statutory lever lives only in
+    HH/LH. The ''still have the
+
+    receipt'' detail supports any remedy but does not itself establish the statutory
+    basis. HL adds only the
+
+    repainting framing; LL keeps the bare same-weekend coincidence. Distinct from
+    T1-093 (coverage redundancy) and
+
+    T1-089 (accidental-damage exclusion).
+
+    HL trimmed from 53 to 47 words: removed ''The detail my mind keeps snagging on
+    is that'' opener, ''whole'', and
+
+    ''the place in chaos,'' to reach the operational target; the em-dash replaces
+    the semicolon for natural flow.
+
+    '
+causal_audit:
+  steelman: 'To steelman the repainting as causal, I would argue that pulling the
+    machine out from the wall and moving it
+
+    could have jolted a connection or delivered a mechanical shock to a marginal component.
+    But the fault is a
+
+    failed motor under normal household use, and superficial repositioning of an appliance
+    has no path to an
+
+    internal motor winding failure; repainting a room does not act on motor windings,
+    bearings, or the control
+
+    board. Crucially, none of it bears on the legal question of the seller''s liability.
+    Even granting a
+
+    far-fetched physical nudge, it would not inform the decisive issue — the statutory
+    remedy — so there is no
+
+    defensible mechanism for the case as framed.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the machine was used normally with no abuse
+    or DIY tampering, foreclosing the 'user-caused damage voids the remedy' pathway;
+    the statutory liability beyond the 12-month guarantee still lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A washing machine failing at 13 months can still be claimed against
+    the seller under statutory consumer rights beyond the 12-month guarantee, unrelated
+    to a coincidental utility-room repaint.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator leak fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

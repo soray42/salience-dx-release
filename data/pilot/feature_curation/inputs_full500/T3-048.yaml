@@ -1,0 +1,171 @@
+seed_id: T3-048
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Cassandra cluster has one query path — reads of recent activity for a single
+  user — that has become slow and sometimes times out, while writes and most other
+  reads are fine. The cluster is healthy, nodes are balanced, and there are no dropped
+  messages or compaction backlogs in the metrics. The slowness is specific to that
+  one access pattern and has worsened over a couple of months. {DS}
+focal_diagnostic_feature: The activity table uses a partition key of user_id alone,
+  so each user's partition grows unbounded over time; the slow users have partitions
+  of hundreds of megabytes that the read must scan.
+low_diagnostic_proposition: A principal engineer asserts that this kind of slowness
+  is a classic under-provisioning problem and the cluster needs more nodes.
+oracle_action: ANSWER
+oracle_focus: 'Fix the data model: user_id-only partitions grow unbounded, so the
+  slow reads are scanning huge partitions; add a time bucket to the partition key
+  and migrate, rather than adding nodes.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the add-nodes diagnosis from authority.
+  Ask for the table's partition key, the size of the slow users' partitions, and whether
+  the read scans a large partition.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the add-nodes diagnosis from authority. Ask for the table's
+      partition key, the size of the slow users' partitions, and whether the read
+      scans a large partition.
+  LL:
+    action: ASK
+    focus: Do not accept the add-nodes diagnosis from authority. Ask for the table's
+      partition key, the size of the slow users' partitions, and whether the read
+      scans a large partition.
+  HH:
+    action: ANSWER
+    focus: 'Fix the data model: user_id-only partitions grow unbounded, so the slow
+      reads are scanning huge partitions; add a time bucket to the partition key and
+      migrate, rather than adding nodes.'
+  LH:
+    action: ANSWER
+    focus: 'Fix the data model: user_id-only partitions grow unbounded, so the slow
+      reads are scanning huge partitions; add a time bucket to the partition key and
+      migrate, rather than adding nodes.'
+variants:
+  HL:
+    distractor: Our principal engineer cut in at the incident review and said, with
+      the authority of someone who has run big clusters for years, that this is the
+      classic signature of an under-provisioned cluster and we should just add nodes
+      — he did not look at the table at all.
+    diagnosticity: low
+    salience: high
+    proposition: A principal engineer asserts that this kind of slowness is a classic
+      under-provisioning problem and the cluster needs more nodes.
+    salience_source: A/C — a principal engineer with deep cluster experience confidently
+      pattern-matches to under-provisioning, lending status weight.
+    why_plausible: Slow reads under growth do often mean a cluster needs more capacity,
+      so a senior 'classic under-provisioning' call is easy to follow.
+    why_irrelevant: The cluster is healthy and balanced with no resource saturation;
+      the slowness is confined to one access pattern, which capacity cannot explain
+      — adding nodes does not shrink an oversized partition.
+  LL:
+    distractor: A senior engineer stated that this slowness is a classic under-provisioning
+      problem and the cluster needs more nodes.
+    diagnosticity: low
+    salience: low
+    proposition: A principal engineer asserts that this kind of slowness is a classic
+      under-provisioning problem and the cluster needs more nodes.
+    matched_to: HL
+  HH:
+    distractor: The activity table's partition key is just user_id, so each user's
+      partition grows without bound as their history accumulates; the users who are
+      slow have partitions in the hundreds of megabytes, and the read has to scan
+      that whole partition to return recent rows.
+    diagnosticity: high
+    salience: high
+    proposition: The activity table uses a partition key of user_id alone, so each
+      user's partition grows unbounded over time; the slow users have partitions of
+      hundreds of megabytes that the read must scan.
+    salience_source: Concrete model flaw (user_id-only key, unbounded partitions,
+      hundreds of MB scanned) makes the cause precise.
+  LH:
+    distractor: The table's partition key is user_id alone, so partitions grow unbounded;
+      slow users have hundreds-of-megabyte partitions the read must scan.
+    diagnosticity: high
+    salience: low
+    proposition: The activity table uses a partition key of user_id alone, so each
+      user's partition grows unbounded over time; the slow users have partitions of
+      hundreds of megabytes that the read must scan.
+    matched_to: HH
+distractor_direction:
+  label: Cluster under-provisioning
+  description: Investigating whether the cluster lacks capacity and adding nodes is
+    the fix, per a senior engineer's assertion.
+plausible_alternative_directions:
+- label: Tombstone accumulation
+  description: Whether deletes have left tombstones that the slow read must skip over.
+- label: Read-repair or consistency cost
+  description: Whether the consistency level or read repair is adding latency to that
+    path.
+leak_audit:
+  ll_atomic_claims:
+  - A senior engineer stated a position.
+  - The position is that the slowness is under-provisioning and the cluster needs
+    more nodes.
+  hh_atomic_claims:
+  - The activity table's partition key is user_id alone.
+  - Each user's partition grows without bound over time.
+  - Slow users have partitions of hundreds of megabytes that the read must scan.
+  hl_salience_dimensions:
+    source_credibility: A principal engineer with years of running large clusters.
+    narrative_coherence: A coherent incident-review setting for the assertion.
+    confident_assertion: Stated as the classic signature with authority.
+    concrete_detail: Detail about the source/setting (incident review, his experience,
+      that he did not look at the table) only — no engagement with the partition key.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 79
+  hl_word_count: 46
+  ll_word_count: 18
+  hh_word_count: 42
+  lh_word_count: 21
+  notes: 'LL carries only the under-provisioning assertion. The principal engineer''s
+    status, the incident-review setting,
+
+    and that he never inspected the table are HL-only and about the source. xbase
+    reports the cluster is healthy and
+
+    balanced with no drops or compaction backlog — closing the resource-saturation
+    pathway — while withholding the
+
+    partition-key flaw; the decisive unbounded-partition fact lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A senior engineer would note that growing data and slow reads can genuinely
+    mean a cluster is out of headroom,
+
+    and adding nodes is a standard remedy, so the under-provisioning call is not unreasonable
+    on its face. But it is
+
+    generic pattern-matching that ignores this case: the cluster is healthy and balanced
+    with no saturation, and the
+
+    slowness is confined to a single access pattern. The real cause is a data-model
+    flaw — user_id-only partitions
+
+    growing into hundreds of megabytes — and adding nodes does not shrink an oversized
+    partition or speed a scan of
+
+    it. Capacity has no mechanism to fix this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the cluster is healthy and balanced with no
+    dropped messages or compaction backlog, foreclosing the resource-saturation pathway
+    the under-provisioning claim relies on; the decisive partition-key flaw lives
+    only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Slow Cassandra reads on one access pattern caused by an unbounded user_id-only
+    partition key (huge partitions), not the cluster under-provisioning a principal
+    engineer asserts.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

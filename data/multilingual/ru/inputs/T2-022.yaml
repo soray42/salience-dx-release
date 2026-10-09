@@ -1,0 +1,174 @@
+seed_id: T2-022
+template: T2
+domain: open_qa
+complexity: medium
+xbase: За последние несколько недель расход топлива у моего автомобиля заметно вырос,
+  и я начинаю думать об обмене на что-то новее. При том же маршруте заправляюсь гораздо
+  чаще, чем раньше. Двигатель работает ровно, предупреждающих огней нет, маршрут и
+  пробег не изменились. Машина просто пьёт топливо. {DS}
+focal_diagnostic_feature: Манометр показывает около 22 psi на всех четырёх шинах при
+  норме 35 psi по наклейке на двери, а такое недокачивание заметно увеличивает сопротивление
+  качению и расход топлива.
+low_diagnostic_proposition: The drop in fuel economy began right after new seat covers
+  and a steering-wheel cover were fitted.
+oracle_action: ANSWER
+oracle_focus: Do not trade in the car; inflate all four tyres to the placard pressure
+  first, because roughly 22 psi against a 35 psi spec sharply raises rolling resistance
+  and fuel consumption.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect new seat or wheel covers to fuel economy.
+  Ask about tyre pressures, recent maintenance, and any drivetrain or tyre changes.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect new seat or wheel covers to fuel economy. Ask about tyre
+      pressures, recent maintenance, and any drivetrain or tyre changes.
+  LL:
+    action: ASK
+    focus: Do not connect new seat or wheel covers to fuel economy. Ask about tyre
+      pressures, recent maintenance, and any drivetrain or tyre changes.
+  HH:
+    action: ANSWER
+    focus: Do not trade in the car; inflate all four tyres to the placard pressure
+      first, because roughly 22 psi against a 35 psi spec sharply raises rolling resistance
+      and fuel consumption.
+  LH:
+    action: ANSWER
+    focus: Do not trade in the car; inflate all four tyres to the placard pressure
+      first, because roughly 22 psi against a 35 psi spec sharply raises rolling resistance
+      and fuel consumption.
+variants:
+  HL:
+    distractor: Я понял, что аппетит к топливу вырос прямо после того, как я обновил
+      салон — новые мягкие чехлы на сиденья спереди и сзади и кожаный чехол на руль,
+      всё поставил в один вечер. Следующий бак исчез намного быстрее обычного, и с
+      тех пор так и продолжается.
+    diagnosticity: low
+    salience: high
+    proposition: The drop in fuel economy began right after new seat covers and a
+      steering-wheel cover were fitted.
+    salience_source: B/C — a confident first-person timeline pinning the change to
+      a specific, recent thing done to the car.
+    why_plausible: It was the most recent deliberate change to the car, so it is the
+      natural event to blame when something shifts afterward.
+    why_irrelevant: Seat and wheel covers add negligible weight and touch nothing
+      in the drivetrain or tyres; they cannot move fuel consumption.
+  LL:
+    distractor: Рост расхода топлива начался примерно тогда, когда были установлены
+      новые чехлы на сиденья и чехол на руль.
+    diagnosticity: low
+    salience: low
+    proposition: The drop in fuel economy began right after new seat covers and a
+      steering-wheel cover were fitted.
+    matched_to: HL
+  HH:
+    distractor: Наконец приложил манометр к шинам — каждая показывает около 22 psi,
+      тогда как наклейка на стойке двери требует 35. Такие мягкие шины сильно тормозят
+      о дорогу, и одного только этого дополнительного сопротивления качению достаточно,
+      чтобы объяснить заметно возросший расход топлива.
+    diagnosticity: high
+    salience: high
+    proposition: A tyre-pressure gauge reads about 22 psi on all four tyres against
+      the 35 psi on the door placard, and the underinflation noticeably increases
+      rolling resistance and fuel use.
+    salience_source: The measured 22-vs-35 psi reading makes the underinflation and
+      its fuel cost concrete and quantified.
+  LH:
+    distractor: Все четыре шины показывают около 22 psi при норме 35 psi по наклейке
+      на стойке двери, а такое недокачивание заметно увеличивает сопротивление качению
+      и расход топлива.
+    diagnosticity: high
+    salience: low
+    proposition: A tyre-pressure gauge reads about 22 psi on all four tyres against
+      the 35 psi on the door placard, and the underinflation noticeably increases
+      rolling resistance and fuel use.
+    matched_to: HH
+distractor_direction:
+  label: Совпадение по времени с установкой аксессуаров в салоне
+  description: Связывать ухудшение расхода топлива с недавно установленными чехлами
+    на сиденья и руль, потому что они совпали по времени.
+plausible_alternative_directions:
+- label: Неисправность двигателя / просроченное ТО
+  description: Проверить, не снижает ли засорённый воздушный фильтр, неисправный датчик
+    или просроченное техобслуживание эффективность двигателя.
+  failing sensor: null
+  or overdue service is hurting efficiency.: null
+- label: Изменение качества топлива или сезонный фактор
+  description: Проверить, не влияют ли смена топлива или более холодная погода на
+    измеренный расход.
+leak_audit:
+  ll_atomic_claims:
+  - The drop in fuel economy began around the time new seat covers and a steering-wheel
+    cover were fitted.
+  hh_atomic_claims:
+  - A gauge reads about 22 psi on all four tyres.
+  - The door-placard specification is 35 psi.
+  - That underinflation raises rolling resistance and would explain the higher fuel
+    use.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent fitted-covers-then-thirsty-tank timeline.
+    confident_assertion: States the next tank 'vanished way faster than usual'.
+    concrete_detail: Concrete detail about the covers (front/back seats, leather wheel
+      cover, same afternoon) — about the event, not the fuel system.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 44
+  ll_word_count: 18
+  hh_word_count: 47
+  lh_word_count: 22
+  notes: 'T2 coincidence: seat/wheel covers add trivial weight and touch no drivetrain
+    element, so no mechanism for fuel
+
+    economy exists. xbase gives the worse-economy symptom, smooth engine, no warning
+    lights, and unchanged route —
+
+    symptoms only; the measured 22-vs-35 psi tyre reading (decisive) is HH/LH-only.
+    No tunable value leaks into HL.
+
+    '
+causal_audit:
+  steelman: 'A mechanic could note that heavier upholstery adds a little mass and
+    that a thicker wheel cover changes nothing
+
+    aerodynamic — but the added mass from fabric covers is a rounding error against
+    vehicle weight and cannot produce
+
+    a noticeable economy drop, whereas tyres 13 psi under spec measurably increase
+    rolling resistance. The covers have
+
+    no real path to fuel use.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the route and distance are unchanged and the
+    engine runs smoothly with no warning lights, closing the driving-pattern and obvious-fault
+    pathways and leaving the tyre evidence (in HH/LH) decisive.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Worsening car fuel economy caused by all four tyres being underinflated
+    to 22 psi versus a 35 psi spec, coincidentally timed with fitting new seat and
+    wheel covers, prompting a needless trade-in.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-022.yaml
+  source_xbase_sha256: 7f58e40c07fda6b4
+  translated_content_sha256: 87b7f5b6250913f2
+  translation_notes: Pressure unit 'psi' retained as-is (internationally understood
+    in automotive context; Russian users of cars with import specs regularly see psi
+    values). 'Наклейка на стойке двери' is the standard Russian phrase for the door-jamb
+    placard.

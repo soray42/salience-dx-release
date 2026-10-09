@@ -1,0 +1,31 @@
+{
+  "seed_id": "T1-014",
+  "ll_claims_extracted": [
+    "Someone (unspecified) replaced their dishwasher instead of repairing it.",
+    "The reason for replacing rather than repairing was that a repair would void the remaining manufacturer warranty."
+  ],
+  "hl_case_claims": [
+    "Third-party repairs void remaining manufacturer warranty coverage.",
+    "The brother-in-law replaced his dishwasher rather than repairing it.",
+    "The warranty-voiding concern was the deciding factor in his decision.",
+    "His machine still had years of coverage left at the time of decision."
+  ],
+  "hl_source_claims": [
+    "The brother-in-law told the user this reasoning.",
+    "The brother-in-law's appliance technician pointed out the warranty-voiding issue.",
+    "The brother-in-law stated replacing was 'clearly the right call.'",
+    "He said that was the deciding factor (first-person relay)."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "ll": 17,
+    "hl": 40,
+    "xbase": 50,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

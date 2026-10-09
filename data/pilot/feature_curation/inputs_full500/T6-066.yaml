@@ -1,0 +1,168 @@
+seed_id: T6-066
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our web application's OAuth 2.0 token refresh is failing in production. Users
+  get logged out every hour when the refresh token call returns a 400 Bad Request.
+  The same flow worked fine for several months, and the redirect URI registered in
+  the IdP is confirmed unchanged. {DS}
+focal_diagnostic_feature: The identity provider audit log shows the OAuth client secret
+  was rotated two days ago; the application's CLIENT_SECRET environment variable still
+  holds the previous value.
+low_diagnostic_proposition: Past OAuth problems for the user were consistently caused
+  by redirect URI mismatches in the identity provider, suggesting that is the likely
+  current cause.
+oracle_action: ANSWER
+oracle_focus: Update the CLIENT_SECRET environment variable with the newly rotated
+  secret value and redeploy; the 400 errors are caused by credential mismatch after
+  the IdP rotation.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the redirect URI explanation from past experience.
+  Ask for the IdP audit log, any recent credential rotations, and compare the application's
+  stored secret against the current IdP value.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the redirect URI explanation from past experience. Ask for
+      the IdP audit log, any recent credential rotations, and compare the application's
+      stored secret against the current IdP value.
+  LL:
+    action: ASK
+    focus: Do not adopt the redirect URI explanation from past experience. Ask for
+      the IdP audit log, any recent credential rotations, and compare the application's
+      stored secret against the current IdP value.
+  HH:
+    action: ANSWER
+    focus: Update the CLIENT_SECRET environment variable with the newly rotated secret
+      value and redeploy; the 400 errors are caused by credential mismatch after the
+      IdP rotation.
+  LH:
+    action: ANSWER
+    focus: Update the CLIENT_SECRET environment variable with the newly rotated secret
+      value and redeploy; the 400 errors are caused by credential mismatch after the
+      IdP rotation.
+variants:
+  HL:
+    distractor: Every OAuth issue I've dealt with before has come down to a redirect
+      URI mismatch in the IdP config, so I keep going back to that registration page
+      even though I just checked it.
+    diagnosticity: low
+    salience: high
+    proposition: Past OAuth problems for the user were consistently caused by redirect
+      URI mismatches in the identity provider, suggesting that is the likely current
+      cause.
+    salience_source: B (narrative coherence — personal pattern stated as universal
+      ('every OAuth issue'), vivid returning-to-the-page detail); C (confident first-instinct
+      framing)
+    why_plausible: Redirect URI mismatch is genuinely one of the most common OAuth
+      400 errors; a developer who has seen it repeatedly would have strong pattern
+      activation, and a busy reader would share this intuition.
+    why_irrelevant: xbase confirms the redirect URI is unchanged; the past-experience
+      pattern cannot operate here because the mechanism it relies on (URI mismatch)
+      is explicitly ruled out for this case.
+  LL:
+    distractor: Past OAuth problems were consistently caused by redirect URI mismatches
+      in the IdP, suggesting that is the likely current cause.
+    diagnosticity: low
+    salience: low
+    proposition: Past OAuth problems for the user were consistently caused by redirect
+      URI mismatches in the identity provider, suggesting that is the likely current
+      cause.
+    matched_to: HL
+  HH:
+    distractor: Checking the IdP audit log shows the client secret was rotated two
+      days ago — exactly when the 400s started — and the application's CLIENT_SECRET
+      environment variable still holds the previous secret value.
+    diagnosticity: high
+    salience: high
+    proposition: The identity provider audit log shows the OAuth client secret was
+      rotated two days ago; the application's CLIENT_SECRET environment variable still
+      holds the previous value.
+    salience_source: B (narrative coherence — specific audit log finding, precise
+      timing correlation with symptom onset, named environment variable); C (confident
+      causal connection)
+  LH:
+    distractor: The IdP client secret was rotated two days ago when the 400s started;
+      the application's CLIENT_SECRET still holds the old value.
+    diagnosticity: high
+    salience: low
+    proposition: The identity provider audit log shows the OAuth client secret was
+      rotated two days ago; the application's CLIENT_SECRET environment variable still
+      holds the previous value.
+    matched_to: HH
+distractor_direction:
+  label: Redirect URI mismatch
+  description: Investigating whether the OAuth 400 Bad Request errors stem from a
+    redirect URI configured in the application not matching the registered value in
+    the identity provider.
+plausible_alternative_directions:
+- label: Refresh token expiry policy
+  description: Checking whether the identity provider reduced the refresh token lifetime,
+    causing tokens to expire before the hourly refresh cycle.
+- label: Scope or grant type change
+  description: Investigating whether the IdP configuration for this client application
+    had its allowed scopes or grant types modified.
+- label: Clock skew at token validation
+  description: Examining whether a timing offset between the app server and the IdP
+    is causing issued tokens to appear expired immediately.
+leak_audit:
+  ll_atomic_claims:
+  - Past OAuth problems for the user were consistently caused by redirect URI mismatches
+    in the identity provider.
+  - This suggests a redirect URI mismatch is the likely current cause.
+  hh_atomic_claims:
+  - The IdP audit log shows the client secret was rotated two days ago.
+  - The rotation timing coincides with when the 400 errors began.
+  - The application's CLIENT_SECRET environment variable still holds the previous
+    secret value.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person availability memory, no named source.
+    narrative_coherence: Personal pattern stated emphatically ('every OAuth issue
+      I've dealt with'), vivid behavioural detail ('keep going back to that registration
+      page').
+    confident_assertion: '''every OAuth issue'', ''the likely current cause'' — strong
+      availability-driven certainty.'
+    concrete_detail: N/A — detail is about past cases, not the present case's configuration.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 34
+  ll_word_count: 20
+  hh_word_count: 31
+  lh_word_count: 21
+  notes: 'T6 availability inference (''suggesting that is the likely current cause'')
+    appears in both HL and LL per C1.
+
+    Redirect URI pathway closed in xbase: ''redirect URI registered in the IdP is
+    confirmed unchanged''.
+
+    HH timing correlation (''exactly when the 400s started'') is a salience element;
+    LH carries the timing correlation flatly (''two days ago when the 400s started'')
+    within the 23-word limit.
+
+    '
+causal_audit:
+  steelman: 'Redirect URI mismatch is the single most common cause of OAuth 400 Bad
+    Request errors in token flows where the redirect_uri parameter is included as
+    a validation check. A developer who has fixed this repeatedly would have strong
+    justification for checking it first. The availability heuristic is grounded in
+    genuine domain pattern.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: The redirect URI in the IdP is confirmed unchanged, directly
+    foreclosing the URI mismatch mechanism that past experience pointed to.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: OAuth 2.0 token refresh returning 400 Bad Request; availability heuristic
+    is past redirect URI mismatches; root cause is unupdated CLIENT_SECRET after IdP
+    client secret rotation two days prior.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

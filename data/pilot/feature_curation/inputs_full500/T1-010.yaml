@@ -1,0 +1,93 @@
+seed_id: T1-010
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'My VPN to the company gateway is extremely slow: about 3 Mbps down. Without
+  the VPN my home connection is over 400 Mbps. The gateway is in another country,
+  and I have not changed my VPN client settings this week. {DS}'
+focal_diagnostic_feature: Other colleagues in the same city using the same gateway
+  today get over 100 Mbps.
+low_diagnostic_proposition: A peer's VPN problem was attributed to ISP-level throttling
+  of encrypted traffic.
+oracle_action: ASK
+oracle_focus: The problem is local to this user's path or device; check Wi-Fi/NIC,
+  MTU, local routing/peering, and compare from another network.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer national ISP throttling from someone else's
+  case. First compare against peers on the same gateway and city.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer national ISP throttling from someone else's case. First compare
+      against peers on the same gateway and city.
+  LL:
+    action: ASK
+    focus: Do not infer national ISP throttling from someone else's case. First compare
+      against peers on the same gateway and city.
+  HH:
+    action: ASK
+    focus: The problem is local to this user's path or device; check Wi-Fi/NIC, MTU,
+      local routing/peering, and compare from another network.
+  LH:
+    action: ASK
+    focus: The problem is local to this user's path or device; check Wi-Fi/NIC, MTU,
+      local routing/peering, and compare from another network.
+variants:
+  HL:
+    distractor: A friend from school had VPN speeds collapse during a political crisis;
+      his national ISP was apparently throttling encrypted traffic at night.
+    diagnosticity: low
+    salience: high
+    proposition: A peer's VPN problem was attributed to ISP-level throttling of encrypted
+      traffic.
+    salience_source: dramatic geopolitical anecdote, similar VPN symptom
+    why_plausible: VPN slowness plus a throttling story sounds like a plausible hidden-network
+      cause.
+    why_irrelevant: Peers in the same city and gateway being normal rules out a broad
+      citywide or gateway-wide explanation.
+  LL:
+    distractor: A peer had a VPN performance issue attributed to ISP-level encrypted-traffic
+      shaping.
+    diagnosticity: low
+    salience: low
+    proposition: A peer's VPN problem was attributed to ISP-level throttling of encrypted
+      traffic.
+    matched_to: HL
+  HH:
+    distractor: People in my city on the same gateway are getting over 100 Mbps today
+      while I'm stuck at 3 Mbps on this machine.
+    diagnosticity: high
+    salience: high
+    proposition: Other colleagues in the same city using the same gateway today get
+      over 100 Mbps.
+    salience_source: peer baseline on same route/gateway
+  LH:
+    distractor: Comparable users in the same city and on the same VPN gateway report
+      normal throughput.
+    diagnosticity: high
+    salience: low
+    proposition: Other colleagues in the same city using the same gateway today get
+      over 100 Mbps.
+    matched_to: HH
+distractor_direction:
+  label: ISP traffic shaping
+  description: Investigating whether the internet provider is throttling or shaping
+    encrypted VPN traffic.
+plausible_alternative_directions:
+- label: Gateway capacity issue
+  description: The remote company VPN gateway is congested or undersized for current
+    load.
+- label: VPN protocol mismatch
+  description: The selected VPN protocol, cipher, or transport is inefficient for
+    this route.
+- label: Peering-route degradation
+  description: The route between the home ISP and the foreign gateway has poor peering
+    or packet loss.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

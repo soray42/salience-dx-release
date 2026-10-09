@@ -1,0 +1,163 @@
+seed_id: T3-019
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I'm trying to decide whether to buy a flat now or keep renting. I have a deposit
+  saved and could qualify for a mortgage on a modest place. Renting feels like it
+  is going nowhere, and there is family pressure to "get on the ladder". I do like
+  the idea of owning eventually. I just want to make the call that actually leaves
+  me better off financially. {DS}
+focal_diagnostic_feature: The user expects to relocate to another city in about two
+  years for an all-but-confirmed job, and the round-trip purchase and sale costs would
+  be roughly 9% of the price — unrecoverable over such a short hold.
+low_diagnostic_proposition: A family elder insists that renting is always wasted money
+  and that buying is essentially always the better choice.
+oracle_action: ANSWER
+oracle_focus: Keep renting for now; with a likely relocation in about two years and
+  ~9% in round-trip transaction costs, a short ownership window would almost certainly
+  lose money versus renting.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept "renting is wasted money" as a rule. Ask
+  how long the user will realistically stay put and what the buying-and-selling transaction
+  costs are.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept "renting is wasted money" as a rule. Ask how long the user
+      will realistically stay put and what the buying-and-selling transaction costs
+      are.
+  LL:
+    action: ASK
+    focus: Do not accept "renting is wasted money" as a rule. Ask how long the user
+      will realistically stay put and what the buying-and-selling transaction costs
+      are.
+  HH:
+    action: ANSWER
+    focus: Keep renting for now; with a likely relocation in about two years and ~9%
+      in round-trip transaction costs, a short ownership window would almost certainly
+      lose money versus renting.
+  LH:
+    action: ANSWER
+    focus: Keep renting for now; with a likely relocation in about two years and ~9%
+      in round-trip transaction costs, a short ownership window would almost certainly
+      lose money versus renting.
+variants:
+  HL:
+    distractor: My grandfather Teodoro, who paid off two homes in his life, tells
+      me every time we speak that rent is money set on fire and that buying is always
+      the right move in the end. He says it with total conviction, like it is simply
+      a law of life.
+    diagnosticity: low
+    salience: high
+    proposition: A family elder insists that renting is always wasted money and that
+      buying is essentially always the better choice.
+    salience_source: A/C — a respected family elder with a lifetime of homeownership
+      asserting an absolute rule with full conviction.
+    why_plausible: '''Renting is throwing money away'' is deeply embedded folk wisdom
+      and the elder''s own experience seems to back it.'
+    why_irrelevant: It is a blanket rule that ignores holding period and transaction
+      costs; it never engages this user's near-term move, which is what decides the
+      math.
+  LL:
+    distractor: A family elder stated that renting is always wasted money and buying
+      is essentially always better.
+    diagnosticity: low
+    salience: low
+    proposition: A family elder insists that renting is always wasted money and that
+      buying is essentially always the better choice.
+    matched_to: HL
+  HH:
+    distractor: 'A job I am almost certain to take will move me to another city in
+      about two years, and buying then selling that fast would burn roughly 9% of
+      the price in fees, taxes, and legal costs: far more than I could build in equity
+      that quickly.'
+    diagnosticity: high
+    salience: high
+    proposition: The user expects to relocate to another city in about two years for
+      an all-but-confirmed job, and the round-trip purchase and sale costs would be
+      roughly 9% of the price — unrecoverable over such a short hold.
+    salience_source: The near-certain two-year relocation plus the quantified ~9%
+      round-trip cost makes the short-hold loss concrete.
+  LH:
+    distractor: A near-certain job will relocate the user in about two years, and
+      ~9% round-trip transaction costs would be unrecoverable over so short a hold.
+    diagnosticity: high
+    salience: low
+    proposition: The user expects to relocate to another city in about two years for
+      an all-but-confirmed job, and the round-trip purchase and sale costs would be
+      roughly 9% of the price — unrecoverable over such a short hold.
+    matched_to: HH
+distractor_direction:
+  label: Buying always wins
+  description: Buying now because renting is treated as inherently wasted money and
+    ownership as always superior.
+plausible_alternative_directions:
+- label: Rent-vs-mortgage spread
+  description: Whether the monthly mortgage versus rent gap and price trend favour
+    buying even over a short hold.
+- label: Relocation uncertainty
+  description: Whether the job move is uncertain enough that planning around staying
+    is reasonable.
+leak_audit:
+  ll_atomic_claims:
+  - A family elder stated that renting is always wasted money.
+  - The elder stated that buying is essentially always better.
+  hh_atomic_claims:
+  - A near-certain job will relocate the user to another city in about two years.
+  - Buying then selling that quickly would cost roughly 9% of the price in fees, taxes,
+    and legal costs.
+  - That cost exceeds the equity the user could build in two years.
+  hl_salience_dimensions:
+    source_credibility: Family elder (grandfather Teodoro) who paid off two homes.
+    narrative_coherence: N/A
+    confident_assertion: Says it with 'total conviction', 'like a law of life', 'always'.
+    concrete_detail: Concrete detail about the source (paid off two homes) only.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 70
+  hl_word_count: 49
+  ll_word_count: 16
+  hh_word_count: 47
+  lh_word_count: 24
+  notes: 'LH is 24 words, keeping full equivalence with HH (relocation timing, near-certainty,
+    the 9% figure, and the
+
+    unrecoverable-over-short-hold consequence) as a single flat clause-set. T3 authority:
+    the elder asserts a blanket
+
+    rule and never engages the user''s
+
+    timeline. xbase mentions wanting to own "eventually" but withholds the two-year
+    move and transaction costs —
+
+    decisive facts in HH/LH only.
+
+    '
+causal_audit:
+  steelman: 'A long-term homeowner could argue that over decades buying builds equity
+    and hedges rent inflation, that renting
+
+    yields no asset, and that delaying entry risks being priced out — all genuinely
+    true on a long horizon, which is
+
+    why the "buy, don''t rent" rule is widely and reasonably held in the abstract.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the short holding period and transaction costs that
+    overturn the rule are supplied only in HH/LH; xbase does not foreclose the buy-now
+    case.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to buy or keep renting given a near-certain two-year relocation
+    and ~9% transaction costs, against a family elder's blanket 'renting is wasted
+    money' rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

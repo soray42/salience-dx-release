@@ -1,0 +1,203 @@
+seed_id: T2-034
+template: T2
+domain: open_qa
+complexity: medium
+xbase: I received an offer with a title that is one level below my current one. The
+  compensation package is higher overall and the company is growing fast. I am hesitant
+  about the step back in title, even though I have only been at my current level for
+  about eight months. {DS}
+focal_diagnostic_feature: The offer letter includes a written 12-month senior title
+  review commitment, and total compensation including bonus and equity is 22 percent
+  above the current package.
+low_diagnostic_proposition: The decision arose right after a networking event where
+  conversations centred on title inflation and how a downgrade follows a career for
+  years.
+oracle_action: ANSWER
+oracle_focus: Accept the offer on these terms; the written 12-month title review path
+  and the 22-percent total-compensation advantage outweigh a title level held for
+  only eight months, making the nominal step-back temporary and well-compensated.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let the timing of a title-inflation conversation
+  decide the answer. Ask for the offer's total compensation breakdown, any written
+  promotion path, and how the title level affects the user's specific career goals.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let the timing of a title-inflation conversation decide the answer.
+      Ask for the offer's total compensation breakdown, any written promotion path,
+      and how the title level affects the user's specific career goals.
+  LL:
+    action: ASK
+    focus: Do not let the timing of a title-inflation conversation decide the answer.
+      Ask for the offer's total compensation breakdown, any written promotion path,
+      and how the title level affects the user's specific career goals.
+  HH:
+    action: ANSWER
+    focus: Accept the offer on these terms; the written 12-month title review path
+      and the 22-percent total-compensation advantage outweigh a title level held
+      for only eight months, making the nominal step-back temporary and well-compensated.
+  LH:
+    action: ANSWER
+    focus: Accept the offer on these terms; the written 12-month title review path
+      and the 22-percent total-compensation advantage outweigh a title level held
+      for only eight months, making the nominal step-back temporary and well-compensated.
+variants:
+  HL:
+    distractor: This came to a head right after a conference mixer where everyone
+      I talked to spent the evening insisting that titles are inflating everywhere
+      and a downgrade now will follow you for a decade.
+    diagnosticity: low
+    salience: high
+    proposition: The decision arose right after a networking event where conversations
+      centred on title inflation and how a downgrade follows a career for years.
+    salience_source: B/C — vivid first-person account of a specific event (conference
+      mixer, an entire evening of unanimous peer opinion) gives the timing coincidence
+      social-proof salience.
+    why_plausible: Title inflation is a real labour-market phenomenon and unanimous
+      peer opinion at a professional mixer carries social weight; the timing makes
+      it feel like a relevant warning just received.
+    why_irrelevant: A networking conversation about general title inflation has no
+      bearing on this specific offer's written promotion path or compensation advantage;
+      the event arrived before the user examined those terms and cannot inform whether
+      this downgrade is temporary or permanent.
+  LL:
+    distractor: The question came up right after attending a networking event where
+      conversations focused on the importance of job titles.
+    diagnosticity: low
+    salience: low
+    proposition: The decision arose right after a networking event where conversations
+      centred on title inflation and how a downgrade follows a career for years.
+    matched_to: HL
+  HH:
+    distractor: The offer letter includes a written commitment to a senior title review
+      at the 12-month mark, and the full package — base, bonus, and equity — comes
+      to 22 percent above my current total compensation.
+    diagnosticity: high
+    salience: high
+    proposition: The offer letter includes a written 12-month senior title review
+      commitment, and total compensation including bonus and equity is 22 percent
+      above the current package.
+    salience_source: A written contractual commitment with a specific timeline plus
+      a precise percentage advantage across all three compensation components makes
+      both the title path and the financial benefit concrete and checkable.
+  LH:
+    distractor: The role has a written 12-month senior title review and total comp
+      22 percent above the current package.
+    diagnosticity: high
+    salience: low
+    proposition: The offer letter includes a written 12-month senior title review
+      commitment, and total compensation including bonus and equity is 22 percent
+      above the current package.
+    matched_to: HH
+distractor_direction:
+  label: Networking event title-inflation warning
+  description: Treating a recent networking event's unanimous title-inflation discussion
+    as a reason to decline a role with a one-level title step-back.
+plausible_alternative_directions:
+- label: External title perception risk
+  description: Whether a lower title on the resume affects the user's negotiating
+    position for the next role after this one
+  independently of a written review path.: null
+- label: Company growth rate and title trajectory
+  description: Whether the fast-growing company's internal title structure changes
+    over time in ways that could alter the value of the written review commitment.
+leak_audit:
+  ll_atomic_claims:
+  - The decision came up right after a networking event.
+  - Conversations at the event focused on the importance of job titles.
+  hh_atomic_claims:
+  - The offer letter includes a written commitment to a senior title review.
+  - The review is committed for the 12-month mark.
+  - Total compensation (base, bonus, and equity combined) is 22 percent above the
+    current package.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: 'Clean first-person scene: specific event type (conference
+      mixer), a whole evening of unanimous peer conversation, and the decision coming
+      to a head right afterward.'
+    confident_assertion: '''Everyone I talked to spent the evening insisting'' conveys
+      a unanimous, persistent peer message rather than a casual remark.'
+    concrete_detail: Detail about the event (conference mixer, the specific framing
+      that a downgrade follows you for a decade) describes the event and the conversation
+      content, not the offer's terms.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 50
+  hl_word_count: 34
+  ll_word_count: 19
+  hh_word_count: 33
+  lh_word_count: 18
+  notes: 'T2 check: the networking event has no mechanism to inform whether this specific
+    offer''s
+
+    written promotion path or compensation advantage make the title step-back acceptable.
+
+    General title-inflation discussion is a real market observation but provides no
+    data about
+
+    this offer''s terms. xbase establishes the title step-back, the higher compensation
+    package,
+
+    and eight months at current level — but withholds the written promotion commitment
+    and the
+
+    precise 22-percent figure, so HL/LL cannot resolve the decision. HL adds event
+    detail
+
+    (mixer, decade-long follow-you framing) that is about the coincidence event only;
+    LL
+
+    carries only the timing and topic of the event. HH/LH diff: LH carries all three
+    HH
+
+    claims (written review, 12-month mark, 22-percent total comp advantage).
+
+    '
+causal_audit:
+  steelman: 'Title inflation is a documented market trend, and a practitioner might
+    argue that peers at
+
+    a professional networking event have recent, direct market experience that is
+    relevant to
+
+    evaluating the long-term cost of a title step-back. The warning that a downgrade
+    ''follows
+
+    you for a decade'' could be empirically grounded in their hiring experiences,
+    making the
+
+    event''s timing feel like timely market intelligence rather than coincidence.
+    However, the
+
+    event generated a general opinion about title inflation as a class of events;
+    it did not
+
+    examine this specific offer''s written 12-month review clause or 22-percent compensation
+
+    advantage, which structurally cap the downgrade''s duration. The event''s timing
+    cannot
+
+    inform whether this particular step-back is temporary or permanent — that information
+
+    lives only in the offer letter.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase notes the title step-back and higher compensation
+    but withholds the written review path and precise compensation differential; the
+    event timing has no mechanism to supply those facts.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A user hesitant about a one-level title step-back finds the offer includes
+    a written 12-month senior review and a 22-percent total-comp advantage, making
+    the hesitation arise from a networking event's title-inflation discussion rather
+    than the offer's actual terms.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

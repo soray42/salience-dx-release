@@ -1,0 +1,216 @@
+seed_id: T5-089
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: My static site is served through a CDN, and visitors keep reporting they see
+  outdated page content even after I push updates to the origin. When I hit the origin
+  directly, I always get the latest version. The CDN provider is the one I have used
+  for two years without issues. I have not changed the CDN configuration in the past
+  month. {DS}
+focal_diagnostic_feature: The CDN configuration sets Cache-Control max-age to 86400
+  seconds with no cache invalidation step in the deployment pipeline, so edge nodes
+  hold each version for up to 24 hours regardless of origin updates.
+low_diagnostic_proposition: The CDN provider's dashboard interface looks outdated
+  and suggests the service may be unreliable or poorly maintained.
+oracle_action: ANSWER
+oracle_focus: Add a cache invalidation or purge step to the deployment pipeline, or
+  reduce max-age with stale-while-revalidate; the CDN is working correctly but is
+  configured to hold content for 24 hours, so visitors will see stale versions until
+  that TTL expires or cache is purged.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer CDN reliability from dashboard appearance.
+  Ask for the Cache-Control headers served at the edge and whether the deployment
+  pipeline includes a cache invalidation or purge step.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer CDN reliability from dashboard appearance. Ask for the Cache-Control
+      headers served at the edge and whether the deployment pipeline includes a cache
+      invalidation or purge step.
+  LL:
+    action: ASK
+    focus: Do not infer CDN reliability from dashboard appearance. Ask for the Cache-Control
+      headers served at the edge and whether the deployment pipeline includes a cache
+      invalidation or purge step.
+  HH:
+    action: ANSWER
+    focus: Add a cache invalidation or purge step to the deployment pipeline, or reduce
+      max-age with stale-while-revalidate; the CDN is working correctly but is configured
+      to hold content for 24 hours, so visitors will see stale versions until that
+      TTL expires or cache is purged.
+  LH:
+    action: ANSWER
+    focus: Add a cache invalidation or purge step to the deployment pipeline, or reduce
+      max-age with stale-while-revalidate; the CDN is working correctly but is configured
+      to hold content for 24 hours, so visitors will see stale versions until that
+      TTL expires or cache is purged.
+variants:
+  HL:
+    distractor: The provider dashboard has faded gray panels, menu labels that do
+      not quite align, and a deployment log section that looks like it predates modern
+      CSS — the kind of interface I would not trust to be running cache invalidations
+      correctly.
+    diagnosticity: low
+    salience: high
+    proposition: The CDN provider's dashboard interface looks outdated and suggests
+      the service may be unreliable or poorly maintained.
+    salience_source: B — vivid first-person description of dashboard quirks with a
+      coherent inference chain from appearance to reliability; C — confident concluding
+      judgment about trustworthiness.
+    why_plausible: Neglected tooling can genuinely correlate with neglected infrastructure,
+      so a practitioner might wonder whether a poorly maintained dashboard reflects
+      a poorly maintained CDN service.
+    why_irrelevant: Dashboard visual design cannot determine whether cache invalidation
+      runs correctly; the decisive issue is a Cache-Control TTL that is too long combined
+      with no purge step, which is a client-side configuration problem unrelated to
+      provider reliability.
+  LL:
+    distractor: The CDN provider's dashboard interface looks outdated and suggests
+      the service may be poorly maintained.
+    diagnosticity: low
+    salience: low
+    proposition: The CDN provider's dashboard interface looks outdated and suggests
+      the service may be unreliable or poorly maintained.
+    matched_to: HL
+  HH:
+    distractor: 'Checking the response headers from the CDN edge with curl shows Cache-Control:
+      max-age=86400 and an Age value of around 50,000 — the CDN is holding content
+      for up to a full day, and the deployment script has no purge or invalidation
+      command anywhere in it.'
+    diagnosticity: high
+    salience: high
+    proposition: The CDN configuration sets Cache-Control max-age to 86400 seconds
+      with no cache invalidation step in the deployment pipeline, so edge nodes hold
+      each version for up to 24 hours regardless of origin updates.
+    salience_source: Exact header values and Age counter from a direct curl call,
+      paired with the concrete absence of any purge step in the pipeline, make the
+      TTL problem immediately verifiable.
+  LH:
+    distractor: Edge responses carry max-age=86400 with an Age of around 50,000 seconds,
+      and the deployment pipeline contains no cache purge or invalidation step.
+    diagnosticity: high
+    salience: low
+    proposition: The CDN configuration sets Cache-Control max-age to 86400 seconds
+      with no cache invalidation step in the deployment pipeline, so edge nodes hold
+      each version for up to 24 hours regardless of origin updates.
+    matched_to: HH
+distractor_direction:
+  label: CDN provider unreliability
+  description: Investigating whether the CDN service itself is running incorrectly
+    or failing to propagate cache invalidations due to poor maintenance.
+plausible_alternative_directions:
+- label: Origin headers not propagated
+  description: The origin may be setting correct short-lived Cache-Control headers
+    that the CDN strips or ignores, causing the edge to apply its own default TTL.
+- label: CDN edge geographic inconsistency
+  description: Some CDN edge PoPs may have received a prior invalidation while others
+    have not, causing region-dependent stale responses rather than a uniform TTL expiry
+    problem.
+leak_audit:
+  ll_atomic_claims:
+  - The CDN provider's dashboard looks outdated.
+  - This appearance suggests the service may be poorly maintained.
+  hh_atomic_claims:
+  - Edge responses show Cache-Control max-age=86400.
+  - The Age value is around 50,000 seconds.
+  - The deployment pipeline has no cache purge or invalidation step.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person aesthetic observation.
+    narrative_coherence: Coherent list of dashboard quirks building to a reliability
+      inference.
+    confident_assertion: Confident concluding statement about trustworthiness.
+    concrete_detail: Specific visual details about the dashboard (gray interface,
+      misaligned labels, flickering chart, old CSS) — about the provider's interface,
+      not the cached content.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 62
+  hl_word_count: 40
+  ll_word_count: 15
+  hh_word_count: 44
+  lh_word_count: 22
+  notes: 'T5 rule: the inferential bridge (appearance → reliability inference) is
+    propositional content
+
+    and appears in both HL ("I would not trust to be running cache invalidations correctly")
+    and LL
+
+    ("suggests the service may be poorly maintained"). Both carry the surface-to-quality
+    inference
+
+    flatly. HL is purely about the visual appearance of the provider''s interface
+    — no case-specific
+
+    claim added. HH/LH share exactly the same three header facts. HL:LL = 40:15 =
+    2.7:1 ≤ 4:1.
+
+    HH:LH = 44:15 = 2.9:1 ≤ 4:1. xbase withholds TTL value and pipeline contents entirely.
+
+    HL count (current text): The(1) provider(2) dashboard(3) has(4) faded(5) gray(6)
+    panels(7)
+
+    menu(8) labels(9) that(10) do(11) not(12) quite(13) align(14) and(15) a(16) deployment(17)
+
+    log(18) section(19) that(20) looks(21) like(22) it(23) predates(24) modern(25)
+    CSS(26)
+
+    the(27) kind(28) of(29) interface(30) I(31) would(32) not(33) trust(34) to(35)
+    be(36)
+
+    running(37) cache(38) invalidations(39) correctly(40) = 40 words. Within 27-48
+    target.
+
+    QC repair: replaced plausible_alternative_direction ''Deployment targeting wrong
+    origin'' (foreclosed
+
+    by xbase''s explicit statement that hitting the origin directly always shows the
+    latest version)
+
+    with ''CDN edge geographic inconsistency'' (genuinely live from xbase alone, not
+    contradicted).
+
+    '
+causal_audit:
+  steelman: 'A sysadmin could reasonably argue that a CDN provider with a neglected
+    dashboard might
+
+    also be running outdated edge software, which could in principle have bugs in
+    cache
+
+    invalidation propagation. However, xbase states this provider has been used without
+    issues
+
+    for two years and that no configuration was changed in the past month — eliminating
+    a
+
+    recent provider-side change. More decisively, the focal feature shows the max-age
+    header
+
+    is set to 86400 with no purge step in the deploy pipeline, which is a client-side
+
+    configuration choice; even a perfectly maintained CDN would hold content for 24
+    hours
+
+    under those settings. Provider quality has no mechanism to explain this case''s
+    behaviour.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes two years of trouble-free use and no configuration
+    change in the past month, removing recent provider degradation as an explanation
+    without naming the TTL cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Static site CDN serves stale content after deploys because max-age
+    is set to 86400 with no cache purge step in the pipeline; an aesthetic inference
+    about dashboard quality is the distractor.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator
+  generator: generator_B
+  generation_mode: generator_B_batches

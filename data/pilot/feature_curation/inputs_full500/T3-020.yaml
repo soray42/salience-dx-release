@@ -1,0 +1,176 @@
+seed_id: T3-020
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Kafka consumer group keeps rebalancing every few minutes, and consumer
+  lag climbs because almost no work gets done between rebalances. There are six consumers
+  across two hosts, partitions are evenly assigned, and the brokers are healthy with
+  plenty of headroom. The hosts show modest, stable CPU and memory. Consumer logs
+  show no OutOfMemoryError events, and JVM heap utilization has stayed flat below
+  sixty percent throughout the incident. This started after we added a new enrichment
+  step to message processing. {DS}
+focal_diagnostic_feature: Per-batch processing time now exceeds max.poll.interval.ms
+  because the new enrichment makes a slow synchronous external call per message, so
+  the broker treats consumers as dead and evicts them, triggering the rebalance storm.
+low_diagnostic_proposition: A senior architect says repeated Kafka rebalancing is
+  always a consumer crashing under memory pressure and the fix is bigger heaps.
+oracle_action: ANSWER
+oracle_focus: Cut per-batch processing time below max.poll.interval.ms — make the
+  new enrichment call async/batched, raise the interval, or lower max.poll.records;
+  consumers are being evicted for slow polling, not crashing on memory.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the memory-crash diagnosis on authority.
+  Ask whether consumers are actually OOM-ing or whether per-batch processing time
+  exceeds the poll interval.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the memory-crash diagnosis on authority. Ask whether consumers
+      are actually OOM-ing or whether per-batch processing time exceeds the poll interval.
+  LL:
+    action: ASK
+    focus: Do not accept the memory-crash diagnosis on authority. Ask whether consumers
+      are actually OOM-ing or whether per-batch processing time exceeds the poll interval.
+  HH:
+    action: ANSWER
+    focus: Cut per-batch processing time below max.poll.interval.ms — make the new
+      enrichment call async/batched, raise the interval, or lower max.poll.records;
+      consumers are being evicted for slow polling, not crashing on memory.
+  LH:
+    action: ANSWER
+    focus: Cut per-batch processing time below max.poll.interval.ms — make the new
+      enrichment call async/batched, raise the interval, or lower max.poll.records;
+      consumers are being evicted for slow polling, not crashing on memory.
+variants:
+  HL:
+    distractor: Our staff architect heard "constant rebalancing" and said immediately
+      that it is always a consumer getting OOM-killed and rejoining — that this is
+      the classic memory-pressure rebalance loop — and told the team to just double
+      the heap on every consumer and redeploy.
+    diagnosticity: low
+    salience: high
+    proposition: A senior architect says repeated Kafka rebalancing is always a consumer
+      crashing under memory pressure and the fix is bigger heaps.
+    salience_source: A/C — a staff architect confidently invoking a 'classic' rebalance
+      cause from the symptom name alone, without checking metrics.
+    why_plausible: Crash-loop-driven rebalances are a real and well-known Kafka failure
+      mode, so memory pressure is a believable first call.
+    why_irrelevant: Memory and CPU are stable with headroom, no OOM events are logged,
+      and heap stays flat; the rebalances come from exceeding the poll interval, which
+      more heap does not address.
+  LL:
+    distractor: A senior architect stated that repeated Kafka rebalancing is always
+      a consumer crashing under memory pressure, fixed by bigger heaps.
+    diagnosticity: low
+    salience: low
+    proposition: A senior architect says repeated Kafka rebalancing is always a consumer
+      crashing under memory pressure and the fix is bigger heaps.
+    matched_to: HL
+  HH:
+    distractor: Timing the loop, each poll's batch now takes longer to process than
+      max.poll.interval.ms allows, because the new enrichment makes one slow synchronous
+      HTTP call per message. The broker stops hearing polls in time, declares those
+      consumers dead, and reassigns — which is the rebalance we keep seeing.
+    diagnosticity: high
+    salience: high
+    proposition: Per-batch processing time now exceeds max.poll.interval.ms because
+      the new enrichment makes a slow synchronous external call per message, so the
+      broker treats consumers as dead and evicts them, triggering the rebalance storm.
+    salience_source: Timing the batch against the poll interval and naming the per-message
+      synchronous call makes the eviction mechanism concrete.
+  LH:
+    distractor: Per-batch processing now exceeds max.poll.interval.ms due to the new
+      per-message synchronous call, so the broker evicts consumers and forces continual
+      rebalances.
+    diagnosticity: high
+    salience: low
+    proposition: Per-batch processing time now exceeds max.poll.interval.ms because
+      the new enrichment makes a slow synchronous external call per message, so the
+      broker treats consumers as dead and evicts them, triggering the rebalance storm.
+    matched_to: HH
+distractor_direction:
+  label: Consumer memory crash-loop
+  description: Investigating whether consumers are being OOM-killed and rejoining,
+    with more heap as the fix.
+plausible_alternative_directions:
+- label: Session-timeout/heartbeat tuning
+  description: Whether session.timeout.ms or heartbeat settings are too tight for
+    the workload.
+- label: Unstable group coordinator
+  description: Whether a flapping group coordinator or network blips are forcing the
+    group to rebalance.
+leak_audit:
+  ll_atomic_claims:
+  - A senior architect stated that repeated Kafka rebalancing is always a consumer
+    crashing under memory pressure.
+  - The architect's prescribed fix is bigger heaps.
+  hh_atomic_claims:
+  - Per-batch processing time now exceeds max.poll.interval.ms.
+  - The cause is the new enrichment making one slow synchronous HTTP call per message.
+  - The broker therefore declares those consumers dead and reassigns, producing the
+    rebalances.
+  hl_salience_dimensions:
+    source_credibility: Staff architect at the user's company.
+    narrative_coherence: N/A
+    confident_assertion: Says it is 'always' and 'classic'; orders a heap doubling
+      immediately.
+    concrete_detail: Concrete detail about the source's directive (double heap, redeploy)
+      only.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 41
+  ll_word_count: 20
+  hh_word_count: 46
+  lh_word_count: 21
+  notes: 'T3 authority: the architect pattern-matches to OOM crash-loop from the word
+    "rebalancing" alone. xbase now
+
+    affirmatively closes the memory-crash pathway — stable CPU/memory with headroom,
+    no logged OutOfMemoryError
+
+    events, and flat JVM heap below 60% throughout — which rules out the distractor
+    mechanism (including transient
+
+    OOM-killer spikes, since kills would be logged regardless of averaging) without
+    naming any affirmative cause.
+
+    The decisive fact that per-batch time exceeds the poll interval (the focal cause)
+    still lives ONLY in HH/LH, so
+
+    xbase alone cannot compute the answer (C4 preserved); the closure is a neutral
+    pathway-block, not a cause supply.
+
+    '
+causal_audit:
+  steelman: 'A staff engineer could argue that consumers OOM-killed by a memory-heavy
+    enrichment step would repeatedly leave
+
+    and rejoin the group, producing exactly this rebalance churn, and that adding
+    an enrichment step often inflates
+
+    per-record memory — so a heap/crash hypothesis is a coherent, common cause worth
+    checking first.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'Yes: xbase reports stable, modest memory with headroom,
+    no logged OutOfMemoryError events, and flat JVM heap below 60% throughout, which
+    affirmatively forecloses the OOM crash-loop mechanism by cited evidence (transient
+    kills would still appear in logs). The affirmative poll-interval-exceeded cause
+    remains only in HH/LH.'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A Kafka rebalance storm caused by per-batch processing exceeding max.poll.interval.ms
+    after a slow per-message enrichment call, not the memory crash-loop a staff architect
+    asserted.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

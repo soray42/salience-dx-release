@@ -1,0 +1,173 @@
+seed_id: T2-038
+template: T2
+domain: open_qa
+complexity: medium
+xbase: My dishwasher has been leaving the dishes wet at the end of every cycle for
+  the past two weeks; plastic items in particular come out dripping. The dishes are
+  clean, the cycle completes normally with no error, and the machine still gets hot
+  during the wash. It is four years old. A call-out to look at it would be about €110,
+  and a new dishwasher in the same bracket runs €450, so I am weighing repair against
+  replacement. {DS}
+focal_diagnostic_feature: The rinse-aid indicator has been showing empty and the dispenser
+  is dry, so without rinse aid the water sheets and clings instead of running off,
+  which is why everything comes out wet.
+low_diagnostic_proposition: The wet dishes started the same week new curtains were
+  hung in the kitchen.
+oracle_action: ANSWER
+oracle_focus: Refill the rinse-aid dispenser (and clear it if blocked); empty rinse
+  aid is a trivial, free-to-fix cause of poor drying, so neither a repair call-out
+  nor replacement is warranted.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the new curtains to the wet dishes. Ask
+  whether the rinse-aid dispenser is filled and working before considering a repair
+  or replacement.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the new curtains to the wet dishes. Ask whether the rinse-aid
+      dispenser is filled and working before considering a repair or replacement.
+  LL:
+    action: ASK
+    focus: Do not connect the new curtains to the wet dishes. Ask whether the rinse-aid
+      dispenser is filled and working before considering a repair or replacement.
+  HH:
+    action: ANSWER
+    focus: Refill the rinse-aid dispenser (and clear it if blocked); empty rinse aid
+      is a trivial, free-to-fix cause of poor drying, so neither a repair call-out
+      nor replacement is warranted.
+  LH:
+    action: ANSWER
+    focus: Refill the rinse-aid dispenser (and clear it if blocked); empty rinse aid
+      is a trivial, free-to-fix cause of poor drying, so neither a repair call-out
+      nor replacement is warranted.
+variants:
+  HL:
+    distractor: We hung new linen curtains across the kitchen window the same weekend
+      the dishes first came out wet — the machine had dried fine for years before
+      that, and the timing feels like more than coincidence.
+    diagnosticity: low
+    salience: high
+    proposition: The wet dishes started the same week new curtains were hung in the
+      kitchen.
+    salience_source: B/C — clean same-weekend chronology recounted with the confident
+      pull of 'more than coincidence'.
+    why_plausible: When two changes land together, the visible new object is an easy
+      thing to suspect.
+    why_irrelevant: Curtains on a window cannot affect what happens inside a sealed
+      dishwasher cycle; they touch neither the water, the heat, nor the drying.
+  LL:
+    distractor: The wet dishes started the same week new curtains were hung in the
+      kitchen.
+    diagnosticity: low
+    salience: low
+    proposition: The wet dishes started the same week new curtains were hung in the
+      kitchen.
+    matched_to: HL
+  HH:
+    distractor: I checked the little dispenser and the rinse-aid window is showing
+      empty, bone dry inside; with no rinse aid the final rinse water just sheets
+      and beads instead of running off the dishes, which is exactly why everything,
+      especially the plastics, comes out clinging with droplets.
+    diagnosticity: high
+    salience: high
+    proposition: The rinse-aid indicator has been showing empty and the dispenser
+      is dry, so without rinse aid the water sheets and clings instead of running
+      off, which is why everything comes out wet.
+    salience_source: Finding the empty, dry rinse-aid dispenser and explaining the
+      sheeting names the trivial cause concretely.
+  LH:
+    distractor: The rinse-aid dispenser is empty and dry, so without rinse aid the
+      rinse water clings instead of running off, leaving the dishes wet.
+    diagnosticity: high
+    salience: low
+    proposition: The rinse-aid indicator has been showing empty and the dispenser
+      is dry, so without rinse aid the water sheets and clings instead of running
+      off, which is why everything comes out wet.
+    matched_to: HH
+distractor_direction:
+  label: New-curtains coincidence
+  description: Treating the hanging of new kitchen curtains as connected to the dishwasher
+    leaving dishes wet because the timing lined up.
+plausible_alternative_directions:
+- label: Heating-element drying fault
+  description: Whether a failed drying heater is the cause
+  a costlier repair that would change the repair-vs-replace calculus.: null
+- label: Vent or fan failure
+  description: Whether a stuck drying vent or fan is trapping moisture inside at the
+    end of the cycle.
+leak_audit:
+  ll_atomic_claims:
+  - The wet dishes started the same week new curtains were hung in the kitchen.
+  hh_atomic_claims:
+  - The rinse-aid dispenser is empty and dry.
+  - Without rinse aid the rinse water sheets and clings instead of running off.
+  - This is why the dishes (especially plastics) come out wet.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-weekend, years-fine-before chronology.
+    confident_assertion: Framed as 'more than coincidence'.
+    concrete_detail: Detail about the curtains (linen, kitchen window) only — no claim
+      about the dishwasher cycle.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 78
+  hl_word_count: 35
+  ll_word_count: 14
+  hh_word_count: 46
+  lh_word_count: 23
+  notes: 'xbase gives the wet-dishes symptom, clean dishes, hot wash, completed cycle,
+    age, and prices, but withholds the
+
+    rinse-aid state — the decisive empty-dispenser fact lives only in HH/LH, so repair-vs-replace
+    does not compute
+
+    from xbase. The ''machine still gets hot'' line neutrally hints the heater works
+    without naming rinse aid. LL
+
+    carries only the same-week curtain coincidence. HL trimmed from 51 to 35 words
+    to satisfy C9 hard bound (≤50)
+
+    and operational target (27-48); same atomic claims retained, narrative coherence
+    and confident-assertion
+
+    salience preserved.
+
+    '
+causal_audit:
+  steelman: 'To steelman the curtains: one might imagine they changed airflow or humidity
+    near the machine, or that whoever
+
+    hung them bumped a setting. But curtains across a window do not alter the closed
+    environment of a dishwasher
+
+    cycle, where drying depends on rinse-aid sheeting and internal heat or venting,
+    not room humidity; and bumping a
+
+    setting is a different cause, not a property of the curtains. xbase confirms the
+    wash still gets hot, so heat is
+
+    present. The focal evidence shows the actual cause — an empty rinse-aid dispenser
+    causing water to cling — which
+
+    is wholly internal to the machine and unrelated to anything hung on the window.
+    No mechanism connects them.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive empty-rinse-aid evidence lives only
+    in HH/LH; new curtains have no path to the dishwasher's drying cycle regardless
+    of xbase.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A dishwasher repair-vs-replace decision where empty rinse aid (a free
+    fix) explains wet dishes, coincident with new kitchen curtains.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

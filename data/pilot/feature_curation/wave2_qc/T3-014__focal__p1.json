@@ -1,0 +1,13 @@
+{
+  "seed_id": "T3-014",
+  "my_own_diagnosis": "The family works Mon-Thu (4 days); the nanny share covers exactly those four days at $1,200/month while daycare covers five days at $1,850/month — a $650/month premium for a Friday slot never used. With quality stated acceptable for both, the nanny share is the clear recommendation on schedule-match and cost grounds alone.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature provides precise, sufficient information (4-day schedule, exact prices, quality parity) to uniquely identify the nanny share as the correct choice and reject the daycare direction without any inferential gap.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cell oracles match low_diagnostic_oracle_focus text exactly and HH/LH cell oracles match oracle_focus text exactly; low_diagnostic_oracle_focus correctly instructs non-adoption of the authority-decree distractor while still recommending nanny share from xbase data.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

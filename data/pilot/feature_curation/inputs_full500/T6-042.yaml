@@ -1,0 +1,170 @@
+seed_id: T6-042
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: My SSH sessions to a remote development server start dropping silently after
+  sitting idle for about ten minutes. The initial connection authenticates instantly
+  and interactive commands run fine while I am actively typing. I changed nothing
+  in my SSH config recently, and the server is reachable by ping the entire time the
+  session is inactive. {DS}
+focal_diagnostic_feature: The server firewall drops TCP connections idle beyond 600
+  seconds, and neither the client nor server SSH configuration sets TCPKeepAlive or
+  ServerAliveInterval.
+low_diagnostic_proposition: The user's past SSH problems were caused by misconfigured
+  key files or incorrect dot-ssh permissions, so the key setup is probably the issue
+  again.
+oracle_action: ANSWER
+oracle_focus: Configure TCPKeepAlive and ServerAliveInterval on the client or server
+  SSH config to prevent the firewall from silently dropping idle connections.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not re-apply the key-auth diagnosis from past incidents.
+  Ask whether keepalive settings are configured and whether the server has a firewall
+  idle-timeout policy.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not re-apply the key-auth diagnosis from past incidents. Ask whether
+      keepalive settings are configured and whether the server has a firewall idle-timeout
+      policy.
+  LL:
+    action: ASK
+    focus: Do not re-apply the key-auth diagnosis from past incidents. Ask whether
+      keepalive settings are configured and whether the server has a firewall idle-timeout
+      policy.
+  HH:
+    action: ANSWER
+    focus: Configure TCPKeepAlive and ServerAliveInterval on the client or server
+      SSH config to prevent the firewall from silently dropping idle connections.
+  LH:
+    action: ANSWER
+    focus: Configure TCPKeepAlive and ServerAliveInterval on the client or server
+      SSH config to prevent the firewall from silently dropping idle connections.
+variants:
+  HL:
+    distractor: Every SSH problem I have run into before turned out to be a mangled
+      authorized_keys file or a wrong permission bit on dot-ssh, so my first instinct
+      is to recheck the key setup even though authentication currently works fine.
+    diagnosticity: low
+    salience: high
+    proposition: The user's past SSH problems were caused by misconfigured key files
+      or incorrect dot-ssh permissions, so the key setup is probably the issue again.
+    salience_source: 'B — vivid personal pattern (every past incident, specific artefacts:
+      authorized_keys, permission bits); C — strong first-instinct framing ("my first
+      instinct is").'
+    why_plausible: SSH key and permissions errors are genuinely the most common category
+      of SSH failure; a practitioner skimming the ticket could reasonably start there,
+      especially when the user self-reports a recurrent personal pattern.
+    why_irrelevant: 'Authentication already succeeds on every connection: the session
+      authenticates instantly and commands run fine under active use. Key and permission
+      errors manifest at connection time, not after idle periods — they cannot cause
+      post-authentication silent drops.'
+  LL:
+    distractor: Prior SSH issues for the user were generally caused by misconfigured
+      key files or incorrect dot-ssh directory permissions.
+    diagnosticity: low
+    salience: low
+    proposition: The user's past SSH problems were caused by misconfigured key files
+      or incorrect dot-ssh permissions, so the key setup is probably the issue again.
+    matched_to: HL
+  HH:
+    distractor: The server firewall drops TCP connections idle for more than 600 seconds,
+      and neither the client nor server SSH configs have TCPKeepAlive or ServerAliveInterval
+      set, so idle sessions time out silently without either side sending a probe.
+    diagnosticity: high
+    salience: high
+    proposition: The server firewall drops TCP connections idle beyond 600 seconds,
+      and neither the client nor server SSH configuration sets TCPKeepAlive or ServerAliveInterval.
+    salience_source: B — precise idle-timeout threshold (600 seconds), named SSH config
+      options (TCPKeepAlive, ServerAliveInterval), and mechanistic explanation of
+      silent drop.
+  LH:
+    distractor: No TCP keepalive is configured on either side and the server firewall
+      drops connections idle beyond 600 seconds.
+    diagnosticity: high
+    salience: low
+    proposition: The server firewall drops TCP connections idle beyond 600 seconds,
+      and neither the client nor server SSH configuration sets TCPKeepAlive or ServerAliveInterval.
+    matched_to: HH
+distractor_direction:
+  label: SSH key or permission misconfiguration
+  description: Investigating whether authorized_keys file corruption or incorrect
+    dot-ssh directory permission bits are causing the SSH session drops.
+plausible_alternative_directions:
+- label: Network path NAT timeout
+  description: An intermediate NAT device or cloud security group rather than the
+    server's own firewall may be expiring idle connection state, which would require
+    a different remediation than server-side firewall configuration.
+- label: Server SSH daemon resource limit
+  description: The sshd MaxSessions or ClientAliveCountMax settings may be terminating
+    idle sessions independently of the firewall timeout policy.
+leak_audit:
+  ll_atomic_claims:
+  - Prior SSH issues for the user were caused by misconfigured key files or incorrect
+    dot-ssh permissions.
+  hh_atomic_claims:
+  - The server firewall drops TCP connections idle for more than 600 seconds.
+  - Neither the client SSH config nor the server SSH config has TCPKeepAlive set.
+  - Neither the client SSH config nor the server SSH config has ServerAliveInterval
+    set.
+  - Idle sessions time out silently without either side sending a keepalive probe.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person narrator, no external expert
+    narrative_coherence: Every past incident framing, specific named artefacts (authorized_keys,
+      dot-ssh)
+    confident_assertion: my first instinct is
+    concrete_detail: N/A — HL describes past incidents, not this case's configuration
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 51
+  hl_word_count: 38
+  ll_word_count: 18
+  hh_word_count: 31
+  lh_word_count: 18
+  notes: 'T6 availability inference ("so the key setup is probably the issue again")
+
+    appears in both HL and LL. The key-auth hypothesis is structurally ruled out by
+
+    xbase noting authentication succeeds instantly — this is a narrow C4-permissible
+
+    pathway-closure that rules out one mechanism of the distractor (auth-time failure)
+
+    without supplying the affirmative cause. The past SSH cases are structurally
+
+    different: they failed at auth time, while this case succeeds at auth and drops
+
+    only during idle periods.
+
+    '
+causal_audit:
+  steelman: 'SSH key or permission errors occasionally manifest in unusual ways —
+    for instance,
+
+    a forced-command mismatch in authorized_keys can allow initial connection but
+
+    restrict subsequent channel opens in some configurations. A cautious practitioner
+
+    might argue that a partial key misconfiguration is worth ruling out before chasing
+
+    firewall policy.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states authentication succeeds instantly and commands
+    work under active use. This closes the auth-time failure pathway: key and permission
+    errors manifest during the connection handshake, not after it. The idle-only drop
+    pattern cannot be explained by key misconfiguration.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: SSH sessions drop silently after idle periods because the server firewall
+    has a 600-second connection timeout and no TCP keepalive is configured, against
+    the user's availability bias that all past SSH problems were key or permission
+    errors.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

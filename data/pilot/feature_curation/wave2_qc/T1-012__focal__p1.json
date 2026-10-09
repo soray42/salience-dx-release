@@ -1,0 +1,13 @@
+{
+  "seed_id": "T1-012",
+  "my_own_diagnosis": "Given that broker-2 (partition 7's leader) is pegged at 95% disk I/O while all other brokers sit under 20%, and consumer-side processing time for partition 7 is identical to healthy partitions, the bottleneck is almost certainly broker-2 disk I/O saturation — a disk failure, near-full disk, or storage throttle on that node is constraining produce/replicate throughput on partition 7; consumer-side causes are structurally ruled out by the matching processing times.",
+  "focal_decisive": true,
+  "focal_notes": "The 95% vs <20% disk I/O contrast on broker-2 combined with equal consumer processing times is unambiguous: a competent practitioner will immediately identify broker-side disk saturation and discard consumer-side hypotheses.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracles map correctly: HL/LL receive the low-diagnostic oracle (reject consumer-lookup, redirect to broker disk I/O) and HH/LH receive the focal oracle (investigate broker-2 disk I/O saturation); low_diagnostic_oracle_focus correctly instructs non-adoption of the distractor.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

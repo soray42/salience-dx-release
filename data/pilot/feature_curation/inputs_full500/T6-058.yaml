@@ -1,0 +1,205 @@
+seed_id: T6-058
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our CI pipelines have been failing sporadically for the past ten days. The
+  failures happen on the image pull step at the start of the job, but only during
+  business hours when multiple branches build simultaneously. No pipeline secrets
+  have been rotated recently. I can pull the same images from the same registry on
+  my local machine with no errors. {DS}
+focal_diagnostic_feature: Failed job logs each terminate with an HTTP 429 Too Many
+  Requests error from the registry, and the failures cluster in the morning peak window
+  when twelve or more pipeline jobs run in parallel against the same registry endpoint.
+low_diagnostic_proposition: Past pipeline failures for this user were generally caused
+  by missing or expired secrets in the CI environment, making a credential audit the
+  likely first step.
+oracle_action: ANSWER
+oracle_focus: 'Investigate registry rate-limiting: check the registry plan''s pull-rate
+  quota, reduce parallel job concurrency or add pull-through caching, and confirm
+  the HTTP 429 pattern correlates with job concurrency peaks.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to a credential audit from past experience.
+  Ask for the full failed job log output, particularly the error code and message
+  from the registry, before assuming a secrets cause.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to a credential audit from past experience. Ask for the
+      full failed job log output, particularly the error code and message from the
+      registry, before assuming a secrets cause.
+  LL:
+    action: ASK
+    focus: Do not default to a credential audit from past experience. Ask for the
+      full failed job log output, particularly the error code and message from the
+      registry, before assuming a secrets cause.
+  HH:
+    action: ANSWER
+    focus: 'Investigate registry rate-limiting: check the registry plan''s pull-rate
+      quota, reduce parallel job concurrency or add pull-through caching, and confirm
+      the HTTP 429 pattern correlates with job concurrency peaks.'
+  LH:
+    action: ANSWER
+    focus: 'Investigate registry rate-limiting: check the registry plan''s pull-rate
+      quota, reduce parallel job concurrency or add pull-through caching, and confirm
+      the HTTP 429 pattern correlates with job concurrency peaks.'
+variants:
+  HL:
+    distractor: Every pipeline failure I have ever debugged before turned out to be
+      a missing or expired secret in the CI environment, so my instinct is to audit
+      the credentials and rotate the registry token before anything else.
+    diagnosticity: low
+    salience: high
+    proposition: Past pipeline failures for this user were generally caused by missing
+      or expired secrets in the CI environment, making a credential audit the likely
+      first step.
+    salience_source: B/C — confident first-person 'every... before' pattern followed
+      by a concrete prescribed action; the directness of the recommendation carries
+      experienced authority.
+    why_plausible: Credential issues are among the most common CI failure modes; expired
+      or misconfigured registry tokens are a frequent cause of image pull failures
+      that a practitioner would reasonably audit first.
+    why_irrelevant: An expired or missing credential would return HTTP 401 Unauthorized
+      and would also fail on local pulls; the xbase establishes that local pulls succeed,
+      which closes the invalid-credential mechanism before the focal evidence even
+      appears.
+  LL:
+    distractor: Past pipeline failures for this user were generally attributed to
+      missing or expired secrets in the CI environment, making a credential audit
+      likely.
+    diagnosticity: low
+    salience: low
+    proposition: Past pipeline failures for this user were generally caused by missing
+      or expired secrets in the CI environment, making a credential audit the likely
+      first step.
+    matched_to: HL
+  HH:
+    distractor: The failed job logs each end with HTTP 429 Too Many Requests from
+      the registry, and the failures cluster in the 9 a.m. to noon window when twelve
+      or more pipeline jobs run in parallel against the same registry endpoint.
+    diagnosticity: high
+    salience: high
+    proposition: Failed job logs each terminate with an HTTP 429 Too Many Requests
+      error from the registry, and the failures cluster in the morning peak window
+      when twelve or more pipeline jobs run in parallel against the same registry
+      endpoint.
+    salience_source: Specific HTTP status code (429), concrete time window, and exact
+      concurrent job count make the rate-limiting pattern immediately recognizable
+      and actionable.
+  LH:
+    distractor: Failed job logs each return HTTP 429 from the registry, coinciding
+      with peak concurrent build periods.
+    diagnosticity: high
+    salience: low
+    proposition: Failed job logs each terminate with an HTTP 429 Too Many Requests
+      error from the registry, and the failures cluster in the morning peak window
+      when twelve or more pipeline jobs run in parallel against the same registry
+      endpoint.
+    matched_to: HH
+distractor_direction:
+  label: Expired or missing CI credentials
+  description: Investigating whether a missing, expired, or misconfigured registry
+    secret in the CI environment is causing the image pull failures.
+plausible_alternative_directions:
+- label: Runner network egress block
+  description: Checking whether the CI runners' outbound network to the registry is
+    being throttled or blocked at the network layer during peak hours.
+- label: Registry service degradation
+  description: Evaluating whether the image registry itself is experiencing intermittent
+    service issues independent of client credentials or concurrency.
+- label: Registry authentication tier downgrade
+  description: Checking whether CI pull requests are authenticated under a lower-quota
+    registry tier than local developer pulls, causing the CI account to hit a tighter
+    rate ceiling that local credentials do not reach.
+leak_audit:
+  ll_atomic_claims:
+  - Past pipeline failures were generally attributed to missing or expired secrets.
+  - The CI environment is the suspected location of the missing or expired secret.
+  - A credential audit is the likely first step.
+  hh_atomic_claims:
+  - Failed job logs each end with HTTP 429 Too Many Requests from the registry.
+  - The failures cluster in the 9 a.m. to noon window.
+  - Twelve or more pipeline jobs run in parallel during that window.
+  - The parallel jobs all target the same registry endpoint.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: '''Every... before... so my instinct is to'' constructs a
+      clean personal diagnostic history leading to a confident prescribed action.'
+    confident_assertion: '''every pipeline failure... turned out to be'', ''my instinct
+      is to audit the credentials... before anything else'' — strong first-person
+      certainty.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 60
+  hl_word_count: 37
+  ll_word_count: 23
+  hh_word_count: 40
+  lh_word_count: 16
+  notes: 'The availability inference (''making a credential audit the likely first
+    step'')
+
+    appears in both HL and LL (T6 C1 requirement satisfied).
+
+    xbase closes the invalid-credential mechanism via ''local pulls work'' — this
+
+    is a narrow pathway closure that rules out broken credentials without naming
+
+    the HTTP 429 root cause, within C4''s boundary.
+
+    HH gives four distinct claims about the 429 error; LH compresses to two
+
+    (status code + concurrency correlation) but preserves both decisive facts.
+
+    Ratio HL:LL = 1.61; HH:LH = 2.50; both within 4:1.
+
+    '
+causal_audit:
+  steelman: 'A senior DevOps engineer could argue: CI pipelines sometimes carry
+
+    service-account credentials scoped differently from a developer''s local
+
+    Docker context; a misconfigured or short-lived CI token might fail at the
+
+    start of a job while local developer credentials (potentially cached or
+
+    broader-scoped) succeed. The failure-only-during-business-hours pattern
+
+    could be explained by token refresh cycles that expire during peak working
+
+    hours. This is the strongest mechanism: scope or expiry difference between
+
+    CI and local credentials. However, the xbase explicitly states no pipeline
+
+    secrets were rotated recently, closing the rotation-event trigger. More
+
+    decisively, an expired or narrowly scoped CI token would produce HTTP 401,
+
+    not HTTP 429 — different error codes indicate different server-side
+
+    rejection reasons. The HH/LH HTTP 429 status is definitionally the
+
+    registry''s rate-limit response, not an authentication failure response.
+
+    The credential explanation cannot produce 429 errors under any mechanism.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '''I can pull the same images from the same registry on
+    my local machine with no errors'' closes the invalid-credential mechanism — broken
+    registry credentials would also fail locally. This leaves scope mismatch as a
+    residual possibility, which the 429 status code in HH/LH definitively rules out.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: CI image pull failures caused by registry rate-limiting (HTTP 429)
+    during peak concurrent build windows, misattributed by availability heuristic
+    to the user's prior experience with expired CI credentials.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

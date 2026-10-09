@@ -1,0 +1,104 @@
+seed_id: T5-004
+template: T5
+domain: open_qa
+complexity: medium
+xbase: أفكر في قبول عرض عمل في مدينة أخرى. الشركة مستقرة وذات حجم متوسط في مجالي.
+  أحب مدينتي الحالية، لكن ليس لديّ التزامات محلية ثابتة. {DS}
+focal_diagnostic_feature: العرض يرفع الراتب بنسبة 30%، ويشمل تغطية تكاليف الانتقال،
+  وعمل الشريك متاح عن بُعد، ولا توجد أطفال أو حيوانات أليفة أو التزامات رعاية.
+low_diagnostic_proposition: The offer letter and relocation brochure use a grey, austere
+  visual style.
+oracle_action: ANSWER
+oracle_focus: Accept absent undisclosed constraints; the upside and logistics are
+  unusually favourable.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not treat document aesthetics as job or relocation
+  evidence. Ask about pay, partner work, relocation cost, and local obligations.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not treat document aesthetics as job or relocation evidence. Ask about
+      pay, partner work, relocation cost, and local obligations.
+  LL:
+    action: ASK
+    focus: Do not treat document aesthetics as job or relocation evidence. Ask about
+      pay, partner work, relocation cost, and local obligations.
+  HH:
+    action: ANSWER
+    focus: Accept absent undisclosed constraints; the upside and logistics are unusually
+      favourable.
+  LH:
+    action: ANSWER
+    focus: Accept absent undisclosed constraints; the upside and logistics are unusually
+      favourable.
+variants:
+  HL:
+    distractor: حزمة العرض كلها كتل رمادية باردة، وخطوط رفيعة، وصور مؤسسية صارمة؛
+      مما يجعل فكرة الانتقال بأكملها تبدو كئيبة بشكل غريب.
+    diagnosticity: low
+    salience: high
+    proposition: The offer letter and relocation brochure use a grey, austere visual
+      style.
+    salience_source: surface design, colour/texture details, affective framing
+    why_plausible: A bleak-looking packet can colour the user's feeling about the
+      move.
+    why_irrelevant: Document design is not evidence about compensation, relocation
+      support, partner portability, or obligations.
+  LL:
+    distractor: مواد العرض والانتقال تتبع تصميماً بصرياً متقشفاً نسبياً.
+    diagnosticity: low
+    salience: low
+    proposition: The offer letter and relocation brochure use a grey, austere visual
+      style.
+    matched_to: HL
+  HH:
+    distractor: الراتب يقفز بنسبة 30%، وتكاليف الانتقال مدفوعة، وشريكي يستطيع العمل
+      عن بُعد من أي مكان، وليس لدينا أطفال ولا حيوانات أليفة ولا ارتباطات رعاية تقيّدنا
+      هنا.
+    diagnosticity: high
+    salience: high
+    proposition: The offer raises salary by 30%, covers relocation, the partner's
+      job is fully remote, and there are no children, pets, or caretaking obligations.
+    salience_source: logistical and financial constraint removal
+  LH:
+    distractor: يتضمن العرض زيادة في الراتب بنسبة 30% وتغطية تكاليف الانتقال؛ وعمل
+      الشريك قابل للنقل ولا توجد معالون أو التزامات رعاية.
+    diagnosticity: high
+    salience: low
+    proposition: The offer raises salary by 30%, covers relocation, the partner's
+      job is fully remote, and there are no children, pets, or caretaking obligations.
+    matched_to: HH
+distractor_direction:
+  label: مواد الانتقال الكئيبة
+  description: التحقيق في ما إذا كان النبرة البصرية المتقشفة لحزمة العرض والانتقال
+    تدل على أن الانتقال سيكون قراراً سيئاً.
+plausible_alternative_directions:
+- label: لوجستيات الشريك
+  description: ما إذا كان عمل الشريك عن بُعد وتفضيلاته في الانتقال يجعل الخطوة ممكنة.
+- label: تكلفة مغادرة المدينة الحالية
+  description: ما إذا كانت مغادرة المدينة الحالية تُنشئ تكاليف اجتماعية أو عاطفية
+    غير محددة.
+- label: إمكانات النمو المهني
+  description: ما إذا كانت الشركة الجديدة تُتيح فرص تعلم أو ترقية أو مكانة تتجاوز
+    الزيادة في الراتب.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-004.yaml
+  source_xbase_sha256: 774f17867b9337fe
+  translated_content_sha256: b673e79159e8765b
+  translation_notes: No technical terms in this seed. HL salience preserved through
+    specific design details (grey blocks, thin lines, stern photos) and affective
+    framing ('كئيبة بشكل غريب'). LL stays flat and source-less. '30%' figure kept
+    as-is in HH/LH. First-person register maintained throughout.

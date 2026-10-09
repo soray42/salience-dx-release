@@ -1,0 +1,198 @@
+seed_id: T2-033
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: My banking app stopped sending notifications about a week ago. No alerts for
+  transactions, balance changes, or login activity arrive. Every other app on my phone
+  still notifies me normally, and I have not changed any system notification settings
+  that I am aware of. {DS}
+focal_diagnostic_feature: The banking app's notification channel is toggled off in
+  Android's per-app notification settings, while all other apps' channels remain enabled.
+low_diagnostic_proposition: The notification silence began the same day the user changed
+  the device's default notification ringtone in system settings.
+oracle_action: ASK
+oracle_focus: Check the per-app notification settings for the banking app in Android
+  settings; the notification channel for the app appears disabled and needs to be
+  re-enabled independently of any system sound change.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not attribute the missing notifications to a ringtone
+  change; per-app channel toggles are independent of system sound settings. Ask the
+  user to inspect the banking app's notification channels in Android settings before
+  assuming any other cause.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not attribute the missing notifications to a ringtone change; per-app
+      channel toggles are independent of system sound settings. Ask the user to inspect
+      the banking app's notification channels in Android settings before assuming
+      any other cause.
+  LL:
+    action: ASK
+    focus: Do not attribute the missing notifications to a ringtone change; per-app
+      channel toggles are independent of system sound settings. Ask the user to inspect
+      the banking app's notification channels in Android settings before assuming
+      any other cause.
+  HH:
+    action: ASK
+    focus: Check the per-app notification settings for the banking app in Android
+      settings; the notification channel for the app appears disabled and needs to
+      be re-enabled independently of any system sound change.
+  LH:
+    action: ASK
+    focus: Check the per-app notification settings for the banking app in Android
+      settings; the notification channel for the app appears disabled and needs to
+      be re-enabled independently of any system sound change.
+variants:
+  HL:
+    distractor: This started the exact morning after I changed my default notification
+      ringtone in system settings — I had switched from the stock chime to a downloaded
+      tone and matched it to every sound category I saw listed in the menu.
+    diagnosticity: low
+    salience: high
+    proposition: The notification silence began the same day the user changed the
+      device's default notification ringtone in system settings.
+    salience_source: B/C — vivid first-person chronology anchoring the silence to
+      a specific action the same morning, with confident 'exact morning after' framing.
+    why_plausible: Modifying notification-sound settings sounds adjacent to notification
+      delivery, and users often conflate the two sections of the Android settings
+      panel.
+    why_irrelevant: Android's system ringtone setting controls sound selection only;
+      per-app notification channel enable/disable toggles are controlled in a separate
+      settings section and are not affected by changing the default ringtone.
+  LL:
+    distractor: The silence began the same day the default notification ringtone was
+      changed in system settings.
+    diagnosticity: low
+    salience: low
+    proposition: The notification silence began the same day the user changed the
+      device's default notification ringtone in system settings.
+    matched_to: HL
+  HH:
+    distractor: In the Android per-app notification settings, the banking app's main
+      channel is switched to off, while every other installed app I checked still
+      has its channels enabled.
+    diagnosticity: high
+    salience: high
+    proposition: The banking app's notification channel is toggled off in Android's
+      per-app notification settings, while all other apps' channels remain enabled.
+    salience_source: Precise contrast between the banking app's disabled channel and
+      all others still enabled makes the anomaly immediately legible and actionable.
+  LH:
+    distractor: The banking app's notification channel is set to off in Android's
+      per-app notification settings, while every other app I checked still has its
+      channels enabled.
+    diagnosticity: high
+    salience: low
+    proposition: The banking app's notification channel is toggled off in Android's
+      per-app notification settings, while all other apps' channels remain enabled.
+    matched_to: HH
+distractor_direction:
+  label: Ringtone change disabling notifications
+  description: Investigating whether changing the system default notification ringtone
+    also disabled the banking app's notification delivery.
+plausible_alternative_directions:
+- label: App-level notification permission revoked
+  description: Whether the OS revoked or the user accidentally denied the banking
+    app's notification permission at the OS level rather than channel level.
+- label: Bank server push outage
+  description: Whether the bank's push-notification service or Firebase Cloud Messaging
+    integration is down for this account.
+- label: Battery optimisation blocking delivery
+  description: Whether aggressive battery-optimisation settings are preventing the
+    banking app's background process from receiving push payloads.
+leak_audit:
+  ll_atomic_claims:
+  - The notification silence began the same day as a system default ringtone change.
+  - The ringtone change was made in system settings.
+  hh_atomic_claims:
+  - The banking app's main notification channel is switched to off in Android per-app
+    settings.
+  - Every other installed app checked still has its channels enabled.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: 'Clean first-person chronology: specific action (ringtone
+      change) on the exact morning the silence started.'
+    confident_assertion: '''Exact morning after'' frames the temporal link with precision
+      and confidence.'
+    concrete_detail: Detail about the ringtone-change action (switched from stock
+      chime to downloaded tone, matched to every category) describes the user's action
+      only, not the notification state.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 43
+  hl_word_count: 45
+  ll_word_count: 15
+  hh_word_count: 27
+  lh_word_count: 25
+  notes: 'xbase says "I have not changed any system notification settings that I am
+    aware of" — this is
+
+    the user''s subjective belief about system-level settings, not the per-app channel
+    state, so it
+
+    does not foreclose the ringtone distractor (user could have changed the ringtone
+    without thinking
+
+    of it as a ''notification setting'') and does not reveal the per-app channel toggle.
+    HL adds only
+
+    description of the ringtone-change action; no new claim about the notification
+    state appears in
+
+    HL that LL lacks. HH/LH contrast checked: LH now carries both atomic claims —
+    channel off for
+
+    banking app and every other app checked still has channels enabled — matching
+    HH propositionally.
+
+    LH word count is 25 (at the C9 hard bound of 25; one word above operational target
+    23 because
+
+    both atomic claims are required by C10).
+
+    '
+causal_audit:
+  steelman: 'One might argue that changing the default notification ringtone in Android
+    could, on some
+
+    manufacturer skins (Samsung One UI, MIUI), inadvertently reset per-app notification
+    channel
+
+    preferences if the ringtone change is applied globally through a poorly implemented
+    OEM settings
+
+    sync. A practitioner familiar with OEM customisations might say this is worth
+    ruling out.
+
+    However, this mechanism is not present in stock Android or any widely shipped
+    ROM version;
+
+    system sound settings and per-app channel toggles operate on entirely separate
+    settings
+
+    databases with no known interaction path. There is no general or specific mechanism
+    by which
+
+    choosing a different notification sound could disable a specific app''s channel
+    toggle.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the coincidence has no mechanism; xbase notes the
+    user believes no system notification settings were changed, but the per-app channel
+    state (the actual cause) is not mentioned in xbase and lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Android banking app stops notifying after a week; root cause is the
+    app's per-app notification channel was toggled off, unrelated to a same-day ringtone
+    change.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,9 @@
+{
+  "seed_id": "T6-011",
+  "steelman": "Evening peak-hour ISP congestion (7–10 PM) is one of the most documented causes of robotic VoIP audio: residential ISPs throttle bandwidth or experience contention, causing packet loss and jitter that forces codecs such as Opus into artifact-heavy error-concealment modes producing exactly the robotic quality described. The home router itself may accumulate a degraded NAT table or suffer a firmware memory leak after days of uptime, both resolvable by restart. A senior network engineer would place 'check for evening packet loss and reboot router' near the top of any home-network VoIP troubleshooting checklist. The user's multi-year track record of router-restart resolution provides strong inductive support for the same mechanism now, and the time-of-day pattern (evenings only, fine during the day) is consistent with peak-hour congestion.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Evening ISP peak-hour packet loss / jitter causes codec error-concealment artifacts; router NAT-table degradation or firmware memory leak accumulates over uptime and resolves on restart — both are real network-layer mechanisms that produce robotic VoIP audio.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase includes an explicit and decisive closure: 'I recorded a short voice memo offline on the same laptop at that hour and it sounded equally robotic.' Local audio recording to disk requires no network connection; it is physically upstream of any network or router pathway. Packet loss, jitter, NAT-table state, and ISP congestion all operate on already-encoded data in transit — they cannot affect a microphone capture that never touches the network. The steelman mechanism is valid and checklist-worthy in general, but is completely foreclosed for this specific episode by the offline recording evidence. No repair needed; the closure is tight and the seed is structurally sound."
+}

@@ -1,0 +1,172 @@
+seed_id: T2-087
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our Kafka consumer group for the order-events topic has had a growing lag on
+  partition 3 for the past three days. The consumer service is running and healthy,
+  but partition 3 lag climbs steadily while partitions 1 and 2 stay near zero. No
+  deployment has touched the consumer code this week. {DS}
+focal_diagnostic_feature: Consumer logs for partition 3 show a deserialization exception
+  looping on the same offset repeatedly, with no dead-letter or skip configuration,
+  so the consumer never advances past that record.
+low_diagnostic_proposition: The partition lag increase appeared around the time the
+  team activated a new Slack alerting integration.
+oracle_action: ANSWER
+oracle_focus: Configure a dead-letter queue or skip policy for the poison-pill record
+  at the stuck offset on partition 3; the consumer is retrying a malformed message
+  indefinitely and will not self-recover.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the Slack integration to Kafka consumer
+  lag. Ask for consumer logs on partition 3, the stuck offset, and whether an error
+  handler is configured.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the Slack integration to Kafka consumer lag. Ask for consumer
+      logs on partition 3, the stuck offset, and whether an error handler is configured.
+  LL:
+    action: ASK
+    focus: Do not connect the Slack integration to Kafka consumer lag. Ask for consumer
+      logs on partition 3, the stuck offset, and whether an error handler is configured.
+  HH:
+    action: ANSWER
+    focus: Configure a dead-letter queue or skip policy for the poison-pill record
+      at the stuck offset on partition 3; the consumer is retrying a malformed message
+      indefinitely and will not self-recover.
+  LH:
+    action: ANSWER
+    focus: Configure a dead-letter queue or skip policy for the poison-pill record
+      at the stuck offset on partition 3; the consumer is retrying a malformed message
+      indefinitely and will not self-recover.
+variants:
+  HL:
+    distractor: The climbing lag first appeared in our dashboards the same afternoon
+      our ops team activated a new Slack alerting integration that posts to the incidents
+      channel, so the team is investigating whether the webhook is interfering with
+      the consumer pipeline.
+    diagnosticity: low
+    salience: high
+    proposition: The partition lag increase appeared around the time the team activated
+      a new Slack alerting integration.
+    salience_source: 'B: precise temporal anchor (same afternoon) with professional
+      internal team context; C: ''the team is investigating'' frames it as an active
+      live hypothesis under examination'
+    why_plausible: Ops tooling changes coinciding with system symptoms can reasonably
+      prompt investigation; a Slack webhook adding latency to an alerting path could
+      superficially suggest side effects.
+    why_irrelevant: A Slack alerting webhook operates on a completely separate data
+      path from the Kafka consumer group; it has no mechanism to stall partition consumption
+      or cause lag on a specific partition.
+  LL:
+    distractor: The partition lag increase appeared around the time the team activated
+      a new Slack alerting integration.
+    diagnosticity: low
+    salience: low
+    proposition: The partition lag increase appeared around the time the team activated
+      a new Slack alerting integration.
+    matched_to: HL
+  HH:
+    distractor: 'Consumer logs for partition 3 show the same offset replaying in a
+      tight loop with a deserialization exception: the record at offset 1,047,822
+      contains a malformed payload and the error handler retries it without skipping,
+      so the consumer never advances.'
+    diagnosticity: high
+    salience: high
+    proposition: Consumer logs for partition 3 show a deserialization exception looping
+      on the same offset repeatedly, with no dead-letter or skip configuration, so
+      the consumer never advances past that record.
+    salience_source: 'B: exact offset number, named exception type, causal chain stated
+      precisely; C: declarative factual findings'
+  LH:
+    distractor: Partition 3 consumer logs show a deserialization exception looping
+      on offset 1,047,822 with no dead-letter routing configured.
+    diagnosticity: high
+    salience: low
+    proposition: Consumer logs for partition 3 show a deserialization exception looping
+      on the same offset repeatedly, with no dead-letter or skip configuration, so
+      the consumer never advances past that record.
+    matched_to: HH
+distractor_direction:
+  label: Slack alerting integration interference
+  description: Investigating whether the newly activated Slack webhook or alerting
+    integration is interfering with the Kafka consumer pipeline and causing partition
+    lag.
+plausible_alternative_directions:
+- label: Partition reassignment imbalance
+  description: A consumer group rebalance could leave partition 3 assigned to a slower
+    or resource-constrained consumer instance
+  causing lag to grow independently on that partition.: null
+- label: Downstream write bottleneck
+  description: If the consumer writes to a downstream database and that write path
+    is slow or erroring for records in partition 3
+  processing may stall without an obvious consumer exception in simple health checks.: null
+- label: Broker-side partition leadership change
+  description: A recent broker leader election for partition 3 could introduce temporary
+    fetch latency or uncommitted offsets that appear as growing lag.
+leak_audit:
+  ll_atomic_claims:
+  - The partition lag increase appeared around the time the team activated a new Slack
+    alerting integration.
+  hh_atomic_claims:
+  - Consumer logs for partition 3 show a deserialization exception.
+  - The exception is looping on offset 1,047,822.
+  - The error handler retries without skipping.
+  - The consumer never advances past the stuck record.
+  hl_salience_dimensions:
+    source_credibility: N/A — internal team framing, no named individual
+    narrative_coherence: '''Same afternoon'' precise temporal anchor with professional
+      internal context'
+    confident_assertion: '''the team is investigating whether the webhook is interfering''
+      — active hypothesis framing, no hedging language'
+    concrete_detail: N/A — detail is about the Slack integration event, not the consumer
+      case
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 51
+  hl_word_count: 40
+  ll_word_count: 16
+  hh_word_count: 38
+  lh_word_count: 17
+  notes: 'Distractor is a textbook T2 clean case: Slack webhook changes are in a completely
+    separate system with no shared code path with the Kafka consumer group.
+
+    Partition isolation (partitions 1 and 2 are fine) is in xbase as a symptom, not
+    a diagnosis; the stuck-offset evidence lives only in HH/LH.
+
+    QC repair: replaced ''somehow stalling the pipeline'' (hedging language style
+    flag) with ''the team is investigating whether the webhook is interfering with
+    the consumer pipeline'' — neutral active-voice; hl_word_count updated from 41
+    to 40.
+
+    '
+causal_audit:
+  steelman: 'A Slack alerting integration might post to a shared alerting library
+    that is imported by multiple services including the consumer. If the Slack HTTP
+    client added as a transitive dependency had a blocking initialisation or locked
+    a shared thread resource, it could theoretically affect the consumer''s executor.
+    However, this is a deployment-time side effect that would have affected all partitions
+    equally and would have been visible at startup; the fact that only partition 3
+    lags while 1 and 2 are fine makes any cross-partition shared-resource explanation
+    implausible. A Slack webhook posting to an external URL has no architectural path
+    into the Kafka poll loop.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase notes no deployment changed the consumer code
+    this week, closing the transitive-dependency route; the Slack integration is a
+    pure observability addition on a separate path
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Kafka consumer group lag on a single partition caused by a poison-pill
+    message at a stuck offset with no dead-letter routing, with temporal coincidence
+    distractor of a new Slack alerting integration.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,110 @@
+seed_id: T1-001
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: Nuestro CI empezó a fallar el martes. Los tests unitarios, el linting y la
+  compilación siguen pasando. Los fallos solo aparecen cuando la etapa de integración
+  intenta conectarse a la réplica de Postgres de staging; el error es simplemente
+  un timeout de conexión de 30 segundos. No hemos cambiado los tests ni el esquema
+  de la base de datos recientemente. {DS}
+focal_diagnostic_feature: La conectividad desde el runner de CI al puerto de Postgres
+  agota el tiempo antes de que se realice cualquier autenticación o consulta a la
+  base de datos.
+low_diagnostic_proposition: A comparable timeout at another company was attributed
+  to an ORM connection-pool setting.
+oracle_action: ASK
+oracle_focus: Treat this as a reachability problem between CI and the staging replica;
+  check DNS, firewall/security-group rules, routing, NAT/VPN, and DB port access from
+  the runner.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the outside ORM story. Ask for direct connectivity
+  checks from the CI runner to the replica before diagnosing application code.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the outside ORM story. Ask for direct connectivity checks
+      from the CI runner to the replica before diagnosing application code.
+  LL:
+    action: ASK
+    focus: Do not adopt the outside ORM story. Ask for direct connectivity checks
+      from the CI runner to the replica before diagnosing application code.
+  HH:
+    action: ASK
+    focus: Treat this as a reachability problem between CI and the staging replica;
+      check DNS, firewall/security-group rules, routing, NAT/VPN, and DB port access
+      from the runner.
+  LH:
+    action: ASK
+    focus: Treat this as a reachability problem between CI and the staging replica;
+      check DNS, firewall/security-group rules, routing, NAT/VPN, and DB port access
+      from the runner.
+variants:
+  HL:
+    distractor: Marco, de otra fintech, jura que su CI tuvo el mismo timeout el mes
+      pasado; después de dos días encontraron que un parámetro del pool ORM estaba
+      fijado exactamente en 1 conexión.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable timeout at another company was attributed to an ORM
+      connection-pool setting.
+    salience_source: named third party, exact setting value, similar error label
+    why_plausible: The same visible symptom, 'connection timeout', makes the outside
+      anecdote feel portable.
+    why_irrelevant: The story is from a different stack and points to application
+      pooling; the current failure occurs before database authentication and is isolated
+      to runner-to-replica reachability.
+  LL:
+    distractor: Alguien en otra empresa tuvo un timeout de CI que se atribuyó a la
+      configuración del pool de conexiones del ORM.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable timeout at another company was attributed to an ORM
+      connection-pool setting.
+    matched_to: HL
+  HH:
+    distractor: Desde el runner de CI, el socket simplemente se queda colgado hasta
+      que se cumple el timeout de 30 segundos antes de que Postgres reciba siquiera
+      un intento de login; nunca llega al punto en que un parámetro del pool ORM pudiera
+      importar.
+    diagnosticity: high
+    salience: high
+    proposition: Connectivity from the CI runner to the Postgres port times out before
+      any database authentication or query runs.
+    salience_source: precise protocol-stage detail
+  LH:
+    distractor: Una conexión TCP directa desde el runner de CI al endpoint de Postgres
+      agota el tiempo antes de que comience la autenticación.
+    diagnosticity: high
+    salience: low
+    proposition: Connectivity from the CI runner to the Postgres port times out before
+      any database authentication or query runs.
+    matched_to: HH
+distractor_direction:
+  label: Mala configuración del pool de conexiones del ORM
+  description: Agotamiento del pool de conexiones en el lado de la aplicación, fugas
+    o configuración del timeout causando el síntoma de timeout observado en CI.
+plausible_alternative_directions:
+- label: Saturación del Postgres de staging
+  description: La réplica de staging ha alcanzado el límite de conexiones, CPU, IO
+    o bloqueos y está rechazando clientes independientemente del código de la aplicación.
+- label: Deriva del entorno del runner de CI
+  description: La imagen del runner, los secretos, las variables de entorno o la configuración
+    de salida divergieron de la última compilación exitosa.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-001.yaml
+  source_xbase_sha256: d93bad276b6acc3f
+  translated_content_sha256: e45044986e318f4c
+  translation_notes: ''

@@ -1,0 +1,160 @@
+seed_id: T3-093
+template: T3
+domain: open_qa
+complexity: low
+xbase: My bicycle was stolen from the communal shed outside my flat last week. I have
+  a renter's insurance policy and pay it monthly. I have never filed a claim on this
+  policy and am not sure whether it is worth making one for the bike. There is no
+  replacement offer from anyone; I would need to buy a new one. {DS}
+focal_diagnostic_feature: The policy's excess is £300 and the bicycle's current second-hand
+  market value is £220, so any claim settlement after the excess deduction would be
+  zero.
+low_diagnostic_proposition: Having insurance means you should always file claims to
+  use coverage you are paying for.
+oracle_action: ANSWER
+oracle_focus: Do not file the claim; the £300 excess exceeds the £220 bike value so
+  the payout is zero, and filing could raise future premiums for no benefit.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the blanket always-claim rule. Ask for the
+  policy excess and the bicycle's current replacement or market value before advising
+  on whether filing is worthwhile.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the blanket always-claim rule. Ask for the policy excess and
+      the bicycle's current replacement or market value before advising on whether
+      filing is worthwhile.
+  LL:
+    action: ASK
+    focus: Do not adopt the blanket always-claim rule. Ask for the policy excess and
+      the bicycle's current replacement or market value before advising on whether
+      filing is worthwhile.
+  HH:
+    action: ANSWER
+    focus: Do not file the claim; the £300 excess exceeds the £220 bike value so the
+      payout is zero, and filing could raise future premiums for no benefit.
+  LH:
+    action: ANSWER
+    focus: Do not file the claim; the £300 excess exceeds the £220 bike value so the
+      payout is zero, and filing could raise future premiums for no benefit.
+variants:
+  HL:
+    distractor: 'My uncle Zoltán worked in corporate finance for thirty years and
+      has always been firm about this: if you have insurance, you file the claim,
+      full stop — that is what the premiums are for.'
+    diagnosticity: low
+    salience: high
+    proposition: Having insurance means you should always file claims to use coverage
+      you are paying for.
+    salience_source: Dimension A (source credibility) — thirty-year corporate finance
+      career; dimension C (confident assertion) — 'always been firm', 'full stop'
+      signal authoritative certainty.
+    why_plausible: The logic that premiums are paid to fund claims is financially
+      sound in general; a senior figure with a long finance career lends real weight
+      to the always-claim rule.
+    why_irrelevant: The rule is generic pattern-matching; Zoltán has not examined
+      the excess versus bike value. When the excess exceeds the item's worth, filing
+      pays out nothing — the rule breaks on this specific arithmetic.
+  LL:
+    distractor: A senior relative with a financial background says that having insurance
+      means you should always file claims.
+    diagnosticity: low
+    salience: low
+    proposition: Having insurance means you should always file claims to use coverage
+      you are paying for.
+    matched_to: HL
+  HH:
+    distractor: The policy carries a £300 excess, and the stolen bicycle is worth
+      about £220 on the second-hand market, so any claim settlement after the excess
+      deduction would be zero.
+    diagnosticity: high
+    salience: high
+    proposition: The policy's excess is £300 and the bicycle's current second-hand
+      market value is £220, so any claim settlement after the excess deduction would
+      be zero.
+    salience_source: Dimension B (narrative coherence) — concrete figures (£300, £220)
+      placed in direct arithmetic relation; dimension C (confident assertion) — 'would
+      be zero' stated without qualification.
+  LH:
+    distractor: The policy excess is £300 and the bike's current value is £220, so
+      a claim would yield no payout.
+    diagnosticity: high
+    salience: low
+    proposition: The policy's excess is £300 and the bicycle's current second-hand
+      market value is £220, so any claim settlement after the excess deduction would
+      be zero.
+    matched_to: HH
+distractor_direction:
+  label: always-claim financial principle
+  description: Treating the blanket rule that insurance premiums justify filing all
+    claims as the correct guide for this specific claim decision.
+plausible_alternative_directions:
+- label: premium impact assessment
+  description: Evaluating whether even a zero-payout claim filing would trigger a
+    no-claims discount loss or premium step-up that outweighs any benefit.
+- label: policy theft coverage scope
+  description: Verifying whether the policy covers theft of property from a communal
+    shed rather than from within the flat itself.
+leak_audit:
+  ll_atomic_claims:
+  - A senior relative with a financial background holds this view.
+  - Having insurance means you should always file claims.
+  hh_atomic_claims:
+  - The policy excess is £300.
+  - The stolen bicycle is worth about £220 on the second-hand market.
+  - Any claim settlement after the excess deduction would be zero.
+  hl_salience_dimensions:
+    source_credibility: Thirty-year corporate finance career — domain-adjacent authority
+      on financial decisions.
+    narrative_coherence: Clean first-person report of the relative's consistent, long-held
+      position.
+    confident_assertion: '''Always been firm'', ''full stop'' — maximally confident
+      framing.'
+    concrete_detail: N/A — no additional case-specific detail added in HL.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 61
+  hl_word_count: 35
+  ll_word_count: 17
+  hh_word_count: 29
+  lh_word_count: 19
+  notes: 'T3: authority asserts generic rule (''always file claims'') with no engagement
+    with the case-specific excess-vs-value arithmetic.
+
+    Focal feature (£300 excess vs £220 value) is isolated to HH/LH; xbase mentions
+    neither figure.
+
+    C2: Zoltán''s rule is defensible in general but fails in THIS case because the
+    payout arithmetic produces zero; the steelman finds the general logic sound but
+    not applicable here.
+
+    Source name Zoltán: Hungarian male name, not in taken list.
+
+    '
+causal_audit:
+  steelman: 'A senior financial advisor might argue: filing any claim, even one near
+    the excess boundary, establishes a claims record that can help in future disputes;
+    some insurers may apply goodwill payments or waive excess in cases of theft; and
+    the premium cost of not filing is a sunk cost. On these grounds, always-claim
+    could still be the correct rule even near the excess boundary.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — the excess amount and bicycle value are not disclosed
+    in xbase. The steelman''s goodwill-payment scenario is possible in theory but
+    is not supported by any fact in xbase, and the focal feature definitively shows
+    the arithmetic: £300 excess > £220 value = zero settlement.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Renter's insurance excess (£300) exceeds stolen bicycle value (£220)
+    making a claim pointless; distractor is a senior relative's blanket always-file-claims
+    rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

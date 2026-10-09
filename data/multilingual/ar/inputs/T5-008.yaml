@@ -1,0 +1,104 @@
+seed_id: T5-008
+template: T5
+domain: open_qa
+complexity: medium
+xbase: أنا أفكر في قبول عرض عمل في مستوى مبتدئ من شركة ناشئة صغيرة. طبيعة العمل تبدو
+  مشابهة لعرض آخر لديّ من شركة راسخة. أولوّي استقرار الراتب لأنني لا أملك وسادة مالية
+  كافية بعد. {DS}
+focal_diagnostic_feature: الشركة الناشئة تدفع 25% أقل من السوق، ولديها حصص أسهم صغيرة
+  مع استحقاق بعد أربع سنوات، وسيولة 14 شهراً فقط ولا مستثمرين مؤسسيين، في حين يدفع
+  العرض الراسخ راتباً بسعر السوق الكامل.
+low_diagnostic_proposition: The startup office has a polished industrial-chic aesthetic.
+oracle_action: ANSWER
+oracle_focus: Prefer the established offer; the startup risk and pay gap are not compensated
+  by the disclosed equity terms.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer company quality from office design. Ask
+  for salary, runway, funding, equity terms, and alternatives.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer company quality from office design. Ask for salary, runway,
+      funding, equity terms, and alternatives.
+  LL:
+    action: ASK
+    focus: Do not infer company quality from office design. Ask for salary, runway,
+      funding, equity terms, and alternatives.
+  HH:
+    action: ANSWER
+    focus: Prefer the established offer; the startup risk and pay gap are not compensated
+      by the disclosed equity terms.
+  LH:
+    action: ANSWER
+    focus: Prefer the established offer; the startup risk and pay gap are not compensated
+      by the disclosed equity terms.
+variants:
+  HL:
+    distractor: مكتبهم عبارة عن مستودع مُجدَّد بطوب مكشوف ومصابيح إيديسون وغرفة اجتماعات
+      تبدو كأنها خرجت من مجلة تصميم داخلي.
+    diagnosticity: low
+    salience: high
+    proposition: The startup office has a polished industrial-chic aesthetic.
+    salience_source: stylish office, exposed-brick startup cue
+    why_plausible: A beautiful office can be mistaken for evidence of a healthy company
+      or strong culture.
+    why_irrelevant: Decor does not affect salary, runway, equity value, or the existence
+      of a better offer.
+  LL:
+    distractor: مكتب الشركة الناشئة جمالي بصرياً ويقع في مبنى قديم مُحوَّل.
+    diagnosticity: low
+    salience: low
+    proposition: The startup office has a polished industrial-chic aesthetic.
+    matched_to: HL
+  HH:
+    distractor: الشركة الناشئة تدفع 25% أقل من السوق، والحصص صغيرة مع استحقاق بعد
+      أربع سنوات، والسيولة 14 شهراً فقط، ولديّ بالفعل عرض بسعر السوق الكامل لعمل مماثل.
+    diagnosticity: high
+    salience: high
+    proposition: The startup pays 25% below market, has small equity with a four-year
+      cliff, has 14 months of runway and no institutional investors, while the established
+      offer pays full market.
+    salience_source: offer economics and runway
+  LH:
+    distractor: عرض الشركة الناشئة أقل من السوق بنسبة 25% مع حصص أسهم محدودة وسيولة
+      قصيرة وشروط أسهم ضعيفة؛ في حين يوجد عرض بدوام كامل بسعر السوق.
+    diagnosticity: high
+    salience: low
+    proposition: The startup pays 25% below market, has small equity with a four-year
+      cliff, has 14 months of runway and no institutional investors, while the established
+      offer pays full market.
+    matched_to: HH
+distractor_direction:
+  label: أجواء مكتب الشركة الناشئة
+  description: التحقيق فيما إذا كان المكتب الصناعي اللامع والمحسّن للشركة الناشئة
+    يُشير إلى أن عرضها جذاب.
+plausible_alternative_directions:
+- label: فرصة التعلم
+  description: قد تُتيح الشركة الناشئة مسؤوليات أوسع أو نمواً أسرع في المهارات مقارنةً
+    بالشركة الراسخة.
+- label: جودة المؤسسين
+  description: كفاءة القيادة ونزاهتها قد تُغيّر تقييم المخاطر.
+- label: وضوح نطاق الدور
+  description: قد تختلف مهام العمل اليومي اختلافاً جوهرياً عن عرض الشركة الراسخة.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-008.yaml
+  source_xbase_sha256: 4bfc9a9d1dd6fe18
+  translated_content_sha256: 8f2d73aace2d11f2
+  translation_notes: Technical terms (equity, cliff) translated with standard Arabic
+    financial equivalents (حصص أسهم، استحقاق). The HL vivid office description (renovated
+    warehouse, exposed brick, Edison bulbs, magazine spread) carried over with culturally
+    neutral but equally concrete Arabic imagery. 'Industrial-chic' aesthetic cue is
+    preserved as a high-salience stylish office description.

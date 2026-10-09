@@ -1,0 +1,189 @@
+seed_id: T6-078
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: The icon set on our web application looks blurry on any monitor with a pixel
+  ratio above 1.0, including standard desktop retina displays. The icons are referenced
+  in HTML as .svg files and I can see the .svg extensions in the markup. The blurring
+  started after we migrated our static assets to a new CDN configuration last month.
+  {DS}
+focal_diagnostic_feature: The browser Network tab shows each icon URL returns Content-Type
+  image/png with a 48x48 pixel raster body; the CDN is serving a legacy PNG fallback
+  instead of the SVG source for every .svg request.
+low_diagnostic_proposition: Past blurry-icon problems were always caused by a missing
+  or misconfigured viewport meta tag, so that is likely the cause again.
+oracle_action: ANSWER
+oracle_focus: Fix the CDN MIME type mapping so .svg URLs return image/svg+xml with
+  the correct SVG source files; verify the SVG assets were correctly uploaded during
+  migration and that no legacy PNG fallback rule is still active in the CDN configuration.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to viewport meta tag from past experience;
+  check the actual Content-Type and file format returned by icon URLs in the Network
+  tab before assuming a client-side scaling configuration issue.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to viewport meta tag from past experience; check the actual
+      Content-Type and file format returned by icon URLs in the Network tab before
+      assuming a client-side scaling configuration issue.
+  LL:
+    action: ASK
+    focus: Do not default to viewport meta tag from past experience; check the actual
+      Content-Type and file format returned by icon URLs in the Network tab before
+      assuming a client-side scaling configuration issue.
+  HH:
+    action: ANSWER
+    focus: Fix the CDN MIME type mapping so .svg URLs return image/svg+xml with the
+      correct SVG source files; verify the SVG assets were correctly uploaded during
+      migration and that no legacy PNG fallback rule is still active in the CDN configuration.
+  LH:
+    action: ANSWER
+    focus: Fix the CDN MIME type mapping so .svg URLs return image/svg+xml with the
+      correct SVG source files; verify the SVG assets were correctly uploaded during
+      migration and that no legacy PNG fallback rule is still active in the CDN configuration.
+variants:
+  HL:
+    distractor: Every time I have dealt with blurry icons in a web app before, it
+      turned out to be a viewport meta tag either missing entirely or specifying the
+      wrong initial-scale — so that is where my head goes first with this one too.
+    diagnosticity: low
+    salience: high
+    proposition: Past blurry-icon problems were always caused by a missing or misconfigured
+      viewport meta tag, so that is likely the cause again.
+    salience_source: B/C — vivid personal history pattern ("every time") with confident
+      first-instinct framing ("where my head goes first") applies past experience
+      authoritatively to the present case.
+    why_plausible: Viewport meta tag misconfiguration is a real and commonly encountered
+      cause of blurry graphics on mobile web apps, and a developer who has fixed this
+      before would confidently prioritise it as the first check in a new blurry-icon
+      situation.
+    why_irrelevant: Viewport meta tag affects how mobile browsers scale the layout
+      viewport and does not determine whether a CDN serves a PNG or SVG file for a
+      given URL; the blurring on desktop retina displays — where viewport meta has
+      no effect — rules out this mechanism, and the root cause is server-side asset
+      delivery, not client-side scaling configuration.
+  LL:
+    distractor: Past blurry-icon problems were always a missing or misconfigured viewport
+      meta tag, so that is likely the cause again.
+    diagnosticity: low
+    salience: low
+    proposition: Past blurry-icon problems were always caused by a missing or misconfigured
+      viewport meta tag, so that is likely the cause again.
+    matched_to: HL
+  HH:
+    distractor: Opening the Network tab in DevTools and clicking any icon request
+      shows the response is Content-Type image/png delivering a 48x48 pixel raster
+      file — the CDN is serving the old PNG fallback for every .svg URL, which is
+      why they blur at any pixel ratio above 1.
+    diagnosticity: high
+    salience: high
+    proposition: The browser Network tab shows each icon URL returns Content-Type
+      image/png with a 48x48 pixel raster body; the CDN is serving a legacy PNG fallback
+      instead of the SVG source for every .svg request.
+    salience_source: B/C — specific DevTools action named (Network tab, click icon
+      request), precise response details (Content-Type image/png, 48x48 pixel), causal
+      chain to observed blurring stated directly and confidently.
+  LH:
+    distractor: Each icon URL returns Content-Type image/png with a 48x48 raster body;
+      the CDN serves the legacy PNG fallback instead of the SVG source.
+    diagnosticity: high
+    salience: low
+    proposition: The browser Network tab shows each icon URL returns Content-Type
+      image/png with a 48x48 pixel raster body; the CDN is serving a legacy PNG fallback
+      instead of the SVG source for every .svg request.
+    matched_to: HH
+distractor_direction:
+  label: viewport meta tag misconfiguration
+  description: Investigating whether a missing or incorrect viewport meta tag is causing
+    the browser to apply incorrect scaling that makes icons appear blurry on high-DPI
+    displays.
+plausible_alternative_directions:
+- label: SVG viewBox or sizing attribute error
+  description: SVG files without a viewBox or with mismatched width/height attributes
+    can render at unexpected sizes and appear blurry when scaled by the browser, independently
+    of CDN delivery.
+- label: CSS pixel sizing on SVG elements
+  description: Setting fixed pixel dimensions on inline or img-embedded SVGs without
+    allowing them to scale with device-pixel-ratio can produce apparent blurring on
+    retina displays even when the SVG source is correctly delivered.
+- label: incorrect asset upload during CDN migration
+  description: If the SVG source files were not included in the migration bundle,
+    the CDN might fall back to cached or default assets — a related but distinct failure
+    from a MIME-type misconfiguration routing all .svg requests to a fallback.
+leak_audit:
+  ll_atomic_claims:
+  - Past blurry-icon problems were always a missing or misconfigured viewport meta
+    tag.
+  - That is likely the cause again.
+  hh_atomic_claims:
+  - Each icon URL returns Content-Type image/png.
+  - The response body is a 48x48 pixel raster file.
+  - The CDN is serving the old PNG fallback for every .svg URL.
+  - Icons blur at any pixel ratio above 1 because of the raster delivery.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Personal pattern established through repeated past resolution
+      ("every time... it turned out to be") flows naturally into present-case application.
+    confident_assertion: '"every time", "so that is where my head goes first" — strong
+      frequency claim and confident first-instinct application to the current case.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 58
+  hl_word_count: 42
+  ll_word_count: 19
+  hh_word_count: 46
+  lh_word_count: 23
+  notes: 'xbase says "including standard desktop retina displays" — this closes the
+
+    viewport-meta-tag pathway in xbase because viewport meta affects mobile browser
+
+    scaling, not desktop retina rendering; this is a neutral factual scope statement
+
+    (not the affirmative cause). The affirmative cause (CDN serving PNG fallback)
+
+    lives only in HH/LH. T6 availability inference ("so that is likely the cause
+
+    again") appears in both HL and LL per C1 and the T6 recipe. Past cases
+
+    (mobile viewport issue) are structurally different from the present one (CDN
+
+    asset delivery), exposed by the Network tab evidence in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A developer might argue that even on desktop Chrome, missing or malformed
+
+    viewport meta can interact with DevTools device emulation settings left
+
+    active, or with certain browser flags that affect pixel-ratio reporting,
+
+    causing unexpected scaling of raster graphics. Some PWA configurations also
+
+    reference viewport meta for display handling in ways that could theoretically
+
+    affect icon rendering. These are weak but not completely absurd pathways to
+
+    investigate in a thorough audit.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"Including standard desktop retina displays" — establishes
+    that the problem occurs on desktop contexts where viewport meta tag has no effect
+    on rendering pixel density, closing the primary mechanism of the past-experience
+    distractor without naming the affirmative cause.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Blurry SVG icons on high-DPI displays after a CDN migration are caused
+    by the CDN serving 48x48 PNG fallback files for all .svg URLs due to a MIME type
+    misconfiguration, not by the missing viewport meta tag the developer's past experience
+    makes them suspect first.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

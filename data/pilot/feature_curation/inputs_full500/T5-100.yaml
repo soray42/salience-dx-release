@@ -1,0 +1,204 @@
+seed_id: T5-100
+template: T5
+domain: open_qa
+complexity: high
+xbase: I'm choosing between two used mirrorless cameras for a new photography hobby.
+  Both are the same model and both are priced similarly. The seller of Body A describes
+  heavy use and admits the casing has scratches. Body B looks barely touched in its
+  listing photos and the seller says it was lightly used. I have contacted both sellers
+  and each will let me test before paying. A camera technician inspected Body A and
+  found no impact damage to the shutter mechanism or sensor mount. {DS}
+focal_diagnostic_feature: Body A has 4,200 documented shutter actuations with verifiable
+  purchase documentation, while Body B has no shutter history and sensor dust spots
+  visible in test shots.
+low_diagnostic_proposition: Body A's cosmetic scratches indicate careless handling
+  that likely caused hidden internal damage.
+oracle_action: ANSWER
+oracle_focus: 'Choose Body A: its low shutter count, verified provenance, and clean
+  sensor outweigh cosmetic scratches; Body B has unverifiable history and confirmed
+  sensor contamination.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not reject Body A on cosmetic grounds alone; ask for
+  shutter count, purchase documentation, and sensor test shots for both bodies before
+  deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not reject Body A on cosmetic grounds alone; ask for shutter count,
+      purchase documentation, and sensor test shots for both bodies before deciding.
+  LL:
+    action: ASK
+    focus: Do not reject Body A on cosmetic grounds alone; ask for shutter count,
+      purchase documentation, and sensor test shots for both bodies before deciding.
+  HH:
+    action: ANSWER
+    focus: 'Choose Body A: its low shutter count, verified provenance, and clean sensor
+      outweigh cosmetic scratches; Body B has unverifiable history and confirmed sensor
+      contamination.'
+  LH:
+    action: ANSWER
+    focus: 'Choose Body A: its low shutter count, verified provenance, and clean sensor
+      outweigh cosmetic scratches; Body B has unverifiable history and confirmed sensor
+      contamination.'
+variants:
+  HL:
+    distractor: The scratches on Body A put me off straight away — a camera that battered-looking
+      has clearly been thrown around or dropped, and that kind of treatment leaves
+      its mark inside the mechanics too, even if you cannot see it yet.
+    diagnosticity: low
+    salience: high
+    proposition: Body A's cosmetic scratches indicate careless handling that likely
+      caused hidden internal damage.
+    salience_source: 'B: vivid first-person narrative with confident causal framing;
+      C: confident assertion (clearly, leaves its mark).'
+    why_plausible: Cosmetic damage and owner care do correlate on average; a buyer
+      scanning listings quickly might treat scratch severity as a proxy for how the
+      equipment was generally treated.
+    why_irrelevant: Cosmetic scratches have no constructible mechanism for hidden
+      internal damage independently of the objective usage and condition data; the
+      focal feature provides shutter count and sensor condition that make the surface-appearance
+      inference redundant and misleading.
+  LL:
+    distractor: Body A's scratched exterior suggests careless handling that likely
+      left marks inside the mechanics too.
+    diagnosticity: low
+    salience: low
+    proposition: Body A's cosmetic scratches indicate careless handling that likely
+      caused hidden internal damage.
+    matched_to: HL
+  HH:
+    distractor: Body A's seller has the original shop receipt and warranty card; a
+      shutter count read shows 4,200 actuations against a rated 200,000. Body B's
+      seller cannot verify any shutter history, and my test shots show four obvious
+      dust spots on the sensor.
+    diagnosticity: high
+    salience: high
+    proposition: Body A has 4,200 documented shutter actuations with verifiable purchase
+      documentation, while Body B has no shutter history and sensor dust spots visible
+      in test shots.
+    salience_source: 'B: clean comparison structure with two concrete outcomes; D:
+      specific numeric shutter count (4,200 vs rated 200,000), exact dust spot count
+      (four), and named documents (receipt, warranty card).'
+  LH:
+    distractor: Body A has 4,200 documented actuations (rated 200,000) with original
+      receipts and warranty card; Body B has no shutter history and four sensor dust
+      spots.
+    diagnosticity: high
+    salience: low
+    proposition: Body A has 4,200 documented shutter actuations with verifiable purchase
+      documentation, while Body B has no shutter history and sensor dust spots visible
+      in test shots.
+    matched_to: HH
+distractor_direction:
+  label: Cosmetic wear as internal damage signal
+  description: Treating Body A's scratched and worn casing as evidence of careless
+    handling that likely caused hidden mechanical or optical damage, making it the
+    inferior choice.
+plausible_alternative_directions:
+- label: Resale value impact
+  description: Cosmetic condition affects future resale price regardless of functional
+    performance, so Body A's scratches may matter for a buyer who plans to upgrade.
+- label: Model-specific fault history
+  description: This camera model may have known failure modes (e.g. shutter mechanism,
+    sensor corrosion) that should be investigated before purchase regardless of listed
+    condition.
+- label: Seller reliability
+  description: The willingness of each seller to allow pre-purchase testing and the
+    terms of any return window differ and could affect the purchase risk.
+leak_audit:
+  ll_atomic_claims:
+  - Body A's exterior has visible scratches
+  - The scratches indicate careless handling
+  - Careless handling likely left marks inside the mechanics
+  hh_atomic_claims:
+  - Body A's seller has the original shop receipt and warranty card
+  - A shutter count read shows 4,200 actuations against a rated 200,000
+  - Body B's seller cannot verify any shutter history
+  - Test shots of Body B show four obvious dust spots on the sensor
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person T5 variant; no named external source
+    narrative_coherence: Vivid first-person reaction with confident causal chain (threw
+      around → leaves its mark)
+    confident_assertion: clearly been thrown around or dropped; leaves its mark
+    concrete_detail: N/A — no case-specific detail added beyond the proposition
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 84
+  hl_word_count: 40
+  ll_word_count: 15
+  hh_word_count: 42
+  lh_word_count: 25
+  notes: 'T5 bridge check: the inferential chain (scratches → careless handling →
+    internal damage) appears
+
+    in HL (vivid: "clearly been thrown around... leaves its mark inside the mechanics")
+    and in LL
+
+    (flat: "suggests careless handling that likely left marks inside the mechanics
+    too"). Bridge is
+
+    propositional and present in both cells. C1 satisfied.
+
+    xbase says "same model, priced similarly" — rules out price and model differences
+    as live
+
+    directions, keeping alternatives focused on provenance/condition factors.
+
+    "battered-looking" in HL is a vivid aesthetic descriptor consistent with the surface-judgment
+
+    template; it describes the appearance (source of inference) not a new case-specific
+    claim.
+
+    QC repair (C10 leak): LH extended from 22 to 25 words to carry both HH claims
+    that were
+
+    previously absent — the rated-life ceiling ''(rated 200,000)'' and the specific
+    dust-spot
+
+    count ''four''. LH hits the hard bound (25) but remains within lint-enforced limits;
+    the
+
+    operational target margin (14-23) is consumed by the two required added claims.
+
+    '
+causal_audit:
+  steelman: 'Cosmetic damage and owner carefulness do correlate in aggregate. A camera
+    owner who scratches
+
+    the casing significantly may also have dropped the body (risking AF motor misalignment
+    or
+
+    sensor mount damage), used it in dusty or wet environments without protection
+    (sensor/shutter
+
+    contamination risk), or applied excessive force to lens mounts. An experienced
+    buyer making a
+
+    quick decision could rationally use cosmetic condition as a prior over owner care,
+    in the
+
+    absence of objective usage data. The inferential bridge is not absurd — it is
+    just dominated
+
+    by the objective data in the focal feature.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: technician found no impact damage to Body A's shutter/sensor,
+    ruling out the cosmetic-wear-implies-internal-damage inference without resolving
+    the A-vs-B choice.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing between two same-model used mirrorless cameras; cosmetic scratches
+    on Body A suggest careless use, but Body A has a very low shutter count and clean
+    provenance while Body B has no documented history and sensor dust spots.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator
+  generator: generator_B
+  generation_mode: generator_B_batches

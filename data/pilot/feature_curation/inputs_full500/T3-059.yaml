@@ -1,0 +1,186 @@
+seed_id: T3-059
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I have been making fresh pasta at home and the result is always too thick —
+  the sheets do not get thin enough to cook through properly, and the texture is dense
+  after boiling. I follow the recipe for timing and dough stiffness, the dough feels
+  right to me, and I am using my manual pasta machine. I want to understand why the
+  final pasta is dense and too thick. {DS}
+focal_diagnostic_feature: The pasta machine's thickness dial has stayed at position
+  1, the widest setting, for every pass rather than being progressively reduced.
+low_diagnostic_proposition: A culinary instructor says the hydration ratio is probably
+  wrong, with too much flour relative to eggs making the dough too stiff to roll thin.
+oracle_action: ANSWER
+oracle_focus: Work the dough through the progressive thickness settings; starting
+  at position 1 and never reducing it physically prevents the sheets from reaching
+  the intended thinness regardless of dough composition.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the hydration-ratio diagnosis from authority
+  alone. Ask how the user is working through the pasta machine settings before adjusting
+  the dough formula.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the hydration-ratio diagnosis from authority alone. Ask how
+      the user is working through the pasta machine settings before adjusting the
+      dough formula.
+  LL:
+    action: ASK
+    focus: Do not accept the hydration-ratio diagnosis from authority alone. Ask how
+      the user is working through the pasta machine settings before adjusting the
+      dough formula.
+  HH:
+    action: ANSWER
+    focus: Work the dough through the progressive thickness settings; starting at
+      position 1 and never reducing it physically prevents the sheets from reaching
+      the intended thinness regardless of dough composition.
+  LH:
+    action: ANSWER
+    focus: Work the dough through the progressive thickness settings; starting at
+      position 1 and never reducing it physically prevents the sheets from reaching
+      the intended thinness regardless of dough composition.
+variants:
+  HL:
+    distractor: Meenakshi, a culinary instructor trained in Bologna with fifteen years
+      of pasta technique classes, told me my hydration ratio is almost certainly off
+      — she says too much flour relative to eggs makes dough too stiff to roll thin,
+      and it is the commonest home-pasta error she corrects.
+    diagnosticity: low
+    salience: high
+    proposition: A culinary instructor says the hydration ratio is probably wrong,
+      with too much flour relative to eggs making the dough too stiff to roll thin.
+    salience_source: A — a culinary instructor with named Italian training and fifteen
+      years of specialised teaching; C — "almost certainly off", "commonest error
+      she corrects" — confident and pattern-based assertion.
+    why_plausible: Hydration ratio genuinely affects dough stiffness and rollability;
+      a Bologna-trained instructor citing it as the commonest mistake sounds authoritative
+      and technically grounded.
+    why_irrelevant: The machine dial is physically fixed at the widest position for
+      every pass, so no hydration adjustment can produce thinner sheets until the
+      thickness settings are actually reduced.
+  LL:
+    distractor: A culinary instructor said the hydration ratio is probably wrong,
+      with too much flour relative to eggs.
+    diagnosticity: low
+    salience: low
+    proposition: A culinary instructor says the hydration ratio is probably wrong,
+      with too much flour relative to eggs making the dough too stiff to roll thin.
+    matched_to: HL
+  HH:
+    distractor: I just noticed my machine's thickness dial has been on position 1,
+      the widest setting, for every pass — I never worked the dough through progressively
+      thinner settings as the recipe describes; position 1 produces sheets roughly
+      three times thicker than the finished pasta should be.
+    diagnosticity: high
+    salience: high
+    proposition: The pasta machine's thickness dial has stayed at position 1, the
+      widest setting, for every pass rather than being progressively reduced.
+    salience_source: First-person discovery framing, concrete position number, and
+      the "three times thicker" quantification make the mechanism immediately legible.
+  LH:
+    distractor: The pasta machine's thickness dial has stayed at position 1, the widest
+      setting, for every pass.
+    diagnosticity: high
+    salience: low
+    proposition: The pasta machine's thickness dial has stayed at position 1, the
+      widest setting, for every pass rather than being progressively reduced.
+    matched_to: HH
+distractor_direction:
+  label: Hydration-ratio imbalance
+  description: Investigating whether too much flour relative to eggs creates dough
+    too stiff to roll thin, causing dense and thick sheets.
+plausible_alternative_directions:
+- label: Insufficient resting time
+  description: Whether the dough was not rested long enough for gluten to relax, causing
+    it to spring back during rolling.
+- label: Flour type mismatch
+  description: Whether using all-purpose rather than 00 flour is making the dough
+    harder to roll thin and altering the final texture.
+leak_audit:
+  ll_atomic_claims:
+  - A culinary instructor said the hydration ratio is probably wrong.
+  - The ratio has too much flour relative to eggs.
+  hh_atomic_claims:
+  - The machine's thickness dial has been on position 1 for every pass.
+  - Position 1 is the widest setting.
+  - The dough was never worked through progressively thinner settings as the recipe
+    describes.
+  - Position 1 produces sheets roughly three times thicker than finished pasta should
+    be.
+  hl_salience_dimensions:
+    source_credibility: Meenakshi is identified as a Bologna-trained culinary instructor
+      with fifteen years of pasta technique teaching.
+    narrative_coherence: A named expert delivering a specific confident diagnosis
+      with a professional setting.
+    confident_assertion: '"Almost certainly off", "commonest home-pasta error she
+      corrects" — strong assertion markers.'
+    concrete_detail: Source's training location and years of specialised teaching
+      — detail about the source only, not about this dough's actual stiffness.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 70
+  hl_word_count: 48
+  ll_word_count: 17
+  hh_word_count: 46
+  lh_word_count: 16
+  notes: 'LL carries only the hydration-ratio-wrong and too-much-flour claims; the
+
+    source''s name, Bologna training, and fifteen-year teaching career are
+
+    HL-only and concern the source. xbase reports symptoms and equipment but
+
+    never reveals which thickness setting is in use — that lives only in HH/LH.
+
+    Hydration ratio is a genuine cause of dough stiffness in general; the seed
+
+    is clean because the machine dial''s fixed position physically overrides any
+
+    dough-formula effect — a well-hydrated dough at position 1 still produces
+
+    thick sheets.
+
+    '
+causal_audit:
+  steelman: 'A Bologna-trained instructor is right that hydration ratio affects dough
+
+    stiffness and rollability: too much flour creates a tight gluten network
+
+    that resists extension, and home bakers routinely add more flour than
+
+    needed when the dough feels sticky. A stiff dough at the same machine
+
+    setting would produce thicker sheets than a soft dough, and the expert''s
+
+    pattern-match to the commonest home-pasta error carries real weight. The
+
+    seed is clean, however, because the decisive mechanical fact is that the
+
+    thickness dial never moved beyond position 1. A pasta machine at its
+
+    widest setting produces thick sheets regardless of how soft or supple the
+
+    dough is — the roller gap is a physical constraint, not a dough-chemistry
+
+    variable. Changing the hydration ratio while leaving the dial at position 1
+
+    cannot produce the thin sheets the recipe requires.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the thickness-setting fact lives only in HH/LH; xbase
+    does not reveal which position the dial is on.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Fresh pasta sheets always too thick because the machine dial stays
+    at the widest position, not because of a hydration-ratio error a culinary instructor
+    asserts.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

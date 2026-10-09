@@ -1,0 +1,179 @@
+seed_id: T3-083
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I am choosing between two used hatchbacks at similar prices. Car A has 45,000
+  kilometres on it and a full service history at the main dealer. Car B has only 22,000
+  kilometres and looks nearly new inside. Both have passed the most recent roadworthy
+  inspection. {DS}
+focal_diagnostic_feature: Car B carries a salvage title from a prior insurance write-off,
+  which restricts mainstream financing, reduces insurer willingness to offer full
+  coverage, and depresses resale value by 20-30% compared with a clean-title equivalent.
+low_diagnostic_proposition: Low mileage is the single most reliable indicator of a
+  good used car.
+oracle_action: ANSWER
+oracle_focus: Choose Car A; the salvage title on Car B creates structural financing,
+  insurance, and resale problems that outweigh its lower odometer reading and appearance
+  advantage.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a blanket low-mileage rule decide the choice.
+  Ask about title status, service history, insurance acceptability, and financing
+  eligibility for both cars before drawing a conclusion.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a blanket low-mileage rule decide the choice. Ask about title
+      status, service history, insurance acceptability, and financing eligibility
+      for both cars before drawing a conclusion.
+  LL:
+    action: ASK
+    focus: Do not let a blanket low-mileage rule decide the choice. Ask about title
+      status, service history, insurance acceptability, and financing eligibility
+      for both cars before drawing a conclusion.
+  HH:
+    action: ANSWER
+    focus: Choose Car A; the salvage title on Car B creates structural financing,
+      insurance, and resale problems that outweigh its lower odometer reading and
+      appearance advantage.
+  LH:
+    action: ANSWER
+    focus: Choose Car A; the salvage title on Car B creates structural financing,
+      insurance, and resale problems that outweigh its lower odometer reading and
+      appearance advantage.
+variants:
+  HL:
+    distractor: Leila, who has bought and sold more than a dozen used cars and helped
+      half my family with their purchases, looked at both listings and said low mileage
+      is the single most reliable indicator of a good used car.
+    diagnosticity: low
+    salience: high
+    proposition: Low mileage is the single most reliable indicator of a good used
+      car.
+    salience_source: 'A — source credibility: named expert with a concrete track record
+      of many personal transactions and family advisory experience.'
+    why_plausible: Low mileage is a widely cited proxy for mechanical wear; an experienced
+      buyer asserting it confidently as the primary criterion feels authoritative
+      and practically useful.
+    why_irrelevant: The authority offers a generic heuristic without examining either
+      car's title status; salvage titles introduce financing and insurance barriers
+      that no mileage advantage can offset.
+  LL:
+    distractor: An experienced car-buyer said that low mileage is the single most
+      reliable indicator of a good used car.
+    diagnosticity: low
+    salience: low
+    proposition: Low mileage is the single most reliable indicator of a good used
+      car.
+    matched_to: HL
+  HH:
+    distractor: Car B carries a salvage title from a prior insurance write-off; most
+      mainstream lenders will not finance it, several insurers decline full coverage,
+      and its resale value will be 20-30% lower than an equivalent clean-title car.
+    diagnosticity: high
+    salience: high
+    proposition: Car B carries a salvage title from a prior insurance write-off, which
+      restricts mainstream financing, reduces insurer willingness to offer full coverage,
+      and depresses resale value by 20-30% compared with a clean-title equivalent.
+    salience_source: Specific quantified resale discount (20-30%) plus concrete enumeration
+      of lender and insurer impact makes the salvage-title consequence vivid and immediately
+      comparable.
+  LH:
+    distractor: Car B has a salvage title from a prior write-off, which affects financing,
+      insurance coverage, and resale value.
+    diagnosticity: high
+    salience: low
+    proposition: Car B carries a salvage title from a prior insurance write-off, which
+      restricts mainstream financing, reduces insurer willingness to offer full coverage,
+      and depresses resale value by 20-30% compared with a clean-title equivalent.
+    matched_to: HH
+distractor_direction:
+  label: Low-mileage primacy
+  description: Treating Car B's lower odometer reading as the dominant quality signal
+    and selecting it on the basis of a general low-mileage rule rather than examining
+    title, history, and ownership costs.
+plausible_alternative_directions:
+- label: Service-history completeness
+  description: Car A's full main-dealer history versus Car B's unknown history may
+    be the decisive factor if both titles were clean.
+- label: Insurance cost comparison
+  description: Obtaining actual quotes from insurers for both cars before deciding,
+    since salvage-title policies vary by provider.
+- label: Independent mechanical inspection
+  description: Having an independent mechanic inspect both cars could surface hidden
+    damage or deferred maintenance not visible from the listing or test drive.
+leak_audit:
+  ll_atomic_claims:
+  - Low mileage is the single most reliable indicator of a good used car.
+  hh_atomic_claims:
+  - Car B has a salvage title from a prior insurance write-off.
+  - Most mainstream lenders will not finance a salvage-title car.
+  - Several insurers decline full coverage on salvage-title vehicles.
+  - Car B's resale value will be 20-30% lower than an equivalent clean-title car.
+  hl_salience_dimensions:
+    source_credibility: Leila has bought and sold more than a dozen used cars and
+      advised half the user's family — a specific, relatable track record.
+    narrative_coherence: Presented as a direct look-at-both-listings consultation,
+      professional register.
+    confident_assertion: '"said low mileage is the single most reliable indicator"
+      — unhedged declarative.'
+    concrete_detail: N/A — no case-specific detail added beyond source characterisation.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 39
+  ll_word_count: 18
+  hh_word_count: 41
+  lh_word_count: 18
+  notes: 'T3 authority: Leila gives a confident generic rule (low mileage = best indicator)
+
+    without any engagement with title status. The focal evidence (salvage title plus
+
+    its quantified consequences) is structurally orthogonal to mileage, lives only
+    in
+
+    HH/LH, and lets a competent reader definitively prefer Car A. xbase carries mileage
+
+    data for both cars to make low-mileage reasoning live from the start, but withholds
+
+    title information. Ratios HL:LL=39:18=2.2, HH:LH=41:18=2.3 — both within 4:1.
+
+    '
+causal_audit:
+  steelman: 'Low mileage is a genuine predictor of mechanical wear — a 22,000 km car
+    has
+
+    statistically less stress on engine, drivetrain, brakes, and suspension than a
+
+    45,000 km car. For many buyers, mileage is the single most accessible quality
+    proxy
+
+    when title and history details are not yet known. Leila''s advice reflects a real
+
+    heuristic used by experienced buyers. The seed is clean because the authority
+    gives
+
+    a generic rule without examining the salvage title, and the focal evidence shows
+
+    that a structural legal/financial constraint overrides the mileage advantage in
+
+    this specific case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the distractor direction (mileage primacy) is a general
+    heuristic, not a mechanism for this specific case; xbase presents both mileage
+    figures to keep it live without confirming the authority's conclusion.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Used car choice between a higher-mileage clean-title car and a low-mileage
+    salvage-title car; authority endorses low mileage as the decisive criterion but
+    the salvage title overrides it.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

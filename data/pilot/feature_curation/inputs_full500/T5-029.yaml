@@ -1,0 +1,194 @@
+seed_id: T5-029
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: A productivity app on my Android tablet crashes consistently when I try to
+  log in. I was previously logged in and the crash started two days ago after I cleared
+  the app's storage through system settings. The app is the latest version from the
+  Play Store. {DS}
+focal_diagnostic_feature: The Android crash log shows a NullPointerException in the
+  app's OAuth token refresh handler, caused by a null token reference left after storage
+  was cleared.
+low_diagnostic_proposition: The login screen's visually outdated appearance indicates
+  the whole app is poorly built and likely to crash.
+oracle_action: ANSWER
+oracle_focus: Clear the app's data again or reinstall it to remove the stale null
+  token reference; the crash is in the OAuth refresh handler and is triggered by the
+  missing token left after the earlier storage clear.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not treat UI appearance as evidence of code quality
+  or crash cause. Ask for the crash log or logcat output before diagnosing the login
+  failure.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not treat UI appearance as evidence of code quality or crash cause.
+      Ask for the crash log or logcat output before diagnosing the login failure.
+  LL:
+    action: ASK
+    focus: Do not treat UI appearance as evidence of code quality or crash cause.
+      Ask for the crash log or logcat output before diagnosing the login failure.
+  HH:
+    action: ANSWER
+    focus: Clear the app's data again or reinstall it to remove the stale null token
+      reference; the crash is in the OAuth refresh handler and is triggered by the
+      missing token left after the earlier storage clear.
+  LH:
+    action: ANSWER
+    focus: Clear the app's data again or reinstall it to remove the stale null token
+      reference; the crash is in the OAuth refresh handler and is triggered by the
+      missing token left after the earlier storage clear.
+variants:
+  HL:
+    distractor: The login screen looks like it was designed in 2013 — pixelated icons,
+      mismatched fonts, and a colour palette that belongs on a government intranet;
+      an interface this careless is usually a sign the whole app is poorly built.
+    diagnosticity: low
+    salience: high
+    proposition: The login screen's visually outdated appearance indicates the whole
+      app is poorly built and likely to crash.
+    salience_source: B/C — a vivid personal sensory description followed by a confidently
+      stated inference ('usually a sign') makes the aesthetic-as-evidence claim feel
+      like an expert read.
+    why_plausible: Dated UI patterns do sometimes correlate with unmaintained codebases,
+      and visually unkempt apps are occasionally the product of neglected engineering;
+      a busy reviewer might treat the look as a prior.
+    why_irrelevant: Visual styling is independent of crash behaviour; the crash logcat
+      identifies a specific NullPointerException in the OAuth handler caused by the
+      storage clear, which cannot be inferred from or prevented by updating the UI
+      theme.
+  LL:
+    distractor: The login screen looks visually outdated, which I take as a sign the
+      whole app is poorly built.
+    diagnosticity: low
+    salience: low
+    proposition: The login screen's visually outdated appearance indicates the whole
+      app is poorly built and likely to crash.
+    matched_to: HL
+  HH:
+    distractor: The Android crash log shows a NullPointerException in the token refresh
+      method — the handler tries to read the stored OAuth token, finds null because
+      storage was cleared, and crashes before the login screen even accepts credentials.
+    diagnosticity: high
+    salience: high
+    proposition: The Android crash log shows a NullPointerException in the app's OAuth
+      token refresh handler, caused by a null token reference left after storage was
+      cleared.
+    salience_source: Precise exception class, named method, and step-by-step failure
+      sequence (read token → find null → crash before credential entry) give concrete,
+      checkable technical detail.
+  LH:
+    distractor: The crash log shows a NullPointerException in the app's OAuth token
+      refresh handler, triggered by a null token after storage was cleared.
+    diagnosticity: high
+    salience: low
+    proposition: The Android crash log shows a NullPointerException in the app's OAuth
+      token refresh handler, caused by a null token reference left after storage was
+      cleared.
+    matched_to: HH
+distractor_direction:
+  label: Poor UI indicating buggy app
+  description: Treating the login screen's outdated visual design as evidence that
+    the app is generally poorly built and prone to crashes.
+plausible_alternative_directions:
+- label: Incomplete storage clear leaving corrupt state
+  description: Whether clearing storage left a partially corrupt file or database
+    entry that the app cannot parse on re-launch.
+- label: Play Store version compatibility issue
+  description: Whether the latest Play Store version introduced a regression that
+    is unrelated to the storage clear event.
+leak_audit:
+  ll_atomic_claims:
+  - The login screen looks visually outdated.
+  - The visual appearance is taken as a sign the whole app is poorly built.
+  hh_atomic_claims:
+  - The Android crash log shows a NullPointerException.
+  - The NullPointerException is in the token refresh method (OAuth handler).
+  - The handler tries to read the stored OAuth token and finds null.
+  - The token is null because storage was cleared.
+  - The crash occurs before the login screen accepts credentials.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Smooth first-person observation flowing from visual description
+      to confident inference.
+    confident_assertion: '''Usually a sign'' frames the aesthetic inference as an
+      experienced heuristic, not a guess.'
+    concrete_detail: Detail about the UI (pixelated icons, mismatched fonts, government-intranet
+      colour palette) describes the visual appearance of the source screen only; no
+      new fact about the crash or code is added.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 38
+  ll_word_count: 18
+  hh_word_count: 36
+  lh_word_count: 22
+  notes: 'T5 bridge check: the inferential bridge (outdated appearance → poorly built)
+    appears flatly in
+
+    LL (''which I take as a sign the whole app is poorly built'') — satisfies C1 self-check
+    13.
+
+    HL adds visual specifics (pixelated icons, fonts, palette) that are concrete detail
+    about the
+
+    UI appearance only; LL carries the bridge proposition without them. xbase withholds
+    the crash
+
+    log content; the storage-clear event is mentioned in xbase as the trigger context,
+    but the
+
+    null-token crash mechanism lives only in HH/LH. C4 verified: knowing storage was
+    cleared
+
+    does not let a practitioner identify the NullPointerException in the OAuth handler
+    without
+
+    the log.
+
+    '
+causal_audit:
+  steelman: 'Aged UI styling correlates loosely with legacy codebases that receive
+    infrequent maintenance,
+
+    and an under-maintained codebase is more likely to have unhandled edge cases such
+    as null
+
+    token references after a storage clear. A senior mobile engineer might argue that
+    a visually
+
+    neglected login screen is weak inductive evidence that the engineering team also
+    neglected
+
+    error handling. However, this is a probabilistic population-level correlation,
+    not a mechanism
+
+    specific to this crash; the crash logcat identifies the precise failure path (null
+    token in
+
+    the OAuth refresh handler after storage clear), and that mechanism is independent
+    of whether
+
+    the UI theme is modern or dated. The aesthetic observation carries no diagnostic
+    information
+
+    about this specific crash.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the login UI appearance is irrelevant to the crash
+    cause; the crash log identifying the NullPointerException lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Android tablet productivity app crashes at login due to a NullPointerException
+    in the OAuth token refresh handler after storage was cleared, not because of its
+    dated-looking UI.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

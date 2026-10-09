@@ -1,0 +1,181 @@
+seed_id: T3-054
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our deployment pipeline succeeds on the build and test stages but the release
+  stage keeps failing when it tries to apply our infrastructure changes. The error
+  comes back as a permission-denied when the pipeline calls the cloud provider's API
+  to create resources. This worked last month, and we have not rewritten the deployment
+  scripts. The same change applies cleanly when an engineer runs it locally with their
+  own credentials. {DS}
+focal_diagnostic_feature: The CI service account's permissions were narrowed in a
+  recent policy change and it now lacks the create permission for one resource type,
+  while the engineer's local credentials still have full rights.
+low_diagnostic_proposition: A principal engineer insists the deployment tool's state
+  file is corrupted and that the whole tool should be replaced.
+oracle_action: ANSWER
+oracle_focus: 'Fix the CI service account''s permissions: a recent policy change removed
+  its create rights for one resource type, which is why the pipeline gets permission-denied
+  while local engineer credentials still succeed.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the corrupted-state-file diagnosis from
+  authority. Ask whose credentials the pipeline uses and whether the CI service account's
+  permissions changed.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the corrupted-state-file diagnosis from authority. Ask whose
+      credentials the pipeline uses and whether the CI service account's permissions
+      changed.
+  LL:
+    action: ASK
+    focus: Do not accept the corrupted-state-file diagnosis from authority. Ask whose
+      credentials the pipeline uses and whether the CI service account's permissions
+      changed.
+  HH:
+    action: ANSWER
+    focus: 'Fix the CI service account''s permissions: a recent policy change removed
+      its create rights for one resource type, which is why the pipeline gets permission-denied
+      while local engineer credentials still succeed.'
+  LH:
+    action: ANSWER
+    focus: 'Fix the CI service account''s permissions: a recent policy change removed
+      its create rights for one resource type, which is why the pipeline gets permission-denied
+      while local engineer credentials still succeed.'
+variants:
+  HL:
+    distractor: Esra, our principal infrastructure engineer, looked at the red release
+      stage for about ten seconds and declared with total confidence that this is
+      a classic corrupted state file — she says the deployment tool's state always
+      rots eventually and we should rip it out and migrate to a different tool entirely.
+    diagnosticity: low
+    salience: high
+    proposition: A principal engineer insists the deployment tool's state file is
+      corrupted and that the whole tool should be replaced.
+    salience_source: A — the principal infrastructure engineer asserting a confident,
+      glancing diagnosis by pattern.
+    why_plausible: State-file corruption is a real failure mode for infrastructure
+      tools, so a senior voice naming it sounds credible.
+    why_irrelevant: Corruption would fail regardless of who runs the change, but the
+      same change succeeds with engineer credentials, isolating the fault to the CI
+      account's permissions.
+  LL:
+    distractor: A senior engineer stated the deployment tool's state file is corrupted
+      and the tool should be replaced.
+    diagnosticity: low
+    salience: low
+    proposition: A principal engineer insists the deployment tool's state file is
+      corrupted and that the whole tool should be replaced.
+    matched_to: HL
+  HH:
+    distractor: A recent policy change narrowed the CI service account's permissions,
+      and it no longer holds the create permission for one resource type the release
+      needs; that is the exact API call returning permission-denied, while the engineer's
+      local credentials still carry full rights and apply the same change cleanly.
+    diagnosticity: high
+    salience: high
+    proposition: The CI service account's permissions were narrowed in a recent policy
+      change and it now lacks the create permission for one resource type, while the
+      engineer's local credentials still have full rights.
+    salience_source: The narrowed CI account missing one create permission, contrasted
+      with full-rights local credentials, pinpoints the cause precisely.
+  LH:
+    distractor: A recent policy change removed the CI service account's create permission
+      for one resource type, while local engineer credentials retain full rights.
+    diagnosticity: high
+    salience: low
+    proposition: The CI service account's permissions were narrowed in a recent policy
+      change and it now lacks the create permission for one resource type, while the
+      engineer's local credentials still have full rights.
+    matched_to: HH
+distractor_direction:
+  label: Corrupted state file
+  description: Investigating whether the deployment tool's state is corrupted and
+    whether the tool should be replaced.
+plausible_alternative_directions:
+- label: Provider API change
+  description: Whether the cloud provider changed its API or resource schema
+  breaking the release.: null
+- label: Network egress block
+  description: Whether the pipeline's network path to the provider API was newly restricted.
+leak_audit:
+  ll_atomic_claims:
+  - A senior engineer stated the deployment tool's state file is corrupted.
+  - The same engineer stated the tool should be replaced.
+  hh_atomic_claims:
+  - A recent policy change narrowed the CI service account's permissions.
+  - The account now lacks the create permission for one resource type the release
+    needs.
+  - The engineer's local credentials retain full rights and apply the change cleanly.
+  hl_salience_dimensions:
+    source_credibility: Principal infrastructure engineer (Esra) delivering a confident
+      verdict.
+    narrative_coherence: A quick, decisive ten-second pattern-match diagnosis.
+    confident_assertion: Declares it a classic corrupted state file with total confidence.
+    concrete_detail: Detail about the source (her role, her always-rots claim) only
+      — no fact about the CI account's permissions.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 72
+  hl_word_count: 46
+  ll_word_count: 16
+  hh_word_count: 44
+  lh_word_count: 21
+  notes: 'LL carries only the state-corrupted and replace-the-tool claims; the source''s
+    role, her ten-second glance, and
+
+    her always-rots framing are HL-only and about the source. xbase reports the symptom
+    (release stage gets
+
+    permission-denied from the provider API, works locally) but never reveals whose
+    credentials the pipeline uses or
+
+    that the CI account was narrowed, so the HL/LL cells cannot resolve it. The decisive
+    permissions fact lives only
+
+    in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A senior infra engineer could defend the corrupted-state hypothesis:
+    deployment-tool state files genuinely do
+
+    become inconsistent after partial applies or concurrent runs, this can manifest
+    as failures only in the release
+
+    stage, and a principal engineer naming a known failure mode carries real weight.
+    But state corruption would
+
+    cause the same change to fail no matter who executes it, since the state is shared.
+    The focal evidence shows the
+
+    identical change applies cleanly with the engineer''s local credentials and fails
+    only under the CI service
+
+    account, which a recent policy change stripped of one create permission — the
+    precise API call returning
+
+    permission-denied. A shared corrupt state cannot produce an outcome that depends
+    on the executing identity, so
+
+    the authority''s diagnosis has no defensible mechanism for this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes the same change applies cleanly when an engineer
+    runs it locally with their own credentials, which a corrupted shared state would
+    not permit, weakening the corruption pathway without naming the permissions cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A deployment release-stage permission-denied caused by a narrowed CI
+    service account, not the corrupted deployment-tool state file a principal engineer
+    asserts.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

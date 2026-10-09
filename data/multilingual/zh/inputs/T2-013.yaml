@@ -1,0 +1,211 @@
+seed_id: T2-013
+template: T2
+domain: technical_troubleshooting
+complexity: high
+xbase: '过去一周，我们的 CI 流水线在每次向云对象存储桶上传构件时都会遇到 HTTP 503 ''SlowDown'' 错误。桶名和 IAM 凭据均未变动，因此账户级别的配置没有任何改变。限流现象首次出现的那天，恰好也是公司公开宣布品牌重塑的日子——新名称、新
+  Logo——此后便持续未断。
+
+  {DS}'
+focal_diagnostic_feature: 流水线在两周前被重构，将测试作业扇出到 32 个并行分片，使每个前缀上的并发 PUT 请求量倍增，超过了云存储账户的默认每前缀请求速率上限。
+low_diagnostic_proposition: 'The upload throttling began because of the company''s
+  rebrand announcement.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Investigate the per-prefix PUT request rate introduced by the 32-shard
+  parallelism refactor; add request-rate-aware retry/backoff, spread uploads across
+  multiple prefixes, or request a quota increase from the cloud provider.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Ask for evidence of what changed in the CI pipeline
+  or cloud account around the time throttling began; note that a rebrand announcement
+  (new name/logo) with unchanged bucket names and credentials has no infrastructure
+  pathway to cause storage throttling, so the timing is coincidental.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Ask for evidence of what changed in the CI pipeline or cloud account around
+      the time throttling began; note that a rebrand announcement (new name/logo)
+      with unchanged bucket names and credentials has no infrastructure pathway to
+      cause storage throttling, so the timing is coincidental.
+  LL:
+    action: ASK
+    focus: Ask for evidence of what changed in the CI pipeline or cloud account around
+      the time throttling began; note that a rebrand announcement (new name/logo)
+      with unchanged bucket names and credentials has no infrastructure pathway to
+      cause storage throttling, so the timing is coincidental.
+  HH:
+    action: ANSWER
+    focus: Investigate the per-prefix PUT request rate introduced by the 32-shard
+      parallelism refactor; add request-rate-aware retry/backoff, spread uploads across
+      multiple prefixes, or request a quota increase from the cloud provider.
+  LH:
+    action: ANSWER
+    focus: Investigate the per-prefix PUT request rate introduced by the 32-shard
+      parallelism refactor; add request-rate-aware retry/backoff, spread uploads across
+      multiple prefixes, or request a quota increase from the cloud provider.
+variants:
+  HL:
+    distractor: 负责主导品牌重塑发布的传播主管 Camille 告诉我，她之前见过完全相同的情况，她确信品牌重塑公告引发了这次限流。
+    diagnosticity: low
+    salience: high
+    proposition: The upload throttling began because of the company's rebrand announcement.
+    salience_source: 'A (source credibility): Camille is named, role-anchored as communications
+      lead, and positioned as someone with pattern-recognition authority ("seen this
+      exact pattern before"). B (narrative coherence): clean professional register.
+      C (confident assertion): "is confident … triggered."
+
+      '
+    why_plausible: 'A named colleague with direct rebrand involvement asserting a
+      causal link with confident framing and apparent prior-pattern knowledge can
+      cause a busy responder to treat the temporal coincidence as an explained fact
+      rather than an uninvestigated correlation.
+
+      '
+    why_irrelevant: 'A communications-role rebrand (new name, new logo) touches no
+      cloud infrastructure; the xbase explicitly confirms bucket name and IAM credentials
+      are unchanged, closing every credential/endpoint pathway. Throttling is a server-side
+      rate-enforcement response to request volume or size, which a marketing announcement
+      cannot alter.
+
+      '
+  LL:
+    distractor: 一位同事提出，上传限流是因为公司宣布了品牌重塑。
+    diagnosticity: low
+    salience: low
+    proposition: The upload throttling began because of the company's rebrand announcement.
+    matched_to: HL
+  HH:
+    distractor: 两周前的 CI 重构将测试任务分散到 32 个并行分片，每个分片同时上传构件；云存储对每个前缀强制执行请求速率上限，而这种扇出几乎可以确定已将流水线推过了该阈值。
+    diagnosticity: high
+    salience: high
+    proposition: 'The pipeline was refactored two weeks ago to fan out across 32 parallel
+      test shards, multiplying concurrent PUT requests per prefix to a level that
+      exceeds the cloud storage account''s default per-prefix request rate limit.
+
+      '
+    salience_source: 'C (confident assertion): "almost certainly pushed past that
+      threshold." D (concrete believable detail): specific shard count (32) and technical
+      mechanism (per-prefix request rate limit) stated precisely.
+
+      '
+  LH:
+    distractor: 流水线现在运行 32 个并行分片，每个分片同时上传构件，这可能超过了云存储的每前缀请求速率上限。
+    diagnosticity: high
+    salience: low
+    proposition: 'The pipeline was refactored two weeks ago to fan out across 32 parallel
+      test shards, multiplying concurrent PUT requests per prefix to a level that
+      exceeds the cloud storage account''s default per-prefix request rate limit.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: 品牌重塑公告导致限流
+  description: 该假设认为，公司公开宣布品牌重塑（新名称和 Logo）在因果上导致了 CI 中云存储上传限流的突然出现。
+plausible_alternative_directions:
+- label: 云服务商降低配额
+  description: 云存储服务商独立降低了账户的默认请求速率配额或套餐等级，与任何流水线变更无关，产生了恰巧在同一时期开始的限流。
+- label: 构件体积增大
+  description: 近期构建的单个构件体积增大，使每次上传的字节传输速率触及存储服务商强制执行的带宽或对象大小限流阈值。
+leak_audit:
+  ll_atomic_claims:
+  - The upload throttling began because of the company's rebrand announcement.
+  hl_salience_dimensions:
+    source_credibility: Camille, named communications lead who ran the rebrand launch,
+      with claimed prior-pattern experience.
+    narrative_coherence: Single clean sentence, professional register, no interruptions
+      or tangents.
+    confident_assertion: '''is confident … triggered the throttling'' — no hedging.'
+    concrete_detail: Role anchor (communications lead) and setting anchor (ran the
+      rebrand launch) about the source, not the case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 26
+  ll_word_count: 13
+  notes: 'No tunable values (no specific request rates or counts in distractor).
+
+    No effort descriptors ("after two days" etc. avoided).
+
+    No severity claims about the throttling''s impact.
+
+    No sensory/setting color outside source identification.
+
+    The phrase "seen this exact pattern before" is a credibility anchor about
+
+    the source''s experience, not a case-content claim — borderline call, retained
+
+    because it attributes knowledge to the speaker rather than adding facts about
+
+    the current incident.
+
+    '
+causal_audit:
+  steelman: 'A company rebrand can involve more than a logo change: it may include
+    DNS
+
+    cutover to a new domain, CDN reconfiguration, or — most relevantly — a
+
+    cloud account reorganization (moving billing accounts, changing org
+
+    hierarchies, or retagging resources) that could inadvertently reset quota
+
+    tiers or change the effective rate limits on a storage bucket. If the rebrand
+
+    involved any cloud-account-level restructuring, the throttling could be a
+
+    direct consequence. Additionally, if the CI pipeline resolves the storage
+
+    endpoint via a custom domain that was updated as part of the rebrand, the
+
+    new endpoint might land on a storage backend with stricter per-client limits.
+
+    A competent SRE told to investigate the timing coincidence should at minimum
+
+    check whether any cloud account or billing changes were made alongside the
+
+    brand launch.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"The bucket name and IAM credentials are unchanged" explicitly
+    closes the credential/account-restructuring pathway and the endpoint-change pathway:
+    if credentials are the same, the account tier and quota context are the same;
+    if the bucket name is the same, no DNS/CDN reconfiguration redirected the upload
+    target. The phrase "nothing in our storage config changed" is implied by these
+    two closures.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 2
+  topic_brief: 'CI artifact uploads to cloud object storage suddenly being throttled.
+    Coincidence: started right after the company announced a rebrand (new name and
+    logo). Rebrand must have no mechanism; close the tempting pathway (bucket names
+    and credentials unchanged) in xbase.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-013.yaml
+  source_xbase_sha256: e9a267db97cd381b
+  translated_content_sha256: fc03e7a883d763e1
+  translation_notes: Technical terms (CI, HTTP 503, IAM, PUT, 'SlowDown') retained
+    as-is per instrument. 'SlowDown' kept in English with quotes as it is a literal
+    cloud provider error code. Name 'Camille' retained. 'fan out' rendered as 扇出 (standard
+    Chinese technical term). 'per-prefix' rendered as 每前缀.

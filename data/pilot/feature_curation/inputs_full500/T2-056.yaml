@@ -1,0 +1,182 @@
+seed_id: T2-056
+template: T2
+domain: open_qa
+complexity: high
+xbase: I'm reconsidering whether buying my current flat last year was a mistake, because
+  my monthly housing cost has felt much tighter for the last few months than it did
+  at first. My salary has not changed and I have not taken on new debt. The mortgage
+  itself is a fixed-rate deal that does not adjust, and I have kept my spending roughly
+  the same. I want to understand what is actually squeezing the budget before I conclude
+  that the purchase itself was wrong. {DS}
+focal_diagnostic_feature: The building's annual service charge and the local property
+  tax both rose sharply this year, and together they account for the entire increase
+  in the user's monthly housing outlay.
+low_diagnostic_proposition: The squeeze seemed to start around the time I switched
+  my grocery shopping to a more upmarket supermarket.
+oracle_action: ANSWER
+oracle_focus: The purchase was not the error; a sharp rise in the building's service
+  charge and the local property tax fully accounts for the higher monthly outlay.
+  Address those ongoing-cost line items rather than second-guessing the buy.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame the upmarket grocery switch for a housing
+  squeeze. Ask which housing line items changed, such as service charges, property
+  tax, or insurance, before judging the purchase.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame the upmarket grocery switch for a housing squeeze. Ask which
+      housing line items changed, such as service charges, property tax, or insurance,
+      before judging the purchase.
+  LL:
+    action: ASK
+    focus: Do not blame the upmarket grocery switch for a housing squeeze. Ask which
+      housing line items changed, such as service charges, property tax, or insurance,
+      before judging the purchase.
+  HH:
+    action: ANSWER
+    focus: The purchase was not the error; a sharp rise in the building's service
+      charge and the local property tax fully accounts for the higher monthly outlay.
+      Address those ongoing-cost line items rather than second-guessing the buy.
+  LH:
+    action: ANSWER
+    focus: The purchase was not the error; a sharp rise in the building's service
+      charge and the local property tax fully accounts for the higher monthly outlay.
+      Address those ongoing-cost line items rather than second-guessing the buy.
+variants:
+  HL:
+    distractor: My partner keeps pointing out that the pinch really set in around
+      the month we switched our weekly grocery run to the pricier organic supermarket
+      across the park; we changed shops and the whole budget has felt tighter from
+      about that point onward.
+    diagnosticity: low
+    salience: high
+    proposition: The squeeze seemed to start around the time I switched my grocery
+      shopping to a more upmarket supermarket.
+    salience_source: B/C — a confident partner anchoring the onset to the supermarket
+      switch with a coherent tighter-budget-from-that-point chronology.
+    why_plausible: A pricier grocery habit genuinely raises spending, so it is tempting
+      to read a general budget squeeze as caused by it.
+    why_irrelevant: Grocery choice is a separate spending category that says nothing
+      about whether buying the flat was a mistake; only the housing-cost line items
+      bear on that question.
+  LL:
+    distractor: The squeeze seemed to start around the time I switched my grocery
+      shopping to a more upmarket supermarket.
+    diagnosticity: low
+    salience: low
+    proposition: The squeeze seemed to start around the time I switched my grocery
+      shopping to a more upmarket supermarket.
+    matched_to: HL
+  HH:
+    distractor: When I broke the housing costs out line by line, the building's annual
+      service charge jumped this year and the local property tax was reassessed upward,
+      and those two increases together account for the entire rise in my monthly housing
+      outlay; the mortgage payment itself never moved.
+    diagnosticity: high
+    salience: high
+    proposition: The building's annual service charge and the local property tax both
+      rose sharply this year, and together they account for the entire increase in
+      the user's monthly housing outlay.
+    salience_source: The line-by-line attribution of the whole increase to the service
+      charge and property-tax rises makes the housing cause precise.
+  LH:
+    distractor: A sharp rise in the building's service charge and the local property
+      tax accounts for the entire increase in monthly housing outlay.
+    diagnosticity: high
+    salience: low
+    proposition: The building's annual service charge and the local property tax both
+      rose sharply this year, and together they account for the entire increase in
+      the user's monthly housing outlay.
+    matched_to: HH
+distractor_direction:
+  label: Upmarket grocery switch
+  description: Treating the move to a pricier supermarket as the cause of the tighter
+    monthly budget and the regret about buying.
+plausible_alternative_directions:
+- label: Rising utility bills
+  description: Whether energy or water costs climbed and are squeezing the household
+    budget.
+- label: Mortgage product reset
+  description: Whether the loan's terms changed in a way that raised the payment.
+leak_audit:
+  ll_atomic_claims:
+  - Around the same period the user switched grocery shopping to a more upmarket supermarket.
+  hh_atomic_claims:
+  - The building's annual service charge rose sharply this year.
+  - The local property tax was reassessed upward.
+  - Together those two increases account for the entire rise in monthly housing outlay,
+    while the mortgage payment is unchanged.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent tighter-budget-from-that-point chronology anchored
+      to the supermarket switch.
+    confident_assertion: Partner keeps pointing it out.
+    concrete_detail: Detail about the setting (organic supermarket across the park)
+      only — no fact about the housing line items.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 84
+  hl_word_count: 43
+  ll_word_count: 17
+  hh_word_count: 45
+  lh_word_count: 21
+  notes: 'LL carries only the supermarket-switch timing coincidence; the partner''s
+    pointing and the across-the-park detail
+
+    are HL-only framing about the setting. ''our card statements got heavier'' was
+    removed from HL in QC repair as a
+
+    case claim about financial evidence absent from LL (leak). xbase states the symptom
+    (housing cost feels tighter
+
+    though salary, debt, the fixed mortgage, and spending are unchanged) but never
+    breaks out the service-charge or
+
+    tax line items, so the HL/LL cells cannot resolve whether the buy was the error.
+    The decisive housing-cost
+
+    attribution lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One could try to argue the grocery switch is the culprit: moving to a
+    pricier supermarket really does raise
+
+    monthly spending, and a budget can feel tight from exactly such a habit change,
+    so it might seem to vindicate the
+
+    suspicion. But the question on the table is whether buying the flat was a mistake,
+    which turns on housing costs,
+
+    not on a discretionary grocery category. The focal evidence shows the entire increase
+    in monthly housing outlay
+
+    is explained by a sharp service-charge rise and an upward property-tax reassessment,
+    with the fixed mortgage
+
+    unchanged. Grocery spending is orthogonal to whether the purchase was sound and
+    cannot account for the
+
+    housing-line increase, so the coincidence has no constructible mechanism for the
+    question being asked.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states spending was kept roughly the same and the
+    mortgage is fixed and unchanged, framing the squeeze as a housing-cost question
+    and weakening the grocery pathway without naming the service-charge and tax cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A homeowner's tightening budget explained by sharp service-charge and
+    property-tax rises, not the buy being a mistake, coinciding only by chance with
+    switching supermarkets.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

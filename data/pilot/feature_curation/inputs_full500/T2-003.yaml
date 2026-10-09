@@ -1,0 +1,85 @@
+seed_id: T2-003
+template: T2
+domain: open_qa
+complexity: low
+xbase: I've been late to work three times this week. I leave home at 8:47 as usual
+  and work starts at 9:00. I do not think I have been waking up later than normal.
+  {DS}
+focal_diagnostic_feature: The bus departs at 8:52 and is scheduled to arrive at work
+  exactly at 9:00.
+low_diagnostic_proposition: Local construction noise began during the same period.
+oracle_action: ANSWER
+oracle_focus: The commute has zero buffer; leave earlier or take an earlier bus.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame construction noise without evidence of late
+  wake-up. Ask for the actual transit schedule and buffer.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame construction noise without evidence of late wake-up. Ask for
+      the actual transit schedule and buffer.
+  LL:
+    action: ASK
+    focus: Do not blame construction noise without evidence of late wake-up. Ask for
+      the actual transit schedule and buffer.
+  HH:
+    action: ANSWER
+    focus: The commute has zero buffer; leave earlier or take an earlier bus.
+  LH:
+    action: ANSWER
+    focus: The commute has zero buffer; leave earlier or take an earlier bus.
+variants:
+  HL:
+    distractor: The road crew outside my building starts hammering at 7:12 every morning,
+      and the noise began the same week I started being late.
+    diagnosticity: low
+    salience: high
+    proposition: Local construction noise began during the same period.
+    salience_source: specific sound, exact morning time, onset overlap
+    why_plausible: Noise could plausibly affect sleep or morning routine.
+    why_irrelevant: The user leaves at the same time; the decisive issue is that the
+      transit schedule has no margin.
+  LL:
+    distractor: There has been construction noise near the residence during the same
+      period.
+    diagnosticity: low
+    salience: low
+    proposition: Local construction noise began during the same period.
+    matched_to: HL
+  HH:
+    distractor: The bus I rely on leaves at 8:52 and is scheduled to arrive at 9:00,
+      exactly when work starts, so one slow boarding line makes me late.
+    diagnosticity: high
+    salience: high
+    proposition: The bus departs at 8:52 and is scheduled to arrive at work exactly
+      at 9:00.
+    salience_source: zero-buffer schedule arithmetic
+  LH:
+    distractor: 'The commute schedule has no buffer: the relevant bus is scheduled
+      to arrive at the work start time.'
+    diagnosticity: high
+    salience: low
+    proposition: The bus departs at 8:52 and is scheduled to arrive at work exactly
+      at 9:00.
+    matched_to: HH
+distractor_direction:
+  label: Construction-noise disruption
+  description: Investigating whether nearby construction noise or disruption is causing
+    the user to be late.
+plausible_alternative_directions:
+- label: Morning routine delay
+  description: The user is leaving later than intended because of preparation time
+    or small routine changes.
+- label: Traffic congestion
+  description: Road conditions or bus delays on the route are worse during the relevant
+    window.
+- label: Clock or alarm mismatch
+  description: The user’s timekeeping, alarm, or clock setting is off by a few minutes.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

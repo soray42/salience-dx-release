@@ -1,0 +1,171 @@
+seed_id: T2-073
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: My Docker build on my laptop has gone from about two minutes to over eight
+  minutes over the last few days. The Dockerfile has not changed and the project is
+  the same size. The build eventually succeeds, it is just much slower than it used
+  to be. I want to know where the time is going before I waste another afternoon waiting.
+  {DS}
+focal_diagnostic_feature: The build no longer reuses the Docker layer cache; an early
+  COPY of a frequently-changing file invalidates every subsequent layer, so all dependency
+  layers rebuild each time.
+low_diagnostic_proposition: The slowdown began the same week the user changed their
+  desktop wallpaper and terminal colour scheme.
+oracle_action: ANSWER
+oracle_focus: The build is busting the layer cache because an early COPY of a changing
+  file invalidates later layers; reorder the Dockerfile so dependencies are copied
+  and installed before volatile files, restoring cache reuse.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the wallpaper or terminal theme change
+  to build speed. Ask whether the layer cache is being hit and which step rebuilds
+  every run.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the wallpaper or terminal theme change to build speed. Ask
+      whether the layer cache is being hit and which step rebuilds every run.
+  LL:
+    action: ASK
+    focus: Do not connect the wallpaper or terminal theme change to build speed. Ask
+      whether the layer cache is being hit and which step rebuilds every run.
+  HH:
+    action: ANSWER
+    focus: The build is busting the layer cache because an early COPY of a changing
+      file invalidates later layers; reorder the Dockerfile so dependencies are copied
+      and installed before volatile files, restoring cache reuse.
+  LH:
+    action: ANSWER
+    focus: The build is busting the layer cache because an early COPY of a changing
+      file invalidates later layers; reorder the Dockerfile so dependencies are copied
+      and installed before volatile files, restoring cache reuse.
+variants:
+  HL:
+    distractor: What sticks with me is that the builds got slow the exact same week
+      I redid my whole desktop look — new wallpaper, a fresh terminal colour scheme,
+      the works. The timing matches so cleanly that it is hard not to suspect the
+      changes I made that week.
+    diagnosticity: low
+    salience: high
+    proposition: The slowdown began the same week the user changed their desktop wallpaper
+      and terminal colour scheme.
+    salience_source: B/C — clean first-person chronology and confident first-instinct
+      framing make the coincidence feel like the lead.
+    why_plausible: Pinning a new symptom on the only thing one changed that week is
+      a natural reflex, especially when the timing is tidy.
+    why_irrelevant: Wallpaper and terminal colours are purely cosmetic UI settings;
+      they have no path to Docker's build pipeline or its caching behaviour.
+  LL:
+    distractor: The slowdown began around the week the user changed their desktop
+      wallpaper and terminal colour scheme.
+    diagnosticity: low
+    salience: low
+    proposition: The slowdown began the same week the user changed their desktop wallpaper
+      and terminal colour scheme.
+    matched_to: HL
+  HH:
+    distractor: Watching the build output, every dependency step now says it is rebuilding
+      rather than using cache; an early COPY of a file that changes on almost every
+      run invalidates the cache for every layer after it, so the whole dependency
+      install runs cold each time.
+    diagnosticity: high
+    salience: high
+    proposition: The build no longer reuses the Docker layer cache; an early COPY
+      of a frequently-changing file invalidates every subsequent layer, so all dependency
+      layers rebuild each time.
+    salience_source: Concrete reading of the build output showing cache misses and
+      the cache-busting early COPY exposes the mechanism.
+  LH:
+    distractor: An early COPY of a frequently-changing file busts the layer cache,
+      so all later dependency layers rebuild each run.
+    diagnosticity: high
+    salience: low
+    proposition: The build no longer reuses the Docker layer cache; an early COPY
+      of a frequently-changing file invalidates every subsequent layer, so all dependency
+      layers rebuild each time.
+    matched_to: HH
+distractor_direction:
+  label: Desktop-environment change
+  description: Attributing the build slowdown to the user's cosmetic desktop and terminal
+    customisation because the timing coincided.
+plausible_alternative_directions:
+- label: Disk space pressure
+  description: Whether a nearly full disk is slowing Docker's storage driver.
+- label: Background resource contention
+  description: Whether another process is now consuming CPU during builds.
+leak_audit:
+  ll_atomic_claims:
+  - The slowdown began around the week the user changed their desktop wallpaper and
+    terminal colour scheme.
+  hh_atomic_claims:
+  - Every dependency step now rebuilds instead of using cache.
+  - An early COPY of a frequently-changing file invalidates the cache for every later
+    layer.
+  - The dependency install therefore runs cold each build.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person chronology placing the slowdown at the
+      desktop redesign week.
+    confident_assertion: Confident framing that the timing matches cleanly and points
+      at the environment changes.
+    concrete_detail: Detail about the change itself (wallpaper, terminal colour scheme)
+      only — no claim about the Dockerfile or cache.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 62
+  hl_word_count: 47
+  ll_word_count: 16
+  hh_word_count: 45
+  lh_word_count: 19
+  notes: 'LL carries only the timing-coincidence claim with the cosmetic desktop change;
+    the clean-match and points-at-the
+
+    -environment framing are HL-only salience. xbase gives the symptom (build slowed,
+    Dockerfile unchanged, project
+
+    same size) but withholds the cache-busting early-COPY behaviour, so HL/LL cannot
+    resolve the cause; the decisive
+
+    layer-cache invalidation lives only in HH/LH. The coincidence has no mechanism
+    at all (C2 absolute), so no
+
+    pathway closure is required.
+
+    '
+causal_audit:
+  steelman: 'The strongest case for the desktop change: perhaps a new terminal emulator
+    or shell theme spawns extra processes
+
+    or a heavier rendering path that steals CPU during builds. But xbase specifies
+    only a wallpaper and a colour
+
+    scheme — cosmetic display settings — not a new terminal program or shell. Such
+    settings change how pixels are
+
+    drawn, not how Docker schedules work or caches layers. There is no mechanism by
+    which choosing a different
+
+    background image or palette can quadruple build time. The real cause, an early
+    cache-busting COPY, lives entirely
+
+    in the Dockerfile''s layer ordering, independent of any desktop appearance, so
+    the coincidence is non-causal.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the coincidence (cosmetic desktop change) has no
+    mechanism for build speed; the real cache-busting cause lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A Docker build slowdown is caused by an early cache-busting COPY invalidating
+    all dependency layers, not by the coincidental desktop wallpaper and terminal
+    theme change.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

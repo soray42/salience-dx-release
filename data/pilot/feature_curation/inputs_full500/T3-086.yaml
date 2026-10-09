@@ -1,0 +1,175 @@
+seed_id: T3-086
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our event-processing microservice drops roughly one in fifty incoming events
+  under peak load. The events simply do not appear in the database; no error is logged
+  for them. The topic has eight partitions and the consumer group has eight instances
+  running, so partitions and consumer instances are balanced. {DS}
+focal_diagnostic_feature: Thread dumps captured during drop windows show the consumer
+  executor pool is fully saturated, with all processing threads blocked on downstream
+  database writes and the bounded work queue overflowing and silently discarding arriving
+  records.
+low_diagnostic_proposition: A senior platform engineer asserts that silent event loss
+  at scale is always caused by insufficient topic partition count.
+oracle_action: ANSWER
+oracle_focus: Increase the consumer executor thread pool size or reduce downstream
+  write latency so threads are not blocked during spikes; the partition count is not
+  the bottleneck.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the partition-count assertion from authority
+  alone. Ask for thread-dump output during drop windows and whether the executor queue
+  is bounded.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the partition-count assertion from authority alone. Ask for
+      thread-dump output during drop windows and whether the executor queue is bounded.
+  LL:
+    action: ASK
+    focus: Do not accept the partition-count assertion from authority alone. Ask for
+      thread-dump output during drop windows and whether the executor queue is bounded.
+  HH:
+    action: ANSWER
+    focus: Increase the consumer executor thread pool size or reduce downstream write
+      latency so threads are not blocked during spikes; the partition count is not
+      the bottleneck.
+  LH:
+    action: ANSWER
+    focus: Increase the consumer executor thread pool size or reduce downstream write
+      latency so threads are not blocked during spikes; the partition count is not
+      the bottleneck.
+variants:
+  HL:
+    distractor: Our head of platform engineering looked at the symptoms and said this
+      is a classic under-partitioned topic — he has seen it dozens of times — and
+      adding partitions always fixes silent event loss like this.
+    diagnosticity: low
+    salience: high
+    proposition: A senior platform engineer asserts that silent event loss at scale
+      is always caused by insufficient topic partition count.
+    salience_source: 'A: head of platform engineering, senior organisational role;
+      C: ''always fixes'' — categorical confident prescription; B: ''dozens of times''
+      — volumetric experience claim about source'
+    why_plausible: Under-partitioned topics limiting parallelism is a real and common
+      cause of Kafka throughput ceiling; an authority with broad experience could
+      credibly have seen it often.
+    why_irrelevant: The partition count equals the instance count, so no instance
+      is idle and adding partitions would not increase parallelism; the bottleneck
+      is thread-pool depth, not partition assignment.
+  LL:
+    distractor: A senior platform engineer stated that silent event loss at scale
+      is always caused by insufficient topic partition count.
+    diagnosticity: low
+    salience: low
+    proposition: A senior platform engineer asserts that silent event loss at scale
+      is always caused by insufficient topic partition count.
+    matched_to: HL
+  HH:
+    distractor: 'Thread-dump output shows the consumer executor pool fully saturated
+      during drop windows: all eight processing threads are blocked waiting on downstream
+      database writes, and arriving records overflow the bounded queue and are silently
+      discarded without logging.'
+    diagnosticity: high
+    salience: high
+    proposition: Thread dumps captured during drop windows show the consumer executor
+      pool is fully saturated, with all processing threads blocked on downstream database
+      writes and the bounded work queue overflowing and silently discarding arriving
+      records.
+    salience_source: 'B: specific diagnostic artefact (thread dump), precise count
+      of blocked threads, causal chain to silent discard stated directly; C: declarative
+      factual findings'
+  LH:
+    distractor: Thread dumps during drop windows show the executor pool exhausted,
+      processing threads blocked on downstream database writes, and bounded-queue
+      overflow silently discarding records.
+    diagnosticity: high
+    salience: low
+    proposition: Thread dumps captured during drop windows show the consumer executor
+      pool is fully saturated, with all processing threads blocked on downstream database
+      writes and the bounded work queue overflowing and silently discarding arriving
+      records.
+    matched_to: HH
+distractor_direction:
+  label: Insufficient partition count
+  description: Investigating whether the topic has too few partitions to support the
+    required consumer parallelism, creating a throughput ceiling that causes silent
+    event loss.
+plausible_alternative_directions:
+- label: Database write timeout
+  description: If downstream database writes are intermittently timing out and the
+    consumer swallows the exception without logging
+  events could silently disappear without thread-pool exhaustion.: null
+- label: Consumer group rebalance churn
+  description: Frequent rebalance cycles triggered by slow poll intervals can cause
+    in-flight records to be dropped during the revocation window if offsets are committed
+    prematurely.
+leak_audit:
+  ll_atomic_claims:
+  - A senior platform engineer stated that silent event loss at scale is always caused
+    by insufficient topic partition count.
+  hh_atomic_claims:
+  - Thread-dump output is available from drop windows.
+  - All eight processing threads are blocked on downstream database writes.
+  - The executor pool is fully saturated during drop windows.
+  - Arriving records overflow the bounded queue.
+  - The overflow discard happens silently without logging.
+  hl_salience_dimensions:
+    source_credibility: Head of platform engineering — senior organisational role,
+      matches the domain
+    narrative_coherence: Clean professional delivery at a standup context implied
+      by 'looked at the symptoms'
+    confident_assertion: '''always fixes'' — categorical prescription; ''dozens of
+      times'' — quantified experience claim'
+    concrete_detail: N/A — no case-specific facts added beyond LL
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 48
+  hl_word_count: 34
+  ll_word_count: 19
+  hh_word_count: 36
+  lh_word_count: 23
+  notes: 'The authority''s diagnosis is genuinely reasonable in a case where partitions
+    < instances; it is blocked here because partitions == instances (stated in xbase),
+    so adding partitions would not unlock new consumers.
+
+    Silent discard detail (no error logged) is consistent across xbase and HH; the
+    thread-dump finding explains WHY there is no log, which is diagnostic content
+    living only in HH/LH.
+
+    QC repair: LH distractor extended to include the blocking-on-downstream-database-writes
+    claim (hh_atomic_claim #2), which was omitted in the original; lh_word_count updated
+    from 18 to 23.
+
+    '
+causal_audit:
+  steelman: 'Under-partitioning is a classic Kafka pattern: if you have more consumer
+    instances than partitions, some instances sit idle, reducing effective throughput.
+    A senior engineer who has fixed throughput problems by increasing partition count
+    would reasonably reach for this diagnosis. The symptom (silent loss under load,
+    not at low traffic) matches the pattern. However, xbase explicitly states eight
+    partitions and eight instances are running in balance, which means every instance
+    already owns exactly one partition. Adding more partitions would create idle new
+    partitions unless additional instances were also added; the throughput ceiling
+    here is not partition assignment but downstream processing capacity per thread.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states eight partitions and eight consumer instances,
+    so the authority's generic under-partitioned-topic pattern does not apply to this
+    specific case
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Microservice silently dropping events under load due to consumer executor
+    thread-pool exhaustion from blocked downstream writes, with authority distractor
+    asserting insufficient Kafka partition count.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

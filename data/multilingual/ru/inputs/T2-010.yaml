@@ -1,0 +1,109 @@
+seed_id: T2-010
+template: T2
+domain: technical_troubleshooting
+complexity: high
+xbase: Наш ingress-контроллер Kubernetes сбрасывает заметную долю запросов с ошибкой
+  502 Bad Gateway в моменты пиковой нагрузки. При стабильно низком трафике ошибок
+  нет. {DS}
+focal_diagnostic_feature: Ошибки 502 возникают, когда один upstream превышает примерно
+  2 000 одновременных соединений, а p99 этого сервиса близко к таймауту readiness-пробы
+  в одну секунду.
+low_diagnostic_proposition: The pattern appeared in metrics during a period of dashboard
+  cleanup by a new SRE.
+oracle_action: ANSWER
+oracle_focus: The upstream is likely flapping readiness or failing under spike load;
+  tune readiness timeout/failureThreshold and add capacity or connection limits.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame dashboard housekeeping. Ask for upstream-level
+  correlation, readiness events, and latency near probe thresholds.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame dashboard housekeeping. Ask for upstream-level correlation,
+      readiness events, and latency near probe thresholds.
+  LL:
+    action: ASK
+    focus: Do not blame dashboard housekeeping. Ask for upstream-level correlation,
+      readiness events, and latency near probe thresholds.
+  HH:
+    action: ANSWER
+    focus: The upstream is likely flapping readiness or failing under spike load;
+      tune readiness timeout/failureThreshold and add capacity or connection limits.
+  LH:
+    action: ANSWER
+    focus: The upstream is likely flapping readiness or failing under spike load;
+      tune readiness timeout/failureThreshold and add capacity or connection limits.
+variants:
+  HL:
+    distractor: Впервые это проявилось на той же неделе, когда новый SRE удалил целую
+      стену старых панелей Grafana и переименовал половину папок дашборда.
+    diagnosticity: low
+    salience: high
+    proposition: The pattern appeared in metrics during a period of dashboard cleanup
+      by a new SRE.
+    salience_source: named role, vivid dashboard-cleanup event, temporal coincidence
+    why_plausible: Changes near monitoring can make the metric itself feel suspect.
+    why_irrelevant: Dashboard cleanup changes presentation, not live request handling;
+      the upstream/probe correlation is causal evidence.
+  LL:
+    distractor: Метрики появились в период наведения порядка в системе мониторинга
+      дашбордов.
+    diagnosticity: low
+    salience: low
+    proposition: The pattern appeared in metrics during a period of dashboard cleanup
+      by a new SRE.
+    matched_to: HL
+  HH:
+    distractor: Ошибки 502 появляются именно тогда, когда один upstream пересекает
+      отметку примерно 2 000 одновременных соединений, а его p99 в 800 мс опасно близко
+      к таймауту readiness-пробы в 1 с.
+    diagnosticity: high
+    salience: high
+    proposition: The 502s occur when one upstream exceeds about 2,000 concurrent connections,
+      and that service's p99 is close to its one-second readiness timeout.
+    salience_source: load threshold plus probe timeout proximity
+  LH:
+    distractor: Ошибки коррелируют с превышением одним upstream-сервисом ~2 000 одновременных
+      соединений, при этом его p99-задержка близка к таймауту readiness-пробы в 1
+      с.
+    diagnosticity: high
+    salience: low
+    proposition: The 502s occur when one upstream exceeds about 2,000 concurrent connections,
+      and that service's p99 is close to its one-second readiness timeout.
+    matched_to: HH
+distractor_direction:
+  label: Артефакт мониторинга
+  description: Исследование того, изменило ли наведение порядка в дашбордах, удаление
+    панелей или корректировка представления метрик способ отображения ошибок 502.
+plausible_alternative_directions:
+- label: Настройка таймаутов ingress
+  description: Таймауты или настройки повторных попыток ingress-контроллера слишком
+    агрессивны в периоды пиковой нагрузки.
+- label: Проверки работоспособности балансировщика нагрузки
+  description: Поведение health-check временно исключает upstream-сервисы при всплесках
+    трафика.
+- label: Задержка автомасштабирования
+  description: Мощности масштабируются слишком медленно при пиках трафика, вызывая
+    временные сбои upstream.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-010.yaml
+  source_xbase_sha256: ed1b8bfa11e1a4cf
+  translated_content_sha256: 53411aed0fcf83a4
+  translation_notes: 'Технические термины оставлены в английской форме в соответствии
+    с принятой практикой: Kubernetes, ingress-контроллер, SRE, Grafana, 502 Bad Gateway,
+    upstream, p99, readiness-проба, health-check. «Failover» / «failureThreshold»
+    не упоминается в переводимых полях, только в oracle-метаданных. Роль «SRE» сохранена
+    как есть — это устоявшееся профессиональное звание в русскоязычной DevOps-среде.'

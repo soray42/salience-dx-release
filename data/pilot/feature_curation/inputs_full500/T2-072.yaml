@@ -1,0 +1,179 @@
+seed_id: T2-072
+template: T2
+domain: open_qa
+complexity: high
+xbase: My teenage daughter's grades in her online tutoring programme have slipped
+  over the past two months, after a solid first term. She still logs in for her scheduled
+  sessions and the platform is the same one she liked before. Her teachers say she
+  seems checked out lately. We are paying a meaningful monthly fee and I am trying
+  to decide whether the programme is still working or whether something else is going
+  on. I want to get this right before the next billing cycle. {DS}
+focal_diagnostic_feature: The slip began exactly when the programme moved her into
+  an advanced cohort two levels above her placement test, and her session recordings
+  show her unable to follow the new material.
+low_diagnostic_proposition: The decline started the same month the household switched
+  to a new internet provider.
+oracle_action: ANSWER
+oracle_focus: The grades slipped because the programme advanced her two levels beyond
+  her tested placement and she cannot follow the harder material; have her moved back
+  to an appropriate level rather than cancelling, and review the misplacement with
+  the provider.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not attribute the grade slip to the internet-provider
+  switch. Ask what changed in the programme's content or level for her and whether
+  the material now matches her ability.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not attribute the grade slip to the internet-provider switch. Ask what
+      changed in the programme's content or level for her and whether the material
+      now matches her ability.
+  LL:
+    action: ASK
+    focus: Do not attribute the grade slip to the internet-provider switch. Ask what
+      changed in the programme's content or level for her and whether the material
+      now matches her ability.
+  HH:
+    action: ANSWER
+    focus: The grades slipped because the programme advanced her two levels beyond
+      her tested placement and she cannot follow the harder material; have her moved
+      back to an appropriate level rather than cancelling, and review the misplacement
+      with the provider.
+  LH:
+    action: ANSWER
+    focus: The grades slipped because the programme advanced her two levels beyond
+      her tested placement and she cannot follow the harder material; have her moved
+      back to an appropriate level rather than cancelling, and review the misplacement
+      with the provider.
+variants:
+  HL:
+    distractor: The thing that nags at me is that her grades started sliding the very
+      same month we switched broadband to a new provider; the timing is almost exact,
+      and it is the one change in our household routine I can actually put my finger
+      on from that period.
+    diagnosticity: low
+    salience: high
+    proposition: The decline started the same month the household switched to a new
+      internet provider.
+    salience_source: B/C — clean first-person chronology and confident first-instinct
+      framing make the coincidence feel like the explanation.
+    why_plausible: A connectivity change feels relevant to an online programme, so
+      blaming the new provider is a tempting reflex for a worried parent.
+    why_irrelevant: She still logs in and attends her sessions normally, so connection
+      quality is not the issue; an internet switch cannot cause a content-comprehension
+      decline.
+  LL:
+    distractor: The decline started around the same time the household switched to
+      a new internet provider.
+    diagnosticity: low
+    salience: low
+    proposition: The decline started the same month the household switched to a new
+      internet provider.
+    matched_to: HL
+  HH:
+    distractor: I checked her account history and the slip lines up exactly with the
+      programme bumping her into an advanced cohort two levels above her original
+      placement test; in the session recordings she is visibly lost, unable to follow
+      lessons pitched well beyond where she actually tested.
+    diagnosticity: high
+    salience: high
+    proposition: The slip began exactly when the programme moved her into an advanced
+      cohort two levels above her placement test, and her session recordings show
+      her unable to follow the new material.
+    salience_source: Concrete account-history and recording evidence of the two-level
+      jump and her struggle makes the misplacement vivid.
+  LH:
+    distractor: The slip began when the programme moved her two levels above her placement
+      test, and she cannot follow the material.
+    diagnosticity: high
+    salience: low
+    proposition: The slip began exactly when the programme moved her into an advanced
+      cohort two levels above her placement test, and her session recordings show
+      her unable to follow the new material.
+    matched_to: HH
+distractor_direction:
+  label: Internet-provider switch
+  description: Attributing the grade decline to the household's change of broadband
+    provider because the timing coincided.
+plausible_alternative_directions:
+- label: Motivation or wellbeing
+  description: Whether a non-academic change in the daughter's life explains the disengagement.
+- label: Programme quality drop
+  description: Whether the tutoring quality itself declined for all students recently.
+leak_audit:
+  ll_atomic_claims:
+  - The decline started around the same time the household switched to a new internet
+    provider.
+  hh_atomic_claims:
+  - The slip lines up with the programme moving her into an advanced cohort two levels
+    above her placement test.
+  - Her session recordings show her unable to follow lessons pitched beyond where
+    she tested.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person chronology placing the slip at the broadband
+      switch.
+    confident_assertion: Confident framing that the timing is almost exact and the
+      only identifiable change.
+    concrete_detail: Detail about the change itself (switching broadband provider)
+      only — no claim about her placement level.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 84
+  hl_word_count: 48
+  ll_word_count: 15
+  hh_word_count: 46
+  lh_word_count: 20
+  notes: 'LL carries only the timing-coincidence claim with the provider switch; the
+    almost-exact and only-change framing
+
+    are HL-only salience. xbase notes she still logs in and attends (a neutral symptom
+    that happens to make a
+
+    connectivity story implausible) but withholds the two-level misplacement, so HL/LL
+    cannot resolve the cause; the
+
+    decisive cohort-jump fact lives only in HH/LH. "She still logs in for her sessions"
+    is a symptom statement, not an
+
+    affirmative cause, so it does not break C4 — it merely shows attendance is intact.
+
+    '
+causal_audit:
+  steelman: 'The best case for the broadband switch: a worse connection could cause
+    dropped sessions, lag, or missed
+
+    instruction, degrading learning. But xbase establishes she still logs in and attends
+    her scheduled sessions
+
+    normally, and the symptom is comprehension and engagement, not connectivity. A
+    change of internet provider has no
+
+    mechanism to make a student stop understanding material she is present for; it
+    can only affect whether she can
+
+    connect, which is not in question. The real cause is an academic misplacement
+    two levels above her tested ability,
+
+    wholly independent of the home network, so the coincidence has no constructible
+    mechanism for this decline.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states she still logs in and attends her sessions
+    normally, which neutralises the only connectivity mechanism without naming the
+    real cause; the cohort misplacement lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A child's online-tutoring grade slip is caused by misplacement into
+    a cohort two levels too high, not by the coincidental switch to a new internet
+    provider.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

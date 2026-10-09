@@ -1,0 +1,13 @@
+{
+  "seed_id": "T2-011",
+  "my_own_diagnosis": "From xbase alone the intermittent failures on a cloud-hosted endpoint with no platform incident and no recent redeployment suggest an auth or config change; the focal feature (HTTP 401 on every failure plus a signing-secret rotation three days ago with no corresponding endpoint update) makes the diagnosis unambiguous: the endpoint is rejecting deliveries because its signature-verification code still uses the old secret.",
+  "focal_decisive": true,
+  "focal_notes": "HTTP 401 paired with a logged signing-secret rotation that was not propagated to the receiving application gives a single, unambiguous root cause with no residual ambiguity.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "oracle_action ANSWER and oracle_focus correctly name the 401 auth failure and the fix; low_diagnostic_oracle_focus correctly instructs ASK and explicitly forecloses the desk-rearrangement attribution with valid architectural reasoning; cell_oracles correctly map HL/LL to the low-diagnostic oracle and HH/LH to the focal oracle.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

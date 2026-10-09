@@ -1,0 +1,173 @@
+seed_id: T6-069
+template: T6
+domain: open_qa
+complexity: low
+xbase: My weekly running mileage has dropped significantly over the last four weeks
+  and I am not sure why. I do not feel particularly fatigued and I am not nursing
+  any soreness. I changed jobs about a month ago, but the role is similar and the
+  hours are roughly the same. I have not changed my diet or sleep schedule. {DS}
+focal_diagnostic_feature: The previous job required a 3 km run each way to the station
+  five days a week; the new office is reached by car, removing approximately 30 km
+  of running per week.
+low_diagnostic_proposition: Past mileage drops for this user were caused by overtraining;
+  needing a rest period is probably the issue now too.
+oracle_action: ANSWER
+oracle_focus: The mileage drop is accounted for by the elimination of commute running;
+  to restore total mileage, add explicit training runs to replace the lost 30 km per
+  week rather than rest further.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume overtraining from past experience. Ask
+  whether the job change affected the commute routine and whether any daily running
+  was built into the commute itself.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume overtraining from past experience. Ask whether the job change
+      affected the commute routine and whether any daily running was built into the
+      commute itself.
+  LL:
+    action: ASK
+    focus: Do not assume overtraining from past experience. Ask whether the job change
+      affected the commute routine and whether any daily running was built into the
+      commute itself.
+  HH:
+    action: ANSWER
+    focus: The mileage drop is accounted for by the elimination of commute running;
+      to restore total mileage, add explicit training runs to replace the lost 30
+      km per week rather than rest further.
+  LH:
+    action: ANSWER
+    focus: The mileage drop is accounted for by the elimination of commute running;
+      to restore total mileage, add explicit training runs to replace the lost 30
+      km per week rather than rest further.
+variants:
+  HL:
+    distractor: Every time my mileage has tanked before, it was because I was pushing
+      too hard and my body quietly forced a break, so my first instinct is that I
+      am overtraining again and need a rest week.
+    diagnosticity: low
+    salience: high
+    proposition: Past mileage drops for this user were caused by overtraining; needing
+      a rest period is probably the issue now too.
+    salience_source: B/C — vivid personal pattern ("my body quietly forced a break"),
+      confident first-instinct framing, and a coherent history of mileage drops being
+      followed by enforced rest make this read as a trusted self-knowledge account.
+    why_plausible: Overtraining suppressing mileage is a real pattern for many runners,
+      and a user who has experienced this before would have genuine reason to recognise
+      the pattern.
+    why_irrelevant: Overtraining typically presents with fatigue, soreness, and elevated
+      resting heart rate; the user reports none of these, and the focal evidence reveals
+      the mileage drop is fully accounted for by lost commute running, leaving nothing
+      for overtraining to explain.
+  LL:
+    distractor: Past mileage drops for this user were caused by overtraining; needing
+      a rest period is probably the issue now.
+    diagnosticity: low
+    salience: low
+    proposition: Past mileage drops for this user were caused by overtraining; needing
+      a rest period is probably the issue now too.
+    matched_to: HL
+  HH:
+    distractor: The old job required a 3 km run each way to the station five days
+      a week; the new office is a five-minute drive and I have been commuting by car,
+      so I have lost 30 km of running per week that I was never counting as training.
+    diagnosticity: high
+    salience: high
+    proposition: The previous job required a 3 km run each way to the station five
+      days a week; the new office is reached by car, removing approximately 30 km
+      of running per week.
+    salience_source: B/C — precise route distances (3 km each way), explicit frequency
+      (five days), calculated weekly loss (30 km), and the concrete mechanism ("never
+      counting as training") create a vivid and complete account.
+  LH:
+    distractor: Commuting was a 3 km run each way five days a week; driving removed
+      30 km weekly never counted as training.
+    diagnosticity: high
+    salience: low
+    proposition: The previous job required a 3 km run each way to the station five
+      days a week; the new office is reached by car, removing approximately 30 km
+      of running per week.
+    matched_to: HH
+distractor_direction:
+  label: overtraining requiring rest
+  description: Treating the mileage drop as the body enforcing a rest period after
+    overtraining, based on a history of past mileage drops being caused by overtraining.
+plausible_alternative_directions:
+- label: reduced motivation or habit disruption
+  description: The job change may have disrupted the runner's routine or social cues
+    for running, making it harder to maintain consistent training without the commute
+    structure.
+- label: new-job adjustment fatigue
+  description: Even without physical overtraining, the cognitive and social demands
+    of starting a new role might reduce the energy available for discretionary exercise.
+leak_audit:
+  ll_atomic_claims:
+  - Past mileage drops for this user were caused by overtraining.
+  - Needing a rest period is probably the issue now.
+  hh_atomic_claims:
+  - The old job required a 3 km run each way.
+  - The route ran five days per week.
+  - The new office is reached by car (five-minute drive).
+  - The user has been commuting by car.
+  - This removes 30 km of running per week.
+  - The commute running was not counted as training.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, no named external source
+    narrative_coherence: Coherent personal history of mileage-drop episodes followed
+      by enforced rest, with the same pattern recognised and applied confidently to
+      the current situation.
+    confident_assertion: '''my first instinct is that I am overtraining again'''
+    concrete_detail: N/A — vivid detail is about the speaker's past experience, not
+      the present case
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 59
+  hl_word_count: 37
+  ll_word_count: 19
+  hh_word_count: 48
+  lh_word_count: 21
+  notes: 'LH revised to 21 words: "Commuting was a 3 km run each way five days a week;
+
+    driving removed 30 km weekly never counted as training." All six HH atomic claims
+
+    (3 km each way, five days/week, driving replaced it, 30 km weekly loss, not
+
+    counted as training) now appear flatly in LH. QC repair: added ''never counted
+    as
+
+    training'' to satisfy C10 HH/LH equivalence. HH:LH = 48:21 = 2.3.
+
+    '
+causal_audit:
+  steelman: 'Overtraining-induced mileage drops are a real and well-documented phenomenon,
+
+    and a runner who has experienced it three or more times would have strong personal
+
+    evidence that their body enforces rest when pushed too hard. The xbase notes the
+
+    user does not feel fatigued or sore — but early or low-grade overtraining can
+
+    suppress motivation and performance without overt soreness, particularly in
+
+    experienced runners whose bodies have adapted to hide early warning signals. The
+
+    pattern recognition is therefore not obviously wrong.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Runner's weekly mileage dropped because a job change eliminated a 3
+    km each-way commute run five days per week (30 km/week lost), against an availability
+    bias that past mileage drops were always overtraining requiring a rest week.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

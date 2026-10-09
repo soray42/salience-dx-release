@@ -1,0 +1,105 @@
+seed_id: T1-006
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: تستغرق لوحة تحكم React لدينا حوالي عشر ثوانٍ لعرض الصفحة الرئيسية عند التحميل
+  الأول. استجابة API متاحة قبل انتهاء الواجهة من عملية الرسم، والتباطؤ واضح حتى على
+  جهاز المطوّر مع بيانات محلية. {DS}
+focal_diagnostic_feature: يُظهر الـ Profiling أن جدول المقاييس يُصيّر 4,000 صف غير
+  مُفرَّع ويستهلك معظم وقت الرسم.
+low_diagnostic_proposition: A React performance issue at another team was caused by
+  uncompressed image assets.
+oracle_action: ANSWER
+oracle_focus: 'Optimise the table rendering path: virtualise rows, memoise row components,
+  and avoid rendering all rows at once.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume an image-asset issue from the anecdote.
+  Ask for React profiler output and component-level render costs.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume an image-asset issue from the anecdote. Ask for React profiler
+      output and component-level render costs.
+  LL:
+    action: ASK
+    focus: Do not assume an image-asset issue from the anecdote. Ask for React profiler
+      output and component-level render costs.
+  HH:
+    action: ANSWER
+    focus: 'Optimise the table rendering path: virtualise rows, memoise row components,
+      and avoid rendering all rows at once.'
+  LH:
+    action: ANSWER
+    focus: 'Optimise the table rendering path: virtualise rows, memoise row components,
+      and avoid rendering all rows at once.'
+variants:
+  HL:
+    distractor: تطبيق React لـ هانا كان يبدو متجمداً أيضاً، واتضح في النهاية أن السبب
+      صورة PNG بطولية بحجم 15 ميجابايت تُحمَّل على صفحة الهبوط.
+    diagnosticity: low
+    salience: high
+    proposition: A React performance issue at another team was caused by uncompressed
+      image assets.
+    salience_source: named peer, exact asset size, superficially similar symptom
+    why_plausible: Slow React apps often are asset-related, so the story feels actionable.
+    why_irrelevant: The current symptom appears after data are available and needs
+      component profiling; another app's image issue does not diagnose this table
+      render path.
+  LL:
+    distractor: مشكلة أداء React لدى أحد الزملاء حُلّت عن طريق تحسين الصور.
+    diagnosticity: low
+    salience: low
+    proposition: A React performance issue at another team was caused by uncompressed
+      image assets.
+    matched_to: HL
+  HH:
+    distractor: يُشير الـ profiler إلى جدول مقاييس واحد يستهلك حوالي 85% من وقت الرسم
+      بينما يحاول تصيير 4,000 صف دون أي virtualization.
+    diagnosticity: high
+    salience: high
+    proposition: Profiling shows the metrics table renders 4,000 unvirtualised rows
+      and accounts for most render time.
+    salience_source: profiler percentage and component behaviour
+  LH:
+    distractor: يعزو الـ Profiling معظم وقت الرسم إلى جدول مقاييس يُصيّر حوالي 4,000
+      صف دون استخدام التمرير الافتراضي.
+    diagnosticity: high
+    salience: low
+    proposition: Profiling shows the metrics table renders 4,000 unvirtualised rows
+      and accounts for most render time.
+    matched_to: HH
+distractor_direction:
+  label: تحسين أصول الصور
+  description: التحقيق فيما إذا كانت أصول الصور الكبيرة أو غير المضغوطة أو سيئة الخدمة
+    تتسبب في تجربة رسم React البطيئة.
+plausible_alternative_directions:
+- label: تضخم حجم الحزمة
+  description: الحزمة الأولية من JavaScript كبيرة جداً أو مقسّمة بشكل سيئ، مما يؤخر
+    الرسم الأول.
+- label: زمن انتظار متعاقب في الـ API
+  description: الواجهة تنتظر طلبات شبكة متسلسلة على الرغم من توفر استجابة API الرئيسية.
+- label: عدم تطابق في الـ Hydration
+  description: الـ hydration أو المطابقة على جانب العميل تُنفذ عملاً مكلفاً قبل ظهور
+    الصفحة الرئيسية.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-006.yaml
+  source_xbase_sha256: 5bca82c1094abb81
+  translated_content_sha256: 1edcb0f8923fa620
+  translation_notes: Technical terms (React, API, Profiling/profiler, PNG, virtualization,
+    hydration, JavaScript) kept as English loan terms — standard practice in Arabic
+    tech discourse. 'Hana' transliterated as 'هانا' to preserve named-peer salience
+    in HL. '15-megabyte' and '4,000 rows' kept as concrete figures to maintain salience
+    contrast. '85%' figure in HH preserved.

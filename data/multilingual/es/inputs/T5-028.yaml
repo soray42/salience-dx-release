@@ -1,0 +1,231 @@
+seed_id: T5-028
+template: T5
+domain: open_qa
+complexity: high
+xbase: Estoy decidiendo si contratar mi seguro de hogar, asistencia en carretera y
+  seguro de mascotas con un mismo proveedor por €118 al mes, o conservar mis tres
+  pólizas separadas que se renuevan en distintos momentos del año. El proveedor único
+  ofrece una tarifa fija durante 24 meses. Mis fechas de renovación están repartidas
+  a lo largo del año, lo que dificulta la comparación año a año. {DS}
+focal_diagnostic_feature: Al sumar las tres primas anuales actuales se obtienen €1.608
+  al año; el paquete cuesta €1.416 al año con la tarifa fija, un ahorro verificado
+  de €192 que se mantiene independientemente de cómo esté formateada la tabla comparativa.
+  El bloqueo de la tarifa a 24 meses también elimina la varianza en los plazos de
+  renovación.
+low_diagnostic_proposition: The bundler's comparison page is formatted in a confusing
+  and cluttered way, suggesting the headline saving is probably inflated and unreliable.
+oracle_action: ANSWER
+oracle_focus: Switch to the bundle; the arithmetic from the user's own premium figures
+  confirms a genuine €192 annual saving, and the 24-month rate lock resolves the renewal-timing
+  comparison problem. Verify that coverage terms are equivalent before committing.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not dismiss the saving based on the comparison page's
+  visual quality. Ask the user to add up their actual current premiums and compare
+  them to the bundle price directly before concluding the saving is inflated.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not dismiss the saving based on the comparison page's visual quality.
+      Ask the user to add up their actual current premiums and compare them to the
+      bundle price directly before concluding the saving is inflated.
+  LL:
+    action: ASK
+    focus: Do not dismiss the saving based on the comparison page's visual quality.
+      Ask the user to add up their actual current premiums and compare them to the
+      bundle price directly before concluding the saving is inflated.
+  HH:
+    action: ANSWER
+    focus: Switch to the bundle; the arithmetic from the user's own premium figures
+      confirms a genuine €192 annual saving, and the 24-month rate lock resolves the
+      renewal-timing comparison problem. Verify that coverage terms are equivalent
+      before committing.
+  LH:
+    action: ANSWER
+    focus: Switch to the bundle; the arithmetic from the user's own premium figures
+      confirms a genuine €192 annual saving, and the 24-month rate lock resolves the
+      renewal-timing comparison problem. Verify that coverage terms are equivalent
+      before committing.
+variants:
+  HL:
+    distractor: La página de comparativa del proveedor único es una pared de notas
+      al pie con asteriscos, pequeños reclamos promocionales y una tabla en la que
+      algunas columnas desaparecen en una pantalla de portátil normal. Una presentación
+      de precios tan confusa casi con toda seguridad significa que el ahorro anunciado
+      está inflado artificialmente y no puede tomarse en serio.
+    diagnosticity: low
+    salience: high
+    proposition: The bundler's comparison page is formatted in a confusing and cluttered
+      way, suggesting the headline saving is probably inflated and unreliable.
+    salience_source: B (specific visual inventory — asterisked footnotes, promotional
+      callouts in multiple sizes, disappearing table columns — in confident professional
+      register), C (confident assertion — "almost certainly means ... cannot be taken
+      at face value")
+    why_plausible: Experienced consumers and financial advisors know that complex
+      pricing pages with asterisked small print often conceal conditions that erode
+      advertised savings; the detailed visual inventory makes the observation feel
+      like domain-experienced caution rather than mere aesthetics.
+    why_irrelevant: The visual design of a comparison webpage has no constructible
+      mechanism for changing the underlying premium amounts; the saving of €192 is
+      derived from the user's own policy figures, not from the bundler's marketing
+      table, so the page layout cannot affect whether the saving is real.
+  LL:
+    distractor: La página de comparativa del proveedor único está presentada de forma
+      confusa y recargada, lo que sugiere que el ahorro anunciado probablemente está
+      inflado y no es fiable.
+    diagnosticity: low
+    salience: low
+    proposition: The bundler's comparison page is formatted in a confusing and cluttered
+      way, suggesting the headline saving is probably inflated and unreliable.
+    matched_to: HL
+  HH:
+    distractor: Al sumar mis tres primas anuales actuales obtengo €1.608 al año; el
+      paquete cuesta €1.416 al año con la tarifa fija, un ahorro verificado de €192
+      independientemente de cómo se presente la tabla comparativa. El bloqueo de la
+      tarifa a 24 meses elimina la varianza en los plazos de renovación que antes
+      dificultaba la comparación directa.
+    diagnosticity: high
+    salience: high
+    proposition: Adding the three current annual premiums yields €1,608 per year;
+      the bundle costs €1,416 per year at the locked rate, a verified saving of €192
+      that holds regardless of how the comparison table is formatted. The 24-month
+      rate lock also eliminates the renewal-timing variance.
+    salience_source: B (precise arithmetic — €1,608 vs €1,416, €192 delta — with explicit
+      statement that the saving is independent of the table formatting and a concrete
+      resolution to the renewal-timing problem)
+  LH:
+    distractor: Las primas separadas actuales suman €1.608 al año; el paquete cuesta
+      €1.416 con tarifa fija, un ahorro de €192. El bloqueo a 24 meses elimina la
+      varianza en las fechas de renovación.
+    diagnosticity: high
+    salience: low
+    proposition: Adding the three current annual premiums yields €1,608 per year;
+      the bundle costs €1,416 per year at the locked rate, a verified saving of €192
+      that holds regardless of how the comparison table is formatted. The 24-month
+      rate lock also eliminates the renewal-timing variance.
+    matched_to: HH
+distractor_direction:
+  label: Ahorro anunciado inflado
+  description: Tratar la página de comparativa recargada y llena de asteriscos como
+    evidencia de que el ahorro indicado por el proveedor está artificialmente inflado
+    y no debe tomarse en serio.
+plausible_alternative_directions:
+- label: Reducción de coberturas
+  description: El paquete puede ofrecer límites de cobertura más bajos o excluir condiciones
+    presentes en las pólizas separadas, haciendo que el ahorro aparente sea engañoso
+    en comparación directa.
+- label: Riesgo de estabilidad financiera del proveedor único
+  description: Concentrar las tres pólizas con un único proveedor crea un riesgo de
+    punto único de fallo si el proveedor cambia las condiciones, quiebra o abandona
+    una línea de producto en la renovación.
+- label: Penalización por cancelación de las pólizas actuales
+  description: La cancelación anticipada de las pólizas separadas existentes puede
+    generar comisiones de salida que compensen parcial o totalmente el ahorro anual
+    proyectado del paquete.
+leak_audit:
+  ll_atomic_claims:
+  - The bundler's comparison page is formatted in a confusing and cluttered way.
+  - The confusing format suggests the headline saving is probably inflated and unreliable.
+  hh_atomic_claims:
+  - Adding the three current annual premiums gives €1,608 per year.
+  - The bundle costs €1,416 per year on the locked rate.
+  - The saving is €192 per year.
+  - The saving holds regardless of how the comparison table is presented.
+  - The 24-month rate lock eliminates the renewal-timing variance.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Precise inventory of visual defects (asterisked footnotes,
+      multiple callout sizes, disappearing columns) leading to a confident professional-register
+      conclusion about the saving's reliability.
+    confident_assertion: '"almost certainly means the headline saving is artificially
+      inflated and cannot be taken at face value" — strong epistemic claim with no
+      hedging.'
+    concrete_detail: Named defect types and a specific rendering failure (columns
+      disappear on a normal laptop screen) — about the webpage design, not the underlying
+      premium amounts.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 57
+  hl_word_count: 46
+  ll_word_count: 21
+  hh_word_count: 48
+  lh_word_count: 19
+  notes: 'T5 inferential bridge ("A pricing presentation this confusing almost certainly
+    means the headline
+
+    saving is artificially inflated and cannot be taken at face value") appears in
+    HL and is carried
+
+    flatly in LL ("suggesting the headline saving is probably inflated and unreliable").
+    The actual
+
+    premium figures (€1,608 / €1,416 / €192) live only in HH/LH and are not in xbase,
+    preserving
+
+    C4. xbase establishes the renewal-timing complexity as genuine context without
+    revealing the
+
+    outcome. HH/LH atomic diff: LH drops the "regardless of how the comparison table
+    is presented"
+
+    clause, the phrase "verified saving," and compresses the rate-lock benefit to
+    a shorter form
+
+    while retaining all five core claims. Complexity set to high: the high-value multi-policy
+
+    comparison with a rate-lock decision and scattered renewal dates requires multi-factor
+    reasoning.
+
+    '
+causal_audit:
+  steelman: 'A senior personal-finance advisor might argue: complex comparison pages
+    with asterisked footnotes
+
+    often conceal conditions — introductory rates, coverage exclusions, or compulsory
+    add-ons —
+
+    that erode the headline saving after the first renewal. A practitioner who has
+    encountered
+
+    bundled-insurance bait-and-switch pricing could reasonably treat the page design
+    as a warning
+
+    signal warranting extra scrutiny, potentially placing the inflated-saving hypothesis
+    on a
+
+    short checklist.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — xbase does not close the inflated-saving pathway.
+    The decisive evidence lives only in HH/LH: the arithmetic derived from the user''s
+    own policy figures, independent of the bundler''s comparison table.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Bundling three insurance policies saves €192 per year on the user's
+    own premium arithmetic and resolves renewal-timing variance; distractor is the
+    bundler's cluttered comparison page offered as evidence that the headline saving
+    is artificially inflated.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-028.yaml
+  source_xbase_sha256: e6a195250539590a
+  translated_content_sha256: c5c5cdc6f8e278c4
+  translation_notes: Euro amounts (€118, €1.608, €1.416, €192) kept unchanged as they
+    are part of the seed's arithmetic and salience. Spanish convention uses period
+    as thousands separator and comma as decimal separator; amounts formatted accordingly
+    (€1.608, €1.416). 'Salvage title' not relevant here. 'Rate lock' rendered as 'bloqueo
+    de la tarifa/tarifa fija', which is the natural Spanish insurance term. No culture-bound
+    salience issues.

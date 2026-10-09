@@ -1,0 +1,180 @@
+seed_id: T2-074
+template: T2
+domain: open_qa
+complexity: medium
+xbase: I subscribed to an online course platform a year ago and used it heavily at
+  first, but over the last three months I have barely opened it. The content library
+  is as good as ever and I still get value from the occasional course I do finish.
+  The annual renewal is coming up and I am trying to decide honestly whether I should
+  keep paying for it. I want to base this on something real, not guilt. {DS}
+focal_diagnostic_feature: The user's viewing history shows they completed only one
+  short course in the past quarter and have started none, so they are paying an annual
+  fee for almost no use.
+low_diagnostic_proposition: The drop in usage began the same month the user repainted
+  their home office.
+oracle_action: ANSWER
+oracle_focus: Do not renew at the current tier; the user's own activity shows they
+  finished only one short course last quarter and started none, so the annual fee
+  buys access they are not using. Switch to pay-per-course or cancel.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not tie the usage drop to the office repaint. Ask
+  how much the user has actually used the platform recently and whether the annual
+  fee matches that real usage.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not tie the usage drop to the office repaint. Ask how much the user
+      has actually used the platform recently and whether the annual fee matches that
+      real usage.
+  LL:
+    action: ASK
+    focus: Do not tie the usage drop to the office repaint. Ask how much the user
+      has actually used the platform recently and whether the annual fee matches that
+      real usage.
+  HH:
+    action: ANSWER
+    focus: Do not renew at the current tier; the user's own activity shows they finished
+      only one short course last quarter and started none, so the annual fee buys
+      access they are not using. Switch to pay-per-course or cancel.
+  LH:
+    action: ANSWER
+    focus: Do not renew at the current tier; the user's own activity shows they finished
+      only one short course last quarter and started none, so the annual fee buys
+      access they are not using. Switch to pay-per-course or cancel.
+variants:
+  HL:
+    distractor: The part that lingers is that I stopped using the platform the very
+      month I repainted my home office; the timing matches almost perfectly, and part
+      of me keeps wondering whether redoing that room is somehow tangled up in why
+      I drifted away from the courses.
+    diagnosticity: low
+    salience: high
+    proposition: The drop in usage began the same month the user repainted their home
+      office.
+    salience_source: B/C — clean first-person chronology and confident first-instinct
+      framing make the coincidence feel like an explanation.
+    why_plausible: Looking for an external trigger for a behaviour change is natural,
+      and a memorable life event in the same month is an easy thing to fasten onto.
+    why_irrelevant: Repainting a room is a one-off cosmetic change that cannot determine
+      whether an annual subscription is worth renewing; the deciding fact is the user's
+      actual usage.
+  LL:
+    distractor: The drop in usage began around the same month the user repainted their
+      home office.
+    diagnosticity: low
+    salience: low
+    proposition: The drop in usage began the same month the user repainted their home
+      office.
+    matched_to: HL
+  HH:
+    distractor: I pulled up my account's viewing history and in the past three months
+      I have finished exactly one short course and started none at all, while the
+      renewal charges a full year's fee — I am paying for a library I have effectively
+      stopped opening.
+    diagnosticity: high
+    salience: high
+    proposition: The user's viewing history shows they completed only one short course
+      in the past quarter and have started none, so they are paying an annual fee
+      for almost no use.
+    salience_source: Concrete retrieval of the exact usage count against the annual
+      fee makes the underuse undeniable.
+  LH:
+    distractor: The user's history shows one short course finished and none started
+      last quarter, against a full annual fee.
+    diagnosticity: high
+    salience: low
+    proposition: The user's viewing history shows they completed only one short course
+      in the past quarter and have started none, so they are paying an annual fee
+      for almost no use.
+    matched_to: HH
+distractor_direction:
+  label: Office-repaint trigger
+  description: Attributing the drop in platform usage to the home-office repaint because
+    the timing coincided.
+plausible_alternative_directions:
+- label: Habit disruption
+  description: Whether a sustained lifestyle change unrelated to the repaint (new
+    work schedule
+  shift in priorities: null
+  or other routine break) disrupted the study habit in a way that persists regardless of subscription cost.: null
+- label: Cheaper access tier
+  description: Whether a pay-per-course or monthly option matches the user's reduced
+    usage better.
+leak_audit:
+  ll_atomic_claims:
+  - The drop in usage began around the same month the user repainted their home office.
+  hh_atomic_claims:
+  - The user finished exactly one short course in the past three months.
+  - The user started no courses in that period.
+  - The renewal charges a full annual fee against that near-zero use.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person chronology placing the usage drop at the
+      repaint month.
+    confident_assertion: Confident framing that the timing matches almost perfectly.
+    concrete_detail: Detail about the change itself (repainting the home office) only
+      — no claim about the actual usage count.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 77
+  hl_word_count: 46
+  ll_word_count: 15
+  hh_word_count: 44
+  lh_word_count: 18
+  notes: 'LL carries only the timing-coincidence claim with the office repaint; the
+    almost-perfect-match framing is HL-only
+
+    salience. xbase notes the content library is still good and occasional value remains
+    (neutral context) but
+
+    withholds the exact recent usage count, so HL/LL cannot resolve the renewal decision;
+    the decisive one-course
+
+    -last-quarter fact lives only in HH/LH. The renewal decision is the user''s own
+    usage problem, not a coincidence
+
+    -timing problem, so the focal feature is the activity log.
+
+    QC repair: replaced Alt 1 ''Content fit decline'' (negated by xbase ''The content
+    library is as good as ever'') with
+
+    ''Habit disruption'' (a lifestyle/routine break unrelated to the repaint — genuinely
+    open from xbase alone).
+
+    '
+causal_audit:
+  steelman: 'The strongest case for the repaint: a disrupted workspace could break
+    a study habit if, say, the room were
+
+    unusable for weeks. But xbase describes a finished repaint, not an ongoing renovation,
+    and the question is whether
+
+    to renew an annual subscription — a value-for-money decision governed entirely
+    by how much the user actually uses
+
+    the platform. A one-off cosmetic change to a room has no mechanism to make a yearly
+    fee worth or not worth paying;
+
+    even if the repaint nudged a habit, the renewal answer turns on real usage, which
+    the focal log supplies. The
+
+    coincidence cannot inform the decision.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the coincidence (office repaint) has no mechanism
+    for the renewal value decision; the decisive usage log lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to renew an online-course subscription turns on the user's
+    near-zero recent usage, not on the coincidental home-office repaint that month.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

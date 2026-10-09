@@ -1,0 +1,184 @@
+seed_id: T1-072
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Kubernetes pods for one service keep getting OOMKilled and restarting a
+  few times an hour. The deployment is unchanged for six weeks and traffic is flat.
+  The container has a 512Mi memory limit, and the service is a fairly standard JVM
+  application behind a sidecar. Liveness and readiness probes pass between restarts,
+  and the node itself has plenty of free memory. The kills happen within seconds of
+  each pod starting, before any request load arrives. {DS}
+focal_diagnostic_feature: The JVM has no explicit max-heap flag, so it sizes its heap
+  to a fraction of the node's total memory and ignores the 512Mi cgroup limit.
+low_diagnostic_proposition: A team elsewhere had recurring OOMKills that turned out
+  to be a memory leak in their application code.
+oracle_action: ANSWER
+oracle_focus: The JVM is sizing its heap from node memory, not the 512Mi cgroup limit,
+  so it grows past the container cap; set an explicit max-heap or enable container-aware
+  memory sizing so the heap fits inside the limit.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the outside memory-leak story. Ask whether
+  the JVM heap is sized to the node or the cgroup limit and what the actual heap and
+  RSS look like before each kill.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the outside memory-leak story. Ask whether the JVM heap is
+      sized to the node or the cgroup limit and what the actual heap and RSS look
+      like before each kill.
+  LL:
+    action: ASK
+    focus: Do not adopt the outside memory-leak story. Ask whether the JVM heap is
+      sized to the node or the cgroup limit and what the actual heap and RSS look
+      like before each kill.
+  HH:
+    action: ANSWER
+    focus: The JVM is sizing its heap from node memory, not the 512Mi cgroup limit,
+      so it grows past the container cap; set an explicit max-heap or enable container-aware
+      memory sizing so the heap fits inside the limit.
+  LH:
+    action: ANSWER
+    focus: The JVM is sizing its heap from node memory, not the 512Mi cgroup limit,
+      so it grows past the container cap; set an explicit max-heap or enable container-aware
+      memory sizing so the heap fits inside the limit.
+variants:
+  HL:
+    distractor: Dawit, a platform engineer at a company I trust, said his team chased
+      almost identical OOMKills for a week and it came down to an application memory
+      leak — a cache that never evicted entries —.
+    diagnosticity: low
+    salience: high
+    proposition: A team elsewhere had recurring OOMKills that turned out to be a memory
+      leak in their application code.
+    salience_source: A — a named platform engineer at a respected company recounting
+      a closely matching incident lends the leak hypothesis weight.
+    why_plausible: Unbounded caches are a classic real cause of recurring container
+      OOMKills, so the matching story feels like a strong lead.
+    why_irrelevant: A leak grows usage over time; xbase shows kills happen within
+      seconds of startup before any request load, which a slow leak cannot produce,
+      so the other team's fix cannot address this configuration cause.
+  LL:
+    distractor: Another team's recurring container OOMKills turned out to be an application
+      memory leak from an unbounded cache.
+    diagnosticity: low
+    salience: low
+    proposition: A team elsewhere had recurring OOMKills that turned out to be a memory
+      leak in their application code.
+    matched_to: HL
+  HH:
+    distractor: I checked the JVM flags and there is no max-heap set, so it reads
+      the node's total memory and picks a heap far larger than 512Mi; the process
+      climbs past the cgroup limit on startup and gets OOMKilled before any sustained
+      workload runs, which a slow leak could never do.
+    diagnosticity: high
+    salience: high
+    proposition: The JVM has no explicit max-heap flag, so it sizes its heap to a
+      fraction of the node's total memory and ignores the 512Mi cgroup limit.
+    salience_source: Concrete inspection of the missing flag and the heap-versus-limit
+      mismatch makes the misconfiguration unmistakable.
+  LH:
+    distractor: JVM has no max-heap flag; it sizes from node memory, exceeds 512Mi
+      at startup before any workload — a slow leak cannot do this.
+    diagnosticity: high
+    salience: low
+    proposition: The JVM has no explicit max-heap flag, so it sizes its heap to a
+      fraction of the node's total memory and ignores the 512Mi cgroup limit.
+    matched_to: HH
+distractor_direction:
+  label: Application memory leak
+  description: Investigating whether application code leaks memory over time, as happened
+    to another team, rather than a heap-sizing misconfiguration.
+plausible_alternative_directions:
+- label: Memory limit too low
+  description: Whether 512Mi is simply undersized for this service's legitimate working
+    set.
+- label: Sidecar memory accounting
+  description: Whether the sidecar's usage counts against the same cgroup and contributes
+    to the kills.
+leak_audit:
+  ll_atomic_claims:
+  - Another team had recurring container OOMKills.
+  - Those kills turned out to be an application memory leak from an unbounded cache.
+  hh_atomic_claims:
+  - The JVM has no max-heap flag set.
+  - It therefore sizes its heap from the node's total memory.
+  - The chosen heap exceeds the 512Mi cgroup limit and the process is killed before
+    sustained workload runs.
+  - A slow leak could never produce kills before any sustained workload runs.
+  hl_salience_dimensions:
+    source_credibility: Named platform engineer (Dawit) at a respected company recounting
+      a near-identical incident.
+    narrative_coherence: 'Clear arc: chased the kills, found the cache leak, fixed
+      eviction, restarts stopped.'
+    confident_assertion: Stated as a resolved, confirmed root cause.
+    concrete_detail: Detail about the source's incident (the unbounded cache, the
+      week of chasing) only — no claim about this service's JVM flags.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 76
+  hl_word_count: 35
+  ll_word_count: 17
+  hh_word_count: 50
+  lh_word_count: 23
+  notes: 'LL carries only the other-team-leak claim; the named engineer, the trusted
+    company, and the week of chasing are
+
+    HL-only and all about the source. xbase gives the symptom (OOMKills, flat traffic,
+    unchanged deploy, 512Mi limit)
+
+    but withholds the JVM heap-sizing behaviour; xbase adds a narrow pathway-closure
+    — kills within seconds of pod
+
+    startup before any request load — that forecloses the time-dependent leak mechanism
+    without revealing the cause.
+
+    The decisive missing-max-heap fact lives only in HH/LH. LH expanded to include
+    the startup-timing detail and the
+
+    leak-ruling-out clause to match HH''s atomic claims; lh_word_count updated from
+    20 to 23.
+
+    '
+causal_audit:
+  steelman: 'A senior JVM engineer could argue the leak hypothesis is strong: unbounded
+    caches and listener accumulation are
+
+    among the most common causes of repeating container OOMKills, the symptom (periodic
+    kills with passing probes
+
+    between them) fits a leak that refills after each restart, and another credible
+    team hit exactly this. But a leak
+
+    is a time-dependent growth story: usage climbs across minutes of traffic before
+    crossing the limit. The focal
+
+    feature shows the opposite shape — with no max-heap the JVM commits an oversized
+    heap derived from node memory and
+
+    breaches the 512Mi cap on startup, before sustained workload, so a leak fix cannot
+    address this case. The other
+
+    team''s experience has no mechanism to bear on a heap-sizing misconfiguration
+    here.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the kills happen within seconds of each pod
+    starting, before any request load arrives — this forecloses the time-dependent
+    leak mechanism (which requires sustained runtime for memory to accumulate) from
+    xbase alone, without revealing the JVM heap-sizing root cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A Kubernetes JVM service is OOMKilled because the heap is sized from
+    node memory with no max-heap flag and ignores the cgroup limit, not because of
+    the application memory leak a peer team described.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator-adjudicated
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

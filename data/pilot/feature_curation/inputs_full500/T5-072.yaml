@@ -1,0 +1,178 @@
+seed_id: T5-072
+template: T5
+domain: open_qa
+complexity: high
+xbase: I am deciding between two credentials to advance from a mid-level data analyst
+  role. Option A is a twelve-month graduate certificate from a regional university,
+  costing about nine thousand dollars. Option B is a professional certification from
+  an industry body. I need something that boosts my hireability for senior roles within
+  the next two years and I have limited study time each week. {DS}
+focal_diagnostic_feature: Among senior analyst job postings tracked over three years,
+  71% list Option B as a preferred qualification versus 11% for Option A; Option B
+  holders in the user's network report an 18% salary premium over a two-year horizon.
+low_diagnostic_proposition: The graduate-certificate programme website is visually
+  dated and suggests the programme itself may be equally neglected.
+oracle_action: ANSWER
+oracle_focus: Choose Option B; it appears in the majority of senior job postings and
+  its holders report a salary premium, directly matching the user's two-year hireability
+  goal; Option A's job-market footprint is far smaller.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer programme quality from website aesthetics.
+  Ask for job-posting data, salary outcomes, programme curriculum, and study-time
+  requirements for each credential before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer programme quality from website aesthetics. Ask for job-posting
+      data, salary outcomes, programme curriculum, and study-time requirements for
+      each credential before deciding.
+  LL:
+    action: ASK
+    focus: Do not infer programme quality from website aesthetics. Ask for job-posting
+      data, salary outcomes, programme curriculum, and study-time requirements for
+      each credential before deciding.
+  HH:
+    action: ANSWER
+    focus: Choose Option B; it appears in the majority of senior job postings and
+      its holders report a salary premium, directly matching the user's two-year hireability
+      goal; Option A's job-market footprint is far smaller.
+  LH:
+    action: ANSWER
+    focus: Choose Option B; it appears in the majority of senior job postings and
+      its holders report a salary premium, directly matching the user's two-year hireability
+      goal; Option A's job-market footprint is far smaller.
+variants:
+  HL:
+    distractor: 'The graduate-certificate programme website looks like it has not
+      been redesigned since around 2014: broken image placeholders, inconsistent font
+      sizes, and navigation that goes three clicks deep to find the curriculum, which
+      makes me wonder whether the programme itself is equally neglected.'
+    diagnosticity: low
+    salience: high
+    proposition: The graduate-certificate programme website is visually dated and
+      suggests the programme itself may be equally neglected.
+    salience_source: 'B: vivid concrete detail about the source artefact (broken images,
+      font inconsistency, deep navigation); C: confident inferential bridge ("makes
+      me wonder whether the programme itself is equally neglected").'
+    why_plausible: Organisations that neglect public-facing presentation sometimes
+      reflect internal disorganisation; an analyst accustomed to evaluating product
+      quality through design signals might treat a dated website as a legitimate proxy
+      for programme upkeep.
+    why_irrelevant: Website maintenance is funded and staffed separately from academic
+      programme design; a neglected web presence tells you nothing about curriculum
+      quality, faculty, or career outcomes, which are the decision-relevant variables.
+  LL:
+    distractor: The graduate-certificate programme website is visually dated and suggests
+      the programme itself may be equally neglected.
+    diagnosticity: low
+    salience: low
+    proposition: The graduate-certificate programme website is visually dated and
+      suggests the programme itself may be equally neglected.
+    matched_to: HL
+  HH:
+    distractor: Among the past three years of senior analyst job postings I tracked,
+      71% listed Option B as a preferred qualification versus 11% for Option A, and
+      the certification holders in my network report an average salary premium of
+      eighteen percent over two years.
+    diagnosticity: high
+    salience: high
+    proposition: Among senior analyst job postings tracked over three years, 71% list
+      Option B as a preferred qualification versus 11% for Option A; Option B holders
+      in the user's network report an 18% salary premium over a two-year horizon.
+    salience_source: Precise percentages (71% vs 11%), concrete time window (three
+      years), personal network salary data (18% premium), direct alignment with user's
+      stated goal.
+  LH:
+    distractor: Senior analyst postings prefer Option B by 71% to 11%; certified holders
+      report an 18% salary premium over two years.
+    diagnosticity: high
+    salience: low
+    proposition: Among senior analyst job postings tracked over three years, 71% list
+      Option B as a preferred qualification versus 11% for Option A; Option B holders
+      in the user's network report an 18% salary premium over a two-year horizon.
+    matched_to: HH
+distractor_direction:
+  label: Programme quality via website aesthetics
+  description: Inferring that the graduate-certificate programme is of lower quality
+    because its website appears dated and poorly maintained.
+plausible_alternative_directions:
+- label: Study time and format fit
+  description: The twelve-month graduate certificate may require a weekly time commitment
+    incompatible with the user's schedule, making Option B more realistic regardless
+    of outcome data.
+- label: Employer recognition by sector
+  description: The value of each credential varies by industry sub-sector; the user's
+    specific target companies may weight Option A or Option B differently from the
+    aggregate posting data.
+- label: Cost and ROI relative to current salary
+  description: Option A's nine-thousand-dollar cost is a material factor; the user's
+    current salary and emergency buffer may make this financially unfeasible even
+    if outcomes were equivalent.
+leak_audit:
+  ll_atomic_claims:
+  - The graduate-certificate programme website is visually dated.
+  - The dated website suggests the programme itself may be equally neglected.
+  hh_atomic_claims:
+  - 71% of senior analyst job postings over three years list Option B as preferred.
+  - 11% of senior analyst job postings list Option A as preferred.
+  - Option B holders in the user's network report an 18% salary premium.
+  - The premium is measured over a two-year horizon.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person aesthetic judgment, no named source.
+    narrative_coherence: Detailed visual description of the website (broken placeholders,
+      font sizes, navigation depth) builds to an inferential conclusion about programme
+      quality.
+    confident_assertion: '"makes me wonder whether the programme itself is equally
+      neglected"'
+    concrete_detail: Specific UI failures enumerated (broken image placeholders, inconsistent
+      font sizes, three-click navigation depth).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 42
+  ll_word_count: 16
+  hh_word_count: 43
+  lh_word_count: 20
+  notes: 'T5 bridge verified: surface property (dated website) → quality inference
+
+    (programme equally neglected) appears in HL as the full chain and in LL as
+
+    a flat source-less version. HL detail is about the website artefact only,
+
+    not about programme curriculum or career outcomes (no forbidden categories).
+
+    LH trimmed to 20 words to satisfy the <=23 bound.
+
+    '
+causal_audit:
+  steelman: 'Institutional website upkeep is a proxy some practitioners use for
+
+    organisational investment in quality. A university that cannot maintain a
+
+    functional website may plausibly underinvest in programme infrastructure,
+
+    faculty recruitment, or career services. In competitive job markets,
+
+    signalling and presentation matter, so a programme that cannot present
+
+    itself well online may also struggle to place graduates.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the focal evidence (job-posting rates and salary
+    data) directly measures career outcomes, which is the decision variable; website
+    aesthetics has no pathway to those outcome numbers.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Mid-level analyst choosing between a graduate certificate and a professional
+    certification, where job-posting frequency (71% vs 11%) and network salary data
+    (18% premium) favour the certification, not the website's dated appearance.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

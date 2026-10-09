@@ -1,0 +1,8 @@
+{
+  "seed_id": "T2-013",
+  "verdict": "clean",
+  "xbase_span": "",
+  "focal_in_hh_lh": true,
+  "reasoning": "xbase contains only symptom description (HTTP 503 SlowDown errors) and a pathway-closure statement (bucket name and IAM credentials unchanged) that blocks the credential/account-restructuring mechanism — an intentional design device explicitly excluded from contamination by lens rule (a). The decisive focal evidence (32-shard parallelism refactor multiplying concurrent PUT requests past the per-prefix rate limit) appears nowhere in xbase; a practitioner reading xbase alone has no basis to conclusively reject the rebrand-distractor direction or identify the true cause. Both HH and LH variants carry the focal evidence explicitly via the 32-shard fan-out detail and per-prefix rate limit mechanism.",
+  "repair_hint": ""
+}

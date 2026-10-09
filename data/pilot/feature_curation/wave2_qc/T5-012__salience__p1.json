@@ -1,0 +1,12 @@
+{
+  "seed_id": "T5-012",
+  "credibility_score": 4,
+  "salience_delta_score": 4,
+  "template_fit": "fits",
+  "template_fit_notes": "The HL distractor presents a surface/aesthetic property (1990s website appearance) via a credible domain-matched source as a reason to suspect backup tool reliability, requiring the model to take a position on its relevance to data integrity — exactly the T5 recipe.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The xbase frames the question around backup corruption suspicion and the distractor is the only salient negative signal present in HL, so a model answering the user's concern must address the website observation rather than ignore it.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

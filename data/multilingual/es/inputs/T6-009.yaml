@@ -1,0 +1,94 @@
+seed_id: T6-009
+template: T6
+domain: technical_troubleshooting
+complexity: low
+xbase: Mi ratón inalámbrico ha comenzado a tener retrasos y saltos durante su uso
+  en los últimos días. El cursor titubea y los clics a veces no se registran. {DS}
+focal_diagnostic_feature: El indicador de batería del ratón muestra una barra restante.
+low_diagnostic_proposition: The user's previous mouse problems were generally caused
+  by dirt on the optical sensor.
+oracle_action: ANSWER
+oracle_focus: Replace or recharge the battery before taking the mouse apart.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to sensor-cleaning from memory. Ask for
+  battery level first.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to sensor-cleaning from memory. Ask for battery level first.
+  LL:
+    action: ASK
+    focus: Do not default to sensor-cleaning from memory. Ask for battery level first.
+  HH:
+    action: ANSWER
+    focus: Replace or recharge the battery before taking the mouse apart.
+  LH:
+    action: ANSWER
+    focus: Replace or recharge the battery before taking the mouse apart.
+variants:
+  HL:
+    distractor: Todos los problemas que he tenido antes con ratones eran por polvo
+      debajo del sensor óptico, así que ya estoy buscando un destornillador pequeño
+      para desmontar este.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous mouse problems were generally caused by dirt
+      on the optical sensor.
+    salience_source: familiar past fix, active disassembly impulse, vivid wording
+    why_plausible: Sensor dirt is a common and memorable mouse issue.
+    why_irrelevant: A one-bar battery directly explains wireless stutter and dropped
+      clicks better than an old sensor story.
+  LL:
+    distractor: Los problemas anteriores del ratón del usuario se atribuyeron generalmente
+      a la suciedad del sensor óptico.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous mouse problems were generally caused by dirt
+      on the optical sensor.
+    matched_to: HL
+  HH:
+    distractor: El indicador de batería está en una sola barra, y los saltos y los
+      fallos de clic comenzaron justo cuando llegó a ese nivel.
+    diagnosticity: high
+    salience: high
+    proposition: The mouse battery indicator shows one bar remaining.
+    salience_source: battery-level indicator
+  LH:
+    distractor: El indicador de batería del ratón muestra una barra restante.
+    diagnosticity: high
+    salience: low
+    proposition: The mouse battery indicator shows one bar remaining.
+    matched_to: HH
+distractor_direction:
+  label: Sensor óptico sucio
+  description: Investigar si el polvo o la suciedad en el sensor óptico está causando
+    el retraso y los movimientos perdidos del ratón.
+plausible_alternative_directions:
+- label: Interferencia inalámbrica
+  description: Otros dispositivos inalámbricos o la ubicación del receptor USB pueden
+    estar interfiriendo con la señal del ratón.
+- label: Problema de seguimiento en la superficie
+  description: La superficie del escritorio o la alfombrilla puede no ser detectada
+    de forma fiable por este sensor óptico.
+- label: Fallo del receptor USB
+  description: El receptor o el puerto puede estar suelto o fallando.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-009.yaml
+  source_xbase_sha256: 322c34546f4a9a30
+  translated_content_sha256: b4df8b6a7df82eb6
+  translation_notes: No culture-bound salience cues. Technical terms retained as-is
+    (USB, sensor óptico is established Spanish terminology). 'One lonely bar' in HH
+    rendered as 'una sola barra' preserving the vivid concreteness.

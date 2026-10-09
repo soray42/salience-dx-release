@@ -1,0 +1,13 @@
+{
+  "seed_id": "T2-013",
+  "my_own_diagnosis": "The 32-shard parallelism refactor multiplied concurrent PUT requests per prefix to a level that exceeds cloud storage per-prefix rate limits, producing 503 'SlowDown' responses; the rebrand timing is coincidental since unchanged bucket names and IAM credentials leave no infrastructure pathway for a marketing rebrand to cause storage throttling.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature supplies the precise causal mechanism (32x concurrent PUT fan-out exceeding per-prefix rate limits), which is sufficient for a competent practitioner to identify the correct direction and reject the rebrand coincidence.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracle mapping is correct: HL/LL (low-diagnostic distractor) → ASK with rebrand-dismissal rationale; HH/LH (high-diagnostic focal) → ANSWER with per-prefix rate remediation; low_diagnostic_oracle_focus correctly closes the rebrand pathway.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

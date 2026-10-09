@@ -1,0 +1,186 @@
+seed_id: T1-052
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our analytics warehouse on ClickHouse has a dashboard query that used to return
+  in under a second and now takes nearly thirty. It is a filtered aggregation over
+  an events table that has grown over the past few months. The query, the table schema,
+  and the cluster sizing are all unchanged, and CPU and memory on the nodes look comfortable
+  while the query runs. {DS}
+focal_diagnostic_feature: The query filters on a column that is not part of the table's
+  sorting key, so it now scans nearly every granule of a much larger table instead
+  of skipping with the primary index.
+low_diagnostic_proposition: A comparable ClickHouse slowdown at another shop was fixed
+  by switching the table from the Log engine to MergeTree.
+oracle_action: ANSWER
+oracle_focus: 'Address data skipping: the filter column is not in the sorting key
+  so the primary index cannot prune, forcing a near-full scan; add a suitable sorting
+  key, projection, or skip index for that filter.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not import the other shop's engine-swap fix. Ask which
+  columns are in the sorting key, whether the filter prunes granules, and how much
+  of the table the query reads.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not import the other shop's engine-swap fix. Ask which columns are in
+      the sorting key, whether the filter prunes granules, and how much of the table
+      the query reads.
+  LL:
+    action: ASK
+    focus: Do not import the other shop's engine-swap fix. Ask which columns are in
+      the sorting key, whether the filter prunes granules, and how much of the table
+      the query reads.
+  HH:
+    action: ANSWER
+    focus: 'Address data skipping: the filter column is not in the sorting key so
+      the primary index cannot prune, forcing a near-full scan; add a suitable sorting
+      key, projection, or skip index for that filter.'
+  LH:
+    action: ANSWER
+    focus: 'Address data skipping: the filter column is not in the sorting key so
+      the primary index cannot prune, forcing a near-full scan; add a suitable sorting
+      key, projection, or skip index for that filter.'
+variants:
+  HL:
+    distractor: Lubomír, a data engineer I trust from a previous job, told me they
+      had an almost identical ClickHouse slowdown and it turned out their events table
+      was on the Log engine; switching to MergeTree made the query instant, and he
+      was confident that was the root.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable ClickHouse slowdown at another shop was fixed by switching
+      the table from the Log engine to MergeTree.
+    salience_source: A — a trusted data engineer recounting a near-identical slowdown
+      with a definite fix lends the engine-swap story credibility.
+    why_plausible: Engine choice genuinely affects ClickHouse performance, and Log-vs-MergeTree
+      is a real lever, so the matching story tempts an engineer to check the engine
+      first.
+    why_irrelevant: This table is already MergeTree (it has a sorting key and primary
+      index); the slowdown comes from the filter not aligning with that key, which
+      an engine swap cannot address.
+  LL:
+    distractor: A comparable ClickHouse slowdown at another shop was fixed by switching
+      the table from the Log engine to MergeTree.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable ClickHouse slowdown at another shop was fixed by switching
+      the table from the Log engine to MergeTree.
+    matched_to: HL
+  HH:
+    distractor: The query filters on a column that is not in the table's sorting key,
+      so the primary index cannot prune by it; as the events table grew, the query
+      now reads nearly every granule and scans almost the whole table instead of skipping
+      past irrelevant parts.
+    diagnosticity: high
+    salience: high
+    proposition: The query filters on a column that is not part of the table's sorting
+      key, so it now scans nearly every granule of a much larger table instead of
+      skipping with the primary index.
+    salience_source: Concrete index mechanics (filter column absent from the sorting
+      key, granules unprunable, near-full scan) make the cause precise.
+  LH:
+    distractor: The filter column is not in the sorting key, so the primary index
+      cannot prune and the query scans nearly the whole enlarged table.
+    diagnosticity: high
+    salience: low
+    proposition: The query filters on a column that is not part of the table's sorting
+      key, so it now scans nearly every granule of a much larger table instead of
+      skipping with the primary index.
+    matched_to: HH
+distractor_direction:
+  label: Table engine choice
+  description: Investigating whether the table is on a slow engine and should be switched
+    to MergeTree to fix the slowdown.
+plausible_alternative_directions:
+- label: Background merge backlog
+  description: Whether unmerged parts have piled up so the query reads many small
+    parts.
+- label: Stale or missing statistics
+  description: Whether outdated metadata is leading the query to a poor execution
+    choice.
+leak_audit:
+  ll_atomic_claims:
+  - A comparable ClickHouse slowdown occurred at another shop.
+  - It was fixed by switching the table from the Log engine to MergeTree.
+  hh_atomic_claims:
+  - The query filters on a column that is not in the table's sorting key.
+  - The primary index therefore cannot prune by that filter.
+  - The query now reads nearly every granule, scanning almost the whole enlarged table.
+  hl_salience_dimensions:
+    source_credibility: Named data engineer (Lubomír) from a previous job describing
+      an almost identical slowdown.
+    narrative_coherence: Coherent account ending in the engine swap with a confident
+      conclusion.
+    confident_assertion: He was confident that was the root.
+    concrete_detail: Detail about the source's case (Log engine, MergeTree move, instant
+      query) only — no claim about this table's sorting key.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 46
+  ll_word_count: 19
+  hh_word_count: 46
+  lh_word_count: 24
+  notes: 'HL trimmed from 53 to 46 words: removed effort descriptor "for a week" (C1
+    violation — investigation duration is case content,
+
+    not source framing), removed "chased" (implies investigative effort), removed
+    "still" and "old" as redundant qualifiers,
+
+    changed "dashboard" to "query" for concision. All LL atomic claims preserved in
+    HL. LL word count corrected to 19 (was 18).
+
+    HH word count corrected to 46 (was 45). LH word count corrected to 24 (was 22).
+    xbase word count corrected to 64 (was 72).
+
+    LL carries only the engine-swap-fix claim from another shop. The named engineer
+    and his certainty are HL-only and about
+
+    the source''s case. xbase reports that the schema is unchanged and CPU/memory
+    are comfortable, withholding the
+
+    sorting-key/filter mismatch and the near-full-scan behaviour; the decisive granule-scan
+    fact lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A ClickHouse expert would note that engine choice is a real performance
+    determinant and that a table left on the
+
+    Log engine cannot use a primary index at all, so a matching slowdown fixed by
+    moving to MergeTree is a plausible
+
+    parallel worth checking. The defeater is the focal evidence: this table already
+    has a sorting key and primary
+
+    index (it is MergeTree), and the slowdown is that the query filters on a column
+    absent from that key, defeating
+
+    granule pruning as the table grew. An engine swap addresses tables that lack an
+    index entirely; here the index
+
+    exists and is simply unusable for this filter, so the engine story has no mechanism
+    to act on this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the table schema and cluster sizing are unchanged
+    and resources are comfortable, which together with the index-dependent symptom
+    implies an indexed MergeTree table; the decisive sorting-key/filter mismatch is
+    withheld to HH/LH so HL/LL cannot resolve the engine question.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A ClickHouse dashboard query slowing as data grows because the filter
+    column is not in the sorting key (no granule pruning), not the Log-to-MergeTree
+    engine swap a peer's war story suggests.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

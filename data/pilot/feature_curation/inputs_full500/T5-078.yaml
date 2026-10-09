@@ -1,0 +1,192 @@
+seed_id: T5-078
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I am restocking my cottage garden border with hardy perennials and have narrowed
+  it down to two garden centres. Both stock the same genera I need — salvias, echinaceas,
+  and geraniums — at similar prices per pot. I have room in my car for up to twelve
+  plants today. {DS}
+focal_diagnostic_feature: Squeezing pot bases at Centre B reveals dense white-tipped
+  healthy root systems that hold the compost together, while the same check at Centre
+  A shows tightly circled brown roots with no fresh growth, indicating severely root-bound
+  stock.
+low_diagnostic_proposition: Centre A's polished layout and clean labelling suggest
+  it maintains higher plant quality standards than Centre B.
+oracle_action: ANSWER
+oracle_focus: Choose Centre B; the root-ball check shows its plants are actively growing
+  with healthy root systems, while Centre A's stock is severely root-bound and unlikely
+  to establish well after planting.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer plant quality from display tidiness or label
+  presentation; ask for or perform a direct root-ball inspection on pots from each
+  centre before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer plant quality from display tidiness or label presentation;
+      ask for or perform a direct root-ball inspection on pots from each centre before
+      deciding.
+  LL:
+    action: ASK
+    focus: Do not infer plant quality from display tidiness or label presentation;
+      ask for or perform a direct root-ball inspection on pots from each centre before
+      deciding.
+  HH:
+    action: ANSWER
+    focus: Choose Centre B; the root-ball check shows its plants are actively growing
+      with healthy root systems, while Centre A's stock is severely root-bound and
+      unlikely to establish well after planting.
+  LH:
+    action: ANSWER
+    focus: Choose Centre B; the root-ball check shows its plants are actively growing
+      with healthy root systems, while Centre A's stock is severely root-bound and
+      unlikely to establish well after planting.
+variants:
+  HL:
+    distractor: Centre A is spotless — colour-coded labels, freshly swept paths, plants
+      grouped by genus on neat tables; the whole setup signals a level of care that
+      makes me trust the stock quality.
+    diagnosticity: low
+    salience: high
+    proposition: Centre A's polished layout and clean labelling suggest it maintains
+      higher plant quality standards than Centre B.
+    salience_source: B/C/D — vivid concrete detail about the presentation (colour-coded
+      labels, swept paths, genus grouping), confident first-person trust inference,
+      and narrative coherence of the observed-and-concluded sequence.
+    why_plausible: A well-organised, tidy garden centre plausibly signals staff attentiveness,
+      good stock rotation, and care for plant welfare — a busy gardener could reasonably
+      infer that presentation discipline correlates with stock health.
+    why_irrelevant: Tidy labelling and swept paths reflect retail presentation decisions,
+      not the timing of potting or root-space management; plants can be beautifully
+      displayed and severely root-bound simultaneously, and the root-ball check is
+      the direct diagnostic test that presentation cannot substitute for.
+  LL:
+    distractor: Centre A's polished layout and clean labelling suggest it maintains
+      higher plant quality standards than Centre B.
+    diagnosticity: low
+    salience: low
+    proposition: Centre A's polished layout and clean labelling suggest it maintains
+      higher plant quality standards than Centre B.
+    matched_to: HL
+  HH:
+    distractor: At Centre B, squeezing pot bases produces a firm compost-holding rootball
+      with dense white root tips — the plants have been potted recently and are actively
+      growing. At Centre A, the same squeeze reveals tightly circled brown roots that
+      fill the pot with no fresh growth visible.
+    diagnosticity: high
+    salience: high
+    proposition: Squeezing pot bases at Centre B reveals dense white-tipped healthy
+      root systems that hold the compost together, while the same check at Centre
+      A shows tightly circled brown roots with no fresh growth, indicating severely
+      root-bound stock.
+    salience_source: B/C — vivid tactile and visual detail (firm rootball, dense white
+      tips, circled brown roots), symmetrical test applied to both centres, concrete
+      contrast stated in confident declarative terms.
+  LH:
+    distractor: Centre B's plants have dense white-tipped healthy root systems; Centre
+      A's plants show severely root-bound circling roots with no fresh growth.
+    diagnosticity: high
+    salience: low
+    proposition: Squeezing pot bases at Centre B reveals dense white-tipped healthy
+      root systems that hold the compost together, while the same check at Centre
+      A shows tightly circled brown roots with no fresh growth, indicating severely
+      root-bound stock.
+    matched_to: HH
+distractor_direction:
+  label: display presentation as quality proxy
+  description: Treating Centre A's polished, well-organised retail presentation as
+    evidence of higher plant quality and better horticultural standards than Centre
+    B.
+plausible_alternative_directions:
+- label: plant variety availability
+  description: One centre may stock specific cultivars or colour forms of the desired
+    genera that better suit the border design, which would be a decisive factor at
+    equal quality.
+- label: staff horticultural expertise
+  description: The ability to get accurate planting advice from knowledgeable staff
+    is a live candidate advantage when establishing a mixed perennial border for the
+    first time.
+- label: return or exchange policy
+  description: A guarantee or replacement policy on plants that fail to establish
+    is a meaningful differentiator when buying a full border restocking at similar
+    prices.
+leak_audit:
+  ll_atomic_claims:
+  - Centre A's polished layout and clean labelling suggest it maintains higher plant
+    quality standards than Centre B.
+  hh_atomic_claims:
+  - At Centre B, squeezing pot bases produces a firm compost-holding rootball with
+    dense white root tips.
+  - Centre B's plants have been potted recently and are actively growing.
+  - At Centre A, the same squeeze reveals tightly circled brown roots.
+  - Centre A's roots fill the pot with no fresh growth visible.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person walk-through observation flows to a confident
+      trust conclusion in a single coherent sequence.
+    confident_assertion: '"signals a level of care that makes me trust the stock quality"
+      — strong confident inference from presentation to underlying quality.'
+    concrete_detail: Specific presentation elements named (colour-coded labels, freshly
+      swept paths, genus grouping on neat tables) as concrete detail about the retail
+      setting, not plant biology.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 47
+  hl_word_count: 31
+  ll_word_count: 17
+  hh_word_count: 46
+  lh_word_count: 21
+  notes: 'T5 bridge ("polished layout and clean labelling suggest higher plant quality
+
+    standards") appears in both HL and LL per C1 and self-check 13. HL adds only
+
+    vivid sensory specifics of the retail display and confident personal trust
+
+    inference. xbase specifies same genera at similar prices, keeping the
+
+    comparison clean. Root-ball check (the decisive diagnostic test) lives only
+
+    in HH/LH. No presentation details appear in xbase. No sensory distractor
+
+    about unrelated environmental setting in HL — the color-coded labels are the
+
+    diagnostic surface property being offered as evidence.
+
+    '
+causal_audit:
+  steelman: 'A senior horticulturalist could argue that well-organised stock management,
+
+    including genus grouping and clean labelling, correlates with attentive staff
+
+    who turn over stock regularly, which in turn reduces the likelihood of
+
+    root-bound plants sitting unsold too long. This is a plausible institutional-
+
+    quality argument: tidiness as a proxy for operational discipline that extends
+
+    to plant care. However, the root-ball check is a direct measurement that
+
+    supersedes any proxy inference — the correlation is population-level and
+
+    cannot override specimen-level evidence.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase specifies same genera at similar prices to
+    keep the comparison symmetric, but does not pre-answer the quality question. Decisive
+    root-health evidence lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing between two garden centres for perennial restocking turns
+    on a direct root-ball inspection showing Centre B has healthy active root growth
+    while Centre A's stock is severely root-bound, not on Centre A's polished retail
+    presentation that signals apparent quality.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

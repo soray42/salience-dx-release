@@ -1,0 +1,29 @@
+{
+  "seed_id": "T1-012",
+  "ll_claims_extracted": [
+    "An entity at another company had a consumer group with single-partition lag.",
+    "That lag was traced to synchronous database lookups per message."
+  ],
+  "hl_case_claims": [
+    "Their consumer group had the same single-partition lag symptom.",
+    "The cause was one consumer performing synchronous database lookups per message."
+  ],
+  "hl_source_claims": [
+    "The speaker is a senior platform engineer at a peer fintech.",
+    "They told the narrator directly (firsthand account).",
+    "This occurred last quarter.",
+    "They conducted a post-mortem to identify the root cause."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 37,
+    "ll": 16,
+    "xbase": 57,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

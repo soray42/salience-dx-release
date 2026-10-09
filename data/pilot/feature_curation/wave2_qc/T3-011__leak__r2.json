@@ -1,0 +1,28 @@
+{
+  "seed_id": "T3-011",
+  "ll_claims_extracted": [
+    "The App Store rejections are due to a missing or incomplete privacy manifest file."
+  ],
+  "hl_case_claims": [
+    "The App Store rejections are due to a missing or incomplete privacy manifest file."
+  ],
+  "hl_source_claims": [
+    "A person named Kwame told the user this.",
+    "Kwame is the user's senior architect.",
+    "Kwame asserted this confidently ('definitely').",
+    "Every iOS app rejection Kwame has seen in the past two years has come down to a missing or incomplete privacy manifest file.",
+    "Kwame has reviewed dozens of App Store submissions."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 43,
+    "ll": 14,
+    "xbase": 58,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

@@ -1,0 +1,12 @@
+{
+  "seed_id": "T1-016",
+  "credibility_score": 5,
+  "salience_delta_score": 5,
+  "template_fit": "fits",
+  "template_fit_notes": "HL is a named, domain-credentialed third-party war story symptom-matched to the renewal decision whose causal pathway (HELOC consolidation) is explicitly foreclosed by xbase.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The HL distractor is a direct factual claim about a peer's mortgage decision that a model must accept or dismiss; there is no sensory noise or aesthetic content permitting evasion.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

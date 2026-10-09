@@ -1,0 +1,107 @@
+seed_id: T6-001
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: El kernel de mi notebook de Jupyter se bloquea cuando ejecuto una celda específica
+  de carga de datos. Otros notebooks con datos más pequeños siguen funcionando. No
+  he modificado mi entorno de Python esta semana. {DS}
+focal_diagnostic_feature: La celda carga un CSV de 4 GB con pandas en un portátil
+  con 8 GB de RAM y el kernel muere en unos 10 segundos.
+low_diagnostic_proposition: The user's previous Jupyter crashes were attributed to
+  Anaconda installation corruption.
+oracle_action: ANSWER
+oracle_focus: This is likely memory exhaustion from loading the CSV; use chunking,
+  dtypes, Parquet/Arrow, or a machine with more RAM.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the previous Anaconda explanation automatically.
+  Ask what the failing cell loads and what memory is available.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the previous Anaconda explanation automatically. Ask what
+      the failing cell loads and what memory is available.
+  LL:
+    action: ASK
+    focus: Do not apply the previous Anaconda explanation automatically. Ask what
+      the failing cell loads and what memory is available.
+  HH:
+    action: ANSWER
+    focus: This is likely memory exhaustion from loading the CSV; use chunking, dtypes,
+      Parquet/Arrow, or a machine with more RAM.
+  LH:
+    action: ANSWER
+    focus: This is likely memory exhaustion from loading the CSV; use chunking, dtypes,
+      Parquet/Arrow, or a machine with more RAM.
+variants:
+  HL:
+    distractor: Cada vez que Jupyter se me ha bloqueado antes, era una instalación
+      rota de Anaconda, así que mi primer instinto es reinstalar todo de nuevo.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous Jupyter crashes were attributed to Anaconda installation
+      corruption.
+    salience_source: first-person pattern, repeated prior cause, drastic repair impulse
+    why_plausible: Availability of a familiar past fix makes it feel like the same
+      failure.
+    why_irrelevant: This crash is tied to a large data load, not a general environment
+      failure.
+  LL:
+    distractor: Los bloqueos anteriores de Jupyter para este usuario se atribuyeron
+      generalmente a problemas de instalación del entorno.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous Jupyter crashes were attributed to Anaconda installation
+      corruption.
+    matched_to: HL
+  HH:
+    distractor: La celda lee un CSV de 4 GB con pandas en un portátil con 8 GB de
+      RAM, y el kernel muere unos diez segundos después de iniciar la lectura.
+    diagnosticity: high
+    salience: high
+    proposition: The cell loads a 4GB CSV with pandas on an 8GB-RAM laptop and the
+      kernel dies within about 10 seconds.
+    salience_source: data-size to RAM mismatch
+  LH:
+    distractor: La celda fallida carga un CSV de 4 GB con pandas en una máquina con
+      8 GB de RAM y termina poco después de empezar.
+    diagnosticity: high
+    salience: low
+    proposition: The cell loads a 4GB CSV with pandas on an 8GB-RAM laptop and the
+      kernel dies within about 10 seconds.
+    matched_to: HH
+distractor_direction:
+  label: Corrupción de la instalación de Anaconda
+  description: Investigar si la instalación del entorno Python/Anaconda está rota
+    o corrupta.
+plausible_alternative_directions:
+- label: Problema del parser de CSV
+  description: La celda de carga de datos puede encontrar una línea malformada, un
+    problema de codificación o un error del parser.
+- label: Conflicto de versiones de paquetes
+  description: Un desajuste en las versiones de bibliotecas puede provocar que el
+    proceso del kernel se bloquee.
+- label: Cuello de botella de E/S en disco
+  description: Leer el CSV desde almacenamiento lento o remoto puede desestabilizar
+    el notebook.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-001.yaml
+  source_xbase_sha256: 2147c1bf909bdcff
+  translated_content_sha256: 26dc2337a6d91ff9
+  translation_notes: 'Technical terms (Jupyter, kernel, pandas, CSV, Anaconda, Python)
+    kept as-is per instrument. ''Portátil'' used for ''laptop'' (natural ES term).
+    HL first-person salience preserved: repeated prior cause + drastic repair impulse.
+    LH/HH order in the JSON follows the schema order (HL/LL/LH/HH); content correctly
+    matched.'

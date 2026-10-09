@@ -1,0 +1,8 @@
+{
+  "seed_id": "T3-016",
+  "verdict": "clean",
+  "xbase_span": "",
+  "focal_in_hh_lh": true,
+  "reasoning": "xbase establishes only income level (£19,000), work type (design), and the sole-trader-vs-limited-company decision context — it contains no reference to an accountant's cost-benefit analysis or professional indemnity insurance. The decisive focal evidence (accountant's case-specific confirmation that overhead exceeds corporation-tax savings, and existing PI coverage closing the liability pathway) lives exclusively in the HH and LH distractors, exactly as required. The seed's own causal_audit.pathway_closed_in_xbase field confirms this, and the repair_basis note records that a prior revision already moved the focal out of xbase.",
+  "repair_hint": ""
+}

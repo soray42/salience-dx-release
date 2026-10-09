@@ -1,0 +1,163 @@
+seed_id: T3-041
+template: T3
+domain: open_qa
+complexity: low
+xbase: I'm buying Wi-Fi for my new flat and stuck between a single good dual-band
+  router and a much pricier three-node mesh kit. I just want reliable internet for
+  my laptop, phone, and TV, and I'd rather not overspend. It's a small place and I
+  work from home some days, mostly on video calls and browsing, nothing heavy. {DS}
+focal_diagnostic_feature: The flat is a one-bedroom of about 45 m² where one well-placed
+  dual-band router covers everything, and the single router already supports the Wi-Fi
+  6 and WPA3 the user's devices use, so the three-node mesh would be redundant capacity.
+low_diagnostic_proposition: A relative who works in IT says you should always buy
+  the largest mesh system because more coverage is always better.
+oracle_action: ANSWER
+oracle_focus: Buy the single dual-band router; a 45 m² one-bedroom is fully covered
+  by one well-placed unit that already supports the user's Wi-Fi 6 and WPA3 devices,
+  so the three-node mesh adds cost without solving any coverage problem.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the "always buy the biggest mesh" rule.
+  Ask about the flat's size and layout and what the single router supports before
+  assuming more nodes are needed.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the "always buy the biggest mesh" rule. Ask about the flat's
+      size and layout and what the single router supports before assuming more nodes
+      are needed.
+  LL:
+    action: ASK
+    focus: Do not adopt the "always buy the biggest mesh" rule. Ask about the flat's
+      size and layout and what the single router supports before assuming more nodes
+      are needed.
+  HH:
+    action: ANSWER
+    focus: Buy the single dual-band router; a 45 m² one-bedroom is fully covered by
+      one well-placed unit that already supports the user's Wi-Fi 6 and WPA3 devices,
+      so the three-node mesh adds cost without solving any coverage problem.
+  LH:
+    action: ANSWER
+    focus: Buy the single dual-band router; a 45 m² one-bedroom is fully covered by
+      one well-placed unit that already supports the user's Wi-Fi 6 and WPA3 devices,
+      so the three-node mesh adds cost without solving any coverage problem.
+variants:
+  HL:
+    distractor: My cousin Trang, who manages networks for an office, waved off my
+      hesitation and said flatly that you always go for the biggest mesh you can afford,
+      because with Wi-Fi more coverage is simply always better and you never regret
+      the extra nodes.
+    diagnosticity: low
+    salience: high
+    proposition: A relative who works in IT says you should always buy the largest
+      mesh system because more coverage is always better.
+    salience_source: A/C — a relative who manages office networks asserting a confident
+      blanket buying rule.
+    why_plausible: Mesh systems do help large or awkward homes, and an IT relative's
+      flat rule sounds like authoritative shorthand.
+    why_irrelevant: The blanket 'more is always better' rule ignores this flat's small
+      size, where one router already covers everything; extra nodes solve a coverage
+      problem the user does not have.
+  LL:
+    distractor: A relative in IT says to always buy the largest mesh because more
+      coverage is always better.
+    diagnosticity: low
+    salience: low
+    proposition: A relative who works in IT says you should always buy the largest
+      mesh system because more coverage is always better.
+    matched_to: HL
+  HH:
+    distractor: Mapping it out, the flat is a 45 m² one-bedroom that one well-placed
+      router blankets end to end, and the single unit already does Wi-Fi 6 and WPA3,
+      exactly what my laptop, phone, and TV use; the three-node mesh would just be
+      two extra radios sitting idle in a space that doesn't need them.
+    diagnosticity: high
+    salience: high
+    proposition: The flat is a one-bedroom of about 45 m² where one well-placed dual-band
+      router covers everything, and the single router already supports the Wi-Fi 6
+      and WPA3 the user's devices use, so the three-node mesh would be redundant capacity.
+    salience_source: Concrete sizing (45 m² one-bedroom, one router covers it) plus
+      matched Wi-Fi 6/WPA3 support makes the mesh redundancy plain.
+  LH:
+    distractor: A 45 m² one-bedroom is fully covered by one dual-band router that
+      already supports the user's Wi-Fi 6 and WPA3 devices, so the mesh is redundant.
+    diagnosticity: high
+    salience: low
+    proposition: The flat is a one-bedroom of about 45 m² where one well-placed dual-band
+      router covers everything, and the single router already supports the Wi-Fi 6
+      and WPA3 the user's devices use, so the three-node mesh would be redundant capacity.
+    matched_to: HH
+distractor_direction:
+  label: Bigger-mesh-is-better rule
+  description: Treating an IT relative's blanket "always buy the largest mesh" advice
+    as the reason to pick the pricier kit.
+plausible_alternative_directions:
+- label: Future-proofing
+  description: Whether anticipated more demanding use later justifies buying the larger
+    system now.
+- label: Wall and layout obstacles
+  description: Whether the flat's specific walls or layout would actually defeat a
+    single router despite its size.
+- label: Feature differences
+  description: Whether the mesh kit offers control or security features the user genuinely
+    wants beyond coverage.
+leak_audit:
+  ll_atomic_claims:
+  - A relative in IT says to always buy the largest mesh.
+  - The relative's reason is that more coverage is always better.
+  hh_atomic_claims:
+  - The flat is a 45 m² one-bedroom that one well-placed router covers end to end.
+  - The single router already supports Wi-Fi 6 and WPA3, which the user's devices
+    use.
+  - The three-node mesh would be redundant capacity in this space.
+  hl_salience_dimensions:
+    source_credibility: Relative (cousin Trang) who manages office networks, giving
+      a confident buying rule.
+    narrative_coherence: A clean, decisive blanket statement of how to choose Wi-Fi
+      gear.
+    confident_assertion: She said flatly you always go for the biggest mesh you can
+      afford.
+    concrete_detail: Detail about her managing office networks — about the source's
+      authority, not this flat's needs.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 42
+  ll_word_count: 17
+  hh_word_count: 48
+  lh_word_count: 25
+  notes: 'xbase states the place is small and the use is light (symptoms/context)
+    but withholds the exact size and the
+
+    single router''s Wi-Fi 6/WPA3 support, which decide it and live only in HH/LH.
+    The authority offers a generic
+
+    rule, not an analysis of this flat.
+
+    '
+causal_audit:
+  steelman: 'A network manager might argue mesh future-proofs against later needs
+    and avoids buyer''s remorse, so erring large
+
+    is prudent. But that is a generic heuristic, not a read of this 45 m² one-bedroom,
+    which a single capable router
+
+    already covers with the right standards; buying three nodes solves no problem
+    the user has and only adds cost.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the authority gives a blanket rule rather than engaging
+    this flat's size or the single router's capabilities.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Choosing Wi-Fi for a small 45 m² flat where one capable router suffices,
+    against an IT relative's blanket 'always buy the biggest mesh' rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

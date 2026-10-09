@@ -1,0 +1,206 @@
+seed_id: T5-025
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: Our integration with a third-party REST API has started returning 400 Bad Request
+  on every POST request this week. The same endpoint worked correctly six months ago.
+  We have not changed the integration code recently and our API credentials are still
+  valid. The provider has confirmed that their published API contract is unchanged.
+  {DS}
+focal_diagnostic_feature: 'The API error response body states ''Content-Type must
+  be application/json''; the client is sending Content-Type: application/x-www-form-urlencoded.'
+low_diagnostic_proposition: The provider's API documentation looks outdated, suggesting
+  the API may have undocumented breaking changes causing the 400 errors.
+oracle_action: ANSWER
+oracle_focus: Update the request Content-Type header to application/json and ensure
+  the POST body is serialised as JSON rather than form-encoded.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer undocumented breaking changes from documentation
+  aesthetics. Ask for the exact error response body and the Content-Type header the
+  client is sending.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer undocumented breaking changes from documentation aesthetics.
+      Ask for the exact error response body and the Content-Type header the client
+      is sending.
+  LL:
+    action: ASK
+    focus: Do not infer undocumented breaking changes from documentation aesthetics.
+      Ask for the exact error response body and the Content-Type header the client
+      is sending.
+  HH:
+    action: ANSWER
+    focus: Update the request Content-Type header to application/json and ensure the
+      POST body is serialised as JSON rather than form-encoded.
+  LH:
+    action: ANSWER
+    focus: Update the request Content-Type header to application/json and ensure the
+      POST body is serialised as JSON rather than form-encoded.
+variants:
+  HL:
+    distractor: The provider's Swagger docs are years out of date — broken example
+      snippets, deprecated endpoints still listed as current, and a changelog that
+      ends in 2022 — suggesting the API itself is poorly maintained and the 400s may
+      reflect undocumented breaking changes nobody bothered to announce.
+    diagnosticity: low
+    salience: high
+    proposition: The provider's API documentation looks outdated, suggesting the API
+      may have undocumented breaking changes causing the 400 errors.
+    salience_source: B/C — three specific observations about the docs state in an
+      indignant confident first-person register ('nobody bothered to announce') that
+      implies the observer inspected the documentation thoroughly.
+    why_plausible: When a previously working integration breaks without a known code
+      change, undocumented API changes on the provider side are a genuine hypothesis;
+      neglected documentation does correlate loosely with neglected change communication.
+    why_irrelevant: The API error body provides a literal machine-readable explanation
+      of the 400 cause; the Content-Type mismatch is a client-side misconfiguration
+      that the documentation aesthetic cannot inform.
+  LL:
+    distractor: The provider's API documentation looks outdated, suggesting the API
+      may have undocumented breaking changes causing the 400 errors.
+    diagnosticity: low
+    salience: low
+    proposition: The provider's API documentation looks outdated, suggesting the API
+      may have undocumented breaking changes causing the 400 errors.
+    matched_to: HL
+  HH:
+    distractor: 'The error response body returns the message ''Content-Type must be
+      application/json'' on every failing POST; inspecting the outgoing request headers
+      shows the client is sending Content-Type: application/x-www-form-urlencoded
+      instead.'
+    diagnosticity: high
+    salience: high
+    proposition: 'The API error response body states ''Content-Type must be application/json'';
+      the client is sending Content-Type: application/x-www-form-urlencoded.'
+    salience_source: B — verbatim error message from the API response paired with
+      a concrete header value from the outgoing request, making the mismatch immediately
+      legible without any inference.
+  LH:
+    distractor: 'The API error body says ''Content-Type must be application/json'';
+      the client is sending Content-Type: application/x-www-form-urlencoded.'
+    diagnosticity: high
+    salience: low
+    proposition: 'The API error response body states ''Content-Type must be application/json'';
+      the client is sending Content-Type: application/x-www-form-urlencoded.'
+    matched_to: HH
+distractor_direction:
+  label: undocumented provider API change
+  description: Investigating whether the third-party API provider silently changed
+    its contract or behaviour, with documentation neglect as evidence of poor change
+    communication.
+plausible_alternative_directions:
+- label: authentication or credential expiry
+  description: The API credentials or a signed token may have expired or been revoked
+    by the provider, causing the 400 rather than a 401 if the provider conflates validation
+    errors.
+- label: provider rate-limit or quota enforcement
+  description: The provider may have introduced or lowered a request-rate or quota
+    limit and is returning 400 instead of 429, causing failures that look like a validation
+    error but are actually throughput enforcement.
+- label: library or dependency update
+  description: A transitive dependency update in the integration stack may have silently
+    changed how the HTTP client serialises and sets headers, without the integration
+    code itself being modified.
+leak_audit:
+  ll_atomic_claims:
+  - The provider's API documentation looks outdated.
+  - This outdated appearance suggests the API may have undocumented breaking changes
+    causing the 400 errors.
+  hh_atomic_claims:
+  - The API error response body contains the message 'Content-Type must be application/json'.
+  - 'The client is sending Content-Type: application/x-www-form-urlencoded.'
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Three enumerated specific observations about documentation
+      state in a composed, slightly indignant first-person voice with a clear inferential
+      bridge.
+    confident_assertion: '''Nobody bothered to announce'' — confident, opinionated
+      phrasing that signals direct inspection.'
+    concrete_detail: Broken example snippets, deprecated endpoints, 2022 changelog
+      — these are observations about the documentation surface, not claims about the
+      API's runtime behaviour.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 53
+  hl_word_count: 44
+  ll_word_count: 18
+  hh_word_count: 28
+  lh_word_count: 15
+  notes: 'T5 bridge check: HL states ''suggesting the API itself is poorly maintained
+    and the
+
+    400s may reflect undocumented breaking changes nobody bothered to announce.''
+    LL states
+
+    ''suggesting the API may have undocumented breaking changes causing the 400 errors.''
+
+    Both cells carry the inferential bridge (documentation appearance -> API reliability
+
+    conclusion) per C1 self-check 13.
+
+    HH/LH diff: LH covers both HH claims (verbatim error message, outgoing Content-Type
+
+    header value) with no additions. Clean.
+
+    QC repair: replaced plausible_alternative_directions[1] (''request body schema
+    change'')
+
+    which subsumed the distractor (''undocumented provider API change'') — a schema
+    change
+
+    IS a provider-side contract change, violating C7 mutual-exclusivity. Replacement
+
+    (''provider rate-limit or quota enforcement'') is mechanistically orthogonal:
+    it is a
+
+    throughput-enforcement failure, not a contract or header-format change, and is
+    a
+
+    genuinely live hypothesis from xbase (sudden 400s with no client code change).
+
+    '
+causal_audit:
+  steelman: 'When a previously working integration breaks without any code change
+    on the client
+
+    side, a provider-side API change is the most natural first hypothesis. Outdated
+
+    documentation is a genuine (if imperfect) proxy for operational neglect, and providers
+
+    that do not maintain their docs sometimes also do not notify integrators of breaking
+
+    changes. A 400 Bad Request with no code change on the client could plausibly result
+
+    from the provider adding a required field, changing an enum value, or tightening
+
+    header validation. However, the API error response body provides an explicit,
+
+    machine-readable statement of the exact failure reason. The message ''Content-Type
+
+    must be application/json'' is not ambiguous; it identifies a client-side header
+
+    misconfiguration, not a schema change, and is present regardless of what the
+
+    documentation looks like.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: provider confirmed the API contract is unchanged, ruling
+    out the undocumented-provider-change hypothesis without naming the client-side
+    Content-Type cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Third-party REST API returning 400 Bad Request because the client sends
+    form-encoded Content-Type instead of application/json; distracted by the provider's
+    outdated API documentation.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator
+  generator: generator_B
+  generation_mode: generator_B_batches

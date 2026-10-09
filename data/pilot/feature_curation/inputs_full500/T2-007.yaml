@@ -1,0 +1,93 @@
+seed_id: T2-007
+template: T2
+domain: open_qa
+complexity: high
+xbase: I'm deciding whether to convert my traditional IRA to a Roth IRA this year.
+  The balance is about $180,000, retirement is roughly 15 years away, and I would
+  pay the conversion tax from a taxable brokerage account. {DS}
+focal_diagnostic_feature: The user's marginal tax rate is higher this year than their
+  projected retirement marginal rate.
+low_diagnostic_proposition: The question arose during news coverage about possible
+  retirement-account legislation.
+oracle_action: ANSWER
+oracle_focus: A full conversion this year is unfavourable in the simple bracket comparison;
+  consider waiting for lower-income years or modelling a ladder.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let speculative news set the answer. Ask for current
+  and expected future tax brackets before judging the conversion.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let speculative news set the answer. Ask for current and expected
+      future tax brackets before judging the conversion.
+  LL:
+    action: ASK
+    focus: Do not let speculative news set the answer. Ask for current and expected
+      future tax brackets before judging the conversion.
+  HH:
+    action: ANSWER
+    focus: A full conversion this year is unfavourable in the simple bracket comparison;
+      consider waiting for lower-income years or modelling a ladder.
+  LH:
+    action: ANSWER
+    focus: A full conversion this year is unfavourable in the simple bracket comparison;
+      consider waiting for lower-income years or modelling a ladder.
+variants:
+  HL:
+    distractor: This only came up because last week every finance headline seemed
+      to be shouting about Congress changing retirement-account rules.
+    diagnosticity: low
+    salience: high
+    proposition: The question arose during news coverage about possible retirement-account
+      legislation.
+    salience_source: temporal link to intense news cycle
+    why_plausible: Pending legislation can feel urgent and action-forcing.
+    why_irrelevant: The disclosed bracket spread is the decision-relevant fact; generic
+      news does not change that arithmetic.
+  LL:
+    distractor: The decision arose during media discussion of possible retirement-account
+      legislation.
+    diagnosticity: low
+    salience: low
+    proposition: The question arose during news coverage about possible retirement-account
+      legislation.
+    matched_to: HL
+  HH:
+    distractor: This year I'm in a 32% marginal bracket, while my retirement projection
+      is about 22%, so converting now means paying roughly ten extra tax points per
+      dollar.
+    diagnosticity: high
+    salience: high
+    proposition: The user's marginal tax rate is higher this year than their projected
+      retirement marginal rate.
+    salience_source: tax-rate spread
+  LH:
+    distractor: Current marginal tax rate is about 32% and projected retirement marginal
+      rate is about 22%.
+    diagnosticity: high
+    salience: low
+    proposition: The user's marginal tax rate is higher this year than their projected
+      retirement marginal rate.
+    matched_to: HH
+distractor_direction:
+  label: Legislative-change concern
+  description: Investigating whether possible retirement-account legislation should
+    drive the Roth conversion timing.
+plausible_alternative_directions:
+- label: Portfolio liquidity impact
+  description: Whether using taxable funds to pay conversion tax creates liquidity
+    or investment-allocation problems.
+- label: Conversion ladder timing
+  description: Whether spreading conversions across lower-income years would produce
+    better tax outcomes.
+- label: Estate-planning objective
+  description: Whether heirs’ tax treatment or legacy goals make conversion attractive
+    despite bracket costs.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

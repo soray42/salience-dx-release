@@ -1,0 +1,173 @@
+seed_id: T6-038
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our Apache Airflow DAG that orchestrates a multi-step ML feature pipeline has
+  been running two to three times slower than it used to, starting about ten days
+  ago. Individual tasks still succeed and no SLA alerts have fired. We have not changed
+  the Airflow executor version. {DS}
+focal_diagnostic_feature: Task logs show that XCom push and pull operations now account
+  for over 60% of each task's wall time, and the XCom payloads being passed between
+  tasks grew from a few kilobytes to around 180 MB after a recent feature-set expansion.
+low_diagnostic_proposition: The user's previous Airflow slowdowns were generally caused
+  by executor resource contention from too many concurrently scheduled DAG runs.
+oracle_action: ANSWER
+oracle_focus: Move the large intermediate data out of XCom — use a shared object store
+  or database — and pass only a reference key through XCom; the serialisation overhead
+  at 180 MB per task transition is the bottleneck.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the prior executor-contention diagnosis.
+  Ask for per-task wall-time breakdowns and whether XCom payload sizes have changed
+  recently.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the prior executor-contention diagnosis. Ask for per-task
+      wall-time breakdowns and whether XCom payload sizes have changed recently.
+  LL:
+    action: ASK
+    focus: Do not apply the prior executor-contention diagnosis. Ask for per-task
+      wall-time breakdowns and whether XCom payload sizes have changed recently.
+  HH:
+    action: ANSWER
+    focus: Move the large intermediate data out of XCom — use a shared object store
+      or database — and pass only a reference key through XCom; the serialisation
+      overhead at 180 MB per task transition is the bottleneck.
+  LH:
+    action: ANSWER
+    focus: Move the large intermediate data out of XCom — use a shared object store
+      or database — and pass only a reference key through XCom; the serialisation
+      overhead at 180 MB per task transition is the bottleneck.
+variants:
+  HL:
+    distractor: Every time this DAG has slowed down on me before, it turned out we
+      had too many DAG runs queued up at once and the workers were fighting over slots,
+      so that is my first instinct here.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous Airflow slowdowns were generally caused by executor
+      resource contention from too many concurrently scheduled DAG runs.
+    salience_source: B — clear chronological personal history of a repeated pattern
+      with a specific mechanism; C — 'every time', 'turned out', 'first instinct'
+      — confident and definitive.
+    why_plausible: Executor slot contention is a well-known Airflow performance cause
+      and first-person operational history lends it strong credibility.
+    why_irrelevant: Individual tasks still succeed without errors and no SLA alerts
+      have fired, which is inconsistent with slot contention (which causes queue delays
+      or failures); the focal evidence ties slowdown to XCom serialisation overhead
+      from a payload size change.
+  LL:
+    distractor: Previous Airflow slowdowns for this user were generally caused by
+      executor resource contention from too many concurrent DAG runs.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous Airflow slowdowns were generally caused by executor
+      resource contention from too many concurrently scheduled DAG runs.
+    matched_to: HL
+  HH:
+    distractor: Task logs show XCom push and pull taking over 60% of each task's wall
+      time; cross-referencing the feature-set changelog, the XCom payloads grew from
+      a few kilobytes to around 180 MB after the feature expansion two weeks ago —
+      the serialisation and database round-trips at that size dominate execution.
+    diagnosticity: high
+    salience: high
+    proposition: Task logs show that XCom push and pull operations now account for
+      over 60% of each task's wall time, and the XCom payloads being passed between
+      tasks grew from a few kilobytes to around 180 MB after a recent feature-set
+      expansion.
+    salience_source: B/C — specific percentage (60%), precise payload sizes (few KB
+      → 180 MB), and causal linkage to the feature-set changelog with a tight timeline.
+  LH:
+    distractor: XCom operations account for over 60% of each task's wall time, and
+      payloads grew from a few kilobytes to about 180 MB after the feature-set expansion.
+    diagnosticity: high
+    salience: low
+    proposition: Task logs show that XCom push and pull operations now account for
+      over 60% of each task's wall time, and the XCom payloads being passed between
+      tasks grew from a few kilobytes to around 180 MB after a recent feature-set
+      expansion.
+    matched_to: HH
+distractor_direction:
+  label: Executor slot contention
+  description: Investigating whether too many concurrent DAG runs are competing for
+    executor worker slots and causing the pipeline slowdown.
+plausible_alternative_directions:
+- label: Database metadata store saturation
+  description: The Airflow metadata database may be experiencing slow queries as DAG
+    run history grows
+  adding overhead to task scheduling.: null
+- label: Worker node resource pressure
+  description: Memory or CPU pressure on Airflow worker nodes from an unrelated workload
+    co-located on the same machines.
+- label: Upstream data volume growth
+  description: The source dataset processed by the pipeline may have grown
+  causing individual computation tasks to take longer.: null
+leak_audit:
+  ll_atomic_claims:
+  - Previous Airflow slowdowns for this user were generally caused by executor resource
+    contention from too many concurrent DAG runs.
+  hh_atomic_claims:
+  - XCom push and pull operations account for over 60% of each task's wall time.
+  - XCom payloads grew from a few kilobytes to around 180 MB.
+  - The payload growth occurred after the feature-set expansion two weeks ago.
+  - The serialisation and database round-trips at 180 MB dominate execution.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clear chronological personal-history pattern with specific
+      mechanism named.
+    confident_assertion: '''every time'', ''turned out'', ''first instinct'' — strong
+      confident framing.'
+    concrete_detail: N/A — no case-specific detail added.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 69
+  hl_word_count: 35
+  ll_word_count: 18
+  hh_word_count: 58
+  lh_word_count: 22
+  notes: 'C4 check: xbase mentions individual tasks succeed and no SLA alerts fired
+    — this forecloses the slot-contention pathway (which causes queue delays) without
+    naming the XCom cause.
+
+    C1: HL adds only personal-history framing and confident assertion over LL — no
+    sizes or percentages added.
+
+    HH/LH atomic claims match. HL:LL = 35:18 = 1.94 ≤ 4. HH:LH = 58:22 = 2.64 ≤ 4.
+
+    Steelman: executor contention could in theory cause slowdowns without failure
+    if the queue backs up gradually. Rebuttal: xbase says tasks still succeed individually
+    and no SLA has fired, which structurally conflicts with contention at a severity
+    level that doubles or triples wall time. The focal evidence (XCom 180MB serialisation
+    consuming 60% of time) provides a precise mechanism.
+
+    '
+causal_audit:
+  steelman: 'A practitioner could argue: executor slot contention can manifest as
+    gradual slowdowns without complete failures if concurrency is capped just below
+    the critical level, causing tasks to wait in queue rather than fail. If max_active_runs
+    was recently increased by another team member, this would be worth checking. This
+    is a plausible first investigation step. However, xbase states no executor version
+    change and individual tasks still succeed without errors — if contention were
+    causing 2-3x slowdown, we would expect queue depth metrics to reflect this and
+    some SLA events to have fired. The focal evidence (XCom serialisation at 180 MB
+    consuming 60% of task time) is a precise, timing-consistent explanation that slot
+    contention cannot explain.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Tasks still succeed individually and no SLA alerts have
+    fired — forecloses the slot-contention pathway without naming XCom as the cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Airflow ML feature pipeline 2-3x slower — availability bias toward
+    executor slot contention, actual root cause is XCom payload grown to 180 MB causing
+    serialisation overhead.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

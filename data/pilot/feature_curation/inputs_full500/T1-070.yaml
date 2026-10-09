@@ -1,0 +1,179 @@
+seed_id: T1-070
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our backend service fails its TLS handshake when one particular partner client
+  connects to it, while our own browsers and our test harness reach the same endpoint
+  over HTTPS without complaint. The partner reports a generic certificate validation
+  error and the connection is dropped before any application data flows. Our certificate
+  is current and was issued by a well-known public CA. We did not change the certificate
+  or the server configuration when this began. {DS}
+focal_diagnostic_feature: A handshake capture shows the server presents only its leaf
+  certificate and omits the intermediate, so clients without that intermediate cached
+  cannot build a path to the trusted root.
+low_diagnostic_proposition: A similar TLS validation failure elsewhere was caused
+  by an expired root certificate in the client's trust store.
+oracle_action: ANSWER
+oracle_focus: Fix the server to send the full chain including the intermediate certificate;
+  it currently presents only the leaf, so clients lacking that intermediate cannot
+  build a path to the root and reject the handshake.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the outside expired-root story. Ask what
+  certificates the server actually presents in the handshake and whether the chain
+  includes the intermediate.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the outside expired-root story. Ask what certificates the
+      server actually presents in the handshake and whether the chain includes the
+      intermediate.
+  LL:
+    action: ASK
+    focus: Do not adopt the outside expired-root story. Ask what certificates the
+      server actually presents in the handshake and whether the chain includes the
+      intermediate.
+  HH:
+    action: ANSWER
+    focus: Fix the server to send the full chain including the intermediate certificate;
+      it currently presents only the leaf, so clients lacking that intermediate cannot
+      build a path to the root and reject the handshake.
+  LH:
+    action: ANSWER
+    focus: Fix the server to send the full chain including the intermediate certificate;
+      it currently presents only the leaf, so clients lacking that intermediate cannot
+      build a path to the root and reject the handshake.
+variants:
+  HL:
+    distractor: Andreas, who manages PKI at a vendor we work with, told me he burned
+      a whole afternoon on an identical-looking TLS validation error last month, and
+      it came down to an expired root certificate sitting in the connecting client's
+      trust store, which made every chain fail to validate.
+    diagnosticity: low
+    salience: high
+    proposition: A similar TLS validation failure elsewhere was caused by an expired
+      root certificate in the client's trust store.
+    salience_source: A — a named PKI manager at a partner vendor recounting a first-hand
+      incident lends strong domain credibility.
+    why_plausible: An expired root in a client trust store genuinely breaks chain
+      validation, so for an on-call the story matches the symptom closely.
+    why_irrelevant: Browsers and the test harness validate the same endpoint fine,
+      so the trusted root is current; the failure is the server omitting the intermediate,
+      not a client-side expired root.
+  LL:
+    distractor: A similar TLS validation failure elsewhere was caused by an expired
+      root certificate in the client's trust store.
+    diagnosticity: low
+    salience: low
+    proposition: A similar TLS validation failure elsewhere was caused by an expired
+      root certificate in the client's trust store.
+    matched_to: HL
+  HH:
+    distractor: I captured the handshake and the server only sends its own leaf certificate;
+      the intermediate is missing from what it presents. Clients that happen to have
+      that intermediate cached succeed, but the partner, who does not, cannot build
+      a path up to the trusted root and aborts.
+    diagnosticity: high
+    salience: high
+    proposition: A handshake capture shows the server presents only its leaf certificate
+      and omits the intermediate, so clients without that intermediate cached cannot
+      build a path to the trusted root.
+    salience_source: Concrete handshake capture showing the leaf-only presentation
+      makes the missing-intermediate cause precise and observable.
+  LH:
+    distractor: The server presents only its leaf certificate, omitting the intermediate,
+      so clients lacking it cannot build a path to the root.
+    diagnosticity: high
+    salience: low
+    proposition: A handshake capture shows the server presents only its leaf certificate
+      and omits the intermediate, so clients without that intermediate cached cannot
+      build a path to the trusted root.
+    matched_to: HH
+distractor_direction:
+  label: Client expired-root trust store
+  description: Investigating whether the connecting client's trust store contains
+    an expired or outdated root certificate that breaks chain validation.
+plausible_alternative_directions:
+- label: Cipher or protocol mismatch
+  description: Whether the partner client and server fail to negotiate a common TLS
+    version or cipher suite.
+- label: SNI or hostname mismatch
+  description: Whether the partner reaches a virtual host that serves a certificate
+    for a different name.
+leak_audit:
+  ll_atomic_claims:
+  - A similar TLS validation failure occurred elsewhere.
+  - It was caused by an expired root certificate in the client's trust store.
+  hh_atomic_claims:
+  - A handshake capture shows the server presents only its leaf certificate.
+  - The intermediate certificate is omitted from what the server presents.
+  - Clients without that intermediate cached cannot build a path to the trusted root.
+  hl_salience_dimensions:
+    source_credibility: Named PKI manager (Andreas) at a partner vendor recounting
+      a first-hand incident.
+    narrative_coherence: Coherent burned-an-afternoon-then-found-it arc.
+    confident_assertion: Told me ... it came down to — direct, unhedged report.
+    concrete_detail: Detail about the source's incident (their afternoon, last month,
+      the client trust store) only — no claim about this server's presented chain.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 79
+  hl_word_count: 45
+  ll_word_count: 21
+  hh_word_count: 47
+  lh_word_count: 21
+  notes: 'LL carries only the expired-root claim; Andreas, the vendor, last month,
+    and his afternoon are HL-only and about
+
+    the source. xbase states the symptom (one partner fails, browsers and test harness
+    succeed, cert current from a
+
+    public CA, no config change) but withholds the handshake capture, so HL/LL cannot
+    resolve it. The decisive
+
+    leaf-only/missing-intermediate fact lives only in HH/LH. The fact that browsers
+    succeed is symptom context, not
+
+    the affirmative cause.
+
+    '
+causal_audit:
+  steelman: 'A PKI engineer could argue that an expired root in the connecting client''s
+    trust store is a textbook cause of a
+
+    generic certificate validation error: if the anchor the client uses to terminate
+    the chain has lapsed, every
+
+    presented chain fails to validate and the client drops the connection before application
+    data, matching the
+
+    symptom exactly. This is a real cause-class. But it cannot fit THIS case: xbase
+    states our own browsers and test
+
+    harness validate the same endpoint without complaint, which they could not do
+    if the relevant root were expired,
+
+    and the focal capture shows the server itself omits the intermediate. The expired-root
+    pathway is excluded by the
+
+    other clients'' success and the server-side chain gap.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states browsers and the test harness reach the same
+    endpoint over HTTPS without complaint, foreclosing an expired-trusted-root cause
+    without naming the chain gap; the decisive missing-intermediate fact lives only
+    in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A partner's TLS handshake failure caused by the server presenting a
+    leaf-only chain with no intermediate, not a peer's expired-root-in-trust-store
+    story.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

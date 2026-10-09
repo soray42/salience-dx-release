@@ -1,0 +1,30 @@
+{
+  "seed_id": "T1-015",
+  "ll_claims_extracted": [
+    "Someone else's tomato plants had lower-leaf yellowing",
+    "The cause of their yellowing was attributed to overly alkaline soil",
+    "The alkaline soil blocked iron uptake"
+  ],
+  "hl_case_claims": [
+    "Their plants had lower-leaf yellowing",
+    "The cause turned out to be soil that had gone too alkaline",
+    "The tomatoes couldn't take up iron properly"
+  ],
+  "hl_source_claims": [
+    "Andrei is a named individual",
+    "Andrei runs the community garden two streets over",
+    "Andrei told the user this directly (first-person report)"
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 31,
+    "ll": 17,
+    "xbase": 60,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

@@ -1,0 +1,182 @@
+seed_id: T5-062
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I am choosing between two cast iron skillets at a kitchen supply store. The
+  first costs €65 and has a glassy, mirror-like surface. The second costs €38 and
+  looks matte and dark brown. I cook eggs and sear meat most mornings and want a pan
+  that will last and perform reliably. {DS}
+focal_diagnostic_feature: The €65 pan's glassy surface is a factory-applied floor
+  wax that burns off in the first use and leaves bare unseasoned iron, while the €38
+  pan has ten years of documented cooking use and multiple independent reviews confirming
+  smooth non-stick performance.
+low_diagnostic_proposition: The €65 pan's glassy surface suggests it is exceptionally
+  well seasoned and should cook eggs without sticking.
+oracle_action: ANSWER
+oracle_focus: Choose the €38 pan; its decade of real cooking use and confirmed non-stick
+  reviews are the reliable indicators of performance, and the €65 pan's factory glaze
+  will burn off immediately, leaving bare iron to re-season from scratch.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer seasoning quality from surface appearance
+  alone; ask what the surface finish is made of and whether there are user reviews
+  or independent tests before judging either pan.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer seasoning quality from surface appearance alone; ask what
+      the surface finish is made of and whether there are user reviews or independent
+      tests before judging either pan.
+  LL:
+    action: ASK
+    focus: Do not infer seasoning quality from surface appearance alone; ask what
+      the surface finish is made of and whether there are user reviews or independent
+      tests before judging either pan.
+  HH:
+    action: ANSWER
+    focus: Choose the €38 pan; its decade of real cooking use and confirmed non-stick
+      reviews are the reliable indicators of performance, and the €65 pan's factory
+      glaze will burn off immediately, leaving bare iron to re-season from scratch.
+  LH:
+    action: ANSWER
+    focus: Choose the €38 pan; its decade of real cooking use and confirmed non-stick
+      reviews are the reliable indicators of performance, and the €65 pan's factory
+      glaze will burn off immediately, leaving bare iron to re-season from scratch.
+variants:
+  HL:
+    distractor: The €65 pan has an almost liquid glassy shine that my eye keeps going
+      back to, and a surface that perfect has to mean it is exceptionally well seasoned
+      and ready to cook eggs without sticking.
+    diagnosticity: low
+    salience: high
+    proposition: The €65 pan's glassy surface suggests it is exceptionally well seasoned
+      and should cook eggs without sticking.
+    salience_source: 'Dimension B (narrative coherence): fluent first-person sensory
+      engagement with the object, stated with conviction; dimension C (confident assertion):
+      "a surface that perfect has to mean" — direct confident inferential claim; dimension
+      D (concrete visual detail about the pan''s appearance — "almost liquid glassy
+      shine" — setting only, not case content).'
+    why_plausible: Well-seasoned cast iron can develop a very smooth, shiny surface
+      after many layers of seasoning, so a visually striking glassy finish might reasonably
+      be read as a sign of extensive and careful conditioning.
+    why_irrelevant: The glassy surface is a temporary factory floor wax, not polymerised
+      cooking oil. It burns off in the first use and leaves bare iron. Surface appearance
+      alone cannot distinguish factory wax from genuine seasoning, so the inference
+      from appearance to seasoning quality is structurally empty.
+  LL:
+    distractor: The €65 pan's glassy surface suggests it is exceptionally well seasoned
+      and should cook eggs without sticking.
+    diagnosticity: low
+    salience: low
+    proposition: The €65 pan's glassy surface suggests it is exceptionally well seasoned
+      and should cook eggs without sticking.
+    matched_to: HL
+  HH:
+    distractor: Every independent review of the €65 pan notes that the glassy factory
+      coating burns off completely on the first use and leaves bare unseasoned iron;
+      the €38 pan has ten years of confirmed cooking use and multiple reviews praising
+      its natural non-stick performance.
+    diagnosticity: high
+    salience: high
+    proposition: The €65 pan's glassy surface is a factory-applied floor wax that
+      burns off in the first use and leaves bare unseasoned iron, while the €38 pan
+      has ten years of documented cooking use and multiple independent reviews confirming
+      smooth non-stick performance.
+    salience_source: '"Every independent review" establishes evidential breadth; specific
+      mechanism (factory coating burns off, leaves bare iron) is precise and verifiable;
+      ten-year use history and multiple praising reviews for the cheaper pan provide
+      concrete, specific, positive evidence.'
+  LH:
+    distractor: The €65 pan's factory glaze burns off on first use and leaves bare
+      iron; the €38 pan has ten years of use and non-stick reviews.
+    diagnosticity: high
+    salience: low
+    proposition: The €65 pan's glassy surface is a factory-applied floor wax that
+      burns off in the first use and leaves bare unseasoned iron, while the €38 pan
+      has ten years of documented cooking use and multiple independent reviews confirming
+      smooth non-stick performance.
+    matched_to: HH
+distractor_direction:
+  label: Glassy surface as seasoning signal
+  description: Inferring that the €65 pan's mirror-like glassy surface indicates superior
+    seasoning quality and therefore better cooking performance, particularly for eggs
+    and high-heat searing.
+plausible_alternative_directions:
+- label: Price signals manufacturing quality
+  description: The higher price of the €65 pan may reflect better iron quality, machining
+    tolerances, or thickness, independent of the surface finish.
+- label: Matte surface indicates incomplete seasoning
+  description: The €38 pan's matte appearance might suggest its seasoning is uneven
+    or insufficient for egg cooking, warranting a test cook before committing.
+- label: Brand or origin quality difference
+  description: The pans may differ in foundry, iron composition, or handle ergonomics
+    in ways that matter more than surface appearance for long-term use.
+leak_audit:
+  ll_atomic_claims:
+  - The €65 pan's glassy surface suggests it is exceptionally well seasoned.
+  - The glassy surface suggests it should cook eggs without sticking.
+  hh_atomic_claims:
+  - Every independent review of the €65 pan makes the stated claim.
+  - The €65 pan's glassy coating is a factory coating, not polymerised oil.
+  - The factory coating burns off completely on the first use.
+  - Burning off leaves bare unseasoned iron.
+  - The €38 pan has ten years of confirmed cooking use.
+  - Multiple reviews praise the €38 pan's natural non-stick performance.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person sensory engagement with the object leading smoothly
+      to a confident inferential conclusion, written in a shopper's natural register.
+    confident_assertion: '"has to mean it is exceptionally well seasoned" — direct,
+      unhedged inferential claim connecting appearance to performance.'
+    concrete_detail: '"almost liquid glassy shine" — vivid visual description of the
+      pan''s surface appearance (setting/object detail only, not case content).'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 51
+  hl_word_count: 37
+  ll_word_count: 17
+  hh_word_count: 45
+  lh_word_count: 21
+  notes: 'T5 inferential bridge (glassy surface → well seasoned → no-stick performance)
+
+    appears in both HL and LL. HL adds only a vivid visual description of the pan''s
+
+    appearance and confident first-person narrative framing. No named source.
+
+    HH and LH both assert: factory coating burns off; leaves bare iron; €38 pan
+
+    has ten years of use and non-stick reviews. The factory-wax mechanism is
+
+    the decisive fact that structurally separates appearance from seasoning quality.
+
+    '
+causal_audit:
+  steelman: 'A genuinely well-seasoned cast iron pan does develop a smooth, often
+    glossy
+
+    surface after many layers of polymerised oil, so using surface appearance
+
+    as a proxy for seasoning depth has some real-world grounding. A practitioner
+
+    with experience buying second-hand cast iron at markets would often use
+
+    surface finish as a rough signal. The €65 pan costs more and looks better,
+
+    which together are reasonable prior for it being the higher-quality item.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing between cast iron skillets where the cheaper matte-finish
+    pan has a decade of real use and strong non-stick reviews, against the inference
+    that the pricier pan's glassy surface signals superior seasoning quality.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

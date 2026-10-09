@@ -1,0 +1,176 @@
+seed_id: T3-044
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: We have had intermittent packet loss and TCP retransmits on one VLAN for five
+  days. The affected hosts can ping the gateway but large file transfers stall repeatedly.
+  We run a managed switch fabric, and none of the host NICs or switch ports have been
+  reconfigured this month. The losses do not appear on other VLANs sharing the same
+  uplinks. {DS}
+focal_diagnostic_feature: Packet captures on the trunk uplink show IP fragments being
+  silently discarded, and the VLAN's trunk port MTU is configured at 1500 bytes while
+  the underlying physical interface carries jumbo frames at 9000 bytes.
+low_diagnostic_proposition: A senior network architect states that duplex mismatch
+  should be treated as the main cause of packet loss in managed-network environments.
+oracle_action: ANSWER
+oracle_focus: 'Fix the MTU mismatch on the trunk port: align the VLAN trunk port MTU
+  with the physical interface (or disable jumbo frames consistently); the fragmentation
+  and silent discard pattern identifies this as the root cause.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not follow the duplex-mismatch diagnosis from authority
+  alone. Ask for packet captures on the trunk, MTU settings across the path, and interface
+  error counters before auditing duplex configuration.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not follow the duplex-mismatch diagnosis from authority alone. Ask for
+      packet captures on the trunk, MTU settings across the path, and interface error
+      counters before auditing duplex configuration.
+  LL:
+    action: ASK
+    focus: Do not follow the duplex-mismatch diagnosis from authority alone. Ask for
+      packet captures on the trunk, MTU settings across the path, and interface error
+      counters before auditing duplex configuration.
+  HH:
+    action: ANSWER
+    focus: 'Fix the MTU mismatch on the trunk port: align the VLAN trunk port MTU
+      with the physical interface (or disable jumbo frames consistently); the fragmentation
+      and silent discard pattern identifies this as the root cause.'
+  LH:
+    action: ANSWER
+    focus: 'Fix the MTU mismatch on the trunk port: align the VLAN trunk port MTU
+      with the physical interface (or disable jumbo frames consistently); the fragmentation
+      and silent discard pattern identifies this as the root cause.'
+variants:
+  HL:
+    distractor: Our network architect Duc glanced at the ticket and said confidently
+      that this is always a duplex mismatch in managed environments and we should
+      audit every host NIC duplex setting before touching anything else.
+    diagnosticity: low
+    salience: high
+    proposition: A senior network architect states that duplex mismatch should be
+      treated as the main cause of packet loss in managed-network environments.
+    salience_source: A — source credibility (network architect, senior role); C —
+      confident assertion ("said confidently", "always"); B — clean professional delivery.
+    why_plausible: Duplex mismatch is a genuine and common cause of intermittent packet
+      loss and retransmits on managed switches; a senior architect's pattern-match
+      to a well-known failure mode is exactly the kind of confident shortcut a busy
+      engineer might accept.
+    why_irrelevant: Duplex mismatch produces late-collision errors visible on interface
+      counters and affects all traffic symmetrically, not selectively by frame size.
+      The focal evidence — fragmented packets discarded at the trunk, with a per-VLAN
+      MTU mismatch — is structurally incompatible with a duplex explanation, which
+      does not produce silent IP fragment drops on specific VLANs.
+  LL:
+    distractor: A senior network architect stated that duplex mismatch should be treated
+      as the main cause of packet loss in managed-network environments.
+    diagnosticity: low
+    salience: low
+    proposition: A senior network architect states that duplex mismatch should be
+      treated as the main cause of packet loss in managed-network environments.
+    matched_to: HL
+  HH:
+    distractor: A packet capture on the trunk uplink shows IP fragments being silently
+      discarded; the VLAN's trunk port is set to a 1500-byte MTU while jumbo frames
+      at 9000 bytes are enabled on the underlying physical interface.
+    diagnosticity: high
+    salience: high
+    proposition: Packet captures on the trunk uplink show IP fragments being silently
+      discarded, and the VLAN's trunk port MTU is configured at 1500 bytes while the
+      underlying physical interface carries jumbo frames at 9000 bytes.
+    salience_source: B — concrete packet-capture finding with exact MTU figures (1500
+      vs 9000 bytes) and the specific failure mode (silent IP fragment discard).
+  LH:
+    distractor: Trunk captures show IP fragments discarded; VLAN trunk MTU is 1500
+      bytes while the physical interface carries 9000-byte jumbo frames.
+    diagnosticity: high
+    salience: low
+    proposition: Packet captures on the trunk uplink show IP fragments being silently
+      discarded, and the VLAN's trunk port MTU is configured at 1500 bytes while the
+      underlying physical interface carries jumbo frames at 9000 bytes.
+    matched_to: HH
+distractor_direction:
+  label: Duplex mismatch on host NICs
+  description: Investigating whether half-duplex/full-duplex negotiation mismatch
+    on host network interface cards is causing the intermittent packet loss and TCP
+    retransmits.
+plausible_alternative_directions:
+- label: Switch port CRC or hardware error
+  description: A degraded SFP module or cable on the trunk could introduce physical-layer
+    errors producing intermittent drops, independent of MTU or duplex configuration.
+- label: VLAN ACL or QoS policy drop
+  description: An access control or QoS policy applied specifically to this VLAN could
+    be rate-limiting or dropping frames silently under load.
+- label: Spanning-tree topology change
+  description: A spanning-tree reconfiguration event on this VLAN's segment could
+    cause periodic forwarding interruptions consistent with the observed retransmit
+    pattern.
+leak_audit:
+  ll_atomic_claims:
+  - A senior network architect made the claim.
+  - Duplex mismatch should be treated as the main cause of packet loss in managed
+    networks.
+  hh_atomic_claims:
+  - Packet capture on the trunk uplink shows IP fragments being silently discarded.
+  - The VLAN trunk port is configured at 1500-byte MTU.
+  - The underlying physical interface has jumbo frames at 9000 bytes enabled.
+  hl_salience_dimensions:
+    source_credibility: Senior network architect role, named (Duc)
+    narrative_coherence: Clean direct-speech delivery with professional register
+    confident_assertion: said confidently, always
+    concrete_detail: N/A — no case-specific diagnostic content added
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 60
+  hl_word_count: 34
+  ll_word_count: 19
+  hh_word_count: 36
+  lh_word_count: 20
+  notes: 'High complexity calibrated by requiring understanding of IP fragmentation,
+    MTU
+
+    path discovery, and VLAN trunk configuration — not by increased length. The
+
+    authority''s diagnosis (duplex) is a real failure class but structurally incompatible
+
+    with the focal evidence (fragment-specific silent drops). xbase gives the VLAN
+
+    isolation fact (other VLANs on same uplinks unaffected) which is consistent with
+
+    both duplex and MTU hypotheses, preserving C4.
+
+    '
+causal_audit:
+  steelman: 'Duplex mismatch is a classic and genuinely common cause of intermittent
+    TCP
+
+    retransmits and packet loss on managed switches. It would be entirely reasonable
+
+    for a senior practitioner to add it to the checklist. In some switch implementations,
+
+    half-duplex collisions could affect only certain traffic classes or VLAN priorities
+
+    depending on QoS configuration.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase notes that the symptom appears on this VLAN but
+    not on other VLANs sharing the same uplinks. This is consistent with an MTU mismatch
+    configured per-VLAN but is also consistent with a VLAN-specific QoS or ACL; it
+    does not specifically foreclose duplex (which would typically be port-level).
+    The focal fragment-capture evidence structurally rules out duplex: duplex mismatch
+    produces late-collision errors, not silent per-VLAN IP fragment discards.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Intermittent packet loss on one VLAN caused by a trunk port MTU mismatch
+    (1500 vs 9000 bytes) producing silent IP fragment drops, against the network architect's
+    blanket assertion that this is always a duplex mismatch.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

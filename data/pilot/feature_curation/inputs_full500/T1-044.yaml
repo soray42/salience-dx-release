@@ -1,0 +1,176 @@
+seed_id: T1-044
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Since this morning, about a third of our users cannot reach our API; the rest
+  are completely fine. The failing users get an immediate "host not found" in the
+  client, not a slow timeout. Our servers are up, the certificate is valid, and the
+  application logs show no errors because the requests never arrive. There was a brief
+  authoritative-zone misconfiguration overnight that we reverted within minutes. {DS}
+focal_diagnostic_feature: The failing users all resolve through one upstream public
+  resolver that cached the overnight NXDOMAIN for the API hostname at a long negative
+  TTL, so it keeps returning "host not found" while resolvers without that cached
+  negative answer succeed.
+low_diagnostic_proposition: An engineer at a peer company said a similar partial-reachability
+  incident of theirs turned out to be a BGP route leak by a transit provider.
+oracle_action: ANSWER
+oracle_focus: 'Treat this as a stale negative DNS cache: the overnight NXDOMAIN was
+  cached with a long negative TTL on the resolvers the failing users share; shorten
+  the SOA negative-caching TTL and have affected resolvers flush, since the records
+  are correct now.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the peer's BGP-route-leak story. Ask whether
+  the failing users share a common DNS resolver and whether that resolver still returns
+  NXDOMAIN for the API hostname before investigating routing.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the peer's BGP-route-leak story. Ask whether the failing users
+      share a common DNS resolver and whether that resolver still returns NXDOMAIN
+      for the API hostname before investigating routing.
+  LL:
+    action: ASK
+    focus: Do not adopt the peer's BGP-route-leak story. Ask whether the failing users
+      share a common DNS resolver and whether that resolver still returns NXDOMAIN
+      for the API hostname before investigating routing.
+  HH:
+    action: ANSWER
+    focus: 'Treat this as a stale negative DNS cache: the overnight NXDOMAIN was cached
+      with a long negative TTL on the resolvers the failing users share; shorten the
+      SOA negative-caching TTL and have affected resolvers flush, since the records
+      are correct now.'
+  LH:
+    action: ANSWER
+    focus: 'Treat this as a stale negative DNS cache: the overnight NXDOMAIN was cached
+      with a long negative TTL on the resolvers the failing users share; shorten the
+      SOA negative-caching TTL and have affected resolvers flush, since the records
+      are correct now.'
+variants:
+  HL:
+    distractor: Mai, a network engineer at a trusted peer company, told me their similar
+      partial-reachability incident traced to a transit provider leaking routes via
+      BGP; she flagged it as a textbook BGP routing incident.
+    diagnosticity: low
+    salience: high
+    proposition: An engineer at a peer company said a similar partial-reachability
+      incident of theirs turned out to be a BGP route leak by a transit provider.
+    salience_source: A/C — a trusted peer network engineer confidently mapping our
+      symptom onto her firsthand routing incident.
+    why_plausible: Route leaks genuinely cause partial, geography-correlated reachability
+      loss, so an expert's matching war story feels diagnostic.
+    why_irrelevant: A route leak produces timeouts and path failures, not an instant
+      authoritative 'host not found'; our symptom is name resolution returning NXDOMAIN,
+      which routing cannot cause and her anecdote does not match.
+  LL:
+    distractor: A peer engineer said a similar partial-reachability incident of theirs
+      was a BGP route leak.
+    diagnosticity: low
+    salience: low
+    proposition: An engineer at a peer company said a similar partial-reachability
+      incident of theirs turned out to be a BGP route leak by a transit provider.
+    matched_to: HL
+  HH:
+    distractor: Every failing user resolves through one upstream public resolver,
+      and that resolver still hands back NXDOMAIN for our API name with a long negative
+      TTL it cached during the overnight misconfiguration; resolvers that never cached
+      that negative answer resolve us fine, which is exactly the third that works.
+    diagnosticity: high
+    salience: high
+    proposition: The failing users all resolve through one upstream public resolver
+      that cached the overnight NXDOMAIN for the API hostname at a long negative TTL,
+      so it keeps returning "host not found" while resolvers without that cached negative
+      answer succeed.
+    salience_source: Failing-vs-working split maps exactly onto which resolver cached
+      the overnight NXDOMAIN at a long negative TTL.
+  LH:
+    distractor: Failing users share one resolver still returning the overnight NXDOMAIN
+      at a long negative TTL; resolvers without that cached answer succeed.
+    diagnosticity: high
+    salience: low
+    proposition: The failing users all resolve through one upstream public resolver
+      that cached the overnight NXDOMAIN for the API hostname at a long negative TTL,
+      so it keeps returning "host not found" while resolvers without that cached negative
+      answer succeed.
+    matched_to: HH
+distractor_direction:
+  label: BGP route leak
+  description: Investigating a transit-provider route leak as the cause of the partial
+    loss of reachability.
+plausible_alternative_directions:
+- label: Anycast node failure
+  description: Whether one CDN or anycast edge node serving a subset of users is down
+    or misrouting traffic.
+- label: GeoDNS split-horizon error
+  description: Whether a geo-based DNS policy is returning a bad record to one region
+    of users.
+- label: Client-side DNS pinning
+  description: Whether some clients pinned an old or empty answer locally during the
+    misconfiguration window.
+leak_audit:
+  ll_atomic_claims:
+  - A peer engineer said a similar partial-reachability incident of theirs was a BGP
+    route leak.
+  hh_atomic_claims:
+  - All failing users resolve through one upstream public resolver.
+  - That resolver still returns NXDOMAIN for the API hostname at a long negative TTL
+    cached overnight.
+  - Resolvers that never cached the negative answer resolve the API fine, matching
+    the working third.
+  hl_salience_dimensions:
+    source_credibility: Named network engineer (Mai) at a trusted peer company recounting
+      her firsthand incident.
+    narrative_coherence: A clean traced-it-to-BGP story mapped onto our symptom.
+    confident_assertion: She characterised her incident as a textbook BGP routing
+      case — confident assertion about her own case, not ours.
+    concrete_detail: Detail about her transit-provider incident — about her case,
+      not our resolution path.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 33
+  ll_word_count: 15
+  hh_word_count: 48
+  lh_word_count: 21
+  notes: 'xbase gives the partial-reachability symptom, the instant "host not found",
+    and the reverted overnight zone
+
+    change as context, but withholds the decisive resolver-correlation and persisting
+    negative cache, which live
+
+    only in HH/LH. The instant NXDOMAIN-style failure in xbase is a symptom, not the
+    affirmative cause.
+
+    '
+causal_audit:
+  steelman: 'A senior network engineer could argue a route leak explains partial reachability
+    split by network path, and
+
+    transient routing churn might even disrupt DNS queries to authoritative servers.
+    But a leak yields timeouts and
+
+    unreachable paths, not an instantaneous authoritative "host not found"; our records
+    are correct now and the
+
+    failing set maps onto a resolver''s cached NXDOMAIN, a DNS-cache phenomenon with
+    no routing mechanism.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the failure is an immediate 'host not found'
+    (name resolution), not a slow timeout, foreclosing the timeout/path-failure signature
+    a route leak would produce.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Partial API unreachability from a stale negative DNS cache (overnight
+    NXDOMAIN at long negative TTL on one shared resolver), against a peer's BGP-route-leak
+    anecdote.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

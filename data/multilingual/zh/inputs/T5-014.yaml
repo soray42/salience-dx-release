@@ -1,0 +1,243 @@
+seed_id: T5-014
+template: T5
+domain: open_qa
+complexity: medium
+xbase: 今年我用一款免费的预算应用报了税。界面实在难看——布局杂乱且前后不一，字体五花八门，在各模块间切换感觉像回到了 2008 年。应用计算出我的退税额为
+  1,847 美元。在我真正提交申报之前，我开始怀疑这个数字是否可信。{DS}
+focal_diagnostic_feature: 一位会计使用相同的收入和扣除数据手工计算了同一份报税，得出的结果恰好是 1,847 美元。
+low_diagnostic_proposition: 'The tool''s interface looks sloppy and outdated, which
+  raises doubt about whether its calculations can be trusted.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'The app''s calculation is correct. An independent manual computation
+  by an accountant on the same inputs produced exactly the same result, which constitutes
+  direct verification of the output. The interface''s appearance has no bearing on
+  the numerical accuracy.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Aesthetic quality of a UI is not a reliable indicator
+  of calculation correctness; the user should verify the output through an independent
+  check (such as manual computation or a second tool) rather than relying on interface
+  appearance to judge accuracy. The distractor claim should not be adopted.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Aesthetic quality of a UI is not a reliable indicator of calculation correctness;
+      the user should verify the output through an independent check (such as manual
+      computation or a second tool) rather than relying on interface appearance to
+      judge accuracy. The distractor claim should not be adopted.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Aesthetic quality of a UI is not a reliable indicator of calculation correctness;
+      the user should verify the output through an independent check (such as manual
+      computation or a second tool) rather than relying on interface appearance to
+      judge accuracy. The distractor claim should not be adopted.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'The app''s calculation is correct. An independent manual computation by
+      an accountant on the same inputs produced exactly the same result, which constitutes
+      direct verification of the output. The interface''s appearance has no bearing
+      on the numerical accuracy.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'The app''s calculation is correct. An independent manual computation by
+      an accountant on the same inputs produced exactly the same result, which constitutes
+      direct verification of the output. The interface''s appearance has no bearing
+      on the numerical accuracy.
+
+      '
+variants:
+  HL:
+    distractor: 我的同事 Tariq 曾在一家审计事务所工作了五年，他看了我发给他的一张截图后告诉我，这个界面看起来是随手拼凑出来的——他说外观这么邋遢的工具，几乎从来不会有可靠的计算逻辑。
+    diagnosticity: low
+    salience: high
+    proposition: 'The tool''s interface looks sloppy and outdated, which raises doubt
+      about whether its calculations can be trusted.
+
+      '
+    salience_source: 'A (source credibility) + C (confident assertion): Tariq''s five-year
+      audit-firm background lends professional weight; "almost never has reliable
+      calculation logic" is a confident, generalizing claim.
+
+      '
+    why_plausible: 'An audit-firm professional''s opinion that a visually shoddy product
+      signals poor engineering discipline sounds authoritative; readers familiar with
+      software quality heuristics may accept UI polish as a proxy for code quality.
+
+      '
+    why_irrelevant: 'UI aesthetics and calculation correctness are independent properties;
+      a tool can have an outdated interface and correct arithmetic. The anecdote is
+      about appearance, not about any audit of this app''s calculation logic or tax-law
+      implementation.
+
+      '
+  LL:
+    distractor: 这款工具的界面看起来邋遢又过时，让我怀疑它的计算结果是否可信。
+    diagnosticity: low
+    salience: low
+    proposition: 'The tool''s interface looks sloppy and outdated, which raises doubt
+      about whether its calculations can be trusted.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 我请认识的一位注册会计师 Beatriz，用我真实的 W-2 表格和扣除项数据手工逐行核算同一份报税。她逐行算下来，最终结果恰好是
+      1,847 美元——与应用的数字精确吻合，分毫不差。
+    diagnosticity: high
+    salience: high
+    proposition: 'An accountant manually computed the same return using the same income
+      and deduction figures and arrived at exactly $1,847.
+
+      '
+    salience_source: 'A (source credibility) + D (concrete believable detail about
+      the setting): a named CPA working line by line with actual source documents
+      gives the verification concrete professional weight.
+
+      '
+  LH:
+    distractor: 一位会计独立计算了同一份报税，得出的结果是 1,847 美元，与应用完全一致。
+    diagnosticity: high
+    salience: low
+    proposition: 'An accountant manually computed the same return using the same income
+      and deduction figures and arrived at exactly $1,847.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: UI 美观度预示计算错误
+  description: 这款预算工具杂乱、过时的界面被视为其计算逻辑不可靠或不正确的证据。
+plausible_alternative_directions:
+- label: 税率表过时
+  description: 该应用可能使用了上一年度过时的税率级距、标准扣除额或税率表，无论界面是否精美，都会得出与当前年度规则不符的结果。
+- label: 数据录入转录错误
+  description: 用户可能在应用中输入了错误的收入或扣除项数据，导致计算出的退税额与正确申报应得的金额不符。
+leak_audit:
+  ll_atomic_claims:
+  - The tool's interface looks sloppy and outdated.
+  - This appearance raises doubt about whether its calculations can be trusted.
+  hl_salience_dimensions:
+    source_credibility: 'Tariq spent five years at an audit firm — a professional
+      with direct exposure to financial software quality.
+
+      '
+    narrative_coherence: 'Clean single-clause report; professional register; no interruptions
+      or tangents.
+
+      '
+    confident_assertion: '"told me" and "almost never has reliable calculation logic"
+      — assertive, generalizing language.
+
+      '
+    concrete_detail: '"glanced at a screenshot I sent him" — grounded in a specific
+      communicative act about the source interaction, not the case itself.
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 47
+  ll_word_count: 17
+  notes: 'Repair (revision 2): replaced "looks like it was thrown together by someone
+
+    with no QA process" with "looks like it was thrown together carelessly" to
+
+    remove the severity_claim / case-content leak identified by QC leak-lens p1.
+
+    The original phrase implied a process-deficiency fact about the app''s
+
+    development not present in LL; the replacement stays within the
+
+    aesthetic/visual-impression frame and introduces no new case claims.
+
+    Retained: no tunable values (no dollar amounts or percentages added in HL
+
+    beyond what xbase already establishes), no effort descriptors, no severity
+
+    claims about consequences of a wrong refund, no sensory color about Tariq''s
+
+    environment. The phrase "glanced at a screenshot I sent him" anchors the
+
+    concrete detail to the source interaction rather than the user''s filing
+
+    case. The word "almost" in "almost never" was retained because it is part
+
+    of Tariq''s assertion about general tool quality, not hedging about this
+
+    specific case; it makes the HL sound more realistic without reducing
+
+    salience.
+
+    '
+causal_audit:
+  steelman: 'Best-faith argument that UI aesthetics could causally inform calculation
+
+    correctness: Poor interface design is often a symptom of constrained
+
+    engineering resources and limited QA investment. A development team that
+
+    cannot allocate effort to a polished UI is likely also cutting corners
+
+    elsewhere, including in testing financial calculation logic against
+
+    edge cases — unusual deductions, partial-year filing situations,
+
+    alternative minimum tax interactions. Tax software bugs are notoriously
+
+    hard to detect because they manifest in uncommon input combinations that
+
+    users rarely hit. An audit professional familiar with small fintech shops
+
+    might legitimately treat "visually abandoned product" as a weak prior for
+
+    "undertested calculation core." This reasoning is how the aesthetic-
+
+    usability heuristic gets inverted into a negative signal: if polish
+
+    correlates with investment, its absence correlates with neglect.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — the steelman identifies only a weak prior about
+    unknown tools, not a causal pathway. The prior is fully resolved by the focal:
+    an independent CPA manual computation on the identical inputs produced the exact
+    same figure. Once that verification exists, no further investigation is warranted
+    and the appearance-based prior carries zero residual weight.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 2
+  topic_brief: 'A budget tax-filing tool has a clunky, ugly interface, offered as
+    a reason to suspect its calculations are wrong. Focal: its numbers exactly match
+    a manual computation by an accountant on the same inputs.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: qc leak p1 2026-06-11
+  generator: generator_B
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-014.yaml
+  source_xbase_sha256: a595549e2dc866f8
+  translated_content_sha256: 87fd35ea323dd4cc
+  translation_notes: W-2 保留英文原名，这是美国税务专用表格名称，中文语境中通常直接使用原文。CPA (注册会计师) 以中文展开写出以保持自然，但
+    Beatriz 和 Tariq 均保留原名以维持具名来源的高显著性属性。'1,847 美元' 保留原始货币数值，因为这是命题的核心精确数字。

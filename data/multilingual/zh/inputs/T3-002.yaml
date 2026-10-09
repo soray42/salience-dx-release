@@ -1,0 +1,96 @@
+seed_id: T3-002
+template: T3
+domain: open_qa
+complexity: medium
+xbase: 我正在两个硕士项目之间做选择。项目A提供全额资助，研究方向也是我想要的。项目B所在的大学更有名气，但如果去那里，我需要贷款。我目前的存款约为4000欧元。{DS}
+focal_diagnostic_feature: 项目A与用户的研究方向完全匹配，导师在目标期刊发表论文；项目B费用为35,000欧元，师资契合度低。
+low_diagnostic_proposition: A professor says institutional brand should be the main
+  decision factor for an academic career.
+oracle_action: ANSWER
+oracle_focus: Recommend Program A on funding, research fit, and financial risk unless
+  there is a hidden constraint.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let generic prestige advice decide it. Ask about
+  supervisor fit, funding, publication alignment, and debt load.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let generic prestige advice decide it. Ask about supervisor fit,
+      funding, publication alignment, and debt load.
+  LL:
+    action: ASK
+    focus: Do not let generic prestige advice decide it. Ask about supervisor fit,
+      funding, publication alignment, and debt load.
+  HH:
+    action: ANSWER
+    focus: Recommend Program A on funding, research fit, and financial risk unless
+      there is a hidden constraint.
+  LH:
+    action: ANSWER
+    focus: Recommend Program A on funding, research fit, and financial risk unless
+      there is a hidden constraint.
+variants:
+  HL:
+    distractor: 我的导师明确告诉我，如果想在学术界有所发展，大学的品牌声誉应该是我首要考量的因素。
+    diagnosticity: low
+    salience: high
+    proposition: A professor says institutional brand should be the main decision
+      factor for an academic career.
+    salience_source: authority figure, firm advice, absolutist career framing
+    why_plausible: Prestige does matter sometimes, so the advice feels credible.
+    why_irrelevant: The specific programme fit and funding dominate a generic prestige
+      heuristic for this research-track decision.
+  LL:
+    distractor: 一位教职人员建议，机构声誉应该是学术发展路径中选择项目的主要标准。
+    diagnosticity: low
+    salience: low
+    proposition: A professor says institutional brand should be the main decision
+      factor for an academic career.
+    matched_to: HL
+  HH:
+    distractor: 项目A与我的研究方向完全契合，导师也在我目标期刊上发表论文；项目B则意味着35,000欧元的学费债务，且相关师资关联松散。
+    diagnosticity: high
+    salience: high
+    proposition: Program A has the exact research fit and a supervisor publishing
+      in the user's target venues, while Program B costs €35,000 and has only loose
+      faculty fit.
+    salience_source: fit/funding/debt comparison
+  LH:
+    distractor: 项目A提供精确的研究方向匹配和相关导师指导；项目B需要35,000欧元的学费，且师资契合度较弱。
+    diagnosticity: high
+    salience: low
+    proposition: Program A has the exact research fit and a supervisor publishing
+      in the user's target venues, while Program B costs €35,000 and has only loose
+      faculty fit.
+    matched_to: HH
+distractor_direction:
+  label: 机构声誉
+  description: 将大学品牌名称和机构声誉作为项目选择的主导标准。
+plausible_alternative_directions:
+- label: 同学质量
+  description: 录取学生群体的实力、进取心和同伴网络可能影响未来发展机会。
+- label: 城市生活适配度
+  description: 各项目所在地的生活成本、住房及日常适配度可能影响可行性。
+- label: 校友网络资源
+  description: 项目校友的就业安置和导师网络可能与机构品牌本身有所不同。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-002.yaml
+  source_xbase_sha256: 19378b11a0bfb7c8
+  translated_content_sha256: 915a7cc4f9487723
+  translation_notes: 'Currency symbol € retained as-is (universally recognised in
+    zh-CN academic contexts). ''Professor'' in HL rendered as ''导师'' to preserve the
+    authority-figure salience. Proposition equivalence between HL and LL verified:
+    both state that an authority recommends university brand as the main criterion.'

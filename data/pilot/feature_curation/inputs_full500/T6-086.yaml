@@ -1,0 +1,167 @@
+seed_id: T6-086
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our Google Cloud Pub/Sub push subscription is delivering messages to our subscriber
+  webhook, but about five percent of deliveries return HTTP 502 and the messages are
+  retried indefinitely. The subscriber service shows healthy CPU and memory during
+  the failures. No infrastructure changes were made this week. NAT gateway logs show
+  zero dropped sessions during the entire failure window. {DS}
+focal_diagnostic_feature: All failing deliveries carry payloads above 900 kilobytes,
+  and the web framework enforces a 1 MB request body limit that returns HTTP 502 when
+  that limit is exceeded.
+low_diagnostic_proposition: Prior Pub/Sub 502 errors at this organisation were caused
+  by NAT gateway misconfiguration, so the current 502s are probably the same problem
+  again.
+oracle_action: ANSWER
+oracle_focus: Raise the framework request body limit above the maximum message size
+  or configure the publisher to split large messages; the 502s are caused by the body-size
+  limit being exceeded, not NAT routing.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume NAT misconfiguration from past incidents.
+  Ask for payload size distribution on the failing deliveries and the subscriber framework's
+  request body limit configuration.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume NAT misconfiguration from past incidents. Ask for payload
+      size distribution on the failing deliveries and the subscriber framework's request
+      body limit configuration.
+  LL:
+    action: ASK
+    focus: Do not assume NAT misconfiguration from past incidents. Ask for payload
+      size distribution on the failing deliveries and the subscriber framework's request
+      body limit configuration.
+  HH:
+    action: ANSWER
+    focus: Raise the framework request body limit above the maximum message size or
+      configure the publisher to split large messages; the 502s are caused by the
+      body-size limit being exceeded, not NAT routing.
+  LH:
+    action: ANSWER
+    focus: Raise the framework request body limit above the maximum message size or
+      configure the publisher to split large messages; the 502s are caused by the
+      body-size limit being exceeded, not NAT routing.
+variants:
+  HL:
+    distractor: Every time I have seen Pub/Sub push return 502s in this organisation
+      before, the root cause was a misconfigured NAT gateway dropping outbound egress,
+      so my instinct is to check the NAT rules again.
+    diagnosticity: low
+    salience: high
+    proposition: Prior Pub/Sub 502 errors at this organisation were caused by NAT
+      gateway misconfiguration, so the current 502s are probably the same problem
+      again.
+    salience_source: 'B: first-person organisational history framing; C: ''every time''
+      — categorical confident pattern with a specific past root cause named'
+  LL:
+    distractor: Prior Pub/Sub 502 errors in this organisation were generally attributed
+      to NAT gateway misconfiguration.
+    diagnosticity: low
+    salience: low
+    proposition: Prior Pub/Sub 502 errors at this organisation were caused by NAT
+      gateway misconfiguration, so the current 502s are probably the same problem
+      again.
+    matched_to: HL
+  HH:
+    distractor: Logging the raw request bytes at the subscriber endpoint shows all
+      failing deliveries carry payloads above 900 kilobytes, while the web framework
+      is set to a 1 MB request body limit that returns 502 when exceeded.
+    diagnosticity: high
+    salience: high
+    proposition: All failing deliveries carry payloads above 900 kilobytes, and the
+      web framework enforces a 1 MB request body limit that returns HTTP 502 when
+      that limit is exceeded.
+    salience_source: 'B: specific instrumentation method (logging raw bytes), precise
+      threshold values, causal chain stated directly; C: declarative present-tense
+      findings'
+  LH:
+    distractor: All failing deliveries have payloads above 900 KB and the subscriber
+      framework enforces a 1 MB body limit that returns 502 on overflow.
+    diagnosticity: high
+    salience: low
+    proposition: All failing deliveries carry payloads above 900 kilobytes, and the
+      web framework enforces a 1 MB request body limit that returns HTTP 502 when
+      that limit is exceeded.
+    matched_to: HH
+distractor_direction:
+  label: NAT gateway misconfiguration
+  description: Investigating whether a misconfigured NAT gateway is dropping outbound
+    Pub/Sub delivery traffic, causing HTTP 502 errors as it did in previous incidents.
+plausible_alternative_directions:
+- label: Subscriber endpoint timeout
+  description: If the subscriber takes longer than the Pub/Sub acknowledgement deadline
+    to process messages
+  Pub/Sub will treat the delivery as failed and retry: null
+  appearing as a recurring 502 pattern.: null
+- label: TLS certificate mismatch
+  description: An expired or hostname-mismatched TLS certificate on the subscriber
+    endpoint can cause Pub/Sub delivery to fail with a connection error reported as
+    502 by the push transport layer.
+- label: Pub/Sub push quota limit
+  description: Per-region push delivery quota exhaustion can cause a fraction of deliveries
+    to be rejected with a non-200 response that looks like a subscriber-side 502.
+leak_audit:
+  ll_atomic_claims:
+  - Prior Pub/Sub 502 errors in this organisation were generally attributed to NAT
+    gateway misconfiguration.
+  hh_atomic_claims:
+  - All failing deliveries carry payloads above 900 kilobytes.
+  - The web framework enforces a 1 MB request body limit.
+  - Exceeding that limit returns HTTP 502.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, T6 template
+    narrative_coherence: First-person organisational history with a specific named
+      past cause (NAT gateway)
+    confident_assertion: '''Every time'' — categorical historical pattern; ''my instinct
+      is'' — immediate first-person inference'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 38
+  ll_word_count: 14
+  hh_word_count: 37
+  lh_word_count: 22
+  notes: 'T6 availability inference (''probably the same problem again'') appears
+    in both HL and LL per C1/§3 T6 rule.
+
+    Structural difference between past and present: NAT misconfiguration would affect
+    all messages uniformly or based on destination routing; the current failures are
+    correlated with payload size, which is a request-content property unrelated to
+    NAT egress rules.
+
+    xbase correctly carries only symptom (5% returning 502, healthy service) and no
+    infrastructure change context; size data lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A NAT gateway misconfiguration that imposes a packet-level MTU or connection-level
+    restriction could plausibly cause intermittent 502s on Pub/Sub push deliveries
+    if the NAT was randomly dropping sessions. Past incidents attributed to NAT at
+    this organisation make it a live hypothesis based on institutional experience.
+    However, if NAT were the cause, the failure rate would be stochastic across all
+    deliveries or correlated with connection age, not with payload size; a NAT rule
+    does not inspect HTTP request body bytes. The correlation of all failures with
+    payloads above 900 KB is inconsistent with any NAT-layer mechanism, which operates
+    at the network transport layer below HTTP body parsing.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — payload-size correlation is the decisive discriminator
+    and lives only in HH/LH; xbase correctly says no infrastructure changed, which
+    makes NAT regression unlikely but does not by itself rule it out
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Pub/Sub push subscription returning HTTP 502 for large messages because
+    the subscriber framework's request body limit is exceeded, with availability distractor
+    of past NAT gateway misconfiguration incidents at the same organisation.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

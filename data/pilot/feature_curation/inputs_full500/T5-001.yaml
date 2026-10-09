@@ -1,0 +1,90 @@
+seed_id: T5-001
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: A Postgres query that joins three tables takes about 4 seconds to return only
+  a few hundred rows. The largest table has around 12 million rows and there is an
+  index on the join column. {DS}
+focal_diagnostic_feature: EXPLAIN ANALYZE shows a sequential scan on the 12M-row table,
+  and its statistics were last analysed six months ago.
+low_diagnostic_proposition: The database administration interface has an old visual
+  theme that makes some output hard to read.
+oracle_action: ANSWER
+oracle_focus: Run ANALYZE/update statistics and recheck the plan; stale stats are
+  likely causing the planner to skip the index.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer query-planner behaviour from UI appearance.
+  Ask for EXPLAIN ANALYZE and table statistics age.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer query-planner behaviour from UI appearance. Ask for EXPLAIN
+      ANALYZE and table statistics age.
+  LL:
+    action: ASK
+    focus: Do not infer query-planner behaviour from UI appearance. Ask for EXPLAIN
+      ANALYZE and table statistics age.
+  HH:
+    action: ANSWER
+    focus: Run ANALYZE/update statistics and recheck the plan; stale stats are likely
+      causing the planner to skip the index.
+  LH:
+    action: ANSWER
+    focus: Run ANALYZE/update statistics and recheck the plan; stale stats are likely
+      causing the planner to skip the index.
+variants:
+  HL:
+    distractor: 'pgAdmin looks awful on our setup: faded grey panels, tiny fonts,
+      and a colour scheme that makes the plan output look half broken.'
+    diagnosticity: low
+    salience: high
+    proposition: The database administration interface has an old visual theme that
+      makes some output hard to read.
+    salience_source: ugly interface, degraded readability, surface-level defect
+    why_plausible: A broken-looking tool can make the tool itself seem suspect.
+    why_irrelevant: Interface styling does not affect the query planner's scan choice
+      or table statistics.
+  LL:
+    distractor: The database administration interface uses an older visual theme that
+      some users find hard to read.
+    diagnosticity: low
+    salience: low
+    proposition: The database administration interface has an old visual theme that
+      makes some output hard to read.
+    matched_to: HL
+  HH:
+    distractor: The plan is doing a full sequential scan over 12 million rows even
+      though the join index exists, and the table stats are six months stale.
+    diagnosticity: high
+    salience: high
+    proposition: EXPLAIN ANALYZE shows a sequential scan on the 12M-row table, and
+      its statistics were last analysed six months ago.
+    salience_source: execution plan plus stale statistics
+  LH:
+    distractor: EXPLAIN ANALYZE selects a sequential scan on the 12M-row table despite
+      an index; table statistics are six months old.
+    diagnosticity: high
+    salience: low
+    proposition: EXPLAIN ANALYZE shows a sequential scan on the 12M-row table, and
+      its statistics were last analysed six months ago.
+    matched_to: HH
+distractor_direction:
+  label: Admin-interface readability
+  description: Investigating whether the database UI or readability of displayed plans
+    is misleading the diagnosis.
+plausible_alternative_directions:
+- label: Missing composite index
+  description: The query may lack an index covering the actual join/filter pattern.
+- label: Join-order problem
+  description: The planner may be choosing a poor join order because of data distribution.
+- label: Lock contention
+  description: The query may be waiting behind locks rather than spending time scanning
+    data.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

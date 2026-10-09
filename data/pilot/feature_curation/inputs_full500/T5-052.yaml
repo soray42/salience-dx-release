@@ -1,0 +1,187 @@
+seed_id: T5-052
+template: T5
+domain: open_qa
+complexity: high
+xbase: I'm choosing between two travel agencies for a two-week guided tour of Japan
+  next spring. Both cover Tokyo, Kyoto, and Osaka with roughly equivalent daily schedules.
+  I want value for money and a well-managed trip; this is a significant expense for
+  me. I have spoken to a representative from each agency and both seemed professional.
+  {DS}
+focal_diagnostic_feature: Agency A is €420 cheaper per person, has all accommodation
+  confirmed rather than provisional, caps groups at 12 against Agency B's 22, and
+  has an independently verified customer satisfaction score significantly above Agency
+  B's.
+low_diagnostic_proposition: Agency B's brochure has high-quality production values,
+  which suggests it is the better-organised agency.
+oracle_action: ANSWER
+oracle_focus: Choose Agency A; it is cheaper per person, has logistically committed
+  accommodation, offers a substantially smaller group experience, and outperforms
+  Agency B on independently verified customer satisfaction — the brochure quality
+  is irrelevant to any of these factors.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not treat brochure quality as operational evidence;
+  ask for per-person price, confirmed versus provisional accommodation, group size
+  caps, and verified customer satisfaction data before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not treat brochure quality as operational evidence; ask for per-person
+      price, confirmed versus provisional accommodation, group size caps, and verified
+      customer satisfaction data before deciding.
+  LL:
+    action: ASK
+    focus: Do not treat brochure quality as operational evidence; ask for per-person
+      price, confirmed versus provisional accommodation, group size caps, and verified
+      customer satisfaction data before deciding.
+  HH:
+    action: ANSWER
+    focus: Choose Agency A; it is cheaper per person, has logistically committed accommodation,
+      offers a substantially smaller group experience, and outperforms Agency B on
+      independently verified customer satisfaction — the brochure quality is irrelevant
+      to any of these factors.
+  LH:
+    action: ANSWER
+    focus: Choose Agency A; it is cheaper per person, has logistically committed accommodation,
+      offers a substantially smaller group experience, and outperforms Agency B on
+      independently verified customer satisfaction — the brochure quality is irrelevant
+      to any of these factors.
+variants:
+  HL:
+    distractor: 'Agency B''s brochure is genuinely impressive: double-spread panoramic
+      photographs of Mount Fuji at dawn, a linen-textured cover, and the kind of typesetting
+      that makes the text look carved rather than printed — a level of production
+      investment that usually signals a well-organised operation.'
+    diagnosticity: low
+    salience: high
+    proposition: Agency B's brochure has high-quality production values, which suggests
+      it is the better-organised agency.
+    salience_source: B — confident descriptive register building a coherent aesthetic
+      case; C — 'usually signals a well-organised operation' asserts the inferential
+      bridge with authority; D — specific concrete details about the brochure (panoramic
+      photographs, linen-textured cover, carved typesetting).
+    why_plausible: Premium print production requires significant investment and organisational
+      effort; a reader could reasonably infer that an agency spending carefully on
+      its brochure also manages its tours carefully.
+    why_irrelevant: 'Brochure production quality shares no mechanism with tour operational
+      quality: confirmed hotel bookings, guide-to-guest ratios, and customer satisfaction
+      are determined by procurement and management processes entirely independent
+      of marketing spend.'
+  LL:
+    distractor: Agency B's brochure has high-quality production values, which suggests
+      it is the better-organised agency.
+    diagnosticity: low
+    salience: low
+    proposition: Agency B's brochure has high-quality production values, which suggests
+      it is the better-organised agency.
+    matched_to: HL
+  HH:
+    distractor: Agency A is €420 cheaper, has all accommodation confirmed rather than
+      provisional, limits groups to 12 against Agency B's 22, and has an independently
+      verified customer satisfaction score significantly above Agency B's.
+    diagnosticity: high
+    salience: high
+    proposition: Agency A is €420 cheaper per person, has all accommodation confirmed
+      rather than provisional, caps groups at 12 against Agency B's 22, and has an
+      independently verified customer satisfaction score significantly above Agency
+      B's.
+    salience_source: Four concrete, mutually reinforcing data points — cost saving,
+      confirmed logistics, group-size ratio, and verified satisfaction — each directly
+      relevant to the user's stated priorities of value and well-managed execution.
+  LH:
+    distractor: Agency A is €420 cheaper, has confirmed accommodation, caps groups
+      at 12 versus 22, and has a higher verified customer satisfaction score.
+    diagnosticity: high
+    salience: low
+    proposition: Agency A is €420 cheaper per person, has all accommodation confirmed
+      rather than provisional, caps groups at 12 against Agency B's 22, and has an
+      independently verified customer satisfaction score significantly above Agency
+      B's.
+    matched_to: HH
+distractor_direction:
+  label: brochure polish signals organisational quality
+  description: Treating Agency B as the better-run tour operator because its printed
+    brochure uses premium production values that suggest careful, well-resourced management.
+plausible_alternative_directions:
+- label: guide language and local expertise
+  description: For a Japan itinerary, the fluency and cultural knowledge of guides
+    is a decisive factor that neither price nor brochure design reveals, and could
+    be the primary differentiator.
+- label: cancellation and force-majeure terms
+  description: For a significant long-haul expense booked months in advance, each
+    agency's cancellation, rescheduling, and insurance terms could outweigh all other
+    factors if circumstances change.
+- label: included activity and entry-fee scope
+  description: Differences in what is included in the tour price — temple entry fees,
+    meal allowances, transport upgrades — could shift the effective per-person cost
+    comparison substantially.
+leak_audit:
+  ll_atomic_claims:
+  - Agency B's brochure has high-quality production values.
+  - This suggests Agency B is the better-organised agency.
+  hh_atomic_claims:
+  - Agency A is €420 cheaper than Agency B.
+  - Agency A has all accommodation confirmed rather than provisional.
+  - Agency A caps groups at 12; Agency B caps at 22.
+  - Agency A has an independently verified customer satisfaction score significantly
+    above Agency B's.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Confident, coherent aesthetic catalogue that builds to a
+      causal inference with professional register throughout.
+    confident_assertion: '''usually signals a well-organised operation'' — the bridge
+      is asserted as a general industry signal, not hedged.'
+    concrete_detail: Double-spread panoramic photos, linen-textured cover, carved
+      typesetting — specific tangible features that make the brochure description
+      vivid and checkable.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 55
+  hl_word_count: 42
+  ll_word_count: 14
+  hh_word_count: 32
+  lh_word_count: 22
+  notes: 'HL:LL ratio = 3.00; HH:LH ratio = 1.45. Both within 4:1.
+
+    LL is at the minimum (14 words) because the T5 proposition including the bridge
+    is inherently short when stated flatly. No padding added.
+
+    High complexity calibrated through four independent evaluative axes (price, confirmed
+    logistics, group size, satisfaction index) rather than length alone.
+
+    T5 bridge in HL: ''usually signals a well-organised operation''. Bridge in LL:
+    ''which suggests it is the better-organised agency''. Both present per C1/self-check
+    13.
+
+    HH says ''independently verified... significantly above''; LH says ''higher verified''
+    — same claim, lower salience. C10 satisfied.
+
+    '
+causal_audit:
+  steelman: 'A sophisticated traveller might argue: agencies that invest heavily in
+    premium print brochures are signalling brand investment and customer-acquisition
+    confidence, which often correlates with higher service quality and operational
+    professionalism in the luxury travel sector. Premium brochure production also
+    requires internal coordination (photography, design, printing procurement) that
+    mirrors the coordination required for well-managed tours. This proxy is not unreasonable
+    in markets where tour quality is otherwise hard to verify before purchase.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not mention any brochure; the aesthetic
+    distractor arrives only in the variant slot. The focal evidence (price, confirmed
+    accommodation, group size, satisfaction score) is operationally independent of
+    marketing materials.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: A premium-quality Japan tour brochure cannot substitute for confirmed
+    accommodation bookings, a smaller group cap, and a superior verified satisfaction
+    score when comparing two travel agencies.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,177 @@
+seed_id: T3-089
+template: T3
+domain: open_qa
+complexity: low
+xbase: A stone chipped my windscreen on the motorway and left a small crack about
+  the size of a coin, low in the corner of the glass. My garage says it can be repaired
+  rather than replaced if I act soon. I have a comprehensive car insurance policy
+  and I am trying to decide whether to claim for the repair or just pay for it myself
+  to protect my no-claims discount. I have the policy documents but have not read
+  the glass section. {DS}
+focal_diagnostic_feature: The policy states that windscreen and glass repairs are
+  settled separately and do not count as a fault claim, so claiming for the chip does
+  not reduce the no-claims discount or step up the premium.
+low_diagnostic_proposition: A senior relative with insurance experience advises that
+  filing any claim always damages the no-claims discount and should be avoided.
+oracle_action: ANSWER
+oracle_focus: Claim for the windscreen repair; the policy treats glass repairs as
+  a separate, no-claims-protected category, so claiming does not touch the no-claims
+  discount or the premium and paying out of pocket gives up a free benefit.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the blanket 'never claim' rule. Ask how
+  the user's specific policy treats glass and windscreen claims before deciding whether
+  claiming affects the no-claims discount.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the blanket 'never claim' rule. Ask how the user's specific
+      policy treats glass and windscreen claims before deciding whether claiming affects
+      the no-claims discount.
+  LL:
+    action: ASK
+    focus: Do not accept the blanket 'never claim' rule. Ask how the user's specific
+      policy treats glass and windscreen claims before deciding whether claiming affects
+      the no-claims discount.
+  HH:
+    action: ANSWER
+    focus: Claim for the windscreen repair; the policy treats glass repairs as a separate,
+      no-claims-protected category, so claiming does not touch the no-claims discount
+      or the premium and paying out of pocket gives up a free benefit.
+  LH:
+    action: ANSWER
+    focus: Claim for the windscreen repair; the policy treats glass repairs as a separate,
+      no-claims-protected category, so claiming does not touch the no-claims discount
+      or the premium and paying out of pocket gives up a free benefit.
+variants:
+  HL:
+    distractor: My uncle Levente spent years as a claims handler and told me, with
+      total certainty, that the golden rule is never to file any claim at all, because
+      the moment you do your no-claims discount takes a hit and your premium climbs
+      at the next renewal no matter what.
+    diagnosticity: low
+    salience: high
+    proposition: A senior relative with insurance experience advises that filing any
+      claim always damages the no-claims discount and should be avoided.
+    salience_source: A — a relative with years as a claims handler asserting a confident
+      blanket rule lends the never-claim advice authority.
+    why_plausible: Many fault claims do reduce no-claims discounts, so an experienced
+      insider's blanket rule sounds like safe, knowing guidance.
+    why_irrelevant: A generic rule about claims in general ignores that this policy
+      treats glass repairs as a separate, no-claims-protected category, which is what
+      actually governs this case.
+  LL:
+    distractor: A relative with insurance experience says filing any claim always
+      harms the no-claims discount and should be avoided.
+    diagnosticity: low
+    salience: low
+    proposition: A senior relative with insurance experience advises that filing any
+      claim always damages the no-claims discount and should be avoided.
+    matched_to: HL
+  HH:
+    distractor: Reading the glass section, the policy spells out that windscreen and
+      glass repairs are handled as a separate settlement that is not treated as a
+      fault claim, so making this repair claim leaves my no-claims discount untouched
+      and does not push up my renewal premium.
+    diagnosticity: high
+    salience: high
+    proposition: The policy states that windscreen and glass repairs are settled separately
+      and do not count as a fault claim, so claiming for the chip does not reduce
+      the no-claims discount or step up the premium.
+    salience_source: Quoting the policy's own carve-out for glass repairs makes the
+      no-claims-protected status concrete and decisive.
+  LH:
+    distractor: The policy settles glass repairs separately and not as a fault claim,
+      so claiming for the chip does not affect the no-claims discount or premium.
+    diagnosticity: high
+    salience: low
+    proposition: The policy states that windscreen and glass repairs are settled separately
+      and do not count as a fault claim, so claiming for the chip does not reduce
+      the no-claims discount or step up the premium.
+    matched_to: HH
+distractor_direction:
+  label: Blanket never-claim rule
+  description: Treating an experienced relative's general rule that any claim harms
+    the no-claims discount as the basis for paying out of pocket.
+plausible_alternative_directions:
+- label: Glass excess vs cost
+  description: Whether a glass-cover excess might exceed the cheap repair cost
+  making self-pay simpler despite no discount impact.: null
+- label: Repair-now urgency
+  description: Whether acting before the chip spreads into a full crack matters more
+    than the claim-versus-pay framing.
+leak_audit:
+  ll_atomic_claims:
+  - A relative with insurance experience gives advice.
+  - The advice is that filing any claim always harms the no-claims discount and should
+    be avoided.
+  hh_atomic_claims:
+  - The policy handles windscreen and glass repairs as a separate settlement.
+  - That settlement is not treated as a fault claim.
+  - So claiming for the chip leaves the no-claims discount and renewal premium untouched.
+  hl_salience_dimensions:
+    source_credibility: Named relative (Levente) with years as a claims handler.
+    narrative_coherence: Coherent statement of a single golden rule.
+    confident_assertion: Asserts the rule with total certainty as an absolute.
+    concrete_detail: Detail about the source's background (years as a claims handler)
+      only — no claim about this policy's glass terms.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 84
+  hl_word_count: 47
+  ll_word_count: 17
+  hh_word_count: 43
+  lh_word_count: 25
+  notes: 'The authority pattern-matches with a generic ''never claim'' rule rather
+    than engaging this policy''s glass terms,
+
+    per T3. xbase states the chip, the repairability, that a comprehensive policy
+    exists, and the user''s worry about
+
+    the no-claims discount — but withholds the glass-section treatment, so HL/LL cannot
+    resolve whether claiming is
+
+    safe; that decisive carve-out lives only in HH/LH. HL adds only the relative''s
+    identity and experience; LL keeps
+
+    the bare blanket rule. Distinct root cause from T1-093 (coverage redundancy of
+    a paid plan).
+
+    '
+causal_audit:
+  steelman: 'A seasoned claims handler''s rule is not baseless: across most claim
+    types, filing genuinely does erode the
+
+    no-claims discount and lift premiums, and selection effects make any claim look
+    risky, so ''never claim'' is a
+
+    defensible heuristic in general. But the heuristic is about claims as a class;
+    it does not engage the specific
+
+    fact that this policy carves out glass repairs as a separate, non-fault settlement.
+    The relative offered no
+
+    analysis of this policy''s glass terms, and those terms — not the general rule
+    — determine the outcome here. The
+
+    authority''s confidence cannot change what the policy says, so it has no mechanism
+    to make self-pay the right
+
+    call for this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A windscreen-chip repair claim is no-claims-protected under the policy's
+    glass carve-out, so an authority's blanket never-claim rule is wrong for this
+    case.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,167 @@
+seed_id: T1-065
+template: T1
+domain: open_qa
+complexity: low
+xbase: I'm deciding whether to move my workouts from early morning to after work.
+  I've been a morning lifter for two years and it has mostly stuck, but lately the
+  alarm feels brutal and a colleague raves about training in the evening. My job ends
+  at a predictable time and the gym is open both early and late, so either slot is
+  physically available to me. I want to keep my four-sessions-a-week habit intact
+  through the switch. {DS}
+focal_diagnostic_feature: The user's own training log from a three-week evening trial
+  shows they completed only 4 of 12 planned evening sessions, versus near-perfect
+  morning attendance.
+low_diagnostic_proposition: An acquaintance switched to evening workouts and found
+  they enjoyed and sustained the new timing.
+oracle_action: ANSWER
+oracle_focus: Keep training in the morning; the user's own evening trial collapsed
+  to a third of planned sessions while mornings hold, so the switch threatens the
+  habit they want to protect.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one acquaintance's good experience decide
+  this. Ask how the user themselves performs at each time of day before recommending
+  a switch.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one acquaintance's good experience decide this. Ask how the
+      user themselves performs at each time of day before recommending a switch.
+  LL:
+    action: ASK
+    focus: Do not let one acquaintance's good experience decide this. Ask how the
+      user themselves performs at each time of day before recommending a switch.
+  HH:
+    action: ANSWER
+    focus: Keep training in the morning; the user's own evening trial collapsed to
+      a third of planned sessions while mornings hold, so the switch threatens the
+      habit they want to protect.
+  LH:
+    action: ANSWER
+    focus: Keep training in the morning; the user's own evening trial collapsed to
+      a third of planned sessions while mornings hold, so the switch threatens the
+      habit they want to protect.
+variants:
+  HL:
+    distractor: Eleni, who I share a commute with, moved all her sessions to after
+      work last year, and she keeps telling me how much she enjoys evening training
+      and how naturally the new timing has stuck for her since she made the change.
+    diagnosticity: low
+    salience: high
+    proposition: An acquaintance switched to evening workouts and found they enjoyed
+      and sustained the new timing.
+    salience_source: A — a named commuting acquaintance recounting her own first-hand,
+      sustained experience lends the endorsement everyday credibility.
+    why_plausible: Plenty of people genuinely do train better in the evening, so a
+      vivid peer success makes the switch sound low-risk.
+    why_irrelevant: Another person's circadian preference and adherence say nothing
+      about whether THIS user sustains evening sessions; only the user's own attendance
+      does.
+  LL:
+    distractor: An acquaintance switched to evening workouts and found they enjoyed
+      and kept up the new timing.
+    diagnosticity: low
+    salience: low
+    proposition: An acquaintance switched to evening workouts and found they enjoyed
+      and sustained the new timing.
+    matched_to: HL
+  HH:
+    distractor: 'I actually ran a three-week evening trial and logged it: I made only
+      four of twelve planned after-work sessions, skipping the rest, while my morning
+      log over the same months shows me hitting nearly every single one.'
+    diagnosticity: high
+    salience: high
+    proposition: The user's own training log from a three-week evening trial shows
+      they completed only 4 of 12 planned evening sessions, versus near-perfect morning
+      attendance.
+    salience_source: Concrete first-person retrieval of the trial's exact 4-of-12
+      count makes the user's own poor evening adherence vivid.
+  LH:
+    distractor: The user's logged evening trial shows 4 of 12 planned sessions completed,
+      versus near-perfect morning attendance.
+    diagnosticity: high
+    salience: low
+    proposition: The user's own training log from a three-week evening trial shows
+      they completed only 4 of 12 planned evening sessions, versus near-perfect morning
+      attendance.
+    matched_to: HH
+distractor_direction:
+  label: Peer evening success
+  description: Treating the switch as safe because an acquaintance enjoyed and sustained
+    evening workouts after a similar change.
+plausible_alternative_directions:
+- label: Morning alarm fatigue
+  description: Whether the user's growing dislike of the early alarm is a sustainable
+    reason to move sessions regardless of attendance.
+- label: Hybrid split
+  description: Whether keeping some morning sessions and adding one or two evening
+    ones would preserve the habit while easing the alarm.
+leak_audit:
+  ll_atomic_claims:
+  - An acquaintance switched to evening workouts.
+  - That acquaintance enjoyed and sustained the new timing.
+  hh_atomic_claims:
+  - The user ran a three-week evening trial and logged it.
+  - They completed 4 of 12 planned evening sessions.
+  - Their morning log over the same period shows near-perfect attendance.
+  hl_salience_dimensions:
+    source_credibility: Named commuting acquaintance (Eleni) recounting her own sustained
+      first-hand switch.
+    narrative_coherence: Clean since-she-made-the-change chronology.
+    confident_assertion: She keeps telling me — confident endorsement, no hedging.
+    concrete_detail: Detail about the source (shared commute, last year) only — no
+      claim about the user's own evening attendance.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 84
+  hl_word_count: 39
+  ll_word_count: 16
+  hh_word_count: 40
+  lh_word_count: 18
+  notes: 'LL carries only the switched-and-sustained claim; Eleni''s name, the shared
+    commute, and the timing are HL-only
+
+    and all about the source. xbase withholds the user''s own trial results, stating
+    only their morning habit, the
+
+    alarm fatigue, the colleague''s raving, and that both slots are available — so
+    HL/LL cannot resolve the decision.
+
+    The decisive 4-of-12 trial result lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A coach might argue that adherence is partly about enjoyment and chronotype,
+    and that a credible peer who thrived
+
+    on evening training signals the slot is workable, so the user could plausibly
+    inherit the same benefit. That
+
+    reasoning treats the acquaintance''s preference as predictive of the user''s.
+    But adherence is person-specific, and
+
+    xbase already shows the user has a long-standing successful morning habit; whether
+    evenings work for THIS user is
+
+    answered only by the user''s own evening attendance, which the peer story cannot
+    supply. The peer''s success has no
+
+    mechanism to make the user''s evening sessions stick.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase establishes both slots are physically available to
+    the user, foreclosing the access/logistics mechanism, so the peer's success cannot
+    bear on the user's own adherence; the decisive trial result lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A user weighing a morning-to-evening workout switch, where their own
+    failed 4-of-12 evening trial, not a peer's evening success, is decisive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,13 @@
+{
+  "seed_id": "T1-016",
+  "my_own_diagnosis": "With no HELOC or variable-rate debt secured against the property, the colleague's consolidation experience is structurally inapplicable; the decision reduces to whether the 0.7-percentage-point fixed-rate premium is justified given stable dual income on long-term contracts and an indefinite holding horizon — I would advise evaluating fixed vs variable on rate-differential break-even grounds and holding-horizon alignment, not consolidation.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature (no HELOC or secured variable-rate debt) directly forecloses the consolidation pathway and leaves a clean rate-type choice determinable from the stated rate differential, income stability, and holding horizon.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracles correctly map HL/LL to low-diagnostic focus (acknowledge but do not adopt the HELOC anecdote) and HH/LH to the focal oracle focus (rate differential, income stability, holding horizon, explicit dismissal of inapplicable consolidation); low_diagnostic_oracle_focus correctly instructs non-adoption of the distractor direction.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

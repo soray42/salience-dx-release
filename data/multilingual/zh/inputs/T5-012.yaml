@@ -1,0 +1,213 @@
+seed_id: T5-012
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: 我一直在使用 BackPulse（一款开源备份 CLI 工具）来保护我们的生产数据库快照。我开始担心这个工具可能在悄悄损坏备份数据。我将数据完整还原到一个独立的测试卷上，然后使用该工具的内置
+  verify 命令检查数据完整性。{DS}
+focal_diagnostic_feature: verify 命令确认所有已还原文件的校验和与原始文件完全一致，排除了该工具导致数据损坏的可能性。
+low_diagnostic_proposition: 'The tool''s website has a very outdated, 1990s-era visual
+  appearance.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Checksum verification confirms data integrity; the tool is functioning
+  correctly; website aesthetics are irrelevant to backup correctness.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Acknowledge the website aesthetics concern but explain
+  that visual design has no causal relationship to backup data integrity; recommend
+  verifying checksums or checking commit history rather than judging reliability by
+  website appearance.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Acknowledge the website aesthetics concern but explain that visual design
+      has no causal relationship to backup data integrity; recommend verifying checksums
+      or checking commit history rather than judging reliability by website appearance.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Acknowledge the website aesthetics concern but explain that visual design
+      has no causal relationship to backup data integrity; recommend verifying checksums
+      or checking commit history rather than judging reliability by website appearance.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Checksum verification confirms data integrity; the tool is functioning
+      correctly; website aesthetics are irrelevant to backup correctness.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Checksum verification confirms data integrity; the tool is functioning
+      correctly; website aesthetics are irrelevant to backup correctness.
+
+      '
+variants:
+  HL:
+    distractor: 我们的基础设施主管工程师——她在公司负责三家中型银行的备份基础设施——直接告诉我，这个工具的官网看起来完全像是 1990 年代做的东西。
+    diagnosticity: low
+    salience: high
+    proposition: 'The tool''s website has a very outdated, 1990s-era visual appearance.
+
+      '
+    salience_source: 'A: source credibility (lead infrastructure engineer managing
+      backups for multiple banks); C: confident verb "told me"; D: concrete detail
+      about source''s role and employer context.
+
+      '
+    why_plausible: 'A senior engineer with hands-on backup infrastructure experience
+      at regulated institutions carries real authority; her observation sounds like
+      the kind of red-flag a practitioner would flag.
+
+      '
+    why_irrelevant: 'Website aesthetics have no causal pathway to cryptographic hash
+      computation during backup or restore; a 1990s-looking site cannot alter the
+      byte-level fidelity of file transfers.
+
+      '
+  LL:
+    distractor: 有人提到这个工具的官网看起来像是 1990 年代做的。
+    diagnosticity: low
+    salience: low
+    proposition: 'The tool''s website has a very outdated, 1990s-era visual appearance.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: verify 命令无错误完成：所有已还原文件的 SHA-256 校验和与存储清单中的原始值完全匹配。备份集中的每一个文件，零不匹配。
+    diagnosticity: high
+    salience: high
+    proposition: 'The verify command confirmed that all restored file checksums match
+      the originals exactly, ruling out data corruption by the tool.
+
+      '
+    salience_source: 'C: confident, precise result statement ("Zero mismatches");
+      D: concrete technical detail (SHA-256, manifest reference, full coverage assertion).
+
+      '
+  LH:
+    distractor: verify 命令确认所有已还原文件的校验和与原始文件完全一致。
+    diagnosticity: high
+    salience: low
+    proposition: 'The verify command confirmed that all restored file checksums match
+      the originals exactly, ruling out data corruption by the tool.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: 过时的官网意味着存在数据损坏
+  description: 该工具 1990 年代风格的官网外观被作为项目不可靠、备份数据可能已损坏的证据。
+plausible_alternative_directions:
+- label: 备份配置不完整
+  description: BackPulse 可能被配置为排除某些文件路径，在不报错的情况下静默地遗漏备份数据。
+- label: 存储层损坏
+  description: 底层磁盘或网络存储卷可能独立于备份工具本身引入了数据损坏。
+- label: 增量快照逻辑缺陷
+  description: BackPulse 的增量备份算法可能在备份阶段不触发错误的情况下包含了陈旧或不正确的文件版本。
+leak_audit:
+  ll_atomic_claims:
+  - The tool's website looks like it was built in the 1990s.
+  hl_salience_dimensions:
+    source_credibility: 'Lead infrastructure engineer who manages backup infrastructure
+      for three mid-sized banks at her firm — domain-matched authority.
+
+      '
+    narrative_coherence: 'Single clean declarative sentence; professional register;
+      no interruptions or tangents.
+
+      '
+    confident_assertion: '"told me" — direct confident verb, no hedging.
+
+      '
+    concrete_detail: '"manages backup infrastructure for three mid-sized banks at
+      her firm" — detail about the source''s role and employer, not about the case.
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 29
+  ll_word_count: 14
+  notes: 'Stripped: no mention of what the engineer concluded from the website
+
+    (avoided "not safe for production data" as a severity/impact leak).
+
+    No description of the website''s specific features (frames, broken
+
+    links) added to HL beyond what the distractor claim requires.
+
+    Concrete detail kept strictly to source role and employer context.
+
+    Ratio 29/14 = 2.07:1, well within 4:1 ceiling.
+
+    '
+causal_audit:
+  steelman: 'A software project with an obviously neglected website might also
+
+    have neglected code: if maintainers do not update their web
+
+    presence, they may not be applying security patches, fixing known
+
+    bugs, or testing on modern OS versions. An unmaintained backup tool
+
+    could accumulate silent data-corruption bugs over time. A senior
+
+    sysadmin doing vendor due diligence would include "check project
+
+    maintenance signals" — website recency, last commit date,
+
+    issue-tracker responsiveness — as an evaluation criterion. So a
+
+    1990s-looking website is a (weak) proxy for maintenance neglect,
+
+    which is a (weak) proxy for reliability risk. Under this chain,
+
+    a practitioner might list it as worth noting.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'The steelman reveals only a weak correlation heuristic
+    for tool selection, not a causal mechanism for a specific backup corruption event.
+    Crucially, the xbase states the user already ran the verify command; the focal
+    variants confirm checksums matched — the definitive test for byte-level integrity.
+    Website aesthetics have no pathway to the cryptographic hash results. A senior
+    practitioner troubleshooting "is my backup corrupted?" puts checksum verification
+    on the checklist, not website aesthetics. Once checksums pass, the aesthetic proxy
+    is completely uninformative about this case.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  topic_brief: 'The website of an open-source backup CLI looks like it was made in
+    the 1990s, offered as a reason to suspect the tool is corrupting backups. Focal:
+    restore-verification checksums match.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  generator: generator_B
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-012.yaml
+  source_xbase_sha256: a31d9ef6c9d1b0d8
+  translated_content_sha256: 16ac17fec79df813
+  translation_notes: BackPulse retained as-is (proper product name). CLI, SHA-256,
+    verify command retained as-is. 'Lead infrastructure engineer' rendered as '基础设施主管工程师'
+    preserving authority and domain-match salience. '三家中型银行' (three mid-sized banks)
+    retained for the concrete credibility detail. '直接告诉我' mirrors 'told me' (confident
+    speech verb). '存储清单' for 'manifest'. '校验和' is standard Chinese for 'checksum'.
+    First-person register preserved.

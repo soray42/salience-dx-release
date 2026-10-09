@@ -1,0 +1,182 @@
+seed_id: T1-099
+template: T1
+domain: open_qa
+complexity: medium
+xbase: I am picking my first telescope and have narrowed it to two. One is a €280
+  refractor on a tabletop mount; the other is a €260 Dobsonian reflector. I mainly
+  want to look at large faint things like nebulae and galaxy clusters from my dark
+  rural garden. Both are in stock and within budget, and I want to choose this week.
+  {DS}
+focal_diagnostic_feature: The Dobsonian offers more aperture and a wider field, matching
+  faint extended targets; the refractor is narrow and small.
+low_diagnostic_proposition: A friend found that her first cheap telescope had poor
+  optics that produced blurry images.
+oracle_action: ANSWER
+oracle_focus: Choose the six-inch Dobsonian; its greater aperture and wider field
+  suit the large, faint deep-sky targets the user wants from a dark site, whereas
+  the small long-focus refractor is mismatched to those objects.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not generalise from one friend's bad-optics telescope.
+  Ask about each instrument's aperture and field to determine which suits the user's
+  faint extended targets before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not generalise from one friend's bad-optics telescope. Ask about each
+      instrument's aperture and field to determine which suits the user's faint extended
+      targets before deciding.
+  LL:
+    action: ASK
+    focus: Do not generalise from one friend's bad-optics telescope. Ask about each
+      instrument's aperture and field to determine which suits the user's faint extended
+      targets before deciding.
+  HH:
+    action: ANSWER
+    focus: Choose the six-inch Dobsonian; its greater aperture and wider field suit
+      the large, faint deep-sky targets the user wants from a dark site, whereas the
+      small long-focus refractor is mismatched to those objects.
+  LH:
+    action: ANSWER
+    focus: Choose the six-inch Dobsonian; its greater aperture and wider field suit
+      the large, faint deep-sky targets the user wants from a dark site, whereas the
+      small long-focus refractor is mismatched to those objects.
+variants:
+  HL:
+    distractor: Diwata, a friend who has stargazed for years, warned me her first
+      budget telescope had genuinely poor optics, with soft, smeared star images she
+      could never focus sharply, and she said cheap glass is the thing that ruins
+      beginners on this hobby.
+    diagnosticity: low
+    salience: high
+    proposition: A friend found that her first cheap telescope had poor optics that
+      produced blurry images.
+    salience_source: A — an experienced hobbyist friend recounting a vivid, first-hand
+      optical-quality failure.
+    why_plausible: Poor optics genuinely ruin a beginner's experience, so an experienced
+      friend's warning makes optical quality feel like the deciding axis.
+    why_irrelevant: Her bad-optics unit is a separate purchase; it says nothing about
+      these two scopes, whose decisive difference is aperture and field fit to the
+      user's targets.
+  LL:
+    distractor: A friend found that her first cheap telescope had poor optics that
+      produced blurry images.
+    diagnosticity: low
+    salience: low
+    proposition: A friend found that her first cheap telescope had poor optics that
+      produced blurry images.
+    matched_to: HL
+  HH:
+    distractor: The refractor has a long focal length giving a narrow, highly magnified
+      field, while the six-inch Dobsonian gathers far more light at a wide field,
+      which is what large dim nebulae and galaxy clusters actually need.
+    diagnosticity: high
+    salience: high
+    proposition: The Dobsonian offers more aperture and a wider field, matching faint
+      extended targets; the refractor is narrow and small.
+    salience_source: Concrete optical contrast (aperture and field-of-view) mapped
+      directly onto the user's stated faint-extended targets makes the fit decisive.
+  LH:
+    distractor: The Dobsonian offers more aperture and a wider field, matching faint
+      extended targets; the refractor is narrow and small.
+    diagnosticity: high
+    salience: low
+    proposition: The Dobsonian offers more aperture and a wider field, matching faint
+      extended targets; the refractor is narrow and small.
+    matched_to: HH
+distractor_direction:
+  label: Optical-quality risk
+  description: Treating optical sharpness as the deciding axis because a friend's
+    cheap telescope had poor optics.
+plausible_alternative_directions:
+- label: Mount stability
+  description: Whether the tabletop versus Dobsonian mount steadiness and usability
+    should drive the choice.
+- label: Portability and setup
+  description: Whether the larger Dobsonian's bulk versus the compact refractor matters
+    for the user's garden use.
+leak_audit:
+  ll_atomic_claims:
+  - A friend's first cheap telescope had poor optics.
+  - It produced blurry images.
+  hh_atomic_claims:
+  - The refractor has a long focal length and narrow, magnified field.
+  - The six-inch Dobsonian gathers more light at a wider field.
+  - Large faint nebulae and galaxy clusters need aperture and wide field.
+  hl_salience_dimensions:
+    source_credibility: Named experienced hobbyist (Diwata) recounting her own first-telescope
+      optical failure.
+    narrative_coherence: Clean beginner-bought-bad-optics-then-warns narrative.
+    confident_assertion: warned me... she said cheap glass is the thing that ruins
+      beginners
+    concrete_detail: Detail about the source's telescope (soft smeared stars, never
+      focused) only; no claim about the two candidate scopes.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 61
+  hl_word_count: 42
+  ll_word_count: 15
+  hh_word_count: 36
+  lh_word_count: 19
+  notes: 'QC repair: removed ''small'' from ''€280 refractor'' and ''six-inch'' from
+    ''Dobsonian reflector'' in xbase
+
+    to strip the aperture-size contrast from the base scenario. Without those descriptors
+    a competent
+
+    astronomer cannot conclusively pick the Dobsonian from xbase + distractor alone
+    (aperture fit to
+
+    faint extended targets is not deducible from scope type alone at budget price
+    points), so HL/LL
+
+    cells are genuinely low-diagnosticity. The decisive aperture-and-field fit to
+    the user''s targets
+
+    lives only in HH/LH. Updated low_diagnostic_oracle_focus to reflect that asking
+    about aperture and
+
+    field remains necessary even though targets are stated. xbase_word_count drops
+    from 63 to 61.
+
+    '
+causal_audit:
+  steelman: 'A seasoned observer could argue optical quality dominates: a scope with
+    bad glass frustrates a beginner no
+
+    matter its specs, sample variation is real at budget price points, and a trusted
+    friend''s poor-optics
+
+    experience is worth heeding, so optical quality should drive the choice. That
+    is a point about telescope optics
+
+    in general and about the friend''s particular unit. It gives no case-specific
+    reason to prefer either candidate
+
+    here, where neither is reported defective and the decisive difference is that
+    the Dobsonian''s larger aperture
+
+    and wider field match the user''s faint extended targets while the small long-focus
+    refractor does not. The
+
+    optics anecdote cannot rank these two scopes, and the aperture-field fit settles
+    the choice.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase withholds the aperture-and-field comparison,
+    so the optics-quality framing is only foreclosed by HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A first-telescope choice for faint deep-sky targets, where the Dobsonian's
+    aperture and wide-field fit to those objects, not a friend's bad-optics warning,
+    is decisive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

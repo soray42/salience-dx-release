@@ -1,0 +1,9 @@
+{
+  "seed_id": "T3-014",
+  "steelman": "A moderator with eight years of experience advising families across a 40,000-member parenting forum has observed many real-world outcomes across a wide range of care arrangements. Daycare centres offer licensed oversight, structured developmental programming, peer socialization for toddlers, and built-in backup coverage when a carer is sick — all factors a veteran observer might have distilled into a strong categorical preference. The moderator may have witnessed many nanny-share arrangements dissolve when one family exits, leaving parents scrambling, and her 'always' rule could encode a real empirical regularity about reliability and developmental outcomes that a competent childcare advisor might at least note as a relevant prior. One could argue that deference to domain-expert consensus is itself a legitimate decision heuristic that a practitioner might include on any checklist.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The distractor direction is authority-substitution ('follow the categorical recommendation rather than running one's own analysis'), not a domain mechanism. No amount of source credibility changes the schedule-arithmetic fact: the family works Mon-Thu, the daycare slot includes a structurally unused Friday, and the $650/month differential is directly computable from the stated prices. The xbase explicitly states both options are considered acceptable in care quality, closing the one dimension (quality/reliability differential) that might lend the moderator's categorical preference a case-specific pathway. A competent practitioner would note the moderator's view as a potential anchoring bias to guard against, not as a diagnostic mechanism informing this family's specific numbers. Seed passes this lens; no repair needed."
+}

@@ -1,0 +1,176 @@
+seed_id: T5-043
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: My home Wi-Fi speeds have been poor for two weeks. Speed tests on my phone
+  show only 8 to 12 Mbps download even though my broadband line delivers over 300
+  Mbps to the router. Other household devices have the same problem. The router was
+  not changed and no new appliances were added. {DS}
+focal_diagnostic_feature: Every affected device is connected to the 2.4 GHz band at
+  20 MHz channel width, band-steering is disabled in the router settings, and the
+  5 GHz radio shows no associated clients despite devices being within two metres
+  of the router.
+low_diagnostic_proposition: The router admin interface has a confusing and poorly
+  organised visual design, suggesting the firmware may not manage radio resources
+  well.
+oracle_action: ANSWER
+oracle_focus: Enable band-steering in the router settings so nearby devices connect
+  to the 5 GHz radio instead of defaulting to the slower 2.4 GHz band.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer radio management quality from the admin
+  interface's visual design. Ask which band and channel width each device is using,
+  and whether band-steering is configured.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer radio management quality from the admin interface's visual
+      design. Ask which band and channel width each device is using, and whether band-steering
+      is configured.
+  LL:
+    action: ASK
+    focus: Do not infer radio management quality from the admin interface's visual
+      design. Ask which band and channel width each device is using, and whether band-steering
+      is configured.
+  HH:
+    action: ANSWER
+    focus: Enable band-steering in the router settings so nearby devices connect to
+      the 5 GHz radio instead of defaulting to the slower 2.4 GHz band.
+  LH:
+    action: ANSWER
+    focus: Enable band-steering in the router settings so nearby devices connect to
+      the 5 GHz radio instead of defaulting to the slower 2.4 GHz band.
+variants:
+  HL:
+    distractor: The router admin interface is crammed with unlabelled sliders, clashing
+      pastel buttons, and a layout that breaks on mobile, making it hard to believe
+      the firmware manages radio resources competently.
+    diagnosticity: low
+    salience: high
+    proposition: The router admin interface has a confusing and poorly organised visual
+      design, suggesting the firmware may not manage radio resources well.
+    salience_source: B — specific visual defects (unlabelled sliders, clashing pastel
+      buttons, broken mobile layout); C — confident inferential framing ("hard to
+      believe").
+    why_plausible: Consumer router firmware with poor UI quality sometimes does have
+      underlying implementation weaknesses; a practitioner might reasonably treat
+      UI chaos as a signal of overall software engineering quality.
+    why_irrelevant: Band-steering is a discrete configurable feature, not a symptom
+      of general firmware quality. The admin interface's visual design has no constructible
+      mechanism for whether band-steering is enabled or whether clients associate
+      to 2.4 GHz versus 5 GHz — those are discrete configuration values independent
+      of the interface's visual presentation.
+  LL:
+    distractor: The router admin interface has a confusing and poorly organised visual
+      design, suggesting the firmware may not manage radio resources well.
+    diagnosticity: low
+    salience: low
+    proposition: The router admin interface has a confusing and poorly organised visual
+      design, suggesting the firmware may not manage radio resources well.
+    matched_to: HL
+  HH:
+    distractor: Every affected device shows it is connected to the 2.4 GHz band at
+      20 MHz channel width; the router's band-steering setting is disabled, and the
+      5 GHz radio shows no associated clients despite the devices being within two
+      metres of the router.
+    diagnosticity: high
+    salience: high
+    proposition: Every affected device is connected to the 2.4 GHz band at 20 MHz
+      channel width, band-steering is disabled in the router settings, and the 5 GHz
+      radio shows no associated clients despite devices being within two metres of
+      the router.
+    salience_source: B — specific band and channel width from client association tables
+      (2.4 GHz, 20 MHz), named setting (band-steering disabled), and the concrete
+      proximity detail (within two metres).
+  LH:
+    distractor: All affected devices connect to 2.4 GHz at 20 MHz; band-steering is
+      off and the 5 GHz radio has no associated clients.
+    diagnosticity: high
+    salience: low
+    proposition: Every affected device is connected to the 2.4 GHz band at 20 MHz
+      channel width, band-steering is disabled in the router settings, and the 5 GHz
+      radio shows no associated clients despite devices being within two metres of
+      the router.
+    matched_to: HH
+distractor_direction:
+  label: Firmware radio-management incompetence
+  description: Treating the router admin interface's cluttered visual design as evidence
+    that the firmware is too poorly engineered to manage Wi-Fi radios competently.
+plausible_alternative_directions:
+- label: 2.4 GHz channel congestion
+  description: Even on 2.4 GHz, neighbouring networks could be saturating overlapping
+    channels, reducing throughput independently of band-steering configuration.
+- label: Broadband line contention
+  description: Despite 300 Mbps reaching the router, ISP-side contention or a congested
+    backhaul segment could degrade real-world throughput during peak hours.
+leak_audit:
+  ll_atomic_claims:
+  - The router admin interface has a confusing and poorly organised visual design.
+  - The confusing visual design suggests the firmware may not manage radio resources
+    well.
+  hh_atomic_claims:
+  - Every affected device is connected to the 2.4 GHz band.
+  - The channel width in use is 20 MHz.
+  - The router's band-steering setting is disabled.
+  - The 5 GHz radio shows no associated clients.
+  - The affected devices are within two metres of the router.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observer, no named expert
+    narrative_coherence: Specific UI defects (unlabelled sliders, clashing pastel
+      buttons, broken mobile layout) grounding the observation
+    confident_assertion: hard to believe — confident inferential framing
+    concrete_detail: N/A — visual details describe the admin UI appearance only
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 52
+  hl_word_count: 30
+  ll_word_count: 21
+  hh_word_count: 42
+  lh_word_count: 21
+  notes: 'T5 inferential bridge ("confusing visual design → firmware may not manage
+    radio
+
+    resources well") present in both HL and LL as required by C1/self-check 13.
+
+    HL''s visual details are about the admin interface appearance only — no band,
+
+    channel, or association facts added. HH is at the upper bound (42 words); all
+
+    five claims are necessary for the focal evidence to be conclusive. LH trimmed
+
+    from 24 to 21 words while preserving all four atomic claims.
+
+    '
+causal_audit:
+  steelman: 'Some consumer routers with poor UI quality do have implementation bugs
+    in radio
+
+    management, band selection algorithms, or DFS handling — a practitioner could
+
+    argue that the UI''s lack of polish signals overall firmware immaturity that might
+
+    leave band-steering poorly implemented even if nominally present. This is a real
+
+    correlation in the industry for certain budget brands.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — xbase does not disclose band or band-steering state.
+    The focal evidence (all devices on 2.4 GHz, band-steering disabled, 5 GHz empty,
+    proximity to router confirmed) provides a complete structural explanation: the
+    firmware does support band-steering as a feature; it is simply disabled. UI appearance
+    cannot determine whether a configuration toggle is on or off.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Home Wi-Fi clients stuck on slow 2.4 GHz because band-steering is disabled,
+    with all affected devices within two metres of the router, against the inference
+    that the router admin interface's cluttered appearance signals firmware radio-management
+    incompetence.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

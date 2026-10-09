@@ -1,0 +1,35 @@
+{
+  "seed_id": "T2-012",
+  "ll_claims_extracted": [
+    "Someone (unspecified) suggested that the new bedside lamp could be causing the e-reader battery to drain faster."
+  ],
+  "hl_case_claims": [
+    "New LED bedside lamps with high-frequency switching drivers are a known cause of accelerated battery drain in nearby devices."
+  ],
+  "hl_source_claims": [
+    "The speaker's neighbor told them this information.",
+    "The neighbor works as a technician at a consumer electronics repair shop.",
+    "The neighbor stated this as a direct, confident personal report of professional knowledge."
+  ],
+  "leaks": [
+    {
+      "text": "new LED bedside lamps with high-frequency switching drivers",
+      "category": "other_case_content"
+    },
+    {
+      "text": "are a known cause",
+      "category": "severity_claim"
+    }
+  ],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 35,
+    "ll": 16,
+    "xbase": 68,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "fail",
+  "repair_hint": "Two leaks: (1) 'new LED bedside lamps with high-frequency switching drivers' introduces a mechanism claim about lamp technology that could change a responder's diagnostic approach (prompt asking whether user's lamp has switching drivers). Fix: replace with 'bedside lamps like that' or remove lamp-type specificity entirely — the technician's claim should refer only to 'the new lamp' without naming a mechanism. (2) 'are a known cause' upgrades the epistemic certainty from LL's 'could be causing' to an established causal claim, which changes how much weight a responder gives the lamp hypothesis in the user's case. Fix: replace with 'could cause' or 'has been known to affect' to match the tentative framing in LL. Revised HL: 'My neighbor, who works as a technician at a consumer electronics repair shop, told me that bedside lamps like that could cause battery drain in nearby devices.'"
+}

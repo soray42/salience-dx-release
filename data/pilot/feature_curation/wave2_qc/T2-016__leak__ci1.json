@@ -1,0 +1,27 @@
+{
+  "seed_id": "T2-016",
+  "ll_claims_extracted": [
+    "An accountant stated this claim",
+    "Unfamiliar invoice designs can make clients slow down payments"
+  ],
+  "hl_case_claims": [
+    "Clients sometimes slow down payments when an invoice looks unfamiliar"
+  ],
+  "hl_source_claims": [
+    "The speaker's accountant made this claim",
+    "The accountant handles billing for a dozen freelancers",
+    "The accountant has seen this happen before (prior empirical observation)"
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 25,
+    "ll": 12,
+    "xbase": 66,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

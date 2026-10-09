@@ -1,0 +1,112 @@
+seed_id: T1-004
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: La precisión de nuestro modelo de fraude en producción ha caído durante las
+  últimas semanas, mientras que el recall se mantiene básicamente sin cambios. El
+  modelo se desplegó hace nueve meses y no se ha vuelto a entrenar desde entonces.
+  No he encontrado evidencia de un cambio reciente en el pipeline de etiquetas. {DS}
+focal_diagnostic_feature: La pérdida de precisión está concentrada en una categoría
+  de comercio recién añadida que no existía en los datos de entrenamiento.
+low_diagnostic_proposition: A fraud-model regression at another bank was caused by
+  swapped labels in their pipeline.
+oracle_action: ASK
+oracle_focus: Investigate per-MCC precision and distribution shift; the pattern suggests
+  covariate shift in the new merchant category and may require calibration or retraining
+  on that segment.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not import the other bank's label-swap explanation.
+  Ask for segment-level error rates and whether the drop is concentrated in new transaction
+  types.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not import the other bank's label-swap explanation. Ask for segment-level
+      error rates and whether the drop is concentrated in new transaction types.
+  LL:
+    action: ASK
+    focus: Do not import the other bank's label-swap explanation. Ask for segment-level
+      error rates and whether the drop is concentrated in new transaction types.
+  HH:
+    action: ASK
+    focus: Investigate per-MCC precision and distribution shift; the pattern suggests
+      covariate shift in the new merchant category and may require calibration or
+      retraining on that segment.
+  LH:
+    action: ASK
+    focus: Investigate per-MCC precision and distribution shift; the pattern suggests
+      covariate shift in the new merchant category and may require calibration or
+      retraining on that segment.
+variants:
+  HL:
+    distractor: Un colega en otro banco me contó que su puntuación de fraude se desplomó
+      después de que un analista intercambiara accidentalmente dos etiquetas de tipo
+      de tarjeta en una carga del viernes.
+    diagnosticity: low
+    salience: high
+    proposition: A fraud-model regression at another bank was caused by swapped labels
+      in their pipeline.
+    salience_source: vivid human-error anecdote from adjacent industry
+    why_plausible: Label swaps are plausible ML failures and the banking context sounds
+      close.
+    why_irrelevant: The current evidence points to a new distribution segment, not
+      changed labels; the external pipeline story adds no evidence about this model.
+  LL:
+    distractor: Un par en otro banco reportó una regresión del modelo de fraude causada
+      por un intercambio de etiquetas en su pipeline de datos.
+    diagnosticity: low
+    salience: low
+    proposition: A fraud-model regression at another bank was caused by swapped labels
+      in their pipeline.
+    matched_to: HL
+  HH:
+    distractor: Casi toda la pérdida de precisión proviene de un MCC completamente
+      nuevo que no existía cuando entrenamos el modelo; las categorías más antiguas
+      parecen básicamente normales.
+    diagnosticity: high
+    salience: high
+    proposition: The precision loss is concentrated in a newly added merchant category
+      that did not exist in the training data.
+    salience_source: segment-localised error concentration
+  LH:
+    distractor: La degradación de precisión está concentrada en una categoría de comercio
+      que es posterior a los datos de entrenamiento; las demás categorías se mantienen
+      relativamente estables.
+    diagnosticity: high
+    salience: low
+    proposition: The precision loss is concentrated in a newly added merchant category
+      that did not exist in the training data.
+    matched_to: HH
+distractor_direction:
+  label: Intercambio de etiquetas en el pipeline
+  description: Investigar si las etiquetas de entrenamiento o evaluación fueron intercambiadas,
+    invertidas o mal unidas en el pipeline del modelo.
+plausible_alternative_directions:
+- label: Descalibración del umbral de decisión
+  description: El umbral de puntuación del modelo o la capa de calibración cambió,
+    reduciendo la precisión sin afectar mucho al recall.
+- label: Regresión en el registro de características
+  description: Un cambio en la generación o el registro de características corrompió
+    una o más entradas del modelo tras el despliegue.
+- label: Retraso en las etiquetas de fraude
+  description: Las etiquetas de resultado llegan tarde o de forma irregular, distorsionando
+    las mediciones de precisión recientes.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-004.yaml
+  source_xbase_sha256: c8c2d5edcc6bcc83
+  translated_content_sha256: fd8f8312fab62a7c
+  translation_notes: MCC (Merchant Category Code) retained as-is — standard technical
+    term in Spanish banking/ML contexts.

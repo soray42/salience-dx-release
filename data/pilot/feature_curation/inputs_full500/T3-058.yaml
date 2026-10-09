@@ -1,0 +1,174 @@
+seed_id: T3-058
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our main branch integration tests fail on roughly one run in six in the shared
+  CI environment. Different tests fail each time, and retrying the same run sometimes
+  passes. We run eight parallel workers and share one test database instance across
+  them. {DS}
+focal_diagnostic_feature: Every failure trace ends with a unique-constraint violation
+  on the `users` table caused by two parallel workers generating the same username
+  and inserting simultaneously; no network errors or external-service timeouts appear
+  in any failing run.
+low_diagnostic_proposition: This is a classic case of flaky external HTTP calls and
+  the fix is to add retry logic around every external request.
+oracle_action: ANSWER
+oracle_focus: Isolate test database state per worker using transactions rolled back
+  after each test, per-worker schemas, or a unique-username generation strategy; the
+  failures are a shared-state race condition, not external-service flakiness.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the external-HTTP-retry diagnosis from authority
+  alone. Ask for failure logs and error types before treating this as a network-reliability
+  problem.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the external-HTTP-retry diagnosis from authority alone. Ask
+      for failure logs and error types before treating this as a network-reliability
+      problem.
+  LL:
+    action: ASK
+    focus: Do not adopt the external-HTTP-retry diagnosis from authority alone. Ask
+      for failure logs and error types before treating this as a network-reliability
+      problem.
+  HH:
+    action: ANSWER
+    focus: Isolate test database state per worker using transactions rolled back after
+      each test, per-worker schemas, or a unique-username generation strategy; the
+      failures are a shared-state race condition, not external-service flakiness.
+  LH:
+    action: ANSWER
+    focus: Isolate test database state per worker using transactions rolled back after
+      each test, per-worker schemas, or a unique-username generation strategy; the
+      failures are a shared-state race condition, not external-service flakiness.
+variants:
+  HL:
+    distractor: Gökhan, our most experienced backend engineer, said this is a classic
+      case of flaky third-party HTTP calls and told me to wrap every external request
+      in a retry with exponential backoff.
+    diagnosticity: low
+    salience: high
+    proposition: This is a classic case of flaky external HTTP calls and the fix is
+      to add retry logic around every external request.
+    salience_source: A (source credibility — most experienced backend engineer on
+      the team); C (confident assertion — "classic case", declarative told-me framing);
+      B (narrative coherence — clean diagnosis-plus-prescription structure).
+    why_plausible: Intermittent failures that sometimes pass on retry are the canonical
+      symptom of flaky external calls; an experienced engineer recognising that pattern
+      is entirely reasonable.
+    why_irrelevant: Gökhan applied a pattern without examining the error type; the
+      actual failures are database constraint violations with no network component,
+      which retry logic around HTTP calls cannot address.
+  LL:
+    distractor: A senior engineer said this is a classic case of flaky external HTTP
+      calls and suggested adding retry logic.
+    diagnosticity: low
+    salience: low
+    proposition: This is a classic case of flaky external HTTP calls and the fix is
+      to add retry logic around every external request.
+    matched_to: HL
+  HH:
+    distractor: Every failure log ends with a unique-constraint violation on the `users`
+      table — two workers generated the same username and tried to insert simultaneously;
+      there is no network error or timeout anywhere in any failing run.
+    diagnosticity: high
+    salience: high
+    proposition: Every failure trace ends with a unique-constraint violation on the
+      `users` table caused by two parallel workers generating the same username and
+      inserting simultaneously; no network errors or external-service timeouts appear
+      in any failing run.
+    salience_source: B (narrative coherence — error type, table name, collision mechanism,
+      and absence of network errors stated in one structured sequence); C (definitive
+      assertion — "every failure log", "no network error ... anywhere").
+  LH:
+    distractor: All failure traces show a unique-constraint violation with concurrent
+      inserts to the `users` table; no network errors appear.
+    diagnosticity: high
+    salience: low
+    proposition: Every failure trace ends with a unique-constraint violation on the
+      `users` table caused by two parallel workers generating the same username and
+      inserting simultaneously; no network errors or external-service timeouts appear
+      in any failing run.
+    matched_to: HH
+distractor_direction:
+  label: flaky external HTTP calls
+  description: Diagnosing the intermittent CI failures as caused by unreliable third-party
+    HTTP endpoints and prescribing retry logic as the fix.
+plausible_alternative_directions:
+- label: test ordering dependency
+  description: Tests may share mutable state left from a previous test rather than
+    colliding in the same run, causing failures depending on execution order.
+- label: CI environment resource contention
+  description: Eight workers on a shared instance may exhaust available database connections
+    or file descriptors under load, causing transient errors.
+leak_audit:
+  ll_atomic_claims:
+  - A senior engineer characterised the problem as a classic case of flaky external
+    HTTP calls.
+  - The engineer suggested adding retry logic.
+  hh_atomic_claims:
+  - Every failure log ends with a unique-constraint violation.
+  - The violation is on the `users` table.
+  - Two workers generated the same username simultaneously.
+  - Two workers attempted concurrent inserts of that username.
+  - No network error or timeout appears in any failing run.
+  hl_salience_dimensions:
+    source_credibility: Most experienced backend engineer on the team — strong domain-matched
+      credibility.
+    narrative_coherence: 'Clean two-part structure: diagnosis ("classic case of")
+      then prescription ("wrap every external request in a retry") in professional
+      register.'
+    confident_assertion: '"Classic case of", "told me to" — declarative, no hedging.'
+    concrete_detail: '"Exponential backoff" is a concrete technique name — about the
+      generic prescription, not this case''s specific evidence; allowed under C1.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 42
+  hl_word_count: 31
+  ll_word_count: 19
+  hh_word_count: 35
+  lh_word_count: 18
+  notes: 'HL adds only the named source (Gökhan), his role, the confident framing,
+    and
+
+    the generic prescription. No case-specific error type or table name in HL/LL.
+
+    HH/LH diff: both assert the constraint violation, the `users` table, concurrent
+
+    insert, and absence of network errors; HH adds the username-collision mechanism
+
+    and "every" quantifier for vividness.
+
+    '
+causal_audit:
+  steelman: 'Intermittent failures that pass on retry are the canonical fingerprint
+    of
+
+    flaky network calls to external services. An experienced backend engineer
+
+    seeing "sometimes fails, sometimes passes" on shared CI would very reasonably
+
+    reach for the external-call explanation first, especially if the service under
+
+    test makes HTTP calls.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not mention external HTTP calls at all;
+    a practitioner cannot distinguish between the distractor and the actual cause
+    from xbase alone. The focal feature (constraint violation, no network errors)
+    is what rules out the HTTP-retry direction.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: CI integration tests fail intermittently due to parallel workers colliding
+    on a shared test database with non-isolated username generation; authority figure
+    pattern-matches to flaky external HTTP calls.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

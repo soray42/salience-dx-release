@@ -1,0 +1,13 @@
+{
+  "seed_id": "T6-013",
+  "my_own_diagnosis": "Given the NTP-clean xbase and the focal feature specifying 'x509: certificate signed by unknown authority', I concluded that the cert-manager configuration change broke the CA trust chain — likely a missing or corrupted CA bundle or trust store update — before reading the oracles. Clock skew is doubly ruled out: NTP confirms sub-second offsets and the error type is structurally incompatible with time-validity failures.",
+  "focal_decisive": true,
+  "focal_notes": "The 'unknown authority' error type unambiguously signals a trust-chain failure and structurally excludes clock skew, which produces time-validity errors; combined with the NTP confirmation in xbase, the focal feature leaves no residual ambiguity about direction.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cells correctly use the low-diagnostic oracle (reject clock skew, redirect to cert-manager config); HH/LH cells correctly use the focal oracle (investigate CA bundle/trust store); low_diagnostic_oracle_focus correctly explains both the NTP evidence and the structural incompatibility of the error type.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

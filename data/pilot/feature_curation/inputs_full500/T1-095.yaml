@@ -1,0 +1,170 @@
+seed_id: T1-095
+template: T1
+domain: open_qa
+complexity: medium
+xbase: I am deciding whether to buy a used espresso machine a private seller is offering
+  for €230. It is a dual-boiler model that normally sells for far more, it powers
+  on, and the seller says it was descaled regularly. I would use it most mornings
+  and want it to last. I am meeting them this weekend to inspect it before paying.
+  {DS}
+focal_diagnostic_feature: The portafilter gasket is cracked through, and replacement
+  gaskets for this discontinued model are unavailable.
+low_diagnostic_proposition: A friend bought a comparable used machine that later failed
+  because of internal limescale buildup.
+oracle_action: ANSWER
+oracle_focus: Do not buy at this price; the split gasket is a leak point and the part
+  is discontinued with no compatible replacement, so the machine cannot be made reliably
+  usable without fabricating or sourcing an unavailable seal.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one friend's limescale failure decide this.
+  Ask what the inspection of this specific unit actually shows before judging whether
+  it is worth buying.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one friend's limescale failure decide this. Ask what the inspection
+      of this specific unit actually shows before judging whether it is worth buying.
+  LL:
+    action: ASK
+    focus: Do not let one friend's limescale failure decide this. Ask what the inspection
+      of this specific unit actually shows before judging whether it is worth buying.
+  HH:
+    action: ANSWER
+    focus: Do not buy at this price; the split gasket is a leak point and the part
+      is discontinued with no compatible replacement, so the machine cannot be made
+      reliably usable without fabricating or sourcing an unavailable seal.
+  LH:
+    action: ANSWER
+    focus: Do not buy at this price; the split gasket is a leak point and the part
+      is discontinued with no compatible replacement, so the machine cannot be made
+      reliably usable without fabricating or sourcing an unavailable seal.
+variants:
+  HL:
+    distractor: Dakila, who roasts coffee as a hobby, told me a near-identical secondhand
+      machine he bought two years ago slowly died from limescale buildup that had
+      quietly furred up the internal boiler long before he ever saw a symptom.
+    diagnosticity: low
+    salience: high
+    proposition: A friend bought a comparable used machine that later failed because
+      of internal limescale buildup.
+    salience_source: A — a named hobbyist friend recounting a coherent, dated first-hand
+      failure of the same machine class.
+    why_plausible: Limescale really does kill espresso boilers over time, so a matching
+      machine that died from it feels like a direct warning about this purchase.
+    why_irrelevant: The friend's scale failure is about a different unit's history
+      and says nothing about this machine's condition; the buy decision turns on this
+      unit's own inspectable parts.
+  LL:
+    distractor: A friend bought a comparable used machine that later failed because
+      of internal limescale buildup.
+    diagnosticity: low
+    salience: low
+    proposition: A friend bought a comparable used machine that later failed because
+      of internal limescale buildup.
+    matched_to: HL
+  HH:
+    distractor: When I lifted the group head to look, the rubber portafilter gasket
+      is split right across and crumbling, and that exact part is discontinued for
+      this model, with no compatible replacement gasket sold anywhere I can find.
+    diagnosticity: high
+    salience: high
+    proposition: The portafilter gasket is cracked through, and replacement gaskets
+      for this discontinued model are unavailable.
+    salience_source: Concrete first-person inspection naming the exact failed part
+      and the dead-end parts search makes the blocker vivid.
+  LH:
+    distractor: The portafilter gasket is cracked through, and replacement gaskets
+      for this discontinued model are unavailable.
+    diagnosticity: high
+    salience: low
+    proposition: The portafilter gasket is cracked through, and replacement gaskets
+      for this discontinued model are unavailable.
+    matched_to: HH
+distractor_direction:
+  label: Limescale failure risk
+  description: Treating likely internal scale damage as the dominant reason to walk
+    away, as happened to a friend's similar machine.
+plausible_alternative_directions:
+- label: Electronics or pump health
+  description: Whether the pump
+  boilers: null
+  and control board work: null
+  which powering on only partly indicates.: null
+- label: Price-versus-condition value
+  description: Whether €230 is fair given whatever refurbishment this specific unit
+    turns out to need.
+leak_audit:
+  ll_atomic_claims:
+  - A friend bought a comparable used espresso machine.
+  - That machine later failed.
+  - The failure was due to internal limescale buildup.
+  hh_atomic_claims:
+  - The portafilter gasket is cracked through.
+  - Replacement gaskets for this model are unavailable.
+  - The model is discontinued.
+  hl_salience_dimensions:
+    source_credibility: Named hobbyist friend (Dakila) recounting his own dated purchase
+      of the same machine class.
+    narrative_coherence: Clean two-year-ago-to-failure chronology.
+    confident_assertion: N/A
+    concrete_detail: Detail about the source's own machine (bought two years ago,
+      quiet boiler furring) only; no claim about the unit being inspected.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 61
+  hl_word_count: 38
+  ll_word_count: 15
+  hh_word_count: 37
+  lh_word_count: 15
+  notes: 'LL carries only the friend-machine-failed-from-scale claim; the named source,
+    his hobby, and the two-year
+
+    history are HL-only and all describe the source''s own unit, not this one. xbase
+    withholds any condition finding,
+
+    stating only price, model class, that it powers on, the seller''s descaling claim,
+    and the planned inspection, so
+
+    the HL/LL cells cannot resolve the purchase. The decisive cracked-gasket-plus-unavailable-part
+    fact lives only
+
+    in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A restoration-minded buyer could argue scale is the real killer of secondhand
+    espresso machines: it hides
+
+    inside boilers, blocks heat exchange, and a seller''s verbal descaling claim is
+    unverifiable, so a peer machine
+
+    that died of scale is a fair caution. But that argument is about scale''s general
+    prevalence and about the
+
+    friend''s unit, not this one. Nothing in xbase shows scale symptoms here, and
+    the deciding defect is a visibly
+
+    cracked, discontinued gasket that no descaling history changes; the scale anecdote
+    supplies no reason to rank
+
+    scale as this machine''s leading problem, and the gasket finding settles the decision
+    on its own.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase neither shows nor rules out scale; it simply
+    withholds all condition findings so the decisive defect lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A buyer inspecting a used espresso machine, where a cracked, discontinued,
+    unobtainable portafilter gasket, not a friend's limescale failure, is the decisive
+    reason not to buy.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

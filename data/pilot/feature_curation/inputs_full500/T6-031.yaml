@@ -1,0 +1,198 @@
+seed_id: T6-031
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I am trying to decide whether to accept a counteroffer from my current employer.
+  My current manager made the case strongly when I told her I was considering leaving,
+  and the raise she is proposing would close most of the gap with the outside offer.
+  I have been in this role for four years and have a lot of context here. {DS}
+focal_diagnostic_feature: The outside offer includes a senior title the candidate
+  has been promised but denied at the current employer for two consecutive review
+  cycles, while the counteroffer retains the same title and no written promotion commitment.
+low_diagnostic_proposition: Counteroffers from a current employer tend to be short-term
+  retention moves that rarely result in lasting improvement, so it is probably the
+  same situation again.
+oracle_action: ANSWER
+oracle_focus: 'Decline the counteroffer: the title and promotion commitment that motivated
+  the job search are absent from the counteroffer, while the outside offer provides
+  them; the raise alone does not resolve the underlying issue.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply a general counteroffer-skepticism pattern
+  without examining this case. Ask whether the counteroffer addresses the specific
+  reasons the candidate was considering leaving.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply a general counteroffer-skepticism pattern without examining
+      this case. Ask whether the counteroffer addresses the specific reasons the candidate
+      was considering leaving.
+  LL:
+    action: ASK
+    focus: Do not apply a general counteroffer-skepticism pattern without examining
+      this case. Ask whether the counteroffer addresses the specific reasons the candidate
+      was considering leaving.
+  HH:
+    action: ANSWER
+    focus: 'Decline the counteroffer: the title and promotion commitment that motivated
+      the job search are absent from the counteroffer, while the outside offer provides
+      them; the raise alone does not resolve the underlying issue.'
+  LH:
+    action: ANSWER
+    focus: 'Decline the counteroffer: the title and promotion commitment that motivated
+      the job search are absent from the counteroffer, while the outside offer provides
+      them; the raise alone does not resolve the underlying issue.'
+variants:
+  HL:
+    distractor: Every time I have seen someone take a counteroffer at a place that
+      already undervalued them, they were gone within eighteen months anyway — the
+      raise buys quiet for a review cycle and then everything reverts, so my gut says
+      this is the same story playing out again.
+    diagnosticity: low
+    salience: high
+    proposition: Counteroffers from a current employer tend to be short-term retention
+      moves that rarely result in lasting improvement, so it is probably the same
+      situation again.
+    salience_source: 'B: vivid personal pattern with specific timeline detail (''eighteen
+      months'', ''buys quiet for a review cycle''); C: confident first-instinct framing
+      (''my gut says this is the same story'').'
+    why_plausible: The general counteroffer-skepticism pattern is well-supported by
+      career literature and recruiter experience; many professionals have observed
+      exactly this dynamic.
+    why_irrelevant: The availability inference is based on general employer behavior,
+      not on whether this specific counteroffer resolves the actual reason the candidate
+      was job-searching; the focal evidence shows the title and promotion commitment
+      are still absent, which is structurally different from cases where the root
+      issue was only compensation.
+  LL:
+    distractor: Counteroffers at places that undervalued someone tend to be short-term,
+      so this is probably the same situation again.
+    diagnosticity: low
+    salience: low
+    proposition: Counteroffers from a current employer tend to be short-term retention
+      moves that rarely result in lasting improvement, so it is probably the same
+      situation again.
+    matched_to: HL
+  HH:
+    distractor: The outside offer carries the senior title I have been promised twice
+      in performance reviews and denied both times; the counteroffer keeps my current
+      title and my manager gave no written commitment on promotion timing, so the
+      raise does not touch the reason I started looking.
+    diagnosticity: high
+    salience: high
+    proposition: The outside offer includes a senior title the candidate has been
+      promised but denied at the current employer for two consecutive review cycles,
+      while the counteroffer retains the same title and no written promotion commitment.
+    salience_source: 'B: coherent personal narrative with specific prior-promise history;
+      C: decisive framing (''does not touch the reason I started looking'').'
+  LH:
+    distractor: The outside offer has the twice-denied senior title; the counteroffer
+      has no title or promotion commitment, so the raise does not address the cause.
+    diagnosticity: high
+    salience: low
+    proposition: The outside offer includes a senior title the candidate has been
+      promised but denied at the current employer for two consecutive review cycles,
+      while the counteroffer retains the same title and no written promotion commitment.
+    matched_to: HH
+distractor_direction:
+  label: general counteroffer-skepticism pattern
+  description: Applying a broad pattern — that counteroffers are short-term retention
+    moves that rarely resolve underlying issues — as the primary reason to decline,
+    based on the candidate's observations of other people's situations.
+plausible_alternative_directions:
+- label: manager relationship sustainability
+  description: Examining whether the manager's strong retention push signals a genuine
+    shift in how she values the candidate, or whether the relationship will become
+    uncomfortable once she knows the candidate seriously considered leaving.
+- label: compensation long-term trajectory
+  description: Evaluating whether accepting the counteroffer raise resets the candidate's
+    market leverage or creates a new compensation ceiling at the current employer.
+- label: institutional knowledge cost
+  description: Assessing whether four years of accumulated context creates switching
+    costs and productivity dip that should factor into the timing of a move.
+leak_audit:
+  ll_atomic_claims:
+  - Counteroffers at places that undervalued someone tend to be short-term.
+  - The offered inference is that this situation is probably the same.
+  hh_atomic_claims:
+  - The outside offer carries a senior title.
+  - The candidate was promised that title twice in performance reviews.
+  - The title was denied both times.
+  - The counteroffer retains the current title.
+  - The manager gave no written commitment on promotion timing.
+  - The raise does not address the reason the candidate started job-searching.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person availability inference, no named external
+      source.
+    narrative_coherence: 'B: vivid personal pattern with specific outcome timeline
+      (''eighteen months'', ''buys quiet for a review cycle'').'
+    confident_assertion: 'C: ''my gut says this is the same story playing out again''.'
+    concrete_detail: N/A — detail is about the pattern observed, not this case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 61
+  hl_word_count: 48
+  ll_word_count: 18
+  hh_word_count: 46
+  lh_word_count: 21
+  notes: 'T6: the availability inference ("so it is probably the same situation again")
+
+    appears in both HL and LL per C1 and T6 recipe. xbase deliberately withholds
+
+    the title/promotion-promise history; that lives only in HH/LH. The general
+
+    counteroffer pattern is empirically real, so steelman is strong — but it cannot
+
+    resolve whether this specific counteroffer addresses the actual root issue
+
+    (title/promotion), which the focal evidence decisively covers.
+
+    Ratios: HL:LL 46:19 = 2.4:1 OK. HH:LH 57:22 = 2.6:1 OK.
+
+    HH recount: "The(1) outside(2) offer(3) carries(4) the(5) senior(6) title(7)
+
+    I(8) have(9) been(10) promised(11) twice(12) in(13) performance(14) reviews(15)
+
+    and(16) denied(17) both(18) times(19) the(20) counteroffer(21) keeps(22) my(23)
+
+    current(24) title(25) and(26) my(27) manager(28) gave(29) no(30) written(31)
+
+    commitment(32) on(33) promotion(34) timing(35) so(36) the(37) raise(38) does(39)
+
+    not(40) touch(41) the(42) reason(43) I(44) started(45) looking(46)" = 46.
+
+    Correcting hh_word_count to 46.
+
+    '
+causal_audit:
+  steelman: 'The general counteroffer-skepticism pattern has strong empirical backing:
+    HR
+
+    and career research consistently documents that the majority of employees who
+
+    accept counteroffers leave within twelve to eighteen months, because the underlying
+
+    reasons for job-searching (culture, growth, recognition) are typically not resolved
+
+    by a pay adjustment alone. A thoughtful observer would be right to flag this
+
+    pattern as a real risk in many counteroffer situations.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not reveal the title/promotion history;
+    the structural distinction between a compensation-only counteroffer and the candidate's
+    actual root motivation lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Candidate weighing a counteroffer with a raise but no title change;
+    the actual motivation for job-searching was a twice-promised-but-denied senior
+    title, which the outside offer provides and the counteroffer does not.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,194 @@
+seed_id: T6-064
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our distributed tracing setup has been dropping roughly thirty percent of spans
+  across all services for the past four days. The sampling rate was raised from 1%
+  to 100% last week when we started a production debugging session. I have not restarted
+  the OpenTelemetry collector process during this period. {DS}
+focal_diagnostic_feature: The SDK's drop counter shows spans being discarded at the
+  export queue before reaching the collector, with the queue pegged at maximum capacity;
+  the collector process itself shows 40% memory utilization and healthy throughput
+  metrics.
+low_diagnostic_proposition: Past span drops in this tracing pipeline were caused by
+  the collector being OOM-killed, so the collector is likely responsible again.
+oracle_action: ANSWER
+oracle_focus: The SDK export queue is overflowing because the 100x sampling-rate increase
+  saturates it faster than the exporter can drain; increase the export queue size
+  or batch-send concurrency in the SDK configuration, or lower the sampling rate.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume the collector is OOM-killed based on past
+  experience. Ask for SDK-side drop counters, collector memory metrics, and export
+  queue utilization before diagnosing the collector process.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume the collector is OOM-killed based on past experience. Ask
+      for SDK-side drop counters, collector memory metrics, and export queue utilization
+      before diagnosing the collector process.
+  LL:
+    action: ASK
+    focus: Do not assume the collector is OOM-killed based on past experience. Ask
+      for SDK-side drop counters, collector memory metrics, and export queue utilization
+      before diagnosing the collector process.
+  HH:
+    action: ANSWER
+    focus: The SDK export queue is overflowing because the 100x sampling-rate increase
+      saturates it faster than the exporter can drain; increase the export queue size
+      or batch-send concurrency in the SDK configuration, or lower the sampling rate.
+  LH:
+    action: ANSWER
+    focus: The SDK export queue is overflowing because the 100x sampling-rate increase
+      saturates it faster than the exporter can drain; increase the export queue size
+      or batch-send concurrency in the SDK configuration, or lower the sampling rate.
+variants:
+  HL:
+    distractor: Every time I have seen spans go missing in this stack before, it turned
+      out the collector was running out of memory and getting OOM-killed by the kernel,
+      so my first instinct is that the collector is doing it again.
+    diagnosticity: low
+    salience: high
+    proposition: Past span drops in this tracing pipeline were caused by the collector
+      being OOM-killed, so the collector is likely responsible again.
+    salience_source: B — vivid personal history with a clean causal narrative (OOM
+      → kernel kill → span loss) and confident first-instinct framing; C — assertive
+      certainty (turned out, my first instinct is).
+    why_plausible: An OOM-killed collector is one of the most common causes of span
+      drops in production tracing; a practitioner who has seen it multiple times in
+      this exact stack has a strong empirical prior that is hard to dismiss.
+    why_irrelevant: An OOM-killed collector would exhaust memory and be terminated;
+      it cannot account for the SDK-side export queue overflowing while the collector
+      runs at 40% memory with healthy throughput. The drop is happening before spans
+      reach the collector at all.
+  LL:
+    distractor: Prior span drops in this tracing stack were caused by the collector
+      being OOM-killed, so the collector is probably responsible again.
+    diagnosticity: low
+    salience: low
+    proposition: Past span drops in this tracing pipeline were caused by the collector
+      being OOM-killed, so the collector is likely responsible again.
+    matched_to: HL
+  HH:
+    distractor: The OpenTelemetry SDK's own drop counter shows it is discarding spans
+      before they even reach the collector — the export queue is pegged at maximum
+      capacity — while the collector process itself shows only 40% memory utilization
+      and healthy throughput metrics.
+    diagnosticity: high
+    salience: high
+    proposition: The SDK's drop counter shows spans being discarded at the export
+      queue before reaching the collector, with the queue pegged at maximum capacity;
+      the collector process itself shows 40% memory utilization and healthy throughput
+      metrics.
+    salience_source: B — precise metric values (drop counter, maximum capacity, 40%
+      memory) with the explicit before-the-collector framing that structurally rules
+      out the distractor; C — confident present-tense assertion from live telemetry.
+  LH:
+    distractor: SDK drop counter shows spans lost in the export queue at capacity;
+      collector memory is at 40% with normal throughput.
+    diagnosticity: high
+    salience: low
+    proposition: The SDK's drop counter shows spans being discarded at the export
+      queue before reaching the collector, with the queue pegged at maximum capacity;
+      the collector process itself shows 40% memory utilization and healthy throughput
+      metrics.
+    matched_to: HH
+distractor_direction:
+  label: Collector OOM-kill
+  description: Investigating whether the OpenTelemetry collector process is being
+    killed by the kernel due to out-of-memory pressure, causing spans to be dropped
+    before they are exported.
+plausible_alternative_directions:
+- label: Incorrect exporter endpoint
+  description: The SDK exporter may be sending to a wrong or unreachable collector
+    address, causing silent connection failures and drops that look like queue overflow.
+- label: Network packet loss between SDK and collector
+  description: Packet loss on the network path between instrumented services and the
+    collector could cause retries that fill the export queue without OOM being involved.
+- label: Collector batch-processor back-pressure
+  description: The collector's batch processor may be unable to forward spans to the
+    backend fast enough, creating back-pressure that causes SDK-side queue growth
+    independent of collector memory limits.
+leak_audit:
+  ll_atomic_claims:
+  - Past span drops in this tracing stack were caused by the collector being OOM-killed.
+  - The collector is probably responsible for the current span drops again.
+  hh_atomic_claims:
+  - The SDK's own drop counter shows spans are being discarded before they reach the
+    collector.
+  - The export queue is at maximum capacity.
+  - The collector process shows 40% memory utilization.
+  - The collector shows healthy throughput metrics.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, no external authority.
+    narrative_coherence: 'Personal history told in clean causal sequence: saw drops,
+      investigated, found OOM kill — same pattern expected now.'
+    confident_assertion: Turned out; my first instinct is — strong certainty markers.
+    concrete_detail: N/A — detail is about past events on this stack, not the present
+      case's evidence.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 49
+  hl_word_count: 40
+  ll_word_count: 21
+  hh_word_count: 39
+  lh_word_count: 19
+  notes: 'T6 availability inference rule (C1): the application-to-now ("collector
+    is doing
+
+    it again" / "collector is probably responsible again") appears in both HL and
+    LL.
+
+    Past pattern + present inference is the full low_diagnostic_proposition. xbase
+
+    mentions sampling rate raised 1%→100% and collector not restarted — this makes
+
+    SDK queue overflow a live hypothesis but does not conclusively reject OOM (a
+
+    practitioner must still check collector memory). pathway_closed_in_xbase is N/A:
+
+    "I have not restarted" does not rule out kernel OOM-kill between restarts.
+
+    HH/LH diff: LH omits "before they even reach the collector" as a phrase but
+
+    retains the concept via "before the collector" in the queue description; atomic
+
+    claims 1-4 all present in LH. Alternatives include collector back-pressure
+
+    as a structurally distinct direction (slow backend forwarding, not memory pressure).
+
+    '
+causal_audit:
+  steelman: 'A practitioner who has personally seen OOM-killed collectors drop spans
+    in this
+
+    exact stack has strong evidence that the failure mode is real and recurrent here.
+
+    OpenTelemetry collectors processing high-volume span traffic do consume substantial
+
+    memory — and a sampling rate increase from 1% to 100% would multiply span volume
+
+    by 100x, which could plausibly exhaust collector memory. The argument "same stack,
+
+    same symptom, 100x more data going in" is a coherent, checklist-worthy hypothesis
+
+    that any senior SRE would want to rule out before concluding otherwise.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not foreclose OOM; it only notes the sampling
+    rate change and that the collector was not manually restarted, which is consistent
+    with either OOM-kill or SDK queue overflow.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Distributed tracing pipeline dropping 30% of spans after 1%→100% sampling-rate
+    increase; real cause is SDK export queue overflow; user's availability heuristic
+    points to past OOM-killed collector incidents on the same stack.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

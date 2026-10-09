@@ -1,0 +1,8 @@
+{
+  "seed_id": "T2-016",
+  "verdict": "clean",
+  "xbase_span": "",
+  "focal_in_hh_lh": true,
+  "reasoning": "xbase states the template redesign covered only fonts, color scheme, and logo with all fields and positions unchanged — this is a pathway-closure statement (exception a) that forecloses the OCR/template-matching mechanism of the distractor without supplying the affirmative alternative diagnosis. The decisive focal evidence (client AP chain restructuring) is absent from xbase entirely and appears only in the HH and LH distractors, as required. No fragment of the AP restructuring fact leaks into xbase.",
+  "repair_hint": ""
+}

@@ -1,0 +1,163 @@
+seed_id: T1-049
+template: T1
+domain: open_qa
+complexity: low
+xbase: I'm picking between two hotels for a three-night city break. Both are in neighbourhoods
+  I would happily stay in and both have similar prices and good reviews for the rooms.
+  I mostly want to spend my days at the museums and galleries in the historic centre
+  and walk to them easily. I have to book one of them today. {DS}
+focal_diagnostic_feature: Hotel A is a 6-minute walk from the historic centre; Hotel
+  B is 8 kilometres out near the airport with only an hourly shuttle.
+low_diagnostic_proposition: A friend stayed at Hotel A's chain elsewhere and found
+  the breakfast buffet disappointing.
+oracle_action: ANSWER
+oracle_focus: Book Hotel A; it is a short walk from the historic centre the user wants
+  to spend days in, while Hotel B is 8 km out with only an hourly shuttle.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a breakfast complaint about the chain decide
+  this. Ask where each hotel sits relative to the museums the user wants to walk to.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a breakfast complaint about the chain decide this. Ask where
+      each hotel sits relative to the museums the user wants to walk to.
+  LL:
+    action: ASK
+    focus: Do not let a breakfast complaint about the chain decide this. Ask where
+      each hotel sits relative to the museums the user wants to walk to.
+  HH:
+    action: ANSWER
+    focus: Book Hotel A; it is a short walk from the historic centre the user wants
+      to spend days in, while Hotel B is 8 km out with only an hourly shuttle.
+  LH:
+    action: ANSWER
+    focus: Book Hotel A; it is a short walk from the historic centre the user wants
+      to spend days in, while Hotel B is 8 km out with only an hourly shuttle.
+variants:
+  HL:
+    distractor: Zofia stayed at a hotel from Hotel A's chain in another city last
+      year and still complains about it — she said the breakfast buffet was tired
+      and picked-over by eight in the morning, with cold eggs and weak coffee, and
+      it put her off the brand entirely.
+    diagnosticity: low
+    salience: high
+    proposition: A friend stayed at Hotel A's chain elsewhere and found the breakfast
+      buffet disappointing.
+    salience_source: A — a friend's specific first-hand experience of the same chain
+      lends the complaint apparent relevance.
+    why_plausible: Breakfast quality is a real part of a hotel stay, and chain consistency
+      is a reasonable thing to extrapolate, so the complaint tempts.
+    why_irrelevant: A breakfast buffet at a different property says nothing about
+      which hotel lets the user walk to the museums; location, not breakfast, decides
+      this.
+  LL:
+    distractor: A friend stayed at Hotel A's chain in another city and found the breakfast
+      buffet disappointing.
+    diagnosticity: low
+    salience: low
+    proposition: A friend stayed at Hotel A's chain elsewhere and found the breakfast
+      buffet disappointing.
+    matched_to: HL
+  HH:
+    distractor: Pulling up the map, Hotel A is a six-minute walk from the edge of
+      the historic centre where the museums cluster, while Hotel B sits 8 kilometres
+      out near the airport, reachable from the centre only by a shuttle that runs
+      once an hour.
+    diagnosticity: high
+    salience: high
+    proposition: Hotel A is a 6-minute walk from the historic centre; Hotel B is 8
+      kilometres out near the airport with only an hourly shuttle.
+    salience_source: Concrete distances and the hourly-shuttle detail make the location
+      gap vivid and decisive.
+  LH:
+    distractor: Hotel A is a 6-minute walk from the historic centre; Hotel B is 8
+      km away near the airport with an hourly shuttle.
+    diagnosticity: high
+    salience: low
+    proposition: Hotel A is a 6-minute walk from the historic centre; Hotel B is 8
+      kilometres out near the airport with only an hourly shuttle.
+    matched_to: HH
+distractor_direction:
+  label: Chain breakfast quality
+  description: Treating the choice as influenced by a disappointing breakfast experienced
+    at another property of Hotel A's chain.
+plausible_alternative_directions:
+- label: Room and review quality
+  description: Whether differences in room quality or guest reviews should tip the
+    choice between the two hotels.
+- label: Neighbourhood character
+  description: Whether the surrounding neighbourhood's atmosphere or amenities favour
+    one hotel over the other.
+leak_audit:
+  ll_atomic_claims:
+  - A friend stayed at Hotel A's chain in another city.
+  - The friend found the breakfast buffet disappointing.
+  hh_atomic_claims:
+  - Hotel A is a six-minute walk from the historic centre.
+  - Hotel B is 8 kilometres out near the airport.
+  - Hotel B is reachable from the centre only by an hourly shuttle.
+  hl_salience_dimensions:
+    source_credibility: Named friend (Zofia) recounting her own stay at the same chain.
+    narrative_coherence: Coherent last-year account that put her off the brand.
+    confident_assertion: N/A
+    concrete_detail: Detail about the source's experience (cold eggs, weak coffee,
+      by eight a.m.) only — no claim about either hotel's location.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 62
+  hl_word_count: 47
+  ll_word_count: 16
+  hh_word_count: 43
+  lh_word_count: 21
+  notes: 'LL carries only the disappointing-breakfast claim about the chain. The named
+    friend, the eight-a.m. detail, and
+
+    her being put off the brand are HL-only and about the source''s stay. xbase withholds
+    both hotels'' locations,
+
+    stating only that both neighbourhoods are acceptable and that the user wants to
+    walk to the centre''s museums; the
+
+    decisive location gap lives solely in HH/LH. The sensory breakfast details are
+    about the SOURCE''s past stay,
+
+    not setting colour around the slot.
+
+    '
+causal_audit:
+  steelman: 'A frequent traveller might argue chains do maintain consistent breakfast
+    standards, so a tired buffet at one
+
+    property is weak evidence the brand will underwhelm here, and breakfast matters
+    on a city break. But the user''s
+
+    stated priority is spending days walking to the museums in the historic centre.
+    Breakfast quality cannot bear on
+
+    whether a hotel is within walking distance of those museums; the deciding variable
+    is location, where Hotel A is
+
+    six minutes away and Hotel B is 8 km out with an hourly shuttle. The breakfast
+    story has no mechanism to inform
+
+    the walkability that drives this choice.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase fixes the user's priority as walking to the historic-centre
+    museums, so a breakfast complaint cannot speak to the deciding variable; the location
+    gap that resolves it lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Choosing a city-break hotel for museum-focused days where walking distance
+    to the historic centre, not a friend's disappointing-breakfast story about the
+    chain, is decisive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

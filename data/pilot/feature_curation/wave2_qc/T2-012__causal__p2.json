@@ -1,0 +1,9 @@
+{
+  "seed_id": "T2-012",
+  "steelman": "LED bedside lamps with switching-mode power supplies emit broadband electromagnetic interference (EMI). An e-reader placed centimetres away on a nightstand could theoretically have its Wi-Fi or Bluetooth radio disrupted, causing the radio to retry connections more aggressively and consume more power. A consumer electronics repair technician citing 'high-frequency switching drivers' is using technically coherent terminology — cheap LED drivers are documented to cause EMI issues with nearby wireless devices. Even without a shared circuit, radiated EMI within 30 cm could in principle add marginal load to a wireless radio, and a knowledgeable practitioner could cite this as a plausible contributing factor worth a quick sanity check.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Radiated EMI from the lamp's switching power supply disrupts the e-reader's wireless radio, causing increased retry activity and power draw.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase explicitly closes the conducted-interference pathway ('never connects to it or plugs into it in any way'). The radiated EMI pathway is theoretically real but cannot plausibly account for the observed ~10x battery life reduction (3 weeks to 2 days); no mainstream e-reader troubleshooting guide lists nearby lamp EMI as a checklist item; and the lamp-EMI mechanism requires the e-reader radio to already be active, making it downstream of the actual cause (Wi-Fi/auto-sync being on) rather than independent. A senior practitioner would not entertain the lamp hypothesis given a confirmed Wi-Fi/sync change. Seed passes this lens. No repair needed."
+}

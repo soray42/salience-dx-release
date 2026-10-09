@@ -1,0 +1,13 @@
+{
+  "seed_id": "T1-016",
+  "my_own_diagnosis": "From xbase alone, this is a pure fixed-versus-variable rate decision: rate differential break-even, income stability as a buffer for variable-rate risk, and whether a 10-year lock-in horizon is appropriate. The colleague's HELOC consolidation experience is structurally inapplicable because the user has no HELOC, and the focal feature correctly and decisively removes that pathway.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature cleanly closes the consolidation pathway by citing the explicit xbase fact ('no home equity line or other debt tied to the property') and correctly names the three remaining decision factors, leaving no ambiguity about what the correct analytical direction is.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracles map HL/LL to low-diagnostic oracle and HH/LH to focal oracle as required; low_diagnostic_oracle_focus correctly instructs non-adoption of the HELOC-consolidation distractor while still addressing the underlying rate-type question.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

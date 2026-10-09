@@ -1,0 +1,180 @@
+seed_id: T5-033
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: My iOS Home Screen widget stopped refreshing its data. It shows the same stale
+  values no matter how long I wait. The host app itself fetches fresh data normally
+  when opened. I have not changed device settings or Background App Refresh permissions
+  for the widget extension. {DS}
+focal_diagnostic_feature: The widget's TimelineProvider returns a Timeline with a
+  policy of .never, meaning the WidgetKit framework will not schedule any future refresh;
+  this value was hardcoded in a commit three days ago.
+low_diagnostic_proposition: The widget's visual design looks old and unpolished compared
+  with current iOS design standards, suggesting the widget code has not been maintained
+  and may have stale data-fetching logic.
+oracle_action: ANSWER
+oracle_focus: Change the timeline refresh policy from .never to an appropriate interval
+  or after-date policy; the OS will not schedule widget refreshes until the policy
+  allows them.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer data-fetch behavior from widget visual style.
+  Ask for the TimelineProvider implementation and specifically the timeline refresh
+  policy.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer data-fetch behavior from widget visual style. Ask for the
+      TimelineProvider implementation and specifically the timeline refresh policy.
+  LL:
+    action: ASK
+    focus: Do not infer data-fetch behavior from widget visual style. Ask for the
+      TimelineProvider implementation and specifically the timeline refresh policy.
+  HH:
+    action: ANSWER
+    focus: Change the timeline refresh policy from .never to an appropriate interval
+      or after-date policy; the OS will not schedule widget refreshes until the policy
+      allows them.
+  LH:
+    action: ANSWER
+    focus: Change the timeline refresh policy from .never to an appropriate interval
+      or after-date policy; the OS will not schedule widget refreshes until the policy
+      allows them.
+variants:
+  HL:
+    distractor: Honestly the widget looks like it was designed in 2019 — square corners,
+      a mismatched font, no dynamic island consideration at all; something that visually
+      unmaintained is probably running equally neglected update logic underneath,
+      so the stale data is almost certainly a code-quality problem.
+    diagnosticity: low
+    salience: high
+    proposition: The widget's visual design looks old and unpolished compared with
+      current iOS design standards, suggesting the widget code has not been maintained
+      and may have stale data-fetching logic.
+    salience_source: 'B: vivid first-person visual inspection with specific design
+      details; C: ''almost certainly a code-quality problem'', confident inferential
+      framing.'
+    why_plausible: Design debt and code debt often correlate in widget extensions
+      maintained by small teams; an engineer looking at a visually neglected widget
+      could reasonably suspect the refresh logic received the same neglect.
+    why_irrelevant: Visual design age has no mechanism for controlling the WidgetKit
+      timeline policy; a beautifully designed widget returns .never just as easily
+      as an old-looking one, and vice versa. The policy is a single explicit enum
+      value independent of UI assets.
+  LL:
+    distractor: The widget's visual design looks old and unpolished for current iOS
+      standards, suggesting the code may have stale data-fetching logic.
+    diagnosticity: low
+    salience: low
+    proposition: The widget's visual design looks old and unpolished compared with
+      current iOS design standards, suggesting the widget code has not been maintained
+      and may have stale data-fetching logic.
+    matched_to: HL
+  HH:
+    distractor: 'I checked the TimelineProvider: the getTimeline function returns
+      a Timeline with policy set to .never — the WidgetKit framework will not schedule
+      any reload at all, and that line was introduced in a commit from three days
+      ago.'
+    diagnosticity: high
+    salience: high
+    proposition: The widget's TimelineProvider returns a Timeline with a policy of
+      .never, meaning the WidgetKit framework will not schedule any future refresh;
+      this value was hardcoded in a commit three days ago.
+    salience_source: 'B: precise code-level finding with commit timing; C: decisive
+      first-person framing (''I checked'', definitive policy value).'
+  LH:
+    distractor: The TimelineProvider returns a Timeline with a .never refresh policy,
+      so WidgetKit does not schedule reloads; introduced three days ago.
+    diagnosticity: high
+    salience: low
+    proposition: The widget's TimelineProvider returns a Timeline with a policy of
+      .never, meaning the WidgetKit framework will not schedule any future refresh;
+      this value was hardcoded in a commit three days ago.
+    matched_to: HH
+distractor_direction:
+  label: unmaintained widget code quality
+  description: Using the widget's visually dated appearance as evidence that the underlying
+    data-fetching and refresh logic has also been neglected, causing stale data.
+plausible_alternative_directions:
+- label: widget extension Background App Refresh budget
+  description: Investigating whether the widget extension has exhausted its OS-allocated
+    daily refresh budget, causing the OS to defer further refreshes until the next
+    day.
+- label: App Group data container synchronization
+  description: Examining whether the shared App Group container between the host app
+    and widget extension is not being written correctly, so the widget displays cached
+    data even when the timeline fires.
+leak_audit:
+  ll_atomic_claims:
+  - The widget's visual design looks old and unpolished.
+  - It looks outdated compared with current iOS design standards.
+  - This suggests the code may have stale data-fetching logic.
+  hh_atomic_claims:
+  - The TimelineProvider's getTimeline function was inspected.
+  - It returns a Timeline with a refresh policy of .never.
+  - WidgetKit will not schedule any reload with this policy.
+  - The .never value was introduced in a commit three days ago.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person aesthetic observation.
+    narrative_coherence: 'B: vivid visual inspection with specific design details
+      (square corners, mismatched font, no dynamic island consideration).'
+    confident_assertion: 'C: ''almost certainly a code-quality problem''.'
+    concrete_detail: N/A — visual details are about the widget's appearance, not a
+      case-specific technical parameter.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 44
+  ll_word_count: 20
+  hh_word_count: 38
+  lh_word_count: 20
+  notes: 'T5 bridge ("visually old suggests stale code logic") appears in both HL
+    and
+
+    LL per C1 and self-check 13. xbase withholds the TimelineProvider policy;
+
+    that lives only in HH/LH (C4). Background App Refresh permissions explicitly
+
+    noted as unchanged in xbase — this blocks a tempting but permitted narrow
+
+    pathway (permissions are settings, not the data-fetch logic). Low complexity
+
+    appropriate: a single enum value is the entire fix. No prior seed has .never
+
+    timeline policy as root cause (C11). No named source needed for T5.
+
+    Ratios: HL:LL 47:18 = 2.6:1 OK. HH:LH 41:17 = 2.4:1 OK.
+
+    '
+causal_audit:
+  steelman: 'In practice, design debt and maintenance debt do correlate in WidgetKit
+    extensions:
+
+    teams that have not invested in keeping the widget visually current are often
+
+    the same teams that have not audited the refresh budget logic or updated the
+
+    TimelineProvider implementation for newer OS behaviors. An experienced iOS developer
+
+    seeing a visually unmaintained widget might reasonably flag code quality as a
+
+    contributing concern worth investigating.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase explicitly notes Background App Refresh permissions
+    are unchanged (closing that mechanism) but does not reveal the timeline policy;
+    the policy finding lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: iOS Home Screen widget shows stale data; aesthetic distractor suggests
+    dated design implies neglected refresh code, but the actual cause is a .never
+    timeline refresh policy accidentally hardcoded three days ago.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

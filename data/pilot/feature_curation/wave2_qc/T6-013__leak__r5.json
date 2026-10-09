@@ -1,0 +1,26 @@
+{
+  "seed_id": "T6-013",
+  "ll_claims_extracted": [
+    "The speaker has personal experience with cert errors like the current one.",
+    "Those prior cert errors were caused by clock skew."
+  ],
+  "hl_case_claims": [
+    "Every mTLS cert error the speaker has personally seen has eventually traced back to clock skew."
+  ],
+  "hl_source_claims": [
+    "The speaker is the on-call engineer here (role and setting).",
+    "The speaker has been the on-call engineer here for three full years (tenure)."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 26,
+    "ll": 14,
+    "xbase": 51,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

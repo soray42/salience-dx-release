@@ -1,0 +1,13 @@
+{
+  "seed_id": "T6-015",
+  "my_own_diagnosis": "From xbase alone the new musty odour in an otherwise unchanged routine points to a machine-hygiene problem; the focal feature (door always shut immediately, gasket never cleaned) clinches the diagnosis as gasket mould/mildew trapping moisture and transferring odour to laundry each cycle.",
+  "focal_decisive": true,
+  "focal_notes": "The combination of door always kept closed and gasket never cleaned is a well-known, textbook cause of front-loader musty odour and unambiguously points to the gasket as the primary suspect.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "All four cell oracles correctly route HL/LL to ASK-with-maintenance-probe and HH/LH to ANSWER-with-gasket-fix; low_diagnostic_oracle_focus correctly blocks the structurally-closed detergent-brand pathway.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

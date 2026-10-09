@@ -1,0 +1,99 @@
+seed_id: T2-004
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: شاشة الـ MacBook الخارجية الـ 4K تنقطع وتُعاد وصلتها كل بضع دقائق. الشاشة نفسها
+  تعمل وتشتغل بشكل طبيعي، والمشكلة متقطّعة وليست عطلاً كاملاً. كابل HDMI عمره عدة
+  سنوات. {DS}
+focal_diagnostic_feature: ثني كابل HDMI بالقرب من طرف الشاشة يُعيد إنتاج الوميض، ونفس
+  الشاشة تعمل مع كابل آخر.
+low_diagnostic_proposition: The issue began after a thunderstorm passed through the
+  area.
+oracle_action: ANSWER
+oracle_focus: Replace the HDMI cable; the physical bend test and known-good cable
+  comparison isolate the fault.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume storm damage from timing alone. Ask whether
+  moving the cable reproduces the fault and whether a known-good cable works.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume storm damage from timing alone. Ask whether moving the cable
+      reproduces the fault and whether a known-good cable works.
+  LL:
+    action: ASK
+    focus: Do not assume storm damage from timing alone. Ask whether moving the cable
+      reproduces the fault and whether a known-good cable works.
+  HH:
+    action: ANSWER
+    focus: Replace the HDMI cable; the physical bend test and known-good cable comparison
+      isolate the fault.
+  LH:
+    action: ANSWER
+    focus: Replace the HDMI cable; the physical bend test and known-good cable comparison
+      isolate the fault.
+variants:
+  HL:
+    distractor: بدأ هذا مباشرةً بعد عاصفة رعدية هزّت الزجاج وقطعت الكهرباء لنصف ثانية.
+    diagnosticity: low
+    salience: high
+    proposition: The issue began after a thunderstorm passed through the area.
+    salience_source: dramatic weather event, immediate timing
+    why_plausible: Storms are familiar explanations for electronics problems.
+    why_irrelevant: Direct mechanical reproduction at the cable is stronger than a
+      coincidental weather event.
+  LL:
+    distractor: المشكلة بدأت في الوقت الذي مرّت فيه أحوال جوية سيئة في المنطقة.
+    diagnosticity: low
+    salience: low
+    proposition: The issue began after a thunderstorm passed through the area.
+    matched_to: HL
+  HH:
+    distractor: إذا ثنيت الكابل قليلاً بالقرب من موصّل الشاشة تومض الشاشة على الفور؛
+      كابل زميلي على نفس الشاشة يعمل بشكل مثالي.
+    diagnosticity: high
+    salience: high
+    proposition: Bending the HDMI cable near the monitor end reproduces the flicker,
+      and the same monitor works with another cable.
+    salience_source: physical reproduction plus known-good substitution
+  LH:
+    distractor: التلاعب الجسدي بالكابل يُعيد إنتاج الوميض، والشاشة تعمل بشكل طبيعي
+      مع كابل مختلف.
+    diagnosticity: high
+    salience: low
+    proposition: Bending the HDMI cable near the monitor end reproduces the flicker,
+      and the same monitor works with another cable.
+    matched_to: HH
+distractor_direction:
+  label: ضرر ناجم عن العاصفة
+  description: التحقيق في ما إذا كانت الأحوال الجوية القاسية القريبة أو تذبذب الطاقة
+    أو أضرار التيار الزائد قد تسبّبت في انقطاع الشاشة.
+plausible_alternative_directions:
+- label: عطل منفذ الشاشة
+  description: منفذ إدخال الشاشة رخو أو يعطل بصورة متقطّعة بصرف النظر عن الكابل.
+- label: إعدادات الشاشة على MacBook
+  description: إعدادات الدقة أو معدل التحديث أو GPU أو وضع السكون على MacBook تُسبّب
+    تفاوضاً متقطّعاً للشاشة.
+- label: عطل المحوّل أو الـ dock
+  description: محوّل وسيط أو dongle أو dock يعطل بصورة متقطّعة.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-004.yaml
+  source_xbase_sha256: db18677a0acaba74
+  translated_content_sha256: f7e4cae34da70c1b
+  translation_notes: MacBook, HDMI, 4K, GPU, dock, dongle kept as-is. HL retains dramatic
+    weather event (windows shaking, lights cut half a second) for high salience. LL
+    is flat. HH retains physical reproduction test plus known-good colleague cable
+    for salience. No focal content leaked into HL/LL.

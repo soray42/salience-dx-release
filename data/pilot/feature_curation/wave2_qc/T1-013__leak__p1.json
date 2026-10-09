@@ -1,0 +1,31 @@
+{
+  "seed_id": "T1-013",
+  "ll_claims_extracted": [
+    "An acquaintance of the user had a similar thermostat problem.",
+    "That problem turned out to be a faulty heating relay."
+  ],
+  "hl_case_claims": [
+    "Priya's colleague had the exact same symptom with their thermostat.",
+    "The heating relay had failed and needed replacing."
+  ],
+  "hl_source_claims": [
+    "The speaker is Priya.",
+    "Priya is an HVAC engineer on the user's team.",
+    "Priya told the user this information.",
+    "Priya looked into it (investigated the matter).",
+    "The case described is Priya's colleague's experience.",
+    "After checking everything (the investigation was thorough), they found the relay fault."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 37,
+    "ll": 17,
+    "xbase": 80,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

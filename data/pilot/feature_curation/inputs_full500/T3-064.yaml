@@ -1,0 +1,181 @@
+seed_id: T3-064
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Java microservice that handles recommendation queries has had p99 latency
+  spike from about 80 ms to over 900 ms during load bursts for the past three days.
+  All three replicas are affected equally. The service calls one upstream recommendation
+  index through a shared HTTP connection pool. {DS}
+focal_diagnostic_feature: During every spike window, the connection pool to the upstream
+  index reports zero available slots and all pending requests stall at the TCP connect
+  phase.
+low_diagnostic_proposition: The latency spike matches a classic JVM garbage-collection
+  pause pattern and the garbage collector should be tuned first.
+oracle_action: ASK
+oracle_focus: 'Investigate the HTTP connection pool to the upstream index: check pool-size
+  configuration, pool exhaustion metrics, upstream response time, and connection timeout
+  settings during bursts.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the GC-pause diagnosis on authority alone.
+  Ask for connection-pool metrics, distributed traces showing where requests stall,
+  and JVM GC logs before recommending any GC tuning.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the GC-pause diagnosis on authority alone. Ask for connection-pool
+      metrics, distributed traces showing where requests stall, and JVM GC logs before
+      recommending any GC tuning.
+  LL:
+    action: ASK
+    focus: Do not accept the GC-pause diagnosis on authority alone. Ask for connection-pool
+      metrics, distributed traces showing where requests stall, and JVM GC logs before
+      recommending any GC tuning.
+  HH:
+    action: ASK
+    focus: 'Investigate the HTTP connection pool to the upstream index: check pool-size
+      configuration, pool exhaustion metrics, upstream response time, and connection
+      timeout settings during bursts.'
+  LH:
+    action: ASK
+    focus: 'Investigate the HTTP connection pool to the upstream index: check pool-size
+      configuration, pool exhaustion metrics, upstream response time, and connection
+      timeout settings during bursts.'
+variants:
+  HL:
+    distractor: Vimalraj, our principal SRE who came from a large e-commerce platform,
+      pulled up the latency graph and told the team this is a classic JVM GC pause
+      pattern — he said he has seen it dozens of times and we should tune the garbage
+      collector first.
+    diagnosticity: low
+    salience: high
+    proposition: The latency spike matches a classic JVM garbage-collection pause
+      pattern and the garbage collector should be tuned first.
+    salience_source: 'A — source credibility: principal SRE with named prior company;
+      B — narrative coherence: clean chronology of Vimalraj inspecting the graph and
+      addressing the team; C — confident assertion: told the team, seen it dozens
+      of times.'
+    why_plausible: JVM GC pauses are a well-known cause of p99 latency spikes in Java
+      services; a principal SRE citing prior experience with the identical symptom
+      pattern is exactly the kind of signal a team under pressure might defer to.
+    why_irrelevant: GC pauses are stop-the-world events inside the JVM; they cannot
+      cause stalls at the TCP connection-establishment step before any application
+      code runs. The focal evidence shows requests waiting at TCP connect, which GC
+      tuning cannot address.
+  LL:
+    distractor: A senior engineer said this is a classic JVM GC pause pattern and
+      we should tune the garbage collector.
+    diagnosticity: low
+    salience: low
+    proposition: The latency spike matches a classic JVM garbage-collection pause
+      pattern and the garbage collector should be tuned first.
+    matched_to: HL
+  HH:
+    distractor: During each spike window, the connection pool to the upstream index
+      shows zero available slots in its dashboard metrics, and distributed traces
+      confirm that every queued request is stalling at the TCP connect step — not
+      inside the JVM at all.
+    diagnosticity: high
+    salience: high
+    proposition: During every spike window, the connection pool to the upstream index
+      reports zero available slots and all pending requests stall at the TCP connect
+      phase.
+    salience_source: B — precise quantitative evidence (zero slots, TCP connect step);
+      C — confirms with distributed traces, framing the negative (not inside JVM)
+      that structurally rules out the distractor.
+  LH:
+    distractor: During spike windows the connection pool reports zero free slots and
+      traces show requests waiting at TCP connect, before any JVM processing.
+    diagnosticity: high
+    salience: low
+    proposition: During every spike window, the connection pool to the upstream index
+      reports zero available slots and all pending requests stall at the TCP connect
+      phase.
+    matched_to: HH
+distractor_direction:
+  label: JVM GC pause tuning
+  description: Investigating whether stop-the-world garbage-collection pauses in the
+    JVM are causing the observed p99 latency spikes and whether GC configuration should
+    be the first fix.
+plausible_alternative_directions:
+- label: Upstream replica saturation
+  description: The upstream recommendation index itself may be overloaded or slow
+    during bursts, causing connection waits that are unrelated to local pool configuration.
+- label: Query fan-out amplification
+  description: Each burst request may fan out to many upstream calls, exhausting the
+    pool through volume rather than pool misconfiguration.
+- label: Load-balancer misconfiguration
+  description: The load balancer may be routing an uneven share of burst traffic to
+    one replica, creating local pool saturation that appears service-wide.
+leak_audit:
+  ll_atomic_claims:
+  - The latency spike matches a classic JVM GC pause pattern.
+  - The garbage collector should be tuned first.
+  hh_atomic_claims:
+  - During spike windows the connection pool shows zero available slots.
+  - Distributed traces confirm requests are stalling at the TCP connect step.
+  - The stall occurs before entering the JVM.
+  hl_salience_dimensions:
+    source_credibility: Principal SRE role; came from a large e-commerce platform.
+    narrative_coherence: Vimalraj pulls up the latency graph and addresses the team
+      — clean professional scene.
+    confident_assertion: Told the team; has seen it dozens of times.
+    concrete_detail: N/A — all detail is about Vimalraj and his prior company, not
+      the case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 47
+  hl_word_count: 45
+  ll_word_count: 19
+  hh_word_count: 38
+  lh_word_count: 22
+  notes: 'Removed "Garbage collection logs look clean across all replicas" from xbase
+    because
+
+    it let a practitioner reject the GC distractor from xbase alone (C4 violation).
+
+    The GC mechanism is ruled out only by HH/LH (TCP connect stall + healthy collector
+
+    confirmed by traces). Distractor is "classic JVM GC pause" — an entirely different
+
+    mechanism from the real cause (pool exhaustion at TCP layer). Vimalraj''s generic
+
+    pattern-match ("always") and lack of engagement with pool metrics is the T3 signal.
+
+    Em-dash in HL counted as whitespace separator per C9.
+
+    '
+causal_audit:
+  steelman: 'A senior practitioner could reasonably argue: JVM full-GC events cause
+    stop-the-world
+
+    pauses of hundreds of milliseconds; under load this manifests as p99 spikes affecting
+
+    all replicas simultaneously. A 80ms→900ms spike with all three replicas affected
+
+    equally is exactly the signature of a JVM-wide pause, not a per-connection issue.
+
+    Pool exhaustion would typically cause queueing delay, not a clean stop-the-world
+
+    pattern. Tuning GC (generation sizes, collector choice, pause targets) is a
+
+    well-established first step for latency-sensitive Java services.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — GC pathway is not pre-closed in xbase; it is ruled
+    out only by the focal evidence in HH/LH (requests stall at TCP connect, before
+    JVM processing).
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Java recommendation microservice p99 latency spikes during bursts;
+    real cause is upstream HTTP connection pool exhaustion at TCP connect phase; authority
+    (principal SRE) wrongly pattern-matches to JVM GC pauses.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

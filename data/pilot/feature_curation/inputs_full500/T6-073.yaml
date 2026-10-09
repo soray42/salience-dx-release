@@ -1,0 +1,166 @@
+seed_id: T6-073
+template: T6
+domain: open_qa
+complexity: low
+xbase: I am deciding whether to keep my gym membership or switch to a home fitness
+  app subscription. The gym costs considerably more per month. I work out consistently
+  but do not attend group classes or use any specialist equipment the gym offers.
+  {DS}
+focal_diagnostic_feature: The user's workout log shows exclusively solo cardio and
+  free-weight sessions twice per week for four months, both of which are fully covered
+  by the app.
+low_diagnostic_proposition: Past home fitness app subscriptions for the user were
+  generally not sustained and went unused.
+oracle_action: ANSWER
+oracle_focus: Recommend switching to the app; the user's established twice-weekly
+  solo cardio and free-weight routine is fully covered, and the gym's higher cost
+  and unused features make the switch clearly advantageous.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not treat past app abandonment as decisive; ask what
+  the user's current workout routine involves and whether the gym's specific features
+  are actually used before advising.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not treat past app abandonment as decisive; ask what the user's current
+      workout routine involves and whether the gym's specific features are actually
+      used before advising.
+  LL:
+    action: ASK
+    focus: Do not treat past app abandonment as decisive; ask what the user's current
+      workout routine involves and whether the gym's specific features are actually
+      used before advising.
+  HH:
+    action: ANSWER
+    focus: Recommend switching to the app; the user's established twice-weekly solo
+      cardio and free-weight routine is fully covered, and the gym's higher cost and
+      unused features make the switch clearly advantageous.
+  LH:
+    action: ANSWER
+    focus: Recommend switching to the app; the user's established twice-weekly solo
+      cardio and free-weight routine is fully covered, and the gym's higher cost and
+      unused features make the switch clearly advantageous.
+variants:
+  HL:
+    distractor: 'Every home fitness app I have ever subscribed to ended up unused
+      after the first month: I start strong, lose interest, and the icon just sits
+      there. So my instinct is that only a physical gym keeps me accountable.'
+    diagnosticity: low
+    salience: high
+    proposition: Past home fitness app subscriptions for the user were generally not
+      sustained and went unused.
+    salience_source: B/C — vivid first-person chronology (start, fade, icon sits there)
+      with confident first-instinct framing.
+    why_plausible: Abandonment of fitness apps is extremely common; a practitioner
+      quickly sees it as a real risk and the confident personal framing raises the
+      prior.
+    why_irrelevant: The focal evidence shows this user already has four months of
+      consistent twice-weekly workouts; the past-abandonment pattern does not apply
+      to an established routine with demonstrated adherence.
+  LL:
+    distractor: Past home fitness app subscriptions for the user were generally not
+      sustained and went unused.
+    diagnosticity: low
+    salience: low
+    proposition: Past home fitness app subscriptions for the user were generally not
+      sustained and went unused.
+    matched_to: HL
+  HH:
+    distractor: My log shows I have gone to the gym exactly twice per week for the
+      past four months, always for solo cardio and free weights, both of which the
+      app covers fully.
+    diagnosticity: high
+    salience: high
+    proposition: The user's workout log shows exclusively solo cardio and free-weight
+      sessions twice per week for four months, both of which are fully covered by
+      the app.
+    salience_source: Precise numeric anchor (twice per week, four months), concrete
+      activity detail, and explicit coverage statement create a vivid decisive picture.
+  LH:
+    distractor: My log shows exclusively solo cardio and free weights twice weekly
+      for four months, both fully covered by the app.
+    diagnosticity: high
+    salience: low
+    proposition: The user's workout log shows exclusively solo cardio and free-weight
+      sessions twice per week for four months, both of which are fully covered by
+      the app.
+    matched_to: HH
+distractor_direction:
+  label: app abandonment risk
+  description: Treating the user's history of abandoning fitness app subscriptions
+    as the dominant factor, suggesting the gym is necessary for accountability.
+plausible_alternative_directions:
+- label: cost-benefit ambiguity
+  description: Without knowing the exact price difference, a practitioner might want
+    to quantify monthly savings before recommending the switch.
+- label: gym social or motivation value
+  description: The gym environment may provide motivational cues or peer energy that
+    an app cannot replicate, even for solo workouts.
+leak_audit:
+  ll_atomic_claims:
+  - past home fitness app subscriptions were generally not sustained
+  - those subscriptions went unused
+  hh_atomic_claims:
+  - user has exercised exactly twice per week for four months
+  - workouts are exclusively (always) solo cardio and free weights
+  - the app fully covers both activities
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person chronology of a recurring failure pattern
+      with a clear emotional consequence (regret over the charge).
+    confident_assertion: '"my instinct is" frames it as a strong personal inference
+      from experience.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 42
+  hl_word_count: 39
+  ll_word_count: 15
+  hh_word_count: 32
+  lh_word_count: 20
+  notes: 'HL uses only source/personal-history framing with no case-specific facts.
+
+    The abandonment story gives zero information about this user''s current
+
+    adherence pattern. xbase does not reveal routine specifics; those live in
+
+    HH/LH only.
+
+    QC repair: original LH omitted ''exclusively'' and ''four months'', failing
+
+    C10 HH/LH equivalence. Rewritten LH to assert all three hh_atomic_claims
+
+    flatly within the 14-23 word target (20 words).
+
+    '
+causal_audit:
+  steelman: 'A senior personal-trainer or habit-change expert would note that fitness
+    app
+
+    abandonment rates are genuinely high and that past behaviour is the strongest
+
+    predictor of future behaviour. If the user has repeatedly failed with apps,
+
+    the gym''s sunk-cost and social-presence effects may be providing real
+
+    accountability that the app cannot substitute.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes the user "works out consistently" — this neutrally
+    forecloses the schedule-inconsistency mechanism without naming any cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User deciding gym-vs-app switch; availability distractor is past app
+    abandonment; focal is four months of logged consistent solo workouts fully covered
+    by the app.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

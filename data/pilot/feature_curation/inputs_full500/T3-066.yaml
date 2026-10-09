@@ -1,0 +1,183 @@
+seed_id: T3-066
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our mobile app started failing every secure connection to our backend after
+  our routine certificate renewal last night; users see a connection error before
+  any request goes out. Web browsers and our other clients reach the same backend
+  over HTTPS without a problem, and the new certificate chains correctly to a trusted
+  public root. Only the app rejects the connection, and it does so the instant TLS
+  begins. {DS}
+focal_diagnostic_feature: The app pins the previous leaf certificate's public-key
+  hash, and last night's renewal issued a new leaf with a new key, so the pin no longer
+  matches even though the chain is otherwise valid.
+low_diagnostic_proposition: A senior engineer asserts that this is a classic expired-pinned-certificate
+  problem.
+oracle_action: ANSWER
+oracle_focus: Update the app's pin to the renewed key (or pin the more stable intermediate/SPKI);
+  the app pinned the old leaf's public-key hash, which the new certificate no longer
+  matches even though the chain validates.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the expired-pinned-certificate diagnosis
+  from authority alone. Ask what exactly the app pins and whether the renewal changed
+  the pinned key.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the expired-pinned-certificate diagnosis from authority alone.
+      Ask what exactly the app pins and whether the renewal changed the pinned key.
+  LL:
+    action: ASK
+    focus: Do not accept the expired-pinned-certificate diagnosis from authority alone.
+      Ask what exactly the app pins and whether the renewal changed the pinned key.
+  HH:
+    action: ANSWER
+    focus: Update the app's pin to the renewed key (or pin the more stable intermediate/SPKI);
+      the app pinned the old leaf's public-key hash, which the new certificate no
+      longer matches even though the chain validates.
+  LH:
+    action: ANSWER
+    focus: Update the app's pin to the renewed key (or pin the more stable intermediate/SPKI);
+      the app pinned the old leaf's public-key hash, which the new certificate no
+      longer matches even though the chain validates.
+variants:
+  HL:
+    distractor: Petros, our principal mobile engineer, looked at it for a moment in
+      standup and said with total confidence that this is the classic expired-pinned-certificate
+      problem, the kind he's seen take down apps before, and that we should treat
+      the expiry as the whole story.
+    diagnosticity: low
+    salience: high
+    proposition: A senior engineer asserts that this is a classic expired-pinned-certificate
+      problem.
+    salience_source: A — a principal mobile engineer pattern-matching confidently
+      to a class of failure lends status and authority.
+    why_plausible: Pinning failures around certificate lifecycle are common, and a
+      principal engineer naming a classic pattern sounds authoritative.
+    why_irrelevant: The old certificate did not expire; it was renewed, and the renewal
+      minted a new key, so the failure is a pin-versus-new-key mismatch, not an expiry.
+  LL:
+    distractor: A senior engineer asserts that this is a classic expired-pinned-certificate
+      problem and that the expiry is the complete explanation.
+    diagnosticity: low
+    salience: low
+    proposition: A senior engineer asserts that this is a classic expired-pinned-certificate
+      problem.
+    matched_to: HL
+  HH:
+    distractor: 'I checked what the app actually pins: it''s the public-key hash of
+      the previous leaf certificate. Last night''s renewal issued a brand-new leaf
+      with a new key, so the pin no longer matches, and the app rejects the handshake
+      even though the chain validates to the trusted root.'
+    diagnosticity: high
+    salience: high
+    proposition: The app pins the previous leaf certificate's public-key hash, and
+      last night's renewal issued a new leaf with a new key, so the pin no longer
+      matches even though the chain is otherwise valid.
+    salience_source: Concrete inspection of what the app pins versus the renewed key
+      makes the mismatch precise and observable.
+  LH:
+    distractor: The app pins the old leaf's public-key hash; the renewal issued a
+      new key, so the pin no longer matches though the chain validates.
+    diagnosticity: high
+    salience: low
+    proposition: The app pins the previous leaf certificate's public-key hash, and
+      last night's renewal issued a new leaf with a new key, so the pin no longer
+      matches even though the chain is otherwise valid.
+    matched_to: HH
+distractor_direction:
+  label: Expired pinned certificate
+  description: Investigating whether the pinned certificate expired, on the theory
+    that an expiry is what broke the app's secure connection.
+plausible_alternative_directions:
+- label: New cipher or TLS version
+  description: Whether the renewal changed negotiated TLS parameters the app cannot
+    handle.
+- label: Hostname or SAN change
+  description: Whether the renewed certificate covers a different name than the app
+    expects.
+leak_audit:
+  ll_atomic_claims:
+  - A senior engineer asserts that this is a classic expired-pinned-certificate problem.
+  - The engineer treats the expiry as the complete explanation.
+  hh_atomic_claims:
+  - The app pins the public-key hash of the previous leaf certificate.
+  - Last night's renewal issued a new leaf with a new key.
+  - The pin no longer matches, so the app rejects the handshake even though the chain
+    validates.
+  hl_salience_dimensions:
+    source_credibility: Principal mobile engineer (Petros) pattern-matching to a class
+      of failure.
+    narrative_coherence: Coherent appeal to failures he's seen take down apps before.
+    confident_assertion: Said with total confidence ... the whole story — confident,
+      unhedged.
+    concrete_detail: Detail about the source (his standup glance, his prior experience)
+      only — no claim about what the app actually pins.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 72
+  hl_word_count: 44
+  ll_word_count: 19
+  hh_word_count: 47
+  lh_word_count: 24
+  notes: 'LL carries the expired-pinned-certificate assertion plus the whole-story
+    framing already present in HL;
+
+    Petros''s name, role, and standup framing are HL-only and about the source. xbase
+    states the symptom
+
+    (app-only TLS failure after renewal, browsers fine, chain valid) but withholds
+    what the app pins, so
+
+    HL/LL cannot resolve it. The decisive pin-old-leaf-key fact lives only in HH/LH.
+    xbase noting the chain
+
+    is valid is symptom context, not the affirmative cause. LL lengthened from 11
+    to 19 words by including
+
+    the expiry-as-complete-explanation clause already present in HL content.
+
+    '
+causal_audit:
+  steelman: 'A principal engineer could argue an expired pinned certificate is the
+    textbook cause: many apps hard-code a
+
+    certificate or its hash, and when that certificate lapses the app refuses every
+    connection, exactly the
+
+    all-or-nothing failure seen here. Pinning-and-expiry incidents are real and common.
+    But the diagnosis is generic
+
+    pattern-matching, not analysis of this case: xbase states the certificate was
+    renewed on schedule, so nothing
+
+    expired, and the focal evidence shows the app pins the old leaf''s key while the
+    renewal minted a new one — a
+
+    fresh-key mismatch, not an expiry. The expired-certificate framing has no mechanism
+    here because the certificate
+
+    is current; the engineer simply named a familiar pattern without engaging the
+    renewal detail.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the new certificate chains correctly to a
+    trusted root and the failure followed a routine renewal, foreclosing an expiry
+    explanation while leaving the pin target unstated; the decisive pinned-old-key
+    fact lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A pinned mobile app failing after cert renewal because it pins the
+    old leaf's key, not the expired-pinned-certificate diagnosis a senior engineer
+    asserts.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

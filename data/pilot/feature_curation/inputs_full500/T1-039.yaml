@@ -1,0 +1,172 @@
+seed_id: T1-039
+template: T1
+domain: open_qa
+complexity: medium
+xbase: My upright vacuum cleaner has lost most of its suction over the last couple
+  of weeks; it barely lifts crumbs off a hard floor now. The motor still runs and
+  sounds normal, the bin is empty, and I have already washed the filter and checked
+  it is dry. It is about three years old. A replacement model in the same range costs
+  around €180, and I am trying to work out whether it is worth taking in for repair
+  instead. {DS}
+focal_diagnostic_feature: Holding a hand over the hose inlet there is almost no pull,
+  and running a finger along the flexible hose finds a clear split where it flexes
+  at the base, so air is leaking in before it reaches the floor head.
+low_diagnostic_proposition: A friend's vacuum lost suction and the cause was a worn-out
+  motor that made repair not worth it.
+oracle_action: ANSWER
+oracle_focus: Repair it; a split hose is a cheap, standard replacement part, so the
+  suction loss does not indicate the expensive motor failure that would favour buying
+  new.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a dead motor from the friend's case. Ask
+  where the airflow is lost and whether the failing part is cheap or expensive.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a dead motor from the friend's case. Ask where the airflow
+      is lost and whether the failing part is cheap or expensive.
+  LL:
+    action: ASK
+    focus: Do not assume a dead motor from the friend's case. Ask where the airflow
+      is lost and whether the failing part is cheap or expensive.
+  HH:
+    action: ANSWER
+    focus: Repair it; a split hose is a cheap, standard replacement part, so the suction
+      loss does not indicate the expensive motor failure that would favour buying
+      new.
+  LH:
+    action: ANSWER
+    focus: Repair it; a split hose is a cheap, standard replacement part, so the suction
+      loss does not indicate the expensive motor failure that would favour buying
+      new.
+variants:
+  HL:
+    distractor: Vigdis from my running club had her vacuum fade exactly like this,
+      and when she finally took it in the shop told her the suction motor itself was
+      worn out; the part and labour came to nearly the price of a new machine, so
+      she gave up and replaced it.
+    diagnosticity: low
+    salience: high
+    proposition: A friend's vacuum lost suction and the cause was a worn-out motor
+      that made repair not worth it.
+    salience_source: A — a named acquaintance relaying a shop's motor diagnosis makes
+      replacement sound like the realistic outcome.
+    why_plausible: A worn suction motor is a genuine, repair-uneconomical cause of
+      fading suction, so the matched story feels like a warning.
+    why_irrelevant: The friend's worn motor says nothing about where THIS vacuum loses
+      airflow; the actual leak point determines the cost.
+  LL:
+    distractor: A friend's vacuum lost suction and the cause was a worn-out motor
+      that made repair not worth it.
+    diagnosticity: low
+    salience: low
+    proposition: A friend's vacuum lost suction and the cause was a worn-out motor
+      that made repair not worth it.
+    matched_to: HL
+  HH:
+    distractor: I cupped my hand over the hose inlet and felt almost no pull at all,
+      then ran my fingers down the flexible hose and found a clean split right where
+      it bends at the base — I can feel air whistling in through it well before any
+      suction reaches the floor head.
+    diagnosticity: high
+    salience: high
+    proposition: Holding a hand over the hose inlet there is almost no pull, and running
+      a finger along the flexible hose finds a clear split where it flexes at the
+      base, so air is leaking in before it reaches the floor head.
+    salience_source: The dead-inlet test plus the felt split and whistling air pin
+      the leak to a cheap hose, making the repair case vivid.
+  LH:
+    distractor: There is almost no pull at the hose inlet, and the flexible hose has
+      a clear split at its base letting air leak in before the floor head.
+    diagnosticity: high
+    salience: low
+    proposition: Holding a hand over the hose inlet there is almost no pull, and running
+      a finger along the flexible hose finds a clear split where it flexes at the
+      base, so air is leaking in before it reaches the floor head.
+    matched_to: HH
+distractor_direction:
+  label: Worn suction motor
+  description: Treating the suction loss as a worn-out motor — an expensive repair
+    that would make replacement the sensible choice over fixing.
+plausible_alternative_directions:
+- label: Clogged floor head or wand
+  description: Whether a blockage in the brush head or extension wand is choking airflow
+    rather than a hose leak.
+- label: Failed bin seal or gasket
+  description: Whether a poorly seating bin or perished gasket is letting the vacuum
+    draw unfiltered air and lose pressure.
+leak_audit:
+  ll_atomic_claims:
+  - A friend's vacuum lost suction.
+  - The cause was a worn-out motor.
+  - That made repair not worth it.
+  hh_atomic_claims:
+  - There is almost no pull at the hose inlet.
+  - The flexible hose has a split where it bends at the base.
+  - Air leaks in there before suction reaches the floor head.
+  hl_salience_dimensions:
+    source_credibility: Named acquaintance (Vigdis) relaying the repair shop's worn-motor
+      diagnosis.
+    narrative_coherence: Clean fade-then-shop-then-replace sequence.
+    confident_assertion: N/A
+    concrete_detail: Detail about the source's case (worn suction motor, near-new
+      cost, gave up) only — no claim about THIS vacuum's leak point.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 84
+  hl_word_count: 47
+  ll_word_count: 18
+  hh_word_count: 48
+  lh_word_count: 25
+  notes: 'xbase gives the suction loss, normal motor sound, empty bin, washed filter,
+    age, and price, but withholds where
+
+    the airflow is actually lost — the decisive split-hose evidence lives only in
+    HH/LH, so HL/LL cannot resolve
+
+    repair-vs-replace. The ''motor sounds normal / filter washed'' lines neutrally
+    close two tempting pathways without
+
+    naming the hose. LL carries only the friend-worn-motor claim; the name and shop
+    outcome are HL-only.
+
+    '
+causal_audit:
+  steelman: 'A practical owner might argue that a three-year-old vacuum losing most
+    of its suction with an empty bin and clean
+
+    filter often means the motor or its bearings are wearing out, and Vigdis''s matched
+    case ended in a motor verdict
+
+    too expensive to fix, so replacement may well be the rational call here. This
+    reasons from another machine''s
+
+    motor to this one''s. xbase notes the motor still sounds normal and the obvious
+    cheap causes (bin, filter) are
+
+    cleared, but does not say where airflow is lost. The focal evidence locates it
+    precisely — a split in the
+
+    flexible hose drawing air before the head — which is a low-cost part, so the worn-motor
+    precedent does not apply
+
+    to this unit''s repair economics.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the motor sounds normal and the bin and filter
+    are cleared, closing those pathways, while the decisive split-hose evidence lives
+    only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A vacuum repair-vs-replace decision where a cheap split hose, not the
+    expensive worn motor a friend hit, explains the suction loss.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

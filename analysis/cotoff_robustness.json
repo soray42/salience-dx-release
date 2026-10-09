@@ -1,0 +1,54 @@
+{
+  "subset": {
+    "n_seeds": 300,
+    "cells": "HL,LL",
+    "models": [
+      "claude-sonnet-4-6",
+      "gemini-3.5-flash",
+      "llama3.1:8b",
+      "google/gemma-4-31B-it"
+    ]
+  },
+  "item_distractor_role": {
+    "n": 2392,
+    "agreement_pct": 86.9,
+    "cohen_kappa": 0.734
+  },
+  "pair_bucket": {
+    "n": 1193,
+    "agreement_pct": 77.6
+  },
+  "rates_CoT_on": {
+    "n_pairs": 1194,
+    "n_ISB": 88,
+    "n_vig": 130,
+    "ISB_pct": 7.37,
+    "ISB_ci": [
+      5.8,
+      9.0
+    ],
+    "vig_pct": 10.89,
+    "vig_ci": [
+      9.0,
+      13.0
+    ],
+    "flip_pct": 18.26
+  },
+  "rates_CoT_off": {
+    "n_pairs": 1197,
+    "n_ISB": 108,
+    "n_vig": 126,
+    "ISB_pct": 9.02,
+    "ISB_ci": [
+      7.3,
+      10.8
+    ],
+    "vig_pct": 10.53,
+    "vig_ci": [
+      8.6,
+      12.5
+    ],
+    "flip_pct": 19.55
+  },
+  "note": "Main-run labels (reasoning trace on) vs trace-off re-judge; same 300 scenarios, HL and LL."
+}

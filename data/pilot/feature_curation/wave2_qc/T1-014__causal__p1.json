@@ -1,0 +1,9 @@
+{
+  "seed_id": "T1-014",
+  "steelman": "The strongest case for warranty-voiding being causally relevant is that some consumers purchase third-party extended warranty plans (e.g., SquareTrade/Allstate) at point of sale that run 3-6 years from purchase date, and premium appliance brands occasionally sell 5-year parts-and-labor upgrade warranties. If such a plan were still active, a non-certified repair could void remaining coverage, representing a real financial consideration. A thorough practitioner might therefore include 'do you have an active extended warranty or protection plan?' on a diagnostic checklist before dismissing the brother-in-law's reasoning entirely. Additionally, home warranty policies covering appliances (distinct from manufacturer warranties) can be active indefinitely as annual-renewal contracts, and these sometimes restrict non-authorized repairs.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Active third-party extended warranty or home warranty policy that prohibits non-certified repairs — but this requires a fact (an active protection plan at year 8) that is both absent from xbase and requires a statistically improbable confluence of purchase-time decisions and plan duration. No standard checklist item for an 8-year-old machine with no warranty mention in xbase.",
+  "pathway_closure_check": "effective",
+  "notes": "Seed is structurally sound. The xbase's 8-year age is the key closure: standard manufacturer warranties expire after 1-3 years; third-party extended plans rarely run past 5-6 years; home warranty coverage, while technically possible, is not referenced anywhere in xbase. The brother-in-law's warranty rationale is structurally inapplicable to the user's situation under all default assumptions, and xbase provides zero positive signal that any extended or home warranty plan exists. The seed correctly documents this in its own causal_audit block. No repair needed."
+}

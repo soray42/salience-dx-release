@@ -1,0 +1,190 @@
+seed_id: T3-033
+template: T3
+domain: open_qa
+complexity: low
+xbase: I graduated six months ago and have been applying widely since. I now have
+  two entry-level offers, both in my field and starting within a few weeks of each
+  other. I do not have strong ties to either city and have limited savings from a
+  part-time job during my final year. I asked a mentor who built his career at large
+  corporations which offer I should take. {DS}
+focal_diagnostic_feature: Offer A pays 22% more, requires no relocation, and the role
+  content matches the candidate's stated goal exactly; Offer B is at a more recognizable
+  company name but pays less and requires self-funded relocation.
+low_diagnostic_proposition: Brand-name employers should always be prioritised for
+  a first role because they set the career trajectory.
+oracle_action: ANSWER
+oracle_focus: 'Choose Offer A: the pay gap, relocation cost, and role-content alignment
+  together outweigh the brand advantage when the candidate has no financial cushion
+  for relocation and a clear career direction.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply a blanket brand-name rule. Ask for the compensation
+  gap, relocation situation, role content, and the candidate's financial position
+  before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply a blanket brand-name rule. Ask for the compensation gap, relocation
+      situation, role content, and the candidate's financial position before deciding.
+  LL:
+    action: ASK
+    focus: Do not apply a blanket brand-name rule. Ask for the compensation gap, relocation
+      situation, role content, and the candidate's financial position before deciding.
+  HH:
+    action: ANSWER
+    focus: 'Choose Offer A: the pay gap, relocation cost, and role-content alignment
+      together outweigh the brand advantage when the candidate has no financial cushion
+      for relocation and a clear career direction.'
+  LH:
+    action: ANSWER
+    focus: 'Choose Offer A: the pay gap, relocation cost, and role-content alignment
+      together outweigh the brand advantage when the candidate has no financial cushion
+      for relocation and a clear career direction.'
+variants:
+  HL:
+    distractor: Chinonso spent thirty years rising through blue-chip firms and told
+      me without hesitation that the brand name on your first role opens every door
+      that matters and you should always pick it, regardless of anything else.
+    diagnosticity: low
+    salience: high
+    proposition: Brand-name employers should always be prioritised for a first role
+      because they set the career trajectory.
+    salience_source: 'A: source credibility (thirty years, blue-chip career); B: clean
+      authoritative register; C: ''without hesitation'', ''always pick it''.'
+    why_plausible: The brand-name first-job heuristic is widely shared by successful
+      corporate veterans and has some empirical support in hiring literature for signaling
+      value.
+    why_irrelevant: The authority asserts a general pattern without engaging the specific
+      compensation gap, self-funded relocation cost, or role-content match — factors
+      that are decisive for this candidate given their financial situation.
+  LL:
+    distractor: A senior mentor said brand-name employers should always be chosen
+      first because they set career trajectory.
+    diagnosticity: low
+    salience: low
+    proposition: Brand-name employers should always be prioritised for a first role
+      because they set the career trajectory.
+    matched_to: HL
+  HH:
+    distractor: Offer A pays 22% more, needs no relocation, and the day-to-day work
+      is exactly what I said I want to do; Offer B has the bigger company name but
+      pays less and I would have to fund the move from savings I do not have.
+    diagnosticity: high
+    salience: high
+    proposition: Offer A pays 22% more, requires no relocation, and the role content
+      matches the candidate's stated goal exactly; Offer B is at a more recognizable
+      company name but pays less and requires self-funded relocation.
+    salience_source: 'B: concrete personal-situation narrative; C: decisive framing
+      (''savings I do not have'').'
+  LH:
+    distractor: Offer A pays 22% more, no relocation, matches my goal; Offer B's bigger
+      brand pays less; I have no savings to relocate.
+    diagnosticity: high
+    salience: low
+    proposition: Offer A pays 22% more, requires no relocation, and the role content
+      matches the candidate's stated goal exactly; Offer B is at a more recognizable
+      company name but pays less and requires self-funded relocation.
+    matched_to: HH
+distractor_direction:
+  label: brand-name employer priority
+  description: Treating the more recognizable company name on Offer B as the primary
+    decision criterion for a first role, based on the mentor's general career heuristic.
+plausible_alternative_directions:
+- label: team and manager quality
+  description: Examining whether the direct manager and team at each company are strong
+    learning environments, independent of brand or pay.
+- label: growth and promotion pace
+  description: Comparing how quickly each company promotes from entry level and whether
+    the learning curves differ meaningfully.
+leak_audit:
+  ll_atomic_claims:
+  - A senior mentor made the claim.
+  - The claim is that brand-name employers should always be chosen first.
+  - The reason given is that they set career trajectory.
+  hh_atomic_claims:
+  - Offer A pays 22% more than Offer B.
+  - Offer A requires no relocation.
+  - The Offer A role matches exactly what the candidate said they want to do.
+  - Offer B has a more recognizable company name.
+  - Offer B pays less.
+  - Offer B requires self-funded relocation.
+  - The candidate does not have savings to fund the move.
+  hl_salience_dimensions:
+    source_credibility: 'A: thirty years rising through blue-chip firms.'
+    narrative_coherence: 'B: clean authoritative register, direct reported exchange.'
+    confident_assertion: 'C: ''without hesitation'', ''always pick it, regardless
+      of anything else''.'
+    concrete_detail: N/A — no case-specific facts added.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 67
+  hl_word_count: 36
+  ll_word_count: 16
+  hh_word_count: 45
+  lh_word_count: 22
+  notes: 'Low complexity calibrates to a straightforward situation with clear facts.
+
+    xbase is intentionally minimal for low complexity — withholds compensation,
+
+    relocation, and role-content details (C4). Source Chinonso is fresh (C12).
+
+    Brand-name heuristic is genuinely defensible in general but the mentor never
+
+    engages this candidate''s specific situation (C3). HH word count: "Offer(1) A(2)
+
+    pays(3) 22%(4) more(5) needs(6) no(7) relocation(8) and(9) the(10) day-to-day(11)
+
+    work(12) is(13) exactly(14) what(15) I(16) said(17) I(18) want(19) to(20) do(21)
+
+    Offer(22) B(23) has(24) the(25) bigger(26) company(27) name(28) but(29) pays(30)
+
+    less(31) and(32) I(33) would(34) have(35) to(36) fund(37) the(38) move(39)
+
+    from(40) savings(41) I(42) do(43) not(44) have(45)" = 45.
+
+    LH word count (post-repair): "Offer(1) A(2) pays(3) 22%(4) more(5) no(6)
+
+    relocation(7) matches(8) my(9) goal(10) Offer(11) B''s(12) bigger(13) brand(14)
+
+    pays(15) less(16) I(17) have(18) no(19) savings(20) to(21) relocate(22)" = 22.
+
+    Ratios: HL:LL 36:16 = 2.25:1 OK. HH:LH 45:22 = 2.05:1 OK.
+
+    QC repair: expanded LH to add role-content match and savings-insufficiency clause,
+
+    restoring C10 HH/LH propositional equivalence across all seven atomic claims.
+
+    '
+causal_audit:
+  steelman: 'The brand-name first-job heuristic has genuine empirical support: research
+    on
+
+    resume screening and hiring patterns shows that brand-name employers on a CV
+
+    increase callback rates, and veteran career practitioners observe that early
+
+    employer prestige compounds through alumni networks and internal talent pipelines.
+
+    A thirty-year blue-chip veteran recommending this rule would be repeating a
+
+    pattern they have directly observed across cohorts of junior hires.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the specific financial and role-content facts that
+    override the brand heuristic live only in HH/LH, not in xbase.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Entry-level offer choice between higher-paying no-relocation role-aligned
+    Offer A and lower-paying self-funded-relocation brand-name Offer B; authority
+    mentor says always take the brand name, but the candidate's financial situation
+    and career direction make Offer A clearly preferable.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

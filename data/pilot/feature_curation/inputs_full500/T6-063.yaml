@@ -1,0 +1,188 @@
+seed_id: T6-063
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I have been baking a sponge cake from the same recipe three times this week
+  and it keeps sinking in the centre. I do not open the oven during baking and the
+  edges look golden and done when I take it out. {DS}
+focal_diagnostic_feature: An oven thermometer placed on the middle rack shows the
+  actual temperature is 160°C when the dial reads 200°C, a 40°C deficit that leaves
+  the cake centre underdone regardless of baking time.
+low_diagnostic_proposition: Past sinking cakes were caused by opening the oven door
+  too early, so I probably opened the door without realising it.
+oracle_action: ANSWER
+oracle_focus: The oven thermostat is significantly miscalibrated; increase the dial
+  setting by at least 40°C or use an oven thermometer to verify and maintain the correct
+  baking temperature before the next attempt.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the oven-door explanation without checking
+  actual oven temperature; ask whether an oven thermometer has been used and whether
+  the oven temperature matches the dial setting.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the oven-door explanation without checking actual oven temperature;
+      ask whether an oven thermometer has been used and whether the oven temperature
+      matches the dial setting.
+  LL:
+    action: ASK
+    focus: Do not accept the oven-door explanation without checking actual oven temperature;
+      ask whether an oven thermometer has been used and whether the oven temperature
+      matches the dial setting.
+  HH:
+    action: ANSWER
+    focus: The oven thermostat is significantly miscalibrated; increase the dial setting
+      by at least 40°C or use an oven thermometer to verify and maintain the correct
+      baking temperature before the next attempt.
+  LH:
+    action: ANSWER
+    focus: The oven thermostat is significantly miscalibrated; increase the dial setting
+      by at least 40°C or use an oven thermometer to verify and maintain the correct
+      baking temperature before the next attempt.
+variants:
+  HL:
+    distractor: Every time a cake has sunk on me before, I had peeked at it before
+      the timer went off and let cold air rush in, so even though I am trying not
+      to, I wonder if my hand reached for the door handle without me realising it.
+    diagnosticity: low
+    salience: high
+    proposition: Past sinking cakes were caused by opening the oven door too early,
+      so I probably opened the door without realising it.
+    salience_source: 'Dimension B (narrative coherence): vivid physical memory of
+      the past incident (cold air rushing in, hand reaching for the handle) creates
+      a compelling causal story; dimension C (confident assertion of past pattern
+      while leaving doubt about the present — "I wonder if" — creates plausible uncertainty
+      that keeps the distractor live).'
+    why_plausible: Early oven-door opening is one of the most commonly cited reasons
+      for sunken sponge cakes, and a baker whose past failures were reliably caused
+      by this would have strong reason to suspect it again, especially if the current
+      failure repeats the same symptom.
+    why_irrelevant: The xbase explicitly states the door is not opened during baking,
+      which closes the primary mechanism of the distractor. The oven's actual temperature
+      is 40°C below the dial reading — a deficit that would cause the cake centre
+      to remain liquid regardless of whether the door were touched.
+  LL:
+    distractor: Past sinking cakes I made were caused by opening the oven door too
+      early, so I probably opened the door without realising it.
+    diagnosticity: low
+    salience: low
+    proposition: Past sinking cakes were caused by opening the oven door too early,
+      so I probably opened the door without realising it.
+    matched_to: HL
+  HH:
+    distractor: An oven thermometer I placed on the middle rack shows the actual internal
+      temperature is only 160°C when the dial sits at 200°C, which means the cake
+      centre has never reached a high enough temperature to set, regardless of how
+      long it bakes.
+    diagnosticity: high
+    salience: high
+    proposition: An oven thermometer placed on the middle rack shows the actual temperature
+      is 160°C when the dial reads 200°C, a 40°C deficit that leaves the cake centre
+      underdone regardless of baking time.
+    salience_source: Specific instrument used (oven thermometer, placed on middle
+      rack); exact temperature readings (160°C vs 200°C); mechanistic explanation
+      of consequence (cake centre cannot set regardless of time); all concrete and
+      directly actionable.
+  LH:
+    distractor: An oven thermometer reads 160°C when the dial shows 200°C, a 40°C
+      deficit that prevents the cake centre from setting.
+    diagnosticity: high
+    salience: low
+    proposition: An oven thermometer placed on the middle rack shows the actual temperature
+      is 160°C when the dial reads 200°C, a 40°C deficit that leaves the cake centre
+      underdone regardless of baking time.
+    matched_to: HH
+distractor_direction:
+  label: Oven door opened too early
+  description: Investigating whether the baker opened the oven door during baking,
+    allowing cold air to enter and collapse the cake's structure before it had fully
+    set.
+plausible_alternative_directions:
+- label: Under-beaten or over-beaten egg structure
+  description: The egg-and-sugar mixture was not beaten to the correct ribbon stage,
+    or was over-worked and deflated before baking, leading to insufficient lift.
+- label: Leavening agent failure
+  description: The baking powder has expired or was measured incorrectly, providing
+    insufficient rise for the sponge structure to hold during baking.
+- label: Pan size mismatch
+  description: The tin is larger than the recipe specifies, spreading the batter too
+    thin so the edges set and the centre sinks before heat can penetrate.
+leak_audit:
+  ll_atomic_claims:
+  - Past sinking cakes were caused by opening the oven door too early.
+  - I probably opened the door without realising it.
+  hh_atomic_claims:
+  - An oven thermometer was placed on the middle rack.
+  - The thermometer shows the actual temperature is 160°C.
+  - The dial reads 200°C at the time of the measurement.
+  - The 40°C gap means the cake centre cannot reach a high enough temperature to set.
+  - This holds regardless of how long the cake bakes.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Vivid first-person recollection of the past physical experience
+      (cold air, hand reaching for the handle) creates a compelling and fluent causal
+      narrative.
+    confident_assertion: '"Every time a cake has sunk on me before" — categorical
+      past pattern; the present doubt ("I wonder if") keeps the inference live rather
+      than hedging it away.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 42
+  hl_word_count: 47
+  ll_word_count: 21
+  hh_word_count: 43
+  lh_word_count: 20
+  notes: 'T6 availability inference ("so I probably opened the door without realising
+
+    it") appears in both HL and LL. HL adds only vivid narrative framing of the
+
+    past experience (cold air, hand-reaching memory) without adding new case
+
+    claims. No named source (first-person T6). xbase pathway-closure: "I do not
+
+    open the oven during baking" closes the primary door-opening mechanism per
+
+    C4''s allowed narrow pathway-closure ("neutrally rules out one tempting
+
+    mechanism"), naming no affirmative cause. The 160°C vs 200°C reading lives
+
+    only in HH/LH. HL:LL ratio 47:21 = 2.24:1 ✓; HH:LH ratio 43:20 = 2.15:1 ✓.
+
+    '
+causal_audit:
+  steelman: 'Early oven-door opening is a textbook cause of sunken sponge cakes: cold
+    air
+
+    rushes in, dropping the internal temperature at the moment the structure is
+
+    most fragile, and the partially set centre collapses under its own weight.
+
+    A baker who has reliably reproduced this failure in the past has strong
+
+    inductive grounds to suspect the same mechanism. Moreover, "not opening the
+
+    oven" is easy to do automatically or accidentally, so the baker''s stated
+
+    intention not to open it does not definitively prove the door was never opened.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"I do not open the oven during baking" — this closes the
+    oven-door mechanism as a narrow pathway-closure. It names no affirmative cause
+    and is consistent with C4''s allowance for a single-mechanism closure. The 160°C
+    thermostat reading that rules out all other explanations lives only in HH/LH.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Repeatedly sunken sponge cakes caused by an oven thermostat reading
+    40°C below the dial setting, against the baker's availability bias that past sinking
+    cakes always resulted from opening the oven door too early.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

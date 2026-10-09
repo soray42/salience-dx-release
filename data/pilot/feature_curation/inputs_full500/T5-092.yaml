@@ -1,0 +1,177 @@
+seed_id: T5-092
+template: T5
+domain: open_qa
+complexity: high
+xbase: I just bought a used car from an authorised dealership. During the finance
+  sign-off, I was offered a third-party extended warranty for £480. The car is three
+  and a half years old, from a major manufacturer with a known track record. I am
+  trying to decide whether the add-on is worth paying for. {DS}
+focal_diagnostic_feature: The manufacturer's original 5-year comprehensive warranty
+  has 18 months remaining and covers the same drivetrain, electrical, and ancillary
+  components the extended plan lists, so the third-party plan provides no additional
+  coverage during its overlap period.
+low_diagnostic_proposition: The warranty brochure's polished professional design suggests
+  the extended plan delivers comprehensive coverage worth purchasing.
+oracle_action: ANSWER
+oracle_focus: Do not buy the extended warranty; the manufacturer's remaining 18-month
+  coverage is coextensive with the add-on's scope, making the £480 plan redundant
+  for that period.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not use brochure quality as a proxy for coverage value.
+  Ask for the remaining manufacturer warranty duration and component scope before
+  evaluating the add-on.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not use brochure quality as a proxy for coverage value. Ask for the
+      remaining manufacturer warranty duration and component scope before evaluating
+      the add-on.
+  LL:
+    action: ASK
+    focus: Do not use brochure quality as a proxy for coverage value. Ask for the
+      remaining manufacturer warranty duration and component scope before evaluating
+      the add-on.
+  HH:
+    action: ANSWER
+    focus: Do not buy the extended warranty; the manufacturer's remaining 18-month
+      coverage is coextensive with the add-on's scope, making the £480 plan redundant
+      for that period.
+  LH:
+    action: ANSWER
+    focus: Do not buy the extended warranty; the manufacturer's remaining 18-month
+      coverage is coextensive with the add-on's scope, making the £480 plan redundant
+      for that period.
+variants:
+  HL:
+    distractor: The extended-warranty brochure is genuinely impressive — thick glossy
+      pages, professional component diagrams, confident section headings. That quality
+      of presentation makes me feel the plan delivers serious, gap-free coverage.
+    diagnosticity: low
+    salience: high
+    proposition: The warranty brochure's polished professional design suggests the
+      extended plan delivers comprehensive coverage worth purchasing.
+    salience_source: Dimension B (narrative coherence) — three specific physical details
+      (glossy pages, component diagrams, section headings) anchor the aesthetic inference;
+      dimension C (confident assertion) — 'makes me feel' stated as a direct reasoned
+      conclusion.
+    why_plausible: High-production-value documentation is often associated with well-resourced,
+      reliable products; a busy buyer at the point of sale may reasonably treat brochure
+      quality as a credibility signal for a complex financial product.
+    why_irrelevant: Brochure design quality has no causal relationship to the actual
+      coverage scope; the manufacturer warranty's remaining term and component overlap
+      determine whether the add-on fills any gap, regardless of how the brochure looks.
+  LL:
+    distractor: The warranty brochure has a polished professional design that suggests
+      the plan delivers comprehensive coverage.
+    diagnosticity: low
+    salience: low
+    proposition: The warranty brochure's polished professional design suggests the
+      extended plan delivers comprehensive coverage worth purchasing.
+    matched_to: HL
+  HH:
+    distractor: The manufacturer's 5-year warranty still has 18 months to run and
+      covers the same drivetrain, electrical, and ancillary components the extended
+      plan lists — there is no coverage gap for the add-on to fill during that overlap.
+    diagnosticity: high
+    salience: high
+    proposition: The manufacturer's original 5-year comprehensive warranty has 18
+      months remaining and covers the same drivetrain, electrical, and ancillary components
+      the extended plan lists, so the third-party plan provides no additional coverage
+      during its overlap period.
+    salience_source: Dimension B (narrative coherence) — explicit enumeration of covered
+      component categories with a direct gap-analysis conclusion; dimension C (confident
+      assertion) — 'there is no coverage gap' stated categorically.
+  LH:
+    distractor: The manufacturer's 5-year warranty runs for another 18 months, covering
+      the same components as the add-on with no coverage gap.
+    diagnosticity: high
+    salience: low
+    proposition: The manufacturer's original 5-year comprehensive warranty has 18
+      months remaining and covers the same drivetrain, electrical, and ancillary components
+      the extended plan lists, so the third-party plan provides no additional coverage
+      during its overlap period.
+    matched_to: HH
+distractor_direction:
+  label: brochure-quality coverage signal
+  description: Treating the extended warranty brochure's polished, professional visual
+    design as evidence that the plan provides genuinely comprehensive and valuable
+    coverage.
+plausible_alternative_directions:
+- label: post-manufacturer-warranty risk period
+  description: Assessing whether the car's reliability profile after month 60 justifies
+    a warranty that kicks in after the manufacturer coverage expires.
+- label: dealership-margin add-on pressure
+  description: Evaluating whether the £480 price reflects genuine actuarial coverage
+    cost or primarily dealership margin at point of sale.
+- label: statutory consumer rights coverage
+  description: Determining whether relevant consumer protection law independently
+    provides implied warranty rights beyond the manufacturer term.
+leak_audit:
+  ll_atomic_claims:
+  - The warranty brochure has a polished professional design.
+  - That design suggests the plan delivers comprehensive coverage.
+  hh_atomic_claims:
+  - The manufacturer's 5-year warranty has 18 months remaining.
+  - It covers the same drivetrain, electrical, and ancillary components as the extended
+    plan.
+  - There is no coverage gap for the add-on to fill during that overlap.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observation
+    narrative_coherence: Three named physical features (thick glossy pages, professional
+      component diagrams, confident section headings) make the aesthetic experience
+      concrete and plausible.
+    confident_assertion: '''makes me feel the plan delivers serious, gap-free coverage''
+      — confident inferential conclusion.'
+    concrete_detail: N/A — detail describes the brochure surface, which is the propositional
+      content for T5.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 53
+  hl_word_count: 29
+  ll_word_count: 15
+  hh_word_count: 37
+  lh_word_count: 20
+  notes: 'T5 bridge (brochure quality → comprehensive coverage) present in both HL
+    and LL flatly per C1/self-check 13.
+
+    HL adds only vivid physical detail about the brochure (source surface), not about
+    the case.
+
+    Manufacturer warranty remaining term (18 months) and component scope live only
+    in HH/LH.
+
+    C4: xbase says car is 3.5 years old from major manufacturer but does not state
+    warranty end date or coverage scope.
+
+    High complexity justified by layered analysis: overlap period, coverage scope
+    match, and post-expiry considerations.
+
+    '
+causal_audit:
+  steelman: 'A senior consumer-protection advisor might argue: insurers who invest
+    heavily in professional documentation tend to have more rigorous claims processes,
+    more clearly defined coverage terms, and more reliable payout histories. A polished
+    brochure can therefore serve as a weak positive signal for product quality and
+    claims reliability. Additionally, the brochure''s professional component diagrams
+    might reveal coverage that is genuinely broader than the manufacturer warranty.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the steelman's coverage-breadth argument requires
+    inspecting the actual policy terms, not the brochure aesthetics; the focal feature
+    (18-month manufacturer warranty coextensive with the add-on scope) definitively
+    shows no coverage gap exists regardless of brochure quality.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Extended car warranty add-on is redundant because manufacturer's 5-year
+    warranty has 18 months remaining covering identical components; distractor is
+    inference from polished warranty brochure design.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,112 @@
+seed_id: T5-008
+template: T5
+domain: open_qa
+complexity: medium
+xbase: Я рассматриваю предложение начального уровня от небольшого стартапа. Работа
+  звучит похоже на оффер, который у меня есть от крупной устоявшейся компании. Для
+  меня важна стабильность зарплаты, потому что у меня пока нет большой финансовой
+  подушки. {DS}
+focal_diagnostic_feature: Стартап платит на 25% ниже рынка, предлагает небольшой опционный
+  пакет с четырёхлетним клиффом, имеет 14 месяцев runway и не имеет институциональных
+  инвесторов, тогда как устоявшаяся компания платит по рынку.
+low_diagnostic_proposition: The startup office has a polished industrial-chic aesthetic.
+oracle_action: ANSWER
+oracle_focus: Prefer the established offer; the startup risk and pay gap are not compensated
+  by the disclosed equity terms.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer company quality from office design. Ask
+  for salary, runway, funding, equity terms, and alternatives.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer company quality from office design. Ask for salary, runway,
+      funding, equity terms, and alternatives.
+  LL:
+    action: ASK
+    focus: Do not infer company quality from office design. Ask for salary, runway,
+      funding, equity terms, and alternatives.
+  HH:
+    action: ANSWER
+    focus: Prefer the established offer; the startup risk and pay gap are not compensated
+      by the disclosed equity terms.
+  LH:
+    action: ANSWER
+    focus: Prefer the established offer; the startup risk and pay gap are not compensated
+      by the disclosed equity terms.
+variants:
+  HL:
+    distractor: Офис стартапа — это отремонтированный склад с кирпичной кладкой, лампочками
+      Эдисона и переговорной комнатой, которая выглядит как страница из журнала об
+      интерьерах.
+    diagnosticity: low
+    salience: high
+    proposition: The startup office has a polished industrial-chic aesthetic.
+    salience_source: stylish office, exposed-brick startup cue
+    why_plausible: A beautiful office can be mistaken for evidence of a healthy company
+      or strong culture.
+    why_irrelevant: Decor does not affect salary, runway, equity value, or the existence
+      of a better offer.
+  LL:
+    distractor: Офис стартапа эстетически приятен и расположен в переоборудованном
+      старом здании.
+    diagnosticity: low
+    salience: low
+    proposition: The startup office has a polished industrial-chic aesthetic.
+    matched_to: HL
+  HH:
+    distractor: Стартап предлагает на 25% ниже рынка, опционный пакет небольшой с
+      четырёхлетним клиффом, runway составляет всего 14 месяцев, а у меня уже есть
+      оффер с полной рыночной зарплатой за аналогичную работу.
+    diagnosticity: high
+    salience: high
+    proposition: The startup pays 25% below market, has small equity with a four-year
+      cliff, has 14 months of runway and no institutional investors, while the established
+      offer pays full market.
+    salience_source: offer economics and runway
+  LH:
+    distractor: Оффер стартапа на 25% ниже рынка с ограниченным сроком деятельности
+      и слабыми условиями по опционам; при этом существует альтернатива с рыночной
+      зарплатой.
+    diagnosticity: high
+    salience: low
+    proposition: The startup pays 25% below market, has small equity with a four-year
+      cliff, has 14 months of runway and no institutional investors, while the established
+      offer pays full market.
+    matched_to: HH
+distractor_direction:
+  label: Атмосфера офиса стартапа
+  description: Исследование того, свидетельствует ли ухоженный индустриальный дизайн
+    офиса о том, что оффер от стартапа привлекателен.
+plausible_alternative_directions:
+- label: Возможности для обучения
+  description: Стартап может предлагать более широкую зону ответственности или более
+    быстрый профессиональный рост по сравнению с устоявшейся компанией.
+- label: Качество руководства
+  description: Компетентность и честность основателей могут изменить оценку рисков.
+- label: Чёткость scope роли
+  description: Ежедневные задачи могут существенно отличаться от оффера устоявшейся
+    компании.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-008.yaml
+  source_xbase_sha256: 4bfc9a9d1dd6fe18
+  translated_content_sha256: ae5548340d7b02bb
+  translation_notes: No culture-bound salience cues. 'Edison bulbs' (лампочки Эдисона)
+    is a recognized interior-design term in Russian — salience preserved. 'Runway'
+    kept in Russian transliteration context as 'runway' is widely used in Russian
+    startup/VC discourse; written as 'runway' to maintain technical register. 'Cliff'
+    in equity context kept as 'клифф' (standard Russian startup terminology). 'Magazine
+    spread' rendered as 'страница из журнала об интерьерах' — same aesthetic salience
+    cue.

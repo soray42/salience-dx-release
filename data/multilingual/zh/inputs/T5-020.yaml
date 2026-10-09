@@ -1,0 +1,170 @@
+seed_id: T5-020
+template: T5
+domain: open_qa
+complexity: high
+xbase: 我在同款车型中挑选二手车，两辆里程和价格都差不多。其中一辆光彩照人——漆面无瑕、内饰一尘不染，看起来像刚从展厅开出来一样。另一辆虽然干净但平平无奇，有几处轻微剐蹭和暗淡的漆面。我打算把买到的车开好多年，所以可靠性远比外观重要。{DS}
+focal_diagnostic_feature: 车辆历史报告显示，光彩照人的车有一个洪水受损的事故/报废产权证明，且维修记录有缺失；而外观平淡的车拥有干净的产权证明和完整的、经销商加盖章的维修记录。
+low_diagnostic_proposition: The gleaming car's showroom-perfect condition is a sign
+  it has been well maintained mechanically and is the more reliable choice.
+oracle_action: ANSWER
+oracle_focus: Buy the dull car; its clean title and complete service history outweigh
+  appearance, while the gleaming car's salvage/flood-damage title and service gaps
+  are serious reliability red flags a detailing job hides.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not read mechanical condition from how shiny the car
+  looks. Ask for each car's title status, accident/flood history, and service records.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not read mechanical condition from how shiny the car looks. Ask for
+      each car's title status, accident/flood history, and service records.
+  LL:
+    action: ASK
+    focus: Do not read mechanical condition from how shiny the car looks. Ask for
+      each car's title status, accident/flood history, and service records.
+  HH:
+    action: ANSWER
+    focus: Buy the dull car; its clean title and complete service history outweigh
+      appearance, while the gleaming car's salvage/flood-damage title and service
+      gaps are serious reliability red flags a detailing job hides.
+  LH:
+    action: ANSWER
+    focus: Buy the dull car; its clean title and complete service history outweigh
+      appearance, while the gleaming car's salvage/flood-damage title and service
+      gaps are serious reliability red flags a detailing job hides.
+variants:
+  HL:
+    distractor: 那辆光彩照人的车散发着一种被主人精心呵护的气息——镜面般的漆面、座椅上没有一处痕迹、一切都一丝不苟——一辆表面保养得如此完美的车，引擎盖下同样被照料得无微不至。
+    diagnosticity: low
+    salience: high
+    proposition: The gleaming car's showroom-perfect condition is a sign it has been
+      well maintained mechanically and is the more reliable choice.
+    salience_source: B/D — vivid concrete detail of the car's flawless appearance
+      carrying the bridge that surface care implies mechanical care.
+    why_plausible: An owner who keeps a car immaculate often does maintain it well,
+      so cosmetic perfection reads as a proxy for diligence.
+    why_irrelevant: A detail and polish can be applied in an afternoon and even mask
+      flood damage; shine reflects effort on the surface, not the title or mechanical
+      history.
+  LL:
+    distractor: 那辆光彩照人的车展厅般的状态表明它在机械方面保养良好，是更可靠的选择。
+    diagnosticity: low
+    salience: low
+    proposition: The gleaming car's showroom-perfect condition is a sign it has been
+      well maintained mechanically and is the more reliable choice.
+    matched_to: HL
+  HH:
+    distractor: 历史报告彻底颠覆了印象：那辆光彩照人的车带有洪水受损的事故/报废产权证明，且维修记录有明显缺口；而外观平淡的车拥有完全干净的产权证明以及完整的、经销商加盖章的维修历史，没有任何缺失。
+    diagnosticity: high
+    salience: high
+    proposition: A vehicle-history report shows the gleaming car has a salvage title
+      from prior flood damage and gaps in its service record, while the dull car has
+      a clean title and a complete, stamped dealer service history.
+    salience_source: Pulling the title and service histories makes the reliability
+      picture concrete and reverses the surface impression.
+  LH:
+    distractor: 那辆光彩照人的车有一个洪水受损的事故/报废产权证明，且维修记录有缺失；而外观平淡的车拥有干净的产权证明和完整的经销商加盖维修记录。
+    diagnosticity: high
+    salience: low
+    proposition: A vehicle-history report shows the gleaming car has a salvage title
+      from prior flood damage and gaps in its service record, while the dull car has
+      a clean title and a complete, stamped dealer service history.
+    matched_to: HH
+distractor_direction:
+  label: 光亮意味着保养良好
+  description: 选择光彩照人的车，因为其完美的外观被视为仔细机械保养的证据。
+plausible_alternative_directions:
+- label: 独立机械师检验
+  description: 购车前由独立机械师检查是否能发现任何一辆车隐藏的机械问题。
+- label: 里程与磨损匹配度
+  description: 磨损部件和里程是否与每辆车声称的历史记录和价格相符。
+leak_audit:
+  ll_atomic_claims:
+  - The gleaming car is in showroom-perfect condition.
+  - That condition is a sign it has been well maintained mechanically and is more
+    reliable.
+  hh_atomic_claims:
+  - A history report shows the gleaming car has a salvage title from prior flood damage
+    and gaps in its service record.
+  - The dull car has a completely clean title.
+  - The dull car has a full, dealer-stamped service history with no missing intervals.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: N/A
+    confident_assertion: N/A
+    concrete_detail: Vivid concrete detail of the gleaming car's appearance (mirror
+      paint, unmarked seats).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 43
+  ll_word_count: 20
+  hh_word_count: 45
+  lh_word_count: 22
+  notes: 'LH is 22 words, preserving full HH equivalence — flood-salvage title, service
+    gaps on the gleaming car, clean
+
+    title and complete service history on the dull car. It remains a single flat clause-set
+    with no salience anchors.
+
+    T5 bridge "surface care implies mechanical care" is in HL and
+
+    flat in LL (self-check 13). xbase gives the appearance contrast and same mileage/price
+    but withholds the title
+
+    and service histories (decisive), which live only in HH/LH.
+
+    QC repair round 1: removed HL-only hedging marker "almost always" from the inferential
+    bridge so HL no longer
+
+    carries hedging_language that LL lacks; the bridge now reads as a flat confident
+    assertion matched to LL''s
+
+    "is a sign", with no change to the distractor''s case content, salience, or propositional
+    equivalence.
+
+    '
+causal_audit:
+  steelman: 'A used-car buyer could argue that owners who keep a car spotless tend
+    to be conscientious about servicing too,
+
+    that interior care correlates with garage-keeping and gentle use, and that visible
+    neglect often signals
+
+    mechanical neglect — so cosmetic condition is a real, if imperfect, signal of
+    how a car was treated.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the title and service-history facts that overturn
+    the shine inference are supplied only in HH/LH; xbase does not foreclose the appearance
+    argument.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Choosing between two used cars where title and service history favour
+    the dull one, against the inference that the gleaming, showroom-perfect car must
+    be mechanically sounder.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-020.yaml
+  source_xbase_sha256: 068a642fd4d39153
+  translated_content_sha256: 83c6cd3656612245
+  translation_notes: Chinese uses '产权证明' for title (vehicle title document). 'Salvage
+    title' rendered as '事故/报废产权证明' which is the standard Chinese concept. 'Dealer-stamped
+    service history' rendered with '经销商加盖章'. HL vivid detail (mirror paint, unmarked
+    seats) preserved. {DS} token unchanged. The term '加盖章' (dealer-stamped) kept concrete
+    to match HH salience.

@@ -1,0 +1,171 @@
+seed_id: T2-018
+template: T2
+domain: open_qa
+complexity: medium
+xbase: Our household electricity bill has roughly doubled over the last two months
+  and I'm trying to decide whether to switch energy providers in protest. The tariff
+  on the bill is the same rate per kilowatt-hour we have always paid, and there has
+  been no notice of a price increase from the supplier. It just feels like we are
+  suddenly paying far too much. {DS}
+focal_diagnostic_feature: The itemised bill shows total kilowatt-hours consumed has
+  nearly doubled, and a chest freezer was moved into the unheated garage two months
+  ago where it now runs almost continuously.
+low_diagnostic_proposition: The bill increase started the same month the kitchen and
+  dining room were repainted.
+oracle_action: ANSWER
+oracle_focus: Do not switch provider over price; the rate is unchanged and consumption
+  nearly doubled, so address the new always-on load (the garage chest freezer) rather
+  than the tariff.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not tie repainting to the electricity bill. Ask whether
+  metered consumption rose or the rate changed, and what new or relocated appliances
+  are now running.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not tie repainting to the electricity bill. Ask whether metered consumption
+      rose or the rate changed, and what new or relocated appliances are now running.
+  LL:
+    action: ASK
+    focus: Do not tie repainting to the electricity bill. Ask whether metered consumption
+      rose or the rate changed, and what new or relocated appliances are now running.
+  HH:
+    action: ANSWER
+    focus: Do not switch provider over price; the rate is unchanged and consumption
+      nearly doubled, so address the new always-on load (the garage chest freezer)
+      rather than the tariff.
+  LH:
+    action: ANSWER
+    focus: Do not switch provider over price; the rate is unchanged and consumption
+      nearly doubled, so address the new always-on load (the garage chest freezer)
+      rather than the tariff.
+variants:
+  HL:
+    distractor: It hit me that the bills started climbing the exact same month we
+      finally repainted the kitchen and dining room — two full weekends, three coats.
+      The jump and the repaint landed in the same billing cycle.
+    diagnosticity: low
+    salience: high
+    proposition: The bill increase started the same month the kitchen and dining room
+      were repainted.
+    salience_source: B/C — a confident first-person timeline anchoring the cost jump
+      to a vivid, recent home project.
+    why_plausible: Repainting is the most salient recent household change, so it is
+      the natural thing to associate with a same-cycle cost jump.
+    why_irrelevant: Drying paint draws no metered electricity of any consequence;
+      it cannot move kilowatt-hour consumption, which is what actually doubled.
+  LL:
+    distractor: The increase began the same month the kitchen and dining room were
+      repainted.
+    diagnosticity: low
+    salience: low
+    proposition: The bill increase started the same month the kitchen and dining room
+      were repainted.
+    matched_to: HL
+  HH:
+    distractor: Reading the itemised bill, it is not the rate at all — the kilowatt-hours
+      we used nearly doubled. Around the same time we moved the chest freezer out
+      to the unheated garage, and in the cold it now cycles its compressor almost
+      constantly to hold temperature.
+    diagnosticity: high
+    salience: high
+    proposition: The itemised bill shows total kilowatt-hours consumed has nearly
+      doubled, and a chest freezer was moved into the unheated garage two months ago
+      where it now runs almost continuously.
+    salience_source: Reading the metered kWh and naming the relocated, now-overworked
+      freezer makes the consumption cause concrete.
+  LH:
+    distractor: The bill's metered kilowatt-hours nearly doubled; a chest freezer
+      was moved to the unheated garage two months ago and now runs almost continuously.
+    diagnosticity: high
+    salience: low
+    proposition: The itemised bill shows total kilowatt-hours consumed has nearly
+      doubled, and a chest freezer was moved into the unheated garage two months ago
+      where it now runs almost continuously.
+    matched_to: HH
+distractor_direction:
+  label: Repaint-timing coincidence
+  description: Associating the bill increase with the recent repainting because the
+    two coincided in the same billing cycle.
+plausible_alternative_directions:
+- label: Standby or phantom load
+  description: Whether increased standby or phantom load from multiple idle devices
+    left on is driving up continuous consumption.
+- label: Meter or billing error
+  description: Whether the meter is misreading or the bill is estimated rather than
+    measured.
+leak_audit:
+  ll_atomic_claims:
+  - The bill increase began the same month the kitchen and dining room were repainted.
+  hh_atomic_claims:
+  - The itemised bill shows metered kilowatt-hours nearly doubled.
+  - A chest freezer was moved to the unheated garage two months ago.
+  - In the cold garage it now runs its compressor almost continuously.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent same-billing-cycle account of the repaint.
+    confident_assertion: States the jump and repaint 'landed in the same billing cycle'.
+    concrete_detail: Concrete detail about the repaint (two weekends, three coats)
+      — about the event, not the bill mechanics.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 36
+  ll_word_count: 13
+  hh_word_count: 45
+  lh_word_count: 23
+  notes: 'T2 coincidence: repainting consumes negligible metered electricity, so it
+    has no mechanism for a doubled kWh bill.
+
+    xbase states the rate is unchanged and gives the felt-too-high symptom but withholds
+    the metered-usage breakdown
+
+    and the relocated freezer — the decisive facts — which live only in HH/LH. No
+    effort/severity leak into HL beyond
+
+    source-side colour.
+
+    Repair round 1: removed the sensory_distractor_about_setting clause ("the whole
+    downstairs smelling of paint")
+
+    from HL — it was style-prohibited and absent from LL; HL now carries only the
+    same-cycle timing plus event colour
+
+    (two weekends, three coats), preserving HL/LL propositional equivalence. All five
+    word counts recounted under the
+
+    C9 rule after the edit.
+
+    '
+causal_audit:
+  steelman: 'One might argue fresh paint led the household to keep windows shut and
+    run heating or air handling harder, or to
+
+    spend more time indoors using devices — but those are speculative behavioural
+    chains, not effects of the paint
+
+    itself, and the bill change is a near-doubling of metered consumption traceable
+    to a specific always-on load.
+
+    Painting has no direct electrical draw worth counting.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the per-kWh rate is unchanged with no price-increase
+    notice, closing the tariff pathway and leaving consumption (revealed only in HH/LH)
+    as the live axis.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A doubled electricity bill driven by a relocated chest freezer running
+    constantly in a cold garage, coincidentally timed with repainting, prompting a
+    needless provider switch.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

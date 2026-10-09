@@ -1,0 +1,173 @@
+seed_id: T2-053
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: Our nightly CI build started failing about three days ago at the artifact upload
+  step, right at the end of an otherwise green run. The compile and test stages pass,
+  and the error is just a generic failure when the job tries to publish the build
+  output. We have not touched the pipeline file or the upload credentials this week,
+  and the same build publishes fine when I trigger it by hand during the day. {DS}
+focal_diagnostic_feature: The nightly run is scheduled inside the artifact store's
+  documented maintenance window, during which uploads are rejected, while the manual
+  daytime runs fall outside it.
+low_diagnostic_proposition: The failures began around the time the office switched
+  to a new building-wide Wi-Fi network name.
+oracle_action: ANSWER
+oracle_focus: Reschedule the nightly job outside the artifact store's maintenance
+  window, or add a retry that survives it; the upload fails because the nightly run
+  lands inside the window when the store rejects writes.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a Wi-Fi network rename to a server-side
+  CI upload failure. Ask when the nightly job runs and what the artifact store does
+  at that hour.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a Wi-Fi network rename to a server-side CI upload failure.
+      Ask when the nightly job runs and what the artifact store does at that hour.
+  LL:
+    action: ASK
+    focus: Do not connect a Wi-Fi network rename to a server-side CI upload failure.
+      Ask when the nightly job runs and what the artifact store does at that hour.
+  HH:
+    action: ANSWER
+    focus: Reschedule the nightly job outside the artifact store's maintenance window,
+      or add a retry that survives it; the upload fails because the nightly run lands
+      inside the window when the store rejects writes.
+  LH:
+    action: ANSWER
+    focus: Reschedule the nightly job outside the artifact store's maintenance window,
+      or add a retry that survives it; the upload fails because the nightly run lands
+      inside the window when the store rejects writes.
+variants:
+  HL:
+    distractor: The whole thing lines up almost too neatly with the week our facilities
+      team retired the old office Wi-Fi name and rolled out a new building-wide network;
+      the first failed nightly run was the very morning after everyone had to forget
+      the old network and reconnect to the new one.
+    diagnosticity: low
+    salience: high
+    proposition: The failures began around the time the office switched to a new building-wide
+      Wi-Fi network name.
+    salience_source: B/C — a clean, confidently drawn chronology pinning the first
+      failure to the morning after the network rename.
+    why_plausible: Network changes feel infrastructural, so a busy engineer might
+      loosely associate them with anything connectivity-shaped failing.
+    why_irrelevant: The CI runners and the cloud artifact store never touch the office
+      Wi-Fi, so renaming an office SSID cannot affect a server-to-server upload.
+  LL:
+    distractor: The failures began around the time the office switched to a new building-wide
+      Wi-Fi network name.
+    diagnosticity: low
+    salience: low
+    proposition: The failures began around the time the office switched to a new building-wide
+      Wi-Fi network name.
+    matched_to: HL
+  HH:
+    distractor: The nightly job is scheduled for 02:30, which falls squarely inside
+      the artifact store's published daily maintenance window when it rejects all
+      uploads; my manual daytime triggers run well outside that window, which is exactly
+      why they publish without complaint.
+    diagnosticity: high
+    salience: high
+    proposition: The nightly run is scheduled inside the artifact store's documented
+      maintenance window, during which uploads are rejected, while the manual daytime
+      runs fall outside it.
+    salience_source: The exact schedule time landing inside the documented reject
+      window makes the timing collision concrete.
+  LH:
+    distractor: The nightly run is scheduled inside the artifact store's maintenance
+      window, which rejects uploads, while daytime manual runs fall outside it.
+    diagnosticity: high
+    salience: low
+    proposition: The nightly run is scheduled inside the artifact store's documented
+      maintenance window, during which uploads are rejected, while the manual daytime
+      runs fall outside it.
+    matched_to: HH
+distractor_direction:
+  label: Office Wi-Fi changeover
+  description: Investigating whether the office network rename or switchover is responsible
+    for the nightly upload failures.
+plausible_alternative_directions:
+- label: Expiring upload token
+  description: Whether the publish credential rotates and is invalid only during the
+    nightly run.
+- label: Artifact store quota
+  description: Whether a storage quota is reached overnight
+  blocking new uploads.: null
+leak_audit:
+  ll_atomic_claims:
+  - Around the same period the office switched to a new building-wide Wi-Fi network
+    name.
+  hh_atomic_claims:
+  - The nightly job runs at 02:30, inside the artifact store's published maintenance
+    window.
+  - During that window the store rejects all uploads.
+  - The manual daytime runs fall outside the window and publish.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean chronology pinning the first failure to the morning
+      after the Wi-Fi rename.
+    confident_assertion: Asserts the timing lines up almost too neatly.
+    concrete_detail: Detail about the setting (retiring the old SSID, reconnecting
+      to the new network) only — no fact about the CI schedule or the store.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 76
+  hl_word_count: 45
+  ll_word_count: 16
+  hh_word_count: 39
+  lh_word_count: 21
+  notes: 'LL carries only the Wi-Fi-rename timing coincidence; the morning-after chronology
+    and the reconnect detail are
+
+    HL-only narrative framing about the setting. xbase states the symptom (upload
+    step fails nightly, passes when
+
+    triggered by hand in the day) but never reveals the schedule time or the store''s
+    maintenance window, so the
+
+    HL/LL cells cannot resolve it. The decisive window-collision fact lives only in
+    HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One could try to argue the Wi-Fi changeover matters: if CI runners or
+    a self-hosted agent sat on the office
+
+    network, a network rename could break their connectivity. But CI runners and a
+    cloud artifact store communicate
+
+    over the internet backend-to-backend; they do not authenticate to or route through
+    the office wireless SSID, and
+
+    a daytime manual trigger of the same pipeline — which would use the same renamed
+    office network — succeeds. The
+
+    rename therefore has no path to a nightly server-side upload rejection. The real
+    cause, the nightly run landing
+
+    inside the store''s maintenance window when writes are refused, is fully independent
+    of the office network. The
+
+    coincidence has no constructible mechanism for this symptom.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes the same build publishes fine when triggered
+    by hand during the day, which would use the very same renamed office network,
+    foreclosing the Wi-Fi mechanism without naming the maintenance-window cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A nightly CI upload failure caused by the job landing in the artifact
+    store's maintenance window, coinciding only by chance with an office Wi-Fi network
+    rename.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,106 @@
+seed_id: T3-003
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Nuestro clúster Redis fragmentado tiene un nodo llenándose lentamente. El nodo
+  2 está al 92% de maxmemory después de 11 días, mientras que los nodos 1 y 3 están
+  en torno al 45%. El Slowlog del nodo 2 no muestra nada destacable. {DS}
+focal_diagnostic_feature: El análisis de hot-key muestra que un prefijo de clave en
+  el nodo 2 representa una gran proporción de la memoria y no tiene TTL ni rotación.
+low_diagnostic_proposition: A senior engineer says Redis memory fragmentation should
+  be treated as the main cause.
+oracle_action: ANSWER
+oracle_focus: Add TTL/rotation or trimming for the unbounded prefix, then rebalance
+  if needed; this is not primarily generic fragmentation.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept generic Redis folklore from authority.
+  Ask for keyspace analysis, TTLs, and memory distribution by prefix.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept generic Redis folklore from authority. Ask for keyspace analysis,
+      TTLs, and memory distribution by prefix.
+  LL:
+    action: ASK
+    focus: Do not accept generic Redis folklore from authority. Ask for keyspace analysis,
+      TTLs, and memory distribution by prefix.
+  HH:
+    action: ANSWER
+    focus: Add TTL/rotation or trimming for the unbounded prefix, then rebalance if
+      needed; this is not primarily generic fragmentation.
+  LH:
+    action: ANSWER
+    focus: Add TTL/rotation or trimming for the unbounded prefix, then rebalance if
+      needed; this is not primarily generic fragmentation.
+variants:
+  HL:
+    distractor: Un arquitecto sénior del equipo de al lado dijo en el standup que
+      Redis en Linux siempre pierde memoria en producción y que deberíamos cambiar
+      de almacén.
+    diagnosticity: low
+    salience: high
+    proposition: A senior engineer says Redis memory fragmentation should be treated
+      as the main cause.
+    salience_source: senior title, public standup claim, absolute technical statement
+    why_plausible: Redis fragmentation is a real phenomenon and the speaker sounds
+      experienced.
+    why_irrelevant: The keyspace breakdown gives a concrete unbounded object source
+      that explains the shard imbalance.
+  LL:
+    distractor: Un ingeniero sénior argumentó que la fragmentación de memoria de Redis
+      debería considerarse la causa principal.
+    diagnosticity: low
+    salience: low
+    proposition: A senior engineer says Redis memory fragmentation should be treated
+      as the main cause.
+    matched_to: HL
+  HH:
+    distractor: Un prefijo de clave en el nodo 2 está consumiendo el 38% de la memoria
+      de ese nodo, y esas claves no tienen TTL y nunca se rotan.
+    diagnosticity: high
+    salience: high
+    proposition: Hot-key analysis shows one key prefix on node 2 accounts for a large
+      share of memory and has no TTL or rotation.
+    salience_source: prefix-level memory attribution
+  LH:
+    distractor: Un único prefijo de clave sin expiración representa aproximadamente
+      el 38% de la memoria del nodo 2.
+    diagnosticity: high
+    salience: low
+    proposition: Hot-key analysis shows one key prefix on node 2 accounts for a large
+      share of memory and has no TTL or rotation.
+    matched_to: HH
+distractor_direction:
+  label: Fragmentación de memoria en Redis
+  description: Investigar la fragmentación del asignador de memoria o la sobrecarga
+    de memoria de Redis/Linux como causa del aumento de memoria en el nodo.
+plausible_alternative_directions:
+- label: Política de desalojo inconsistente
+  description: La política de desalojo o la configuración de maxmemory del nodo es
+    inconsistente con la carga de trabajo.
+- label: Crecimiento del backlog de replicación
+  description: La memoria del backlog de réplica o AOF está creciendo de forma desigual
+    en el nodo afectado.
+- label: Crecimiento del buffer de salida de clientes
+  description: Clientes de larga vida o suscripciones están acumulando buffers de
+    salida en el nodo 2.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-003.yaml
+  source_xbase_sha256: e2201ca489f3fc72
+  translated_content_sha256: 3232ddee35d4aad8
+  translation_notes: Technical terms Redis, TTL, AOF, Slowlog, maxmemory, hot-key
+    retained as-is per instrument. 'standup' retained as a recognisable anglicism
+    in Spanish tech culture.

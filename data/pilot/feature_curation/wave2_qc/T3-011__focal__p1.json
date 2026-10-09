@@ -1,0 +1,13 @@
+{
+  "seed_id": "T3-011",
+  "my_own_diagnosis": "From xbase alone, both rejection emails cite Guideline 4.0 Design with a reproducible iPad landscape-rotation crash using identical reproduction steps — a competent practitioner would immediately identify this as an orientation-handling runtime bug in the main navigation stack requiring a UIKit/SwiftUI layout fix, and would reject the privacy manifest hypothesis on the grounds that static manifest files cannot cause runtime crashes and appear under different guideline numbers.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature (Guideline 4.0 Design citation + crash with identical reproduction steps) is unambiguous and categorically forecloses the privacy manifest distractor, which operates under a different guideline and has no runtime crash mechanism.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracles map correctly: HL/LL → ASK (withhold judgment, examine rejection emails), HH/LH → ANSWER (fix the crash); low_diagnostic_oracle_focus correctly instructs against accepting the privacy manifest claim without verifying the actual rejection notes.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

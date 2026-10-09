@@ -1,0 +1,13 @@
+{
+  "seed_id": "T3-013",
+  "my_own_diagnosis": "From xbase alone, the crackling is perfectly clear away from the desk but occurs only when near the laptop — a strictly proximity-dependent pattern that rules out any session-global software explanation and points to local RF interference emitted by the laptop or something co-located with it at the desk. Profile misconfiguration cannot account for a spatially variable symptom.",
+  "focal_decisive": true,
+  "focal_notes": "The ~1 meter spatial boundary is unambiguous: any competent practitioner would immediately reject a fixed session parameter (profile) as the cause and focus on a local RF emitter at the desk.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracles correctly map HL/LL to the low-diagnostic oracle (ask about distance-dependence, reject profile story) and HH/LH to the focal oracle (investigate laptop-local RF sources); low_diagnostic_oracle_focus correctly instructs non-adoption of the distractor.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

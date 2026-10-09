@@ -1,0 +1,8 @@
+{
+  "seed_id": "T1-012",
+  "verdict": "clean",
+  "xbase_span": "",
+  "focal_in_hh_lh": true,
+  "reasoning": "The xbase describes only symptoms and context: growing lag on partition 7 over 48 hours, all other nine partitions stable under 500 messages, uniform consumer versions and JVM flags, no rebalance, and an explicit admission that the constraint has not been identified. Neither the broker-2 disk I/O figures nor the consumer processing time parity that constitute the focal_diagnostic_feature appear anywhere in xbase. The focal evidence is present in full in both HH (explicit percentages, consumer poll/processing latency parity, causal pointer to broker-side disk constraint) and LH (same claims in condensed form: 95% disk I/O vs under 20%, consumer poll and processing latency matching healthy partitions).",
+  "repair_hint": ""
+}

@@ -1,0 +1,177 @@
+seed_id: T1-054
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our GitHub Actions pipeline started failing intermittently this week on the
+  deploy job, while build and test jobs stay green. The deploy job runs a container
+  push to our registry, and roughly one run in four exits non-zero partway through
+  the push. We have not changed the deploy workflow file or the registry credentials
+  recently, and the same image builds fine locally. {DS}
+focal_diagnostic_feature: The push fails only on runs assigned to the self-hosted
+  runner whose disk is above ninety-five percent full, leaving no room to stage image
+  layers.
+low_diagnostic_proposition: A comparable intermittent push failure elsewhere was traced
+  to registry-side rate limiting.
+oracle_action: ANSWER
+oracle_focus: 'Treat this as a disk-space problem on the self-hosted runner: the push
+  fails when layer staging cannot fit on the nearly full disk. Free space or move
+  to a runner with headroom and confirm the failures disappear.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the registry rate-limit story. Ask which
+  runner the failing runs land on and what the disk and resource state of that runner
+  is during the push.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the registry rate-limit story. Ask which runner the failing
+      runs land on and what the disk and resource state of that runner is during the
+      push.
+  LL:
+    action: ASK
+    focus: Do not adopt the registry rate-limit story. Ask which runner the failing
+      runs land on and what the disk and resource state of that runner is during the
+      push.
+  HH:
+    action: ANSWER
+    focus: 'Treat this as a disk-space problem on the self-hosted runner: the push
+      fails when layer staging cannot fit on the nearly full disk. Free space or move
+      to a runner with headroom and confirm the failures disappear.'
+  LH:
+    action: ANSWER
+    focus: 'Treat this as a disk-space problem on the self-hosted runner: the push
+      fails when layer staging cannot fit on the nearly full disk. Free space or move
+      to a runner with headroom and confirm the failures disappear.'
+variants:
+  HL:
+    distractor: Selin, who runs platform engineering at a company I trust, told me
+      they chased an almost identical flaky container push for a week and it turned
+      out their registry provider had quietly tightened anonymous and burst pull limits,
+      so pushes failed whenever they brushed the new ceiling.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable intermittent push failure elsewhere was traced to registry-side
+      rate limiting.
+    salience_source: A — a named senior platform engineer at a trusted peer company
+      recounting a closely matched incident.
+    why_plausible: Registry rate limits are a real and common cause of intermittent
+      push and pull failures, so the story pattern-matches the symptom.
+    why_irrelevant: Rate limiting would be independent of which runner executes the
+      job, whereas these failures track one specific runner's exhausted disk, which
+      registry limits cannot explain.
+  LL:
+    distractor: An intermittent container push failure elsewhere was attributed to
+      registry-side rate limiting.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable intermittent push failure elsewhere was traced to registry-side
+      rate limiting.
+    matched_to: HL
+  HH:
+    distractor: Every failing run landed on the same self-hosted runner, whose disk
+      sits above ninety-five percent full; the push aborts exactly when it tries to
+      stage image layers and finds no room, while runs on the other runners with free
+      space push cleanly every time.
+    diagnosticity: high
+    salience: high
+    proposition: The push fails only on runs assigned to the self-hosted runner whose
+      disk is above ninety-five percent full, leaving no room to stage image layers.
+    salience_source: The exact runner attribution plus the over-ninety-five-percent
+      disk figure makes the resource exhaustion concrete and one-sided.
+  LH:
+    distractor: Failures occur only on one self-hosted runner whose disk exceeds ninety-five
+      percent, leaving no room to stage layers.
+    diagnosticity: high
+    salience: low
+    proposition: The push fails only on runs assigned to the self-hosted runner whose
+      disk is above ninety-five percent full, leaving no room to stage image layers.
+    matched_to: HH
+distractor_direction:
+  label: Registry rate limiting
+  description: Investigating whether the container registry is throttling or rate-limiting
+    pushes, causing the intermittent push failures.
+plausible_alternative_directions:
+- label: Credential or token expiry
+  description: Whether a periodically refreshed push token is intermittently invalid
+    during the deploy step.
+- label: Network flakiness to registry
+  description: Whether transient network drops between runner and registry interrupt
+    the layer upload.
+leak_audit:
+  ll_atomic_claims:
+  - An intermittent container push failure occurred elsewhere.
+  - It was attributed to registry-side rate limiting.
+  hh_atomic_claims:
+  - All failing runs land on one self-hosted runner.
+  - That runner's disk is above ninety-five percent full.
+  - The push aborts when staging layers finds no room, while runners with free space
+    succeed.
+  hl_salience_dimensions:
+    source_credibility: Named senior platform engineer (Selin) at a trusted peer company.
+    narrative_coherence: Coherent week-long investigation ending in a clear registry-limit
+      finding.
+    confident_assertion: States the cause was the tightened limits.
+    concrete_detail: Detail about the source's incident (anonymous and burst pull
+      limits) only — no fact about the user's own runners.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 45
+  ll_word_count: 13
+  hh_word_count: 44
+  lh_word_count: 17
+  notes: 'LL carries only the elsewhere-failure and rate-limit-attribution claims;
+    the named source, the week of chasing,
+
+    and the burst-limit detail are HL-only and describe the source''s incident. xbase
+    reports the symptom (one run in
+
+    four fails partway through the push) and what is unchanged, but never names a
+    runner or any disk state, so the
+
+    HL/LL cells cannot localise the fault. The decisive runner-and-disk fact lives
+    only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A senior SRE could argue rate limiting is a leading hypothesis: intermittent
+    push failures that build fine
+
+    locally are a textbook registry-throttling signature, providers do silently change
+    burst and anonymous limits,
+
+    and a one-in-four failure rate is consistent with brushing a ceiling under concurrent
+    traffic. That mechanism,
+
+    however, is indifferent to which CI runner executes the job — a registry limit
+    would strike pushes regardless of
+
+    origin host. The focal evidence shows the failures are perfectly correlated with
+    a single self-hosted runner
+
+    whose disk is over ninety-five percent full and that the abort happens precisely
+    at layer staging, a local
+
+    disk-space failure mode; runners with free space never fail. Registry rate limiting
+    cannot produce that
+
+    runner-specific, disk-correlated pattern, so it has no defensible mechanism for
+    this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive runner-and-disk fact is withheld from
+    xbase and lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An intermittent CI container-push failure caused by one self-hosted
+    runner's full disk, not the registry rate limiting a peer engineer's anecdote
+    describes.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

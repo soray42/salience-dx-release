@@ -1,0 +1,92 @@
+seed_id: T3-005
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our React Native app crashes on iOS when the user opens one particular screen
+  that displays a user-uploaded image. The same screen usually survives on Android.
+  {DS}
+focal_diagnostic_feature: 'The iOS crash log says ''Memory pressure: terminated'',
+  and the screen loads 4000x3000 images at full resolution.'
+low_diagnostic_proposition: A senior engineering leader says native bridge serialisation
+  should be treated as the main cause of iOS React Native crashes.
+oracle_action: ANSWER
+oracle_focus: Downsample/cache images appropriately; the crash is an iOS memory-pressure
+  termination from full-resolution image loading.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not take the CTO's bridge explanation without logs.
+  Ask for the iOS crash reason and image dimensions/loading behaviour.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not take the CTO's bridge explanation without logs. Ask for the iOS
+      crash reason and image dimensions/loading behaviour.
+  LL:
+    action: ASK
+    focus: Do not take the CTO's bridge explanation without logs. Ask for the iOS
+      crash reason and image dimensions/loading behaviour.
+  HH:
+    action: ANSWER
+    focus: Downsample/cache images appropriately; the crash is an iOS memory-pressure
+      termination from full-resolution image loading.
+  LH:
+    action: ANSWER
+    focus: Downsample/cache images appropriately; the crash is an iOS memory-pressure
+      termination from full-resolution image loading.
+variants:
+  HL:
+    distractor: My CTO said confidently that React Native crashes on iOS are almost
+      always native-bridge serialisation problems.
+    diagnosticity: low
+    salience: high
+    proposition: A senior engineering leader says native bridge serialisation should
+      be treated as the main cause of iOS React Native crashes.
+    salience_source: authority title, confident technical diagnosis
+    why_plausible: The bridge is a real React Native failure area and the CTO is high
+      status.
+    why_irrelevant: The OS log directly states memory pressure; bridge serialisation
+      is not the best fit for that evidence.
+  LL:
+    distractor: A senior engineering leader stated that native bridge serialisation
+      is the main cause of this class of iOS React Native crash.
+    diagnosticity: low
+    salience: low
+    proposition: A senior engineering leader says native bridge serialisation should
+      be treated as the main cause of iOS React Native crashes.
+    matched_to: HL
+  HH:
+    distractor: 'The crash log literally says ''Memory pressure: terminated'', and
+      the screen is loading 4000x3000 user photos without downsampling.'
+    diagnosticity: high
+    salience: high
+    proposition: 'The iOS crash log says ''Memory pressure: terminated'', and the
+      screen loads 4000x3000 images at full resolution.'
+    salience_source: crash-log reason and image dimensions
+  LH:
+    distractor: iOS crash logs indicate memory-pressure termination on a screen loading
+      native-resolution 4000x3000 images.
+    diagnosticity: high
+    salience: low
+    proposition: 'The iOS crash log says ''Memory pressure: terminated'', and the
+      screen loads 4000x3000 images at full resolution.'
+    matched_to: HH
+distractor_direction:
+  label: Native bridge serialisation
+  description: Investigating React Native bridge serialisation, message passing, or
+    native-module marshalling as the crash source.
+plausible_alternative_directions:
+- label: Corrupt uploaded asset
+  description: A malformed or unusual user-uploaded image is crashing the image-loading
+    path.
+- label: iOS decoder bug
+  description: A platform image-decoding issue affects iOS but not Android.
+- label: Navigation lifecycle bug
+  description: The screen transition or lifecycle handling triggers a platform-specific
+    crash.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

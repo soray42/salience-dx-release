@@ -1,0 +1,171 @@
+seed_id: T2-059
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our search API's average response time roughly doubled about a week ago, from
+  around 80 ms to 160 ms, and it has stayed there. The slowdown affects every endpoint
+  roughly equally and is steady all day rather than tied to load. There were no application
+  deploys to the service in that window, and request volume is flat. The hosts are
+  not CPU-bound or memory-bound according to the usual graphs. {DS}
+focal_diagnostic_feature: The application log level was left at DEBUG, and each request
+  now writes dozens of synchronous log lines to disk inline before responding.
+low_diagnostic_proposition: The slowdown began the same week the team migrated its
+  dashboards to a new Grafana instance.
+oracle_action: ANSWER
+oracle_focus: The service is spending request time on synchronous DEBUG logging to
+  disk; set the log level back to INFO or make logging asynchronous, rather than treating
+  the dashboard migration as relevant.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the Grafana migration to the service's
+  own latency. Ask what the requests are spending added time on, such as logging,
+  I/O, or downstream calls.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the Grafana migration to the service's own latency. Ask
+      what the requests are spending added time on, such as logging, I/O, or downstream
+      calls.
+  LL:
+    action: ASK
+    focus: Do not connect the Grafana migration to the service's own latency. Ask
+      what the requests are spending added time on, such as logging, I/O, or downstream
+      calls.
+  HH:
+    action: ANSWER
+    focus: The service is spending request time on synchronous DEBUG logging to disk;
+      set the log level back to INFO or make logging asynchronous, rather than treating
+      the dashboard migration as relevant.
+  LH:
+    action: ANSWER
+    focus: The service is spending request time on synchronous DEBUG logging to disk;
+      set the log level back to INFO or make logging asynchronous, rather than treating
+      the dashboard migration as relevant.
+variants:
+  HL:
+    distractor: 'The thing I keep coming back to is the timing: this slowdown showed
+      up the very same week we finished migrating all our dashboards over to the new
+      self-hosted Grafana instance and pointed everyone at the new URLs. It feels
+      like too clean a coincidence to be unrelated.'
+    diagnosticity: low
+    salience: high
+    proposition: The slowdown began the same week the team migrated its dashboards
+      to a new Grafana instance.
+    salience_source: B/C — a clean, confidently framed first-person chronology pinning
+      the slowdown to the dashboard migration week.
+    why_plausible: Latency that appears right when an infrastructure change lands
+      invites a busy engineer to link the two by timing alone.
+    why_irrelevant: Grafana only reads and displays metrics; migrating the dashboard
+      instance changes nothing about how the search service itself processes a request,
+      so it cannot add latency to it.
+  LL:
+    distractor: The slowdown began the same week the team migrated its dashboards
+      to a new Grafana instance.
+    diagnosticity: low
+    salience: low
+    proposition: The slowdown began the same week the team migrated its dashboards
+      to a new Grafana instance.
+    matched_to: HL
+  HH:
+    distractor: Looking at the service config, the log level got left on DEBUG, and
+      now every single request writes dozens of verbose log lines straight to disk
+      inline before it returns; the per-request logging I/O is what is padding each
+      response by tens of milliseconds.
+    diagnosticity: high
+    salience: high
+    proposition: The application log level was left at DEBUG, and each request now
+      writes dozens of synchronous log lines to disk inline before responding.
+    salience_source: The exact misconfiguration and the per-request synchronous-write
+      mechanism make the cause concrete.
+  LH:
+    distractor: The log level was left at DEBUG, so each request synchronously writes
+      dozens of log lines to disk before responding.
+    diagnosticity: high
+    salience: low
+    proposition: The application log level was left at DEBUG, and each request now
+      writes dozens of synchronous log lines to disk inline before responding.
+    matched_to: HH
+distractor_direction:
+  label: Dashboard-migration timing
+  description: Investigating whether migrating dashboards to a new Grafana instance
+    is connected to the search API slowdown.
+plausible_alternative_directions:
+- label: Downstream dependency slowdown
+  description: Whether a backing datastore or service the API calls has become slower.
+- label: Disk or I/O saturation
+  description: Whether the host's disk subsystem is contended and slowing requests.
+leak_audit:
+  ll_atomic_claims:
+  - The slowdown began the same week the dashboards were migrated to a new Grafana
+    instance.
+  hh_atomic_claims:
+  - The log level was left at DEBUG.
+  - Each request now synchronously writes dozens of log lines to disk before responding.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person same-week timing narrative tying slowdown
+      to the migration.
+    confident_assertion: '''too clean a coincidence to be unrelated'' — confident
+      framing of the link.'
+    concrete_detail: Detail about the setting (new self-hosted instance, new URLs)
+      only; no new fact about request handling.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 70
+  hl_word_count: 47
+  ll_word_count: 17
+  hh_word_count: 44
+  lh_word_count: 19
+  notes: 'T2: the coincidence (dashboard migration) has no mechanism to alter the
+    search service''s request handling. LL is
+
+    the bare timing claim; HL adds only first-person framing and setting detail (new
+    instance, new URLs). xbase gives
+
+    the symptom shape and rules out deploys/volume/CPU/memory but withholds the logging
+    cause; the decisive DEBUG-log
+
+    finding lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One could try to argue the Grafana migration mattered: perhaps the new
+    instance scrapes the service more
+
+    aggressively, or a new agent was installed alongside it that competes for resources.
+    But the migration as
+
+    described is purely a move of dashboards — the read-and-display layer — to a new
+    instance with new URLs; it does
+
+    not change scrape configuration on the service, install anything on the service
+    hosts, or touch the request path.
+
+    A dashboard instance consumes already-exported metrics; it cannot inject latency
+    into the search API''s own
+
+    handling of a request. Nothing in xbase ties the service''s processing to Grafana,
+    so the timing is coincidence
+
+    with no constructible mechanism, and the steady all-day doubling instead matches
+    per-request synchronous logging.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the slowdown affects every endpoint equally
+    and is steady all day with flat volume and no deploys, which fits a uniform per-request
+    overhead rather than anything a dashboard move could cause; the decisive DEBUG-logging
+    finding lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A search API slowdown caused by synchronous DEBUG logging left on,
+    coincidentally timed with migrating dashboards to a new Grafana instance, which
+    has no mechanism for service latency.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

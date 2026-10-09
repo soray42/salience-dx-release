@@ -1,0 +1,183 @@
+seed_id: T1-018
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: بدأ أحد اختبارات نهاية إلى نهاية (end-to-end) في مجموعتنا يفشل بشكل متقطع،
+  ربما مرة واحدة من كل خمس. يتحقق الاختبار من ظهور فاتورة منشأة حديثاً ضمن قسم 'مستحقة
+  هذا الأسبوع'. لم تتغير شيفرة التطبيق المتعلقة بالفواتير منذ شهر، والاختبار يمر بنجاح
+  عندما أُشغّله وحده على جهازي. على CI يفشل بشكل عشوائي ظاهرياً، حتى عندما أُثبّت
+  الوظيفة لتشغيل ذلك الـ spec وحده دون أي اختبارات أخرى تشارك نفس العملية. {DS}
+focal_diagnostic_feature: الاختبار يُثبّت سلسلة تاريخ استحقاق حرفية ثابتة، ويفشل فقط
+  في تشغيلات CI التي تبدأ بعد الساعة 23:00 UTC، حين يتقدم 'هذا الأسبوع' إلى أسبوع
+  ISO التالي.
+low_diagnostic_proposition: A comparable flaky test elsewhere was caused by tests
+  sharing state when run in parallel.
+oracle_action: ANSWER
+oracle_focus: 'Fix the test''s time handling: the hardcoded due date crosses the week
+  boundary late in the day, so make the fixture relative to a frozen clock rather
+  than a literal date, rather than chasing parallelism.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the parallel-state explanation from another
+  project. Ask when the failing runs occur and whether any date or time value in the
+  test is fixed.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the parallel-state explanation from another project. Ask when
+      the failing runs occur and whether any date or time value in the test is fixed.
+  LL:
+    action: ASK
+    focus: Do not adopt the parallel-state explanation from another project. Ask when
+      the failing runs occur and whether any date or time value in the test is fixed.
+  HH:
+    action: ANSWER
+    focus: 'Fix the test''s time handling: the hardcoded due date crosses the week
+      boundary late in the day, so make the fixture relative to a frozen clock rather
+      than a literal date, rather than chasing parallelism.'
+  LH:
+    action: ANSWER
+    focus: 'Fix the test''s time handling: the hardcoded due date crosses the week
+      boundary late in the day, so make the fixture relative to a frozen clock rather
+      than a literal date, rather than chasing parallelism.'
+variants:
+  HL:
+    distractor: أخبرني أولاميد، الذي يدير قسم ضمان الجودة في منصة لوجستية، أن مجموعة
+      اختباراتهم بأكملها صارت متقطعة بالضبط بهذه الطريقة لأسابيع، وتبيّن في نهاية
+      المطاف أن السبب هو اشتراك الاختبارات في الحالة تحت التنفيذ المتوازي على runner
+      الخاص بهم.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable flaky test elsewhere was caused by tests sharing state
+      when run in parallel.
+    salience_source: A — a named QA lead at a peer company recounting a closely matching
+      flakiness symptom.
+    why_plausible: Shared mutable state under parallel execution is one of the most
+      common real causes of intermittent E2E failures, so it is a natural first guess.
+    why_irrelevant: xbase already reports the failure reproduces on CI with that single
+      spec running alone in the process, so no cross-test state-sharing is present;
+      the focal evidence shows the failure is a deterministic function of wall-clock
+      time.
+  LL:
+    distractor: اختبار متقطع مماثل في مجموعة اختبارات أخرى كان سببه اشتراك الاختبارات
+      في الحالة تحت التنفيذ المتوازي.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable flaky test elsewhere was caused by tests sharing state
+      when run in parallel.
+    matched_to: HL
+  HH:
+    distractor: قارنت سجل CI مقابل الطوابع الزمنية فوجدت أن كل تشغيل فاشل بدأ بعد
+      الساعة 23:00 UTC؛ الاختبار يُثبّت سلسلة تاريخ استحقاق حرفية ثابتة، وبعد تلك
+      الساعة يتقدم 'مستحقة هذا الأسبوع' إلى أسبوع ISO التالي، فلا تعود الفاتورة تطابق
+      النافذة التي يتوقعها الاختبار.
+    diagnosticity: high
+    salience: high
+    proposition: The test hardcodes a fixed due-date string, and it fails only on
+      CI runs that start after 23:00 UTC, when "this week" has rolled into the next
+      ISO week.
+    salience_source: Aligning the failure log against the clock makes the time-boundary
+      mechanism concrete and specific.
+  LH:
+    distractor: الاختبار يُثبّت سلسلة تاريخ استحقاق حرفية ثابتة، ويفشل فقط بعد الساعة
+      23:00 UTC حين يتقدم 'هذا الأسبوع' إلى أسبوع ISO التالي.
+    diagnosticity: high
+    salience: low
+    proposition: The test hardcodes a fixed due-date string, and it fails only on
+      CI runs that start after 23:00 UTC, when "this week" has rolled into the next
+      ISO week.
+    matched_to: HH
+distractor_direction:
+  label: اشتراك الحالة تحت التنفيذ المتوازي
+  description: التحقيق فيما إذا كانت الاختبارات التي تعمل بالتوازي تُتلف حالة قاعدة
+    البيانات أو الـ fixture المشتركة، مما ينتج فشلاً متقطعاً.
+plausible_alternative_directions:
+- label: انحراف بيئة CI
+  description: ما إذا كانت صورة CI أو البيانات المُهيّأة تختلف عن البيئة المحلية بطريقة
+    لا تظهر إلا على الـ runner.
+- label: سباق توقيت غير متزامن
+  description: ما إذا كانت عملية التحقق تسبق عملية كتابة غير متزامنة لم تُكمَل بعد
+    حين يقرأ الاختبار.
+leak_audit:
+  ll_atomic_claims:
+  - A flaky test in another suite had the same intermittent pattern.
+  - Its cause was tests sharing state under parallel execution.
+  hh_atomic_claims:
+  - The failing runs all start after 23:00 UTC.
+  - The test pins a literal due-date string.
+  - After that hour the "due this week" window has advanced to the next ISO week,
+    so the invoice no longer matches.
+  hl_salience_dimensions:
+    source_credibility: Named QA lead (Olamide) at a peer platform.
+    narrative_coherence: Coherent weeks-of-flakiness symptom-match account.
+    confident_assertion: Told me it 'turned out' to be parallelism.
+    concrete_detail: Detail about the source's role and platform only.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 79
+  hl_word_count: 37
+  ll_word_count: 16
+  hh_word_count: 48
+  lh_word_count: 22
+  notes: 'Repair round 1: xbase now closes the cross-test state-sharing pathway neutrally
+    — it reports the failure
+
+    reproduces on CI with that single spec running alone in the process, which rules
+    out parallel fixture clobbering
+
+    without naming the affirmative cause (C4 narrow pathway-closure; the 23:00-UTC/ISO-week
+    mechanism still lives only
+
+    in HH/LH). HL was stripped of the leaked mechanism (database-row clobbering) and
+    fix-path (fixture isolation)
+
+    detail; it now asserts exactly LL''s two claims plus source identity only. LL
+    strips the named source and
+
+    matching-symptom colour.
+
+    '
+causal_audit:
+  steelman: 'A senior test engineer could argue CI commonly runs specs in parallel
+    while local runs are serial, which would
+
+    perfectly explain "passes alone, flaky on CI"; shared seeded rows under concurrency
+    is textbook flakiness and
+
+    would normally top the differential for an intermittent E2E failure.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase closes the parallelism pathway: it states the failure
+    still reproduces on CI when the single spec runs alone in the process with no
+    other tests, so cross-test shared-state clobbering cannot be the cause. This neutrally
+    rules out the one tempting mechanism without supplying the affirmative cause,
+    which the focal time-boundary evidence in HH/LH provides.'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An intermittently failing E2E invoice test whose real cause is a hardcoded
+    due date crossing the ISO-week boundary after 23:00 UTC, not parallel test state-sharing.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-018.yaml
+  source_xbase_sha256: 9e0055849b758063
+  translated_content_sha256: 3210e6600c8b0bd5
+  translation_notes: 'Technical terms kept as-is or as standard loan terms: CI, runner,
+    spec, end-to-end, fixture, ISO week, UTC. ''اختبار نهاية إلى نهاية'' for end-to-end
+    test with the English in parentheses on first use for clarity. ''الـ runner /
+    الـ spec / الـ fixture'' use Arabic article prefix (الـ) with English loanword
+    — standard practice in Arabic technical writing. ''ضمان الجودة'' for QA. Olamide
+    kept as-is (named source, preserves salience).'

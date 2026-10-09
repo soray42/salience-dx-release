@@ -1,0 +1,180 @@
+seed_id: T2-076
+template: T2
+domain: open_qa
+complexity: high
+xbase: I run a small paid newsletter and online course bundle, and my monthly recurring
+  revenue has fallen by about a third over the last quarter after two years of steady
+  growth. My content cadence is unchanged and existing subscribers who stay seem happy.
+  New signups have not collapsed, so this feels like people leaving rather than nobody
+  arriving. I want to understand the churn before I make any rushed pricing changes
+  ahead of my annual planning. {DS}
+focal_diagnostic_feature: The cancellation survey shows the large majority of churned
+  subscribers cite that a well-known competitor now offers the same material free,
+  and cancellations spiked when that free offering launched.
+low_diagnostic_proposition: The revenue decline began the same quarter the user redesigned
+  the newsletter's logo and colour palette.
+oracle_action: ANSWER
+oracle_focus: The churn is driven by a competitor releasing equivalent material for
+  free, per the cancellation survey; address the value gap with differentiation, bundling,
+  or a free tier, rather than tweaking price or branding blindly.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not attribute the revenue decline to the logo and
+  palette redesign. Ask why subscribers are actually cancelling and what the exit-survey
+  reasons say.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not attribute the revenue decline to the logo and palette redesign.
+      Ask why subscribers are actually cancelling and what the exit-survey reasons
+      say.
+  LL:
+    action: ASK
+    focus: Do not attribute the revenue decline to the logo and palette redesign.
+      Ask why subscribers are actually cancelling and what the exit-survey reasons
+      say.
+  HH:
+    action: ANSWER
+    focus: The churn is driven by a competitor releasing equivalent material for free,
+      per the cancellation survey; address the value gap with differentiation, bundling,
+      or a free tier, rather than tweaking price or branding blindly.
+  LH:
+    action: ANSWER
+    focus: The churn is driven by a competitor releasing equivalent material for free,
+      per the cancellation survey; address the value gap with differentiation, bundling,
+      or a free tier, rather than tweaking price or branding blindly.
+variants:
+  HL:
+    distractor: The thing I cannot shake is that the revenue slide began the exact
+      quarter I rolled out the newsletter's new logo and colour palette; the timing
+      matches so precisely.
+    diagnosticity: low
+    salience: high
+    proposition: The revenue decline began the same quarter the user redesigned the
+      newsletter's logo and colour palette.
+    salience_source: B/C — clean first-person chronology and confident first-instinct
+      framing make the coincidence feel like a cause.
+    why_plausible: A visible rebrand in the same window as a revenue drop is an easy
+      thing for an anxious founder to blame.
+    why_irrelevant: Subscribers who stay are happy and the survey shows they leave
+      for free competing content, so a logo and palette change is not why people cancel.
+  LL:
+    distractor: The revenue decline began around the same quarter the user redesigned
+      the newsletter's logo and colour palette.
+    diagnosticity: low
+    salience: low
+    proposition: The revenue decline began the same quarter the user redesigned the
+      newsletter's logo and colour palette.
+    matched_to: HL
+  HH:
+    distractor: 'I read every cancellation survey from the quarter and the large majority
+      say the same thing: a well-known competitor now publishes the same material
+      free. The cancellation rate jumped the week that free offering launched, lining
+      the churn up squarely with the competitor.'
+    diagnosticity: high
+    salience: high
+    proposition: The cancellation survey shows the large majority of churned subscribers
+      cite that a well-known competitor now offers the same material free, and cancellations
+      spiked when that free offering launched.
+    salience_source: Concrete survey evidence and the cancellation spike aligned to
+      the competitor's free launch make the real driver vivid.
+  LH:
+    distractor: Cancellation surveys show most churned subscribers left for a competitor's
+      free equivalent, and churn spiked at that launch.
+    diagnosticity: high
+    salience: low
+    proposition: The cancellation survey shows the large majority of churned subscribers
+      cite that a well-known competitor now offers the same material free, and cancellations
+      spiked when that free offering launched.
+    matched_to: HH
+distractor_direction:
+  label: Rebrand backlash
+  description: Attributing the revenue decline to the newsletter's logo and colour-palette
+    redesign because the timing coincided.
+plausible_alternative_directions:
+- label: Price sensitivity
+  description: Whether a recent price change pushed subscribers to cancel.
+- label: Content fatigue
+  description: Whether the material has become repetitive and lost perceived value.
+leak_audit:
+  ll_atomic_claims:
+  - The revenue decline began around the same quarter the user redesigned the newsletter's
+    logo and colour palette.
+  hh_atomic_claims:
+  - The cancellation surveys show the large majority left for a competitor's free
+    equivalent.
+  - The cancellation rate jumped the week that free offering launched.
+  - The churn lines up with the competitor, not the user's own changes.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person chronology placing the slide at the rebrand
+      quarter.
+    confident_assertion: Confident framing that the timing matches precisely and that
+      the rebrand spooked subscribers.
+    concrete_detail: Detail about the change itself (new logo and palette) only —
+      no claim about the survey reasons.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 76
+  hl_word_count: 29
+  ll_word_count: 17
+  hh_word_count: 43
+  lh_word_count: 18
+  notes: 'LL carries only the timing-coincidence claim with the rebrand; the matches-precisely
+    framing is HL-only salience.
+
+    QC repair: dropped ''since it is the most visible change I made all year'' from
+    HL — that phrase was an
+
+    other_case_content claim absent from LL (C1 violation / leak). The temporal-coincidence
+    framing alone is
+
+    sufficient for T2 salience. xbase notes staying subscribers are happy and signups
+    have not collapsed (neutral
+
+    symptoms that point to churn) but withholds the survey reasons and the competitor''s
+    free launch, so HL/LL cannot
+
+    resolve the cause; the decisive survey-and-spike evidence lives only in HH/LH.
+    "Subscribers who stay seem happy"
+
+    is a symptom, not the cause, so C4 holds.
+
+    '
+causal_audit:
+  steelman: 'The strongest case for the rebrand: a jarring redesign can erode trust
+    or make a brand feel unstable, nudging
+
+    marginal subscribers to leave. But xbase establishes that retained subscribers
+    are happy and signups have not
+
+    collapsed, and the exit surveys overwhelmingly cite a competitor''s free equivalent,
+    with churn spiking at that
+
+    launch. A logo and colour-palette change has no mechanism to make people prefer
+    a free identical product; the
+
+    decision to cancel is driven by the external free alternative, not by visual branding.
+    The coincidence cannot
+
+    explain a churn pattern the survey ties cleanly to the competitor.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the coincidence (logo and palette redesign) has no
+    mechanism for competitor-driven churn; the decisive survey evidence lives only
+    in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A paid newsletter's revenue decline is driven by a competitor offering
+    the same material free, per exit surveys, not by the coincidental logo and colour-palette
+    rebrand.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator leak fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

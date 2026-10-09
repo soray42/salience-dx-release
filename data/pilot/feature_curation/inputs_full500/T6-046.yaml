@@ -1,0 +1,179 @@
+seed_id: T6-046
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: All the devices on my home Wi-Fi have been dropping the network connection
+  for a few seconds several times a day for the past four days. The drops are brief,
+  around three to five seconds, and affect every device simultaneously. My cable modem
+  and router are combined into one ISP-provided unit. I have restarted it twice and
+  the drops continue. {DS}
+focal_diagnostic_feature: The modem reads 41°C, within its normal operating range;
+  every recorded drop coincides with the kitchen microwave running, and the router
+  is operating exclusively on the 2.4 GHz band.
+low_diagnostic_proposition: The user's previous network drops were always resolved
+  by improving modem ventilation, suggesting overheating is the likely cause here.
+oracle_action: ANSWER
+oracle_focus: Switch the router to the 5 GHz band or a 2.4 GHz channel away from microwave
+  interference range; the drops are caused by RF interference from the microwave,
+  not overheating.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to overheating from past incidents. Measure
+  modem temperature and check whether drop timing correlates with any household appliance
+  or activity before assuming ventilation is the cause.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to overheating from past incidents. Measure modem temperature
+      and check whether drop timing correlates with any household appliance or activity
+      before assuming ventilation is the cause.
+  LL:
+    action: ASK
+    focus: Do not default to overheating from past incidents. Measure modem temperature
+      and check whether drop timing correlates with any household appliance or activity
+      before assuming ventilation is the cause.
+  HH:
+    action: ANSWER
+    focus: Switch the router to the 5 GHz band or a 2.4 GHz channel away from microwave
+      interference range; the drops are caused by RF interference from the microwave,
+      not overheating.
+  LH:
+    action: ANSWER
+    focus: Switch the router to the 5 GHz band or a 2.4 GHz channel away from microwave
+      interference range; the drops are caused by RF interference from the microwave,
+      not overheating.
+variants:
+  HL:
+    distractor: Every network drop I have ever had before came down to the modem getting
+      too hot — once I gave it more ventilation they all went away — so my first thought
+      here is that it needs better airflow.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous network drops were always resolved by improving
+      modem ventilation, suggesting overheating is the likely cause here.
+    salience_source: B/C — resolved-incident history with a specific fix ('gave it
+      more ventilation, they all went away'); confident first-instinct framing ('my
+      first thought here is').
+    why_plausible: Modem overheating causing packet loss and drops is a well-known
+      failure mode; a user who has successfully resolved past drops by adding ventilation
+      has a validated prior that seems directly applicable.
+    why_irrelevant: The past drops were a different root cause — overheating — which
+      the focal measurement rules out here (41°C is within the modem's normal range);
+      the current drops are instead caused by microwave RF interference on the 2.4
+      GHz band.
+  LL:
+    distractor: The user's previous network drops were always resolved by improving
+      modem ventilation, suggesting overheating is the likely cause here.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous network drops were always resolved by improving
+      modem ventilation, suggesting overheating is the likely cause here.
+    matched_to: HL
+  HH:
+    distractor: A thermometer near the modem vents reads 41°C, comfortably within
+      its operating range; logging drop times against household activity shows every
+      single drop occurs while the kitchen microwave is running, and the router logs
+      confirm it is operating on 2.4 GHz only.
+    diagnosticity: high
+    salience: high
+    proposition: The modem reads 41°C, within its normal operating range; every recorded
+      drop coincides with the kitchen microwave running, and the router is operating
+      exclusively on the 2.4 GHz band.
+    salience_source: B/C — precise temperature reading (41°C) with explicit normal-range
+      verdict; 'every single drop' as a precise correlation; router-log confirmation
+      of band.
+  LH:
+    distractor: The modem reads 41°C, within normal range; every drop coincides with
+      the microwave running; the router operates on 2.4 GHz.
+    diagnosticity: high
+    salience: low
+    proposition: The modem reads 41°C, within its normal operating range; every recorded
+      drop coincides with the kitchen microwave running, and the router is operating
+      exclusively on the 2.4 GHz band.
+    matched_to: HH
+distractor_direction:
+  label: modem thermal overheating
+  description: Investigating whether the combined modem-router unit is overheating
+    and throttling or resetting its connection as a result of insufficient ventilation.
+plausible_alternative_directions:
+- label: ISP line signal degradation
+  description: Checking whether the coaxial or DSL line signal quality has degraded,
+    causing the modem to lose sync intermittently regardless of household activity.
+- label: firmware or DHCP lease issue
+  description: Investigating whether the ISP unit's firmware is performing scheduled
+    background tasks or DHCP lease renewals that cause brief connectivity interruptions
+    for all devices.
+leak_audit:
+  ll_atomic_claims:
+  - The user's previous network drops were always resolved by improving modem ventilation.
+  - This suggests overheating is the likely cause here.
+  hh_atomic_claims:
+  - A thermometer near the modem vents reads 41°C.
+  - 41°C is comfortably within the modem's operating range.
+  - Every drop occurs while the kitchen microwave is running (confirmed via logged
+    correlation).
+  - The router logs confirm it is operating on 2.4 GHz only.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person T6 speaker
+    narrative_coherence: Specific resolved-incident history (ventilation fix that
+      worked) with clean cause-effect chain; confident first-thought conclusion follows
+      naturally.
+    confident_assertion: '''every network drop I have ever had''; ''my first thought
+      here is'' — strong pattern-to-now framing.'
+    concrete_detail: N/A — detail is about prior fix outcome (source history), not
+      this unit's current temperature or band configuration.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 37
+  ll_word_count: 19
+  hh_word_count: 46
+  lh_word_count: 20
+  notes: 'HL:LL 1.9:1; HH:LH 2.3:1 — both within the 4:1 limit. xbase describes symptoms
+    (brief
+
+    all-device drops) without revealing temperature or correlation data. LH is intentionally
+
+    concise at 20 words — three parallel facts in a single short sentence meets the
+    "one flat
+
+    clause" spirit while staying in range. The modem-overheating distractor is a real
+    failure
+
+    mode (steelman is honest) but is structurally ruled out by the temperature reading
+    in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'Combined ISP modem-router units placed in enclosed entertainment centres
+    or media cabinets
+
+    commonly overheat and cause packet loss or resets. A user who has successfully
+    diagnosed and
+
+    fixed this pattern multiple times is applying base-rate reasoning to a symptom
+    (all-device
+
+    simultaneous drops) that is entirely consistent with modem-level overheating.
+    The symptom
+
+    pattern does not rule out thermal throttling from xbase alone.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the focal evidence (41°C is within normal range;
+    every drop coincides with microwave) rules out overheating definitively. xbase
+    does not carry temperature data, preserving the distractor as a live hypothesis.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: All-device home Wi-Fi drops caused by microwave oven RF interference
+    on the router's 2.4 GHz band, against the availability bias that past network
+    drops were always resolved by improving modem ventilation.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

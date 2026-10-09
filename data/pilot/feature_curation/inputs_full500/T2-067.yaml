@@ -1,0 +1,172 @@
+seed_id: T2-067
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Two of our internal services that talk to each other over mutual TLS suddenly
+  cannot establish a connection. The handshake gets far enough that both sides present
+  certificates, but the server then rejects the client and tears the connection down.
+  Both certificates are issued by our internal CA, both are well within their validity
+  period, and neither service was redeployed today. The failures are total, not intermittent,
+  and began this afternoon. {DS}
+focal_diagnostic_feature: The server validates the client certificate's identity against
+  an expected hostname, and the client cert's Subject Alternative Name still carries
+  the service's old name from a recent rename, so the identity check fails.
+low_diagnostic_proposition: The connection failures started right after the team migrated
+  its monitoring dashboards to a new tool.
+oracle_action: ANSWER
+oracle_focus: Reissue the client certificate with a Subject Alternative Name matching
+  the service's current hostname; the server rejects it because the SAN still holds
+  the pre-rename name that no longer matches the expected identity.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a dashboard migration to an mTLS rejection.
+  Ask what identity the server expects and what name the client certificate's SAN
+  actually carries.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a dashboard migration to an mTLS rejection. Ask what identity
+      the server expects and what name the client certificate's SAN actually carries.
+  LL:
+    action: ASK
+    focus: Do not connect a dashboard migration to an mTLS rejection. Ask what identity
+      the server expects and what name the client certificate's SAN actually carries.
+  HH:
+    action: ANSWER
+    focus: Reissue the client certificate with a Subject Alternative Name matching
+      the service's current hostname; the server rejects it because the SAN still
+      holds the pre-rename name that no longer matches the expected identity.
+  LH:
+    action: ANSWER
+    focus: Reissue the client certificate with a Subject Alternative Name matching
+      the service's current hostname; the server rejects it because the SAN still
+      holds the pre-rename name that no longer matches the expected identity.
+variants:
+  HL:
+    distractor: It only just occurred to me that this lines up exactly with our switch
+      to a new monitoring platform this afternoon; we cut over all the dashboards
+      and alert routing within the same hour the first mTLS failures showed up in
+      the logs.
+    diagnosticity: low
+    salience: high
+    proposition: The connection failures started right after the team migrated its
+      monitoring dashboards to a new tool.
+    salience_source: B/C — a clean, confident first-person chronology tying the symptom
+      to a same-hour, vivid migration.
+    why_plausible: A big observability cutover happening the same hour is exactly
+      the kind of change an engineer suspects when something breaks.
+    why_irrelevant: Dashboards and alert routing only read telemetry; they cannot
+      alter what certificate identity the server enforces or what name a client cert's
+      SAN carries.
+  LL:
+    distractor: The connection failures started right after the team migrated its
+      monitoring dashboards to a new tool.
+    diagnosticity: low
+    salience: low
+    proposition: The connection failures started right after the team migrated its
+      monitoring dashboards to a new tool.
+    matched_to: HL
+  HH:
+    distractor: 'I checked what the server enforces: it validates the client cert''s
+      identity against the expected hostname, and the client cert''s SAN still carries
+      the service''s old name from last week''s rename. That stale SAN no longer matches,
+      so the identity check fails and the server drops it.'
+    diagnosticity: high
+    salience: high
+    proposition: The server validates the client certificate's identity against an
+      expected hostname, and the client cert's Subject Alternative Name still carries
+      the service's old name from a recent rename, so the identity check fails.
+    salience_source: Concrete inspection pairing the server's enforced identity with
+      the stale SAN makes the rename mismatch precise and observable.
+  LH:
+    distractor: The client cert's SAN still carries the service's pre-rename name,
+      so the server's hostname identity check fails and drops it.
+    diagnosticity: high
+    salience: low
+    proposition: The server validates the client certificate's identity against an
+      expected hostname, and the client cert's Subject Alternative Name still carries
+      the service's old name from a recent rename, so the identity check fails.
+    matched_to: HH
+distractor_direction:
+  label: Monitoring migration timing
+  description: Investigating whether the cutover to a new monitoring and alerting
+    platform disrupted the connection between the two services.
+plausible_alternative_directions:
+- label: CA trust bundle drift
+  description: Whether one service stopped trusting the internal CA after a trust-bundle
+    change.
+- label: Cipher or protocol downgrade
+  description: Whether a TLS version or cipher-suite mismatch is causing the post-presentation
+    teardown.
+leak_audit:
+  ll_atomic_claims:
+  - The connection failures started right after the team migrated its monitoring dashboards
+    to a new tool.
+  hh_atomic_claims:
+  - The server validates the client cert's identity against the expected hostname.
+  - The client cert's SAN still carries the service's old pre-rename name.
+  - That stale SAN no longer matches, so the server's identity check fails and drops
+    the connection.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-hour chronology tying the symptom to the cutover.
+    confident_assertion: It only just occurred to me that this lines up exactly —
+      confident first-person framing.
+    concrete_detail: Detail about the event (dashboards, alert routing, same-hour
+      cutover) only — no claim about the cert SAN or server identity check.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 76
+  hl_word_count: 41
+  ll_word_count: 18
+  hh_word_count: 49
+  lh_word_count: 22
+  notes: 'LL carries only the same-time-as-dashboard-migration timing claim; the alert-routing
+    and same-hour details are
+
+    HL-only and about the event. xbase states the symptom (mTLS teardown after cert
+    presentation, both certs valid
+
+    from the internal CA, no redeploy, total failure) but withholds the SAN/identity
+    mismatch, so HL/LL cannot
+
+    resolve it. The decisive stale-SAN fact lives only in HH/LH. The rename is named
+    only in HH/LH, not xbase.
+
+    '
+causal_audit:
+  steelman: 'One could argue a monitoring migration is not always read-only: cutting
+    over to a new platform sometimes ships
+
+    sidecars, agents, or network-policy changes that ride along and could interfere
+    with service-to-service traffic,
+
+    so the same-hour timing might point at the cutover. But xbase limits the change
+    to dashboards and alert routing,
+
+    which consume telemetry and do not participate in the mTLS path; they cannot change
+    what certificate identity a
+
+    server enforces or what name a client certificate''s SAN encodes. There is no
+    mechanism by which a dashboard
+
+    migration produces a SAN-versus-expected-hostname mismatch. The coincidence is
+    purely temporal.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase limits the coincident change to dashboards and alert
+    routing and states neither service was redeployed, foreclosing any data-plane
+    pathway for the migration; the decisive stale-SAN fact lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An mTLS rejection caused by a client cert SAN still carrying a service's
+    pre-rename name, coincident with a monitoring-dashboard migration.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

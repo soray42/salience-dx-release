@@ -1,0 +1,173 @@
+seed_id: T5-035
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our nightly ETL pipeline has been failing on the largest input day of the week
+  — Mondays — for the past three weeks. The same pipeline runs cleanly on every other
+  day. Airflow shows the task as failed with a database query timeout. We have not
+  changed the DAG code recently. {DS}
+focal_diagnostic_feature: EXPLAIN ANALYZE reveals a full table scan on 900 million
+  rows because the WHERE clause omits the partition column on high-volume days, so
+  the query planner bypasses the partition index entirely.
+low_diagnostic_proposition: The Airflow DAG graph is visually cluttered and hard to
+  follow, suggesting the pipeline code may have maintainability or logic problems.
+oracle_action: ANSWER
+oracle_focus: Add the partition column to the WHERE clause for Monday's query path
+  so the planner uses the partition index instead of a full table scan; validate with
+  EXPLAIN ANALYZE before deploying.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer code logic problems from DAG graph appearance.
+  Run EXPLAIN ANALYZE on the failing query and check for missing partition predicates
+  or plan regressions before reviewing DAG structure.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer code logic problems from DAG graph appearance. Run EXPLAIN
+      ANALYZE on the failing query and check for missing partition predicates or plan
+      regressions before reviewing DAG structure.
+  LL:
+    action: ASK
+    focus: Do not infer code logic problems from DAG graph appearance. Run EXPLAIN
+      ANALYZE on the failing query and check for missing partition predicates or plan
+      regressions before reviewing DAG structure.
+  HH:
+    action: ANSWER
+    focus: Add the partition column to the WHERE clause for Monday's query path so
+      the planner uses the partition index instead of a full table scan; validate
+      with EXPLAIN ANALYZE before deploying.
+  LH:
+    action: ANSWER
+    focus: Add the partition column to the WHERE clause for Monday's query path so
+      the planner uses the partition index instead of a full table scan; validate
+      with EXPLAIN ANALYZE before deploying.
+variants:
+  HL:
+    distractor: The Airflow graph view for this DAG looks like a bowl of spaghetti
+      — tasks cascading in every direction with barely readable labels, the kind of
+      layout that tells you whoever wrote it was not thinking about maintainability.
+    diagnosticity: low
+    salience: high
+    proposition: The Airflow DAG graph is visually cluttered and hard to follow, suggesting
+      the pipeline code may have maintainability or logic problems.
+    salience_source: 'B: vivid, concrete visual metaphor (''bowl of spaghetti'') with
+      confident inferential framing (''tells you''); C: confident assertion linking
+      appearance to code quality.'
+    why_plausible: A visually tangled DAG graph often does reflect poorly designed
+      pipeline logic, so a busy engineer might accept DAG complexity as a signal that
+      task ordering or dependencies are wrong.
+    why_irrelevant: The failure is day-of-week specific and rooted in a query plan
+      regression on high-volume input; DAG graph layout has no mechanism to cause
+      query timeout on a subset of days.
+  LL:
+    distractor: The Airflow DAG graph view is visually cluttered and difficult to
+      interpret at a glance.
+    diagnosticity: low
+    salience: low
+    proposition: The Airflow DAG graph is visually cluttered and hard to follow, suggesting
+      the pipeline code may have maintainability or logic problems.
+    matched_to: HL
+  HH:
+    distractor: Adding EXPLAIN to the failing query revealed a full table scan over
+      900 million rows; the WHERE clause on the largest input day skips the partition
+      column entirely, so Postgres ignores the partition index and reads the whole
+      table.
+    diagnosticity: high
+    salience: high
+    proposition: EXPLAIN ANALYZE reveals a full table scan on 900 million rows because
+      the WHERE clause omits the partition column on high-volume days, so the query
+      planner bypasses the partition index entirely.
+    salience_source: 'B: precise technical finding (900 million rows, named mechanism);
+      C: direct causal chain stated with specificity — skipped partition column, ignored
+      index, full scan.'
+  LH:
+    distractor: EXPLAIN shows a full table scan on 900 million rows; the WHERE clause
+      omits the partition column on high-volume days.
+    diagnosticity: high
+    salience: low
+    proposition: EXPLAIN ANALYZE reveals a full table scan on 900 million rows because
+      the WHERE clause omits the partition column on high-volume days, so the query
+      planner bypasses the partition index entirely.
+    matched_to: HH
+distractor_direction:
+  label: DAG logic or ordering bug
+  description: Investigating whether the visual complexity of the Airflow DAG graph
+    reflects a real task-ordering error or dependency misconfiguration that causes
+    the Monday failure.
+plausible_alternative_directions:
+- label: Monday-specific data volume overload
+  description: The Monday input dataset is large enough to exhaust a resource limit
+    (memory, connection pool, or row limit) independent of query plan choice.
+- label: Upstream API rate limiting
+  description: The third-party data source throttles Monday's larger pull, causing
+    delayed or partial data delivery that times out at the ingestion step.
+- label: Warehouse maintenance window conflict
+  description: A weekly maintenance or statistics-update job runs on Monday nights
+    and locks resources the ETL task needs, causing the observed timeout.
+leak_audit:
+  ll_atomic_claims:
+  - The Airflow DAG graph view is visually cluttered.
+  - The DAG graph is difficult to interpret at a glance.
+  hh_atomic_claims:
+  - EXPLAIN was added to the failing query.
+  - The plan shows a full table scan over 900 million rows.
+  - The WHERE clause on the largest input day skips the partition column.
+  - Postgres ignores the partition index as a result.
+  - Postgres reads the whole table instead of using the index.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person aesthetic observation, no named source.
+    narrative_coherence: 'B: clean first-person observation with vivid metaphor and
+      confident inferential framing.'
+    confident_assertion: 'C: ''tells you whoever wrote it was not thinking about maintainability''
+      — assertive causal bridge from surface to code quality.'
+    concrete_detail: N/A — detail is about the visual appearance of the tool, not
+      about the case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 49
+  hl_word_count: 37
+  ll_word_count: 15
+  hh_word_count: 39
+  lh_word_count: 20
+  notes: 'T5 self-check 13: inferential bridge (''suggests the pipeline code may have
+
+    maintainability or logic problems'') appears in both HL (as the clause ''tells
+
+    you whoever wrote it was not thinking about maintainability'') and LL (implicit
+
+    in ''difficult to interpret''). Both HL and LL carry the surface->quality inference
+
+    propositionally. The day-of-week pattern in xbase isolates the failure without
+
+    naming the cause. Ratios: HL:LL = 2.47, HH:LH = 1.95.
+
+    '
+causal_audit:
+  steelman: 'A senior data engineer could argue: complex DAGs with many interdependencies
+
+    often have subtle task-ordering bugs that manifest only when data volume crosses
+
+    a threshold — a downstream task executing prematurely or concurrently on Monday''s
+
+    larger volume could cause database contention and timeout in a way that would
+
+    not show up on lighter days.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the failure is a database query timeout visible
+    directly in Airflow task logs, not a task-ordering or concurrency error. The DAG
+    code has not changed, making a structural ordering regression implausible.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Nightly ETL fails only on Mondays with a query timeout; visual mess
+    of the Airflow DAG is offered as evidence of logic bugs, but EXPLAIN reveals a
+    missing partition predicate causing a full 900M-row scan.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

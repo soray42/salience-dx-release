@@ -1,0 +1,8 @@
+{
+  "seed_id": "T6-016",
+  "verdict": "clean",
+  "xbase_span": "",
+  "focal_in_hh_lh": true,
+  "reasoning": "xbase mentions only that the investor has a target allocation on file and has not revisited actual weights 'in some time' — no equity target percentage, no current weight, no drift magnitude, and no time horizon are given. A practitioner reading xbase alone cannot quantify or conclusively identify allocation drift as the cause; the vague statement is a context/symptom cue, not the decisive focal evidence. The fees-pathway closure ('expense ratio is 0.07%, essentially the same as the index tracker itself') is an intentional pathway-closure device exempt from contamination rules. Both HH and LH distractors carry the full focal evidence (60% target, 75–78% current equity weight, 15–18 pp drift, two equity-bull years without rebalancing), satisfying the focal_in_hh_lh requirement.",
+  "repair_hint": ""
+}

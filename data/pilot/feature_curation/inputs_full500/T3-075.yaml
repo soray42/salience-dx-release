@@ -1,0 +1,173 @@
+seed_id: T3-075
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I am choosing between two online data analytics certificates. Certificate A
+  is from a smaller provider and costs half as much as Certificate B. Both cover similar
+  material and are self-paced. I want the credential to strengthen my resume for a
+  job search starting in four months. {DS}
+focal_diagnostic_feature: Both certificates share the same professional-body accreditation
+  and appear on identical job-board filter lists; Certificate A has verified placement
+  reviews in the user's target field.
+low_diagnostic_proposition: A hiring manager stated that recruiters consider only
+  major-platform certificates and filter out smaller providers.
+oracle_action: ANSWER
+oracle_focus: Recommend Certificate A; it carries equivalent accreditation and job-board
+  recognition to Certificate B, has verified field placements, and costs half as much.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the hiring-manager claim without verification;
+  ask about each certificate's accreditation body, which job boards list it, and whether
+  hiring teams in the target field recognise it before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the hiring-manager claim without verification; ask about
+      each certificate's accreditation body, which job boards list it, and whether
+      hiring teams in the target field recognise it before deciding.
+  LL:
+    action: ASK
+    focus: Do not accept the hiring-manager claim without verification; ask about
+      each certificate's accreditation body, which job boards list it, and whether
+      hiring teams in the target field recognise it before deciding.
+  HH:
+    action: ANSWER
+    focus: Recommend Certificate A; it carries equivalent accreditation and job-board
+      recognition to Certificate B, has verified field placements, and costs half
+      as much.
+  LH:
+    action: ANSWER
+    focus: Recommend Certificate A; it carries equivalent accreditation and job-board
+      recognition to Certificate B, has verified field placements, and costs half
+      as much.
+variants:
+  HL:
+    distractor: A hiring manager I follow on LinkedIn told me firmly that recruiters
+      only look at certificates from major platform brands and that applicant-tracking
+      systems filter out anything from smaller providers.
+    diagnosticity: low
+    salience: high
+    proposition: A hiring manager stated that recruiters consider only major-platform
+      certificates and filter out smaller providers.
+    salience_source: A — domain-matched authority (a practising hiring manager); C
+      — "told me firmly" signals confident assertion; B — clean professional register.
+    why_plausible: ATS filtering on certification brand is a real industry concern
+      and a practising hiring manager seems positioned to know how it works.
+    why_irrelevant: The focal evidence shows both certificates share the same professional-body
+      accreditation and appear on the same job-board filter lists, which directly
+      contradicts the general ATS-filtering claim for this case.
+  LL:
+    distractor: A hiring manager stated that recruiters consider only major-platform
+      certificates and filter out smaller providers.
+    diagnosticity: low
+    salience: low
+    proposition: A hiring manager stated that recruiters consider only major-platform
+      certificates and filter out smaller providers.
+    matched_to: HL
+  HH:
+    distractor: Certificate A is accredited by the same professional body as Certificate
+      B, appears on the same job-board filter lists, and several verified reviews
+      confirm it helped candidates land roles in my target field.
+    diagnosticity: high
+    salience: high
+    proposition: Both certificates share the same professional-body accreditation
+      and appear on identical job-board filter lists; Certificate A has verified placement
+      reviews in the user's target field.
+    salience_source: Concrete institutional equivalence (same accreditor, same filter
+      lists) paired with peer outcome evidence (verified reviews) in a precise, confident
+      register.
+  LH:
+    distractor: Both certificates carry the same professional-body accreditation,
+      appear on identical job-board filter lists, and Certificate A has verified field
+      placements.
+    diagnosticity: high
+    salience: low
+    proposition: Both certificates share the same professional-body accreditation
+      and appear on identical job-board filter lists; Certificate A has verified placement
+      reviews in the user's target field.
+    matched_to: HH
+distractor_direction:
+  label: major-platform brand gating
+  description: Treating certificate provider brand size as the decisive recruiter
+    filter, making Certificate B from the larger platform the only viable choice.
+plausible_alternative_directions:
+- label: course content depth
+  description: Despite similar syllabi, one certificate may cover topics at greater
+    depth or with more hands-on projects, affecting skill demonstration.
+- label: timeline fit
+  description: With only four months until the job search, completion speed and assessment
+    pace matter independently of credential quality.
+leak_audit:
+  ll_atomic_claims:
+  - a hiring manager stated that recruiters consider only major-platform certificates
+  - smaller providers are filtered out by recruiters
+  hh_atomic_claims:
+  - Certificate A is accredited by the same professional body as Certificate B
+  - Certificate A appears on the same job-board filter lists as Certificate B
+  - verified reviews confirm Certificate A helped candidates in the user's target
+    field
+  hl_salience_dimensions:
+    source_credibility: A — "hiring manager" is a directly domain-matched authority
+      for the question of recruiter behaviour.
+    narrative_coherence: Professional register, LinkedIn context, and a clean two-step
+      claim (recruiters look here; ATS filters there) make it read as credible industry
+      knowledge.
+    confident_assertion: '"told me firmly" signals confident assertion with no hedging.'
+    concrete_detail: Mention of LinkedIn and applicant-tracking systems grounds the
+      source in a specific professional context (about the source, not the case).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 47
+  hl_word_count: 30
+  ll_word_count: 15
+  hh_word_count: 33
+  lh_word_count: 20
+  notes: 'The hiring manager makes a generic-pattern claim ("always", implied by
+
+    "only look at") without analysing these two specific certificates. The focal
+
+    evidence directly addresses the ATS-filter mechanism with concrete
+
+    institutional data, which the authority never engaged.
+
+    QC repair: removed "before a human even sees it" from HL — that phrase
+
+    added a severity/consequence claim (pre-human filtering is absolute) absent
+
+    from LL, violating C1. Source-credibility markers (LinkedIn, "told me
+
+    firmly") remain sufficient for salience contrast.
+
+    '
+causal_audit:
+  steelman: 'A senior talent-acquisition specialist could argue that even when
+
+    accreditation is equivalent, brand recognition by individual recruiters
+
+    or proprietary ATS keyword lists do favour well-known platforms in
+
+    practice. If Certificate B is from Coursera/Google while Certificate A is
+
+    from an unknown vendor, the filtering risk is real and the hiring manager''s
+
+    generalisation may be directionally correct.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the contamination pathway is closed in HH/LH by the
+    shared accreditation and filter-list evidence, not in xbase.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User choosing between a cheaper small-provider data analytics certificate
+    and a pricier major-platform one; authority distractor is a hiring manager claiming
+    ATS filters out smaller providers; focal is shared accreditation and job-board
+    parity with verified placements.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

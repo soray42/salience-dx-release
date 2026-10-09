@@ -1,0 +1,81 @@
+seed_id: T6-009
+template: T6
+domain: technical_troubleshooting
+complexity: low
+xbase: My wireless mouse has started lagging and skipping during use over the past
+  few days. The cursor stutters and clicks sometimes do not register. {DS}
+focal_diagnostic_feature: The mouse battery indicator shows one bar remaining.
+low_diagnostic_proposition: The user's previous mouse problems were generally caused
+  by dirt on the optical sensor.
+oracle_action: ANSWER
+oracle_focus: Replace or recharge the battery before taking the mouse apart.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to sensor-cleaning from memory. Ask for
+  battery level first.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to sensor-cleaning from memory. Ask for battery level first.
+  LL:
+    action: ASK
+    focus: Do not default to sensor-cleaning from memory. Ask for battery level first.
+  HH:
+    action: ANSWER
+    focus: Replace or recharge the battery before taking the mouse apart.
+  LH:
+    action: ANSWER
+    focus: Replace or recharge the battery before taking the mouse apart.
+variants:
+  HL:
+    distractor: Every mouse problem I've had before was dust under the optical sensor,
+      so I'm already looking for a tiny screwdriver to take this one apart.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous mouse problems were generally caused by dirt
+      on the optical sensor.
+    salience_source: familiar past fix, active disassembly impulse, vivid wording
+    why_plausible: Sensor dirt is a common and memorable mouse issue.
+    why_irrelevant: A one-bar battery directly explains wireless stutter and dropped
+      clicks better than an old sensor story.
+  LL:
+    distractor: Previous mouse issues for the user were generally attributed to optical
+      sensor cleanliness.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous mouse problems were generally caused by dirt
+      on the optical sensor.
+    matched_to: HL
+  HH:
+    distractor: The battery indicator is down to one lonely bar, and the skipping/click
+      drops started as it reached that level.
+    diagnosticity: high
+    salience: high
+    proposition: The mouse battery indicator shows one bar remaining.
+    salience_source: battery-level indicator
+  LH:
+    distractor: The mouse battery indicator reads one bar remaining.
+    diagnosticity: high
+    salience: low
+    proposition: The mouse battery indicator shows one bar remaining.
+    matched_to: HH
+distractor_direction:
+  label: Dirty optical sensor
+  description: Investigating whether dust or debris on the optical sensor is causing
+    mouse lag and skipped movement.
+plausible_alternative_directions:
+- label: Wireless interference
+  description: Other wireless devices or USB placement may be interfering with the
+    mouse signal.
+- label: Surface tracking problem
+  description: The desk or mousepad surface may not track reliably with this optical
+    sensor.
+- label: USB receiver fault
+  description: The receiver or port may be loose or failing.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

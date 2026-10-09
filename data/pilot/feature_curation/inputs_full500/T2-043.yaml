@@ -1,0 +1,172 @@
+seed_id: T2-043
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'My home Wi-Fi has become unreliable over the past two weeks: video calls freeze
+  for a second or two and downloads stall and resume. It is not a full outage, and
+  wired devices plugged into the router are rock solid the whole time. My phone shows
+  full bars when it happens. The router firmware is current and I have not changed
+  its settings. {DS}'
+focal_diagnostic_feature: A Wi-Fi scan shows a strong new neighbouring network that
+  recently appeared on the same crowded 2.4 GHz channel as the user's, and the dropouts
+  occur only on 2.4 GHz devices while 5 GHz devices stay solid.
+low_diagnostic_proposition: The trouble began right after the user repotted several
+  houseplants and moved them onto the windowsill.
+oracle_action: ANSWER
+oracle_focus: This is 2.4 GHz channel congestion from a strong new neighbouring network
+  on the same channel; move the router's 2.4 GHz radio to a clear channel or steer
+  devices to 5 GHz, since wired and 5 GHz traffic is unaffected.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect repotting plants to Wi-Fi reliability.
+  Ask whether the dropouts hit 2.4 GHz versus 5 GHz devices and what a channel scan
+  shows for nearby networks before diagnosing the radio environment.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect repotting plants to Wi-Fi reliability. Ask whether the dropouts
+      hit 2.4 GHz versus 5 GHz devices and what a channel scan shows for nearby networks
+      before diagnosing the radio environment.
+  LL:
+    action: ASK
+    focus: Do not connect repotting plants to Wi-Fi reliability. Ask whether the dropouts
+      hit 2.4 GHz versus 5 GHz devices and what a channel scan shows for nearby networks
+      before diagnosing the radio environment.
+  HH:
+    action: ANSWER
+    focus: This is 2.4 GHz channel congestion from a strong new neighbouring network
+      on the same channel; move the router's 2.4 GHz radio to a clear channel or steer
+      devices to 5 GHz, since wired and 5 GHz traffic is unaffected.
+  LH:
+    action: ANSWER
+    focus: This is 2.4 GHz channel congestion from a strong new neighbouring network
+      on the same channel; move the router's 2.4 GHz radio to a clear channel or steer
+      devices to 5 GHz, since wired and 5 GHz traffic is unaffected.
+variants:
+  HL:
+    distractor: The flakiness started the same week I repotted all my houseplants
+      and lined the big ones along the windowsill; the timing stuck with me so precisely
+      that I keep half-believing the new arrangement of pots is somehow part of the
+      problem.
+    diagnosticity: low
+    salience: high
+    proposition: The trouble began right after the user repotted several houseplants
+      and moved them onto the windowsill.
+    salience_source: B/C — a precise, confident first-person timeline pinning the
+      symptom to a memorable repotting day.
+    why_plausible: People blame the most recent visible change near the router, and
+      the repotting and dropouts fell in the same week.
+    why_irrelevant: Plants and pots cannot generate radio interference or contend
+      for a Wi-Fi channel; the symptom is contention on a shared 2.4 GHz channel,
+      which foliage near a window cannot create.
+  LL:
+    distractor: The trouble began around the time the user repotted plants onto the
+      windowsill.
+    diagnosticity: low
+    salience: low
+    proposition: The trouble began right after the user repotted several houseplants
+      and moved them onto the windowsill.
+    matched_to: HL
+  HH:
+    distractor: A channel scan shows a strong new neighbour network that just appeared
+      sitting on the exact crowded 2.4 GHz channel mine uses, and the freezes only
+      ever hit my 2.4 GHz devices; anything on 5 GHz, and everything wired, sails
+      through the whole time without a hiccup.
+    diagnosticity: high
+    salience: high
+    proposition: A Wi-Fi scan shows a strong new neighbouring network that recently
+      appeared on the same crowded 2.4 GHz channel as the user's, and the dropouts
+      occur only on 2.4 GHz devices while 5 GHz devices stay solid.
+    salience_source: Concrete scan finding (new strong network on the same 2.4 GHz
+      channel) plus the clean 2.4-vs-5 GHz split makes contention vivid.
+  LH:
+    distractor: A scan shows a strong new network on the user's 2.4 GHz channel; dropouts
+      hit only 2.4 GHz devices while 5 GHz and wired stay solid.
+    diagnosticity: high
+    salience: low
+    proposition: A Wi-Fi scan shows a strong new neighbouring network that recently
+      appeared on the same crowded 2.4 GHz channel as the user's, and the dropouts
+      occur only on 2.4 GHz devices while 5 GHz devices stay solid.
+    matched_to: HH
+distractor_direction:
+  label: Repotted-plants timing
+  description: Treating the recent repotting and rearranging of houseplants near the
+    router as connected to the Wi-Fi dropouts.
+plausible_alternative_directions:
+- label: Router radio fault
+  description: Whether the router's wireless radio or antenna is intermittently failing
+    while the wired path stays fine.
+- label: Bandwidth saturation
+  description: Whether a household device is saturating the uplink during the freezes.
+- label: Band-steering bug
+  description: Whether the router is mishandling roaming between bands
+  causing brief stalls.: null
+leak_audit:
+  ll_atomic_claims:
+  - The trouble began around the time the user repotted plants onto the windowsill.
+  hh_atomic_claims:
+  - A scan shows a strong new neighbouring network on the same 2.4 GHz channel the
+    user's network uses.
+  - The dropouts occur only on 2.4 GHz devices.
+  - 5 GHz devices and wired devices stay solid throughout.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: A clean same-week timeline tying the flakiness to the repotting
+      day.
+    confident_assertion: The timing stuck so precisely the user half-believes the
+      pots are part of it.
+    concrete_detail: Detail about repotting and lining plants on the windowsill —
+      about the event, not the channel contention.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 65
+  hl_word_count: 41
+  ll_word_count: 13
+  hh_word_count: 47
+  lh_word_count: 25
+  notes: 'xbase keeps the symptom and the wired-stable / full-bars context but withholds
+    the channel-scan finding and the
+
+    2.4-vs-5 GHz split, which live only in HH/LH. Plants near a window have no RF
+    mechanism.
+
+    QC repair: removed ''near the router'' from HL to eliminate the other_case_content
+    leak that made signal
+
+    attenuation appear more plausible; HL now matches the shared proposition (plants
+    on windowsill only).
+
+    '
+causal_audit:
+  steelman: 'One might argue dense foliage and ceramic pots on the windowsill partially
+    obstruct line-of-sight and absorb
+
+    some signal, nudging reliability down. But wired devices are flawless and the
+    phone shows full bars during
+
+    dropouts, foreclosing a signal-attenuation story; the issue is specifically channel
+    contention from a new
+
+    co-channel network seen on a scan, affecting only 2.4 GHz; a few plants by a window
+    cannot create another
+
+    network''s airtime usage, so there is no defensible mechanism.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states wired devices stay rock solid and the phone
+    shows full bars during dropouts, foreclosing a simple signal-strength/obstruction
+    pathway and pointing away from a physical attenuation story.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Home Wi-Fi dropouts from 2.4 GHz co-channel congestion by a new neighbour
+    network, coincidentally timed with repotting houseplants near the router.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

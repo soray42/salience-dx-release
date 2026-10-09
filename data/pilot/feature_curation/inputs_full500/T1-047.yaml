@@ -1,0 +1,175 @@
+seed_id: T1-047
+template: T1
+domain: open_qa
+complexity: medium
+xbase: I'm booking a long-haul trip and deciding between a single itinerary on one
+  airline and a cheaper combination of two separate tickets on different airlines
+  with a connection in between. The cheaper option saves a fair bit and the flight
+  times look convenient. I have travelled plenty and am comfortable moving through
+  a connecting airport on my own. I just want to be sure I am not setting myself up
+  for trouble at the connection. {DS}
+focal_diagnostic_feature: The two separate tickets give a 55-minute connection that
+  requires clearing immigration and re-checking bags at an airport with no inter-terminal
+  transfer.
+low_diagnostic_proposition: An acquaintance had a miserable long-haul trip because
+  of a cramped seat on a budget carrier.
+oracle_action: ANSWER
+oracle_focus: Do not book the two separate tickets; a 55-minute self-transfer that
+  requires immigration and bag re-check at that airport is too tight, so a missed
+  connection is uncovered and likely.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a seat-comfort story decide this. Ask about
+  the connection time, whether the tickets are separate, and what the transfer at
+  that airport requires.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a seat-comfort story decide this. Ask about the connection time,
+      whether the tickets are separate, and what the transfer at that airport requires.
+  LL:
+    action: ASK
+    focus: Do not let a seat-comfort story decide this. Ask about the connection time,
+      whether the tickets are separate, and what the transfer at that airport requires.
+  HH:
+    action: ANSWER
+    focus: Do not book the two separate tickets; a 55-minute self-transfer that requires
+      immigration and bag re-check at that airport is too tight, so a missed connection
+      is uncovered and likely.
+  LH:
+    action: ANSWER
+    focus: Do not book the two separate tickets; a 55-minute self-transfer that requires
+      immigration and bag re-check at that airport is too tight, so a missed connection
+      is uncovered and likely.
+variants:
+  HL:
+    distractor: Wojciech, who flies that route for work several times a year, told
+      me his worst long-haul ever was on one of those budget carriers — the seat pitch
+      was so cruel he could not straighten his legs for nine hours and swore he would
+      never fly them again.
+    diagnosticity: low
+    salience: high
+    proposition: An acquaintance had a miserable long-haul trip because of a cramped
+      seat on a budget carrier.
+    salience_source: A — a frequent flyer of the route recounts a vivid first-hand
+      experience, lending the warning credibility.
+    why_plausible: Seat comfort is a genuine long-haul concern and budget carriers
+      do vary, so the cautionary tale feels relevant to choosing between airlines.
+    why_irrelevant: Seat comfort says nothing about whether the connection is bookable;
+      the thing that can ruin this trip is missing the second flight, which seat pitch
+      cannot inform.
+  LL:
+    distractor: An acquaintance had a miserable long-haul flight on a budget carrier
+      because the seat pitch was extremely cramped.
+    diagnosticity: low
+    salience: low
+    proposition: An acquaintance had a miserable long-haul trip because of a cramped
+      seat on a budget carrier.
+    matched_to: HL
+  HH:
+    distractor: The two cheaper tickets are sold separately, and the gap between landing
+      and the next departure is only 55 minutes — at that airport I would have to
+      clear immigration, collect and re-check my bags, and there is no airside transfer
+      between the terminals at all.
+    diagnosticity: high
+    salience: high
+    proposition: The two separate tickets give a 55-minute connection that requires
+      clearing immigration and re-checking bags at an airport with no inter-terminal
+      transfer.
+    salience_source: Concrete, specific transfer mechanics (55 minutes, immigration,
+      bag re-check, no airside link) make the infeasibility vivid.
+  LH:
+    distractor: The connection is 55 minutes on separate tickets, requiring immigration
+      and bag re-check with no airside terminal transfer.
+    diagnosticity: high
+    salience: low
+    proposition: The two separate tickets give a 55-minute connection that requires
+      clearing immigration and re-checking bags at an airport with no inter-terminal
+      transfer.
+    matched_to: HH
+distractor_direction:
+  label: Seat-comfort quality
+  description: Treating the choice as mainly about in-flight comfort on a budget carrier,
+    as in another traveller's bad experience.
+plausible_alternative_directions:
+- label: Total fare and fees
+  description: Whether the headline saving survives baggage fees and seat selection
+    that the budget combination might add.
+- label: Schedule convenience
+  description: Whether the convenient departure and arrival times of the cheaper option
+    outweigh other factors.
+leak_audit:
+  ll_atomic_claims:
+  - An acquaintance had a miserable long-haul flight on a budget carrier.
+  - The reason was extremely cramped seat pitch.
+  hh_atomic_claims:
+  - The two cheaper tickets are sold separately.
+  - The connection gap is only 55 minutes.
+  - The transfer requires clearing immigration and re-checking bags.
+  - There is no airside transfer between the terminals.
+  hl_salience_dimensions:
+    source_credibility: Named acquaintance (Wojciech) who flies the route several
+      times a year for work.
+    narrative_coherence: Clean single anecdote about his worst flight.
+    confident_assertion: He swore he would never fly them again.
+    concrete_detail: Detail about the source's experience (nine hours, could not straighten
+      legs) only — no claim about this trip's connection.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 82
+  hl_word_count: 47
+  ll_word_count: 17
+  hh_word_count: 46
+  lh_word_count: 19
+  notes: 'LL carries only the cramped-seat-on-budget-carrier claim. The named source,
+    his frequency on the route, and the
+
+    nine-hour detail are HL-only and all about the source''s experience, not about
+    this trip''s connection. xbase
+
+    withholds the connection time and transfer mechanics so HL/LL cannot resolve feasibility;
+    it states only the
+
+    structure of the choice, the saving, convenient times, and the traveller''s general
+    comfort with transfers.
+
+    The decisive 55-minute self-transfer fact lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A seasoned traveller might argue seat comfort is a legitimate decision
+    axis on a nine-hour flight and that a
+
+    carrier with brutal seat pitch is one to avoid, so the warning could steer the
+    airline choice. But the symptom
+
+    this seed turns on is connection risk, not comfort: the focal feature is that
+    the two tickets are separate with a
+
+    55-minute gap, immigration, bag re-check, and no airside link. Seat pitch has
+    no mechanism to make a connection
+
+    bookable or unbookable; it cannot inform whether the second flight will be missed.
+    The comfort story therefore
+
+    has no bearing on the deciding fact, which is the feasibility of the transfer.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the traveller is experienced and comfortable
+    moving through a connecting airport alone, foreclosing the inexperience pathway,
+    while withholding the connection time and transfer requirements that actually
+    decide feasibility — those live only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A traveller choosing between one itinerary and a cheaper two-separate-ticket
+    combination, where an infeasible 55-minute self-transfer (immigration plus bag
+    re-check, no airside link), not a friend's cramped-seat story, is decisive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

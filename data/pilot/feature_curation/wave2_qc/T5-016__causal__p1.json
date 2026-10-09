@@ -1,0 +1,9 @@
+{
+  "seed_id": "T5-016",
+  "steelman": "The strongest case for polished presentation causally signalling advisor competence runs through three indirect pathways. First, a selection/survivorship effect: firms sustaining premium offices typically manage large AUM, and high AUM loosely correlates with client retention, which loosely reflects perceived value — a compliance officer might shorthand this as 'polish = scale = institutional durability = credibility.' Second, an organisational-discipline hypothesis: firms that invest systematically in professional client-facing materials may exhibit similar rigour in back-office investment processes ('how you do anything is how you do everything'). Third, a compliance-investment signal: premium materials partly reflect spending on disclosures, audit trails, and institutional infrastructure, which a private-bank compliance officer might associate with regulatory seriousness.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "All three steelman pathways are indirect, correlational, and require multiple weak links. No CFP Board guidance, CFA Institute checklist, or fiduciary standards framework lists presentation quality as a diagnostic input for advisor competence evaluation. Crucially, a high-fee/underperforming firm has stronger incentive than a genuine value-provider to invest in premium branding — polished presentation is a marketing spend decision decoupled from investment skill. xbase explicitly provides the decisive contradicting evidence (1.8% AUM fee at 35x index cost; 5.2% vs 13.1% net return over ten years) before the distractor slot, effectively foreclosing the aesthetics-to-quality inference for any competent practitioner. The seed's own causal_audit field reaches the same conclusion (steelman_verdict: no_defensible_mechanism). Seed is clean on this lens; no curator repair needed."
+}

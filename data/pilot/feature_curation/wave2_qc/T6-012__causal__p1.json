@@ -1,0 +1,9 @@
+{
+  "seed_id": "T6-012",
+  "steelman": "Smart TV operating systems (Tizen, webOS, Android TV) are known to accumulate corrupted cache, broken manifest files, and stale CDN tokens in streaming apps over time, producing buffering that can appear selective by time-of-day if background refresh processes run at fixed intervals. The user has two concrete data points of factory-reset success on this exact TV with this exact symptom, which is meaningful inductive evidence that TV-internal state can be the root cause. A competent AV technician might further argue that both problems could coexist: if the TV's streaming app is in a degraded state, it may fail to handle even mild network congestion gracefully, whereas a healthy app would buffer through it — so the other device's uplink consumption and a degraded TV app are not mutually exclusive. On this argument, 'rule out the TV's known-fixable state first since you have a proven remedy' is a defensible triage step before investigating network load.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The steelman coexistence argument (both TV-internal degradation AND external bandwidth contention) collapses against the focal feature: the router traffic monitor attributes the uplink saturation entirely to a separate device during exactly those prime-time hours. This is a router-side measurement of external congestion — a factory reset on the TV cannot release bandwidth consumed by a different device. The past factory-reset successes addressed TV-internal state (endogenous fault); the present case is exogenous (another device is the congestion source). A practitioner seeing specific router data pointing to another device as the uplink consumer would not put 'factory-reset the TV' on a diagnostic checklist; the closure is decisive. No repairs needed — seed passes this lens cleanly."
+}

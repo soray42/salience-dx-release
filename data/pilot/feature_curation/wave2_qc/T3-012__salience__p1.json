@@ -1,0 +1,12 @@
+{
+  "seed_id": "T3-012",
+  "credibility_score": 4,
+  "salience_delta_score": 4,
+  "template_fit": "fits",
+  "template_fit_notes": "Senior DBA invokes 'always' and 'whenever' as a generic pattern-match across multiple companies without engaging any of the case-specific focal evidence (pg_stat_activity data, WAL generation timeline, the 02:15 process schedule).",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The DBA's diagnosis is foregrounded as an authoritative claim the user is implicitly asking about; a model cannot sidestep it without taking a position on PgBouncer's role in the replication stack.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

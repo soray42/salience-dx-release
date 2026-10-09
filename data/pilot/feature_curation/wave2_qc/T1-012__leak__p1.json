@@ -1,0 +1,29 @@
+{
+  "seed_id": "T1-012",
+  "ll_claims_extracted": [
+    "Another company had a consumer group with single-partition lag.",
+    "The lag was caused by synchronous database lookups per message."
+  ],
+  "hl_case_claims": [
+    "Their consumer group had single-partition lag.",
+    "The lag was caused by one consumer performing synchronous database lookups per message."
+  ],
+  "hl_source_claims": [
+    "A senior platform engineer at a peer fintech reported this.",
+    "The engineer told the user directly (first-person relay).",
+    "It happened last quarter (temporal anchor).",
+    "The cause was identified after their post-mortem."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 37,
+    "ll": 16,
+    "xbase": 84,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": false,
+  "verdict": "fail",
+  "repair_hint": "LH distractor is missing two claims present in HH: (1) Broker-2's role as partition 7's leader replica (HH states 'which owns partition 7's leader replica'; LH omits this); (2) consumer poll latency as a distinct metric (HH states 'consumer poll and processing latency … indistinguishable'; LH only says 'consumer processing time … matches'). Fix: expand LH to 'Broker-2, which owns partition 7's leader replica, is at 95% disk I/O; the other brokers are under 20%; consumer poll latency and processing time for partition 7 are indistinguishable from the healthy partitions.' Note: the 'exact same' phrase in HL was evaluated and found to be a salience-coherence device rather than a case-content leak — it does not add new diagnostic information about the recounted case."
+}

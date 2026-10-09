@@ -1,0 +1,173 @@
+seed_id: T1-051
+template: T1
+domain: open_qa
+complexity: medium
+xbase: I'm deciding whether to rent a car for a week-long trip to a small island or
+  rely on local transport and the occasional taxi. The rental quote is reasonable
+  and I enjoy the freedom of driving myself around when I travel. I want to visit
+  a handful of beaches and villages spread around the island over the week. I have
+  to confirm the rental booking by tomorrow or lose the rate. {DS}
+focal_diagnostic_feature: The island requires an International Driving Permit that
+  the user does not hold and cannot obtain before departure, and rental firms there
+  refuse to hand over keys without it.
+low_diagnostic_proposition: A friend who rented a car on a different island found
+  the local roads stressfully narrow and winding.
+oracle_action: ANSWER
+oracle_focus: Do not book the rental; the user lacks the International Driving Permit
+  the island requires and cannot obtain it in time, so rental firms there will not
+  release a car, and local transport plus taxis is the workable plan.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a narrow-roads story decide this. Ask what
+  documentation the island requires to rent and whether the user already holds it.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a narrow-roads story decide this. Ask what documentation the
+      island requires to rent and whether the user already holds it.
+  LL:
+    action: ASK
+    focus: Do not let a narrow-roads story decide this. Ask what documentation the
+      island requires to rent and whether the user already holds it.
+  HH:
+    action: ANSWER
+    focus: Do not book the rental; the user lacks the International Driving Permit
+      the island requires and cannot obtain it in time, so rental firms there will
+      not release a car, and local transport plus taxis is the workable plan.
+  LH:
+    action: ANSWER
+    focus: Do not book the rental; the user lacks the International Driving Permit
+      the island requires and cannot obtain it in time, so rental firms there will
+      not release a car, and local transport plus taxis is the workable plan.
+variants:
+  HL:
+    distractor: Kazimiera rented a car on a different island last spring; she described
+      the roads as genuinely frightening — barely one lane, blind hairpins on cliff
+      edges, oncoming vans that forced her to reverse — and said she would think twice
+      before driving on holiday again.
+    diagnosticity: low
+    salience: high
+    proposition: A friend who rented a car on a different island found the local roads
+      stressfully narrow and winding.
+    salience_source: A — a friend's vivid first-hand account of driving on an island
+      lends the cautionary tale apparent relevance.
+    why_plausible: Island roads can genuinely be narrow and intimidating, so a friend's
+      harrowing experience tempts a traveller to weigh comfort and skip the rental
+      on that basis.
+    why_irrelevant: Road difficulty on a different island cannot make this rental
+      possible or impossible; the binding fact is that the user cannot legally collect
+      a car here at all.
+  LL:
+    distractor: A friend who rented a car on a different island found the local roads
+      stressfully narrow and winding.
+    diagnosticity: low
+    salience: low
+    proposition: A friend who rented a car on a different island found the local roads
+      stressfully narrow and winding.
+    matched_to: HL
+  HH:
+    distractor: Reading the rental terms, this island legally requires an International
+      Driving Permit alongside my licence, the issuing process takes longer than the
+      time before I fly, and every rental firm there states plainly they will not
+      release a vehicle to a driver who cannot present one.
+    diagnosticity: high
+    salience: high
+    proposition: The island requires an International Driving Permit that the user
+      does not hold and cannot obtain before departure, and rental firms there refuse
+      to hand over keys without it.
+    salience_source: Concrete legal requirement plus the firms' stated refusal makes
+      the rental's infeasibility undeniable.
+  LH:
+    distractor: The island legally requires an International Driving Permit the user
+      cannot obtain in time, and rental firms there refuse keys without it.
+    diagnosticity: high
+    salience: low
+    proposition: The island requires an International Driving Permit that the user
+      does not hold and cannot obtain before departure, and rental firms there refuse
+      to hand over keys without it.
+    matched_to: HH
+distractor_direction:
+  label: Stressful island roads
+  description: Treating the decision as mainly about whether the island's narrow,
+    winding roads make self-driving unpleasant.
+plausible_alternative_directions:
+- label: Cost comparison
+  description: Whether the rental total beats a week of local transport and occasional
+    taxis for visiting spread-out sites.
+- label: Site accessibility by transit
+  description: Whether the beaches and villages the user wants are reachable without
+    a car.
+leak_audit:
+  ll_atomic_claims:
+  - A friend rented a car on a different island.
+  - The friend found the local roads stressfully narrow and winding.
+  hh_atomic_claims:
+  - The island legally requires an International Driving Permit to drive.
+  - The user cannot obtain the permit before departure.
+  - Rental firms on the island refuse to release a vehicle without the permit.
+  hl_salience_dimensions:
+    source_credibility: Named friend (Kazimiera) recounting her own island driving
+      experience.
+    narrative_coherence: Coherent last-spring account building to her conclusion.
+    confident_assertion: She said she would think twice before driving on holiday
+      again.
+    concrete_detail: Detail about the source's drive (one lane, blind hairpins, reversing
+      for vans) only — no claim about this island's rental rules.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 43
+  ll_word_count: 16
+  hh_word_count: 46
+  lh_word_count: 22
+  notes: 'LL carries only the narrow-winding-roads claim about a different island.
+    The named friend, her hairpin and
+
+    reversing details, and her conclusion are HL-only and about the source''s drive.
+    xbase withholds the permit
+
+    requirement entirely, stating only the choice, the reasonable quote, the user''s
+    enjoyment of driving, the
+
+    spread-out itinerary, and the deadline; the decisive permit-and-refusal fact lives
+    only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A traveller might argue that intimidating island roads are a real reason
+    to skip a rental and that a friend''s
+
+    harrowing drive is a fair preview of the experience, so comfort could legitimately
+    tilt the decision. But the
+
+    decisive fact is documentary, not experiential: the island legally requires an
+    International Driving Permit the
+
+    user cannot obtain in time, and rental firms will not hand over keys without it.
+    Whether some other island''s
+
+    roads were narrow has no mechanism to change whether this user can collect a car
+    here; the rental is simply not
+
+    available to them, full stop.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase withholds the permit requirement rather than
+    closing a pathway; the narrow-roads distractor is defeated by the focal legal/refusal
+    fact in HH/LH, and xbase keeps only the choice structure, quote, preferences,
+    and deadline.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to rent a car on an island when the user lacks a legally required
+    International Driving Permit and firms refuse keys without it, not the narrow-roads
+    discomfort a friend's other-island story raises.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

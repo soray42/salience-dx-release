@@ -1,0 +1,99 @@
+seed_id: T5-007
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: سير العمل في GitHub Actions لدينا يستغرق نحو 22 دقيقة في كل تشغيل. يستخدم المستودع
+  npm وفيه ملف package-lock.json ملتزَم به ونادراً ما يتغير. {DS}
+focal_diagnostic_feature: ثمانية عشر من الـ 22 دقيقة تُستهلك في تشغيل npm install
+  من الصفر، وسير العمل لا يحتوي على أي تخزين مؤقت للتبعيات.
+low_diagnostic_proposition: The visual presentation of GitHub Actions logs is unpleasant
+  to read.
+oracle_action: ANSWER
+oracle_focus: Add dependency caching keyed on the lockfile, using setup-node cache
+  or actions/cache.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not mistake ugly logs for slow execution causes. Ask
+  for per-step timings and workflow cache configuration.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not mistake ugly logs for slow execution causes. Ask for per-step timings
+      and workflow cache configuration.
+  LL:
+    action: ASK
+    focus: Do not mistake ugly logs for slow execution causes. Ask for per-step timings
+      and workflow cache configuration.
+  HH:
+    action: ANSWER
+    focus: Add dependency caching keyed on the lockfile, using setup-node cache or
+      actions/cache.
+  LH:
+    action: ANSWER
+    focus: Add dependency caching keyed on the lockfile, using setup-node cache or
+      actions/cache.
+variants:
+  HL:
+    distractor: السجلات تُعرض بخط ضيق بألوان صارخة؛ وبعد عشر دقائق تبدو وكأنها جدار
+      من الفوضى المكسورة في الطرفية.
+    diagnosticity: low
+    salience: high
+    proposition: The visual presentation of GitHub Actions logs is unpleasant to read.
+    salience_source: visual discomfort, terminal/log aesthetic
+    why_plausible: Bad-looking tooling can feel like malfunctioning tooling.
+    why_irrelevant: Log typography does not explain step duration; per-step timing
+      and missing cache do.
+  LL:
+    distractor: سجلات GitHub Actions لديها طريقة عرض بصرية يجدها الفريق صعبة القراءة.
+    diagnosticity: low
+    salience: low
+    proposition: The visual presentation of GitHub Actions logs is unpleasant to read.
+    matched_to: HL
+  HH:
+    distractor: ثمانية عشر من الـ 22 دقيقة تذهب فقط في تشغيل `npm install` من الصفر
+      في كل مرة، ولا توجد خطوة cache في أي مكان داخل ملف YAML.
+    diagnosticity: high
+    salience: high
+    proposition: Eighteen of the 22 minutes are spent running npm install from scratch,
+      and the workflow has no dependency cache.
+    salience_source: per-step duration and missing cache
+  LH:
+    distractor: خطوة التثبيت تستهلك 18 من أصل 22 دقيقة وسير العمل لا يُهيّئ أي تخزين
+      مؤقت للتبعيات.
+    diagnosticity: high
+    salience: low
+    proposition: Eighteen of the 22 minutes are spent running npm install from scratch,
+      and the workflow has no dependency cache.
+    matched_to: HH
+distractor_direction:
+  label: قابلية قراءة السجلات
+  description: التحقيق فيما إذا كانت صعوبة قراءة سجلات CI أو طريقة عرض الواجهة تُفسّر
+    وقت تشغيل سير العمل الطويل.
+plausible_alternative_directions:
+- label: بطء مجموعة الاختبارات
+  description: قد يقضي سير العمل معظم وقته في تشغيل الاختبارات بدلاً من تثبيت التبعيات.
+- label: زمن استجابة السجل
+  description: قد تكون سرعة الوصول إلى سجل npm أو الشبكة بطيئة أثناء عمليات التثبيت.
+- label: قيود موارد عامل التشغيل
+  description: قد يعاني عامل تشغيل GitHub Actions من قيود على وحدة المعالجة المركزية
+    أو الإدخال/الإخراج.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-007.yaml
+  source_xbase_sha256: e6d6b08fadbc00e5
+  translated_content_sha256: 65fd2e6f76e1949f
+  translation_notes: Technical terms (npm, package-lock.json, GitHub Actions, YAML,
+    cache) kept as-is. The HL vivid detail (cramped typeface, harsh colours, terminal
+    confetti) translated faithfully with equivalent Arabic imagery preserving the
+    high-salience visual-discomfort cue.

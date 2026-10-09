@@ -1,0 +1,182 @@
+seed_id: T5-039
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: A dbt model that aggregates daily transaction counts per customer began producing
+  totals three to five times higher than expected about two weeks ago. The underlying
+  source tables have not been replaced. Upstream row counts look correct in isolation.
+  All dbt run logs show success with no warnings or errors. {DS}
+focal_diagnostic_feature: The model joins a transactions table to a customer-segments
+  table on customer_id; the segments table has multiple rows per customer, causing
+  a fanout that multiplies every transaction row by the number of segment records
+  for that customer.
+low_diagnostic_proposition: The dbt project's dependency graph looks tangled and visually
+  complex, suggesting the model logic is likely broken somewhere inside the DAG.
+oracle_action: ANSWER
+oracle_focus: Fix the fanout join — either deduplicate the segments table before joining,
+  aggregate it into one row per customer, or restructure the join to avoid row multiplication.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer model correctness from DAG visual complexity.
+  Ask for the model's SQL join logic and whether the joined table has one row per
+  customer.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer model correctness from DAG visual complexity. Ask for the
+      model's SQL join logic and whether the joined table has one row per customer.
+  LL:
+    action: ASK
+    focus: Do not infer model correctness from DAG visual complexity. Ask for the
+      model's SQL join logic and whether the joined table has one row per customer.
+  HH:
+    action: ANSWER
+    focus: Fix the fanout join — either deduplicate the segments table before joining,
+      aggregate it into one row per customer, or restructure the join to avoid row
+      multiplication.
+  LH:
+    action: ANSWER
+    focus: Fix the fanout join — either deduplicate the segments table before joining,
+      aggregate it into one row per customer, or restructure the join to avoid row
+      multiplication.
+variants:
+  HL:
+    distractor: The dbt lineage graph for this model is a sprawling tangle of boxes
+      and arrows that spills off the screen — just looking at it, I suspect the model's
+      logic has become too convoluted to be reliable.
+    diagnosticity: low
+    salience: high
+    proposition: The dbt project's dependency graph looks tangled and visually complex,
+      suggesting the model logic is likely broken somewhere inside the DAG.
+    salience_source: B — vivid sensory description of a specific visual characteristic
+      (sprawling tangle, spills off the screen) with a confident inferential frame;
+      C — 'I suspect', 'too convoluted to be reliable'.
+    why_plausible: A complex dependency graph loosely correlates with model maintainability
+      issues, and a non-expert practitioner naturally reads visual complexity as a
+      risk signal.
+    why_irrelevant: DAG visual complexity has no causal mechanism for row multiplication;
+      the fanout is produced by a specific join cardinality issue that would occur
+      in a model with a simple linear lineage graph just as readily.
+  LL:
+    distractor: The dbt project's dependency graph is visually complex and tangled,
+      suggesting the model logic may be unreliable.
+    diagnosticity: low
+    salience: low
+    proposition: The dbt project's dependency graph looks tangled and visually complex,
+      suggesting the model logic is likely broken somewhere inside the DAG.
+    matched_to: HL
+  HH:
+    distractor: The model's SQL joins the transactions table to the customer-segments
+      table on customer_id; running a quick count shows the segments table averages
+      3.8 rows per customer, so each transaction row is joined to multiple segment
+      records and the final GROUP BY sums a 3-to-5x inflated set.
+    diagnosticity: high
+    salience: high
+    proposition: The model joins a transactions table to a customer-segments table
+      on customer_id; the segments table has multiple rows per customer, causing a
+      fanout that multiplies every transaction row by the number of segment records
+      for that customer.
+    salience_source: B/C — precise cardinality figure (3.8 rows per customer), specific
+      table names, mechanism stated (row multiplication before GROUP BY), quantitative
+      match to observed inflation (3-to-5x).
+  LH:
+    distractor: The model joins transactions to the customer-segments table; the segments
+      table has multiple rows per customer, causing a fanout that inflates the aggregated
+      counts.
+    diagnosticity: high
+    salience: low
+    proposition: The model joins a transactions table to a customer-segments table
+      on customer_id; the segments table has multiple rows per customer, causing a
+      fanout that multiplies every transaction row by the number of segment records
+      for that customer.
+    matched_to: HH
+distractor_direction:
+  label: DAG complexity causing model errors
+  description: Treating the visual complexity of the dbt dependency graph as evidence
+    that the model logic is too convoluted and has become unreliable.
+plausible_alternative_directions:
+- label: Source table schema change
+  description: A column rename or type change in the source table may have altered
+    the join key behaviour or silently returned NULL matches.
+- label: Incorrect date filter boundary
+  description: The model's date filter may have shifted to include additional days
+    of data
+  inflating period counts.: null
+- label: Duplicate rows introduced upstream
+  description: An upstream dbt model or ingestion job may have begun producing duplicate
+    rows that are passed to this model's source.
+leak_audit:
+  ll_atomic_claims:
+  - The dbt project's dependency graph is visually complex and tangled.
+  - This suggests the model logic may be unreliable.
+  hh_atomic_claims:
+  - The model's SQL joins the transactions table to the customer-segments table on
+    customer_id.
+  - The segments table averages 3.8 rows per customer.
+  - Each transaction row is joined to multiple segment records.
+  - The final GROUP BY sums a 3-to-5x inflated set.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person vivid description of a specific observed visual
+      characteristic with an inference stated as personal judgment.
+    confident_assertion: '''I suspect'', ''too convoluted to be reliable'' — confident
+      evaluative framing.'
+    concrete_detail: '''sprawling tangle of boxes and arrows that spills off the screen''
+      — visual detail about the DAG appearance, not about the SQL logic.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 50
+  hl_word_count: 36
+  ll_word_count: 17
+  hh_word_count: 46
+  lh_word_count: 24
+  notes: 'T5 bridge check: the inferential bridge (visual complexity → model logic
+    unreliable) appears in BOTH HL and LL (C1 satisfied, self-check 13).
+
+    C4 clean: xbase does not reveal join structure or cardinality — the answer cannot
+    be derived from xbase alone.
+
+    C1: HL adds only the vivid visual description and personal confident inference;
+    LL carries the same proposition flatly. No case-content added in HL.
+
+    HL:LL = 36:17 = 2.12 ≤ 4. HH:LH = 46:24 = 1.92 ≤ 4.
+
+    Steelman: complex DAG structure correlates with technical debt and may reflect
+    copy-paste errors in joins. Rebuttal: visual complexity has no mechanism for row
+    multiplication; the fanout emerges from join cardinality which is independent
+    of lineage graph shape.
+
+    repair: xbase was 39 words (below hard bound 40-90); added ''All dbt run logs
+    show success with no warnings or errors.'' to reach 50 words. All five counts
+    corrected from stale recorded values.
+
+    '
+causal_audit:
+  steelman: 'A practitioner could argue: a visually complex dbt DAG often reflects
+    accumulated technical debt, ad-hoc models, and unmaintained transformations —
+    any of which could introduce logic errors including incorrect joins. The correlation
+    between DAG complexity and reliability is real in practice. However, correlation
+    between complexity and risk is not a causal mechanism for THIS specific symptom
+    (row counts inflated 3-5x). DAG visual complexity provides no mechanism for fanout
+    row multiplication; a single clean model with a two-table join can produce identical
+    fanout if the joined table is not deduplicated. The visual observation cannot
+    inform diagnosis of this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not close any pathway; the decisive cardinality
+    evidence lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: dbt model inflating transaction counts 3-5x — aesthetic DAG complexity
+    bias, actual root cause is a fanout join against a non-deduplicated customer-segments
+    table.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_B
+  generation_mode: generator_B_batches

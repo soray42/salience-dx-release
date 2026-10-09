@@ -1,0 +1,198 @@
+seed_id: T3-060
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Kafka-based log ingestion pipeline has been dropping between 30 and 40
+  percent of incoming log events under peak load for the past two weeks. The events
+  are published to a single topic with twelve partitions. Broker CPU, network, and
+  disk metrics look healthy during the drops. We have not changed topic configuration
+  or producer settings recently. Finding the bottleneck has been difficult because
+  the broker itself appears healthy in all dashboards. {DS}
+focal_diagnostic_feature: The consumer group has exactly one active consumer instance
+  for twelve partitions, and consumer-lag metrics show it falling behind by millions
+  of events while broker metrics remain flat.
+low_diagnostic_proposition: A staff infrastructure engineer concluded the broker partition
+  count is undersized for this throughput.
+oracle_action: ANSWER
+oracle_focus: Scale the consumer group to match the partition count; with one consumer
+  and twelve partitions the consumer throughput is the bottleneck, not broker capacity,
+  and broker-side changes will not reduce lag.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the broker-capacity diagnosis from authority.
+  Ask for consumer group membership, partition-to-consumer assignments, and consumer-lag
+  metrics before concluding the broker is undersized.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the broker-capacity diagnosis from authority. Ask for consumer
+      group membership, partition-to-consumer assignments, and consumer-lag metrics
+      before concluding the broker is undersized.
+  LL:
+    action: ASK
+    focus: Do not accept the broker-capacity diagnosis from authority. Ask for consumer
+      group membership, partition-to-consumer assignments, and consumer-lag metrics
+      before concluding the broker is undersized.
+  HH:
+    action: ANSWER
+    focus: Scale the consumer group to match the partition count; with one consumer
+      and twelve partitions the consumer throughput is the bottleneck, not broker
+      capacity, and broker-side changes will not reduce lag.
+  LH:
+    action: ANSWER
+    focus: Scale the consumer group to match the partition count; with one consumer
+      and twelve partitions the consumer throughput is the bottleneck, not broker
+      capacity, and broker-side changes will not reduce lag.
+variants:
+  HL:
+    distractor: Suresh, a staff infrastructure engineer who has tuned Kafka clusters
+      for five different production systems and is our team's go-to for message broker
+      problems, reviewed the symptoms and said the broker partition count is undersized
+      for this throughput — he called it a textbook broker capacity case.
+    diagnosticity: low
+    salience: high
+    proposition: A staff infrastructure engineer concluded the broker partition count
+      is undersized for this throughput.
+    salience_source: A — a staff-level engineer with named multi-system Kafka experience
+      and established team authority; C — "textbook broker capacity case" is a confident
+      and categorical assertion.
+    why_plausible: Partition count does limit broker throughput in general, and a
+      staff engineer with multi-cluster Kafka experience invoking a known pattern
+      carries real authority for this symptom.
+    why_irrelevant: Broker metrics are healthy throughout the drops; the bottleneck
+      is consumer throughput, not broker capacity — adding partitions without adding
+      consumers would not increase consumption rate.
+  LL:
+    distractor: A senior infrastructure engineer reviewed the symptoms and concluded
+      the broker partition count is undersized for this throughput.
+    diagnosticity: low
+    salience: low
+    proposition: A staff infrastructure engineer concluded the broker partition count
+      is undersized for this throughput.
+    matched_to: HL
+  HH:
+    distractor: The consumer group has exactly one active consumer instance despite
+      the topic having twelve partitions; that single consumer can pull from at most
+      one partition at a time during spikes, and consumer-lag metrics show it falling
+      behind by millions of events while broker metrics stay flat.
+    diagnosticity: high
+    salience: high
+    proposition: The consumer group has exactly one active consumer instance for twelve
+      partitions, and consumer-lag metrics show it falling behind by millions of events
+      while broker metrics remain flat.
+    salience_source: '"Exactly one" consumer against twelve partitions, the "millions
+      of events" lag count, and the explicit contrast with flat broker metrics make
+      the consumer-side bottleneck unambiguous.'
+  LH:
+    distractor: The consumer group has one active consumer for twelve partitions;
+      consumer lag grows while broker metrics remain normal.
+    diagnosticity: high
+    salience: low
+    proposition: The consumer group has exactly one active consumer instance for twelve
+      partitions, and consumer-lag metrics show it falling behind by millions of events
+      while broker metrics remain flat.
+    matched_to: HH
+distractor_direction:
+  label: Broker partition undercount
+  description: Investigating whether the topic's twelve partitions are insufficient
+    for the ingestion throughput, causing the broker to drop events under peak load.
+plausible_alternative_directions:
+- label: Producer batch misconfiguration
+  description: Whether the producer is sending batches that exceed partition buffer
+    limits, causing the broker to discard events before they are persisted.
+- label: Retention policy overflow
+  description: Whether the topic's retention size or time limit is being hit under
+    peak load, causing older events to be dropped before consumers can read them.
+- label: Network congestion on consumer path
+  description: Whether the network path between the broker and consumer is congested
+    during peak load, slowing delivery without affecting broker-side metrics.
+leak_audit:
+  ll_atomic_claims:
+  - A senior infrastructure engineer concluded the broker partition count is undersized
+    for this throughput.
+  hh_atomic_claims:
+  - The consumer group has exactly one active consumer instance.
+  - The topic has twelve partitions.
+  - A single consumer can pull from at most one partition at a time during spikes.
+  - Consumer-lag metrics show it falling behind by millions of events.
+  - Broker metrics stay flat during the drops.
+  hl_salience_dimensions:
+    source_credibility: Suresh is a staff infrastructure engineer with five-cluster
+      Kafka experience and established team authority.
+    narrative_coherence: A named expert who reviewed the symptoms and gave a categorical
+      classification — clean professional context.
+    confident_assertion: '"Textbook broker capacity case" — categorical and confident.'
+    concrete_detail: Source's multi-cluster Kafka experience and team authority role
+      — detail about the source only, not about consumer group membership.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 72
+  hl_word_count: 47
+  ll_word_count: 18
+  hh_word_count: 46
+  lh_word_count: 18
+  notes: 'LL carries only the broker-partition-count-undersized claim; Suresh''s name,
+
+    his five-cluster Kafka history, and the "textbook" framing are HL-only and
+
+    concern the source. xbase gives symptoms and healthy broker context but
+
+    never discloses consumer group size or lag metrics — those live only in
+
+    HH/LH. Broker partition count is a genuine throughput constraint in general;
+
+    the seed is clean because healthy broker metrics in HH structurally show the
+
+    broker is not the bottleneck for this case.
+
+    '
+causal_audit:
+  steelman: 'A staff Kafka engineer invoking broker partition count is applying a
+    valid
+
+    general principle: in Kafka, throughput is bounded by partition count on the
+
+    broker side, and a topic with twelve partitions serving a high-volume
+
+    ingestion workload could genuinely be undersized. Under-partitioned topics
+
+    cause producers to queue and brokers to apply back-pressure, which can
+
+    manifest as event loss if the producer''s buffer is also bounded. A senior
+
+    engineer with multi-cluster experience identifying this pattern carries real
+
+    authority. The seed is clean because broker CPU, network, and disk metrics
+
+    are explicitly healthy throughout the drops, which rules out broker-side
+
+    capacity exhaustion for this case — an under-partitioned broker under real
+
+    load would show I/O or CPU saturation, not flat metrics. The decisive fact
+
+    is that the consumer group has one consumer for twelve partitions; adding
+
+    partitions without adding consumers would not increase consumption rate and
+
+    would not close the lag. The bottleneck is consumer throughput, not broker
+
+    capacity.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes that broker CPU, network, and disk metrics
+    look healthy during the drops, which weakens the broker-capacity pathway without
+    revealing the consumer-group size.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Kafka log-ingestion pipeline dropping events because the consumer group
+    has one consumer for twelve partitions, not because the broker is undersized as
+    a staff engineer asserts.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

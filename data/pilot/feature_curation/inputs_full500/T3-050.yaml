@@ -1,0 +1,154 @@
+seed_id: T3-050
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our PostgreSQL continuous archiving has been silently failing for six days.
+  The archive_command exits with a non-zero status on every WAL segment, yet the database
+  itself is healthy and serving queries normally. We have not changed the archive
+  destination path or the archive_command string recently. I checked and replication
+  between the primary and standby is fine. {DS}
+focal_diagnostic_feature: The archive destination directory is owned by root:root
+  with mode 755, so the postgres OS user cannot write to it.
+low_diagnostic_proposition: WAL archiving failures are caused by index bloat consuming
+  I/O bandwidth on the primary.
+oracle_action: ANSWER
+oracle_focus: Fix the archive directory ownership to postgres:postgres (or add write
+  permission); the command itself is correct and the database is healthy.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the index-bloat explanation from authority
+  alone; ask for the archive_command error output, the destination directory permissions,
+  and disk space before diagnosing I/O.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the index-bloat explanation from authority alone; ask for
+      the archive_command error output, the destination directory permissions, and
+      disk space before diagnosing I/O.
+  LL:
+    action: ASK
+    focus: Do not adopt the index-bloat explanation from authority alone; ask for
+      the archive_command error output, the destination directory permissions, and
+      disk space before diagnosing I/O.
+  HH:
+    action: ANSWER
+    focus: Fix the archive directory ownership to postgres:postgres (or add write
+      permission); the command itself is correct and the database is healthy.
+  LH:
+    action: ANSWER
+    focus: Fix the archive directory ownership to postgres:postgres (or add write
+      permission); the command itself is correct and the database is healthy.
+variants:
+  HL:
+    distractor: Radovan, a DBA with twelve years of PostgreSQL production experience,
+      told me at our last incident review that WAL archiving failures at his company
+      always traced back to index bloat generating enough dirty I/O to starve the
+      archiver process.
+    diagnosticity: low
+    salience: high
+    proposition: WAL archiving failures are caused by index bloat consuming I/O bandwidth
+      on the primary.
+    salience_source: 'A: source credibility (twelve-year DBA); B: clean chronology
+      (incident review setting); C: confident assertion (always traced back).'
+    why_plausible: Index bloat causing I/O pressure is a real PostgreSQL operational
+      problem, and a veteran DBA linking it to archiver starvation sounds authoritative.
+    why_irrelevant: The archive_command itself exits non-zero on every attempt, which
+      is a direct write or permission failure; I/O starvation would cause delays and
+      timeouts, not clean non-zero exits on every segment. The primary is healthy
+      and queries run normally.
+  LL:
+    distractor: Someone said WAL archiving failures are generally caused by index
+      bloat creating I/O pressure on the primary.
+    diagnosticity: low
+    salience: low
+    proposition: WAL archiving failures are caused by index bloat consuming I/O bandwidth
+      on the primary.
+    matched_to: HL
+  HH:
+    distractor: I ran ls -la on the archive destination and the directory is owned
+      by root:root with mode 755 — the postgres user has no write permission there,
+      which would explain a clean permission-denied exit on every WAL segment.
+    diagnosticity: high
+    salience: high
+    proposition: The archive destination directory is owned by root:root with mode
+      755, so the postgres OS user cannot write to it.
+    salience_source: 'B: precise command output cited; C: direct causal link stated
+      (which would explain a clean permission-denied exit).'
+  LH:
+    distractor: The archive directory is owned by root:root with mode 755, so the
+      postgres user lacks write permission.
+    diagnosticity: high
+    salience: low
+    proposition: The archive destination directory is owned by root:root with mode
+      755, so the postgres OS user cannot write to it.
+    matched_to: HH
+distractor_direction:
+  label: Index bloat I/O starvation
+  description: Investigating whether index bloat on the primary is generating enough
+    dirty-page I/O to starve the WAL archiver process, preventing segments from being
+    copied.
+plausible_alternative_directions:
+- label: Archive destination disk full
+  description: The archive target filesystem has exhausted free space, causing every
+    write attempt to fail.
+- label: archive_command path error
+  description: The shell command string references a wrong or non-existent binary
+    or destination path, producing a non-zero exit.
+- label: Network mount unavailable
+  description: The archive destination is a remote NFS or CIFS mount that has become
+    unreachable, causing write failures.
+leak_audit:
+  ll_atomic_claims:
+  - WAL archiving failures are caused by index bloat.
+  - The mechanism is I/O pressure on the primary.
+  hh_atomic_claims:
+  - The archive directory is owned by root:root.
+  - The directory permission mode is 755.
+  - The postgres OS user has no write permission to the directory.
+  - This explains a clean permission-denied exit on every WAL segment.
+  hl_salience_dimensions:
+    source_credibility: Twelve-year DBA, named (Radovan), professional setting (incident
+      review).
+    narrative_coherence: Clean incident-review context, past-tense causal account.
+    confident_assertion: '''Always traced back'' — unhedged universal.'
+    concrete_detail: N/A — no case-content detail added.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 44
+  ll_word_count: 18
+  hh_word_count: 44
+  lh_word_count: 17
+  notes: 'xbase closes streaming-replication path (replication between primary and
+    standby is fine) without naming the root cause — neutrally rules out one tempting
+    mechanism (replication lag) without supplying the affirmative cause. HL adds only
+    source identity and setting. Checked: HH/LH atomic diff passes. Index bloat steelman:
+    bloat causes I/O amplification but exits non-zero identically on every segment
+    rather than causing slow/delayed writes — not a defensible mechanism.
+
+    '
+causal_audit:
+  steelman: 'A senior DBA could argue: severe index bloat on a busy primary means
+    vacuum and autovacuum are churning gigabytes of dirty pages through shared_buffers,
+    saturating wal_writer and bgwriter I/O. If the archive_command is a cp or rsync
+    to a slow destination, it could hit a shell timeout, exiting non-zero. This is
+    a real operational pattern in heavily bloated databases.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: The primary is healthy and serving queries normally — no
+    I/O saturation signal; also, archive_command fails on every segment consistently
+    rather than intermittently, which is not the signature of saturation-induced timeouts.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: PostgreSQL WAL archiving failing silently because the archive destination
+    directory is owned by root and the postgres user cannot write to it, against a
+    senior DBA's index-bloat diagnosis.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

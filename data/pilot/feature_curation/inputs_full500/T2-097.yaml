@@ -1,0 +1,164 @@
+seed_id: T2-097
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: My printer has started producing pages of garbled output over its USB connection.
+  Instead of my document it prints sheets of random characters, stray symbols, and
+  what look like raw command codes, then ejects half-printed pages. It is a laser
+  printer that worked perfectly last week, and other people on the office network
+  print to a different device with no trouble. I print straight from the same applications
+  I always use. {DS}
+focal_diagnostic_feature: The selected driver is a generic PostScript one while the
+  printer is PCL-only, unlike its previously correct setup.
+low_diagnostic_proposition: The garbled printing began around the time a new screensaver
+  was installed.
+oracle_action: ANSWER
+oracle_focus: Treat this as a printer-driver mismatch; install or select the correct
+  PCL driver for this model, since a generic PostScript driver sends a page language
+  the PCL-only printer cannot interpret, producing raw-code garbage.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a screensaver install to garbled printing;
+  it has no mechanism. Ask which driver is currently assigned to the printer and whether
+  it matches the printer's page-description language.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a screensaver install to garbled printing; it has no mechanism.
+      Ask which driver is currently assigned to the printer and whether it matches
+      the printer's page-description language.
+  LL:
+    action: ASK
+    focus: Do not connect a screensaver install to garbled printing; it has no mechanism.
+      Ask which driver is currently assigned to the printer and whether it matches
+      the printer's page-description language.
+  HH:
+    action: ANSWER
+    focus: Treat this as a printer-driver mismatch; install or select the correct
+      PCL driver for this model, since a generic PostScript driver sends a page language
+      the PCL-only printer cannot interpret, producing raw-code garbage.
+  LH:
+    action: ANSWER
+    focus: Treat this as a printer-driver mismatch; install or select the correct
+      PCL driver for this model, since a generic PostScript driver sends a page language
+      the PCL-only printer cannot interpret, producing raw-code garbage.
+variants:
+  HL:
+    distractor: For what it is worth, this nonsense started the day after I installed
+      a new aquarium screensaver on this PC; the first print job after that reboot
+      came out as gibberish.
+    diagnosticity: low
+    salience: high
+    proposition: The garbled printing began around the time a new screensaver was
+      installed.
+    salience_source: B/C — confident first-person chronology tying the first garbled
+      job to the post-install reboot.
+    why_plausible: A new install plus a reboot just before the failure invites blaming
+      the install, since something on the PC clearly changed.
+    why_irrelevant: A screensaver is an idle-time display program; it never participates
+      in the print path and cannot change what page language is sent to the printer.
+  LL:
+    distractor: The garbled printing began around the time a new screensaver was installed
+      on the computer.
+    diagnosticity: low
+    salience: low
+    proposition: The garbled printing began around the time a new screensaver was
+      installed.
+    matched_to: HL
+  HH:
+    distractor: In the print queue the driver listed for this printer is now a generic
+      PostScript driver, but the printer is a PCL-only model, and it was set to its
+      correct PCL driver before last week with no garbling.
+    diagnosticity: high
+    salience: high
+    proposition: The selected driver is a generic PostScript one while the printer
+      is PCL-only, unlike its previously correct setup.
+    salience_source: Concrete queue inspection naming the wrong PostScript driver
+      against a PCL-only printer pinpoints the language mismatch.
+  LH:
+    distractor: The selected driver is a generic PostScript one while the printer
+      is PCL-only, unlike its previously correct setup.
+    diagnosticity: high
+    salience: low
+    proposition: The selected driver is a generic PostScript one while the printer
+      is PCL-only, unlike its previously correct setup.
+    matched_to: HH
+distractor_direction:
+  label: Screensaver install
+  description: Treating the recent screensaver installation as the cause of the garbled
+    output because the problem started around then.
+plausible_alternative_directions:
+- label: USB cable or port fault
+  description: Whether a failing USB cable or port is corrupting the data stream to
+    the printer.
+- label: Corrupt print spooler
+  description: Whether the spooler service or a stuck job is mangling output independent
+    of the driver.
+leak_audit:
+  ll_atomic_claims:
+  - The garbled printing began.
+  - It began around the time a new screensaver was installed.
+  hh_atomic_claims:
+  - The driver currently assigned to the printer is a generic PostScript driver.
+  - The printer is a PCL-only model.
+  - It was set to its correct PCL driver before last week with no garbling.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean install-reboot-then-gibberish chronology.
+    confident_assertion: this nonsense started the day after I installed...
+    concrete_detail: Detail about the install (aquarium screensaver, the reboot) only;
+      no claim about the driver.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 31
+  ll_word_count: 15
+  hh_word_count: 38
+  lh_word_count: 18
+  notes: 'LL carries only the started-around-screensaver-install claim; the aquarium
+    theme and reboot are HL-only colour
+
+    about the install. xbase reports symptoms (raw-code garbage over USB, worked last
+    week, others print fine
+
+    elsewhere) and withholds the driver assignment, so HL/LL cannot reject the coincidence.
+    The decisive
+
+    PostScript-driver-on-a-PCL-printer fact lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One might argue installing software can pull in updates or reset associations,
+    so an install could indirectly
+
+    swap a printer driver. But the stated event is solely that a screensaver was installed;
+    a screensaver is an
+
+    idle-display utility that bundles no print drivers, registers no printer associations,
+    and has no path to the
+
+    spooler or the page-description language sent over USB. There is no constructible
+    mechanism from a screensaver
+
+    to garbled print output, and the focal evidence shows the wrong page-language
+    driver is selected, which by
+
+    itself explains the raw-code garbage.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the coincidence has no mechanism; xbase withholds
+    the driver assignment so the cause lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A laser printer emitting raw-code garbage, where a generic PostScript
+    driver selected for a PCL-only printer, not a coincident screensaver install,
+    is the cause.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

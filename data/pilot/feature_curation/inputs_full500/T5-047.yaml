@@ -1,0 +1,163 @@
+seed_id: T5-047
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our MariaDB replica has fallen behind the primary by about four hours and the
+  lag is growing. The replica has ample CPU and disk headroom, and network throughput
+  between the nodes looks normal. The replication user credentials are valid and the
+  replica SQL thread is running without reported errors in the status output. {DS}
+focal_diagnostic_feature: The primary's binlog_format is STATEMENT and the replicated
+  event log contains UPDATE statements using UUID(), which the replica flags as unsafe
+  and applies with serialised single-thread execution.
+low_diagnostic_proposition: The replication dashboard's dated and confusing visual
+  layout is making the lag metric look worse than the real value.
+oracle_action: ANSWER
+oracle_focus: Switch binlog_format to ROW or MIXED on the primary so that non-deterministic
+  function results are captured as row images rather than re-executed; this will allow
+  the replica to apply events in parallel and clear the lag.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not dismiss the lag as a display artefact; ask for
+  the actual Seconds_Behind_Master value from SHOW REPLICA STATUS, the binlog format,
+  and whether any unsafe-statement warnings appear in the replica logs.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not dismiss the lag as a display artefact; ask for the actual Seconds_Behind_Master
+      value from SHOW REPLICA STATUS, the binlog format, and whether any unsafe-statement
+      warnings appear in the replica logs.
+  LL:
+    action: ASK
+    focus: Do not dismiss the lag as a display artefact; ask for the actual Seconds_Behind_Master
+      value from SHOW REPLICA STATUS, the binlog format, and whether any unsafe-statement
+      warnings appear in the replica logs.
+  HH:
+    action: ANSWER
+    focus: Switch binlog_format to ROW or MIXED on the primary so that non-deterministic
+      function results are captured as row images rather than re-executed; this will
+      allow the replica to apply events in parallel and clear the lag.
+  LH:
+    action: ANSWER
+    focus: Switch binlog_format to ROW or MIXED on the primary so that non-deterministic
+      function results are captured as row images rather than re-executed; this will
+      allow the replica to apply events in parallel and clear the lag.
+variants:
+  HL:
+    distractor: Our replication monitoring tool renders in a washed-out grey palette
+      with overlapping series labels; the lag graph is basically unreadable at a glance,
+      and the y-axis scale resets unexpectedly every few minutes, so the four-hour
+      figure could easily be a display artefact rather than real lag.
+    diagnosticity: low
+    salience: high
+    proposition: The replication dashboard's dated and confusing visual layout is
+      making the lag metric look worse than the real value.
+    salience_source: 'B: vivid concrete description of the display problem; C: confident
+      assertion (could easily be a display artefact).'
+    why_plausible: Monitoring tools sometimes do render stale or misscaled metrics;
+      a busy engineer glancing at a broken graph might reasonably question the number
+      before digging into replication internals.
+    why_irrelevant: The lag is visible in SHOW REPLICA STATUS which is a direct SQL
+      query result unaffected by any monitoring dashboard; the display tool cannot
+      alter the actual replication delay value reported by the engine.
+  LL:
+    distractor: The replication monitoring dashboard has a confusing visual layout
+      that may be misrepresenting the lag metric.
+    diagnosticity: low
+    salience: low
+    proposition: The replication dashboard's dated and confusing visual layout is
+      making the lag metric look worse than the real value.
+    matched_to: HL
+  HH:
+    distractor: 'Checking SHOW REPLICA STATUS shows Seconds_Behind_Master at 14,400
+      and the replica error log is full of warnings: ''Unsafe statement written to
+      the binary log using statement format since BINLOG_FORMAT = STATEMENT. Statement
+      is unsafe because it uses a non-deterministic function.'' Every flagged event
+      contains UUID().'
+    diagnosticity: high
+    salience: high
+    proposition: The primary's binlog_format is STATEMENT and the replicated event
+      log contains UPDATE statements using UUID(), which the replica flags as unsafe
+      and applies with serialised single-thread execution.
+    salience_source: 'B: precise numeric value and verbatim error text; C: definitive
+      causal link through the unsafe-statement warning.'
+  LH:
+    distractor: SHOW REPLICA STATUS shows real lag of 14,400 seconds; replica logs
+      contain unsafe-statement warnings on events using UUID() with STATEMENT binlog
+      format.
+    diagnosticity: high
+    salience: low
+    proposition: The primary's binlog_format is STATEMENT and the replicated event
+      log contains UPDATE statements using UUID(), which the replica flags as unsafe
+      and applies with serialised single-thread execution.
+    matched_to: HH
+distractor_direction:
+  label: Dashboard display artefact
+  description: Investigating whether the replication monitoring tool's visual rendering
+    is misrepresenting the lag value rather than there being genuine replication delay.
+plausible_alternative_directions:
+- label: Long-running transaction on primary
+  description: A slow or uncommitted transaction on the primary is holding up binary
+    log progress, causing the replica to wait.
+- label: Replica I/O thread backpressure
+  description: The relay log write path is bottlenecked, causing the SQL thread to
+    starve even with adequate resources.
+- label: Parallel replication misconfiguration
+  description: slave_parallel_workers is set to zero or one, serialising multi-threaded
+    row application and not matching the workload pattern.
+leak_audit:
+  ll_atomic_claims:
+  - The replication monitoring dashboard has a confusing visual layout.
+  - The layout may be misrepresenting the lag metric.
+  hh_atomic_claims:
+  - SHOW REPLICA STATUS shows Seconds_Behind_Master at 14,400.
+  - The replica error log contains unsafe-statement warnings.
+  - The warnings state binlog_format is STATEMENT.
+  - The flagged events contain UUID().
+  - This causes serialised single-thread application.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observation, no named source.
+    narrative_coherence: Vivid description of a broken monitoring interface with specific
+      failure modes (y-axis reset, overlapping labels).
+    confident_assertion: '''Could easily be a display artefact'' presents it as the
+      likely explanation.'
+    concrete_detail: Washed-out grey palette, overlapping series labels, y-axis scale
+      resets — all describe the SOURCE (monitoring tool appearance), not the replication
+      delay itself.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 67
+  hl_word_count: 47
+  ll_word_count: 16
+  hh_word_count: 47
+  lh_word_count: 21
+  notes: 'T5 inferential bridge (display problem → metric looks wrong) is present
+    in both HL and LL per C1. HL describes the visual defect vividly but adds no claim
+    about actual replication state. HH/LH both include the same four atomic claims.
+    Checked C2: display-tool appearance cannot affect SHOW REPLICA STATUS — no defensible
+    mechanism.
+
+    '
+causal_audit:
+  steelman: 'A practitioner might argue: the four-hour number comes from a monitoring
+    tool query that itself runs on the replica, and if the tool has a buggy aggregation
+    or stale caching layer it could display an old lag value. In some visualisation
+    stacks, the graph''s y-axis auto-scale can make a small oscillating metric look
+    like a large sustained one.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: The Seconds_Behind_Master value comes from SHOW REPLICA
+    STATUS, a direct engine command — no monitoring dashboard sits in that path. Dashboard
+    rendering cannot alter the engine-reported delay.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: MariaDB replication lag caused by STATEMENT binlog format serialising
+    non-deterministic UUID() events, mistaken for a monitoring dashboard display artefact.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

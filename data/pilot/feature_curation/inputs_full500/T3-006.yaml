@@ -1,0 +1,98 @@
+seed_id: T3-006
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I'm choosing between two apartments. Both are in neighbourhoods I would be
+  comfortable living in and both are available from the same date. My budget is tight
+  enough that monthly cost and commute would matter. {DS}
+focal_diagnostic_feature: Apartment A is €850/month, 15 minutes from work, and includes
+  heating; Apartment B is €1,050/month, 45 minutes from work, and heating is extra.
+low_diagnostic_proposition: A relative with architectural expertise says Apartment
+  B's exterior architecture should be treated as the main sign it is the better place
+  to live.
+oracle_action: ANSWER
+oracle_focus: Choose Apartment A unless an undisclosed constraint dominates; it is
+  cheaper, closer, and has heating included.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let architectural prestige substitute for the
+  actual living-cost and commute variables. Ask for rent, commute, included utilities,
+  and lease terms.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let architectural prestige substitute for the actual living-cost
+      and commute variables. Ask for rent, commute, included utilities, and lease
+      terms.
+  LL:
+    action: ASK
+    focus: Do not let architectural prestige substitute for the actual living-cost
+      and commute variables. Ask for rent, commute, included utilities, and lease
+      terms.
+  HH:
+    action: ANSWER
+    focus: Choose Apartment A unless an undisclosed constraint dominates; it is cheaper,
+      closer, and has heating included.
+  LH:
+    action: ANSWER
+    focus: Choose Apartment A unless an undisclosed constraint dominates; it is cheaper,
+      closer, and has heating included.
+variants:
+  HL:
+    distractor: My aunt teaches architecture and says Apartment B's 1930s stone façade,
+      arched lobby, and brass door handles are the real signs that it is the better
+      place to live.
+    diagnosticity: low
+    salience: high
+    proposition: A relative with architectural expertise says Apartment B's exterior
+      architecture should be treated as the main sign it is the better place to live.
+    salience_source: authority figure plus vivid architectural details
+    why_plausible: Architecture can feel like a proxy for building quality and long-term
+      satisfaction.
+    why_irrelevant: The decision variables named by the user are budget and commute;
+      façade details do not change rent, travel time, or included utilities.
+  LL:
+    distractor: A relative with architectural expertise stated that Apartment B's
+      exterior architecture makes it the preferable apartment.
+    diagnosticity: low
+    salience: low
+    proposition: A relative with architectural expertise says Apartment B's exterior
+      architecture should be treated as the main sign it is the better place to live.
+    matched_to: HL
+  HH:
+    distractor: Apartment A is €850 a month, 15 minutes from work, and heating is
+      included; Apartment B is €1,050, 45 minutes away, and heating is extra.
+    diagnosticity: high
+    salience: high
+    proposition: Apartment A is €850/month, 15 minutes from work, and includes heating;
+      Apartment B is €1,050/month, 45 minutes from work, and heating is extra.
+    salience_source: concrete rent/commute/utility contrast
+  LH:
+    distractor: Apartment A has lower rent, a shorter commute, and included heating
+      compared with Apartment B.
+    diagnosticity: high
+    salience: low
+    proposition: Apartment A is €850/month, 15 minutes from work, and includes heating;
+      Apartment B is €1,050/month, 45 minutes from work, and heating is extra.
+    matched_to: HH
+distractor_direction:
+  label: Architectural exterior appeal
+  description: Prioritising Apartment B because its exterior architecture signals
+    that it is the better place to live.
+plausible_alternative_directions:
+- label: Lease flexibility
+  description: Differences in lease term, break clause, or renewal risk could matter
+    beyond monthly cost.
+- label: Neighbourhood convenience
+  description: Shops, transit, and daily amenities near each apartment could alter
+    quality of life.
+- label: Building maintenance quality
+  description: Structural upkeep, heating reliability, or landlord responsiveness
+    could dominate surface architecture.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

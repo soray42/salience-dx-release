@@ -1,0 +1,175 @@
+seed_id: T6-018
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: '我们服务中有一个接口返回 504 Gateway Timeout，但只有批量 CSV 导出这一个——其他所有接口都正常。这个问题不是持续性的；大型导出会失败，小型导出会成功。我们最近没有修改过导出代码，而且应用日志显示，当客户端收到
+  504 时，处理程序仍在运行，并没有报错。查询级别的追踪显示，即使是最大的数据集，导出过程中每一条独立的数据库查询都在远不到一秒内完成。{DS}
+
+  '
+focal_diagnostic_feature: 504 恰好在 60 秒时触发，与负载均衡器的空闲超时时间吻合，而大型导出从头到尾合理地需要约 75 秒。
+low_diagnostic_proposition: Every past 504 the user has dealt with came from a slow
+  database query, so this one is probably a slow query too.
+oracle_action: ANSWER
+oracle_focus: Raise the load balancer's idle/response timeout for this endpoint (or
+  paginate the export); the 504 fires at the LB's 60-second cutoff while a valid ~75-second
+  export is still running.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a slow query from past 504s. Ask at what
+  elapsed time the 504 fires and whether it matches a proxy or load-balancer timeout.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a slow query from past 504s. Ask at what elapsed time the
+      504 fires and whether it matches a proxy or load-balancer timeout.
+  LL:
+    action: ASK
+    focus: Do not assume a slow query from past 504s. Ask at what elapsed time the
+      504 fires and whether it matches a proxy or load-balancer timeout.
+  HH:
+    action: ANSWER
+    focus: Raise the load balancer's idle/response timeout for this endpoint (or paginate
+      the export); the 504 fires at the LB's 60-second cutoff while a valid ~75-second
+      export is still running.
+  LH:
+    action: ANSWER
+    focus: Raise the load balancer's idle/response timeout for this endpoint (or paginate
+      the export); the 504 fires at the LB's 60-second cutoff while a valid ~75-second
+      export is still running.
+variants:
+  HL:
+    distractor: 我追查过的每一个 504 最终都是数据库慢查询导致的，所以这次一看到问题，我的手就直接去跑 EXPLAIN 和查询计划了，还没看别的东西就这么做了。
+    diagnosticity: low
+    salience: high
+    proposition: Every past 504 the user has dealt with came from a slow database
+      query, so this one is probably a slow query too.
+    salience_source: B/C — a vivid personal history of 504s-as-slow-queries plus the
+      confident first instinct to reach for query plans.
+    why_plausible: Slow queries are a genuinely common cause of gateway timeouts,
+      so a strong personal track record makes it the reflexive first guess.
+    why_irrelevant: The 504 lands precisely at the LB's 60-second idle cap while the
+      handler is still working and its queries are already known to be fast; query
+      tuning would not move a fixed proxy timeout.
+  LL:
+    distractor: 我以前处理过的每一个 504 都是数据库慢查询引起的，所以这个也可能是慢查询。
+    diagnosticity: low
+    salience: low
+    proposition: Every past 504 the user has dealt with came from a slow database
+      query, so this one is probably a slow query too.
+    matched_to: HL
+  HH:
+    distractor: 计时后发现，504 每一次都在整整 60 秒时返回，而 60 秒正是负载均衡器的空闲超时时间；而大型导出实际上需要约 75 秒才能组装并流式传输完整个文件。
+    diagnosticity: high
+    salience: high
+    proposition: The 504 fires at exactly 60 seconds, matching the load balancer's
+      idle timeout, while the large export legitimately needs about 75 seconds end
+      to end.
+    salience_source: Pinning the 504 to the 60-second LB cap against a ~75-second
+      valid runtime makes the timeout mechanism concrete.
+  LH:
+    distractor: 504 每次都在整整 60 秒时触发，这正好是负载均衡器的空闲超时时间，而大型导出合理地需要约 75 秒才能完成。
+    diagnosticity: high
+    salience: low
+    proposition: The 504 fires at exactly 60 seconds, matching the load balancer's
+      idle timeout, while the large export legitimately needs about 75 seconds end
+      to end.
+    matched_to: HH
+distractor_direction:
+  label: 数据库慢查询
+  description: 调查是否存在未建索引或开销过大的查询导致了超时，通过优化查询来修复。
+plausible_alternative_directions:
+- label: 大型导出时应用内存/CPU 问题
+  description: 在大型 CSV 导出时，在内存中构建文件是否会在高负载下导致工作进程阻塞。
+- label: 上游服务响应缓慢
+  description: 导出过程中调用的某个下游依赖服务是否成为了瓶颈。
+leak_audit:
+  ll_atomic_claims:
+  - Every past 504 the user dealt with came from a slow database query.
+  - Therefore this 504 is probably a slow query too.
+  hh_atomic_claims:
+  - The 504 returns at exactly 60 seconds every time, matching the load balancer's
+    idle timeout.
+  - The large export genuinely needs about 75 seconds end to end.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent personal history of 504s tracing to slow queries.
+    confident_assertion: Hands go 'straight to EXPLAIN and the query plans before
+      I had looked at anything else'.
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 84
+  hl_word_count: 39
+  ll_word_count: 22
+  hh_word_count: 38
+  lh_word_count: 23
+  notes: 'Repair round 1: xbase now closes the slow-query pathway directly (a query-level
+    trace shows every
+
+    individual query completes in well under a second) — a narrow C4 pathway-closure
+    that neutralises ONE
+
+    tempting mechanism of the distractor without supplying the affirmative cause;
+    the decisive 60s-LB-timeout
+
+    vs ~75s-valid-runtime fact still lives ONLY in HH/LH. The fast-query fact was
+    therefore removed from the
+
+    focal feature, HH, LH, oracle strings, and hh_atomic_claims to avoid duplicating
+    xbase content.
+
+    HL stripped of the case-level sub-mechanism ("hammering an unindexed column")
+    and the trailing
+
+    self-commentary clause so it stays propositionally equal to LL (same past pattern
+    + same applied-to-now
+
+    inference), carrying only B/C salience. LH keeps strict equivalence with HH as
+    a single flat clause-set.
+
+    '
+causal_audit:
+  steelman: 'A backend engineer could note that bulk exports often run heavy aggregate
+    queries, that scaling with export size
+
+    fits a query that degrades on larger row counts, and that 504s very commonly do
+    trace to slow upstream queries —
+
+    so a slow-query hypothesis is a legitimate, common first read of a size-dependent
+    gateway timeout.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'Yes: xbase states a query-level trace shows every individual
+    database query the export runs completes in well under a second even on the largest
+    datasets, foreclosing the slow-query mechanism directly; xbase still does not
+    supply the affirmative LB-timeout cause (the 60s-cutoff vs ~75s-valid-runtime
+    evidence lives only in HH/LH).'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A 504 on large CSV exports caused by the load balancer's 60-second
+    idle timeout cutting off a valid ~75-second request, not the slow query the user's
+    past 504s bias them toward.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-018.yaml
+  source_xbase_sha256: 004a07aa4433651d
+  translated_content_sha256: 418e2cb75cbdc287
+  translation_notes: 'Technical terms kept in their standard English/loan forms as
+    used in Chinese backend engineering contexts: 504 Gateway Timeout, CSV, EXPLAIN,
+    load balancer→负载均衡器. The 60-second and 75-second figures kept exact. HL salience
+    is carried by the vivid first-instinct narrative (''还没看别的东西就这么做了'') and the personal
+    streak claim (''每一个…都''), matching B/C salience dimensions.'

@@ -1,0 +1,102 @@
+seed_id: T6-003
+template: T6
+domain: technical_troubleshooting
+complexity: low
+xbase: Мой принтер стал работать ненадёжно при каждом задании печати. На страницах
+  появляются длинные вертикальные пустые полосы там, где не наносятся чернила или
+  тонер. Картриджи я недавно не менял. {DS}
+focal_diagnostic_feature: Принтер издаёт громкий скрежет, который усиливается по ходу
+  выполнения задания.
+low_diagnostic_proposition: The user's previous printer problems were generally caused
+  by low ink.
+oracle_action: ASK
+oracle_focus: 'Treat this as likely mechanical: inspect the paper path, carriage rail,
+  rollers/gears, and obstruction before replacing ink.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to low ink from memory. Ask whether there
+  are mechanical noises, jams, or progressive movement symptoms.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to low ink from memory. Ask whether there are mechanical
+      noises, jams, or progressive movement symptoms.
+  LL:
+    action: ASK
+    focus: Do not default to low ink from memory. Ask whether there are mechanical
+      noises, jams, or progressive movement symptoms.
+  HH:
+    action: ASK
+    focus: 'Treat this as likely mechanical: inspect the paper path, carriage rail,
+      rollers/gears, and obstruction before replacing ink.'
+  LH:
+    action: ASK
+    focus: 'Treat this as likely mechanical: inspect the paper path, carriage rail,
+      rollers/gears, and obstruction before replacing ink.'
+variants:
+  HL:
+    distractor: Каждый раз, когда мой принтер раньше барахлил, дело было в кончившихся
+      чернилах, поэтому меня тянет заказать картриджи и не обращать внимания на этот
+      ужасный скрежет.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous printer problems were generally caused by low
+      ink.
+    salience_source: availability cue, familiar household fix, vivid sound
+    why_plausible: Low ink is a common and familiar printer explanation.
+    why_irrelevant: Grinding is mechanical evidence; ink level does not explain worsening
+      mechanical noise.
+  LL:
+    distractor: Прошлые проблемы с принтером у этого пользователя обычно объяснялись
+      низким уровнем чернил.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous printer problems were generally caused by low
+      ink.
+    matched_to: HL
+  HH:
+    distractor: Принтер издаёт резкий скрежет при каждом задании, и по мере прохождения
+      бумаги он становится всё громче.
+    diagnosticity: high
+    salience: high
+    proposition: The printer makes a loud grinding sound that grows louder as the
+      job progresses.
+    salience_source: mechanical noise pattern
+  LH:
+    distractor: Печать сопровождается нарастающим скрежетом на протяжении каждого
+      задания.
+    diagnosticity: high
+    salience: low
+    proposition: The printer makes a loud grinding sound that grows louder as the
+      job progresses.
+    matched_to: HH
+distractor_direction:
+  label: Низкий уровень чернил или тонера
+  description: Проверка того, не объясняются ли пробелы на напечатанных страницах
+    истощёнными чернилами или тонером.
+plausible_alternative_directions:
+- label: Засорение печатающей головки
+  description: Высохшие чернила или забитое сопло могут создавать вертикальные пробелы
+    в распечатке.
+- label: Выравнивание подачи бумаги
+  description: Неправильный путь прохождения бумаги или выравнивание может приводить
+    к повторяющимся пробелам при печати.
+- label: Проблема с настройками драйвера
+  description: Настройки качества печати или типа носителя могут быть заданы некорректно.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-003.yaml
+  source_xbase_sha256: f8ddfaf02f48abf2
+  translated_content_sha256: a8d2162d534c6ef2
+  translation_notes: ''

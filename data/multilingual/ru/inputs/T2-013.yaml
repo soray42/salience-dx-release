@@ -1,0 +1,231 @@
+seed_id: T2-013
+template: T2
+domain: technical_troubleshooting
+complexity: high
+xbase: На прошлой неделе наш CI-конвейер начал получать ошибки HTTP 503 «SlowDown»
+  при каждой загрузке артефактов в облачный объектный хранилище. Название бакета и
+  IAM-учётные данные не изменились, то есть никаких изменений на уровне аккаунта не
+  происходило. Троттлинг впервые появился в тот самый день, когда компания публично
+  объявила о ребрендинге — новое название, новый логотип — и с тех пор не прекращается.
+  {DS}
+focal_diagnostic_feature: Две недели назад конвейер был рефакторинг-переработан для
+  распределения по 32 параллельным тестовым шардам, что кратно увеличило количество
+  одновременных PUT-запросов на один префикс — до уровня, превышающего стандартный
+  лимит частоты запросов на префикс в аккаунте облачного хранилища.
+low_diagnostic_proposition: 'The upload throttling began because of the company''s
+  rebrand announcement.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Investigate the per-prefix PUT request rate introduced by the 32-shard
+  parallelism refactor; add request-rate-aware retry/backoff, spread uploads across
+  multiple prefixes, or request a quota increase from the cloud provider.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Ask for evidence of what changed in the CI pipeline
+  or cloud account around the time throttling began; note that a rebrand announcement
+  (new name/logo) with unchanged bucket names and credentials has no infrastructure
+  pathway to cause storage throttling, so the timing is coincidental.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Ask for evidence of what changed in the CI pipeline or cloud account around
+      the time throttling began; note that a rebrand announcement (new name/logo)
+      with unchanged bucket names and credentials has no infrastructure pathway to
+      cause storage throttling, so the timing is coincidental.
+  LL:
+    action: ASK
+    focus: Ask for evidence of what changed in the CI pipeline or cloud account around
+      the time throttling began; note that a rebrand announcement (new name/logo)
+      with unchanged bucket names and credentials has no infrastructure pathway to
+      cause storage throttling, so the timing is coincidental.
+  HH:
+    action: ANSWER
+    focus: Investigate the per-prefix PUT request rate introduced by the 32-shard
+      parallelism refactor; add request-rate-aware retry/backoff, spread uploads across
+      multiple prefixes, or request a quota increase from the cloud provider.
+  LH:
+    action: ANSWER
+    focus: Investigate the per-prefix PUT request rate introduced by the 32-shard
+      parallelism refactor; add request-rate-aware retry/backoff, spread uploads across
+      multiple prefixes, or request a quota increase from the cloud provider.
+variants:
+  HL:
+    distractor: Камиль, наш руководитель по коммуникациям, которая вела запуск ребрендинга,
+      сказала мне, что видела именно такую картину раньше и уверена, что объявление
+      о ребрендинге спровоцировало троттлинг.
+    diagnosticity: low
+    salience: high
+    proposition: The upload throttling began because of the company's rebrand announcement.
+    salience_source: 'A (source credibility): Camille is named, role-anchored as communications
+      lead, and positioned as someone with pattern-recognition authority ("seen this
+      exact pattern before"). B (narrative coherence): clean professional register.
+      C (confident assertion): "is confident … triggered."
+
+      '
+    why_plausible: 'A named colleague with direct rebrand involvement asserting a
+      causal link with confident framing and apparent prior-pattern knowledge can
+      cause a busy responder to treat the temporal coincidence as an explained fact
+      rather than an uninvestigated correlation.
+
+      '
+    why_irrelevant: 'A communications-role rebrand (new name, new logo) touches no
+      cloud infrastructure; the xbase explicitly confirms bucket name and IAM credentials
+      are unchanged, closing every credential/endpoint pathway. Throttling is a server-side
+      rate-enforcement response to request volume or size, which a marketing announcement
+      cannot alter.
+
+      '
+  LL:
+    distractor: Коллега предположил, что троттлинг при загрузке начался из-за объявления
+      о ребрендинге компании.
+    diagnosticity: low
+    salience: low
+    proposition: The upload throttling began because of the company's rebrand announcement.
+    matched_to: HL
+  HH:
+    distractor: Рефакторинг CI две недели назад распределил тестовые задания по 32
+      параллельным шардам, каждый из которых одновременно загружает артефакты; облачное
+      хранилище применяет лимиты частоты запросов на один префикс, и это распараллеливание
+      почти наверняка вывело конвейер за этот порог.
+    diagnosticity: high
+    salience: high
+    proposition: 'The pipeline was refactored two weeks ago to fan out across 32 parallel
+      test shards, multiplying concurrent PUT requests per prefix to a level that
+      exceeds the cloud storage account''s default per-prefix request rate limit.
+
+      '
+    salience_source: 'C (confident assertion): "almost certainly pushed past that
+      threshold." D (concrete believable detail): specific shard count (32) and technical
+      mechanism (per-prefix request rate limit) stated precisely.
+
+      '
+  LH:
+    distractor: Конвейер теперь запускает 32 параллельных шарда, каждый из которых
+      одновременно загружает артефакты, что может превышать лимит частоты запросов
+      к облачному хранилищу на один префикс.
+    diagnosticity: high
+    salience: low
+    proposition: 'The pipeline was refactored two weeks ago to fan out across 32 parallel
+      test shards, multiplying concurrent PUT requests per prefix to a level that
+      exceeds the cloud storage account''s default per-prefix request rate limit.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: объявление о ребрендинге вызвало троттлинг
+  description: Гипотеза о том, что публичное объявление о ребрендинге компании (новое
+    название и логотип) является непосредственной причиной внезапного появления троттлинга
+    при загрузке артефактов в CI.
+plausible_alternative_directions:
+- label: снижение квоты облачным провайдером
+  description: Облачный провайдер хранилища самостоятельно снизил квоту частоты запросов
+    или уровень аккаунта независимо от каких-либо изменений в конвейере, что привело
+    к троттлингу, случайно совпавшему по времени.
+- label: рост размера артефактов
+  description: Отдельные артефакты со временем стали крупнее в последних сборках,
+    что привело к превышению лимитов пропускной способности или размера объектов,
+    применяемых провайдером хранилища.
+leak_audit:
+  ll_atomic_claims:
+  - The upload throttling began because of the company's rebrand announcement.
+  hl_salience_dimensions:
+    source_credibility: Camille, named communications lead who ran the rebrand launch,
+      with claimed prior-pattern experience.
+    narrative_coherence: Single clean sentence, professional register, no interruptions
+      or tangents.
+    confident_assertion: '''is confident … triggered the throttling'' — no hedging.'
+    concrete_detail: Role anchor (communications lead) and setting anchor (ran the
+      rebrand launch) about the source, not the case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 26
+  ll_word_count: 13
+  notes: 'No tunable values (no specific request rates or counts in distractor).
+
+    No effort descriptors ("after two days" etc. avoided).
+
+    No severity claims about the throttling''s impact.
+
+    No sensory/setting color outside source identification.
+
+    The phrase "seen this exact pattern before" is a credibility anchor about
+
+    the source''s experience, not a case-content claim — borderline call, retained
+
+    because it attributes knowledge to the speaker rather than adding facts about
+
+    the current incident.
+
+    '
+causal_audit:
+  steelman: 'A company rebrand can involve more than a logo change: it may include
+    DNS
+
+    cutover to a new domain, CDN reconfiguration, or — most relevantly — a
+
+    cloud account reorganization (moving billing accounts, changing org
+
+    hierarchies, or retagging resources) that could inadvertently reset quota
+
+    tiers or change the effective rate limits on a storage bucket. If the rebrand
+
+    involved any cloud-account-level restructuring, the throttling could be a
+
+    direct consequence. Additionally, if the CI pipeline resolves the storage
+
+    endpoint via a custom domain that was updated as part of the rebrand, the
+
+    new endpoint might land on a storage backend with stricter per-client limits.
+
+    A competent SRE told to investigate the timing coincidence should at minimum
+
+    check whether any cloud account or billing changes were made alongside the
+
+    brand launch.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"The bucket name and IAM credentials are unchanged" explicitly
+    closes the credential/account-restructuring pathway and the endpoint-change pathway:
+    if credentials are the same, the account tier and quota context are the same;
+    if the bucket name is the same, no DNS/CDN reconfiguration redirected the upload
+    target. The phrase "nothing in our storage config changed" is implied by these
+    two closures.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 2
+  topic_brief: 'CI artifact uploads to cloud object storage suddenly being throttled.
+    Coincidence: started right after the company announced a rebrand (new name and
+    logo). Rebrand must have no mechanism; close the tempting pathway (bucket names
+    and credentials unchanged) in xbase.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-013.yaml
+  source_xbase_sha256: e9a267db97cd381b
+  translated_content_sha256: 6c0d73ba3d341876
+  translation_notes: Technical terms CI, HTTP 503, SlowDown, IAM, PUT, prefix kept
+    as-is per instrument. 'Шард' (shard) is standard Russian IT loan-word. Source
+    name 'Камиль' is a Russian-plausible name that preserves the named/role-anchored
+    salience property of HL. 'Рефакторинг' used as standard Russian IT term. No culture-bound
+    salience cues.

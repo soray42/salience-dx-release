@@ -1,0 +1,179 @@
+seed_id: T6-033
+template: T6
+domain: open_qa
+complexity: low
+xbase: I have been offered a new position at a company I'm excited about, and my instinct
+  is to resign within the next few weeks. My current employer has been good to me
+  and I have no complaints about the team. The new role seems to offer better growth.
+  {DS}
+focal_diagnostic_feature: The current employer's equity vesting schedule shows a 4-year
+  cliff that lands in 7 weeks, and resignation before that date forfeits the full
+  $28,000 grant.
+low_diagnostic_proposition: The user's past quick job changes have generally led to
+  better outcomes, suggesting this move will likely work out too.
+oracle_action: ANSWER
+oracle_focus: Wait the 7 weeks for the equity cliff to vest, then resign or negotiate
+  a delayed start date with the new employer; the $28,000 grant forfeiture is a concrete,
+  recoverable cost that the past-pattern heuristic cannot weigh.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not rely on past job-hop outcomes as the decision
+  rule; ask about equity vesting schedules, notice period obligations, and whether
+  a delayed start can be negotiated before advising on timing.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not rely on past job-hop outcomes as the decision rule; ask about equity
+      vesting schedules, notice period obligations, and whether a delayed start can
+      be negotiated before advising on timing.
+  LL:
+    action: ASK
+    focus: Do not rely on past job-hop outcomes as the decision rule; ask about equity
+      vesting schedules, notice period obligations, and whether a delayed start can
+      be negotiated before advising on timing.
+  HH:
+    action: ANSWER
+    focus: Wait the 7 weeks for the equity cliff to vest, then resign or negotiate
+      a delayed start date with the new employer; the $28,000 grant forfeiture is
+      a concrete, recoverable cost that the past-pattern heuristic cannot weigh.
+  LH:
+    action: ANSWER
+    focus: Wait the 7 weeks for the equity cliff to vest, then resign or negotiate
+      a delayed start date with the new employer; the $28,000 grant forfeiture is
+      a concrete, recoverable cost that the past-pattern heuristic cannot weigh.
+variants:
+  HL:
+    distractor: Every job change I've made on a quick instinct has ended somewhere
+      better — usually within a few months. This one has that same pull, so I expect
+      the pattern to hold.
+    diagnosticity: low
+    salience: high
+    proposition: The user's past quick job changes have generally led to better outcomes,
+      suggesting this move will likely work out too.
+    salience_source: B/C — vivid personal history told in first person with a confident
+      expectation that the pattern repeats; the chronology (quick move → noticeably
+      better) is clean and assertive.
+    why_plausible: A consistent track record of successful moves is genuine evidence
+      of judgment; a busy reader might take the pattern as predictive signal for this
+      decision.
+    why_irrelevant: Past moves did not involve an imminent equity cliff; the pattern
+      cannot weigh a concrete, time-bounded financial forfeiture that disappears in
+      7 weeks.
+  LL:
+    distractor: My past quick job changes have generally led to better positions,
+      suggesting this move will likely work out too.
+    diagnosticity: low
+    salience: low
+    proposition: The user's past quick job changes have generally led to better outcomes,
+      suggesting this move will likely work out too.
+    matched_to: HL
+  HH:
+    distractor: My vesting schedule shows a 4-year cliff landing in 7 weeks — that
+      grant is worth $28,000 at the current share price, and resigning before then
+      forfeits every dollar.
+    diagnosticity: high
+    salience: high
+    proposition: The current employer's equity vesting schedule shows a 4-year cliff
+      that lands in 7 weeks, and resignation before that date forfeits the full $28,000
+      grant.
+    salience_source: B/C — precise numbers ($28,000, 7 weeks) delivered in a vivid,
+      concrete first-person statement with a definitive consequence; the chronological
+      tightness makes the cost viscerally legible.
+  LH:
+    distractor: The 4-year equity cliff vests in 7 weeks; resignation before that
+      date forfeits the full $28,000 grant.
+    diagnosticity: high
+    salience: low
+    proposition: The current employer's equity vesting schedule shows a 4-year cliff
+      that lands in 7 weeks, and resignation before that date forfeits the full $28,000
+      grant.
+    matched_to: HH
+distractor_direction:
+  label: past-pattern job-hop optimism
+  description: Inferring that this job change will work out well because previous
+    quick moves consistently led to better outcomes, and this situation feels similar.
+plausible_alternative_directions:
+- label: new-role career trajectory
+  description: Evaluating whether the better stated growth prospects at the new company
+    justify moving now, independent of any vesting consideration.
+- label: notice period and transition logistics
+  description: Assessing whether the user's notice-period obligations or the new employer's
+    start-date flexibility create timing constraints.
+- label: team and manager fit at new company
+  description: Investigating whether the user has enough information about the new
+    team and reporting line to judge cultural and managerial fit.
+leak_audit:
+  ll_atomic_claims:
+  - User's past quick job changes have generally led to better positions.
+  - The past pattern suggests the current move will likely work out too.
+  hh_atomic_claims:
+  - Vesting schedule shows a 4-year cliff landing in 7 weeks.
+  - The grant is worth $28,000 at the current share price.
+  - Resigning before the cliff date forfeits the full grant.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, no external source cited.
+    narrative_coherence: 'Clean chronology: quick instinct → somewhere better → within
+      months; applied assertively to the present situation.'
+    confident_assertion: 'Confident first-person expectation: ''I expect the pattern
+      to hold''.'
+    concrete_detail: N/A — detail is about past outcomes (salience mechanism), not
+      about the source's setting or identity.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 48
+  hl_word_count: 31
+  ll_word_count: 19
+  hh_word_count: 28
+  lh_word_count: 17
+  notes: 'Removed "fourth year at my current employer" from xbase because it lets
+    a competent
+
+    practitioner infer an imminent 4-year cliff (C4 violation). Replaced with a plain
+
+    statement of tenure satisfaction that gives no vesting hint. The HL availability
+
+    inference ("I expect the pattern to hold") is propositional content and appears
+    in
+
+    LL flatly as "suggesting this move will likely work out too" per T6/C1 rules.
+
+    No forbidden categories present in HL; all detail is about past-outcome pattern,
+
+    not case-specific investigation effort or severity.
+
+    '
+causal_audit:
+  steelman: 'A consistent personal track record of quick moves leading to better outcomes
+    is genuine
+
+    evidence of good intuitive judgment in career decisions. A senior career advisor
+    might
+
+    reasonably treat it as a Bayesian prior: if the user has repeatedly made correct
+
+    assessments of opportunity, the prior for this move being good is elevated. One
+    could
+
+    argue the pattern reflects real skill at reading opportunity signals, making it
+    a
+
+    defensible input to the decision.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — the past-pattern heuristic is ruled out not by xbase
+    but by the focal evidence: the 4-year cliff in 7 weeks is a concrete financial
+    forfeiture the past-pattern inference cannot weigh, because the prior moves did
+    not involve any imminent vesting milestone.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User tempted by past job-hop success pattern considers resigning immediately,
+    but is 7 weeks from a $28,000 equity cliff that resignation would forfeit entirely.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,152 @@
+seed_id: T3-085
+template: T3
+domain: open_qa
+complexity: low
+xbase: My road bike rear tyre went flat twice in four days. Both times I found a pinhole
+  in the same area of the inner tube. I patched the first puncture myself and the
+  tube held air overnight but deflated again by morning. {DS}
+focal_diagnostic_feature: A small glass shard remains embedded in the tyre carcass
+  directly at the location corresponding to both pinhole puncture sites.
+low_diagnostic_proposition: An experienced coach advises that patches are less reliable
+  under load than replacement and inner tubes should always be swapped.
+oracle_action: ANSWER
+oracle_focus: Remove the embedded glass shard from the tyre carcass before fitting
+  any tube; until the foreign body is extracted, every tube placed inside will be
+  re-punctured at the same site.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let the replace-always rule decide the fix. Ask
+  whether the tyre carcass has been inspected for an embedded object at the puncture
+  location.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let the replace-always rule decide the fix. Ask whether the tyre
+      carcass has been inspected for an embedded object at the puncture location.
+  LL:
+    action: ASK
+    focus: Do not let the replace-always rule decide the fix. Ask whether the tyre
+      carcass has been inspected for an embedded object at the puncture location.
+  HH:
+    action: ANSWER
+    focus: Remove the embedded glass shard from the tyre carcass before fitting any
+      tube; until the foreign body is extracted, every tube placed inside will be
+      re-punctured at the same site.
+  LH:
+    action: ANSWER
+    focus: Remove the embedded glass shard from the tyre carcass before fitting any
+      tube; until the foreign body is extracted, every tube placed inside will be
+      re-punctured at the same site.
+variants:
+  HL:
+    distractor: Dariush, a bike fitter who has worked with amateur racers for fifteen
+      years, says he never patches tubes and always replaces them outright, because
+      a patched tube is more likely to fail under load than a fresh one.
+    diagnosticity: low
+    salience: high
+    proposition: An experienced coach advises that patches are less reliable under
+      load than replacement and inner tubes should always be swapped.
+    salience_source: 'A: domain-matched expert (bike fitter, fifteen years with racers);
+      C: confident universal framing (''never'', ''always''); B: clean professional
+      register'
+    why_plausible: The generic advice about patch reliability is a real cycling debate;
+      a reader could accept the authority's view as the reason the patched tube failed.
+    why_irrelevant: The authority is applying a general preference, not analysing
+      this tyre — the issue is a retained foreign body, not patch quality; a new tube
+      will fail identically.
+  LL:
+    distractor: An experienced cycling coach advised that patches are less reliable
+      than replacement and tubes should always be swapped.
+    diagnosticity: low
+    salience: low
+    proposition: An experienced coach advises that patches are less reliable under
+      load than replacement and inner tubes should always be swapped.
+    matched_to: HL
+  HH:
+    distractor: Running my finger carefully around the inside of the tyre carcass,
+      I feel a small glass shard still embedded in the rubber, roughly two millimetres
+      deep, sitting right where both pinhole sites are located.
+    diagnosticity: high
+    salience: high
+    proposition: A small glass shard remains embedded in the tyre carcass directly
+      at the location corresponding to both pinhole puncture sites.
+    salience_source: 'B: vivid first-person tactile inspection with precise depth
+      and spatial correspondence; C: declarative present-tense findings'
+  LH:
+    distractor: A small glass fragment is embedded in the tyre carcass at the location
+      matching both puncture sites.
+    diagnosticity: high
+    salience: low
+    proposition: A small glass shard remains embedded in the tyre carcass directly
+      at the location corresponding to both pinhole puncture sites.
+    matched_to: HH
+distractor_direction:
+  label: Patch reliability failure
+  description: Investigating whether the patched tube failed because patches are structurally
+    weaker than intact tubes under riding load.
+plausible_alternative_directions:
+- label: Valve core leak
+  description: A loose or cracked valve core can cause slow overnight deflation that
+    looks like a patched-tube failure.
+- label: Tyre bead seating
+  description: An incorrectly seated tyre bead can pinch the tube at the rim
+  causing re-puncture independent of the original hole.: null
+leak_audit:
+  ll_atomic_claims:
+  - An experienced cycling coach stated patches are less reliable than replacement
+    under load.
+  - The advice is that inner tubes should always be replaced rather than patched.
+  hh_atomic_claims:
+  - A glass shard is embedded in the tyre carcass.
+  - The shard is approximately two millimetres deep in the rubber.
+  - The shard's position corresponds to the location of both pinhole puncture sites.
+  hl_salience_dimensions:
+    source_credibility: Dariush is a bike fitter with fifteen years of experience
+      working with amateur racers — domain-matched, quantified tenure
+    narrative_coherence: Clean declarative report, professional tone
+    confident_assertion: '''never'' and ''always'' — categorical universal claims'
+    concrete_detail: N/A — detail is about source tenure and generic category, not
+      this case
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 42
+  hl_word_count: 38
+  ll_word_count: 18
+  hh_word_count: 34
+  lh_word_count: 18
+  notes: 'Authority''s claim is genuinely debated in cycling (patches vs fresh tubes);
+    it is a real practitioner view that does not engage the specific repeated-location
+    evidence.
+
+    Glass shard detail is structurally decisive: it rules out patch failure as the
+    cause, showing every tube in this tyre will fail at the same spot regardless of
+    patch quality.
+
+    '
+causal_audit:
+  steelman: 'Vulcanised patches, if applied to a high-stress zone near the tread centre,
+    can develop edge lift under repeated flexing, especially if the tube was not fully
+    deflated and roughened before patching. It is plausible that the patched area
+    separated overnight under residual stress. However, this mechanism would produce
+    a deflation at the patch margin and would not explain why the pinhole location
+    is the same in a separately placed tube — nor why two distinct flats occurred
+    at the identical spot. The spatial coincidence points to a retained object, not
+    patch failure mechanics.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the distractor concerns patch integrity, which is
+    a generic quality debate with no case-specific mechanism explaining repeated same-location
+    flats
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Recurring rear tyre flats caused by an embedded glass shard in the
+    carcass, with authority distractor recommending always replacing tubes over patching.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

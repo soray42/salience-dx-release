@@ -1,0 +1,13 @@
+{
+  "seed_id": "T6-012",
+  "my_own_diagnosis": "The router traffic monitor shows a separate device saturating the household uplink during exactly the problematic prime-time hours; the TV itself is not the source of congestion, so the correct action is to investigate and limit that other device's bandwidth usage — a factory reset of the TV cannot free bandwidth consumed by a different device.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature (router data attributing uplink saturation to another device during exactly those hours) unambiguously identifies an exogenous cause and closes the factory-reset pathway without residual ambiguity.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HH/LH correctly direct to the other device as root cause; HL/LL correctly withhold the distractor and ask for more information; cell_oracles map exactly to the expected focal/low-diagnostic oracle text.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

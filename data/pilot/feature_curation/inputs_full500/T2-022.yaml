@@ -1,0 +1,159 @@
+seed_id: T2-022
+template: T2
+domain: open_qa
+complexity: medium
+xbase: My car's fuel economy has gotten noticeably worse over the past few weeks and
+  I'm starting to think about trading it in for something newer. I am filling up far
+  more often than I used to for the same commute. The engine runs smoothly, there
+  are no warning lights, and I have not changed where or how far I drive. It just
+  drinks fuel now. {DS}
+focal_diagnostic_feature: A tyre-pressure gauge reads about 22 psi on all four tyres
+  against the 35 psi on the door placard, and the underinflation noticeably increases
+  rolling resistance and fuel use.
+low_diagnostic_proposition: The drop in fuel economy began right after new seat covers
+  and a steering-wheel cover were fitted.
+oracle_action: ANSWER
+oracle_focus: Do not trade in the car; inflate all four tyres to the placard pressure
+  first, because roughly 22 psi against a 35 psi spec sharply raises rolling resistance
+  and fuel consumption.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect new seat or wheel covers to fuel economy.
+  Ask about tyre pressures, recent maintenance, and any drivetrain or tyre changes.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect new seat or wheel covers to fuel economy. Ask about tyre
+      pressures, recent maintenance, and any drivetrain or tyre changes.
+  LL:
+    action: ASK
+    focus: Do not connect new seat or wheel covers to fuel economy. Ask about tyre
+      pressures, recent maintenance, and any drivetrain or tyre changes.
+  HH:
+    action: ANSWER
+    focus: Do not trade in the car; inflate all four tyres to the placard pressure
+      first, because roughly 22 psi against a 35 psi spec sharply raises rolling resistance
+      and fuel consumption.
+  LH:
+    action: ANSWER
+    focus: Do not trade in the car; inflate all four tyres to the placard pressure
+      first, because roughly 22 psi against a 35 psi spec sharply raises rolling resistance
+      and fuel consumption.
+variants:
+  HL:
+    distractor: I realised the thirst started right after I redid the interior — new
+      padded seat covers front and back and a leather steering-wheel cover, all fitted
+      the same afternoon. The next tank vanished way faster than usual, and it has
+      been like that ever since.
+    diagnosticity: low
+    salience: high
+    proposition: The drop in fuel economy began right after new seat covers and a
+      steering-wheel cover were fitted.
+    salience_source: B/C — a confident first-person timeline pinning the change to
+      a specific, recent thing done to the car.
+    why_plausible: It was the most recent deliberate change to the car, so it is the
+      natural event to blame when something shifts afterward.
+    why_irrelevant: Seat and wheel covers add negligible weight and touch nothing
+      in the drivetrain or tyres; they cannot move fuel consumption.
+  LL:
+    distractor: The drop in fuel economy began around the time new seat covers and
+      a steering-wheel cover were fitted.
+    diagnosticity: low
+    salience: low
+    proposition: The drop in fuel economy began right after new seat covers and a
+      steering-wheel cover were fitted.
+    matched_to: HL
+  HH:
+    distractor: I finally put a gauge on the tyres and every one reads about 22 psi,
+      while the sticker in the door jamb calls for 35. Tyres that soft drag hard against
+      the road, and that extra rolling resistance alone would explain the engine burning
+      noticeably more fuel.
+    diagnosticity: high
+    salience: high
+    proposition: A tyre-pressure gauge reads about 22 psi on all four tyres against
+      the 35 psi on the door placard, and the underinflation noticeably increases
+      rolling resistance and fuel use.
+    salience_source: The measured 22-vs-35 psi reading makes the underinflation and
+      its fuel cost concrete and quantified.
+  LH:
+    distractor: All four tyres read about 22 psi against a 35 psi door-placard spec,
+      and that underinflation raises rolling resistance and fuel use.
+    diagnosticity: high
+    salience: low
+    proposition: A tyre-pressure gauge reads about 22 psi on all four tyres against
+      the 35 psi on the door placard, and the underinflation noticeably increases
+      rolling resistance and fuel use.
+    matched_to: HH
+distractor_direction:
+  label: Interior-upgrade timing
+  description: Associating the worse fuel economy with the recently fitted seat and
+    steering-wheel covers because the two coincided.
+plausible_alternative_directions:
+- label: Engine/maintenance fault
+  description: Whether a clogged air filter
+  failing sensor: null
+  or overdue service is hurting efficiency.: null
+- label: Fuel-quality or seasonal change
+  description: Whether a fuel change or colder weather is reducing measured economy.
+leak_audit:
+  ll_atomic_claims:
+  - The drop in fuel economy began around the time new seat covers and a steering-wheel
+    cover were fitted.
+  hh_atomic_claims:
+  - A gauge reads about 22 psi on all four tyres.
+  - The door-placard specification is 35 psi.
+  - That underinflation raises rolling resistance and would explain the higher fuel
+    use.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent fitted-covers-then-thirsty-tank timeline.
+    confident_assertion: States the next tank 'vanished way faster than usual'.
+    concrete_detail: Concrete detail about the covers (front/back seats, leather wheel
+      cover, same afternoon) — about the event, not the fuel system.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 44
+  ll_word_count: 18
+  hh_word_count: 47
+  lh_word_count: 22
+  notes: 'T2 coincidence: seat/wheel covers add trivial weight and touch no drivetrain
+    element, so no mechanism for fuel
+
+    economy exists. xbase gives the worse-economy symptom, smooth engine, no warning
+    lights, and unchanged route —
+
+    symptoms only; the measured 22-vs-35 psi tyre reading (decisive) is HH/LH-only.
+    No tunable value leaks into HL.
+
+    '
+causal_audit:
+  steelman: 'A mechanic could note that heavier upholstery adds a little mass and
+    that a thicker wheel cover changes nothing
+
+    aerodynamic — but the added mass from fabric covers is a rounding error against
+    vehicle weight and cannot produce
+
+    a noticeable economy drop, whereas tyres 13 psi under spec measurably increase
+    rolling resistance. The covers have
+
+    no real path to fuel use.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the route and distance are unchanged and the
+    engine runs smoothly with no warning lights, closing the driving-pattern and obvious-fault
+    pathways and leaving the tyre evidence (in HH/LH) decisive.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Worsening car fuel economy caused by all four tyres being underinflated
+    to 22 psi versus a 35 psi spec, coincidentally timed with fitting new seat and
+    wheel covers, prompting a needless trade-in.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

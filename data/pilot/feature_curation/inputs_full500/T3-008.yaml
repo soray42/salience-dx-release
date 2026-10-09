@@ -1,0 +1,94 @@
+seed_id: T3-008
+template: T3
+domain: open_qa
+complexity: high
+xbase: I'm thinking about a part-time evening MBA at a regional school. It costs a
+  lot for me, and I am currently a stable mid-career engineer. I am not trying to
+  move into management or consulting right now. {DS}
+focal_diagnostic_feature: The programme's outcomes are mainly management/consulting
+  transitions, while paying for it would drain the emergency fund and add €20k in
+  loans.
+low_diagnostic_proposition: A senior executive says an MBA should be treated as the
+  main career investment for any professional.
+oracle_action: ANSWER
+oracle_focus: Do not enrol on the current facts; cost and outcome mismatch are too
+  large without a clear target use-case.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept a generic VP endorsement. Ask for target
+  career outcome, programme placement data, and financing impact.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept a generic VP endorsement. Ask for target career outcome,
+      programme placement data, and financing impact.
+  LL:
+    action: ASK
+    focus: Do not accept a generic VP endorsement. Ask for target career outcome,
+      programme placement data, and financing impact.
+  HH:
+    action: ANSWER
+    focus: Do not enrol on the current facts; cost and outcome mismatch are too large
+      without a clear target use-case.
+  LH:
+    action: ANSWER
+    focus: Do not enrol on the current facts; cost and outcome mismatch are too large
+      without a clear target use-case.
+variants:
+  HL:
+    distractor: A VP at my company told me over dinner that an MBA is the single most
+      important career investment any professional can make.
+    diagnosticity: low
+    salience: high
+    proposition: A senior executive says an MBA should be treated as the main career
+      investment for any professional.
+    salience_source: authority title, social setting, universal career claim
+    why_plausible: A VP's career advice sounds like insider knowledge.
+    why_irrelevant: The advice is generic and does not address the user's goals or
+      financing burden.
+  LL:
+    distractor: A senior executive stated that an MBA should be considered the main
+      career investment for professionals.
+    diagnosticity: low
+    salience: low
+    proposition: A senior executive says an MBA should be treated as the main career
+      investment for any professional.
+    matched_to: HL
+  HH:
+    distractor: Most of this programme's reported wins are people moving into management
+      or consulting, which I do not want, and I would drain my emergency fund plus
+      take €20k in loans.
+    diagnosticity: high
+    salience: high
+    proposition: The programme's outcomes are mainly management/consulting transitions,
+      while paying for it would drain the emergency fund and add €20k in loans.
+    salience_source: goal/outcome/financing mismatch
+  LH:
+    distractor: The programme's outcome data centre on tracks the user is not pursuing,
+      and financing requires emergency-fund depletion plus €20k debt.
+    diagnosticity: high
+    salience: low
+    proposition: The programme's outcomes are mainly management/consulting transitions,
+      while paying for it would drain the emergency fund and add €20k in loans.
+    matched_to: HH
+distractor_direction:
+  label: MBA credential value
+  description: Prioritising the MBA as the main career investment because a senior
+    executive says the credential is generally valuable.
+plausible_alternative_directions:
+- label: Employer sponsorship
+  description: Whether the employer will pay part of the tuition or provide schedule
+    support.
+- label: Management-transition goal
+  description: Whether the user has a concrete plan to move into management, consulting,
+    or another MBA-linked path.
+- label: Opportunity cost
+  description: Evening study time, fatigue, and foregone alternatives may outweigh
+    credential value.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

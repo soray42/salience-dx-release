@@ -1,0 +1,178 @@
+seed_id: T6-096
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our nightly PostgreSQL backup cron job has not produced any output files for
+  three days. The job appears in the crontab and the schedule has not been changed.
+  The job runs as a dedicated service account with write access to the backup directory.
+  No error emails were sent, and the script exit code logged to syslog shows zero
+  each time it ran. The cron job header sets a full PATH that covers the PostgreSQL
+  binary directory and has not been edited. {DS}
+focal_diagnostic_feature: The /var/backups partition is at 100% capacity, and the
+  backup script silently discards each backup by catching the ENOSPC write error internally,
+  returning exit code zero, and unlinking the partial output file.
+low_diagnostic_proposition: The user's previous cron job failures were generally attributed
+  to PATH environment stripping causing commands like pg_dump to fail silently.
+oracle_action: ANSWER
+oracle_focus: Free space on /var/backups by archiving or deleting old backup files,
+  then verify the next nightly run produces a complete file; also add disk-space pre-flight
+  checks and alerting to prevent silent future recurrence.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to PATH as the cause from memory; ask
+  for disk utilisation on the backup target partition, a listing of recent backup
+  files, and any ENOSPC errors in system or application logs.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to PATH as the cause from memory; ask for disk utilisation
+      on the backup target partition, a listing of recent backup files, and any ENOSPC
+      errors in system or application logs.
+  LL:
+    action: ASK
+    focus: Do not default to PATH as the cause from memory; ask for disk utilisation
+      on the backup target partition, a listing of recent backup files, and any ENOSPC
+      errors in system or application logs.
+  HH:
+    action: ANSWER
+    focus: Free space on /var/backups by archiving or deleting old backup files, then
+      verify the next nightly run produces a complete file; also add disk-space pre-flight
+      checks and alerting to prevent silent future recurrence.
+  LH:
+    action: ANSWER
+    focus: Free space on /var/backups by archiving or deleting old backup files, then
+      verify the next nightly run produces a complete file; also add disk-space pre-flight
+      checks and alerting to prevent silent future recurrence.
+variants:
+  HL:
+    distractor: Every cron job failure I have debugged before came back to PATH —
+      the cron environment strips it down and tools like pg_dump just silently do
+      nothing when they cannot be found, so that is where I start every time.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous cron job failures were generally attributed to
+      PATH environment stripping causing commands like pg_dump to fail silently.
+    salience_source: B/C — confident first-person generalisation ('every cron job
+      failure'), specific technical mechanism named (PATH stripping, pg_dump), confident
+      resolution framing ('that is where I start every time').
+    why_plausible: PATH-related silent failures are genuinely common in cron; pg_dump
+      specifically requires a correct PATH and the cron environment is a known culprit
+      — this is a textbook first check for cron script debugging.
+    why_irrelevant: xbase confirms the cron header sets a full PATH covering the PostgreSQL
+      binary directory and is unchanged; the PATH pathway is structurally closed.
+      The focal feature additionally shows the partition at 100% capacity with ENOSPC
+      caught internally — a completely different failure mode.
+  LL:
+    distractor: The user's previous cron job failures were generally attributed to
+      PATH environment stripping causing commands like pg_dump to fail silently.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous cron job failures were generally attributed to
+      PATH environment stripping causing commands like pg_dump to fail silently.
+    matched_to: HL
+  HH:
+    distractor: The /var/backups partition is at 100% capacity; the backup script
+      opens the output file, receives ENOSPC, exits zero because it catches the error
+      and returns cleanly, then unlinks the partial file — every backup for three
+      days has been silently discarded.
+    diagnosticity: high
+    salience: high
+    proposition: The /var/backups partition is at 100% capacity, and the backup script
+      silently discards each backup by catching the ENOSPC write error internally,
+      returning exit code zero, and unlinking the partial output file.
+    salience_source: B/C — specific partition path named, specific error code (ENOSPC),
+      precise sequence of events in the script (catch → exit zero → unlink), confident
+      summary claim ('every backup for three days has been silently discarded').
+  LH:
+    distractor: /var/backups is at 100% capacity; the script catches ENOSPC, exits
+      zero, and unlinks the partial file, silently discarding each backup.
+    diagnosticity: high
+    salience: low
+    proposition: The /var/backups partition is at 100% capacity, and the backup script
+      silently discards each backup by catching the ENOSPC write error internally,
+      returning exit code zero, and unlinking the partial output file.
+    matched_to: HH
+distractor_direction:
+  label: PATH environment stripping
+  description: Investigating whether the cron execution environment has a stripped
+    PATH that prevents pg_dump or other required binaries from being found, causing
+    silent failures.
+plausible_alternative_directions:
+- label: Service account permission regression
+  description: A recent permission change on the backup directory or PostgreSQL role
+    may have caused the script to exit cleanly without producing output.
+- label: pg_dump connection failure
+  description: A database configuration change could be causing pg_dump to fail connecting,
+    which the script may suppress without raising a non-zero exit code.
+- label: Cron schedule drift
+  description: A timezone change or DST event on the server could have shifted the
+    cron schedule so the job runs but writes to a different date-stamped path that
+    is not being checked.
+leak_audit:
+  ll_atomic_claims:
+  - The user has debugged previous cron job failures.
+  - Those failures were attributed to PATH environment stripping.
+  - PATH stripping caused tools like pg_dump to fail silently.
+  hh_atomic_claims:
+  - The /var/backups partition is at 100% capacity.
+  - The backup script opens the output file for writing.
+  - The script receives an ENOSPC error.
+  - The script catches the ENOSPC error internally.
+  - The script returns exit code zero after catching the error.
+  - The script unlinks the partial output file.
+  - This behavior has silently discarded every backup for three days.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Tight first-person causal loop — past experience, mechanism
+      explanation, habit established ('that is where I start every time').
+    confident_assertion: '''Every cron job failure'', ''just silently do nothing'',
+      ''that is where I start every time'' — strong universal quantifier with no hedging.'
+    concrete_detail: Specific tool named (pg_dump), specific mechanism named (PATH
+      stripping) — technical precision that sounds like real operational experience.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 81
+  hl_word_count: 39
+  ll_word_count: 20
+  hh_word_count: 40
+  lh_word_count: 20
+  notes: 'T6 availability inference (''so it''s probably the same thing again'') is
+    encoded in ''that is where I start every time'' in HL and implied in LL by ''were
+    generally attributed to PATH environment stripping''. Both contain the past pattern
+    and the offered inference-to-now. xbase mentions syslog exit code zero but not
+    /var/backups capacity — the decisive fact lives only in HH/LH. QC repair: added
+    explicit PATH closure sentence to xbase (''The cron job header sets a full PATH
+    that covers the PostgreSQL binary directory and has not been edited'') to foreclose
+    the PATH-stripping pathway that was flagged as plausibly_causal; steelman_verdict
+    now correctly reflects no_defensible_mechanism.
+
+    '
+causal_audit:
+  steelman: 'A systems administrator defending the PATH hypothesis: the syslog shows
+    exit code zero, which is consistent with PATH stripping — if pg_dump cannot be
+    found, the shell command returns 0 under some script structures that don''t check
+    $? explicitly. The fact that no backup was produced despite apparent success is
+    exactly the failure mode PATH stripping causes. It is textbook and should be checked
+    first.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase explicitly states 'The cron job header sets a full
+    PATH that covers the PostgreSQL binary directory and has not been edited' — this
+    is a neutral closure (names no affirmative cause) that directly forecloses the
+    PATH-stripping mechanism; a practitioner reading xbase cannot plausibly rank PATH
+    as a leading hypothesis for this case.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Nightly PostgreSQL backup cron job silently produces no files for three
+    days; past experience points to PATH stripping, but the backup partition is full
+    and the script catches ENOSPC and exits zero.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

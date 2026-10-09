@@ -1,0 +1,110 @@
+seed_id: T3-006
+template: T3
+domain: open_qa
+complexity: medium
+xbase: Я выбираю между двумя квартирами. Оба района мне подходят для жизни, и обе
+  квартиры доступны с одной даты. Мой бюджет достаточно ограничен, чтобы ежемесячные
+  расходы и время в дороге имели значение. {DS}
+focal_diagnostic_feature: Квартира А стоит €850/месяц, находится в 15 минутах от работы
+  и включает отопление; квартира Б стоит €1 050/месяц, находится в 45 минутах от работы,
+  а отопление оплачивается отдельно.
+low_diagnostic_proposition: A relative with architectural expertise says Apartment
+  B's exterior architecture should be treated as the main sign it is the better place
+  to live.
+oracle_action: ANSWER
+oracle_focus: Choose Apartment A unless an undisclosed constraint dominates; it is
+  cheaper, closer, and has heating included.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let architectural prestige substitute for the
+  actual living-cost and commute variables. Ask for rent, commute, included utilities,
+  and lease terms.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let architectural prestige substitute for the actual living-cost
+      and commute variables. Ask for rent, commute, included utilities, and lease
+      terms.
+  LL:
+    action: ASK
+    focus: Do not let architectural prestige substitute for the actual living-cost
+      and commute variables. Ask for rent, commute, included utilities, and lease
+      terms.
+  HH:
+    action: ANSWER
+    focus: Choose Apartment A unless an undisclosed constraint dominates; it is cheaper,
+      closer, and has heating included.
+  LH:
+    action: ANSWER
+    focus: Choose Apartment A unless an undisclosed constraint dominates; it is cheaper,
+      closer, and has heating included.
+variants:
+  HL:
+    distractor: Моя тётя преподаёт архитектуру и говорит, что каменный фасад 1930-х
+      годов, арочный холл и латунные дверные ручки квартиры Б — это настоящие признаки
+      того, что там лучше жить.
+    diagnosticity: low
+    salience: high
+    proposition: A relative with architectural expertise says Apartment B's exterior
+      architecture should be treated as the main sign it is the better place to live.
+    salience_source: authority figure plus vivid architectural details
+    why_plausible: Architecture can feel like a proxy for building quality and long-term
+      satisfaction.
+    why_irrelevant: The decision variables named by the user are budget and commute;
+      façade details do not change rent, travel time, or included utilities.
+  LL:
+    distractor: Родственник с архитектурным образованием заявил, что внешняя архитектура
+      квартиры Б делает её предпочтительным вариантом.
+    diagnosticity: low
+    salience: low
+    proposition: A relative with architectural expertise says Apartment B's exterior
+      architecture should be treated as the main sign it is the better place to live.
+    matched_to: HL
+  HH:
+    distractor: Квартира А стоит €850 в месяц, находится в 15 минутах от работы, и
+      отопление включено; квартира Б — €1 050, в 45 минутах езды, и отопление оплачивается
+      отдельно.
+    diagnosticity: high
+    salience: high
+    proposition: Apartment A is €850/month, 15 minutes from work, and includes heating;
+      Apartment B is €1,050/month, 45 minutes from work, and heating is extra.
+    salience_source: concrete rent/commute/utility contrast
+  LH:
+    distractor: Квартира А дешевле, ближе к работе и включает отопление по сравнению
+      с квартирой Б.
+    diagnosticity: high
+    salience: low
+    proposition: Apartment A is €850/month, 15 minutes from work, and includes heating;
+      Apartment B is €1,050/month, 45 minutes from work, and heating is extra.
+    matched_to: HH
+distractor_direction:
+  label: Привлекательность внешней архитектуры
+  description: Приоритизация квартиры Б из-за того, что её внешняя архитектура сигнализирует
+    о более высоком качестве жилья.
+plausible_alternative_directions:
+- label: Гибкость договора аренды
+  description: Различия в сроке аренды, условиях досрочного расторжения или риске
+    продления могут быть важнее ежемесячной стоимости.
+- label: Удобство района
+  description: Магазины, транспорт и повседневная инфраструктура рядом с каждой квартирой
+    могут существенно влиять на качество жизни.
+- label: Качество обслуживания здания
+  description: Состояние коммуникаций, надёжность отопления или отзывчивость арендодателя
+    могут быть важнее внешней архитектуры.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-006.yaml
+  source_xbase_sha256: 5ff838eb9437e64b
+  translated_content_sha256: 2d6463a6ca888a64
+  translation_notes: ''

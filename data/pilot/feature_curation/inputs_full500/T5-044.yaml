@@ -1,0 +1,174 @@
+seed_id: T5-044
+template: T5
+domain: open_qa
+complexity: high
+xbase: I am choosing between two 65-inch smart TVs in the same price range — Model
+  A costs £599 and Model B costs £749. Both support HDR and I mainly watch films and
+  streamed sport in a moderately lit room. Panel technology, colour accuracy, and
+  input lag all matter to me. I have found reviews and calibration data for both but
+  have not yet read them carefully. {DS}
+focal_diagnostic_feature: Independent HDR calibration benchmarks score Model A's colour
+  accuracy at delta-E 1.8 versus Model B's 3.4, and Model A's peak HDR brightness
+  measures 12% higher than Model B's in the same test conditions.
+low_diagnostic_proposition: Model A's dated smart OS interface suggests its underlying
+  image processing is also outdated and inferior.
+oracle_action: ANSWER
+oracle_focus: Recommend Model A; it is £150 cheaper and its calibration results —
+  lower delta-E and higher peak HDR brightness — show superior picture quality on
+  the metrics the user cares about.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer picture-processing quality from OS interface
+  aesthetics. Ask for panel type, calibration benchmark scores, and input lag measurements
+  before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer picture-processing quality from OS interface aesthetics. Ask
+      for panel type, calibration benchmark scores, and input lag measurements before
+      deciding.
+  LL:
+    action: ASK
+    focus: Do not infer picture-processing quality from OS interface aesthetics. Ask
+      for panel type, calibration benchmark scores, and input lag measurements before
+      deciding.
+  HH:
+    action: ANSWER
+    focus: Recommend Model A; it is £150 cheaper and its calibration results — lower
+      delta-E and higher peak HDR brightness — show superior picture quality on the
+      metrics the user cares about.
+  LH:
+    action: ANSWER
+    focus: Recommend Model A; it is £150 cheaper and its calibration results — lower
+      delta-E and higher peak HDR brightness — show superior picture quality on the
+      metrics the user cares about.
+variants:
+  HL:
+    distractor: Model A's menu system looks genuinely ancient — a faded grid of blocky
+      tiles that belong in 2015 — and that kind of dated software usually means the
+      underlying image processing has not been updated either.
+    diagnosticity: low
+    salience: high
+    proposition: Model A's dated smart OS interface suggests its underlying image
+      processing is also outdated and inferior.
+    salience_source: B/C — specific vivid description of the UI (faded grid, blocky
+      tiles, year reference); confident bridge claim ('usually means') in professional-casual
+      register.
+    why_plausible: Manufacturers who lag in software UI updates sometimes also lag
+      in processing firmware; a reader who has seen this correlation might accept
+      the aesthetic as a reasonable proxy.
+    why_irrelevant: Smart OS interface age and HDR image-processing pipeline quality
+      are independently developed and maintained; UI age has no structural relationship
+      to calibration accuracy or brightness ceiling, which are determined by panel
+      hardware and ISP firmware.
+  LL:
+    distractor: Model A's interface looks old-fashioned, which probably means its
+      image processing is also outdated.
+    diagnosticity: low
+    salience: low
+    proposition: Model A's dated smart OS interface suggests its underlying image
+      processing is also outdated and inferior.
+    matched_to: HL
+  HH:
+    distractor: Independent HDR calibration benchmarks score Model A's colour accuracy
+      at delta-E 1.8 versus Model B's 3.4, and Model A's peak HDR brightness measures
+      12% higher than Model B's in the same test conditions.
+    diagnosticity: high
+    salience: high
+    proposition: Independent HDR calibration benchmarks score Model A's colour accuracy
+      at delta-E 1.8 versus Model B's 3.4, and Model A's peak HDR brightness measures
+      12% higher than Model B's in the same test conditions.
+    salience_source: B/C — objective measurement figures (delta-E 1.8 vs 3.4, 12%
+      HDR lead); cited independent benchmark source; precise comparative framing.
+  LH:
+    distractor: Calibration benchmarks score Model A at delta-E 1.8 versus Model B's
+      3.4, and Model A's peak HDR brightness is 12% higher.
+    diagnosticity: high
+    salience: low
+    proposition: Independent HDR calibration benchmarks score Model A's colour accuracy
+      at delta-E 1.8 versus Model B's 3.4, and Model A's peak HDR brightness measures
+      12% higher than Model B's in the same test conditions.
+    matched_to: HH
+distractor_direction:
+  label: dated OS interface quality signal
+  description: Treating Model A's visually outdated smart TV operating system as evidence
+    that its image processing pipeline is also inferior to Model B's.
+plausible_alternative_directions:
+- label: panel technology difference
+  description: Checking whether one model uses OLED and the other LED/LCD, which would
+    affect contrast, black levels, and viewing angle independently of calibration
+    scores.
+- label: input lag comparison
+  description: Measuring game mode input lag for each model, which is separately important
+    for live sport and would not be captured by colour calibration benchmarks alone.
+- label: smart feature ecosystem fit
+  description: Considering whether the user's streaming services, smart home platform,
+    and remote preferences are better served by one model's OS despite its visual
+    appearance.
+leak_audit:
+  ll_atomic_claims:
+  - Model A's interface looks old-fashioned.
+  - This probably means its image processing is also outdated.
+  hh_atomic_claims:
+  - Independent HDR calibration benchmarks were used as the measurement source.
+  - Model A's colour accuracy is delta-E 1.8.
+  - Model B's colour accuracy is delta-E 3.4.
+  - Model A's peak HDR brightness is 12% higher than Model B's in the same test conditions.
+  hl_salience_dimensions:
+    source_credibility: N/A — no named source; aesthetic impression is the salience
+      vehicle
+    narrative_coherence: Specific visual description (faded grid, blocky tiles, year
+      anchor) with a confident general bridge claim creates coherent surface-to-quality
+      inference.
+    confident_assertion: '''usually means'' — confident but not hedged with ''might''
+      or ''possibly'''
+    concrete_detail: Detail is about the UI surface (faded grid, 2015), not case-specific
+      diagnostic data — compliant with C6.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 33
+  ll_word_count: 14
+  hh_word_count: 33
+  lh_word_count: 21
+  notes: 'T5 inferential bridge ("dated interface → inferior image processing") appears
+    in HL and LL
+
+    per C1. xbase says user "has found calibration data but not yet read it" — this
+    opens the
+
+    focal direction without revealing the data. HL:LL 2.4:1; HH:LH 1.6:1.
+
+    '
+causal_audit:
+  steelman: 'Some TV manufacturers treat OS software and image-processing firmware
+    as part of the same
+
+    product-development cycle; a brand that has not updated its UI since 2015 might
+    similarly
+
+    lag in HDR tonemapping algorithm updates. A well-read consumer electronics reviewer
+    could
+
+    reasonably list dated OS as a weak negative signal for processing quality.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the focal evidence (calibration benchmark scores)
+    directly contradicts the inference by showing Model A's picture quality is objectively
+    superior despite the dated interface. The mechanism is ruled out by the HH/LH
+    evidence, not by xbase.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing between two 65-inch smart TVs where Model A's dated OS interface
+    is offered as evidence its image processing is inferior, but independent calibration
+    benchmarks show Model A has lower delta-E and 12% higher peak HDR brightness than
+    the more expensive Model B.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

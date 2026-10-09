@@ -1,0 +1,177 @@
+seed_id: T1-045
+template: T1
+domain: open_qa
+complexity: low
+xbase: I want to buy a soundbar for my living-room TV, mainly to make films and shows
+  sound better in the evenings. Two models at my budget are both well reviewed and
+  would fit under the TV. I'd like proper surround-style sound and to keep the setup
+  simple with one cable. I don't game and I don't have a separate amplifier or any
+  other audio gear. {DS}
+focal_diagnostic_feature: Only Soundbar A supports the eARC the user's TV needs to
+  pass lossless Atmos over the single HDMI cable; Soundbar B is optical-only and would
+  downmix to plain stereo on this TV.
+low_diagnostic_proposition: A relative's soundbar of a similar kind kept dropping
+  its wireless connection to the subwoofer.
+oracle_action: ANSWER
+oracle_focus: Choose Soundbar A; it supports the eARC the user's TV needs to carry
+  full Atmos over one HDMI cable, directly serving the surround-sound and single-cable
+  goals, whereas the optical-only B would collapse to stereo on this TV.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a relative's wireless-subwoofer dropout decide
+  it. Ask which bar supports the TV's eARC/HDMI audio formats and whether the desired
+  surround sound can actually pass over one cable before choosing.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a relative's wireless-subwoofer dropout decide it. Ask which
+      bar supports the TV's eARC/HDMI audio formats and whether the desired surround
+      sound can actually pass over one cable before choosing.
+  LL:
+    action: ASK
+    focus: Do not let a relative's wireless-subwoofer dropout decide it. Ask which
+      bar supports the TV's eARC/HDMI audio formats and whether the desired surround
+      sound can actually pass over one cable before choosing.
+  HH:
+    action: ANSWER
+    focus: Choose Soundbar A; it supports the eARC the user's TV needs to carry full
+      Atmos over one HDMI cable, directly serving the surround-sound and single-cable
+      goals, whereas the optical-only B would collapse to stereo on this TV.
+  LH:
+    action: ANSWER
+    focus: Choose Soundbar A; it supports the eARC the user's TV needs to carry full
+      Atmos over one HDMI cable, directly serving the surround-sound and single-cable
+      goals, whereas the optical-only B would collapse to stereo on this TV.
+variants:
+  HL:
+    distractor: Nga, my sister-in-law who set up her own home cinema, told me her
+      soundbar of this same kind drove her mad because the wireless subwoofer kept
+      dropping its connection mid-film, and said she'd never buy this type again.
+    diagnosticity: low
+    salience: high
+    proposition: A relative's soundbar of a similar kind kept dropping its wireless
+      connection to the subwoofer.
+    salience_source: A/C — a relative who built her own home cinema warning firsthand
+      about subwoofer dropouts.
+    why_plausible: Wireless-subwoofer dropouts are a real annoyance, and a hands-on
+      relative's strong personal reaction sounds like exactly the kind of tip a buyer
+      wants.
+    why_irrelevant: Her dropout was a different model and says nothing about which
+      of these two bars carries the audio format the user's TV needs; the decision
+      turns on eARC/HDMI support, which her anecdote does not touch.
+  LL:
+    distractor: A relative's similar soundbar kept losing its wireless connection
+      to the subwoofer.
+    diagnosticity: low
+    salience: low
+    proposition: A relative's soundbar of a similar kind kept dropping its wireless
+      connection to the subwoofer.
+    matched_to: HL
+  HH:
+    distractor: Checking the specs against my TV, only Soundbar A supports eARC, which
+      is what lets full lossless Atmos travel over the single HDMI cable I want; Soundbar
+      B connects by optical only, and on this TV optical can carry just compressed
+      stereo, so it would lose the surround entirely.
+    diagnosticity: high
+    salience: high
+    proposition: Only Soundbar A supports the eARC the user's TV needs to pass lossless
+      Atmos over the single HDMI cable; Soundbar B is optical-only and would downmix
+      to plain stereo on this TV.
+    salience_source: Concrete format compatibility (eARC vs optical-only) tied to
+      this TV and the single-cable surround goal.
+  LH:
+    distractor: Only Soundbar A supports the TV's eARC for Atmos over one HDMI cable;
+      Soundbar B is optical-only and downmixes to stereo here.
+    diagnosticity: high
+    salience: low
+    proposition: Only Soundbar A supports the eARC the user's TV needs to pass lossless
+      Atmos over the single HDMI cable; Soundbar B is optical-only and would downmix
+      to plain stereo on this TV.
+    matched_to: HH
+distractor_direction:
+  label: Subwoofer dropout precedent
+  description: Treating a relative's wireless-subwoofer disconnection problem as the
+    reason to favour one bar over the other.
+plausible_alternative_directions:
+- label: Room size and output
+  description: Whether one bar's power and driver count better suits the living-room
+    size for film sound.
+- label: Voice-clarity processing
+  description: Whether one bar handles dialogue clarity in films noticeably better
+    than the other.
+- label: App and control simplicity
+  description: Whether one bar integrates with the TV remote and avoids a separate
+    app for everyday use.
+leak_audit:
+  ll_atomic_claims:
+  - A relative had a similar soundbar.
+  - That soundbar kept losing its wireless connection to the subwoofer.
+  hh_atomic_claims:
+  - Only Soundbar A supports the eARC the TV needs to pass lossless Atmos over one
+    HDMI cable.
+  - Soundbar B is optical-only.
+  - On this TV optical carries only compressed stereo, so B loses the surround.
+  hl_salience_dimensions:
+    source_credibility: Relative (sister-in-law Nga) who built her own home cinema,
+      warning from experience.
+    narrative_coherence: A coherent firsthand account of her subwoofer dropping mid-film.
+    confident_assertion: She said she'd never buy this type again — strong personal
+      conviction about the incident.
+    concrete_detail: Detail about her dropout experience — about her unit, not these
+      two bars' formats.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 72
+  hl_word_count: 38
+  ll_word_count: 13
+  hh_word_count: 47
+  lh_word_count: 23
+  notes: 'xbase carries the user''s goals (surround, one cable, no other gear) but
+    not the eARC/optical distinction that
+
+    decides it; that lives only in HH/LH. The relative''s dropout is a generic precedent
+    about a different model and
+
+    cannot rank either candidate. QC repair: removed category-level claim ''these
+    bars are all flaky about staying
+
+    linked to the sub'' from HL; replaced with ''said she''d never buy this type again''
+    — source-coloring language
+
+    confined to the individual incident, preserving credibility without leaking a
+    systemic reliability claim absent
+
+    from LL.
+
+    '
+causal_audit:
+  steelman: 'One might argue wireless-subwoofer reliability is a real differentiator
+    and worth weighting for a film-focused
+
+    buyer who hates interruptions. But the anecdote concerns a different model and
+    says nothing about either
+
+    candidate''s sub link or, more importantly, about which bar can actually deliver
+    surround over the user''s TV;
+
+    the eARC/optical compatibility is what determines whether the user gets the sound
+    they want.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the anecdote concerns a different unnamed model and
+    never attaches to either candidate soundbar.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Choosing between two soundbars where only one supports the TV's eARC
+    for Atmos over one cable, against a relative's wireless-subwoofer-dropout anecdote
+    about a different model.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

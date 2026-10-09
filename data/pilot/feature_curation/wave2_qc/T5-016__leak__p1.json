@@ -1,0 +1,30 @@
+{
+  "seed_id": "T5-016",
+  "ll_claims_extracted": [
+    "A financial advisor's polished office indicates their firm is competent and trustworthy.",
+    "A financial advisor's premium brochures indicate their firm is competent and trustworthy."
+  ],
+  "hl_case_claims": [
+    "The operation's office fit-out is polished (echoes xbase 'sleek downtown office').",
+    "The operation's pitch deck production quality is polished (echoes xbase 'pitch deck were clearly expensive').",
+    "An operation this polished is how firms signal they are the real deal (i.e., competent and trustworthy)."
+  ],
+  "hl_source_claims": [
+    "The speaker has a colleague named Ingrid.",
+    "Ingrid is a senior compliance officer at a private bank.",
+    "Ingrid reviewed the materials.",
+    "Ingrid told the speaker her assessment directly."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 41,
+    "ll": 18,
+    "xbase": 69,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

@@ -1,0 +1,164 @@
+seed_id: T2-041
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: My desktop at home suddenly cannot open the shared network drive on our little
+  home server. Other devices in the house still reach the drive fine, and the desktop
+  browses the internet normally. The server is powered on and I can see it listed.
+  I have not changed any sharing settings or passwords on either machine. {DS}
+focal_diagnostic_feature: The desktop is set to a static IP that now collides with
+  a new smart speaker that was assigned the same address by DHCP, so the desktop's
+  traffic to the server intermittently goes to the wrong device.
+low_diagnostic_proposition: The problem began right after the user swapped the desk
+  chair for a new one.
+oracle_action: ANSWER
+oracle_focus: 'Resolve the IP address conflict: the desktop''s static IP overlaps
+  an address the router handed to a new device; move the desktop to an address outside
+  the DHCP pool or reserve it, then reconnect to the drive.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a new desk chair to a network-drive failure.
+  Ask whether the desktop has an IP address conflict with another device and how its
+  address is assigned before diagnosing the share.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a new desk chair to a network-drive failure. Ask whether
+      the desktop has an IP address conflict with another device and how its address
+      is assigned before diagnosing the share.
+  LL:
+    action: ASK
+    focus: Do not connect a new desk chair to a network-drive failure. Ask whether
+      the desktop has an IP address conflict with another device and how its address
+      is assigned before diagnosing the share.
+  HH:
+    action: ANSWER
+    focus: 'Resolve the IP address conflict: the desktop''s static IP overlaps an
+      address the router handed to a new device; move the desktop to an address outside
+      the DHCP pool or reserve it, then reconnect to the drive.'
+  LH:
+    action: ANSWER
+    focus: 'Resolve the IP address conflict: the desktop''s static IP overlaps an
+      address the router handed to a new device; move the desktop to an address outside
+      the DHCP pool or reserve it, then reconnect to the drive.'
+variants:
+  HL:
+    distractor: The drive started failing the very afternoon I finally swapped out
+      my old squeaky desk chair for a new ergonomic one and rearranged the desk around
+      it; the timing was so exact that the new chair is the first thing my mind keeps
+      jumping back to.
+    diagnosticity: low
+    salience: high
+    proposition: The problem began right after the user swapped the desk chair for
+      a new one.
+    salience_source: B/C — a precise, confident first-person timeline pinning the
+      failure to a memorable desk change.
+    why_plausible: People reflexively blame the most recent visible change, and the
+      chair swap and failure fell on the same afternoon.
+    why_irrelevant: A desk chair has no electrical or network connection to anything;
+      it cannot affect IP addressing or how the desktop reaches the server, so it
+      has no pathway to the symptom.
+  LL:
+    distractor: The problem began around the time the user replaced the desk chair.
+    diagnosticity: low
+    salience: low
+    proposition: The problem began right after the user swapped the desk chair for
+      a new one.
+    matched_to: HL
+  HH:
+    distractor: 'I checked addresses: the desktop is on a fixed static IP, and a smart
+      speaker I set up recently got handed the exact same address by the router''s
+      DHCP, so two devices now answer to one IP and the desktop''s drive traffic keeps
+      landing on the speaker instead of the server.'
+    diagnosticity: high
+    salience: high
+    proposition: The desktop is set to a static IP that now collides with a new smart
+      speaker that was assigned the same address by DHCP, so the desktop's traffic
+      to the server intermittently goes to the wrong device.
+    salience_source: Concrete address collision (static IP equals a DHCP-assigned
+      speaker's address) making the conflict mechanism vivid.
+  LH:
+    distractor: The desktop's static IP collides with a new smart speaker's DHCP-assigned
+      address, so its drive traffic reaches the wrong device.
+    diagnosticity: high
+    salience: low
+    proposition: The desktop is set to a static IP that now collides with a new smart
+      speaker that was assigned the same address by DHCP, so the desktop's traffic
+      to the server intermittently goes to the wrong device.
+    matched_to: HH
+distractor_direction:
+  label: New-chair timing
+  description: Treating the recent desk-chair replacement as connected to when the
+    network drive stopped working.
+plausible_alternative_directions:
+- label: SMB/share permissions
+  description: Whether the share's permissions or protocol settings changed for this
+    one machine.
+- label: Desktop firewall rule
+  description: Whether the desktop's firewall is newly blocking the file-sharing ports
+    to the server.
+- label: Stale credentials
+  description: Whether cached or expired credentials are stopping only this desktop
+    from mounting the drive.
+leak_audit:
+  ll_atomic_claims:
+  - The problem began around the time the user replaced the desk chair.
+  hh_atomic_claims:
+  - The desktop is set to a static IP.
+  - A new smart speaker was assigned the same address by the router's DHCP.
+  - The desktop's drive traffic reaches the wrong device because two devices share
+    one IP.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person timeline tying the failure to the same
+      afternoon as the chair swap.
+    confident_assertion: The timing was so exact the chair is the first thing the
+      user's mind jumps to.
+    concrete_detail: Detail about the chair swap and desk rearrangement — about the
+      event, not the addressing fault.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 47
+  ll_word_count: 13
+  hh_word_count: 48
+  lh_word_count: 21
+  notes: 'xbase confirms internet works and other devices reach the drive (symptoms)
+    but withholds the static-IP/DHCP
+
+    collision (the decisive evidence), which lives only in HH/LH. The chair has no
+    constructible pathway to network
+
+    addressing.
+
+    '
+causal_audit:
+  steelman: 'One could strain to say moving the desk relocated the machine or jostled
+    a cable, indirectly disturbing the
+
+    connection. But internet browsing on the desktop still works and other devices
+    reach the drive, so physical
+
+    connectivity is intact; a chair cannot assign IP addresses or steer traffic, and
+    the actual fault is an address
+
+    collision with a separately added device. No mechanism survives.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the desktop browses the internet normally
+    and other devices reach the drive, foreclosing any physical-connection or cable
+    pathway a desk change might be imagined to touch.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A desktop losing a network drive because its static IP collides with
+    a new smart speaker's DHCP address, coincidentally timed with swapping the desk
+    chair.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,189 @@
+seed_id: T2-084
+template: T2
+domain: open_qa
+complexity: high
+xbase: My road bike has started skipping under load on the two hardest climbs of my
+  usual route. The chain and cassette are both about eighteen months old, and I ride
+  around 200 km per week. The skip only happens when I push hard, not when spinning
+  easily, and it feels worst in the smallest three rear cogs. {DS}
+focal_diagnostic_feature: A chain-wear gauge reads 0.75% stretch at the replacement
+  threshold, and the smallest three cassette cogs have visibly sharked teeth with
+  hooked, asymmetric profiles, confirming worn drivetrain components as the cause
+  of the skipping.
+low_diagnostic_proposition: The skipping began around the time a new handlebar phone
+  mount was installed.
+oracle_action: ANSWER
+oracle_focus: Replace the chain and matching cassette; both are at or past service
+  limits and the cog wear confirms the skip is drivetrain wear rather than a fit or
+  adjustment issue.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a handlebar phone mount to chain skipping
+  under load. Ask for chain wear measurement and a visual inspection of the cassette
+  cogs before recommending any action.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a handlebar phone mount to chain skipping under load. Ask
+      for chain wear measurement and a visual inspection of the cassette cogs before
+      recommending any action.
+  LL:
+    action: ASK
+    focus: Do not connect a handlebar phone mount to chain skipping under load. Ask
+      for chain wear measurement and a visual inspection of the cassette cogs before
+      recommending any action.
+  HH:
+    action: ANSWER
+    focus: Replace the chain and matching cassette; both are at or past service limits
+      and the cog wear confirms the skip is drivetrain wear rather than a fit or adjustment
+      issue.
+  LH:
+    action: ANSWER
+    focus: Replace the chain and matching cassette; both are at or past service limits
+      and the cog wear confirms the skip is drivetrain wear rather than a fit or adjustment
+      issue.
+variants:
+  HL:
+    distractor: This started exactly the week after I zip-tied a new handlebar phone
+      mount to check Komoot on climbs — I put it on the evening before a long Sunday
+      ride and noticed the skipping on that very outing.
+    diagnosticity: low
+    salience: high
+    proposition: The skipping began around the time a new handlebar phone mount was
+      installed.
+    salience_source: B/C — confident first-person narrative pinning the symptom to
+      a concrete, memorable installation event with a specific app reference and a
+      vivid setting detail (Sunday ride).
+    why_plausible: A recent change coinciding precisely with a new symptom is easy
+      to blame; the mount is a plausible trigger for a vague rider-position or vibration
+      explanation.
+    why_irrelevant: A zip-tied phone mount adds no meaningful force to the drivetrain;
+      chain skipping under hard pedalling load is a mechanical wear phenomenon unrelated
+      to handlebar accessories.
+  LL:
+    distractor: The skipping began right around the time I installed a new handlebar
+      phone mount.
+    diagnosticity: low
+    salience: low
+    proposition: The skipping began around the time a new handlebar phone mount was
+      installed.
+    matched_to: HL
+  HH:
+    distractor: A chain-wear gauge reads 0.75% stretch — at the replacement threshold
+      — and the smallest three cogs have visibly sharked teeth with hooked, asymmetric
+      profiles rather than the flat tops they started with.
+    diagnosticity: high
+    salience: high
+    proposition: A chain-wear gauge reads 0.75% stretch at the replacement threshold,
+      and the smallest three cassette cogs have visibly sharked teeth with hooked,
+      asymmetric profiles, confirming worn drivetrain components as the cause of the
+      skipping.
+    salience_source: The precise 0.75% gauge reading and the visual description of
+      hooked tooth profiles make the evidence specific, observable, and immediately
+      actionable.
+  LH:
+    distractor: Chain wear is at the 0.75% replacement threshold, and the smallest
+      three cassette cogs show sharked teeth.
+    diagnosticity: high
+    salience: low
+    proposition: A chain-wear gauge reads 0.75% stretch at the replacement threshold,
+      and the smallest three cassette cogs have visibly sharked teeth with hooked,
+      asymmetric profiles, confirming worn drivetrain components as the cause of the
+      skipping.
+    matched_to: HH
+distractor_direction:
+  label: Phone mount coincidence
+  description: Investigating whether the recently installed handlebar phone mount
+    caused or contributed to the chain skipping by altering rider position or vibration.
+plausible_alternative_directions:
+- label: Rear derailleur adjustment
+  description: Cable tension or limit-screw drift could cause the chain to skip between
+    cogs under load on the small sprockets.
+- label: Chainring wear
+  description: A worn or bent front chainring could cause skipping that manifests
+    most under hard pedalling regardless of cassette condition.
+- label: Rear wheel alignment
+  description: A wheel that has shifted in the dropout could misalign the drivetrain
+    enough to cause skipping under load.
+leak_audit:
+  ll_atomic_claims:
+  - The skipping began around the time a new handlebar phone mount was installed.
+  hh_atomic_claims:
+  - A chain-wear gauge reads 0.75% stretch at the replacement threshold.
+  - The smallest three cassette cogs have visibly sharked teeth with hooked, asymmetric
+    profiles.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: A coherent first-person timeline from installation evening
+      to first noticed symptom.
+    confident_assertion: '"started exactly the week after", "noticed the skipping
+      on that very outing" — confident temporal pinning without hedging.'
+    concrete_detail: Specific app name (Komoot) and cable-routing detail — about the
+      accessory event, not the mechanical cause.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 57
+  hl_word_count: 37
+  ll_word_count: 14
+  hh_word_count: 31
+  lh_word_count: 17
+  notes: 'T2 coincidence: a handlebar phone mount has no mechanical path to the drivetrain
+
+    and cannot cause chain skipping; the zip-tie installation is a clean temporal
+    anchor
+
+    with zero causal mechanism. xbase withholds the decisive evidence (gauge reading
+    and
+
+    tooth profile) so HH/LH carry the conclusion. The skip-under-load + small-cog
+    pattern
+
+    makes wear a live hypothesis from xbase but does not confirm it. Ratios HL:LL=37:14=2.6,
+
+    HH:LH=31:17=1.8 — both well within 4:1.
+
+    QC repair: removed severity/progression claim (''the skip got worse with every
+    ride
+
+    after'') and hedging clause (''I remember thinking it was coincidence at the time'')
+
+    from HL — both were case-content/hedging absent from LL, violating C1. Replaced
+    with
+
+    setting detail (Sunday ride) to maintain HL salience above 27-word minimum.
+
+    '
+causal_audit:
+  steelman: 'A zip-tied phone mount sitting on the handlebar could minutely shift
+    the rider''s grip
+
+    and hand position, altering torque application angle at the pedals. In theory
+    this might
+
+    marginally change the chain line under hard acceleration. However, a phone mount
+
+    adds no load to the drivetrain and no measurable chain-line change; chain skipping
+    under
+
+    load on worn small sprockets is a function of tooth profile and chain elongation,
+    neither
+
+    of which is influenced by a handlebar accessory. No constructible mechanism exists.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the phone mount has no tempting mechanism requiring
+    closure.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Road bike chain skips under load because chain and cassette are worn
+    past service limits, mistimed with a handlebar phone mount installation.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,428 @@
+{
+  "n_items": 150,
+  "annotators": {
+    "1": {
+      "n_labelled_items": 150,
+      "distractor_role_vs_judge": {
+        "n": 150,
+        "pct_agree": 82.0,
+        "pct_agree_ci": [
+          74.7,
+          88.6
+        ],
+        "gwet_ac1": 0.755,
+        "gwet_ac1_ci": [
+          0.657,
+          0.847
+        ],
+        "cohen_kappa_ref": 0.663,
+        "ref_dist": {
+          "considered_rejected": 82,
+          "primary": 64,
+          "absent": 4
+        },
+        "annotator_dist": {
+          "considered_rejected": 76,
+          "primary": 66,
+          "absent": 8
+        }
+      },
+      "distractor_role_vs_judge_by_condition": {
+        "LL": {
+          "n": 75,
+          "pct_agree": 89.3
+        },
+        "HL": {
+          "n": 75,
+          "pct_agree": 74.7
+        }
+      },
+      "focal_role_vs_judge": {
+        "n": 150,
+        "pct_agree": 61.3,
+        "pct_agree_ci": [
+          52.6,
+          69.7
+        ],
+        "gwet_ac1": 0.482,
+        "gwet_ac1_ci": [
+          0.366,
+          0.598
+        ],
+        "cohen_kappa_ref": 0.29,
+        "ref_dist": {
+          "primary": 38,
+          "absent": 109,
+          "considered_rejected": 3
+        },
+        "annotator_dist": {
+          "primary": 77,
+          "absent": 67,
+          "considered_rejected": 6
+        }
+      },
+      "pair_outcomes": {
+        "n_pairs": 75,
+        "pair_outcome_agreement_pct": 69.3,
+        "annotator_outcomes": {
+          "mixed_other": 6,
+          "vigilance": 4,
+          "stable_adopt": 23,
+          "ISB": 12,
+          "stable_reject": 28,
+          "proto_ISB": 1,
+          "proto_vigilance": 1
+        },
+        "judge_outcomes": {
+          "stable_reject": 33,
+          "stable_adopt": 23,
+          "vigilance": 7,
+          "ISB": 8,
+          "proto_ISB": 2,
+          "mixed_other": 1,
+          "proto_vigilance": 1
+        }
+      },
+      "timing": {
+        "minutes_total": 47.2,
+        "median_seconds_per_item": 13.8,
+        "items_under_5_seconds": 0,
+        "sittings": [
+          {
+            "n_items": 114,
+            "agree_with_judge": 94
+          },
+          {
+            "n_items": 36,
+            "agree_with_judge": 29
+          }
+        ]
+      }
+    },
+    "2": {
+      "n_labelled_items": 150,
+      "distractor_role_vs_judge": {
+        "n": 150,
+        "pct_agree": 80.0,
+        "pct_agree_ci": [
+          73.6,
+          86.1
+        ],
+        "gwet_ac1": 0.726,
+        "gwet_ac1_ci": [
+          0.639,
+          0.812
+        ],
+        "cohen_kappa_ref": 0.633,
+        "ref_dist": {
+          "considered_rejected": 82,
+          "primary": 64,
+          "absent": 4
+        },
+        "annotator_dist": {
+          "considered_rejected": 68,
+          "primary": 72,
+          "absent": 10
+        }
+      },
+      "distractor_role_vs_judge_by_condition": {
+        "LL": {
+          "n": 75,
+          "pct_agree": 86.7
+        },
+        "HL": {
+          "n": 75,
+          "pct_agree": 73.3
+        }
+      },
+      "focal_role_vs_judge": {
+        "n": 150,
+        "pct_agree": 77.3,
+        "pct_agree_ci": [
+          70.0,
+          84.0
+        ],
+        "gwet_ac1": 0.712,
+        "gwet_ac1_ci": [
+          0.612,
+          0.802
+        ],
+        "cohen_kappa_ref": 0.47,
+        "ref_dist": {
+          "primary": 38,
+          "absent": 109,
+          "considered_rejected": 3
+        },
+        "annotator_dist": {
+          "primary": 43,
+          "absent": 103,
+          "considered_rejected": 4
+        }
+      },
+      "pair_outcomes": {
+        "n_pairs": 75,
+        "pair_outcome_agreement_pct": 62.7,
+        "annotator_outcomes": {
+          "ISB": 15,
+          "stable_adopt": 26,
+          "mixed_other": 5,
+          "stable_reject": 23,
+          "absent_pair": 2,
+          "vigilance": 3,
+          "proto_vigilance": 1
+        },
+        "judge_outcomes": {
+          "stable_reject": 33,
+          "stable_adopt": 23,
+          "vigilance": 7,
+          "ISB": 8,
+          "proto_ISB": 2,
+          "mixed_other": 1,
+          "proto_vigilance": 1
+        }
+      },
+      "timing": {
+        "minutes_total": 83.8,
+        "median_seconds_per_item": 20.6,
+        "items_under_5_seconds": 0,
+        "sittings": [
+          {
+            "n_items": 150,
+            "agree_with_judge": 120
+          }
+        ]
+      }
+    },
+    "3": {
+      "n_labelled_items": 150,
+      "distractor_role_vs_judge": {
+        "n": 150,
+        "pct_agree": 77.3,
+        "pct_agree_ci": [
+          70.5,
+          83.8
+        ],
+        "gwet_ac1": 0.688,
+        "gwet_ac1_ci": [
+          0.592,
+          0.783
+        ],
+        "cohen_kappa_ref": 0.591,
+        "ref_dist": {
+          "considered_rejected": 82,
+          "primary": 64,
+          "absent": 4
+        },
+        "annotator_dist": {
+          "considered_rejected": 64,
+          "primary": 74,
+          "absent": 12
+        }
+      },
+      "distractor_role_vs_judge_by_condition": {
+        "LL": {
+          "n": 75,
+          "pct_agree": 76.0
+        },
+        "HL": {
+          "n": 75,
+          "pct_agree": 78.7
+        }
+      },
+      "focal_role_vs_judge": {
+        "n": 150,
+        "pct_agree": 66.7,
+        "pct_agree_ci": [
+          59.2,
+          74.1
+        ],
+        "gwet_ac1": 0.554,
+        "gwet_ac1_ci": [
+          0.448,
+          0.66
+        ],
+        "cohen_kappa_ref": 0.377,
+        "ref_dist": {
+          "primary": 38,
+          "absent": 109,
+          "considered_rejected": 3
+        },
+        "annotator_dist": {
+          "primary": 74,
+          "absent": 70,
+          "considered_rejected": 6
+        }
+      },
+      "pair_outcomes": {
+        "n_pairs": 75,
+        "pair_outcome_agreement_pct": 61.3,
+        "annotator_outcomes": {
+          "stable_reject": 19,
+          "vigilance": 13,
+          "stable_adopt": 24,
+          "proto_ISB": 3,
+          "ISB": 8,
+          "mixed_other": 5,
+          "proto_vigilance": 2,
+          "absent_pair": 1
+        },
+        "judge_outcomes": {
+          "stable_reject": 33,
+          "stable_adopt": 23,
+          "vigilance": 7,
+          "ISB": 8,
+          "proto_ISB": 2,
+          "mixed_other": 1,
+          "proto_vigilance": 1
+        }
+      },
+      "timing": {
+        "minutes_total": 116.7,
+        "median_seconds_per_item": 36.1,
+        "items_under_5_seconds": 1,
+        "sittings": [
+          {
+            "n_items": 150,
+            "agree_with_judge": 116
+          }
+        ]
+      }
+    }
+  },
+  "inter_annotator": {
+    "pairwise": {
+      "1~2": {
+        "n": 150,
+        "pct_agree": 80.0,
+        "pct_agree_ci": [
+          72.6,
+          87.0
+        ],
+        "gwet_ac1": 0.723,
+        "gwet_ac1_ci": [
+          0.616,
+          0.824
+        ],
+        "cohen_kappa_ref": 0.64,
+        "ref_dist": {
+          "considered_rejected": 76,
+          "primary": 66,
+          "absent": 8
+        },
+        "annotator_dist": {
+          "considered_rejected": 68,
+          "primary": 72,
+          "absent": 10
+        }
+      },
+      "1~3": {
+        "n": 150,
+        "pct_agree": 74.7,
+        "pct_agree_ci": [
+          67.3,
+          81.6
+        ],
+        "gwet_ac1": 0.648,
+        "gwet_ac1_ci": [
+          0.542,
+          0.749
+        ],
+        "cohen_kappa_ref": 0.55,
+        "ref_dist": {
+          "considered_rejected": 76,
+          "primary": 66,
+          "absent": 8
+        },
+        "annotator_dist": {
+          "considered_rejected": 64,
+          "primary": 74,
+          "absent": 12
+        }
+      },
+      "2~3": {
+        "n": 150,
+        "pct_agree": 72.0,
+        "pct_agree_ci": [
+          64.2,
+          79.6
+        ],
+        "gwet_ac1": 0.61,
+        "gwet_ac1_ci": [
+          0.5,
+          0.713
+        ],
+        "cohen_kappa_ref": 0.504,
+        "ref_dist": {
+          "considered_rejected": 68,
+          "primary": 72,
+          "absent": 10
+        },
+        "annotator_dist": {
+          "considered_rejected": 64,
+          "primary": 74,
+          "absent": 12
+        }
+      }
+    },
+    "multi_rater": {
+      "n_items_all_annotators": 150,
+      "n_annotators": 3,
+      "gwet_ac1": 0.661
+    },
+    "majority_vs_judge": {
+      "n": 146,
+      "pct_agree": 87.7,
+      "pct_agree_ci": [
+        82.0,
+        92.6
+      ],
+      "gwet_ac1": 0.833,
+      "gwet_ac1_ci": [
+        0.761,
+        0.899
+      ],
+      "cohen_kappa_ref": 0.765,
+      "ref_dist": {
+        "considered_rejected": 78,
+        "primary": 64,
+        "absent": 4
+      },
+      "annotator_dist": {
+        "considered_rejected": 73,
+        "primary": 69,
+        "absent": 4
+      }
+    },
+    "multi_rater_with_judge": {
+      "n_items": 150,
+      "n_raters": 4,
+      "gwet_ac1": 0.692
+    },
+    "mean_pct_agree": {
+      "judge_vs_human": 79.8,
+      "human_vs_human": 75.6
+    },
+    "majority_pair_outcomes": {
+      "n_pairs": 71,
+      "pair_outcome_agreement_pct": 77.5,
+      "majority_outcomes": {
+        "vigilance": 6,
+        "stable_adopt": 25,
+        "ISB": 10,
+        "stable_reject": 26,
+        "mixed_other": 3,
+        "proto_ISB": 1
+      },
+      "judge_outcomes": {
+        "stable_adopt": 23,
+        "vigilance": 5,
+        "ISB": 8,
+        "stable_reject": 31,
+        "proto_ISB": 2,
+        "mixed_other": 1,
+        "proto_vigilance": 1
+      }
+    }
+  },
+  "note": "AC1 is reported with kappa because the label distribution is skewed. Pair outcomes are counts on the labelled sample, not population rates."
+}

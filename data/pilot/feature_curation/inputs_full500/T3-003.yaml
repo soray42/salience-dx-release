@@ -1,0 +1,92 @@
+seed_id: T3-003
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Redis sharded cluster has one node slowly filling up. Node 2 is at about
+  92% of maxmemory after 11 days, while nodes 1 and 3 are around the mid-40s. Slowlog
+  on node 2 is unremarkable. {DS}
+focal_diagnostic_feature: Hot-key analysis shows one key prefix on node 2 accounts
+  for a large share of memory and has no TTL or rotation.
+low_diagnostic_proposition: A senior engineer says Redis memory fragmentation should
+  be treated as the main cause.
+oracle_action: ANSWER
+oracle_focus: Add TTL/rotation or trimming for the unbounded prefix, then rebalance
+  if needed; this is not primarily generic fragmentation.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept generic Redis folklore from authority.
+  Ask for keyspace analysis, TTLs, and memory distribution by prefix.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept generic Redis folklore from authority. Ask for keyspace analysis,
+      TTLs, and memory distribution by prefix.
+  LL:
+    action: ASK
+    focus: Do not accept generic Redis folklore from authority. Ask for keyspace analysis,
+      TTLs, and memory distribution by prefix.
+  HH:
+    action: ANSWER
+    focus: Add TTL/rotation or trimming for the unbounded prefix, then rebalance if
+      needed; this is not primarily generic fragmentation.
+  LH:
+    action: ANSWER
+    focus: Add TTL/rotation or trimming for the unbounded prefix, then rebalance if
+      needed; this is not primarily generic fragmentation.
+variants:
+  HL:
+    distractor: A senior architect on the next team said at standup that Redis on
+      Linux always leaks memory in production and we should switch stores.
+    diagnosticity: low
+    salience: high
+    proposition: A senior engineer says Redis memory fragmentation should be treated
+      as the main cause.
+    salience_source: senior title, public standup claim, absolute technical statement
+    why_plausible: Redis fragmentation is a real phenomenon and the speaker sounds
+      experienced.
+    why_irrelevant: The keyspace breakdown gives a concrete unbounded object source
+      that explains the shard imbalance.
+  LL:
+    distractor: A senior engineer argued that Redis memory fragmentation should be
+      considered the main cause.
+    diagnosticity: low
+    salience: low
+    proposition: A senior engineer says Redis memory fragmentation should be treated
+      as the main cause.
+    matched_to: HL
+  HH:
+    distractor: One key prefix on node 2 is eating 38% of that node's memory, and
+      those keys have no TTL and never get rotated.
+    diagnosticity: high
+    salience: high
+    proposition: Hot-key analysis shows one key prefix on node 2 accounts for a large
+      share of memory and has no TTL or rotation.
+    salience_source: prefix-level memory attribution
+  LH:
+    distractor: A single non-expiring key prefix accounts for approximately 38% of
+      memory on node 2.
+    diagnosticity: high
+    salience: low
+    proposition: Hot-key analysis shows one key prefix on node 2 accounts for a large
+      share of memory and has no TTL or rotation.
+    matched_to: HH
+distractor_direction:
+  label: Redis memory fragmentation
+  description: Investigating allocator fragmentation or Redis/Linux memory overhead
+    as the reason node memory is rising.
+plausible_alternative_directions:
+- label: Eviction-policy mismatch
+  description: The node’s eviction policy or maxmemory setting is inconsistent with
+    the workload.
+- label: Replication backlog growth
+  description: Replica or AOF backlog memory is growing unevenly on the affected node.
+- label: Client-output buffer growth
+  description: Long-lived clients or subscriptions are accumulating output buffers
+    on node 2.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

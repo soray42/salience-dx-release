@@ -1,0 +1,170 @@
+seed_id: T6-021
+template: T6
+domain: open_qa
+complexity: low
+xbase: 我家浴室洗手盆排水很慢，我正准备拿出通管器自己清一下，就像我一贯处理的方式一样。目前还没有完全堵死，只是排水迟缓。这房子有些年头了，但我在这里从来没遇到过管道问题。我不想为这种自己十分钟就能搞定的事情花钱请水管工。{DS}
+focal_diagnostic_feature: 使用洗手盆时马桶和浴缸同时出现倒灌，并伴随多处排水口的咕噜声——这些迹象表明堵塞位于共用的主下水道，而非某个单独存水弯。
+low_diagnostic_proposition: Every drain clog the user has cleared before was a simple
+  hair or debris clog in the trap, so this one is probably the same.
+oracle_action: ANSWER
+oracle_focus: Call a professional for the main line; backups and gurgling across the
+  toilet, tub, and sink together point to a shared sewer-line blockage that a fixture
+  drain snake cannot reach, not a local trap clog.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a simple trap clog from past experience.
+  Ask whether other fixtures back up or gurgle when this drain is used.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a simple trap clog from past experience. Ask whether other
+      fixtures back up or gurgle when this drain is used.
+  LL:
+    action: ASK
+    focus: Do not assume a simple trap clog from past experience. Ask whether other
+      fixtures back up or gurgle when this drain is used.
+  HH:
+    action: ANSWER
+    focus: Call a professional for the main line; backups and gurgling across the
+      toilet, tub, and sink together point to a shared sewer-line blockage that a
+      fixture drain snake cannot reach, not a local trap clog.
+  LH:
+    action: ANSWER
+    focus: Call a professional for the main line; backups and gurgling across the
+      toilet, tub, and sink together point to a shared sewer-line blockage that a
+      fixture drain snake cannot reach, not a local trap clog.
+variants:
+  HL:
+    distractor: 我遇到过的每一次管道堵塞，都只是存水弯里堆了一团头发和污垢，所以我的整个直觉都在告诉我，这个排水迟缓的洗手盆就是我一直以来碰到的那种简单存水弯堵塞。
+    diagnosticity: low
+    salience: high
+    proposition: Every drain clog the user has cleared before was a simple hair or
+      debris clog in the trap, so this one is probably the same.
+    salience_source: B/C — a vivid personal history of easy trap clogs plus the confident
+      first-instinct that this is the same simple job.
+    why_plausible: A consistent run of trivial, snake-able clogs makes 'same easy
+      fix' the natural assumption for another slow drain.
+    why_irrelevant: Past clogs were all local trap blockages; this symptom set points
+      to the shared main line, which past single-fixture fixes give no reason to expect
+      or address.
+  LL:
+    distractor: 用户之前清理过的每一次管道堵塞都是简单的存水弯堵塞，所以这次也很可能是同样的情况。
+    diagnosticity: low
+    salience: low
+    proposition: Every drain clog the user has cleared before was a simple hair or
+      debris clog in the trap, so this one is probably the same.
+    matched_to: HL
+  HH:
+    distractor: 当我用洗手盆时，水竟然同时从马桶和浴缸往上涌，而且我能听到好几处排水口同时发出咕噜声。这不是一个存水弯堵了——它指向的是整个浴室共用的主下水道深处有堵塞。
+    diagnosticity: high
+    salience: high
+    proposition: Water backs up out of the toilet and the bathtub at the same time
+      the sink is used, and gurgling comes from multiple fixtures — signs the blockage
+      is in the shared main sewer line, not a single fixture's trap.
+    salience_source: The simultaneous toilet/tub backup and multi-fixture gurgling
+      on sink use make the shared-main-line blockage concrete.
+  LH:
+    distractor: 使用洗手盆时，马桶和浴缸同时有水涌上来，多处排水口都发出咕噜声，指向共用主下水道堵塞，而非单个存水弯问题。
+    diagnosticity: high
+    salience: low
+    proposition: Water backs up out of the toilet and the bathtub at the same time
+      the sink is used, and gurgling comes from multiple fixtures — signs the blockage
+      is in the shared main sewer line, not a single fixture's trap.
+    matched_to: HH
+distractor_direction:
+  label: 简单存水弯堵塞
+  description: 将排水迟缓视为常见的局部存水弯堵塞，用通管器自行清理，与以往处理方式相同。
+plausible_alternative_directions:
+- label: 通气管堵塞
+  description: 管道通气管堵塞是否导致了排水迟缓和咕噜声。
+- label: 局部支管部分堵塞
+  description: 该排水口自身的支管是否存在部分堵塞。
+leak_audit:
+  ll_atomic_claims:
+  - Every drain clog the user cleared before was a simple trap clog.
+  - Therefore this clog is probably the same.
+  hh_atomic_claims:
+  - Running the sink pushes water up out of the toilet and the bathtub at the same
+    time.
+  - Gurgling comes from several drains at once.
+  - This points to a blockage in the shared main sewer line rather than one fixture's
+    trap.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent personal history of easy hair-clog fixes with the
+      snake.
+    confident_assertion: Whole instinct says this is 'the very same kind of easy clog'
+      as always.
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 42
+  ll_word_count: 18
+  hh_word_count: 47
+  lh_word_count: 25
+  notes: 'T6: the availability inference "this one is probably the same" is in HL
+    and flat in LL. xbase says the sink is
+
+    merely sluggish and the user has had no prior trouble here — symptoms; the
+
+    multi-fixture backup/gurgling that reveals a main-line blockage (decisive) lives
+    only in HH/LH.
+
+    QC repair round 1: stripped two case claims from HL that LL lacked — the effort
+    descriptor
+
+    "that a few minutes with the snake cleared right out" (forbidden effort_descriptor)
+    and the action
+
+    consequence "and I should just handle it myself". HL now carries only the vivid
+    hair-and-gunk trap
+
+    elaboration plus the confident availability inference, matching LL''s two atomic
+    claims exactly.
+
+    HL recounted from 48 to 41 words.
+
+    '
+causal_audit:
+  steelman: 'A handy homeowner could argue that slow single-sink drainage is overwhelmingly
+    a local trap clog, that hair and
+
+    soap scum are by far the most common cause, and that a personal history of snaking
+    such clogs successfully makes
+
+    the DIY approach a reasonable default for another sluggish drain.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the multi-fixture backup and gurgling that reveal
+    a shared main-line blockage live only in HH/LH; xbase does not foreclose the DIY
+    trap-clog assumption.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A slow sink that is actually a shared main-sewer-line blockage (multi-fixture
+    backup and gurgling), against the user's availability bias that past clogs were
+    simple snake-able trap clogs.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 (orchestrator-adjudicated leak fix per protocol max-2-rounds)
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-021.yaml
+  source_xbase_sha256: 9511fced42c71cbd
+  translated_content_sha256: fce914635a742c6a
+  translation_notes: '存水弯 (P-trap), 通管器 (drain snake), 主下水道 (main sewer line) are
+    standard Chinese plumbing terms. HL salience: vivid personal history (''一团头发和污垢'')
+    and confident first-instinct (''整个直觉都在告诉我''). LL is flat and source-less. HH uses
+    first-person narrative with concrete simultaneous symptoms. LH carries same claims
+    in flat prose. No focal content in HL/LL.'

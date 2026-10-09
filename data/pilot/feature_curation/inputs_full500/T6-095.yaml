@@ -1,0 +1,168 @@
+seed_id: T6-095
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I am considering cancelling a gym membership that costs €95 per month. I have
+  been a member for two and a half years but have attended fewer than five times in
+  the past eight months. I run outdoors and do bodyweight work, and the gym is a 20-minute
+  drive from home. {DS}
+focal_diagnostic_feature: The user's training log shows four or more outdoor sessions
+  every week for the past 18 months without any gap longer than five days, including
+  through both recent winters.
+low_diagnostic_proposition: The user reports regretting past gym cancellations during
+  winter months when cold weather reduced outdoor motivation.
+oracle_action: ANSWER
+oracle_focus: Cancel the membership; the established outdoor training habit through
+  two full winters and near-zero gym attendance for eight months mean the membership
+  provides no value worth €95 per month.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let past gym-cancellation regret decide the current
+  question; ask about actual recent training frequency, outdoor habit consistency
+  through winter, and whether the gym provides anything the outdoor routine cannot.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let past gym-cancellation regret decide the current question; ask
+      about actual recent training frequency, outdoor habit consistency through winter,
+      and whether the gym provides anything the outdoor routine cannot.
+  LL:
+    action: ASK
+    focus: Do not let past gym-cancellation regret decide the current question; ask
+      about actual recent training frequency, outdoor habit consistency through winter,
+      and whether the gym provides anything the outdoor routine cannot.
+  HH:
+    action: ANSWER
+    focus: Cancel the membership; the established outdoor training habit through two
+      full winters and near-zero gym attendance for eight months mean the membership
+      provides no value worth €95 per month.
+  LH:
+    action: ANSWER
+    focus: Cancel the membership; the established outdoor training habit through two
+      full winters and near-zero gym attendance for eight months mean the membership
+      provides no value worth €95 per month.
+variants:
+  HL:
+    distractor: Every time I have quit a gym before, I have regretted it by February,
+      when the cold hits and I end up doing nothing for weeks, so my instinct is to
+      keep paying rather than go through that again.
+    diagnosticity: low
+    salience: high
+    proposition: The user reports regretting past gym cancellations during winter
+      months when cold weather reduced outdoor motivation.
+    salience_source: B/C — specific month named ('by February'), vivid consequence
+      framing ('doing nothing for weeks'), confident first-instinct conclusion ('keep
+      paying rather than go through that again').
+    why_plausible: For most people, outdoor exercise does drop in winter, and prior
+      experience of that failure is directly relevant — a decision-maker could reasonably
+      treat this as predictive.
+    why_irrelevant: The past winters that drove regret are structurally different
+      from the current user's situation; the focal feature shows an unbroken outdoor
+      habit through both recent winters, meaning the prior failure pattern does not
+      apply.
+  LL:
+    distractor: The user reports regretting past gym cancellations during winter months
+      when cold weather reduced outdoor motivation, leaving them inactive for weeks.
+    diagnosticity: low
+    salience: low
+    proposition: The user reports regretting past gym cancellations during winter
+      months when cold weather reduced outdoor motivation.
+    matched_to: HL
+  HH:
+    distractor: My training log shows four or more outdoor sessions every week for
+      the past 18 months, including through both recent winters, with no gap longer
+      than five days even in the coldest stretches.
+    diagnosticity: high
+    salience: high
+    proposition: The user's training log shows four or more outdoor sessions every
+      week for the past 18 months without any gap longer than five days, including
+      through both recent winters.
+    salience_source: B/C — quantified log data ('four or more sessions'), precise
+      timespan ('18 months'), specific max-gap claim ('five days'), and explicit winter
+      coverage stated.
+  LH:
+    distractor: The training log shows four-plus outdoor sessions per week over 18
+      months including both winters, with no gap longer than five days.
+    diagnosticity: high
+    salience: low
+    proposition: The user's training log shows four or more outdoor sessions every
+      week for the past 18 months without any gap longer than five days, including
+      through both recent winters.
+    matched_to: HH
+distractor_direction:
+  label: Winter-regret recurrence
+  description: Anticipating that cancelling the gym will lead to the same winter motivation
+    collapse experienced after previous cancellations.
+plausible_alternative_directions:
+- label: Infrequent-use correction
+  description: Reducing membership to a cheaper pay-as-you-go plan rather than cancelling
+    entirely in case specific equipment becomes needed.
+- label: Seasonal weather disruption
+  description: Upcoming unusual weather patterns or a change in schedule might disrupt
+    the outdoor routine in ways not captured by historic data.
+leak_audit:
+  ll_atomic_claims:
+  - The user has cancelled gyms in the past.
+  - The user regretted those cancellations.
+  - The regret occurred during winter months.
+  - The stated reason for regret was cold weather reducing outdoor motivation.
+  - The cold-weather motivation drop left the user inactive for weeks.
+  hh_atomic_claims:
+  - The training log shows four or more outdoor sessions per week.
+  - This frequency has been maintained for 18 months.
+  - The 18-month period includes both recent winters.
+  - No gap in the log exceeds five days.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Tight chronology — past cancellation, February cold, inactivity
+      — presented as a reliable personal cycle.
+    confident_assertion: '''Every time'', ''my instinct is to keep paying'', ''rather
+      than go through that again'' — strong first-person conviction.'
+    concrete_detail: Specific month ('February') as the failure point; 'weeks' of
+      inactivity as the consequence.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 51
+  hl_word_count: 39
+  ll_word_count: 21
+  hh_word_count: 33
+  lh_word_count: 22
+  notes: 'T6 availability inference (''so it''s probably the same thing again'') is
+    in BOTH HL and LL per C1 — LL states the past pattern (winter-regret after cancellations)
+    plus the consequence (inactive for weeks), matching all claims in HL. HH/LH diff:
+    LH now carries ''no gap longer than five days'' flatly, matching HH''s precise
+    gap claim exactly; ''both winters'' covers winter coverage. Repair (QC): LL extended
+    to include ''leaving them inactive for weeks'' to match HL''s severity claim;
+    LH reworded to replace ''without significant gaps'' with ''with no gap longer
+    than five days'' to match HH exactly. Steelman carefully checked — the past experience
+    IS structurally different because the past user lacked an established outdoor
+    winter habit; the focal feature shows the current user already has one.
+
+    '
+causal_audit:
+  steelman: 'A fitness coach could argue: past patterns of winter motivation collapse
+    are predictive precisely because this user has not yet faced a post-cancellation
+    winter without the gym as a fallback. The outdoor habit has been maintained while
+    the gym safety net exists; removing it may alter the psychological equation. The
+    prior regret is a real data point about this specific person''s motivation structure.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not mention the training log, which lives
+    only in HH/LH. The steelman's argument (gym as safety net) cannot be evaluated
+    from xbase alone; only the focal feature reveals that the outdoor habit has persisted
+    through both winters already, removing the basis for the safety-net argument.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User deciding whether to cancel an unused gym membership; past winter-regret
+    from previous cancellations is offered but the training log shows an unbroken
+    outdoor habit through two winters.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

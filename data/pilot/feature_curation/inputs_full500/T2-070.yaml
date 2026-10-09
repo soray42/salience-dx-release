@@ -1,0 +1,176 @@
+seed_id: T2-070
+template: T2
+domain: open_qa
+complexity: medium
+xbase: My evening study sessions have become far less productive over the last fortnight.
+  I sit down for the same two hours, I'm working through the same course material
+  at the same point in the syllabus, and I'm no more tired than usual. Yet I finish
+  each night having covered a fraction of what I used to. I want to pin down what
+  shifted in how these sessions actually run rather than just blaming my willpower.
+  {DS}
+focal_diagnostic_feature: The user's time-tracker shows that since they moved from
+  studying alone in their room to the shared flat common room, their average uninterrupted
+  focus block fell from about 50 minutes to about 9 minutes, with 14 interruptions
+  logged per session.
+low_diagnostic_proposition: The productivity drop began the same week the user bought
+  new over-ear study headphones.
+oracle_action: ANSWER
+oracle_focus: Return to studying alone or otherwise eliminate the interruptions; since
+  moving to the shared common room, focus blocks fragmented from about 50 minutes
+  to about 9, which is what cut the user's output.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame new headphones for the drop on timing alone.
+  Ask how the user's sessions are actually being interrupted and how their focus blocks
+  have changed.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame new headphones for the drop on timing alone. Ask how the user's
+      sessions are actually being interrupted and how their focus blocks have changed.
+  LL:
+    action: ASK
+    focus: Do not blame new headphones for the drop on timing alone. Ask how the user's
+      sessions are actually being interrupted and how their focus blocks have changed.
+  HH:
+    action: ANSWER
+    focus: Return to studying alone or otherwise eliminate the interruptions; since
+      moving to the shared common room, focus blocks fragmented from about 50 minutes
+      to about 9, which is what cut the user's output.
+  LH:
+    action: ANSWER
+    focus: Return to studying alone or otherwise eliminate the interruptions; since
+      moving to the shared common room, focus blocks fragmented from about 50 minutes
+      to about 9, which is what cut the user's output.
+variants:
+  HL:
+    distractor: Thinking back, the slump started the very week I bought a new pair
+      of over-ear headphones for studying; I'd been so pleased with them that I remember
+      the first session I used them, and the drop-off seems to date from right around
+      then.
+    diagnosticity: low
+    salience: high
+    proposition: The productivity drop began the same week the user bought new over-ear
+      study headphones.
+    salience_source: B/C — a clean, confident first-person chronology tying the slump
+      to a vivid, dated purchase used during study.
+    why_plausible: New headphones are right there during every session, so it's natural
+      to suspect them when sessions suddenly go worse.
+    why_irrelevant: The headphones play into the user's hands during study but cannot
+      cause the interruptions that fragment focus; the cause is the noisy shared room,
+      not the audio gear.
+  LL:
+    distractor: The productivity drop began the same week the user bought new over-ear
+      study headphones.
+    diagnosticity: low
+    salience: low
+    proposition: The productivity drop began the same week the user bought new over-ear
+      study headphones.
+    matched_to: HL
+  HH:
+    distractor: 'My time-tracker tells the story: since I started studying in the
+      shared flat common room instead of alone in my room, my average uninterrupted
+      block has collapsed from about fifty minutes to roughly nine, with around fourteen
+      interruptions logged every session.'
+    diagnosticity: high
+    salience: high
+    proposition: The user's time-tracker shows that since they moved from studying
+      alone in their room to the shared flat common room, their average uninterrupted
+      focus block fell from about 50 minutes to about 9 minutes, with 14 interruptions
+      logged per session.
+    salience_source: Concrete time-tracker numbers pairing the room move with the
+      50-to-9-minute block collapse make the fragmentation cause vivid and quantified.
+  LH:
+    distractor: After moving to the shared common room, the user's focus blocks fell
+      from about 50 to about 9 minutes, with 14 interruptions per session.
+    diagnosticity: high
+    salience: low
+    proposition: The user's time-tracker shows that since they moved from studying
+      alone in their room to the shared flat common room, their average uninterrupted
+      focus block fell from about 50 minutes to about 9 minutes, with 14 interruptions
+      logged per session.
+    matched_to: HH
+distractor_direction:
+  label: New headphones timing
+  description: Investigating whether the recently purchased study headphones are degrading
+    the user's concentration or session quality.
+plausible_alternative_directions:
+- label: Material difficulty spike
+  description: Whether the syllabus has reached a harder section that genuinely takes
+    longer per page.
+- label: Motivation or sleep dip
+  description: Whether reduced motivation or rest is lowering the user's effective
+    study output.
+leak_audit:
+  ll_atomic_claims:
+  - The productivity drop began the same week the user bought new over-ear study headphones.
+  hh_atomic_claims:
+  - The user moved from studying alone in their room to the shared flat common room.
+  - Their average uninterrupted focus block fell from about 50 minutes to about 9.
+  - About 14 interruptions are logged per session.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-week onset tied to a dated purchase used during
+      study.
+    confident_assertion: Thinking back, the slump started the very week — confident
+      first-person framing.
+    concrete_detail: Detail about the event (the new over-ear headphones, the first
+      pleased session) only — no claim about the room move or focus blocks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 81
+  hl_word_count: 42
+  ll_word_count: 14
+  hh_word_count: 40
+  lh_word_count: 24
+  notes: 'LL carries only the same-week-as-headphones timing claim; the headphones
+    and pleased-first-session detail are
+
+    HL-only and about the event. xbase states the symptom (same hours, same material/syllabus
+    point, same tiredness,
+
+    lower output) but withholds the room move and tracker data, so HL/LL cannot resolve
+    it. The decisive room-move/
+
+    fragmented-focus fact lives only in HH/LH. Non-medical: this is a study-environment
+    habit change.
+
+    '
+causal_audit:
+  steelman: 'One could argue headphones affect study: uncomfortable or poorly isolating
+    headphones can distract or fatigue a
+
+    learner, and gear used during every session is a fair thing to examine when output
+    falls. The comfort/distraction
+
+    mechanism exists in general. But it cannot inform THIS case: the focal evidence
+    shows output collapsed because
+
+    sessions fragmented into nine-minute blocks under fourteen interruptions after
+    the user moved into a shared
+
+    common room. Headphones, if anything, would reduce ambient distraction, and they
+    cannot generate the social
+
+    interruptions that the tracker records. There is no mechanism by which buying
+    headphones produces fourteen
+
+    interruptions a session. The coincidence is purely temporal.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase fixes hours, material, syllabus point, and tiredness
+    as unchanged, foreclosing time, content, and fatigue explanations while leaving
+    the room move unstated; the decisive fragmented-focus fact lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A study-productivity drop caused by moving into a shared common room
+    that fragments focus into 9-minute blocks, coincident with buying new headphones.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

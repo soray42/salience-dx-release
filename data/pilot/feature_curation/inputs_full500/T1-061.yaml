@@ -1,0 +1,158 @@
+seed_id: T1-061
+template: T1
+domain: open_qa
+complexity: low
+xbase: My non-stick frying pan has started letting eggs and pancakes stick badly,
+  which never used to happen. I have had it about three years and use it most mornings.
+  I always cook on medium heat and use a little oil. I hand-wash it with a soft sponge
+  rather than putting it in the dishwasher. The sticking is the same whatever I cook
+  now. {DS}
+focal_diagnostic_feature: The non-stick coating is visibly scratched and flaking,
+  with bare metal showing across the centre of the pan.
+low_diagnostic_proposition: A similar sticking problem for someone else was caused
+  by overheating oil past its smoke point.
+oracle_action: ANSWER
+oracle_focus: The non-stick surface has worn through to bare metal, so it can no longer
+  release food; replace the pan rather than adjusting cooking oil or heat.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume an oil smoke-point issue from another person's
+  case. Ask about the actual condition of the pan's coating before changing technique.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume an oil smoke-point issue from another person's case. Ask
+      about the actual condition of the pan's coating before changing technique.
+  LL:
+    action: ASK
+    focus: Do not assume an oil smoke-point issue from another person's case. Ask
+      about the actual condition of the pan's coating before changing technique.
+  HH:
+    action: ANSWER
+    focus: The non-stick surface has worn through to bare metal, so it can no longer
+      release food; replace the pan rather than adjusting cooking oil or heat.
+  LH:
+    action: ANSWER
+    focus: The non-stick surface has worn through to bare metal, so it can no longer
+      release food; replace the pan rather than adjusting cooking oil or heat.
+variants:
+  HL:
+    distractor: Nandhini, who cooks a lot and is fussy about her pans, said the same
+      thing happened to her and it came down to using oil with too low a smoke point;
+      once she switched to a higher-smoke-point oil, food stopped gripping the surface
+      again.
+    diagnosticity: low
+    salience: high
+    proposition: A similar sticking problem for someone else was caused by overheating
+      oil past its smoke point.
+    salience_source: A — an experienced, particular home cook recounting her own fix
+      lends the oil explanation credibility.
+    why_plausible: Oil pushed past its smoke point can polymerise and leave a sticky
+      residue, so it is a believable cause of food gripping a pan.
+    why_irrelevant: Her oil fix presumes an intact coating; here the non-stick layer
+      has worn through to bare metal, so no oil choice can restore release.
+  LL:
+    distractor: Someone else's similar sticking problem was caused by using oil heated
+      past its smoke point.
+    diagnosticity: low
+    salience: low
+    proposition: A similar sticking problem for someone else was caused by overheating
+      oil past its smoke point.
+    matched_to: HL
+  HH:
+    distractor: Looking closely under the light, the non-stick coating is scratched
+      all over and peeling, and right across the middle of the pan there is a dull
+      patch of bare metal where the black surface has flaked away completely.
+    diagnosticity: high
+    salience: high
+    proposition: The non-stick coating is visibly scratched and flaking, with bare
+      metal showing across the centre of the pan.
+    salience_source: The close visual description of bare metal where the coating
+      used to be makes the wear concrete.
+  LH:
+    distractor: The non-stick coating is scratched and flaking, with bare metal exposed
+      across the centre of the pan.
+    diagnosticity: high
+    salience: low
+    proposition: The non-stick coating is visibly scratched and flaking, with bare
+      metal showing across the centre of the pan.
+    matched_to: HH
+distractor_direction:
+  label: Oil smoke-point issue
+  description: Treating the sticking as caused by cooking oil overheated past its
+    smoke point leaving residue on the surface.
+plausible_alternative_directions:
+- label: Residue buildup
+  description: Whether baked-on residue from past cooking is reducing release and
+    needs deep cleaning.
+- label: Heat too high
+  description: Whether cooking at too high a temperature is causing food to bond before
+    it sets.
+leak_audit:
+  ll_atomic_claims:
+  - Someone else had a similar sticking problem.
+  - It was caused by oil heated past its smoke point.
+  hh_atomic_claims:
+  - The non-stick coating is scratched and flaking.
+  - Bare metal is exposed across the centre of the pan.
+  hl_salience_dimensions:
+    source_credibility: Named experienced home cook (Nandhini) recounting her own
+      resolved case.
+    narrative_coherence: Clean problem-then-fix arc with the oil swap.
+    confident_assertion: '''it came down to'' — confident attribution.'
+    concrete_detail: Detail about the source (her fussiness, the oil swap that worked)
+      only; no new fact about this user's pan.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 41
+  ll_word_count: 14
+  hh_word_count: 41
+  lh_word_count: 16
+  notes: 'LL carries only the someone-else / oil-smoke-point claim; Nandhini, her
+    habits, and her successful oil swap are
+
+    HL-only and concern the source. xbase withholds the coating''s condition and notes
+    gentle care (medium heat, hand
+
+    wash, soft sponge) so HL/LL cannot resolve it; the decisive bare-metal observation
+    lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A keen home cook could argue that oil taken past its smoke point is a
+    genuine cause of sticking: overheated oil
+
+    polymerises into a tacky varnish that food bonds to, and that residue accumulates
+    morning after morning, which
+
+    would explain why a once-reliable pan now grips everything. That account is defeated
+    by the coating''s state:
+
+    once bare metal is showing where the non-stick layer has flaked away, the release
+    surface is simply gone, and no
+
+    change of oil or cleaning routine restores a worn-through pan. Nothing in xbase
+    elevates the oil hypothesis for
+
+    this user, who already cooks on medium heat with a little oil, so the anecdote
+    has no mechanism for this pan.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the user cooks on medium heat with a little
+    oil, which makes routine smoke-point overheating unlikely, without naming the
+    coating's condition; the decisive bare-metal observation lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A non-stick pan that sticks because its coating has worn through to
+    bare metal, not the oil-smoke-point problem an experienced home cook's anecdote
+    suggests.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

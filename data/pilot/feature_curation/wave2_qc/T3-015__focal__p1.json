@@ -1,0 +1,13 @@
+{
+  "seed_id": "T3-015",
+  "my_own_diagnosis": "The easy screwdriver penetration to the hilt with one hand is the standard field diagnostic for compaction and clearly passes; the spatial correlation of sparse patches with canopy density rather than foot-traffic paths independently forecloses compaction and points unambiguously to shade and root competition as the cause, ruling out the need for aeration.",
+  "focal_decisive": true,
+  "focal_notes": "Two independent lines of evidence in the focal feature — functional penetration test and spatial thinning pattern — jointly and decisively eliminate compaction and identify shade/root competition, leaving no ambiguity for a competent practitioner.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracles map correctly: HL/LL (low diagnosticity, no penetration-test result in distractor) → ASK for the missing diagnostic evidence; HH/LH (high diagnosticity, focal info present) → ANSWER with shade management advice.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

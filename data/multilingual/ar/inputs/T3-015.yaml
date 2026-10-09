@@ -1,0 +1,254 @@
+seed_id: T3-015
+template: T3
+domain: open_qa
+complexity: low
+xbase: في حديقتي الخلفية توجد بقعة عشب صغيرة، ربما 12 متراً مربعاً، تقع تحت شجرتَي
+  بتولا ناضجتَين. حركة الأقدام خفيفة جداً — أعبرها أحياناً للوصول إلى صندوق السماد.
+  العشب يبدو متقطعاً في بعض الأماكن، ولم أقم بأي عمل في التربة منذ سنوات. ذكرت هذا
+  الأمر لرئيسة نادي البستنة في اجتماعنا الخريفي. {DS}
+focal_diagnostic_feature: اختبار اختراق المفك لا يجد أي انضغاط في التربة، والبقع المتفرقة
+  ترتبط مباشرةً بأعمق مناطق ظل المظلة الشجرية وليس بمسارات حركة الأقدام، مما يُشير
+  إلى الظل والتنافس مع جذور الأشجار باعتبارهما السبب لا انضغاط التربة.
+low_diagnostic_proposition: 'The lawn needs autumn core aeration.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Soil compaction is ruled out by the easy screwdriver penetration; the
+  sparse patches tracking the densest shade under the birches points to shade and
+  root competition as the cause. Autumn aeration is not indicated; the user should
+  focus on shade management — overseeding with shade-tolerant fine fescue and optionally
+  thinning the canopy — rather than aerating.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'The president''s recommendation is generic and not specific
+  to this lawn''s condition; before confirming the advice, ask about signs of compaction
+  (e.g., soil penetration test result) and where the sparse patches are located relative
+  to foot-traffic areas and tree canopy.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: 'The president''s recommendation is generic and not specific to this lawn''s
+      condition; before confirming the advice, ask about signs of compaction (e.g.,
+      soil penetration test result) and where the sparse patches are located relative
+      to foot-traffic areas and tree canopy.
+
+      '
+  LL:
+    action: ASK
+    focus: 'The president''s recommendation is generic and not specific to this lawn''s
+      condition; before confirming the advice, ask about signs of compaction (e.g.,
+      soil penetration test result) and where the sparse patches are located relative
+      to foot-traffic areas and tree canopy.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Soil compaction is ruled out by the easy screwdriver penetration; the
+      sparse patches tracking the densest shade under the birches points to shade
+      and root competition as the cause. Autumn aeration is not indicated; the user
+      should focus on shade management — overseeding with shade-tolerant fine fescue
+      and optionally thinning the canopy — rather than aerating.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Soil compaction is ruled out by the easy screwdriver penetration; the
+      sparse patches tracking the densest shade under the birches points to shade
+      and root competition as the cause. Autumn aeration is not indicated; the user
+      should focus on shade management — overseeding with shade-tolerant fine fescue
+      and optionally thinning the canopy — rather than aerating.
+
+      '
+variants:
+  HL:
+    distractor: أخبرتني رئيسة نادي البستنة مباشرةً، دون أن تنظر إلى العشب، أنه يحتاج
+      إلى تهوية أساسية هذا الخريف — هذه توصيتها المعتادة، كما قالت، دون استثناءات.
+    diagnosticity: low
+    salience: high
+    proposition: 'The lawn needs autumn core aeration.
+
+      '
+    salience_source: 'A (source credibility: gardening-club president, domain authority);
+      C (confident assertion: "told me straight away", "without fail", "always gives");
+      D (concrete setting detail: "at our autumn meeting" in xbase).
+
+      '
+    why_plausible: 'Annual autumn aeration is a widely repeated horticultural guideline;
+      a busy reader hearing it from the club president, delivered as a blanket rule
+      she always applies, is likely to accept it without checking whether the lawn''s
+      actual condition warrants it.
+
+      '
+    why_irrelevant: 'The recommendation is generic pattern-matching that ignores this
+      lawn''s evidence entirely: the screwdriver test shows no compaction, and the
+      thinning pattern maps to canopy density, not foot traffic — the only causal
+      pathway for the president''s claim is structurally foreclosed.
+
+      '
+  LL:
+    distractor: قال لي أحدهم في نادي البستنة إن العشب يحتاج إلى تهوية أساسية هذا الخريف.
+    diagnosticity: low
+    salience: low
+    proposition: 'The lawn needs autumn core aeration.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: المفك دخل بسهولة تامة حتى آخره بيد واحدة — نتيجة نموذجية تدل على غياب
+      الانضغاط — وكل بقعة رقيقة تقع بالضبط تحت أكثف مناطق الظل تحت شجرتَي البتولا،
+      دون أي ترقق على طول المسار الذي أمشي فيه فعلاً.
+    diagnosticity: high
+    salience: high
+    proposition: 'The screwdriver penetration test finds no compaction, and the sparse
+      patches correlate directly with the deepest tree canopy rather than with foot-traffic
+      paths, pointing to shade and root competition as the cause rather than compacted
+      soil.
+
+      '
+    salience_source: 'C (confident assertion: "effortlessly", "textbook no-compaction
+      result", "exactly onto"); D (concrete case-internal detail presented vividly:
+      explicit contrast between canopy patches and the walked path).
+
+      '
+  LH:
+    distractor: التربة ليست متماسكة، والبقع الرقيقة موجودة تحت أكثف مناطق ظل المظلة
+      الشجرية، ولا يوجد ترقق على طول المسار الذي أمشي فيه.
+    diagnosticity: high
+    salience: low
+    proposition: 'The screwdriver penetration test finds no compaction, and the sparse
+      patches correlate directly with the deepest tree canopy rather than with foot-traffic
+      paths, pointing to shade and root competition as the cause rather than compacted
+      soil.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: انضغاط التربة يستوجب التهوية
+  description: حكم رئيسة النادي العام يُقدّم التهوية الخريفية باعتبارها العلاج الشامل
+    لأي عشب يبدو مُنهكاً، مع الإيحاء ضمنياً بأن الترقق ناجم عن انضغاط التربة. وهذا
+    نهج قائم على مطابقة الأنماط دون فحص الحالة الفعلية للعشب.
+plausible_alternative_directions:
+- label: نقص المغذيات أو خلل في درجة الحموضة
+  description: التربة الحمضية أو الفقيرة بالمغذيات تحت مظلة شجر البتولا قد تُقيّد
+    نمو العشب، مما يجعل التسميد أو تعديل الحموضة تدخلاً أولياً محتملاً يفكر فيه الخبراء.
+- label: نوع العشب الخاطئ للظروف البيئية
+  description: صنف العشب الحالي قد لا يتناسب مع بيئة ظليلة ومتنافسة في جذورها؛ قد
+    يوصي الخبير باستبداله بنوع متحمل للظل بدلاً من أي علاج صيانة.
+- label: زحف الطحلب الذي يخنق العشب
+  description: الظروف الرطبة والمظللة تحت الأشجار تُشجّع نمو الطحلب؛ قد يشك الخبير
+    في أن منافسة الطحلب هي السبب المباشر لترقق العشب ويوصي بالتجريف أو علاج الطحلب
+    أولاً.
+leak_audit:
+  ll_atomic_claims:
+  - The lawn needs autumn core aeration.
+  hl_salience_dimensions:
+    source_credibility: gardening-club president (recognised domain authority in context)
+    narrative_coherence: clean single statement, professional register, no tangents
+    confident_assertion: '"told me straight away", "without fail", "always gives"'
+    concrete_detail: '"at our autumn meeting" (setting in xbase); "standard recommendation
+      she always gives" (source pattern, not case content)'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 25
+  ll_word_count: 13
+  notes: 'No tunable values (no measurements added by HL beyond what xbase establishes).
+
+    No effort descriptors (no "after two days" equivalents).
+
+    No severity claims (HL does not characterise the lawn''s condition).
+
+    No sensory distractors about setting (no weather, sounds, smells).
+
+    No rambling markers or hedging language.
+
+    "most lawns thin out over winter" describes the president''s general claim
+
+    about lawns in general, not this lawn — cleared as source-pattern phrasing
+
+    rather than a case-content addition.
+
+    HL:LL ratio = 38/13 = 2.9, within the 4:1 ceiling.
+
+    REPAIR (qc leak p1 2026-06-11): LH distractor expanded from 13 words to 23
+
+    words to add the foot-traffic path contrast ("no thinning along the path I
+
+    walk") required for propositional equivalence with HH. HH explicitly states
+
+    this negative path evidence; LH now matches it flatly. LH remains within the
+
+    12-25 word limit (23 words) and salience stays low (flat statement, no
+
+    credibility anchor).
+
+
+    rev3 2026-06-11: HL hand-repaired per QC r2 verdict (orchestrator edit); word
+    count 25.
+
+    rev4 2026-06-11: cell-integrity repair — removed screwdriver penetration test
+    and canopy-patch observation from xbase; both remain in HH/LH variants. xbase
+    now presents bare lawn symptom only. pathway_closed_in_xbase updated to N/A. causal_audit.pathway_closed_in_xbase
+    updated accordingly.'
+causal_audit:
+  steelman: 'Argument for compaction being a live diagnosis: Tree roots can create
+
+    an uneven, shallow surface-soil structure; even light foot traffic over
+
+    several years on a small enclosed lawn may produce localised surface
+
+    capping, particularly on clay-rich soils common in temperate gardens.
+
+    Some extension-service guidance recommends annual autumn aeration as
+
+    low-cost preventive maintenance regardless of visible compaction, on the
+
+    basis that aeration improves winter water infiltration and root-zone
+
+    gas exchange even in non-compacted soils. A garden adviser who had not
+
+    seen the lawn might reasonably list aeration as worth considering.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — the screwdriver penetration test and the canopy-correlated
+    thinning pattern are not in xbase; they live exclusively in the HH/LH variants.
+    xbase presents only the bare symptom (patchy grass on a lightly trafficked shaded
+    lawn), leaving compaction as a live hypothesis at the xbase stage.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 4
+  topic_brief: 'Whether a small shaded lawn needs autumn aeration. The gardening-club
+    president pronounces a confident generic verdict without looking at the actual
+    condition of the lawn.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-015.yaml
+  source_xbase_sha256: 2b06604d7873caae
+  translated_content_sha256: 3b9bb2c023e9939c
+  translation_notes: The gardening-club president's role carries local authority in
+    the original; this transfers naturally in Arabic as 'رئيسة نادي البستنة'. 'تهوية
+    أساسية' (core aeration) is the established Arabic gardening term. 'شجر البتولا'
+    (birch trees) is the standard Arabic botanical term. 'المفك' (screwdriver) is
+    the standard Arabic term. 'fine fescue' is referenced only in oracle fields (not
+    translated); the focal feature uses 'ظل والتنافس مع جذور الأشجار' which preserves
+    the causal claim without introducing oracle content.

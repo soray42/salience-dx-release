@@ -1,0 +1,176 @@
+seed_id: T3-051
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I am planning a week-long island-hopping trip through the Greek islands, arriving
+  by ferry between five different stops. I need to book internal ferries between islands
+  on specific days because the boat schedule is fixed and some crossings run only
+  once daily. I am comparing a flexible open-jaw flight routing versus a rigid return
+  ticket to the same hub. {DS}
+focal_diagnostic_feature: The open-jaw routing lands the user on the correct starting
+  island and departs from the final island, eliminating two extra ferry legs; the
+  return-to-hub ticket would require a six-hour backtrack on the penultimate day,
+  conflicting with the only same-day ferry to the departure port.
+low_diagnostic_proposition: For Mediterranean island trips, a return ticket to the
+  same hub is simpler and avoids getting stranded by open-jaw logistics.
+oracle_action: ANSWER
+oracle_focus: Book the open-jaw routing; the fixed ferry schedule makes the return-to-hub
+  ticket logistically unworkable for the planned itinerary, and the open-jaw removes
+  the six-hour backtrack.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the return-ticket preference from authority
+  alone; ask for the detailed ferry schedule, the backtrack distance and time, and
+  whether missing the penultimate ferry is a risk.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the return-ticket preference from authority alone; ask for
+      the detailed ferry schedule, the backtrack distance and time, and whether missing
+      the penultimate ferry is a risk.
+  LL:
+    action: ASK
+    focus: Do not accept the return-ticket preference from authority alone; ask for
+      the detailed ferry schedule, the backtrack distance and time, and whether missing
+      the penultimate ferry is a risk.
+  HH:
+    action: ANSWER
+    focus: Book the open-jaw routing; the fixed ferry schedule makes the return-to-hub
+      ticket logistically unworkable for the planned itinerary, and the open-jaw removes
+      the six-hour backtrack.
+  LH:
+    action: ANSWER
+    focus: Book the open-jaw routing; the fixed ferry schedule makes the return-to-hub
+      ticket logistically unworkable for the planned itinerary, and the open-jaw removes
+      the six-hour backtrack.
+variants:
+  HL:
+    distractor: Zuzanna, a travel consultant who has planned more than three hundred
+      Mediterranean itineraries, told me that for island trips she always recommends
+      a return ticket to a main hub — open-jaw routings strand people when connections
+      shift.
+    diagnosticity: low
+    salience: high
+    proposition: For Mediterranean island trips, a return ticket to the same hub is
+      simpler and avoids getting stranded by open-jaw logistics.
+    salience_source: 'A: named expert with quantified track record (three hundred
+      itineraries); B: clear professional framing; C: confident assertion (always
+      recommends).'
+    why_plausible: A high-volume travel consultant's blanket preference for return
+      tickets reflects genuine experience with passengers missing open-jaw connections
+      on island itineraries.
+    why_irrelevant: The authority's concern is generic connection risk; it does not
+      engage with the specific fixed ferry schedule that makes the hub-return backtrack
+      logistically impossible within this itinerary.
+  LL:
+    distractor: A travel consultant who handles Mediterranean trips said return tickets
+      to the same hub are simpler and avoid open-jaw stranding risk.
+    diagnosticity: low
+    salience: low
+    proposition: For Mediterranean island trips, a return ticket to the same hub is
+      simpler and avoids getting stranded by open-jaw logistics.
+    matched_to: HL
+  HH:
+    distractor: The open-jaw ticket lands me on Naxos and departs from Santorini,
+      which is exactly my start and end island. The hub-return ticket would mean taking
+      a six-hour ferry back to Athens on the penultimate day, but the only boat to
+      Piraeus from Santorini that day departs at 07:30 — before I can reach the port
+      from my hotel.
+    diagnosticity: high
+    salience: high
+    proposition: The open-jaw routing lands the user on the correct starting island
+      and departs from the final island, eliminating two extra ferry legs; the return-to-hub
+      ticket would require a six-hour backtrack on the penultimate day, conflicting
+      with the only same-day ferry to the departure port.
+    salience_source: 'B: specific named islands, concrete departure time (07:30),
+      and clear logistical conflict stated precisely; C: the impossibility is stated
+      directly.'
+  LH:
+    distractor: The open-jaw matches start and end islands; the return ticket requires
+      a six-hour backtrack whose only ferry departs before the user can reach the
+      port.
+    diagnosticity: high
+    salience: low
+    proposition: The open-jaw routing lands the user on the correct starting island
+      and departs from the final island, eliminating two extra ferry legs; the return-to-hub
+      ticket would require a six-hour backtrack on the penultimate day, conflicting
+      with the only same-day ferry to the departure port.
+    matched_to: HH
+distractor_direction:
+  label: Hub-return simplicity preference
+  description: Recommending a return-to-hub ticket on the grounds that open-jaw routings
+    create stranding risk and are less reliable for island itineraries.
+plausible_alternative_directions:
+- label: Price differential
+  description: The return ticket may be significantly cheaper than the open-jaw, warranting
+    a check on whether the cost saving justifies itinerary adjustments.
+- label: Airline change-fee exposure
+  description: Open-jaw tickets often have stricter change policies; if the trip dates
+    might shift, return ticket flexibility could matter.
+- label: Ferry booking availability
+  description: Fixed ferry slots may sell out; confirming seat availability before
+    committing to either flight option is a live concern.
+leak_audit:
+  ll_atomic_claims:
+  - Return tickets to the same hub are simpler for island trips.
+  - Open-jaw routings carry stranding risk.
+  - A travel consultant holds this view for Mediterranean trips.
+  hh_atomic_claims:
+  - The open-jaw ticket lands on Naxos and departs from Santorini.
+  - Naxos is the start island and Santorini is the end island.
+  - The hub-return ticket requires a six-hour ferry to Athens on the penultimate day.
+  - The only Piraeus-bound boat from Santorini that day departs at 07:30.
+  - That departure is before the user can reach the port from the hotel.
+  hl_salience_dimensions:
+    source_credibility: Named expert (Zuzanna), quantified track record (300+ itineraries),
+      professional role (travel consultant).
+    narrative_coherence: Professional advisory context, clear recommendation.
+    confident_assertion: '''Always recommends'' — universal preference stated without
+      qualification.'
+    concrete_detail: N/A — no detail added about the user's itinerary.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 75
+  hl_word_count: 36
+  ll_word_count: 19
+  hh_word_count: 48
+  lh_word_count: 22
+  notes: 'T3-047 (rail pass vs point-to-point) and T3-049 (carry-on vs checked bag)
+    are both travel/logistics but have distinct root causes. This seed''s root cause
+    is open-jaw vs hub-return determined by fixed ferry schedule conflict — unique.
+    Source name Zuzanna is Polish/Czech, not in the taken list. xbase does not disclose
+    the specific ferry-schedule conflict (that lives in HH/LH); it only states that
+    ferries run on fixed schedules as context.
+
+    QC repair: removed ''and airlines change open-jaw fares unpredictably'' from HL
+    distractor; that phrase was a case-relevant claim absent from LL (C1 leak). HL
+    word count reduced from 44 to 36.
+
+    '
+causal_audit:
+  steelman: 'A travel expert could argue that open-jaw tickets on smaller airlines
+    serving Greek islands have genuinely higher cancellation rates, and if the opening
+    leg is cancelled the traveller is stranded on the wrong island with no ferry fallback
+    to their planned start. The return-ticket structure keeps at least one end of
+    the journey on a more trafficked route.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: The ferries between specific islands run once daily on
+    fixed schedules — the hub-return routing creates an impossible backtrack regardless
+    of open-jaw connection risk. The authority's concern about stranding does not
+    apply when the alternative is itself guaranteed to fail the schedule.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Greek island-hopping open-jaw vs hub-return flight choice, where fixed
+    once-daily ferry schedule makes the hub-return backtrack impossible, against a
+    travel consultant's blanket return-ticket preference.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

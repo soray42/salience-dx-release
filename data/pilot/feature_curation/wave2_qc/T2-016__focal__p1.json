@@ -1,0 +1,13 @@
+{
+  "seed_id": "T2-016",
+  "my_own_diagnosis": "Given that the template redesign was purely cosmetic (fonts, color, logo — no field or content changes) and the client explicitly confirmed their payment process is unchanged, both the template-change and client-process-change pathways are foreclosed; the delay must originate from an unidentified change on the client's side, so the correct action is to ask the client what changed approximately two months ago.",
+  "focal_decisive": true,
+  "focal_notes": "The two explicit closures in xbase — cosmetic-only redesign and client-confirmed process unchanged — together make the focal feature unambiguous: visual redesign cannot be causal and client-side investigation is warranted.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracles correctly map HL/LL to the low-diagnostic focus (reject visual-redesign story, ask client what changed) and HH/LH to the focal oracle focus (ask about specific client-side structural changes); low_diagnostic_oracle_focus explicitly instructs non-adoption of the distractor.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

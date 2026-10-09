@@ -1,0 +1,176 @@
+seed_id: T6-035
+template: T6
+domain: open_qa
+complexity: medium
+xbase: My washing machine vibrates violently and makes a loud rumbling during the
+  spin cycle. I tried redistributing the laundry load and running a small test cycle
+  with just one item, but the shaking is the same. The machine is six years old and
+  the vibration started about ten days ago. {DS}
+focal_diagnostic_feature: The violent vibration and rumbling occur at identical intensity
+  on a completely empty drum spin, ruling out any load-balance explanation and pointing
+  to a mechanical bearing failure.
+low_diagnostic_proposition: Past washing-machine vibration for this user was consistently
+  resolved by redistributing an unbalanced load, so that is likely the cause again.
+oracle_action: ANSWER
+oracle_focus: Stop using the machine and arrange a technician inspection for drum
+  bearing or spider-arm failure; the symptom on an empty spin confirms the fault is
+  structural, not load-related.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not rely on past unbalanced-load experience to explain
+  the current symptom. Ask whether vibration occurs on an empty drum and whether there
+  are any new mechanical sounds before advising load redistribution.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not rely on past unbalanced-load experience to explain the current symptom.
+      Ask whether vibration occurs on an empty drum and whether there are any new
+      mechanical sounds before advising load redistribution.
+  LL:
+    action: ASK
+    focus: Do not rely on past unbalanced-load experience to explain the current symptom.
+      Ask whether vibration occurs on an empty drum and whether there are any new
+      mechanical sounds before advising load redistribution.
+  HH:
+    action: ANSWER
+    focus: Stop using the machine and arrange a technician inspection for drum bearing
+      or spider-arm failure; the symptom on an empty spin confirms the fault is structural,
+      not load-related.
+  LH:
+    action: ANSWER
+    focus: Stop using the machine and arrange a technician inspection for drum bearing
+      or spider-arm failure; the symptom on an empty spin confirms the fault is structural,
+      not load-related.
+variants:
+  HL:
+    distractor: Every time I have had heavy vibration in a washing machine, an unbalanced
+      load was the whole problem — once I redistributed the clothes it always calmed
+      down, so that is where my instinct goes first.
+    diagnosticity: low
+    salience: high
+    proposition: Past washing-machine vibration for this user was consistently resolved
+      by redistributing an unbalanced load, so that is likely the cause again.
+    salience_source: 'B: vivid personal history with a consistent pattern framed confidently;
+      C: ''always calmed down'' — assertive certainty about past resolution.'
+    why_plausible: Unbalanced loads are by far the most common cause of washing-machine
+      vibration, and a personal track record of resolving vibration that way is a
+      reasonable prior.
+    why_irrelevant: The user already redistributed the load and ran a single-item
+      test cycle with identical results, so the load-balance mechanism is exhausted
+      before the slot is reached; the empty-drum test in HH/LH structurally eliminates
+      it.
+  LL:
+    distractor: The user reports that past washing-machine vibration was consistently
+      resolved by redistributing an unbalanced load.
+    diagnosticity: low
+    salience: low
+    proposition: Past washing-machine vibration for this user was consistently resolved
+      by redistributing an unbalanced load, so that is likely the cause again.
+    matched_to: HL
+  HH:
+    distractor: Running the spin cycle completely empty still produces the same violent
+      shaking and the rumbling pitch rises with drum speed; a technician can reproduce
+      it in under a minute by spinning an empty drum.
+    diagnosticity: high
+    salience: high
+    proposition: The violent vibration and rumbling occur at identical intensity on
+      a completely empty drum spin, ruling out any load-balance explanation and pointing
+      to a mechanical bearing failure.
+    salience_source: 'B: precise reproducibility detail (empty drum, pitch rises with
+      speed, confirmed by technician); C: confident causal link to mechanical failure
+      implicit in the empty-drum finding.'
+  LH:
+    distractor: The violent vibration occurs on an empty drum spin and worsens as
+      speed increases.
+    diagnosticity: high
+    salience: low
+    proposition: The violent vibration and rumbling occur at identical intensity on
+      a completely empty drum spin, ruling out any load-balance explanation and pointing
+      to a mechanical bearing failure.
+    matched_to: HH
+distractor_direction:
+  label: Unbalanced laundry load
+  description: Attributing the violent spin vibration to laundry distributed unevenly
+    inside the drum, which would normally be corrected by redistributing or reducing
+    the load.
+plausible_alternative_directions:
+- label: Machine not level on floor
+  description: The appliance feet have settled unevenly over time, causing resonance
+    that worsens during high-speed spin independent of load.
+- label: Drum spider arm fracture
+  description: The spider arm connecting the drum to the shaft has cracked, which
+    also produces violent vibration on an empty spin and requires drum replacement.
+- label: Transit bolt left installed
+  description: A transit bolt or shipping rod was inadvertently left in after a recent
+    move, restricting drum movement and causing the shaking.
+leak_audit:
+  ll_atomic_claims:
+  - The user's past washing-machine vibration was consistently resolved by redistributing
+    the load.
+  - This past pattern is offered as the likely cause of the current vibration.
+  hh_atomic_claims:
+  - The spin cycle was run completely empty.
+  - The violent shaking occurred at the same intensity on an empty drum.
+  - The rumbling pitch rises with drum speed.
+  - A technician can reproduce the symptom by spinning an empty drum in under a minute.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person recall, no external source.
+    narrative_coherence: 'B: personal history framed as a consistent pattern with
+      a clear resolution mechanism.'
+    confident_assertion: 'C: ''always calmed down'', ''every time'' — strong certainty
+      about past experience.'
+    concrete_detail: N/A — the concrete detail is about the source's general experience,
+      not case-specific facts.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 50
+  hl_word_count: 35
+  ll_word_count: 15
+  hh_word_count: 34
+  lh_word_count: 14
+  notes: 'T6 C1 check: the availability inference (''so that is where my instinct
+    goes first'')
+
+    appears in both HL and LL — LL carries it as ''so that is likely the cause again''
+
+    in low_diagnostic_proposition, which both HL and LL share. xbase performs one
+
+    pathway closure: ''I tried redistributing the laundry load and running a small
+
+    test cycle with just one item'' — this blocks the plain load-imbalance mechanism
+
+    without naming the real cause (C4 compliant). Ratios: HL:LL = 2.33, HH:LH = 2.43.
+
+    '
+causal_audit:
+  steelman: 'A senior appliance technician could argue: even redistributing the load
+    or running
+
+    a single-item cycle may not fully eliminate an imbalance if the remaining item
+
+    shifts to one side at high spin speeds; a heavy single item can create significant
+
+    eccentric loading. The vibration pattern the user describes could therefore still
+
+    be a load-distribution issue, especially if they ran the single-item test at
+
+    a lower spin speed.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the user tried both load redistribution and
+    a single-item test cycle with the same result, closing the load-imbalance pathway.
+    The HH/LH empty-drum finding provides the structural exclusion.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Washing machine vibrates violently during spin; user's availability
+    heuristic blames unbalanced load from past experience, but empty-drum spin reproduces
+    the symptom, confirming mechanical bearing failure.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

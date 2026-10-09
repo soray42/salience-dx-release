@@ -1,0 +1,103 @@
+seed_id: T3-005
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: يتعطل تطبيق React Native الخاص بنا على iOS عندما يفتح المستخدم شاشة معينة تعرض
+  صورة مرفوعة من المستخدم. تنجو الشاشة ذاتها في العادة على Android. {DS}
+focal_diagnostic_feature: 'سجل أعطال iOS يُظهر ''Memory pressure: terminated''، والشاشة
+  تحمّل صوراً بحجم 4000x3000 بكامل دقتها.'
+low_diagnostic_proposition: A senior engineering leader says native bridge serialisation
+  should be treated as the main cause of iOS React Native crashes.
+oracle_action: ANSWER
+oracle_focus: Downsample/cache images appropriately; the crash is an iOS memory-pressure
+  termination from full-resolution image loading.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not take the CTO's bridge explanation without logs.
+  Ask for the iOS crash reason and image dimensions/loading behaviour.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not take the CTO's bridge explanation without logs. Ask for the iOS
+      crash reason and image dimensions/loading behaviour.
+  LL:
+    action: ASK
+    focus: Do not take the CTO's bridge explanation without logs. Ask for the iOS
+      crash reason and image dimensions/loading behaviour.
+  HH:
+    action: ANSWER
+    focus: Downsample/cache images appropriately; the crash is an iOS memory-pressure
+      termination from full-resolution image loading.
+  LH:
+    action: ANSWER
+    focus: Downsample/cache images appropriately; the crash is an iOS memory-pressure
+      termination from full-resolution image loading.
+variants:
+  HL:
+    distractor: قال المدير التقني (CTO) بثقة إن أعطال React Native على iOS تكون في
+      معظم الأحيان مشاكل تسلسل في الجسر الأصلي (native bridge serialisation).
+    diagnosticity: low
+    salience: high
+    proposition: A senior engineering leader says native bridge serialisation should
+      be treated as the main cause of iOS React Native crashes.
+    salience_source: authority title, confident technical diagnosis
+    why_plausible: The bridge is a real React Native failure area and the CTO is high
+      status.
+    why_irrelevant: The OS log directly states memory pressure; bridge serialisation
+      is not the best fit for that evidence.
+  LL:
+    distractor: أفاد أحد القادة التقنيين الأقدم بأن تسلسل الجسر الأصلي (native bridge
+      serialisation) هو السبب الرئيسي لهذا النوع من أعطال iOS في React Native.
+    diagnosticity: low
+    salience: low
+    proposition: A senior engineering leader says native bridge serialisation should
+      be treated as the main cause of iOS React Native crashes.
+    matched_to: HL
+  HH:
+    distractor: 'سجل العطل يقول حرفياً ''Memory pressure: terminated''، والشاشة تحمّل
+      صور المستخدمين بحجم 4000x3000 دون تقليص (downsampling).'
+    diagnosticity: high
+    salience: high
+    proposition: 'The iOS crash log says ''Memory pressure: terminated'', and the
+      screen loads 4000x3000 images at full resolution.'
+    salience_source: crash-log reason and image dimensions
+  LH:
+    distractor: تُشير سجلات أعطال iOS إلى إنهاء بسبب ضغط الذاكرة (memory-pressure
+      termination) في شاشة تحمّل صوراً بدقتها الأصلية 4000x3000.
+    diagnosticity: high
+    salience: low
+    proposition: 'The iOS crash log says ''Memory pressure: terminated'', and the
+      screen loads 4000x3000 images at full resolution.'
+    matched_to: HH
+distractor_direction:
+  label: تسلسل الجسر الأصلي (native bridge serialisation)
+  description: التحقيق في تسلسل جسر React Native أو تمرير الرسائل أو marshalling الوحدات
+    الأصلية بوصفه مصدر العطل.
+plausible_alternative_directions:
+- label: أصل مرفوع تالف
+  description: صورة مشوّهة أو غير معتادة مرفوعة من المستخدم تتسبب في تعطّل مسار تحميل
+    الصور.
+- label: خطأ في فك ترميز الصور على iOS
+  description: مشكلة في فك ترميز الصور على منصة iOS لا تظهر على Android.
+- label: خطأ في دورة حياة التنقل
+  description: انتقال الشاشة أو معالجة دورة الحياة يُطلق عطلاً خاصاً بالمنصة.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-005.yaml
+  source_xbase_sha256: 76693cebeec94da1
+  translated_content_sha256: 7c08e63e7bfe4cf9
+  translation_notes: 'Technical terms React Native, iOS, Android, native bridge serialisation,
+    Memory pressure, downsampling, marshalling retained as-is or transliterated per
+    instrument. The crash log string ''Memory pressure: terminated'' kept in English
+    as a quoted literal.'

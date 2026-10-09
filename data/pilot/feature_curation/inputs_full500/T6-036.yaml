@@ -1,0 +1,194 @@
+seed_id: T6-036
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our dbt revenue aggregation model started over-counting totals last week. The
+  discrepancy sits at about 12% above the source system and affects every region.
+  We added a new upstream data source — third-party subscription events — three weeks
+  ago. No existing dbt model logic was modified. {DS}
+focal_diagnostic_feature: The new subscription-events staging table contains an average
+  of 2.1 records per event because the vendor delivers append-only change records
+  and the staging model lacks a ROW_NUMBER or DISTINCT deduplication step.
+low_diagnostic_proposition: Past dbt aggregation over-counting for this user was consistently
+  caused by fan-out joins in the lineage duplicating rows, so that is likely the cause
+  again.
+oracle_action: ANSWER
+oracle_focus: Add a deduplication step to the subscription-events staging model —
+  keep only the latest change record per event ID using ROW_NUMBER or DISTINCT ON
+  — then rerun the aggregation and verify the 12% gap closes.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a fan-out join from past experience. Profile
+  row counts at each node in the lineage, starting with the new source's staging table,
+  to find where the duplication is introduced before reviewing join logic.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a fan-out join from past experience. Profile row counts at
+      each node in the lineage, starting with the new source's staging table, to find
+      where the duplication is introduced before reviewing join logic.
+  LL:
+    action: ASK
+    focus: Do not assume a fan-out join from past experience. Profile row counts at
+      each node in the lineage, starting with the new source's staging table, to find
+      where the duplication is introduced before reviewing join logic.
+  HH:
+    action: ANSWER
+    focus: Add a deduplication step to the subscription-events staging model — keep
+      only the latest change record per event ID using ROW_NUMBER or DISTINCT ON —
+      then rerun the aggregation and verify the 12% gap closes.
+  LH:
+    action: ANSWER
+    focus: Add a deduplication step to the subscription-events staging model — keep
+      only the latest change record per event ID using ROW_NUMBER or DISTINCT ON —
+      then rerun the aggregation and verify the 12% gap closes.
+variants:
+  HL:
+    distractor: Every time I have seen wrong aggregation numbers in dbt before, it
+      was a fan-out join somewhere in the lineage — a one-to-many relationship quietly
+      turning rows into duplicates — and my gut says that is what is happening here
+      again.
+    diagnosticity: low
+    salience: high
+    proposition: Past dbt aggregation over-counting for this user was consistently
+      caused by fan-out joins in the lineage duplicating rows, so that is likely the
+      cause again.
+    salience_source: 'B: vivid personal pattern with a specific technical mechanism
+      (fan-out join, one-to-many); C: ''every time'' — strong certainty about past
+      experience applied to the present case.'
+    why_plausible: Fan-out joins are among the most common causes of aggregation over-counting
+      in dbt pipelines, and a consistent personal track record of identifying them
+      there is a credible prior.
+    why_irrelevant: The duplication is in the source staging table itself (upstream
+      of any join), not in the join logic; the fan-out join mechanism cannot operate
+      when the rows are already duplicated before they reach a join node.
+  LL:
+    distractor: The user reports that past dbt aggregation errors were consistently
+      caused by fan-out joins duplicating rows.
+    diagnosticity: low
+    salience: low
+    proposition: Past dbt aggregation over-counting for this user was consistently
+      caused by fan-out joins in the lineage duplicating rows, so that is likely the
+      cause again.
+    matched_to: HL
+  HH:
+    distractor: Querying the raw staging table for the new subscription-events source
+      shows each event appears an average of 2.1 times; the vendor delivers append-only
+      change records and our staging model passes them through without any ROW_NUMBER
+      or DISTINCT deduplication step.
+    diagnosticity: high
+    salience: high
+    proposition: The new subscription-events staging table contains an average of
+      2.1 records per event because the vendor delivers append-only change records
+      and the staging model lacks a ROW_NUMBER or DISTINCT deduplication step.
+    salience_source: 'B: precise numeric finding (2.1 records per event) with the
+      specific mechanism named (append-only change records, missing dedup step); D:
+      concrete staging-table query result.'
+  LH:
+    distractor: The new subscription-events staging table averages 2.1 records per
+      event; the staging model applies no deduplication.
+    diagnosticity: high
+    salience: low
+    proposition: The new subscription-events staging table contains an average of
+      2.1 records per event because the vendor delivers append-only change records
+      and the staging model lacks a ROW_NUMBER or DISTINCT deduplication step.
+    matched_to: HH
+distractor_direction:
+  label: Fan-out join in lineage
+  description: Investigating whether a one-to-many join relationship in the dbt model
+    lineage is causing rows to multiply and inflate the revenue aggregation totals.
+plausible_alternative_directions:
+- label: Double-counting across source systems
+  description: The new subscription-events source and an existing source overlap on
+    some revenue events, leading to the same revenue being counted twice from two
+    different tables.
+- label: Aggregation grain mismatch
+  description: The revenue aggregation model's grain definition was not updated to
+    account for the new source's event structure, causing group-by keys to merge rows
+    that should remain distinct.
+- label: Incremental model full-refresh issue
+  description: The incremental dbt model processed the new source in a full-refresh
+    run that re-inserted historical records already present, inflating totals.
+leak_audit:
+  ll_atomic_claims:
+  - The user's past dbt aggregation errors were consistently caused by fan-out joins.
+  - Fan-out joins duplicated rows in those past cases.
+  - This pattern is offered as the likely cause of the current over-counting.
+  hh_atomic_claims:
+  - The raw staging table for the new subscription-events source was queried.
+  - Each event appears an average of 2.1 times in that staging table.
+  - The vendor delivers append-only change records.
+  - The staging model passes records through without a ROW_NUMBER or DISTINCT deduplication
+    step.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person recall, no external source.
+    narrative_coherence: 'B: personal pattern with specific technical mechanism described
+      (fan-out join, one-to-many relationship).'
+    confident_assertion: 'C: ''every time'' — strong certainty about past experience.'
+    concrete_detail: N/A — the mechanism described is the user's general past pattern,
+      not a new fact about the current case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 39
+  ll_word_count: 16
+  hh_word_count: 39
+  lh_word_count: 16
+  notes: 'T6 C1 check: availability inference (''so that is likely the cause again'')
+    appears
+
+    in low_diagnostic_proposition shared by both HL and LL. HL adds the vivid mechanism
+
+    description and ''every time'' framing; LL is a flat statement of the same pattern.
+
+    QC repair: removed ''so I keep pulling up the join graph even though I cannot
+    spot
+
+    the problem there'' from HL — this phrase was a current-case investigative finding
+
+    (join graph already inspected without result) absent from LL, violating C1 propositional
+
+    equivalence. Replaced with ''and my gut says that is what is happening here again''
+
+    which is pure first-instinct application-to-now, not a new case fact.
+
+    Ratios: HL:LL = 2.44, HH:LH = 2.44.
+
+    '
+causal_audit:
+  steelman: 'A senior dbt engineer could argue: a new source introduced three weeks
+    before
+
+    the problem appeared could have created a fan-out join if the new source''s
+
+    keys match existing model join columns at an unexpected grain — particularly
+
+    if the staging model was automatically included in a join that assumed one
+
+    record per event. The 12% discrepancy could reflect a partial fan-out affecting
+
+    only the subscription segment, which would look like 2.1x records per event
+
+    when averaged across all rows but is actually a join multiplier for a subset.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states no existing dbt model logic was modified,
+    which means the join graph is unchanged. The only new element is the staging model
+    for the new source, making source-level duplication the first place to check rather
+    than join structure.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: dbt revenue model over-counts by 12% after adding a new subscription-events
+    source; user's availability heuristic blames fan-out joins from past experience,
+    but the staging table itself contains 2.1 duplicate records per event due to missing
+    deduplication of vendor append-only change records.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

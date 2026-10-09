@@ -1,0 +1,9 @@
+{
+  "seed_id": "T1-014",
+  "steelman": "The strongest good-faith argument is that some consumers purchase third-party extended warranty or protection plans (e.g., SquareTrade/Allstate appliance plans) at the time of purchase that can run up to 5 years, and some premium appliance brands offer extended 5-year parts-and-labor warranties as upgrades. If the user held such a plan, a non-certified third-party repair could void that coverage, making warranty preservation a real financial stake. A thorough practitioner might therefore include 'do you have an active extended warranty or protection plan?' on their checklist. Under that scenario, the brother-in-law's technician-backed reasoning about warranty voiding could be genuinely transferable.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Active third-party extended warranty (e.g., SquareTrade) voided by non-certified repair — but requires an active plan covering a machine in its 8th year, which exceeds the typical 3-5 year duration of all standard aftermarket and manufacturer extended warranties. No such plan is present or implied in xbase.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase states the machine is 8 years old. Standard manufacturer dishwasher warranties are 1-3 years; even the most generous aftermarket extended plans (3-5 years from purchase) would have expired by year 8. The steelman's mechanism is theoretically constructable but requires a fact (an unusually long-duration active protection plan) that is absent from xbase and implausible given the machine's age. No competent practitioner would place warranty preservation on a real checklist for this case without first confirming such a plan exists — and xbase provides no grounds to assume one does. The seed's own causal_audit correctly identifies this as closed. Seed passes this lens."
+}

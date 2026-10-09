@@ -1,0 +1,161 @@
+seed_id: T6-087
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I had a slow puncture develop on my car's front passenger tyre during a motorway
+  drive last month. The garage patched it and I kept the tyre. Now a different tyre,
+  the rear driver side, has gone flat overnight in the driveway. I need to decide
+  whether to patch or replace it. {DS}
+focal_diagnostic_feature: A tyre technician measures 5 mm of remaining tread depth
+  on the rear tyre and finds a clean nail puncture in the central tread zone, well
+  within the repairable area by industry standards.
+low_diagnostic_proposition: The user's previous tyre problem required a patch that
+  later failed, so replacing the current flat tyre is probably the safer option.
+oracle_action: ANSWER
+oracle_focus: Have the rear tyre professionally patched; the puncture location and
+  remaining tread depth both meet standard repairability criteria, and replacement
+  is not warranted on the current findings.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not carry over the previous patch outcome to this
+  different tyre and situation. Ask for the puncture location, tread depth, and tyre
+  age before recommending replacement.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not carry over the previous patch outcome to this different tyre and
+      situation. Ask for the puncture location, tread depth, and tyre age before recommending
+      replacement.
+  LL:
+    action: ASK
+    focus: Do not carry over the previous patch outcome to this different tyre and
+      situation. Ask for the puncture location, tread depth, and tyre age before recommending
+      replacement.
+  HH:
+    action: ANSWER
+    focus: Have the rear tyre professionally patched; the puncture location and remaining
+      tread depth both meet standard repairability criteria, and replacement is not
+      warranted on the current findings.
+  LH:
+    action: ANSWER
+    focus: Have the rear tyre professionally patched; the puncture location and remaining
+      tread depth both meet standard repairability criteria, and replacement is not
+      warranted on the current findings.
+variants:
+  HL:
+    distractor: The patch on the front tyre worked for about three weeks and then
+      the pressure started dropping again, so I ended up replacing it anyway — my
+      instinct now is that patches on this car just do not hold long-term.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous tyre problem required a patch that later failed,
+      so replacing the current flat tyre is probably the safer option.
+    salience_source: B/C — concrete personal chronology (three weeks, pressure dropping
+      again) plus a confident generalised inference ('patches on this car just do
+      not hold') framed as an instinct drawn from direct experience.
+    why_plausible: A reader would find it natural to worry that a patch failure on
+      one tyre this season signals something systematic about road conditions or vehicle
+      weight distribution.
+    why_irrelevant: 'The past patch outcome is structurally irrelevant to this tyre:
+      the focal feature establishes that the rear tyre has adequate tread depth and
+      a centrally located puncture that falls within industry repairability criteria
+      — an objectively different situation.'
+  LL:
+    distractor: A previous patch on a different tyre on this car failed after a few
+      weeks, suggesting patches may not hold reliably on this vehicle.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous tyre problem required a patch that later failed,
+      so replacing the current flat tyre is probably the safer option.
+    matched_to: HL
+  HH:
+    distractor: The technician found a roofing nail in the centre of the tread, measured
+      5 mm of remaining depth, and confirmed the puncture sits squarely in the repairable
+      zone — more than 4 mm from the shoulder and well away from the sidewall.
+    diagnosticity: high
+    salience: high
+    proposition: A tyre technician measures 5 mm of remaining tread depth on the rear
+      tyre and finds a clean nail puncture in the central tread zone, well within
+      the repairable area by industry standards.
+    salience_source: B/C — specific object (roofing nail), precise measurements (5
+      mm depth, 4 mm from shoulder), professional confirmation, and the explicit repairability
+      criterion make the evidence vivid and decisive.
+  LH:
+    distractor: The rear tyre has 5 mm of tread remaining and a central-tread puncture
+      within the repairable zone.
+    diagnosticity: high
+    salience: low
+    proposition: A tyre technician measures 5 mm of remaining tread depth on the rear
+      tyre and finds a clean nail puncture in the central tread zone, well within
+      the repairable area by industry standards.
+    matched_to: HH
+distractor_direction:
+  label: Past patch failure generalisation
+  description: Treating the failure of a previous patch on a different tyre as evidence
+    that patching is unreliable for this vehicle and this tyre should be replaced.
+plausible_alternative_directions:
+- label: Tyre age and condition
+  description: Assessing whether the tyre's age, sidewall cracking, or compound hardening
+    independently justifies replacement regardless of the puncture specifics.
+- label: Axle-matching requirement
+  description: Checking whether pairing rules for matching tyres on the same axle
+    require replacing both rear tyres together.
+leak_audit:
+  ll_atomic_claims:
+  - A previous patch on a different tyre on this car failed after a few weeks.
+  - This suggests patches may not hold reliably on this vehicle.
+  hh_atomic_claims:
+  - The technician found a roofing nail in the centre of the tread.
+  - Tread depth measures 5 mm.
+  - The puncture is more than 4 mm from the shoulder and away from the sidewall.
+  - The puncture is confirmed to be within the repairable zone.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker.
+    narrative_coherence: Three-week timeline with pressure-drop recurrence gives a
+      clear personal history arc.
+    confident_assertion: '''my instinct now is that patches on this car just do not
+      hold long-term'' — firm generalised conclusion.'
+    concrete_detail: N/A — the three-week duration is about the previous event timeline,
+      not a new case-content fact about the current tyre.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 75
+  hl_word_count: 44
+  ll_word_count: 22
+  hh_word_count: 42
+  lh_word_count: 17
+  notes: 'T6 availability inference: ''patches on this car just do not hold long-term''
+    is the availability-to-now application and appears in both HL and LL as required.
+    The past patch failure is structurally different: it was on the front tyre with
+    an unspecified puncture location; the current tyre has a measured central-tread
+    puncture with adequate depth — the focal feature closes the inference.
+
+    '
+causal_audit:
+  steelman: 'A cautious tyre specialist might argue: repeated punctures in one season
+    on the same vehicle could indicate an unusually rough road environment or chronic
+    underinflation that stresses patches, making the user''s generalisation at least
+    worth considering. But the focal finding — 5 mm tread depth and a centrally located
+    puncture well within the repairable zone — addresses the repairability of this
+    specific tyre on its own objective criteria. The past failure''s mechanism (unknown
+    puncture location, possibly sidewall or shoulder) is not established, so there
+    is no constructable causal chain from the prior patch failure to predicting failure
+    for this centrally located puncture.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the focal measurements in HH/LH establish repairability;
+    xbase does not pre-close the pathway.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: 'Car tyre flat: past patch failure on a different tyre biases toward
+    replacement, but tyre technician finds 5 mm tread depth and a central-tread puncture
+    well within repairability criteria.'
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

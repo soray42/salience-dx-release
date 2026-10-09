@@ -1,0 +1,86 @@
+seed_id: T5-007
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our GitHub Actions workflow takes about 22 minutes per run. The repository
+  uses npm and has a committed package-lock.json that changes only occasionally. {DS}
+focal_diagnostic_feature: Eighteen of the 22 minutes are spent running npm install
+  from scratch, and the workflow has no dependency cache.
+low_diagnostic_proposition: The visual presentation of GitHub Actions logs is unpleasant
+  to read.
+oracle_action: ANSWER
+oracle_focus: Add dependency caching keyed on the lockfile, using setup-node cache
+  or actions/cache.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not mistake ugly logs for slow execution causes. Ask
+  for per-step timings and workflow cache configuration.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not mistake ugly logs for slow execution causes. Ask for per-step timings
+      and workflow cache configuration.
+  LL:
+    action: ASK
+    focus: Do not mistake ugly logs for slow execution causes. Ask for per-step timings
+      and workflow cache configuration.
+  HH:
+    action: ANSWER
+    focus: Add dependency caching keyed on the lockfile, using setup-node cache or
+      actions/cache.
+  LH:
+    action: ANSWER
+    focus: Add dependency caching keyed on the lockfile, using setup-node cache or
+      actions/cache.
+variants:
+  HL:
+    distractor: The logs render in a cramped typeface with harsh colours; after ten
+      minutes they look like a wall of broken terminal confetti.
+    diagnosticity: low
+    salience: high
+    proposition: The visual presentation of GitHub Actions logs is unpleasant to read.
+    salience_source: visual discomfort, terminal/log aesthetic
+    why_plausible: Bad-looking tooling can feel like malfunctioning tooling.
+    why_irrelevant: Log typography does not explain step duration; per-step timing
+      and missing cache do.
+  LL:
+    distractor: The GitHub Actions logs have a visual presentation that the team finds
+      hard to read.
+    diagnosticity: low
+    salience: low
+    proposition: The visual presentation of GitHub Actions logs is unpleasant to read.
+    matched_to: HL
+  HH:
+    distractor: Eighteen of the 22 minutes are just `npm install` running cold every
+      time, and there is no cache step anywhere in the YAML.
+    diagnosticity: high
+    salience: high
+    proposition: Eighteen of the 22 minutes are spent running npm install from scratch,
+      and the workflow has no dependency cache.
+    salience_source: per-step duration and missing cache
+  LH:
+    distractor: The install step consumes 18 of 22 minutes and the workflow does not
+      configure dependency caching.
+    diagnosticity: high
+    salience: low
+    proposition: Eighteen of the 22 minutes are spent running npm install from scratch,
+      and the workflow has no dependency cache.
+    matched_to: HH
+distractor_direction:
+  label: Log readability
+  description: Investigating whether hard-to-read CI logs or interface presentation
+    explains the long workflow runtime.
+plausible_alternative_directions:
+- label: Test-suite slowness
+  description: The workflow may spend most time in tests rather than dependency installation.
+- label: Registry latency
+  description: npm registry or network access may be slow during installs.
+- label: Runner resource limits
+  description: The GitHub Actions runner may be CPU or IO constrained.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

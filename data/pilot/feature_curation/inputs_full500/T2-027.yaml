@@ -1,0 +1,167 @@
+seed_id: T2-027
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Clients paging through our REST API's list endpoint started seeing the same
+  records appear on more than one page about a week ago. The total count looks right,
+  but a handful of items are duplicated across page boundaries while a few others
+  are skipped. The query and the pagination code have not changed, and the problem
+  only shows up under normal production write activity, never on our static test dataset.
+  {DS}
+focal_diagnostic_feature: The cursor pages by created_at alone, which is not unique;
+  when several rows share the same created_at across a page boundary, ordering is
+  unstable between requests, so rows shift pages, causing the duplicates and skips.
+low_diagnostic_proposition: The duplicate-paging reports started the same week the
+  team migrated its dashboards to a new monitoring vendor.
+oracle_action: ANSWER
+oracle_focus: Make the pagination cursor sort on a unique tiebreaker (created_at plus
+  the primary key); rows sharing a created_at currently order unstably across page
+  boundaries under concurrent writes, which causes the duplicates and skips.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the monitoring-vendor migration to the
+  paging duplicates. Ask what column the cursor sorts on and whether that column is
+  unique across rows.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the monitoring-vendor migration to the paging duplicates.
+      Ask what column the cursor sorts on and whether that column is unique across
+      rows.
+  LL:
+    action: ASK
+    focus: Do not connect the monitoring-vendor migration to the paging duplicates.
+      Ask what column the cursor sorts on and whether that column is unique across
+      rows.
+  HH:
+    action: ANSWER
+    focus: Make the pagination cursor sort on a unique tiebreaker (created_at plus
+      the primary key); rows sharing a created_at currently order unstably across
+      page boundaries under concurrent writes, which causes the duplicates and skips.
+  LH:
+    action: ANSWER
+    focus: Make the pagination cursor sort on a unique tiebreaker (created_at plus
+      the primary key); rows sharing a created_at currently order unstably across
+      page boundaries under concurrent writes, which causes the duplicates and skips.
+variants:
+  HL:
+    distractor: One thing that nags at me is that the duplicate-paging reports started
+      the same week we cut over all our dashboards to a new monitoring vendor; the
+      cutover was a big project and it sticks in my mind as the thing that changed
+      right before this began.
+    diagnosticity: low
+    salience: high
+    proposition: The duplicate-paging reports started the same week the team migrated
+      its dashboards to a new monitoring vendor.
+    salience_source: B/C — a coherent first-person chronology tying onset to a memorable,
+      datable observability migration.
+    why_plausible: A monitoring cutover is a salient recent change and engineers reach
+      for the most recent big project when something breaks.
+    why_irrelevant: The monitoring layer only observes the system; it never touches
+      how the API orders or paginates query results, so it cannot cause records to
+      repeat across pages.
+  LL:
+    distractor: The duplicate-paging reports started around the time the team migrated
+      to a new monitoring vendor.
+    diagnosticity: low
+    salience: low
+    proposition: The duplicate-paging reports started the same week the team migrated
+      its dashboards to a new monitoring vendor.
+    matched_to: HL
+  HH:
+    distractor: The cursor pages by created_at alone, which is not unique; when several
+      rows share the same created_at across a page boundary and new writes arrive,
+      the database is free to order those ties differently between requests, so rows
+      drift across pages, producing the duplicates and skips.
+    diagnosticity: high
+    salience: high
+    proposition: The cursor pages by created_at alone, which is not unique; when several
+      rows share the same created_at across a page boundary, ordering is unstable
+      between requests, so rows shift pages, causing the duplicates and skips.
+    salience_source: The non-unique created_at cursor and the unstable tie-ordering
+      under concurrent writes name the exact paging mechanism.
+  LH:
+    distractor: The cursor sorts on non-unique created_at, so rows sharing a created_at
+      across a page boundary reorder between requests under writes, causing duplicates
+      and skips.
+    diagnosticity: high
+    salience: low
+    proposition: The cursor pages by created_at alone, which is not unique; when several
+      rows share the same created_at across a page boundary, ordering is unstable
+      between requests, so rows shift pages, causing the duplicates and skips.
+    matched_to: HH
+distractor_direction:
+  label: Monitoring-vendor migration
+  description: Investigating whether the recent switch to a new monitoring or dashboard
+    vendor is connected to the duplicate-paging behaviour.
+plausible_alternative_directions:
+- label: Read-replica lag
+  description: Whether queries hitting a lagging replica return inconsistent snapshots
+    across pages.
+- label: Offset-based drift
+  description: Whether offset pagination over a changing dataset shifts rows as items
+    are inserted.
+leak_audit:
+  ll_atomic_claims:
+  - The duplicate-paging reports started around the time the team migrated to a new
+    monitoring vendor.
+  hh_atomic_claims:
+  - The pagination cursor sorts on created_at alone, which is not unique.
+  - When rows share a created_at across a page boundary under concurrent writes, the
+    database orders the ties differently between requests.
+  - Rows therefore drift across pages, producing the duplicates and skips.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person coincidence, no external source.
+    narrative_coherence: Coherent chronology anchoring onset to a big monitoring cutover.
+    confident_assertion: States the same-week timing as the thing that changed.
+    concrete_detail: N/A — about the monitoring migration (setting), not the paging
+      case; adds no case fact LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 73
+  hl_word_count: 44
+  ll_word_count: 17
+  hh_word_count: 46
+  lh_word_count: 25
+  notes: 'T2: a monitoring-vendor migration observes but does not order query results,
+    so it has no path to paging
+
+    duplicates. xbase keeps symptoms (duplicates across page boundaries, only under
+    production writes, unchanged
+
+    query/code) and withholds the non-unique-cursor mechanism, which is HH/LH-only.
+    The "only under production
+
+    writes" detail is a neutral symptom, not the affirmative cause.
+
+    '
+causal_audit:
+  steelman: 'A data engineer might argue a new monitoring vendor sometimes injects
+    query hints, samples, or proxies traffic,
+
+    and a misconfigured agent could in theory alter requests — but the described migration
+    is of dashboards and
+
+    alerting, which consume metrics and never sit in the API''s query path; nothing
+    about swapping observability
+
+    backends changes how the database orders tied rows.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the monitoring migration is unrelated to query ordering;
+    the affirmative cause (non-unique created_at cursor with unstable tie-ordering)
+    is given only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: REST pagination duplicating and skipping records because the cursor
+    sorts on non-unique created_at without a tiebreaker, coincidentally timed with
+    a monitoring-vendor migration.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,27 @@
+{
+  "seed_id": "T6-013",
+  "ll_claims_extracted": [
+    "The speaker has personal experience with cert errors like this.",
+    "Those prior cert errors were caused by clock skew."
+  ],
+  "hl_case_claims": [
+    "Every mTLS cert error seen has been caused by clock skew."
+  ],
+  "hl_source_claims": [
+    "The speaker is the on-call engineer.",
+    "The speaker has been on-call at this location for three years.",
+    "The scope of 'every' covers the collective team history ('we've ever seen')."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 23,
+    "ll": 14,
+    "xbase": 51,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "fail",
+  "repair_hint": "HL is 23 words, below the required 25-word minimum. Add ~2 words to HL without introducing case-content leaks — e.g., expand the tenure phrase or add a brief framing clause that stays in the source/setting domain. Example: 'I've been the on-call engineer here for three years now, and every mTLS cert error we've ever seen has traced back to clock skew.' (25 words)."
+}

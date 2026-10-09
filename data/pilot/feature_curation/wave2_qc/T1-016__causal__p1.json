@@ -1,0 +1,9 @@
+{
+  "seed_id": "T1-016",
+  "steelman": "A senior financial analyst colleague who recently chose fixed at renewal provides indirect Bayesian evidence that fixed rates were economically favorable in her rate environment — weakly relevant to anyone making the same choice in a similar period. Additionally, a forward-looking practitioner might ask whether the user intends to open a HELOC for upcoming home renovation, which would make Priya's consolidation experience pre-emptively applicable. Finally, the fact that a domain-literate professional (pension fund analyst) made this choice could be read as a soft endorsement of fixed products in general, supplying a credibility-weighted signal beyond mere anecdote.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase explicitly states 'no home equity line or other debt tied to the property,' which closes the only real causal pathway (HELOC consolidation) completely. The indirect inference — that Priya's fixed-rate choice signals rate-environment favorability — conflates a consolidation-motivated decision with a pure rate-type optimisation; a senior financial planner would immediately distinguish these cases and discount Priya's experience as structurally inapplicable. No repair needed: the seed is well-constructed and the closure is airtight."
+}

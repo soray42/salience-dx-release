@@ -1,0 +1,232 @@
+seed_id: T1-012
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: 过去48小时，我的Kafka消费者组在分区7上持续出现增长的滞后，而其他九个分区均保持平稳，滞后量低于500条消息。所有消费者版本和JVM参数相同，自问题出现以来消费者组未发生重平衡。我尚未确定是什么原因制约了分区7。{DS}
+focal_diagnostic_feature: Broker-2作为分区7的Leader，磁盘I/O使用率高达95%，而其他所有Broker均低于20%；且分区7的消费者侧处理时间与健康分区相同，排除了消费者侧吞吐量作为原因的可能性。
+low_diagnostic_proposition: 'Another team''s single-partition consumer group lag was
+  caused by one consumer performing synchronous database lookups per message.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Investigate broker-2 for disk I/O saturation: identify whether the
+  disk is failing, nearly full, or being throttled, and consider migrating partition
+  7''s leader replica to a healthy broker while the root cause is resolved.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Do not adopt the synchronous-lookup explanation; instead,
+  gather broker-side and consumer-side metrics for partition 7 to identify the actual
+  constraint before committing to any direction.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: Do not adopt the synchronous-lookup explanation; instead, gather broker-side
+      and consumer-side metrics for partition 7 to identify the actual constraint
+      before committing to any direction.
+  LL:
+    action: ANSWER
+    focus: Do not adopt the synchronous-lookup explanation; instead, gather broker-side
+      and consumer-side metrics for partition 7 to identify the actual constraint
+      before committing to any direction.
+  HH:
+    action: ANSWER
+    focus: 'Investigate broker-2 for disk I/O saturation: identify whether the disk
+      is failing, nearly full, or being throttled, and consider migrating partition
+      7''s leader replica to a healthy broker while the root cause is resolved.'
+  LH:
+    action: ANSWER
+    focus: 'Investigate broker-2 for disk I/O saturation: identify whether the disk
+      is failing, nearly full, or being throttled, and consider migrating partition
+      7''s leader replica to a healthy broker while the root cause is resolved.'
+variants:
+  HL:
+    distractor: 一家同行金融科技公司的高级平台工程师告诉我，他们的消费者组上个季度出现了完全相同的单分区滞后症状；经过事后复盘，追溯到是某个消费者在每条消息处理时进行同步数据库查询所致。
+    diagnosticity: low
+    salience: high
+    proposition: 'Another team''s single-partition consumer group lag was caused by
+      one consumer performing synchronous database lookups per message.
+
+      '
+    salience_source: 'A (source credibility): "senior platform engineer at a peer
+      fintech"; B (narrative coherence): professional register, clean single sentence;
+      C (confident assertion): "told me … traced it to"; D (concrete detail about
+      setting): "after their post-mortem".
+
+      '
+    why_plausible: 'Synchronous consumer-side calls are a well-known Kafka lag cause;
+      the anecdote matches the symptom (single-partition lag) and comes from a credible
+      peer in the same industry, so a busy reader might anchor on it.
+
+      '
+    why_irrelevant: 'The focal feature shows consumer processing time for partition
+      7 is identical to the healthy partitions, structurally ruling out any consumer-side
+      throughput constraint; the actual bottleneck is broker-2''s disk I/O, a completely
+      separate layer.
+
+      '
+  LL:
+    distractor: 另一家公司的某人遇到过单分区消费者组滞后问题，原因被追溯到每条消息的同步数据库查询。
+    diagnosticity: low
+    salience: low
+    proposition: 'Another team''s single-partition consumer group lag was caused by
+      one consumer performing synchronous database lookups per message.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 持有分区7 Leader副本的Broker-2磁盘I/O使用率高达95%，而集群中其他所有Broker均低于20%；分区7的消费者轮询和处理延迟与健康分区无异，明确指向Broker侧的磁盘瓶颈。
+    diagnosticity: high
+    salience: high
+    proposition: 'Broker-2, the partition leader for partition 7, is running at 95%
+      disk I/O utilisation while all other brokers are below 20%, and consumer-side
+      processing time for partition 7 is identical to the healthy partitions, ruling
+      out consumer-side throughput as the cause.
+
+      '
+    salience_source: 'C (confident assertion): "pegged at … pointing squarely to";
+      D (concrete metric detail): specific percentages and explicit contrast with
+      healthy brokers make the causal direction vivid and precise.
+
+      '
+  LH:
+    distractor: Broker-2是分区7的Leader副本，磁盘I/O使用率为95%；其他Broker均低于20%；分区7的消费者轮询和处理延迟与健康分区相同。
+    diagnosticity: high
+    salience: low
+    proposition: 'Broker-2, the partition leader for partition 7, is running at 95%
+      disk I/O utilisation while all other brokers are below 20%, and consumer-side
+      processing time for partition 7 is identical to the healthy partitions, ruling
+      out consumer-side throughput as the cause.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: 消费者同步查询延迟
+  description: 假设分配到分区7的消费者在消费循环内执行同步外部调用（如数据库查询），从而降低其吞吐量，导致该分区滞后积压。
+plausible_alternative_directions:
+- label: 热分区生产者数据倾斜
+  description: 分区7的键范围吸引了生产者不成比例的高消息量，导致无论处理速度如何，消费者都无法跟上。
+- label: 毒丸消息反序列化失败
+  description: 分区7上一条或多条格式错误的消息导致反复的反序列化错误或重试，阻碍了消费者在该分区上的进度。
+- label: 消费者实例资源耗尽
+  description: 分配给分区7的消费者JVM实例堆内存或CPU不足，导致GC暂停或线程饥饿，独立于Broker健康状况地降低消费速度。
+leak_audit:
+  ll_atomic_claims:
+  - Another company had a consumer group with single-partition lag.
+  - The cause of that lag was synchronous database lookups per message.
+  hl_salience_dimensions:
+    source_credibility: senior platform engineer at a peer fintech
+    narrative_coherence: professional single-sentence report, no tangents or hedges
+    confident_assertion: '"told me … traced it to"'
+    concrete_detail: '"after their post-mortem" (setting anchor, says nothing about
+      the current case)'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 37
+  ll_word_count: 16
+  notes: 'Stripped "starving that partition''s throughput" from an early HL draft
+    —
+
+    this was a severity/consequence claim not present in LL. "Last quarter"
+
+    kept as a temporal credibility anchor for the source (allowed per I1);
+
+    it says nothing about the current case. No sensory environment color added.
+
+    No effort descriptor ("after two days" avoided per the T1-001 legacy note).
+
+    The word "exact" in "exact same single-partition lag symptom" is a
+
+    salience-coherence qualifier about the symptom match (T1 template norm),
+
+    not a new content claim about the current case.
+
+    Repair (revision 2, qc leak p1 2026-06-11): LH expanded to include
+
+    Broker-2''s role as partition 7''s leader replica and consumer poll latency
+
+    as a distinct metric, matching all claims present in HH. LH word count is
+
+    now 21 (within 12-25 limit). hl_word_count corrected from 38 to 37.
+
+    Repair (revision 3, cell-integrity lens 2026-06-11): removed broker-2 disk
+
+    I/O contrast and consumer processing parity from xbase — both are focal-
+
+    decisive and belong only in HH/LH. Updated low_diagnostic_oracle_focus and
+
+    HL/LL cell_oracles to remove reference to consumer-processing-time data
+
+    not present in those cells. Updated pathway_closed_in_xbase to reflect
+
+    that the closure now lives entirely in HH/LH focal evidence.
+
+    '
+causal_audit:
+  steelman: 'A competent Kafka engineer would put "consumer-side slow processing"
+    near
+
+    the top of any single-partition lag checklist: if one consumer performs a
+
+    synchronous call per message, that partition''s throughput drops while the
+
+    others remain healthy — exactly the pattern observed here. A defender of
+
+    this direction could argue that the processing-time metric might exclude
+
+    time spent inside the consume callback waiting on an external service, so
+
+    the metric could be misleading. They would say: "rule it out explicitly by
+
+    looking at consumer thread wall-clock time, not just the framework-level
+
+    poll latency." This is a textbook Kafka lag hypothesis and would be on
+
+    every senior engineer''s initial checklist.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'After the cell-integrity repair, xbase no longer states
+    consumer processing time or broker I/O figures. The pathway closure now lives
+    entirely in the HH/LH focal evidence: consumer poll and processing latency for
+    partition 7 are indistinguishable from the healthy partitions, ruling out consumer-side
+    throughput as the cause. In the HL/LL cells the consumer-side pathway remains
+    open, as intended for the low-diagnosticity design.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 3
+  topic_brief: 'A Kafka consumer group shows growing lag on exactly one partition
+    while the others are healthy. The anecdote: a peer team elsewhere saw consumer
+    lag with a different, inapplicable cause.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-012.yaml
+  source_xbase_sha256: fcabe659d9f14e9e
+  translated_content_sha256: 7c7845e10a1b28e6
+  translation_notes: 'Technical terms kept as-is: Kafka, JVM, Broker-2, Leader, I/O,
+    GC, partition (分区 in context). ''分区7'' is the standard Chinese rendering of ''partition
+    7''. ''fintech'' rendered as ''金融科技'' (standard Chinese). ''高级平台工程师'' preserves
+    ''senior platform engineer'' seniority salience. ''事后复盘'' (post-mortem) is the
+    natural industry term. ''上个季度'' (last quarter) retained as credibility anchor
+    per HL design. ''告诉我……追溯到'' preserves ''told me … traced it to'' confident assertion.
+    LL is flat/sourceless. HH uses ''明确指向'' (pointing squarely to) for confident assertion.
+    ''毒丸消息'' is the standard Chinese term for ''poison pill message''.'

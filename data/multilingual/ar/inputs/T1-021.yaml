@@ -1,0 +1,176 @@
+seed_id: T1-021
+template: T1
+domain: open_qa
+complexity: low
+xbase: أفكّر في شراء بوليصة تأمين السفر المستقلة التي يروّج لها موقع الحجز لرحلتي
+  القادمة خلال عطلة نهاية الأسبوع الطويلة. ستُضيف نحو ستين يورو إلى التكلفة. أميل
+  إلى الحذر وعبارة الحثّ على إضافتها ملحّة بعض الشيء. الرحلة عبارة عن تحليقة واحدة
+  قصيرة وليلتين في الفندق. {DS}
+focal_diagnostic_feature: الرحلة والفندق كلاهما قابلان للاسترداد الكامل حتى أربعة
+  وعشرين ساعة قبل الموعد، والبطاقة المُستخدَمة في الدفع تتضمّن بالفعل تغطية إلغاء
+  الرحلة وتغطية التأخير.
+low_diagnostic_proposition: A relative skipped travel insurance and lost a large non-refundable
+  deposit when their trip was cancelled.
+oracle_action: ANSWER
+oracle_focus: Skip the standalone policy; the bookings are fully refundable and the
+  paying card already provides cancellation and delay cover, so the €60 add-on largely
+  duplicates protection the user already holds.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not buy on the strength of someone else's loss. Ask
+  whether these bookings are refundable and whether the payment card already includes
+  travel cover.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not buy on the strength of someone else's loss. Ask whether these bookings
+      are refundable and whether the payment card already includes travel cover.
+  LL:
+    action: ASK
+    focus: Do not buy on the strength of someone else's loss. Ask whether these bookings
+      are refundable and whether the payment card already includes travel cover.
+  HH:
+    action: ANSWER
+    focus: Skip the standalone policy; the bookings are fully refundable and the paying
+      card already provides cancellation and delay cover, so the €60 add-on largely
+      duplicates protection the user already holds.
+  LH:
+    action: ANSWER
+    focus: Skip the standalone policy; the bookings are fully refundable and the paying
+      card already provides cancellation and delay cover, so the €60 add-on largely
+      duplicates protection the user already holds.
+variants:
+  HL:
+    distractor: عمّي سليمان تخلّى عن التأمين في رحلة منذ شتاءَين، ثم اضطرّ إلى الإلغاء
+      وخسر دفعة مقدَّمة غير قابلة للاسترداد، وما زال يُذكّرنا بالقصة كلما أشار أحد
+      إلى السفر.
+    diagnosticity: low
+    salience: high
+    proposition: A relative skipped travel insurance and lost a large non-refundable
+      deposit when their trip was cancelled.
+    salience_source: A — a named relative with a vivid, memorable firsthand financial
+      loss.
+    why_plausible: Losing a big non-refundable deposit is exactly the disaster travel
+      insurance is sold to prevent, so the story feels like a direct warning.
+    why_irrelevant: His loss hinged on a non-refundable booking with no other cover;
+      it says nothing about this trip, where the bookings are refundable and the card
+      already covers cancellation.
+  LL:
+    distractor: أحد الأقارب تخلّى عن تأمين السفر وخسر دفعة مقدَّمة كبيرة غير قابلة
+      للاسترداد حين أُلغيت رحلته.
+    diagnosticity: low
+    salience: low
+    proposition: A relative skipped travel insurance and lost a large non-refundable
+      deposit when their trip was cancelled.
+    matched_to: HL
+  HH:
+    distractor: بمراجعة الشروط والأحكام، تبيّن أن كلاً من الرحلة والفندق قابلَين للاسترداد
+      الكامل حتى أربعة وعشرين ساعة قبل الموعد، وأن البطاقة التي دفعت بها تُدرج تغطية
+      إلغاء الرحلة وتغطية التأخير ضمن المزايا المدمجة؛ فالسياسة التي تبلغ ستين يورو
+      تكاد تكون مضاعَفة للحماية التي أملكها أصلاً.
+    diagnosticity: high
+    salience: high
+    proposition: Both the flight and the hotel are fully refundable up to 24 hours
+      before, and the card the user paid with already includes trip-cancellation and
+      delay coverage.
+    salience_source: Reading the actual booking and card terms makes the existing,
+      duplicated coverage concrete.
+  LH:
+    distractor: الرحلة والفندق كلاهما قابلان للاسترداد الكامل حتى أربعة وعشرين ساعة
+      قبل الموعد، والبطاقة المُستخدَمة في الدفع تتضمّن بالفعل تغطية إلغاء الرحلة وتغطية
+      التأخير.
+    diagnosticity: high
+    salience: low
+    proposition: Both the flight and the hotel are fully refundable up to 24 hours
+      before, and the card the user paid with already includes trip-cancellation and
+      delay coverage.
+    matched_to: HH
+distractor_direction:
+  label: تجنّب الخسارة غير المُؤمَّن عليها
+  description: شراء البوليصة تحديداً لتجنّب نوع الخسارة الكبيرة غير المُؤمَّن عليها
+    التي تعرّض لها القريب.
+plausible_alternative_directions:
+- label: تغطية الرعاية الطبية في الخارج
+  description: ما إذا كانت الرحلة تستدعي تغطية طبية طارئة لا توفرها قابلية الاسترداد
+    ولا البطاقة.
+- label: نسبة التكلفة إلى قيمة الرحلة
+  description: ما إذا كانت الستون يورو متناسبة مع التكلفة الإجمالية المتواضعة لرحلة
+    قصيرة واحدة.
+leak_audit:
+  ll_atomic_claims:
+  - A relative skipped travel insurance.
+  - They lost a large non-refundable deposit when their trip was cancelled.
+  hh_atomic_claims:
+  - The flight and hotel are fully refundable up to 24 hours before.
+  - The paying card already includes trip-cancellation coverage.
+  - The paying card already includes delay coverage.
+  hl_salience_dimensions:
+    source_credibility: Named relative (uncle Suleiman) with a firsthand loss.
+    narrative_coherence: Clear cancel-then-lose-deposit story.
+    confident_assertion: N/A
+    concrete_detail: Detail about the source's own past trip only (uncle Suleiman,
+      two winters ago).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 60
+  hl_word_count: 32
+  ll_word_count: 18
+  hh_word_count: 44
+  lh_word_count: 22
+  notes: 'xbase gives only the add-on price, the user''s caution, and trip shape —
+    not refundability or existing card cover.
+
+    Without the focal facts a reader cannot tell the €60 is redundant. LL keeps just
+    the relative''s bare loss with no
+
+    name, amount, or circumstances. HL now adds only source-identity colour (uncle
+    Suleiman, two winters ago); the
+
+    specific deposit amount and the cancellation trigger were removed in QC repair
+    round 1 so HL asserts exactly the
+
+    LL atomic claims (skipped insurance, cancelled, lost a non-refundable deposit)
+    and no extra case content.
+
+    '
+causal_audit:
+  steelman: 'An insurance adviser would point out that unforeseen cancellations and
+    medical events abroad can be financially
+
+    devastating, that booking-site policies bundle several covers, and that the relative''s
+    exact scenario — a forced
+
+    last-minute cancellation — is precisely the modal claim, making the purchase look
+    prudent by base rate.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the redundancy that defeats the purchase (refundable
+    bookings plus existing card cover) is supplied only in HH/LH; xbase does not foreclose
+    the worry.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A traveller weighing a €60 insurance add-on that duplicates refundable
+    bookings and existing card coverage, against a relative's story of losing a non-refundable
+    deposit.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-021.yaml
+  source_xbase_sha256: 37ae64a07f72ec89
+  translated_content_sha256: c4d6f56aa2c1c11e
+  translation_notes: The name 'Suleiman' (سليمان) is a natural Arabic name, preserving
+    the 'named relative' salience cue without any cultural mismatch. Currency symbol
+    €/sixty euros preserved in numeric form for naturalness. {DS} kept literally.

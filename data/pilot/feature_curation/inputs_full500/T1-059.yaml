@@ -1,0 +1,175 @@
+seed_id: T1-059
+template: T1
+domain: open_qa
+complexity: medium
+xbase: My sponge cakes keep coming out dense and sunken in the middle, even though
+  I follow a recipe I have made before. I weigh the flour, sugar, and eggs on a scale,
+  and I beat the batter until it looks pale and airy. The bake time and shelf position
+  are the same as the recipe says. The texture is the same every attempt, so something
+  steady is off rather than a one-off mistake. I tested the baking powder in warm
+  water and it bubbled vigorously. {DS}
+focal_diagnostic_feature: A separate oven thermometer on the middle shelf reads about
+  30°C below the dial setting throughout the bake.
+low_diagnostic_proposition: A comparable dense-cake problem elsewhere was traced to
+  leavening that had lost its potency.
+oracle_action: ANSWER
+oracle_focus: The oven is running roughly 30°C cold, so the batter sets too slowly
+  and collapses; recalibrate or compensate the temperature and verify with the thermometer
+  before changing the recipe.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume stale leavening from someone else's case.
+  Ask whether the actual oven temperature has been measured independently of the dial.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume stale leavening from someone else's case. Ask whether the
+      actual oven temperature has been measured independently of the dial.
+  LL:
+    action: ASK
+    focus: Do not assume stale leavening from someone else's case. Ask whether the
+      actual oven temperature has been measured independently of the dial.
+  HH:
+    action: ANSWER
+    focus: The oven is running roughly 30°C cold, so the batter sets too slowly and
+      collapses; recalibrate or compensate the temperature and verify with the thermometer
+      before changing the recipe.
+  LH:
+    action: ANSWER
+    focus: The oven is running roughly 30°C cold, so the batter sets too slowly and
+      collapses; recalibrate or compensate the temperature and verify with the thermometer
+      before changing the recipe.
+variants:
+  HL:
+    distractor: Lakshmi, who teaches a weekend baking class, told me her students
+      get exactly this flat, heavy crumb all the time, and in her experience it almost
+      always turns out to be baking powder that has quietly gone stale in the back
+      of the cupboard.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable dense-cake problem elsewhere was traced to leavening
+      that had lost its potency.
+    salience_source: A — a baking instructor citing repeated teaching experience lends
+      the leavening story authority.
+    why_plausible: Spent leavening genuinely produces dense, sunken cakes, so it is
+      a textbook first suspect for this exact symptom.
+    why_irrelevant: The instructor's pattern speaks to her students, not to this bake;
+      a measured 30°C temperature gap, not leavening, is what is actually setting
+      the crumb here.
+  LL:
+    distractor: Someone else's dense, sunken cakes were eventually traced to baking
+      powder that had lost its potency.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable dense-cake problem elsewhere was traced to leavening
+      that had lost its potency.
+    matched_to: HL
+  HH:
+    distractor: I put a separate oven thermometer on the middle shelf, and while the
+      dial says 180°C the thermometer hovers around 150°C for the whole bake, so the
+      batter is cooking far cooler than the recipe assumes and never sets before it
+      falls.
+    diagnosticity: high
+    salience: high
+    proposition: A separate oven thermometer on the middle shelf reads about 30°C
+      below the dial setting throughout the bake.
+    salience_source: An independent measurement quantifying the exact temperature
+      shortfall makes the cause concrete and undeniable.
+  LH:
+    distractor: An independent oven thermometer reads about 30°C below the dial setting
+      for the whole bake.
+    diagnosticity: high
+    salience: low
+    proposition: A separate oven thermometer on the middle shelf reads about 30°C
+      below the dial setting throughout the bake.
+    matched_to: HH
+distractor_direction:
+  label: Stale leavening
+  description: Treating the dense, sunken crumb as caused by baking powder or soda
+    that has lost its raising potency.
+plausible_alternative_directions:
+- label: Overbeaten batter
+  description: Whether knocking the air out of the eggs during mixing flattened the
+    rise.
+- label: Opening the oven early
+  description: Whether disturbing the cake before the structure set caused the collapse.
+leak_audit:
+  ll_atomic_claims:
+  - Someone else had dense, sunken cakes.
+  - That case was traced to leavening that had lost its potency.
+  hh_atomic_claims:
+  - A separate oven thermometer was placed on the middle shelf.
+  - It reads about 30°C below the dial throughout the bake.
+  hl_salience_dimensions:
+    source_credibility: Named baking instructor (Lakshmi) generalising from repeated
+      class experience.
+    narrative_coherence: Clean recurring-pattern framing tied to her teaching.
+    confident_assertion: '''almost always turns out to be'' — confident generalisation.'
+    concrete_detail: Detail about the source (her class, where her students store
+      powder) only; no new fact about this user's bake.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 85
+  hl_word_count: 44
+  ll_word_count: 16
+  hh_word_count: 42
+  lh_word_count: 15
+  notes: 'LL carries only the someone-else / stale-leavening claim; Lakshmi''s class,
+    her experience, and the cupboard
+
+    detail are HL-only and concern the source, not this bake. xbase withholds any
+    temperature measurement so HL/LL
+
+    cannot resolve it; it states only the steady symptom, the weighed ingredients,
+    and the recipe-matched bake time.
+
+    The decisive 30°C gap lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A baker could argue that spent leavening is the single most common cause
+    of a dense, sunken sponge: if the
+
+    baking powder has lost gas-producing capacity, the batter simply cannot rise and
+    will collapse, which matches
+
+    the symptom precisely and recurs on every attempt because the same tin of powder
+    is used each time. Chemical
+
+    leavening acts thermally during baking, not mechanically during mixing, so a pale
+    and airy batter from beating
+
+    only shows mechanical air incorporation — it says nothing about whether the baking
+    powder will produce CO2 under
+
+    heat. However, xbase now states that the user tested the baking powder in warm
+    water and observed vigorous
+
+    bubbling, which directly proves the leavening is active and conclusively forecloses
+    spent leavening as a
+
+    mechanism for this case. The leavening story is a real cause-class in general
+    but has no purchase on this
+
+    tested case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the user tested the baking powder in warm
+    water and it bubbled vigorously, which conclusively forecloses spent leavening
+    as the cause for this case; the decisive thermometer reading still lives only
+    in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Dense, sunken sponge cakes caused by an oven running ~30°C cold (measured
+    by a separate thermometer), not the stale leavening a baking instructor pattern-matches
+    to.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

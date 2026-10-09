@@ -1,0 +1,9 @@
+{
+  "seed_id": "T5-013",
+  "steelman": "Documentation quality can serve as a proxy signal for overall engineering discipline at the vendor. A team that ships public-facing SDK documentation with pervasive typos and broken formatting may also be running a careless release process for their SDK code — skipping edge-case testing, ignoring race conditions in async dispatch, or shipping unreviewed patches. A senior practitioner evaluating a vendor SDK might reasonably note documentation quality as one data point in an overall vendor reliability assessment. If the SDK has known quality problems, it could plausibly produce intermittent bugs in async callbacks (e.g., invoking the callback from an unexpected thread or calling it multiple times), which could in turn trigger the crash observed in app-owned callback code.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The steelman can only reach as far as 'vendor might ship buggy async code in general,' which is not a mechanism for this specific crash. The xbase explicitly states each crash stack trace terminates inside app-owned onCompletionCallback while mutating shared state — this closes the SDK-as-direct-cause pathway entirely. Even granting the doc-quality-as-proxy-for-code-quality inference, the observable crash evidence already localises the fault to app code, so a competent practitioner would not place 'check vendor doc aesthetics' on a crash-triage checklist. The seed's own causal_audit field (steelman_verdict: no_defensible_mechanism) is consistent with this independent finding. No repair needed: distractor is genuinely non-causal."
+}

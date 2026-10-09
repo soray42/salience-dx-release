@@ -1,0 +1,241 @@
+seed_id: T2-014
+template: T2
+domain: open_qa
+complexity: low
+xbase: 过去三周，我的酵母种一直不稳定——膨胀几乎不到两倍，穹顶在我来得及捕捉之前就已塌陷。我没有换任何品牌：同一种面粉、同一种自来水、同一个罐子。我也核对了喂养时间表，没有任何变化。{DS}
+focal_diagnostic_feature: 与夏季相比，厨房温度下降了约五摄氏度，这会直接减缓发酵活动，足以解释酵母种膨胀减少和过早塌陷的现象。
+low_diagnostic_proposition: 'The sourdough starter''s reliability problems began after
+  the baker switched to a different grocery loyalty programme.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Investigate the temperature drop as the primary cause of reduced fermentation
+  activity; advise warming the proofing environment (e.g. oven with light on, consistent
+  warm spot) and explain how a 5°C fall can significantly slow yeast and bacterial
+  activity in a starter.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Acknowledge the timing coincidence but note that a grocery
+  loyalty programme change has no pathway to affect starter microbiology, especially
+  given the confirmed same flour brand and water; ask about environmental conditions,
+  feeding ratio, flour age, and any other changes that could affect fermentation.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Acknowledge the timing coincidence but note that a grocery loyalty programme
+      change has no pathway to affect starter microbiology, especially given the confirmed
+      same flour brand and water; ask about environmental conditions, feeding ratio,
+      flour age, and any other changes that could affect fermentation.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Acknowledge the timing coincidence but note that a grocery loyalty programme
+      change has no pathway to affect starter microbiology, especially given the confirmed
+      same flour brand and water; ask about environmental conditions, feeding ratio,
+      flour age, and any other changes that could affect fermentation.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Investigate the temperature drop as the primary cause of reduced fermentation
+      activity; advise warming the proofing environment (e.g. oven with light on,
+      consistent warm spot) and explain how a 5°C fall can significantly slow yeast
+      and bacterial activity in a starter.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Investigate the temperature drop as the primary cause of reduced fermentation
+      activity; advise warming the proofing environment (e.g. oven with light on,
+      consistent warm spot) and explain how a 5°C fall can significantly slow yeast
+      and bacterial activity in a starter.
+
+      '
+variants:
+  HL:
+    distractor: 经营着一个颇有名气的地区酵母种群组、同时也是职业面包师的 Marta 告诉我，她曾多次见到这种情况——面包师换了超市积分计划之后，酵母种就失去了稳定性。
+    diagnosticity: low
+    salience: high
+    proposition: 'The sourdough starter''s reliability problems began after the baker
+      switched to a different grocery loyalty programme.
+
+      '
+    salience_source: 'A: source credibility (professional baker running a regional
+      sourdough group); C: confident assertion ("told me she has seen this pattern
+      repeatedly"); D: concrete detail about source role and community standing.
+
+      '
+    why_plausible: 'A trusted domain figure — a professional baker who leads a community
+      — claiming to have seen a pattern repeatedly lends the coincidence apparent
+      empirical weight that a busy reader might accept without questioning the mechanism.
+
+      '
+    why_irrelevant: 'A grocery loyalty programme is a commercial/administrative relationship
+      with the retailer; it has no pathway to alter the microbiology of a starter,
+      particularly when the baker has confirmed using the same flour brand and tap
+      water throughout.
+
+      '
+  LL:
+    distractor: 有人说，他们换了超市积分计划之后，酵母种变得不稳定了。
+    diagnosticity: low
+    salience: low
+    proposition: 'The sourdough starter''s reliability problems began after the baker
+      switched to a different grocery loyalty programme.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 我一直用厨房温度计记录：房间现在比夏天低了整整五度，而且每天早上我看到的都是同样的读数。
+    diagnosticity: high
+    salience: high
+    proposition: 'The kitchen temperature has dropped approximately five degrees Celsius
+      compared to summer, which directly slows fermentation activity and would account
+      for the starter''s reduced rise and early collapse.
+
+      '
+    salience_source: 'B: precise technical framing with fermentation science context;
+      C: confident causal statement ("well-known to significantly slow fermentation");
+      D: concrete quantification of the temperature shift.
+
+      '
+  LH:
+    distractor: 厨房最近明显变凉了，大约比夏天低了五度。
+    diagnosticity: high
+    salience: low
+    proposition: 'The kitchen temperature has dropped approximately five degrees Celsius
+      compared to summer, which directly slows fermentation activity and would account
+      for the starter''s reduced rise and early collapse.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: 换积分计划导致问题
+  description: 该假设认为，换用不同的超市积分计划导致酵母种停止可靠膨胀，仅基于时间上的巧合，没有任何合理的机制。
+plausible_alternative_directions:
+- label: 面粉批次差异
+  description: 即便是同一品牌，新生产批次的蛋白质含量、灰分水平或野生酵母含量可能不同，从而影响酵母种的活力。
+- label: 水处理变化
+  description: 市政供水的氯或氯胺含量可能随季节或基础设施变更而波动，过高的消毒剂含量即便使用同一水龙头也会抑制酵母种的微生物群落。
+- label: 污染或菌群稀释
+  description: 通过未清洗的工具引入竞争性微生物，或因喂养比例不当导致菌群过度稀释，可能使微生物平衡发生偏移，足以降低发酵可靠性。
+leak_audit:
+  ll_atomic_claims:
+  - the baker switched to a different grocery loyalty programme
+  - the starter's reliability problems began after that switch
+  hl_salience_dimensions:
+    source_credibility: 'Marta runs a popular regional sourdough group and bakes professionally
+      — a practitioner with domain standing and community authority.
+
+      '
+    narrative_coherence: 'Clean single-sentence report: source identity, observation,
+      and claimed pattern, no tangents or hedges.
+
+      '
+    confident_assertion: '"told me she has seen this pattern repeatedly" — definite,
+      first-person witnessing verb.
+
+      '
+    concrete_detail: '"runs a popular regional sourdough group and bakes professionally"
+      — detail about the source''s role and standing, not about this user''s case.
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 32
+  ll_word_count: 14
+  notes: 'Avoided adding any quantity (how many bakers Marta observed, how long the
+
+    pattern persisted) — those would be tunable values or effort descriptors.
+
+    "repeatedly" modifies the source''s observation frequency and is about her
+
+    experience, not about the user''s case; borderline, but the phrase "she has
+
+    seen this pattern repeatedly" characterises the source''s evidence base, not
+
+    the user''s symptom severity, so it passes I4. No sensory setting color added
+
+    (no kitchen description, sounds, smells). LL stripped to a bare flat clause
+
+    with anonymous attribution.
+
+    '
+causal_audit:
+  steelman: 'A determined advocate might argue as follows: switching loyalty programmes
+
+    often means shopping at a different store branch, or at least at a different
+
+    frequency driven by new promotion cycles. Even if the brand printed on the
+
+    flour bag is identical, different store locations may stock older batches
+
+    with lower enzymatic activity or more oxidised fats. Additionally, a new
+
+    programme might influence which water product the baker buys if they use
+
+    bottled water — but the xbase explicitly states tap water, closing that.
+
+    More creatively: if the new loyalty programme offered points on alternative
+
+    flour brands, the baker might have experimented, but again xbase closes this
+
+    ("same flour"). The loyalty programme itself — the commercial relationship,
+
+    the app, the card — has zero physical interaction with the starter. The only
+
+    remotely defensible pathway (different store = different flour batch) is
+
+    explicitly foreclosed by xbase. No senior baker, microbiologist, or
+
+    fermentation practitioner would put "changed loyalty programme" on a
+
+    troubleshooting checklist even as a low-priority item; the checklist entry
+
+    would be "flour batch" or "store source", not the programme per se, and xbase
+
+    already rules out ingredient changes.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states "I have not changed brands: same flour, same
+    tap water, same jar" — this explicitly forecloses the only tempting causal pathway
+    (that a loyalty programme switch could lead to purchasing different ingredients
+    or using a different store''s products).
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 3
+  topic_brief: 'A sourdough starter stopped rising reliably. Coincidence: it started
+    right after switching to a different grocery loyalty programme. No mechanism (same
+    flour brand and water, stated in xbase).
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: 'qc leak ci2 2026-06-11: mechanism clauses stripped from HH for HH/LH
+    equivalence (observation-only)'
+  generator: generator_B
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-014.yaml
+  source_xbase_sha256: 1138ed3f9fea1731
+  translated_content_sha256: 2393f5a4aa03f458
+  translation_notes: Name 'Marta' retained. '超市积分计划' is a natural Chinese equivalent
+    for 'grocery loyalty programme'. 'sourdough starter' rendered as '酵母种' (common
+    term in Chinese baking communities). Temperature unit Celsius retained as 摄氏度.
+    '穹顶' used for the dome-collapse phenomenon of a starter.

@@ -1,0 +1,228 @@
+seed_id: T3-030
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our iOS app has stopped syncing user data in the background for a subset of
+  accounts. Affected users have not opened the app for at least five days. Background
+  App Refresh is enabled at the iOS system level for our app, but the sync job produces
+  no visible output for these users. {DS}
+focal_diagnostic_feature: Server logs show HTTP 401 responses on OAuth2 refresh-token
+  requests for all affected accounts, with token expiry timestamps matching a seven-day
+  inactivity TTL; the sync handler catches the error and exits silently.
+low_diagnostic_proposition: A senior iOS engineer states that a missing background-fetch
+  entitlement is the standard cause of this type of background sync failure.
+oracle_action: ANSWER
+oracle_focus: Fix the OAuth2 token expiry handling in the sync job; implement silent
+  re-authentication or prompt the user to log in again when the refresh token expires
+  after seven days of inactivity, and add logging so the 401 is visible rather than
+  silently discarded.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the entitlement diagnosis from authority
+  alone. Ask for server-side API logs for affected users and check whether the sync
+  job returns any HTTP error before concluding the failure is a client-side entitlement
+  issue.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the entitlement diagnosis from authority alone. Ask for server-side
+      API logs for affected users and check whether the sync job returns any HTTP
+      error before concluding the failure is a client-side entitlement issue.
+  LL:
+    action: ASK
+    focus: Do not accept the entitlement diagnosis from authority alone. Ask for server-side
+      API logs for affected users and check whether the sync job returns any HTTP
+      error before concluding the failure is a client-side entitlement issue.
+  HH:
+    action: ANSWER
+    focus: Fix the OAuth2 token expiry handling in the sync job; implement silent
+      re-authentication or prompt the user to log in again when the refresh token
+      expires after seven days of inactivity, and add logging so the 401 is visible
+      rather than silently discarded.
+  LH:
+    action: ANSWER
+    focus: Fix the OAuth2 token expiry handling in the sync job; implement silent
+      re-authentication or prompt the user to log in again when the refresh token
+      expires after seven days of inactivity, and add logging so the 401 is visible
+      rather than silently discarded.
+variants:
+  HL:
+    distractor: Adaeze, our principal iOS engineer, looked at the symptom report and
+      said with complete confidence that this is always a missing background-fetch
+      entitlement — she has seen it cause exactly this pattern a dozen times.
+    diagnosticity: low
+    salience: high
+    proposition: A senior iOS engineer states that a missing background-fetch entitlement
+      is the standard cause of this type of background sync failure.
+    salience_source: A/C — source credibility (principal iOS engineer) plus confident
+      assertion ('always', 'exactly this pattern', 'complete confidence') give the
+      generic diagnosis strong authority pull.
+    why_plausible: A missing background-fetch entitlement is a real and common iOS
+      issue, and a senior engineer who has seen it many times would reasonably pattern-match
+      to it quickly.
+    why_irrelevant: The entitlement hypothesis explains why background fetch would
+      not fire at all, but server logs show the sync job does reach the server and
+      receive HTTP 401 responses; an entitlement problem would not produce server-side
+      401s, only client-side silence.
+  LL:
+    distractor: A senior iOS engineer stated that a missing background-fetch entitlement
+      is the standard cause of this type of background sync failure.
+    diagnosticity: low
+    salience: low
+    proposition: A senior iOS engineer states that a missing background-fetch entitlement
+      is the standard cause of this type of background sync failure.
+    matched_to: HL
+  HH:
+    distractor: Server logs show that for every affected user, the OAuth2 refresh-token
+      request returns 401 — the refresh token TTL is seven days, matching the five-day
+      inactivity threshold, and the sync handler catches the error and exits silently
+      without queuing a retry.
+    diagnosticity: high
+    salience: high
+    proposition: Server logs show HTTP 401 responses on OAuth2 refresh-token requests
+      for all affected accounts, with token expiry timestamps matching a seven-day
+      inactivity TTL; the sync handler catches the error and exits silently.
+    salience_source: Server-side 401s for every affected user, the seven-day TTL numerically
+      matching the five-day pattern, and the silent catch-and-exit make the authentication
+      failure concrete and rule out entitlement issues.
+  LH:
+    distractor: Server logs show 401 errors on OAuth2 refresh calls for all affected
+      accounts; tokens expired after seven-day inactivity and the handler exits silently.
+    diagnosticity: high
+    salience: low
+    proposition: Server logs show HTTP 401 responses on OAuth2 refresh-token requests
+      for all affected accounts, with token expiry timestamps matching a seven-day
+      inactivity TTL; the sync handler catches the error and exits silently.
+    matched_to: HH
+distractor_direction:
+  label: Missing background-fetch entitlement
+  description: Investigating whether the app's Info.plist or entitlements file is
+    missing the background-fetch capability declaration, preventing the iOS sync job
+    from running.
+plausible_alternative_directions:
+- label: iOS system background-refresh throttling
+  description: Whether iOS is throttling or deprioritising the app's background refresh
+    for low-activity accounts due to system heuristics.
+- label: Silent sync handler exception
+  description: Whether an unhandled exception in the sync job logic other than token
+    expiry causes it to exit early without producing output.
+- label: Push-notification wakeup missing
+  description: Whether the sync relies on a push-notification wakeup that is not being
+    sent for inactive accounts
+  preventing the sync from starting at all.: null
+leak_audit:
+  ll_atomic_claims:
+  - A senior iOS engineer gave a diagnosis.
+  - The diagnosis was that a missing background-fetch entitlement is the standard
+    cause of this type of failure.
+  hh_atomic_claims:
+  - Server logs show OAuth2 refresh-token requests returning 401 for every affected
+    user.
+  - The refresh token TTL is seven days.
+  - The seven-day TTL matches the five-day inactivity threshold pattern.
+  - The sync handler catches the 401 error.
+  - The sync handler exits silently without queuing a retry.
+  hl_salience_dimensions:
+    source_credibility: Adaeze is the principal iOS engineer — most senior iOS role
+      on the team — lending maximum domain authority to the diagnosis.
+    narrative_coherence: 'Clean two-clause scene: engineer reviewed the symptom report,
+      then delivered a confident assertion.'
+    confident_assertion: '''Complete confidence'', ''always'', and ''exactly this
+      pattern'' stack three confidence markers to maximise the authority effect.'
+    concrete_detail: Detail about the engineer's prior experience ('seen it a dozen
+      times') describes the source's history, not the current case's evidence.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 52
+  hl_word_count: 34
+  ll_word_count: 21
+  hh_word_count: 40
+  lh_word_count: 23
+  notes: 'C4 verified: xbase says ''Background App Refresh is enabled at the iOS system
+    level'' which
+
+    is the user-facing OS toggle, not the developer-side entitlement declaration.
+    An expert
+
+    cannot rule out a missing entitlement from xbase alone because the OS toggle and
+    the
+
+    entitlement are separate mechanisms. The focal evidence (server-side 401s) lives
+    only in
+
+    HH/LH. C2 steelman: a missing entitlement would prevent the sync job from running
+    at
+
+    all on the client side; it would not produce server-side 401 responses. The 401
+    responses
+
+    in HH/LH structurally rule out the entitlement cause because they confirm the
+    sync job
+
+    is reaching the server. LH word count verified at 28 — within the 14-23 target?
+    Recount:
+
+    Server(1) logs(2) show(3) 401(4) responses(5) on(6) OAuth2(7) refresh-token(8)
+    calls(9)
+
+    for(10) all(11) affected(12) users(13), whose(14) tokens(15) expired(16) after(17)
+
+    seven(18) days(19) of(20) inactivity(21); the(22) sync(23) handler(24) silently(25)
+
+    discards(26) the(27) error(28). = 28 words. This exceeds the 14-23 target.
+
+    Revised LH used in this file: ''Server logs show 401 errors on OAuth2 refresh
+    calls for
+
+    all affected accounts; tokens expired after seven-day inactivity and the handler
+    exits
+
+    silently.'' = 22 words. Updating.
+
+    '
+causal_audit:
+  steelman: 'A missing or incorrect background-fetch entitlement declaration is a
+    real and frequent
+
+    cause of iOS apps failing to run background tasks. A principal iOS engineer who
+    has
+
+    diagnosed this pattern repeatedly has genuine expertise, and the symptom — background
+
+    sync producing no output — is exactly what a missing entitlement would cause.
+    One could
+
+    argue that the engineer''s pattern-match is the most parsimonious explanation
+    given the
+
+    observable symptom. However, a missing entitlement would prevent the sync job
+    from
+
+    executing at all on the client, producing no network traffic. The server logs
+    in HH/LH
+
+    show the sync job reaching the server and receiving 401 responses, which is impossible
+
+    if the entitlement were the root cause. The server-side 401 evidence structurally
+
+    disqualifies the entitlement diagnosis for this specific case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states Background App Refresh is enabled at the iOS
+    system level, which partially narrows entitlement concerns but does not rule out
+    a missing entitlement declaration in the app's own configuration; the server-side
+    401 evidence ruling it out lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: iOS app stops syncing for inactive users because the OAuth2 refresh
+    token expires after seven days and the handler silently discards the 401; a senior
+    engineer incorrectly diagnoses a missing background-fetch entitlement.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

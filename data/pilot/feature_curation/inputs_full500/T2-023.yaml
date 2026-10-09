@@ -1,0 +1,183 @@
+seed_id: T2-023
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our REST API started returning 504 Gateway Timeout errors on one specific endpoint
+  two days ago. The endpoint handles user profile lookups and every other route responds
+  normally within milliseconds. We have not deployed any application code changes
+  this week, and traffic patterns look identical to last week. {DS}
+focal_diagnostic_feature: A direct request to the upstream service bypassing the load
+  balancer takes 97 seconds; the load balancer upstream_read_timeout is configured
+  to 60 seconds, so the proxy gives up and returns 504 before the response arrives.
+low_diagnostic_proposition: The 504 errors began around the time a new appliance was
+  installed in the office break room.
+oracle_action: ASK
+oracle_focus: Investigate why the user-profile-lookup upstream takes over 90 seconds;
+  check for a query plan regression, missing index, or lock contention on that endpoint's
+  database path, then tune or raise the upstream timeout appropriately.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a break-room appliance installation to
+  cloud API latency. Ask for direct upstream response times and load balancer timeout
+  configuration.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a break-room appliance installation to cloud API latency.
+      Ask for direct upstream response times and load balancer timeout configuration.
+  LL:
+    action: ASK
+    focus: Do not connect a break-room appliance installation to cloud API latency.
+      Ask for direct upstream response times and load balancer timeout configuration.
+  HH:
+    action: ASK
+    focus: Investigate why the user-profile-lookup upstream takes over 90 seconds;
+      check for a query plan regression, missing index, or lock contention on that
+      endpoint's database path, then tune or raise the upstream timeout appropriately.
+  LH:
+    action: ASK
+    focus: Investigate why the user-profile-lookup upstream takes over 90 seconds;
+      check for a query plan regression, missing index, or lock contention on that
+      endpoint's database path, then tune or raise the upstream timeout appropriately.
+variants:
+  HL:
+    distractor: This started the exact afternoon someone installed a new espresso
+      machine in our break room; I remember because the team gathered around it right
+      before the 504 errors first showed up in our dashboards.
+    diagnosticity: low
+    salience: high
+    proposition: The 504 errors began around the time a new appliance was installed
+      in the office break room.
+    salience_source: B/C — clean first-person chronology with a memorable anchor event
+      and confident precise timing ('the exact afternoon').
+    why_plausible: A busy on-call engineer logging a new failure pattern naturally
+      notes the most salient recent change; temporal proximity feels like signal.
+    why_irrelevant: An office espresso machine has no electrical, network, or software
+      pathway to upstream API response times; the upstream slowdown is a server-side
+      latency regression entirely independent of break-room hardware.
+  LL:
+    distractor: The 504 errors began around the time a new appliance was installed
+      in the office break room.
+    diagnosticity: low
+    salience: low
+    proposition: The 504 errors began around the time a new appliance was installed
+      in the office break room.
+    matched_to: HL
+  HH:
+    distractor: A direct curl to the upstream service, bypassing the load balancer,
+      consistently takes 97 seconds to return; the load balancer upstream_read_timeout
+      is set to 60 seconds, so the proxy abandons the connection and returns 504 before
+      the response ever arrives.
+    diagnosticity: high
+    salience: high
+    proposition: A direct request to the upstream service bypassing the load balancer
+      takes 97 seconds; the load balancer upstream_read_timeout is configured to 60
+      seconds, so the proxy gives up and returns 504 before the response arrives.
+    salience_source: B — concrete measured value (97 s) cross-referenced against a
+      specific config parameter (60 s timeout), making the causal chain immediately
+      legible.
+  LH:
+    distractor: Direct upstream requests take 97 seconds, exceeding the load balancer's
+      60-second timeout, so it returns 504 before the response arrives.
+    diagnosticity: high
+    salience: low
+    proposition: A direct request to the upstream service bypassing the load balancer
+      takes 97 seconds; the load balancer upstream_read_timeout is configured to 60
+      seconds, so the proxy gives up and returns 504 before the response arrives.
+    matched_to: HH
+distractor_direction:
+  label: break-room appliance coincidence
+  description: Treating the installation of a new office appliance as a potential
+    cause of or clue to the API 504 errors based solely on temporal proximity.
+plausible_alternative_directions:
+- label: upstream service degradation
+  description: The upstream profile-lookup service has independently degraded due
+    to database contention, a slow query plan, or a dependency bottleneck unrelated
+    to the proxy timeout.
+- label: load balancer misconfiguration
+  description: A recent change to load balancer settings — timeout values, health-check
+    thresholds, or routing rules — is causing premature upstream abandonment.
+- label: downstream dependency lock
+  description: The endpoint acquired a dependency on a slow or locked external service
+    such as a read-replica or a third-party call that recently regressed.
+leak_audit:
+  ll_atomic_claims:
+  - The 504 errors began at a time that coincided with a new appliance being installed
+    in the office break room.
+  hh_atomic_claims:
+  - A direct request to the upstream service takes 97 seconds.
+  - The load balancer upstream_read_timeout is set to 60 seconds.
+  - The load balancer gives up and returns 504 before the upstream response arrives.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person chronology with a vivid shared moment (team
+      gathered around the machine) anchoring the exact timing.
+    confident_assertion: Precise temporal claim ('the exact afternoon') stated without
+      hedging.
+    concrete_detail: N/A — the espresso machine detail is the coincidence object,
+      not source framing; no extra case content added.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 48
+  hl_word_count: 34
+  ll_word_count: 17
+  hh_word_count: 40
+  lh_word_count: 20
+  notes: 'HL adds only: team gathering as a setting detail and ''the exact afternoon''
+    as temporal
+
+    salience; both are about the source''s recollection, not new case facts.
+
+    HH/LH equivalence: LH now explicitly covers all three HH claims — (1) 97-second
+    upstream
+
+    response, (2) 60-second load balancer timeout, (3) proxy returns 504 before response
+
+    arrives — at lower resolution with no claim added or dropped. Concrete detail
+    category
+
+    flagged but the espresso machine is the coincidence object itself, not a separate
+    source
+
+    framing; the cell is still clean under C1. QC repair: LH previously omitted claim
+    3
+
+    (load balancer abandons connection and returns 504), now corrected.
+
+    '
+causal_audit:
+  steelman: 'A new high-draw appliance on the same office electrical circuit could
+    theoretically
+
+    cause voltage sag or EMI affecting local network hardware, which could in turn
+
+    introduce latency or packet loss on the office network path to the upstream. However,
+
+    the upstream service is cloud-hosted and the load balancer is also external; the
+
+    office network is not in the call path for a cloud-to-cloud proxy request. Furthermore,
+
+    the symptom is not intermittent packet loss but a consistent 97-second response
+    time
+
+    on the upstream, which is a server-side latency regression, not a network path
+    issue.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — no in-xbase closure needed; the break-room appliance
+    has no constructible mechanism to the cloud upstream's response latency.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: REST API 504 errors on one endpoint caused by upstream response time
+    exceeding the load balancer's read timeout, distracted by temporal coincidence
+    with an office appliance installation.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

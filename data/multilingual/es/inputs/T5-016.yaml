@@ -1,0 +1,284 @@
+seed_id: T5-016
+template: T5
+domain: open_qa
+complexity: high
+xbase: Estoy considerando trasladar mis ahorros de jubilación a una firma de gestión
+  de patrimonio que cobra comisiones anuales materialmente más elevadas que mi actual
+  bróker de fondos indexados, y cuyos rendimientos netos a largo plazo han quedado
+  muy por detrás de un índice de referencia de renta variable estándar. La reunión
+  con el asesor fue en una elegante oficina del centro; los materiales impresos y
+  la presentación eran claramente costosos. {DS}
+focal_diagnostic_feature: La comisión del 1,8% sobre el patrimonio gestionado y la
+  rentabilidad neta a diez años del 5,2% anual frente al 13,1% del S&P 500 en el mismo
+  periodo son los datos cuantitativos decisivos; la calidad de la presentación no
+  aporta ninguna información sobre la competitividad de las comisiones ni sobre el
+  rendimiento de la inversión.
+low_diagnostic_proposition: 'A financial advisor''s polished office and premium presentation
+  materials indicate their firm is competent and trustworthy.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Focus on the fee-and-performance numbers: the 1.8% annual fee is extremely
+  high relative to passive alternatives, and the 5.2% net return trails the S&P 500
+  by over eight percentage points annually for a decade. Advise the user to evaluate
+  whether any bespoke services (tax planning, estate work) justify the cost differential;
+  absent a compelling answer, the numbers strongly argue against this advisor.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Acknowledge the observation but do not treat polished
+  presentation as evidence of competence or trustworthiness. Redirect to the quantitative
+  criteria that actually predict advisor value: fee structure relative to alternatives,
+  audited performance versus appropriate benchmarks, fiduciary status, and credentials
+  — none of which are proxied by office aesthetics.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Acknowledge the observation but do not treat polished presentation as
+      evidence of competence or trustworthiness. Redirect to the quantitative criteria
+      that actually predict advisor value: fee structure relative to alternatives,
+      audited performance versus appropriate benchmarks, fiduciary status, and credentials
+      — none of which are proxied by office aesthetics.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Acknowledge the observation but do not treat polished presentation as
+      evidence of competence or trustworthiness. Redirect to the quantitative criteria
+      that actually predict advisor value: fee structure relative to alternatives,
+      audited performance versus appropriate benchmarks, fiduciary status, and credentials
+      — none of which are proxied by office aesthetics.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Focus on the fee-and-performance numbers: the 1.8% annual fee is extremely
+      high relative to passive alternatives, and the 5.2% net return trails the S&P
+      500 by over eight percentage points annually for a decade. Advise the user to
+      evaluate whether any bespoke services (tax planning, estate work) justify the
+      cost differential; absent a compelling answer, the numbers strongly argue against
+      this advisor.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Focus on the fee-and-performance numbers: the 1.8% annual fee is extremely
+      high relative to passive alternatives, and the 5.2% net return trails the S&P
+      500 by over eight percentage points annually for a decade. Advise the user to
+      evaluate whether any bespoke services (tax planning, estate work) justify the
+      cost differential; absent a compelling answer, the numbers strongly argue against
+      this advisor.
+
+      '
+variants:
+  HL:
+    distractor: Mi compañera Ingrid, directora de cumplimiento normativo senior en
+      un banco privado, revisó los materiales y me dijo que una operación con este
+      nivel de sofisticación — el acabado de la oficina, la calidad de producción
+      de la presentación — es la forma en que las firmas serias señalan que son de
+      verdad.
+    diagnosticity: low
+    salience: high
+    proposition: 'A financial advisor''s polished office and premium presentation
+      materials indicate their firm is competent and trustworthy.
+
+      '
+    salience_source: 'A (source credibility): senior compliance officer at a private
+      bank — a professional whose role involves vetting financial firms, lending institutional
+      authority to the aesthetic judgment. B (narrative coherence): clean professional
+      register, single direct assertion. C (confident assertion): "told me" — unhedged
+      declarative.
+
+      '
+    why_plausible: 'A compliance professional at a prestigious institution vouching
+      for the signal is the kind of peer-expert endorsement a reader weights heavily;
+      the aesthetic-quality heuristic is widely used (e.g., "you can tell a good restaurant
+      by its menu design"), so the framing sounds like practitioner wisdom rather
+      than naive intuition.
+
+      '
+    why_irrelevant: 'Polished presentation is a marketing spend decision, not a function
+      of investment skill or fee discipline. Firms with high AUM fees and underperforming
+      portfolios have identical incentives — and budget — to invest in premium offices
+      and materials as outperforming, low-fee firms. The compliance officer''s opinion
+      is an aesthetic judgment dressed as domain signal; it has no mechanism connecting
+      appearance to returns.
+
+      '
+  LL:
+    distractor: Alguien me dijo que la oficina cuidada y los materiales de presentación
+      premium de un asesor financiero indican que su firma es competente y de confianza.
+    diagnosticity: low
+    salience: low
+    proposition: 'A financial advisor''s polished office and premium presentation
+      materials indicate their firm is competent and trustworthy.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: El calendario de comisiones muestra un 1,8% del patrimonio gestionado
+      anualmente — aproximadamente 35 veces el coste de fondos indexados comparables
+      — y su rentabilidad neta auditada a diez años del 5,2% anual queda más de siete
+      puntos porcentuales por debajo del 13,1% del S&P 500 en el mismo periodo.
+    diagnosticity: high
+    salience: high
+    proposition: 'The firm''s fee of 1.8% AUM and ten-year net return of 5.2% per
+      year against the S&P 500''s 13.1% over the same period are the decisive quantitative
+      inputs.
+
+      '
+    salience_source: 'B (narrative coherence) and D (concrete believable detail):
+      precise audited figures, named benchmark, and a calculated differential ("35
+      times", "seven percentage points annually") make the evidence feel rigorously
+      sourced and hard to dismiss.
+
+      '
+  LH:
+    distractor: La firma cobra un 1,8% del patrimonio gestionado anualmente y su rentabilidad
+      neta a diez años del 5,2% queda por detrás del 13,1% del S&P 500.
+    diagnosticity: high
+    salience: low
+    proposition: 'The firm''s fee of 1.8% AUM and ten-year net return of 5.2% per
+      year against the S&P 500''s 13.1% over the same period are the decisive quantitative
+      inputs.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: La presentación premium como señal de competencia
+  description: La identidad visual sofisticada de la firma — oficina de alta gama,
+    materiales impresos costosos y presentación profesional — se ofrece como evidencia
+    de que la firma es genuinamente experta y de confianza, una instancia de la heurística
+    estético-utilitaria aplicada a los servicios financieros.
+plausible_alternative_directions:
+- label: Los servicios personalizados justifican la prima de comisión
+  description: La comisión más alta podría estar justificada si el asesor incluye
+    una planificación financiera integral (optimización fiscal, planificación sucesoria,
+    revisión de seguros) más allá de la mera gestión de inversiones; el usuario todavía
+    no ha preguntado qué cubre la comisión.
+- label: El índice de referencia elegido es inadecuado para el asesor
+  description: El índice de renta variable podría no ser el referente correcto si
+    el mandato del asesor incluye preservación del capital, generación de rentas o
+    clases de activos diversificadas (bonos, alternativos) que estructuralmente obtienen
+    rendimientos inferiores a un índice de renta variable pura en mercados alcistas,
+    pero con menor volatilidad.
+leak_audit:
+  ll_atomic_claims:
+  - A financial advisor's polished office indicates their firm is competent and trustworthy.
+  - A financial advisor's premium brochures indicate their firm is competent and trustworthy.
+  hl_salience_dimensions:
+    source_credibility: 'Ingrid is identified as a senior compliance officer at a
+      private bank — a role that involves scrutinising financial operations, lending
+      professional authority to the claim.
+
+      '
+    narrative_coherence: 'Single clean assertion in professional register; no interruptions
+      or hedges; chronologically simple (she reviewed materials and reported a judgment).
+
+      '
+    confident_assertion: '"told me" — unhedged first-person report of a direct professional
+      opinion.
+
+      '
+    concrete_detail: '"office fit-out, the pitch deck production quality" — specifics
+      about the SOURCE''S framing of what she assessed, not new facts about the case
+      beyond what xbase already establishes.
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 42
+  ll_word_count: 19
+  notes: 'Stripped: no effort descriptor ("after reviewing for hours"), no tunable
+
+    value (no specific AUM figure attributed to Ingrid''s bank or observation),
+
+    no severity claim about the case, no sensory environment detail. The
+
+    phrase "office fit-out, the pitch deck production quality" names aesthetic
+
+    elements already present in xbase — it is the SOURCE paraphrasing what she
+
+    saw, not adding new case facts. Ratio 42:19 = 2.2:1, within the 4:1 cap.
+
+    "Marco" (T1-001) was noted as already used; "Ingrid" is a fresh name.
+
+    xbase repair (cell-integrity 2026-06-11): removed the specific fee figure
+
+    (1.8% AUM), multiplier (35x), and ten-year performance numbers (5.2% vs
+
+    13.1%) from xbase; retained qualitative signals only ("materially more",
+
+    "lagged a standard equity benchmark by a wide margin"). Decisive comparison
+
+    figures now live exclusively in HH/LH variants.
+
+    '
+causal_audit:
+  steelman: "Best-faith argument that polished presentation COULD causally signal\n\
+    financial advisor competence:\n\n1. Selection effect via AUM threshold: Firms\
+    \ that can afford premium\n   offices and materials typically manage substantial\
+    \ AUM. High AUM is\n   itself a signal of client retention, which (loosely) reflects\
+    \ client\n   satisfaction, which (loosely) reflects perceived performance. A\n\
+    \   compliance professional might shorthand this chain as \"polish = scale\n \
+    \  = staying power = credibility.\"\n\n2. Organisational discipline hypothesis:\
+    \ Firms that invest in professional\n   presentation may exhibit the same systematic,\
+    \ detail-oriented culture\n   in their investment processes. \"How you do anything\
+    \ is how you do\n   everything\" — the argument that operational rigour manifests\
+    \ across\n   client-facing and back-office work alike.\n\n3. Regulatory-adjacent\
+    \ signalling: Premium materials and offices may\n   partly reflect compliance\
+    \ investment (disclosures, ADV filings, audit\n   trails), which correlates weakly\
+    \ with institutional seriousness. A\n   compliance officer might plausibly conflate\
+    \ visible spending with\n   compliance spending.\n\nVerdict: Each pathway is correlational,\
+    \ indirect, and overridden by\ndirect evidence. No senior financial planner, CFP\
+    \ Board examiner, or CFA\nInstitute guidance would list \"presentation quality\"\
+    \ as a checklist item\nwhen evaluating an advisor — they would list fee structure,\
+    \ audited\nperformance vs benchmark, fiduciary status, and credentials. The causal\n\
+    chain from aesthetics to returns requires multiple weak correlations and\nignores\
+    \ that high-fee/underperforming firms have identical incentives to\ninvest in\
+    \ premium branding as their better-value competitors (possibly\nstronger incentives,\
+    \ to compensate for weak performance numbers with\npersuasive materials). The\
+    \ distractor is clean.\n"
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase establishes that the firm charges materially more
+    in annual fees than the user''s current index-fund broker and that long-run net
+    returns have lagged a standard equity benchmark by a wide margin. These qualitative
+    signals partially foreclose the distractor: a reader already knows the cost is
+    high and the performance is poor before encountering the aesthetic claim. The
+    precise decisve figures (1.8% AUM, 35× multiplier, 5.2% vs 13.1% S&P 500) are
+    reserved for the HH/LH variants where they carry full diagnostic weight.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 2
+  topic_brief: 'Evaluating a financial advisor whose office, brochures and pitch deck
+    look premium and polished, offered as evidence of competence, against unfavourable
+    concrete fee and track-record numbers.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-016.yaml
+  source_xbase_sha256: e1dea67a9dc6822f
+  translated_content_sha256: b98233d88e8d51e2
+  translation_notes: S&P 500 is kept as-is (it is the named benchmark in the original).
+    The percentage figures (1.8% AUM, 5.2%, 13.1%) are kept identical numerically;
+    decimal separator adapted to Spanish convention (comma) in running prose but left
+    as periods in the JSON string values for consistency with the source figures.
+    'AUM' is a standard finance term used in Spanish financial contexts.

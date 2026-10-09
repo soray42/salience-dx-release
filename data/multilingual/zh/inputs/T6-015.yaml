@@ -1,0 +1,221 @@
+seed_id: T6-015
+template: T6
+domain: open_qa
+complexity: low
+xbase: '我的滚筒洗衣机在洗完后衣物总有霉味——几周前开始出现的。我没有改变任何东西：用了三年多的同款洗涤剂、同样的衣物量、同样的温度设置。我的洗衣习惯完全没有任何变化。{DS}
+
+  '
+focal_diagnostic_feature: 用户每次卸完衣物后立刻关上洗衣机门，而且从未清洁或检查过橡胶门封圈。
+low_diagnostic_proposition: 'In the user''s past experience, musty laundry smell was
+  always caused by the detergent brand.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'The door gasket is the primary suspect: keeping the door closed traps
+  moisture and the uncleaned gasket has accumulated mold or mildew that transfers
+  odour onto clothes each cycle. Advise the user to clean the gasket thoroughly and
+  establish a habit of leaving the door ajar between washes.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'The user''s past-experience attribution to detergent
+  brand is not supported by the current case facts — the detergent is unchanged over
+  three-plus years and the problem is new. Do not adopt the detergent-brand hypothesis.
+  Instead, ask about machine maintenance habits: specifically whether the door is
+  left open between cycles and when the gasket was last cleaned.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: 'The user''s past-experience attribution to detergent brand is not supported
+      by the current case facts — the detergent is unchanged over three-plus years
+      and the problem is new. Do not adopt the detergent-brand hypothesis. Instead,
+      ask about machine maintenance habits: specifically whether the door is left
+      open between cycles and when the gasket was last cleaned.'
+  LL:
+    action: ASK
+    focus: 'The user''s past-experience attribution to detergent brand is not supported
+      by the current case facts — the detergent is unchanged over three-plus years
+      and the problem is new. Do not adopt the detergent-brand hypothesis. Instead,
+      ask about machine maintenance habits: specifically whether the door is left
+      open between cycles and when the gasket was last cleaned.'
+  HH:
+    action: ANSWER
+    focus: 'The door gasket is the primary suspect: keeping the door closed traps
+      moisture and the uncleaned gasket has accumulated mold or mildew that transfers
+      odour onto clothes each cycle. Advise the user to clean the gasket thoroughly
+      and establish a habit of leaving the door ajar between washes.'
+  LH:
+    action: ANSWER
+    focus: 'The door gasket is the primary suspect: keeping the door closed traps
+      moisture and the uncleaned gasket has accumulated mold or mildew that transfers
+      odour onto clothes each cycle. Advise the user to clean the gasket thoroughly
+      and establish a habit of leaving the door ajar between washes.'
+variants:
+  HL:
+    distractor: 回想起来，我以前每次遇到衣物有霉味，都毫无例外地追溯到了洗涤剂品牌——每一次，没有任何例外。这个规律每次都完全一致。
+    diagnosticity: low
+    salience: high
+    proposition: 'In the user''s past experience, musty laundry smell was always caused
+      by the detergent brand.
+
+      '
+    salience_source: 'C (confident assertion: "every single time...without exception...completely
+      consistent") + B (clean first-person narrative, definitive register, no hedging)
+      — personal emotional familiarity and "first instinct" framing characteristic
+      of T6.
+
+      '
+    why_plausible: 'Detergent brand is a widely recognised factor in laundry odour;
+      a user''s confident streak of past diagnoses pointing to it creates a compelling
+      heuristic that a reader might accept at face value before checking the case
+      facts.
+
+      '
+    why_irrelevant: 'The xbase explicitly states the detergent brand and formulation
+      are unchanged for over three years, and the problem only started recently. A
+      cause that has been constant cannot explain a new symptom; the detergent-brand
+      pathway is structurally closed for this case.
+
+      '
+  LL:
+    distractor: 我以前每次遇到衣物有霉味，最终都是洗涤剂品牌的问题。
+    diagnosticity: low
+    salience: low
+    proposition: 'In the user''s past experience, musty laundry smell was always caused
+      by the detergent brand.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 我总是一卸完衣物就把门关上——从来不会让它敞开通风。而且仔细回想，自从买了这台机器，我真的完全记不得有哪一次擦过或检查过门口那圈橡胶密封圈，一次都没有。
+    diagnosticity: high
+    salience: high
+    proposition: 'The user always shuts the washer door immediately after unloading
+      and has never cleaned or inspected the rubber door gasket.
+
+      '
+    salience_source: 'B (vivid first-person chronological recall, active verbs) +
+      C (confident assertion: "always push", "genuinely cannot remember...not once")
+      + D (concrete behavioural detail about the user''s own practice).
+
+      '
+  LH:
+    distractor: 我每次卸完衣物后都立刻把门关上，而且从来没有清洁过门口的橡胶密封圈。
+    diagnosticity: high
+    salience: low
+    proposition: 'The user always shuts the washer door immediately after unloading
+      and has never cleaned or inspected the rubber door gasket.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: 洗涤剂品牌归因
+  description: 用户将霉味归因于洗涤剂品牌，依据是过去洗衣问题的一贯规律。而在本案中，由于品牌和用量三年多来始终不变，而症状是新近出现的，这一假设在结构上已被排除。
+plausible_alternative_directions:
+- label: 过滤器或泵仓堵塞
+  description: 机器的过滤器或泵仓中积累的碎屑和残留物会产生异味并转移到衣物上；首次使用的机主可能从未清洁过这些部件。
+- label: 排水管或排水竖管问题
+  description: 部分堵塞或位置不当的排水管可能导致废水倒流入滚筒，留下残余污水并产生霉味。
+- label: 滚筒内部发霉或洗涤剂残留
+  description: 霉菌可能在滚筒内壁或机器内积累的洗涤剂残留薄膜上生长，与密封圈无关，在主要使用冷水或短程序洗涤的机器上尤为常见。
+leak_audit:
+  ll_atomic_claims:
+  - The user has, on past occasions, had laundry that smelled musty.
+  - On each of those past occasions, the cause was identified as the detergent brand.
+  hl_salience_dimensions:
+    source_credibility: N/A — T6 template; the voice is the user themselves, not a
+      third party
+    narrative_coherence: 'Clean, first-person retrospective statement; professional
+      register; no interruptions or tangents.
+
+      '
+    confident_assertion: '"every single time", "without exception", "completely consistent
+      every time" — highly confident iterative framing.
+
+      '
+    concrete_detail: N/A — no external source or setting detail added
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 46
+  ll_word_count: 18
+  notes: 'HL adds only confidence markers and repetition ("every single time",
+
+    "without exception", "completely consistent") applied to the user''s
+
+    own prior experience — no new facts about the current case, no tunable
+
+    values, no effort descriptors, no sensory environment color.
+
+    LL retains only the two atomic claims (past musty occurrences; attributed
+
+    to detergent brand) with no residual credibility anchors.
+
+    Ratio: 46/18 = 2.56, well within the 4:1 ceiling.
+
+    '
+causal_audit:
+  steelman: 'A competent laundry expert could argue: detergent chemistry matters for
+
+    odour outcomes. Certain detergent lines rely on fragrances that mask
+
+    rather than eliminate microbial odour; if the user''s current brand
+
+    degrades in a new production batch (or if usage concentration has
+
+    subtly drifted) residue on fabrics can begin hosting bacteria and
+
+    produce a musty smell. Consumer troubleshooting guides routinely list
+
+    "try a different detergent" as a step for persistent laundry odour.
+
+    Furthermore, even the "same brand" could have undergone a quiet
+
+    formula change by the manufacturer without consumer notice. Therefore,
+
+    a practitioner might place "revisit detergent type/amount" on their
+
+    checklist.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states "same detergent I''ve been using for over
+    three years, same load size, same temperature settings — nothing about my routine
+    has changed at all." A cause that has been constant for three-plus years cannot
+    explain a symptom that only appeared a few weeks ago. The steelman''s "quiet formula
+    change" scenario is speculative and would require the practitioner to ignore the
+    explicit no-change report from the user; no competent practitioner would anchor
+    on a speculative external change over the user''s direct account of their own
+    routine. The pathway is closed by the explicit no-change assertion combined with
+    the symptom''s recent onset.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  topic_brief: 'Laundry comes out smelling musty. The user: every musty smell before
+    was the detergent brand. Focal: the washer door and gasket habits are the live
+    signal.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  generator: generator_B
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-015.yaml
+  source_xbase_sha256: b44dc0a2e0d5b5c3
+  translated_content_sha256: 2a9c36d14201cb28
+  translation_notes: 'No culture-bound salience cues. Technical terms (gasket→橡胶密封圈/橡胶门封圈,
+    drum filter→过滤器, pump trap→泵仓, drain hose→排水管, standpipe→排水竖管) rendered in standard
+    Simplified Chinese appliance vocabulary. HL salience carried by confident-assertion
+    intensifiers: ''毫无例外地'', ''每一次，没有任何例外'', ''完全一致''.'

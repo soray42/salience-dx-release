@@ -1,0 +1,190 @@
+seed_id: T3-098
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: My Linux workstation mounts a shared NFS volume from the office file server.
+  Large file transfers to that share work for a while and then the connection drops
+  and the mount hangs. Smaller reads complete without issue. I have not changed the
+  client or server configuration this week. A packet capture during a hang shows the
+  TCP session staying established with no reset or FIN from any network hop. {DS}
+focal_diagnostic_feature: Server-side dmesg shows repeated NFS write timeout entries
+  triggered by the sync export option, meaning the server stalls on disk commit acknowledgment
+  during large writes rather than the TCP connection dropping.
+low_diagnostic_proposition: Intermittent NFS drops on this network are always caused
+  by a firewall rule silently dropping long-lived connections.
+oracle_action: ANSWER
+oracle_focus: Change the NFS export option from sync to async or tune the server-side
+  write timeout; the fault is server-side disk commit latency, not a firewall or network
+  layer issue.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the firewall-rule diagnosis from authority
+  alone. Ask for server-side dmesg output and NFS export options before examining
+  network rules.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the firewall-rule diagnosis from authority alone. Ask for
+      server-side dmesg output and NFS export options before examining network rules.
+  LL:
+    action: ASK
+    focus: Do not adopt the firewall-rule diagnosis from authority alone. Ask for
+      server-side dmesg output and NFS export options before examining network rules.
+  HH:
+    action: ANSWER
+    focus: Change the NFS export option from sync to async or tune the server-side
+      write timeout; the fault is server-side disk commit latency, not a firewall
+      or network layer issue.
+  LH:
+    action: ANSWER
+    focus: Change the NFS export option from sync to async or tune the server-side
+      write timeout; the fault is server-side disk commit latency, not a firewall
+      or network layer issue.
+variants:
+  HL:
+    distractor: Renato, the senior sysadmin who has maintained this network for seven
+      years, looked at the symptom and said firmly that intermittent NFS drops on
+      this network are always caused by a firewall rule silently dropping long-lived
+      connections.
+    diagnosticity: low
+    salience: high
+    proposition: Intermittent NFS drops on this network are always caused by a firewall
+      rule silently dropping long-lived connections.
+    salience_source: A — seven years of site-specific sysadmin experience; C — 'said
+      firmly' and 'always caused by' as a strong confident assertion.
+    why_plausible: Stateful firewalls dropping idle long-lived TCP connections is
+      a real and common NFS failure mode; an experienced sysadmin asserting this from
+      network history is credible.
+    why_irrelevant: The server-side dmesg shows write timeout entries, not TCP RST
+      or connection-drop events; the fault is on the server storage path, which a
+      firewall rule cannot explain.
+  LL:
+    distractor: A senior network administrator stated that intermittent NFS drops
+      on this network are always caused by a firewall rule silently dropping long-lived
+      connections.
+    diagnosticity: low
+    salience: low
+    proposition: Intermittent NFS drops on this network are always caused by a firewall
+      rule silently dropping long-lived connections.
+    matched_to: HL
+  HH:
+    distractor: The server-side dmesg shows repeated NFS write timeout entries triggered
+      by the sync export option — the server is waiting for disk commit acknowledgment
+      on each large write and timing out before the client gets a response, not dropping
+      the TCP connection.
+    diagnosticity: high
+    salience: high
+    proposition: Server-side dmesg shows repeated NFS write timeout entries triggered
+      by the sync export option, meaning the server stalls on disk commit acknowledgment
+      during large writes rather than the TCP connection dropping.
+    salience_source: B — precise log evidence (dmesg NFS write timeout entries) with
+      explicit mechanism (sync export option stalling disk commit) and explicit ruling
+      out of the distractor (not dropping the TCP connection).
+  LH:
+    distractor: Server dmesg shows NFS write timeouts — sync export option stalls
+      disk commits, timing out before the client responds, not dropping TCP.
+    diagnosticity: high
+    salience: low
+    proposition: Server-side dmesg shows repeated NFS write timeout entries triggered
+      by the sync export option, meaning the server stalls on disk commit acknowledgment
+      during large writes rather than the TCP connection dropping.
+    matched_to: HH
+distractor_direction:
+  label: Firewall long-lived connection timeout
+  description: Investigating whether a stateful firewall rule is silently dropping
+    the NFS TCP connection after it remains idle during a large write, causing the
+    mount to hang.
+plausible_alternative_directions:
+- label: NFS client rsize/wsize mismatch
+  description: A mismatch between client-side rsize/wsize negotiation and actual network
+    MTU could cause large write failures while small reads succeed.
+- label: Server disk I/O saturation
+  description: The server's storage device may be saturating during large sequential
+    writes, causing timeouts that the client interprets as a dropped connection.
+- label: NFS version or protocol mismatch
+  description: A version or protocol negotiation difference between client and server
+    may make large stateful operations unstable while small reads complete normally.
+leak_audit:
+  ll_atomic_claims:
+  - Intermittent NFS drops on this network are always caused by a firewall rule.
+  - The firewall rule silently drops long-lived connections.
+  hh_atomic_claims:
+  - Server-side dmesg shows repeated NFS write timeout entries.
+  - The timeouts are triggered by the sync export option.
+  - The server is waiting for disk commit acknowledgment on each large write.
+  - The server times out before the client gets a response.
+  - The TCP connection is not being dropped.
+  hl_salience_dimensions:
+    source_credibility: A — seven years of network maintenance at this specific site.
+    narrative_coherence: B — clean professional report with site-specific context.
+    confident_assertion: C — 'said firmly' and 'always caused by'.
+    concrete_detail: N/A — no additional case-content detail added beyond what LL
+      carries.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 69
+  hl_word_count: 37
+  ll_word_count: 23
+  hh_word_count: 41
+  lh_word_count: 21
+  notes: 'Authority uses generic pattern-matching ("always caused by") without engaging
+    the
+
+    dmesg evidence in HH/LH. The authority''s claim is about network-layer behavior,
+
+    while the focal feature is on the server storage path — mutually exclusive layers.
+
+    Steelman: firewall timeout on long-lived NFS TCP is a classic sysadmin war story,
+
+    and the authority''s seven-year site experience gives it real weight. But dmesg
+
+    write-timeout entries (not RST/conntrack) structurally rule it out.
+
+    Source name Renato: Filipino male, sysadmin role. Not in §6 taken-names list.
+
+    QC repair: (1) LL distractor text now carries ''silently dropping long-lived
+
+    connections'' to match HL (ll_word_count 19→23); (2) LH distractor text now
+
+    carries all five hh_atomic_claims including ''timing out before the client gets
+
+    a response'' and ''not dropping the TCP connection'' (lh_word_count 19→21).
+
+    '
+causal_audit:
+  steelman: 'Stateful firewalls silently dropping long-lived TCP sessions is a well-documented
+    NFS
+
+    failure mode. An NFS mount hangs rather than errors cleanly when the TCP layer
+    dies
+
+    without RST, and "the connection drops after large transfers" is almost textbook
+    for
+
+    a firewall idle-timeout around 60–300 seconds. A senior sysadmin who has seen
+    this
+
+    pattern on this network has strong grounds to say it. The authority''s diagnosis
+    is
+
+    the correct one in many real cases and a reasonable first hypothesis to rule out.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: packet capture shows the TCP session stays established
+    with no RST/FIN, ruling out the firewall idle-timeout mechanism without naming
+    the real cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: NFS mount hangs during large file writes due to the server sync export
+    option stalling disk commit acknowledgment; experienced sysadmin asserts firewall
+    rule as the cause.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator
+  generator: generator_B
+  generation_mode: generator_B_batches

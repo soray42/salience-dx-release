@@ -1,0 +1,9 @@
+{
+  "seed_id": "T2-014",
+  "steelman": "A determined advocate could argue that switching grocery loyalty programmes often means shopping at a different store branch or at a different frequency driven by new promotion cycles. Even if the flour brand printed on the bag is identical, different store locations may stock older batches with lower enzymatic activity or different wild-yeast contamination levels. Similarly, if the new programme incentivized trying different products, the baker might have unknowingly varied their flour or water source without fully registering the change. Additionally, if the new programme offered a different store's own-brand water, there could be a difference in chloramine content that suppresses starter microbiota.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "The only remotely defensible indirect pathway is: loyalty programme switch -> shopping at different store branch -> different flour batch (even same brand) or different tap water source -> altered microbiology. However, xbase explicitly forecloses this by stating 'same flour, same tap water, same jar' with no brand or source changes.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase closure 'I have not changed brands: same flour, same tap water, same jar' is explicit and forecloses the only indirect causal pathway (different store = different inputs). The loyalty programme card or app itself has zero physical interaction with starter microbiology. No experienced baker, microbiologist, or fermentation practitioner would list 'changed loyalty programme' on a troubleshooting checklist — they would list flour batch, water treatment, or temperature. The seed is clean for this lens. The seed's own causal_audit section reaches the same conclusion (steelman_verdict: no_defensible_mechanism), and this independent audit concurs."
+}

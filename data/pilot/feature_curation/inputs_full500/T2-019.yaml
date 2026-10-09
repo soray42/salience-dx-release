@@ -1,0 +1,186 @@
+seed_id: T2-019
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Charts on our internal analytics dashboard render blank for some of the team
+  while others see them perfectly. The page itself loads, the data API returns 200
+  with valid JSON, and there are no server errors. The people who see blanks swear
+  they did nothing different, and a hard refresh does not help them. We did not change
+  the charting library this quarter. {DS}
+focal_diagnostic_feature: For affected users the browser console shows the charting
+  bundle request blocked by a client-side filter, and the bundle is served from a
+  path containing the word "analytics" that ad-block lists match.
+low_diagnostic_proposition: The blank charts started appearing right after the team
+  was moved to a new floor with new monitors.
+oracle_action: ANSWER
+oracle_focus: Rename or reverse-proxy the charting bundle off the "analytics"-matching
+  path (or whitelist it); ad-block/content filters are blocking that script for the
+  affected browsers, which is why the API succeeds but charts stay blank.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a floor move or new monitors to blank
+  charts. Ask what the affected users' browser console shows and whether any script
+  request is blocked.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a floor move or new monitors to blank charts. Ask what the
+      affected users' browser console shows and whether any script request is blocked.
+  LL:
+    action: ASK
+    focus: Do not connect a floor move or new monitors to blank charts. Ask what the
+      affected users' browser console shows and whether any script request is blocked.
+  HH:
+    action: ANSWER
+    focus: Rename or reverse-proxy the charting bundle off the "analytics"-matching
+      path (or whitelist it); ad-block/content filters are blocking that script for
+      the affected browsers, which is why the API succeeds but charts stay blank.
+  LH:
+    action: ANSWER
+    focus: Rename or reverse-proxy the charting bundle off the "analytics"-matching
+      path (or whitelist it); ad-block/content filters are blocking that script for
+      the affected browsers, which is why the API succeeds but charts stay blank.
+variants:
+  HL:
+    distractor: It clicked for me that the blank-chart complaints surfaced around
+      the time we were relocated to the new floor and handed fresh external monitors
+      — the whole department packed up on a Friday and unboxed shiny new displays
+      the following Monday.
+    diagnosticity: low
+    salience: high
+    proposition: The blank charts started appearing right after the team was moved
+      to a new floor with new monitors.
+    salience_source: B/C — a confident first-person timeline pinning the symptom to
+      a concrete, recent workplace change.
+    why_plausible: A move plus new hardware is a big visible change, so it is tempting
+      to treat as the trigger when complaints surface afterward.
+    why_irrelevant: A different floor and new monitors cannot alter which JavaScript
+      a browser blocks; the split tracks browser extensions, not desks or displays.
+  LL:
+    distractor: The blank charts started appearing around the time the team moved
+      to a new floor with new monitors.
+    diagnosticity: low
+    salience: low
+    proposition: The blank charts started appearing right after the team was moved
+      to a new floor with new monitors.
+    matched_to: HL
+  HH:
+    distractor: On an affected laptop the console shows the chart bundle request blocked
+      by a content filter, never reaching the network. It is served from a path containing
+      "analytics", which common ad-block lists match, so blocker users lose exactly
+      that one script while the data API still loads.
+    diagnosticity: high
+    salience: high
+    proposition: For affected users the browser console shows the charting bundle
+      request blocked by a client-side filter, and the bundle is served from a path
+      containing the word "analytics" that ad-block lists match.
+    salience_source: The console block and the literal 'analytics' path make the client-filter
+      mechanism concrete and reproducible.
+  LH:
+    distractor: Affected browsers show the chart bundle request blocked by a client-side
+      filter; it is served from an "analytics"-containing path that ad-block lists
+      match.
+    diagnosticity: high
+    salience: low
+    proposition: For affected users the browser console shows the charting bundle
+      request blocked by a client-side filter, and the bundle is served from a path
+      containing the word "analytics" that ad-block lists match.
+    matched_to: HH
+distractor_direction:
+  label: Floor-move/new-monitor timing
+  description: Treating the office relocation and new monitors as the trigger because
+    the complaints began afterward.
+plausible_alternative_directions:
+- label: Browser/version split
+  description: Whether affected users share a browser or version that fails to run
+    the charting code.
+- label: Stale cached bundle
+  description: Whether some users hold a broken cached version of the chart script.
+leak_audit:
+  ll_atomic_claims:
+  - The blank charts started appearing around the time the team moved to a new floor
+    with new monitors.
+  hh_atomic_claims:
+  - On affected browsers the chart bundle request is blocked by a client-side content
+    filter.
+  - The bundle is served from a URL path containing the word "analytics".
+  - Ad-block lists match that path, so blocker users lose that script while the data
+    API still loads.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent before/after-the-move account.
+    confident_assertion: Confident first-person framing ('It clicked for me') asserting
+      the around-the-time coincidence.
+    concrete_detail: Vivid detail about the move event itself (Friday packing, Monday
+      new displays) — about the setting/event, not the failure mechanics and not a
+      new case fact.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 40
+  ll_word_count: 18
+  hh_word_count: 47
+  lh_word_count: 23
+  notes: 'T2 coincidence: a floor move and new monitors have no mechanism over which
+    scripts a browser''s content filter
+
+    blocks. xbase establishes the page loads, the API returns valid JSON, and the
+    split is per-user — symptoms only;
+
+    the console-block and "analytics" path (decisive) are HH/LH-only. New monitors
+    deliberately do not introduce a
+
+    rendering/GPU red herring into xbase.
+
+    QC repair round 1 (leak lens): HL previously carried three claims LL lacked —
+    a temporal baseline
+
+    ("Before the move nobody mentioned it"), a scope/severity quantifier ("suddenly
+    half the team''s charts were
+
+    empty"), and a precision upgrade ("all started the week" vs LL''s "around the
+    time"). HL rewritten to carry only
+
+    LL''s single claim (blank charts appeared around the time of the move/new monitors),
+    with salience now from
+
+    confident first-person framing and vivid detail about the move event itself (Friday
+    packing, Monday displays),
+
+    not added case facts. HL/LL propositional equivalence restored. Recounted: xbase
+    corrected 70→63 (counter error,
+
+    text unchanged), HL 42→40; LL/HH/LH unchanged.
+
+    '
+causal_audit:
+  steelman: 'One could imagine new monitors at an odd resolution or scaling making
+    zero-size chart canvases, or the new floor
+
+    sitting behind a different network segment with stricter egress — but the data
+    API loads fine on the same network,
+
+    and the blanks follow individuals across refreshes regardless of display, so neither
+    monitors nor floor can be the
+
+    discriminating factor.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the data API returns 200 with valid JSON and
+    a hard refresh does not help, closing the network-egress and stale-cache pathways
+    a floor move might be imagined to touch.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Blank dashboard charts caused by ad-blockers matching an 'analytics'
+    bundle path for some users, coincidentally timed with an office floor move and
+    new monitors.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,13 @@
+{
+  "seed_id": "T6-014",
+  "my_own_diagnosis": "The fine silvery webbing on leaf undersides and stem joints is a textbook spider mite indicator that is biologically impossible for fungus gnats to produce; despite the owner's three-for-three past pattern with fungus gnats, the correct current diagnosis is spider mites requiring miticide treatment, increased humidity, plant isolation, and leaf wiping rather than sticky traps or watering reduction.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature — fine silvery webbing exclusive to spider mites and structurally impossible for fungus gnats — is an unambiguous, pathognomonic sign that decisively identifies the correct direction and eliminates the distractor without any domain ambiguity.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracles correctly partition on diagnosticity: HL/LL (low-diagnostic distractor only) → ASK with instruction to inspect for current symptoms; HH/LH (focal webbing feature present) → ANSWER identifying spider mites and appropriate treatment; the low_diagnostic_oracle_focus correctly withholds the fungus gnat assumption without naming the correct answer.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

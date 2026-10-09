@@ -1,0 +1,166 @@
+seed_id: T2-062
+template: T2
+domain: open_qa
+complexity: medium
+xbase: The espresso from my home machine has tasted sharp and sour for about a week,
+  thin and a bit watery rather than the rounded shots I used to pull. I am using the
+  same bag of beans I was using before, stored the same way, and the machine is at
+  the same temperature setting. I tamp the same way I always have and use the same
+  dose. The sourness shows up in every shot now, not just some. {DS}
+focal_diagnostic_feature: The shots now run out in about twelve seconds instead of
+  the usual twenty-eight, because the grinder setting has drifted much coarser.
+low_diagnostic_proposition: The sour taste started right after the user rearranged
+  the kitchen counter and moved the machine to a new spot.
+oracle_action: ANSWER
+oracle_focus: The grind has drifted too coarse, so the shots run fast and under-extract
+  into sourness; dial the grinder finer to bring the shot time back up, rather than
+  blaming the counter rearrangement.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect moving the machine to the sour taste.
+  Ask how long the shots now take to run and whether the grind setting has changed.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect moving the machine to the sour taste. Ask how long the shots
+      now take to run and whether the grind setting has changed.
+  LL:
+    action: ASK
+    focus: Do not connect moving the machine to the sour taste. Ask how long the shots
+      now take to run and whether the grind setting has changed.
+  HH:
+    action: ANSWER
+    focus: The grind has drifted too coarse, so the shots run fast and under-extract
+      into sourness; dial the grinder finer to bring the shot time back up, rather
+      than blaming the counter rearrangement.
+  LH:
+    action: ANSWER
+    focus: The grind has drifted too coarse, so the shots run fast and under-extract
+      into sourness; dial the grinder finer to bring the shot time back up, rather
+      than blaming the counter rearrangement.
+variants:
+  HL:
+    distractor: The detail my mind keeps snagging on is that the sour shots started
+      right after I cleared and rearranged the whole kitchen counter and shifted the
+      machine to a new corner. Everything tasted fine in the old spot, and the trouble
+      began once it moved.
+    diagnosticity: low
+    salience: high
+    proposition: The sour taste started right after the user rearranged the kitchen
+      counter and moved the machine to a new spot.
+    salience_source: B/C — a confident first-person timeline pinning the sour shots
+      to the counter rearrangement and the machine's move.
+    why_plausible: A recent, vivid change to the setup is an intuitive thing to blame
+      when a familiar routine suddenly tastes wrong.
+    why_irrelevant: Moving the machine a short distance on the same counter changes
+      nothing about grind, dose, temperature, or extraction; location does not affect
+      how a shot pulls.
+  LL:
+    distractor: The sour taste started right after the user rearranged the counter
+      and moved the machine to a new spot.
+    diagnosticity: low
+    salience: low
+    proposition: The sour taste started right after the user rearranged the kitchen
+      counter and moved the machine to a new spot.
+    matched_to: HL
+  HH:
+    distractor: I timed a few shots and they are gushing out in about twelve seconds
+      now instead of the twenty-eight they used to take; the grinder must have drifted
+      much coarser, so water races through the puck and under-extracts, which is exactly
+      what makes espresso taste sour and thin.
+    diagnosticity: high
+    salience: high
+    proposition: The shots now run out in about twelve seconds instead of the usual
+      twenty-eight, because the grinder setting has drifted much coarser.
+    salience_source: The measured twelve-versus-twenty-eight-second shot time pinpoints
+      under-extraction from a coarse grind.
+  LH:
+    distractor: The shots now run in about twelve seconds instead of the usual twenty-eight
+      because the grind has drifted much coarser.
+    diagnosticity: high
+    salience: low
+    proposition: The shots now run out in about twelve seconds instead of the usual
+      twenty-eight, because the grinder setting has drifted much coarser.
+    matched_to: HH
+distractor_direction:
+  label: Machine-move timing
+  description: Investigating whether rearranging the counter and moving the machine
+    is connected to the sour-tasting espresso.
+plausible_alternative_directions:
+- label: Stale beans
+  description: Whether the beans have gone stale or lost freshness
+  flattening the shot.: null
+- label: Water temperature drop
+  description: Whether the brew temperature has fallen
+  under-extracting the coffee.: null
+leak_audit:
+  ll_atomic_claims:
+  - The sour taste started right after the user rearranged the counter and moved the
+    machine to a new spot.
+  hh_atomic_claims:
+  - The shots now run out in about twelve seconds instead of the usual twenty-eight.
+  - The grind has drifted much coarser.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean fine-in-the-old-spot, sour-after-the-move chronology.
+    confident_assertion: '''the trouble began once it moved'' — confident framing.'
+    concrete_detail: Detail about the setting (clearing the counter, a new corner)
+      only; no new fact about extraction.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 44
+  ll_word_count: 18
+  hh_word_count: 47
+  lh_word_count: 19
+  notes: 'T2: moving the machine on the same counter has no mechanism for extraction
+    quality. LL is the bare timing claim;
+
+    HL adds only first-person framing and setting detail. xbase holds dose, tamp,
+    beans, storage, and temperature
+
+    constant but withholds the shot time / grind drift; the decisive twelve-vs-twenty-eight-second
+    finding lives only
+
+    in HH/LH. ''twelve seconds'', ''twenty-eight'' each count as their tokens.
+
+    '
+causal_audit:
+  steelman: 'Could relocating the machine matter? One might argue a new spot sits
+    in a draft, near an oven, or in sunlight,
+
+    nudging the group temperature. But xbase fixes the temperature setting and the
+    dose and tamp, and the move is a
+
+    short shift on the same counter, not to a different environment; an espresso shot''s
+    taste is governed by grind,
+
+    dose, temperature, and extraction time, none of which a few feet of relocation
+    changes. There is no path by
+
+    which moving the machine makes every shot run sour. Nothing in xbase ties location
+    to extraction, so the timing
+
+    is coincidence with no constructible mechanism, while a grind drifted coarse to
+    a twelve-second shot fully
+
+    explains the sour, thin result.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase holds the machine's temperature setting, dose, tamp,
+    beans, and storage constant, foreclosing the environmental angle of the move,
+    without naming the grind drift; the decisive shot-time finding lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Sour, under-extracted espresso caused by the grinder drifting coarse
+    (shots running 12s instead of 28s), coincidentally timed with rearranging the
+    counter, which has no mechanism for extraction.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

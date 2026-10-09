@@ -1,0 +1,173 @@
+seed_id: T6-051
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I'm choosing a car rental for a week-long road trip through southern Portugal
+  next month. A small local agency offers a price that is significantly lower than
+  the major international chain's quote. The route covers about 1,800 kilometres and
+  I need reliable breakdown coverage. {DS}
+focal_diagnostic_feature: The local agency's contract has no mandatory add-ons, provides
+  24/7 breakdown assistance through a national AA partnership, has 340 verified customer
+  reviews averaging 4.7 out of 5, and includes comprehensive insurance in the quoted
+  price.
+low_diagnostic_proposition: Past local car rental agencies consistently had hidden
+  fees or quality problems; this one is likely the same.
+oracle_action: ANSWER
+oracle_focus: Book the local agency; the transparent contract, national AA breakdown
+  cover, strong verified reviews, and all-inclusive insurance directly address the
+  stated concerns and outweigh the familiarity of the international chain.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume this local agency has the same problems
+  as past local agencies; ask for the contract terms, breakdown coverage details,
+  and customer reviews before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume this local agency has the same problems as past local agencies;
+      ask for the contract terms, breakdown coverage details, and customer reviews
+      before deciding.
+  LL:
+    action: ASK
+    focus: Do not assume this local agency has the same problems as past local agencies;
+      ask for the contract terms, breakdown coverage details, and customer reviews
+      before deciding.
+  HH:
+    action: ANSWER
+    focus: Book the local agency; the transparent contract, national AA breakdown
+      cover, strong verified reviews, and all-inclusive insurance directly address
+      the stated concerns and outweigh the familiarity of the international chain.
+  LH:
+    action: ANSWER
+    focus: Book the local agency; the transparent contract, national AA breakdown
+      cover, strong verified reviews, and all-inclusive insurance directly address
+      the stated concerns and outweigh the familiarity of the international chain.
+variants:
+  HL:
+    distractor: Every local rental agency I've used on trips before turned out to
+      have some catch — a surprise fuel charge, damage waiver pressure, or a car that
+      smelled of smoke and was missing a hubcap — so my first instinct is to pay the
+      premium and book with the chain.
+    diagnosticity: low
+    salience: high
+    proposition: Past local car rental agencies consistently had hidden fees or quality
+      problems; this one is likely the same.
+    salience_source: B — vivid catalogue of past rental problems in confident first-person
+      narrative; C — 'my first instinct is to pay the premium' asserts conviction
+      from experience.
+    why_plausible: Local agency problems with hidden fees and vehicle quality are
+      genuinely common, and a traveller's repeated negative experiences constitute
+      a reasonable prior that any busy reader would weigh seriously.
+    why_irrelevant: The focal feature shows this specific agency has verified accountability
+      — transparent contract, national AA partnership, 340 reviews at 4.7/5, and inclusive
+      insurance — which structurally distinguishes it from the poorly-documented agencies
+      in the user's past.
+  LL:
+    distractor: Past local car rental agencies consistently had hidden fees or quality
+      problems; this one is likely the same.
+    diagnosticity: low
+    salience: low
+    proposition: Past local car rental agencies consistently had hidden fees or quality
+      problems; this one is likely the same.
+    matched_to: HL
+  HH:
+    distractor: The agency contract has no mandatory add-ons; breakdown cover runs
+      24/7 through a national AA partnership; 340 verified customer reviews average
+      4.7 out of 5; and comprehensive insurance is already built into the quoted price.
+    diagnosticity: high
+    salience: high
+    proposition: The local agency's contract has no mandatory add-ons, provides 24/7
+      breakdown assistance through a national AA partnership, has 340 verified customer
+      reviews averaging 4.7 out of 5, and includes comprehensive insurance in the
+      quoted price.
+    salience_source: Four distinct concrete data points — no add-ons, AA partnership,
+      340 reviews at 4.7/5, insurance included — each directly answering one of the
+      user's stated rental concerns.
+  LH:
+    distractor: The contract has no add-ons, 24/7 AA breakdown cover, 340 reviews
+      at 4.7 out of 5, and comprehensive insurance included.
+    diagnosticity: high
+    salience: low
+    proposition: The local agency's contract has no mandatory add-ons, provides 24/7
+      breakdown assistance through a national AA partnership, has 340 verified customer
+      reviews averaging 4.7 out of 5, and includes comprehensive insurance in the
+      quoted price.
+    matched_to: HH
+distractor_direction:
+  label: local agency reliability stereotype
+  description: Treating the small local agency as likely to have hidden fees or vehicle
+    quality problems because past local agencies the user rented from consistently
+    did.
+plausible_alternative_directions:
+- label: international chain service recovery
+  description: The chain's global network and standardised processes could be more
+    useful specifically during a remote roadside failure on a 1,800-kilometre route
+    through rural southern Portugal.
+- label: fuel policy comparison
+  description: Differences in fuel-return policy (full-to-full versus pre-purchased
+    or full-to-empty) could materially affect total trip cost and need to be confirmed
+    before booking.
+- label: vehicle class suitability
+  description: The specific car model offered by each agency could differ in reliability
+    or comfort in ways relevant to a long-distance drive that the price comparison
+    alone does not capture.
+leak_audit:
+  ll_atomic_claims:
+  - Past local rental agencies consistently had hidden fees or quality problems.
+  - This agency is likely the same.
+  hh_atomic_claims:
+  - The contract has no mandatory add-ons.
+  - 24/7 breakdown cover is provided through a national AA partnership.
+  - There are 340 verified customer reviews averaging 4.7 out of 5.
+  - Comprehensive insurance is included in the quoted price.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Vivid first-person catalogue of past rental experiences with
+      consistent negative-outcome pattern and clear decision logic.
+    confident_assertion: '''my first instinct is to pay the premium'' — direct availability-driven
+      conviction with no hedging.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 48
+  ll_word_count: 18
+  hh_word_count: 35
+  lh_word_count: 20
+  notes: 'HL:LL ratio = 2.67; HH:LH ratio = 2.06. Both within 4:1.
+
+    HL is at the upper bound (48 words). All added content over LL is vivid past-experience
+    detail (fuel charge, waiver pressure, smoke smell, missing hubcap) — all about
+    the SOURCE''s past experiences, not new claims about this specific agency.
+
+    LH covers all four HH atomic claims flatly: no add-ons, AA cover, 340 reviews
+    4.7/5, insurance included. HH adds ''national'' qualifier to AA and ''verified
+    customer'' qualifier to reviews — vivid precision, not separate atomic claims.
+
+    '
+causal_audit:
+  steelman: 'A seasoned traveller could reasonably argue: small local agencies in
+    southern Portugal are less regulated and less incentivised to honour their advertised
+    terms than international chains, and hidden fees or quality issues are structurally
+    more likely with agencies that lack a brand reputation to protect. The user''s
+    track record is consistent with this structural argument, making it a genuinely
+    Bayesian prior rather than mere anecdote.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase describes the local agency only by price; the
+    structural distinction (verified reviews, AA partnership, transparent contract)
+    is revealed only through the focal evidence, not xbase.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: A traveller's pattern of bad experiences with local car rentals should
+    not override verified evidence that this specific Portuguese agency has transparent
+    pricing, AA breakdown cover, and strong customer reviews.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

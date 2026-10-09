@@ -1,0 +1,250 @@
+seed_id: T6-016
+template: T6
+domain: open_qa
+complexity: high
+xbase: 'محفظتي من الأسهم والسندات تفوّتت مؤشرها المرجعي للسنة الثالثة على التوالي.
+  نسبة مصروفات الصندوق هي 0.07%، وهي بالأساس نفس نسبة متتبع المؤشر، لذا لا يمكن للرسوم
+  أن تفسّر الفجوة. لديّ توزيع أصول مستهدف مُسجَّل، لكنني لم أراجع الأوزان الفعلية
+  للمحفظة منذ فترة. {DS}
+
+  '
+focal_diagnostic_feature: المحفظة تعمل بحوالي 15–18 نقطة مئوية فوق هدف الأسهم البالغ
+  60% بعد أكثر من سنتين دون إعادة توازن خلال ارتفاع مستمر في أسواق الأسهم؛ هذا الانجراف
+  في التوزيع وحده يُزيح ملف المخاطة/العائد بشكل ملموس بعيداً عن المؤشر المدمج، مما
+  يفسر التقصير في الأداء دون أي فجوة في الرسوم.
+low_diagnostic_proposition: 'The last three times this investor''s portfolio lagged
+  its benchmark, fund fees were the cause.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Address allocation drift: the portfolio is approximately 75–78% equity
+  against a 60% target, a 15–18 pp overshoot from not rebalancing over two equity-bull
+  years; the investor should rebalance toward the target and verify whether the return
+  gap is fully explained by the changed equity/bond mix before considering any fund
+  change.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Decline to adopt the fee-attribution from past experience;
+  instead ask about the portfolio''s current allocation versus target, rebalancing
+  history, tax drag, and whether the benchmark is an appropriate comparator for the
+  actual current mix.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Decline to adopt the fee-attribution from past experience; instead ask
+      about the portfolio's current allocation versus target, rebalancing history,
+      tax drag, and whether the benchmark is an appropriate comparator for the actual
+      current mix.
+  LL:
+    action: ASK
+    focus: Decline to adopt the fee-attribution from past experience; instead ask
+      about the portfolio's current allocation versus target, rebalancing history,
+      tax drag, and whether the benchmark is an appropriate comparator for the actual
+      current mix.
+  HH:
+    action: ANSWER
+    focus: 'Address allocation drift: the portfolio is approximately 75–78% equity
+      against a 60% target, a 15–18 pp overshoot from not rebalancing over two equity-bull
+      years; the investor should rebalance toward the target and verify whether the
+      return gap is fully explained by the changed equity/bond mix before considering
+      any fund change.'
+  LH:
+    action: ANSWER
+    focus: 'Address allocation drift: the portfolio is approximately 75–78% equity
+      against a 60% target, a 15–18 pp overshoot from not rebalancing over two equity-bull
+      years; the investor should rebalance toward the target and verify whether the
+      return gap is fully explained by the changed equity/bond mix before considering
+      any fund change.'
+variants:
+  HL:
+    distractor: 'أعرف هذا النمط جيداً: كل مرة تأخرت فيها محفظتي قبل ذلك — ثلاث سنوات
+      منفصلة — كان السبب الذي ظهر هو رسوم الصندوق، في كل مرة بدون استثناء.'
+    diagnosticity: low
+    salience: high
+    proposition: 'The last three times this investor''s portfolio lagged its benchmark,
+      fund fees were the cause.
+
+      '
+    salience_source: 'B (narrative coherence: clean first-person history with specific
+      count), C (confident assertion: "I traced the lag back to fund fees"), D (concrete
+      detail about past episodes: "three prior years").
+
+      '
+    why_plausible: 'Fund fees are a canonical cause of benchmark underperformance,
+      and the investor''s own three-time track record of diagnosing fees gives the
+      claim credibility and emotional familiarity — a busy reader pattern-matches
+      to the well-known fees story.
+
+      '
+    why_irrelevant: 'The xbase explicitly discloses an expense ratio of 0.07%, essentially
+      equal to the index tracker; there is no fee differential capable of explaining
+      multi-year lag, so the past-experience pattern does not transfer to this case.
+
+      '
+  LL:
+    distractor: آخر ثلاث مرات تأخرت فيها محفظتي، تبيّن أن رسوم الصندوق هي السبب.
+    diagnosticity: low
+    salience: low
+    proposition: 'The last three times this investor''s portfolio lagged its benchmark,
+      fund fees were the cause.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: توزيعي المستهدف المؤكد هو 60% أسهم، لكنني لم أُعد التوازن منذ أكثر
+      من سنتين؛ أسواق الأسهم ارتفعت بقوة خلال تلك الفترة، لذا وزن الأسهم الحالي لديّ
+      يقع عند 75–78% — أي ما يزيد عن 15–18 نقطة مئوية فوق الهدف.
+    diagnosticity: high
+    salience: high
+    proposition: 'The portfolio''s equity allocation has drifted approximately 15–18
+      percentage points above the 60% target due to no rebalancing over two equity-bull
+      years.
+
+      '
+    salience_source: 'C (confident self-report with precise figures), D (concrete
+      measurable detail: specific current weight range, specific target, specific
+      drift magnitude).
+
+      '
+  LH:
+    distractor: توزيع أسهمي انجرف إلى حوالي 75–78% — أي ما يقارب 15–18 نقطة مئوية
+      فوق هدفي البالغ 60% — بعد سنتين من ارتفاع أسواق الأسهم دون إعادة توازن.
+    diagnosticity: high
+    salience: low
+    proposition: 'The portfolio''s equity allocation has drifted approximately 15–18
+      percentage points above the 60% target due to no rebalancing over two equity-bull
+      years.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: إسناد الرسوم من التجارب السابقة
+  description: يعزو المستثمر التأخر الحالي عن المؤشر إلى رسوم الصندوق، مستدلاً من
+    ثلاث حوادث شخصية سابقة كانت الرسوم فيها هي السبب المشخَّص. هنا يُغلق مسار الرسوم
+    لأن نسبة مصروفات الصندوق منخفضة للغاية وتطابق نسبة المؤشر.
+plausible_alternative_directions:
+- label: عدم تطابق المؤشر المرجعي
+  description: قد لا يعكس مؤشر المقارنة المختار استراتيجية المحفظة الفعلية أو ملف
+    المخاطة الحالي، مما يجعل المقارنة مضللة بدلاً من الدلالة على ضعف أداء حقيقي.
+- label: العبء الضريبي
+  description: قد أدت توزيعات أرباح رأس المال الخاضعة للضريبة أو قرارات حصاد الخسائر
+    إلى تقليل العوائد بعد الضريبة مقارنة بالمؤشر قبل الضريبة، مما يفسر الفجوة الظاهرة
+    دون وجود مشكلة أداء جوهرية.
+- label: عبء السيولة النقدية
+  description: الأموال النقدية غير المستثمرة المحتجزة في الحساب تقلل إجمالي التعرض
+    للأسهم والسندات، مما يُنشئ عجزاً هيكلياً مقارنة بمؤشر مستثمر بالكامل.
+leak_audit:
+  ll_atomic_claims:
+  - The investor's portfolio lagged its benchmark on at least three prior occasions.
+  - Fund fees were identified as the cause each of those times.
+  hl_salience_dimensions:
+    source_credibility: N/A — no external source; salience derives from the user's
+      own repeated personal experience
+    narrative_coherence: 'Clean, first-person chronological account: prior years,
+      consistent diagnosis, current instinct'
+    confident_assertion: '"I traced the lag back to fund fees" — active, definite
+      verb of causal finding'
+    concrete_detail: '"three prior years" anchors the history count without adding
+      case content'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 25
+  ll_word_count: 15
+  lh_word_count: 21
+  notes: 'Avoided "after going through my statements carefully" (effort_descriptor).
+
+    Avoided naming a specific fund or fee figure in the distractor (tunable_value).
+
+    "Three prior years" refers to the user''s past history count, not a case-content
+    value.
+
+    HL ratio 29/15 = 1.93, well within the 4:1 ceiling.
+
+    No sensory environment color added anywhere.
+
+    REPAIR (revision 2): LH distractor rewritten to include all three claims present
+    in HH
+
+    but absent in original LH: (1) two-year duration of non-rebalancing, (2) equity-market
+
+    appreciation mechanism, (3) explicit drift magnitude of 15–18 pp. New LH wording:
+    "My
+
+    equity allocation has drifted to about 75–78% — roughly 15–18 pp above my 60%
+    target —
+
+    after two equity-bull years without rebalancing." (21 words, within 12–25 limit).
+    LH
+
+    proposition unchanged; HH/LH propositional equivalence now restored.
+
+
+    rev3 2026-06-11: HL hand-repaired per QC r2 verdict (orchestrator edit); word
+    count 26.
+
+    rev4 2026-06-11: effort-descriptor strip per QC r3.
+
+    rev5 2026-06-11: cell-integrity repair — xbase no longer narrates drift figures
+    (60% target vs 75-78% current weight, two equity-bull years); focal evidence now
+    lives exclusively in HH/LH variants. xbase retains: third-year underperformance,
+    0.07% expense ratio (fees-pathway closure), and existence of a target allocation
+    without quantified drift.'
+causal_audit:
+  steelman: 'Fund expense ratios directly reduce investor returns year-over-year;
+    a 1%
+
+    annual fee compounds into a ~10% return gap over a decade. On any portfolio
+
+    underperformance investigation, a senior CFP or investment adviser would
+
+    check the fund''s total expense ratio as a first-order diagnostic. The
+
+    investor''s three prior successful diagnoses of fees further support the
+
+    hypothesis. If the fund had a higher expense ratio than the index, fees
+
+    would be a fully defensible primary explanation.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states the fund''s expense ratio is 0.07%, described
+    as "essentially the same as the index tracker itself"; this eliminates any material
+    fee differential as an explanatory variable, collapsing the fees pathway to ~0bp
+    impact and making the past-experience pattern inapplicable to this specific case.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 5
+  topic_brief: 'A personal portfolio lags its benchmark for the third year. The investor:
+    the last three times this happened it was fund fees, so I will switch funds again.
+    Focal: stated allocation drift is the live signal.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-016.yaml
+  source_xbase_sha256: 7c149aa0c4127f6c
+  translated_content_sha256: cafc140617744d9e
+  translation_notes: 'Financial terms: ''expense ratio'' rendered as ''نسبة مصروفات'',
+    ''benchmark'' as ''مؤشر مرجعي'', ''rebalancing'' as ''إعادة التوازن'', ''allocation
+    drift'' as ''انجراف في التوزيع'', ''equity'' as ''أسهم'', ''bond'' as ''سندات'',
+    ''tax drag'' as ''العبء الضريبي'', ''cash drag'' as ''عبء السيولة النقدية''. Percentage
+    figures and ''pp'' notation retained numerically as in English. No culture-bound
+    salience cues.'

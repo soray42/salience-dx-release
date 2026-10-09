@@ -1,0 +1,176 @@
+seed_id: T6-093
+template: T6
+domain: open_qa
+complexity: low
+xbase: My smartphone was stolen from my coat pocket four days ago. I have a standalone
+  mobile insurance policy that I pay for monthly. I did not report it to the police
+  until yesterday because I was away from home. Now I want to know whether I should
+  file an insurance claim for the phone. {DS}
+focal_diagnostic_feature: The policy's claims conditions require the loss or theft
+  to be reported to the insurer within 24 hours of discovery; the phone was taken
+  four days ago, so the claim is time-barred.
+low_diagnostic_proposition: Past phone insurance claims were always handled quickly
+  and paid without difficulty, so this one will be approved too.
+oracle_action: ANSWER
+oracle_focus: Do not file the claim expecting a payout; the 24-hour reporting window
+  has passed and the claim will almost certainly be rejected on procedural grounds.
+  Contact the insurer to confirm and ask whether any appeal or exceptional circumstance
+  process exists.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume approval from past claim history. Ask for
+  the policy's reporting-window requirement and when the theft was discovered before
+  advising on the claim.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume approval from past claim history. Ask for the policy's reporting-window
+      requirement and when the theft was discovered before advising on the claim.
+  LL:
+    action: ASK
+    focus: Do not assume approval from past claim history. Ask for the policy's reporting-window
+      requirement and when the theft was discovered before advising on the claim.
+  HH:
+    action: ANSWER
+    focus: Do not file the claim expecting a payout; the 24-hour reporting window
+      has passed and the claim will almost certainly be rejected on procedural grounds.
+      Contact the insurer to confirm and ask whether any appeal or exceptional circumstance
+      process exists.
+  LH:
+    action: ANSWER
+    focus: Do not file the claim expecting a payout; the 24-hour reporting window
+      has passed and the claim will almost certainly be rejected on procedural grounds.
+      Contact the insurer to confirm and ask whether any appeal or exceptional circumstance
+      process exists.
+variants:
+  HL:
+    distractor: Every time I have needed to claim on phone insurance — a cracked screen
+      two years ago, a water-damage incident last year — the process was quick and
+      they paid without any trouble. I am expecting the same experience here.
+    diagnosticity: low
+    salience: high
+    proposition: Past phone insurance claims were always handled quickly and paid
+      without difficulty, so this one will be approved too.
+    salience_source: Dimension B (narrative coherence) — two specific named incidents
+      (cracked screen, water damage) with time anchors give the pattern vivid personal
+      texture; dimension C (confident assertion) — 'I am expecting the same experience
+      here' stated without hedging.
+    why_plausible: A consistent track record of smooth, paid claims with the same
+      insurer is a reasonable basis for optimism; insurers with cooperative reputations
+      do tend to approve clear, evidenced claims.
+    why_irrelevant: The past claims were presumably reported promptly; a 24-hour reporting
+      window is a contractual condition precedent, and missing it voids the claim
+      regardless of the insurer's goodwill or the user's payment history.
+  LL:
+    distractor: My past phone insurance claims were always handled quickly and paid
+      without difficulty, so I expect this one will be too.
+    diagnosticity: low
+    salience: low
+    proposition: Past phone insurance claims were always handled quickly and paid
+      without difficulty, so this one will be approved too.
+    matched_to: HL
+  HH:
+    distractor: The policy's claims conditions require the loss or theft to be reported
+      to the insurer within 24 hours of the customer discovering it; the phone was
+      taken four days ago, so the window closed on the first evening.
+    diagnosticity: high
+    salience: high
+    proposition: The policy's claims conditions require the loss or theft to be reported
+      to the insurer within 24 hours of discovery; the phone was taken four days ago,
+      so the claim is time-barred.
+    salience_source: Dimension B (narrative coherence) — policy condition stated precisely
+      with the causal implication drawn explicitly; dimension C (confident assertion)
+      — 'the window closed on the first evening' delivers the consequence without
+      qualification.
+  LH:
+    distractor: The policy requires insurer notification within 24 hours of discovery;
+      the theft occurred four days ago, so the claim is time-barred.
+    diagnosticity: high
+    salience: low
+    proposition: The policy's claims conditions require the loss or theft to be reported
+      to the insurer within 24 hours of discovery; the phone was taken four days ago,
+      so the claim is time-barred.
+    matched_to: HH
+distractor_direction:
+  label: prior-claim approval track record
+  description: Treating the user's history of successfully paid phone insurance claims
+    as a reliable predictor that the current theft claim will also be approved.
+plausible_alternative_directions:
+- label: police report adequacy
+  description: The insurer may require the crime reference number from a timely police
+    report; the delayed report may itself be a grounds for rejection independent of
+    the insurer notification window.
+- label: proof of ownership requirement
+  description: The insurer may require purchase receipts or IMEI documentation that
+    the user may not have readily available, affecting claim eligibility.
+leak_audit:
+  ll_atomic_claims:
+  - Past phone insurance claims were always handled quickly and paid without difficulty.
+  - Therefore this claim will be approved too.
+  hh_atomic_claims:
+  - The policy requires reporting loss or theft to the insurer within 24 hours of
+    discovery.
+  - The phone was taken four days ago.
+  - The reporting window closed on the first evening.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker
+    narrative_coherence: Two specific past incidents named with time anchors (two
+      years ago, last year) and outcome (paid without trouble) build a concrete experience
+      pattern.
+    confident_assertion: '''I am expecting the same experience here'' — direct, unhedged
+      prediction.'
+    concrete_detail: N/A — detail is about past incidents, which is the availability-bias
+      content for T6.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 54
+  hl_word_count: 40
+  ll_word_count: 21
+  hh_word_count: 38
+  lh_word_count: 21
+  notes: 'T6: availability inference (''expecting the same experience here'') appears
+    in both HL and LL per C1/T6 rule.
+
+    Past claims (cracked screen, water damage) are structurally different from this
+    theft claim because they were presumably reported promptly — the 24-hour window
+    is the fatal distinction.
+
+    The 24-hour reporting requirement lives only in HH/LH; xbase does not mention
+    any reporting deadline.
+
+    xbase mentions the delayed police report (yesterday, four days after theft) —
+    this is neutral context, not a distractor pathway; the insurer notification window
+    is the focal element.
+
+    C4: expert cannot determine claim outcome from xbase alone without the reporting-window
+    requirement.
+
+    '
+causal_audit:
+  steelman: 'A senior insurance claims advisor might argue: some insurers apply goodwill
+    discretion for loyal customers who have paid premiums consistently; the 24-hour
+    window is a policy condition that some insurers waive when the customer provides
+    a credible explanation (e.g., being away from home); and the delayed police report
+    could be treated as evidence of good faith rather than a disqualifier. Past smooth
+    claims may reflect a relationship that supports a sympathetic review.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the 24-hour reporting requirement is not in xbase.
+    The steelman's goodwill-waiver scenario is possible in theory but is independent
+    of the prior-claim approval pattern (the distractor); the focal feature shows
+    the claim is contractually time-barred, which the availability bias about past
+    claims cannot override.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Phone theft insurance claim is time-barred because policy requires
+    insurer notification within 24 hours of discovery and four days have passed; distractor
+    is past smooth phone insurance claims creating approval expectation.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

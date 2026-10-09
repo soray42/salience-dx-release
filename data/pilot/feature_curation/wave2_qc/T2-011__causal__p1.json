@@ -1,0 +1,9 @@
+{
+  "seed_id": "T2-011",
+  "steelman": "A competent infrastructure practitioner might reason that office desk rearrangements commonly involve moving physical networking hardware — access points, patch-panel connections, or edge switches — which could disrupt local LAN connectivity and, if the webhook endpoint were behind an on-prem reverse proxy or VPN gateway, might indirectly affect delivery. The long-tenured office manager's confident temporal correlation (six years of institutional memory) adds surface credibility. One could further argue that a misconfigured DNS or split-horizon resolution change introduced during a facilities move could theoretically redirect traffic, producing authentication failures if the endpoint resolved differently.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase explicitly states the endpoint is 'deployed on a major cloud platform — not our office network,' directly foreclosing the only tempting mechanism (on-prem network disruption from desk rearrangement). The failure mode is HTTP 401 (an authentication/authorization decision made server-side by the cloud endpoint), which has no plausible pathway from office physical rearrangement even if the network caveat were absent. The DNS-redirect steelman fails because it would produce a connection to a wrong host, not an authenticated 401 from the correct endpoint. This is structurally identical to the calibration example 'Monitor swap → HTTP 403 (server-side authorization decision).' Seed passes this lens cleanly; no repair needed."
+}

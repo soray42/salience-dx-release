@@ -1,0 +1,182 @@
+seed_id: T5-017
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: A free disk-health utility I downloaded is warning me that the SSD in my laptop
+  may be failing and that I should back up soon. The tool itself looks ancient — a
+  clunky grey interface that feels like it has not been updated in twenty years. I
+  am tempted to ignore the warning because the program looks so unprofessional. My
+  operating system's own built-in disk utility independently reports the same failing
+  SMART reading. The laptop otherwise seems to run normally. {DS}
+focal_diagnostic_feature: The drive's own SMART attributes show a rising reallocated-sector
+  count and non-zero pending sectors, and the operating system's built-in disk utility
+  reports the identical failing values.
+low_diagnostic_proposition: The disk-health tool's dated, unprofessional interface
+  suggests its failure warning should not be trusted.
+oracle_action: ANSWER
+oracle_focus: Take the warning seriously and back up now (then plan to replace the
+  drive); the SMART reallocated/pending-sector evidence is corroborated by the OS's
+  own disk utility, regardless of how the tool looks.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not dismiss the warning because the tool looks dated.
+  Ask what underlying SMART values it reports and whether another tool confirms them.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not dismiss the warning because the tool looks dated. Ask what underlying
+      SMART values it reports and whether another tool confirms them.
+  LL:
+    action: ASK
+    focus: Do not dismiss the warning because the tool looks dated. Ask what underlying
+      SMART values it reports and whether another tool confirms them.
+  HH:
+    action: ANSWER
+    focus: Take the warning seriously and back up now (then plan to replace the drive);
+      the SMART reallocated/pending-sector evidence is corroborated by the OS's own
+      disk utility, regardless of how the tool looks.
+  LH:
+    action: ANSWER
+    focus: Take the warning seriously and back up now (then plan to replace the drive);
+      the SMART reallocated/pending-sector evidence is corroborated by the OS's own
+      disk utility, regardless of how the tool looks.
+variants:
+  HL:
+    distractor: Honestly the interface is so crude — washed-out grey panels, jagged
+      pixelated icons, a font straight out of an old install wizard — that the whole
+      thing screams abandonware, and a tool that neglected looks like it would throw
+      a false alarm just as carelessly.
+    diagnosticity: low
+    salience: high
+    proposition: The disk-health tool's dated, unprofessional interface suggests its
+      failure warning should not be trusted.
+    salience_source: B/D — vivid description of the tool's crude appearance, with
+      the bridge that a neglected-looking tool gives unreliable warnings.
+    why_plausible: Polished software does feel more trustworthy, so a shabby interface
+      invites doubt about the substance behind it.
+    why_irrelevant: A SMART warning is just a readout of the drive's own counters;
+      the tool's visual styling has no bearing on whether those hardware counters
+      are degrading.
+  LL:
+    distractor: The tool's dated, unprofessional interface suggests that its disk-failure
+      warning should not be trusted.
+    diagnosticity: low
+    salience: low
+    proposition: The disk-health tool's dated, unprofessional interface suggests its
+      failure warning should not be trusted.
+    matched_to: HL
+  HH:
+    distractor: Looking past the looks at the actual numbers, the drive's SMART data
+      shows its reallocated-sector count climbing and a non-zero pending-sector count
+      — both classic signs of a dying SSD. I cross-checked in the operating system's
+      own disk utility and it reports the exact same failing values.
+    diagnosticity: high
+    salience: high
+    proposition: The drive's own SMART attributes show a rising reallocated-sector
+      count and non-zero pending sectors, and the operating system's built-in disk
+      utility reports the identical failing values.
+    salience_source: Naming the specific SMART attributes and the OS-utility cross-check
+      makes the hardware evidence concrete and independent of the tool.
+  LH:
+    distractor: SMART shows a rising reallocated-sector count and non-zero pending
+      sectors, both failing-drive signs, and the OS disk utility reports identical
+      values.
+    diagnosticity: high
+    salience: low
+    proposition: The drive's own SMART attributes show a rising reallocated-sector
+      count and non-zero pending sectors, and the operating system's built-in disk
+      utility reports the identical failing values.
+    matched_to: HH
+distractor_direction:
+  label: Tool-appearance distrust
+  description: Dismissing the failure warning because the utility's dated interface
+    signals it is unreliable.
+plausible_alternative_directions:
+- label: False-positive heuristic
+  description: Whether the tool uses an over-eager threshold that flags healthy drives.
+- label: Transient read error
+  description: Whether a one-off glitch
+  not genuine degradation: null
+  triggered the warning.: null
+leak_audit:
+  ll_atomic_claims:
+  - The tool's interface is dated and unprofessional.
+  - That appearance suggests its failure warning should not be trusted.
+  hh_atomic_claims:
+  - The drive's SMART data shows a rising reallocated-sector count.
+  - The drive's SMART data shows a non-zero pending-sector count.
+  - These are classic signs of a failing/dying drive.
+  - The operating system's own disk utility reports the identical failing values.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: N/A
+    confident_assertion: N/A
+    concrete_detail: Vivid concrete detail about the tool's appearance (grey panels,
+      pixelated icons, wizard font).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 79
+  hl_word_count: 43
+  ll_word_count: 14
+  hh_word_count: 46
+  lh_word_count: 21
+  notes: 'T5: the inferential bridge "a neglected-looking tool would throw a false
+    alarm" appears in HL and flatly in LL
+
+    (self-check 13). xbase now states that the OS''s own built-in disk utility independently
+    reports the same failing
+
+    SMART reading — a narrow C4-permitted pathway closure that forecloses the "this
+    dated tool is buggy" mechanism
+
+    without naming the decisive SMART attributes. The specific attributes (rising
+    reallocated-sector count, non-zero
+
+    pending sectors) that establish genuine degradation, and thus license ANSWER,
+    still live only in HH/LH; xbase
+
+    alone leaves a practitioner to ASK which values were read. HH/LH parity: LH now
+    carries the "classic signs of a
+
+    failing drive" severity claim flatly so it states every proposition HH makes.
+    Appearance is offered AS a reason
+
+    to distrust, not as decoration.
+
+    '
+causal_audit:
+  steelman: 'One could argue that abandoned, unmaintained tools may read SMART registers
+    incorrectly, misinterpret vendor-
+
+    specific attributes, or use stale failure thresholds, so a crude, dated utility
+    genuinely could produce a spurious
+
+    warning — making appearance a weak proxy for reliability worth a second thought.
+    But xbase now reports that the
+
+    operating system''s own independent disk utility returns the same failing reading,
+    so the warning cannot be an
+
+    artefact of this one dated tool''s rendering or thresholds; the appearance argument
+    has no remaining mechanism.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the OS's own built-in disk utility independently
+    reports the same failing SMART reading, foreclosing the 'this dated/unmaintained
+    tool misreads SMART or uses stale thresholds' false-alarm pathway; the specific
+    attributes that establish real degradation remain only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A failing-SSD SMART warning that should be trusted because the OS disk
+    utility corroborates the same reallocated/pending sectors, despite the reporting
+    tool's dated interface.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

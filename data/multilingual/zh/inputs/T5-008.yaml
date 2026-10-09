@@ -1,0 +1,95 @@
+seed_id: T5-008
+template: T5
+domain: open_qa
+complexity: medium
+xbase: 我正在考虑一家小型初创公司的入门级职位邀约。这份工作听起来和我手头一家成熟公司的邀约差不多。我很在意薪资稳定性，因为目前我的财务缓冲还不多。{DS}
+focal_diagnostic_feature: 该初创公司薪资比市场低 25%，期权较少且有四年归属期，资金跑道仅 14 个月且没有机构投资者，而成熟公司的邀约提供全市场薪资。
+low_diagnostic_proposition: The startup office has a polished industrial-chic aesthetic.
+oracle_action: ANSWER
+oracle_focus: Prefer the established offer; the startup risk and pay gap are not compensated
+  by the disclosed equity terms.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer company quality from office design. Ask
+  for salary, runway, funding, equity terms, and alternatives.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer company quality from office design. Ask for salary, runway,
+      funding, equity terms, and alternatives.
+  LL:
+    action: ASK
+    focus: Do not infer company quality from office design. Ask for salary, runway,
+      funding, equity terms, and alternatives.
+  HH:
+    action: ANSWER
+    focus: Prefer the established offer; the startup risk and pay gap are not compensated
+      by the disclosed equity terms.
+  LH:
+    action: ANSWER
+    focus: Prefer the established offer; the startup risk and pay gap are not compensated
+      by the disclosed equity terms.
+variants:
+  HL:
+    distractor: 他们的办公室是一栋翻新的仓库，有裸露的砖墙、爱迪生灯泡，还有一个看起来像杂志大片的会议室。
+    diagnosticity: low
+    salience: high
+    proposition: The startup office has a polished industrial-chic aesthetic.
+    salience_source: stylish office, exposed-brick startup cue
+    why_plausible: A beautiful office can be mistaken for evidence of a healthy company
+      or strong culture.
+    why_irrelevant: Decor does not affect salary, runway, equity value, or the existence
+      of a better offer.
+  LL:
+    distractor: 那家初创公司的办公室在审美上令人愉悦，位于一栋改建的老建筑内。
+    diagnosticity: low
+    salience: low
+    proposition: The startup office has a polished industrial-chic aesthetic.
+    matched_to: HL
+  HH:
+    distractor: 初创公司薪资比市场低 25%，期权份额很小还有四年归属悬崖，公司资金跑道只剩 14 个月，而我已经有一份同类工作的全市场薪资邀约在手。
+    diagnosticity: high
+    salience: high
+    proposition: The startup pays 25% below market, has small equity with a four-year
+      cliff, has 14 months of runway and no institutional investors, while the established
+      offer pays full market.
+    salience_source: offer economics and runway
+  LH:
+    distractor: 这家初创公司的薪资比市场低 25%，期权有限且有四年归属期，还有一份全市场薪资水平的替代邀约。
+    diagnosticity: high
+    salience: low
+    proposition: The startup pays 25% below market, has small equity with a four-year
+      cliff, has 14 months of runway and no institutional investors, while the established
+      offer pays full market.
+    matched_to: HH
+distractor_direction:
+  label: 初创公司办公室氛围
+  description: 调查精心设计的工业风办公室是否表明该初创公司的邀约更具吸引力。
+plausible_alternative_directions:
+- label: 学习机会
+  description: 与成熟公司相比，初创公司可能提供更广泛的职责或更快的技能成长空间。
+- label: 创始人素质
+  description: 领导层的能力和诚信度可能会改变对风险的评估。
+- label: 岗位职责清晰度
+  description: 日常工作内容可能与成熟公司的邀约存在实质性差异。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-008.yaml
+  source_xbase_sha256: 4bfc9a9d1dd6fe18
+  translated_content_sha256: 610872bfea8182a9
+  translation_notes: Technical terms 'equity', 'cliff', 'runway' rendered as standard
+    Chinese finance/startup vocabulary (期权归属期, 资金跑道). 'Four-year cliff' is '四年归属悬崖'
+    in HH (high-salience concrete) and '四年归属期' in LH/focal (flatter). Office aesthetic
+    details (exposed brick, Edison bulbs) retained in HL for high-salience vividness;
+    LL kept flat. First-person register preserved.

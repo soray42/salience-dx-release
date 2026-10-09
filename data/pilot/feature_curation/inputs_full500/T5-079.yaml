@@ -1,0 +1,162 @@
+seed_id: T5-079
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our React marketing site scores poorly on mobile Lighthouse audits — first
+  contentful paint is over five seconds on a simulated 4G connection. The design renders
+  correctly once loaded, all API calls resolve, and we haven't changed hosting or
+  CDN configuration in the past month. {DS}
+focal_diagnostic_feature: The main JavaScript bundle delivered to the browser is 2.3
+  MB uncompressed; minification and tree-shaking are disabled in the build configuration.
+low_diagnostic_proposition: The loading screen looks dated and suggests performance
+  may have been treated as an afterthought.
+oracle_action: ANSWER
+oracle_focus: Enable minification and tree-shaking in the build configuration immediately;
+  then audit for unused imports and consider code-splitting to reduce initial bundle
+  size.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer bundle or build quality from loading-screen
+  aesthetics. Ask for network tab bundle sizes, build tool configuration, and whether
+  minification and tree-shaking are enabled.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer bundle or build quality from loading-screen aesthetics. Ask
+      for network tab bundle sizes, build tool configuration, and whether minification
+      and tree-shaking are enabled.
+  LL:
+    action: ASK
+    focus: Do not infer bundle or build quality from loading-screen aesthetics. Ask
+      for network tab bundle sizes, build tool configuration, and whether minification
+      and tree-shaking are enabled.
+  HH:
+    action: ANSWER
+    focus: Enable minification and tree-shaking in the build configuration immediately;
+      then audit for unused imports and consider code-splitting to reduce initial
+      bundle size.
+  LH:
+    action: ANSWER
+    focus: Enable minification and tree-shaking in the build configuration immediately;
+      then audit for unused imports and consider code-splitting to reduce initial
+      bundle size.
+variants:
+  HL:
+    distractor: Our loading screen is painfully dated — a centred grey rectangle with
+      no animation — and honestly it looks like the kind of setup where performance
+      is an afterthought too.
+    diagnosticity: low
+    salience: high
+    proposition: The loading screen looks dated and suggests performance may have
+      been treated as an afterthought.
+    salience_source: B (narrative coherence — vivid concrete visual description of
+      the loading screen); C (confident assertion — 'painfully dated', direct inferential
+      conclusion).
+    why_plausible: A dated, low-effort loading screen can signal broader engineering
+      neglect, and the inference that performance was deprioritised alongside design
+      is easy to accept.
+    why_irrelevant: The visual style of a loading screen has no causal path to bundle
+      size or build tool configuration; the appearance of one UI element cannot inform
+      whether minification is enabled.
+  LL:
+    distractor: The loading screen looks dated and suggests performance may have been
+      treated as an afterthought.
+    diagnosticity: low
+    salience: low
+    proposition: The loading screen looks dated and suggests performance may have
+      been treated as an afterthought.
+    matched_to: HL
+  HH:
+    distractor: The network tab shows a 2.3 MB main bundle transferring before any
+      paint — minification is off and the build config has tree-shaking disabled,
+      so every imported module ships in full.
+    diagnosticity: high
+    salience: high
+    proposition: The main JavaScript bundle delivered to the browser is 2.3 MB uncompressed;
+      minification and tree-shaking are disabled in the build configuration.
+    salience_source: Precise byte measurement (2.3 MB), tool location (network tab),
+      specific build settings named (minification off, tree-shaking disabled), causal
+      chain stated.
+  LH:
+    distractor: The main JavaScript bundle is 2.3 MB; minification and tree-shaking
+      are disabled in the build configuration.
+    diagnosticity: high
+    salience: low
+    proposition: The main JavaScript bundle delivered to the browser is 2.3 MB uncompressed;
+      minification and tree-shaking are disabled in the build configuration.
+    matched_to: HH
+distractor_direction:
+  label: Design neglect signalling
+  description: Treating the dated loading-screen aesthetic as evidence that performance
+    optimisation was also neglected, and using appearance as a diagnostic proxy for
+    build quality.
+plausible_alternative_directions:
+- label: Render-blocking third-party scripts
+  description: Synchronous third-party analytics or tag-manager scripts injected in
+    the document head could block HTML parsing before the React bundle even starts.
+- label: Unoptimised image assets above the fold
+  description: Large uncompressed hero images loading before first contentful paint
+    could inflate the critical rendering path independently of the JS bundle.
+- label: Missing HTTP caching headers
+  description: Without cache-control headers, repeat visitors experience full re-downloads
+    on every load, inflating perceived FCP during audits run without a warm cache.
+leak_audit:
+  ll_atomic_claims:
+  - The loading screen looks dated.
+  - The appearance suggests performance may have been treated as an afterthought.
+  hh_atomic_claims:
+  - The network tab shows a 2.3 MB main bundle.
+  - The bundle transfers before any paint occurs.
+  - Minification is disabled in the build configuration.
+  - Tree-shaking is disabled in the build configuration.
+  - Every imported module ships in full as a result.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person aesthetic observation, no named authority.
+    narrative_coherence: Concrete visual description (centred grey rectangle, no animation)
+      that grounds the inference in a specific observed detail.
+    confident_assertion: '"Painfully dated" and "honestly it looks like the kind of
+      setup where performance is an afterthought too" — unhedged inferential claim.'
+    concrete_detail: N/A — visual detail is about the source's perception of a UI
+      element, not about the recounted case's build configuration.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 28
+  ll_word_count: 15
+  hh_word_count: 30
+  lh_word_count: 16
+  notes: 'T5 bridge (surface property → quality conclusion) verified in both HL and
+    LL: HL states "looks like the kind of setup where performance is an afterthought
+    too"; LL states "suggests performance may have been treated as an afterthought."
+    Both carry the inferential bridge flatly. The inference is diagnostically empty
+    — loading screen style cannot reveal build configuration. HH and LH are both about
+    the focal evidence (bundle size, build settings), not about the loading screen.
+
+    '
+causal_audit:
+  steelman: 'A dated loading screen might indicate an engineering team that has not
+    revisited the build pipeline in years — in which case disabled minification could
+    plausibly co-occur as another sign of neglect. This correlation argument is the
+    strongest available. However, correlation is not a mechanism: the visual style
+    of the loading screen does not causally produce or reproduce the disabled build
+    flags. A team can maintain a minimal loading screen intentionally while running
+    a fully optimised build, or vice versa. No constructable mechanism connects loading-screen
+    aesthetics to bundle-size or build-configuration state for this specific case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — no mechanism exists between loading-screen appearance
+    and build configuration; no xbase closure is required.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: React site high FCP caused by a 2.3 MB unminified bundle with tree-shaking
+    disabled, with a dated loading screen incorrectly offered as aesthetic evidence
+    of performance neglect.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

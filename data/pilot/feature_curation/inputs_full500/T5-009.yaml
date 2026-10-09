@@ -1,0 +1,87 @@
+seed_id: T5-009
+template: T5
+domain: technical_troubleshooting
+complexity: high
+xbase: Our gRPC service has periodic pauses where all RPCs time out together. Each
+  pause lasts around half a minute, and this happens every several minutes rather
+  than continuously. {DS}
+focal_diagnostic_feature: JVM logs show ~28-second Full GC events aligned with the
+  timeout windows, with old-gen above 90% before each event.
+low_diagnostic_proposition: The monitoring dashboard for GC metrics uses a confusing
+  colour scheme.
+oracle_action: ANSWER
+oracle_focus: Treat this as Full-GC pause behaviour under old-gen pressure; tune GC/heap
+  and investigate retained objects.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame dashboard colours. Ask for raw GC logs and
+  alignment with timeout windows.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame dashboard colours. Ask for raw GC logs and alignment with
+      timeout windows.
+  LL:
+    action: ASK
+    focus: Do not blame dashboard colours. Ask for raw GC logs and alignment with
+      timeout windows.
+  HH:
+    action: ANSWER
+    focus: Treat this as Full-GC pause behaviour under old-gen pressure; tune GC/heap
+      and investigate retained objects.
+  LH:
+    action: ANSWER
+    focus: Treat this as Full-GC pause behaviour under old-gen pressure; tune GC/heap
+      and investigate retained objects.
+variants:
+  HL:
+    distractor: 'The GC dashboard is almost unreadable: orange traces on a yellow
+      background, with labels that disappear when the lines overlap.'
+    diagnosticity: low
+    salience: high
+    proposition: The monitoring dashboard for GC metrics uses a confusing colour scheme.
+    salience_source: ugly chart colours and visual confusion
+    why_plausible: A bad chart can make the measurement itself feel unreliable.
+    why_irrelevant: Raw GC logs matching the timeout windows remain diagnostic regardless
+      of dashboard colour.
+  LL:
+    distractor: The GC monitoring dashboard has a colour scheme that is hard to read.
+    diagnosticity: low
+    salience: low
+    proposition: The monitoring dashboard for GC metrics uses a confusing colour scheme.
+    matched_to: HL
+  HH:
+    distractor: The raw JVM log shows a 28-second Full GC every 7 to 9 minutes, exactly
+      when all calls time out, and old-gen is over 90% right before it happens.
+    diagnosticity: high
+    salience: high
+    proposition: JVM logs show ~28-second Full GC events aligned with the timeout
+      windows, with old-gen above 90% before each event.
+    salience_source: raw log/event timing alignment
+  LH:
+    distractor: Full GC events of about 28 seconds align with the RPC timeout windows,
+      and old-gen utilisation exceeds 90% before each.
+    diagnosticity: high
+    salience: low
+    proposition: JVM logs show ~28-second Full GC events aligned with the timeout
+      windows, with old-gen above 90% before each event.
+    matched_to: HH
+distractor_direction:
+  label: GC dashboard readability
+  description: Investigating whether confusing GC dashboard visuals or label overlap
+    explain the perceived service pauses.
+plausible_alternative_directions:
+- label: Thread-pool exhaustion
+  description: RPCs may time out because request-handling threads are saturated.
+- label: Downstream dependency stalls
+  description: A dependency could block all RPCs periodically.
+- label: Network partition
+  description: A recurring network or load-balancer issue could cause synchronized
+    timeouts.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

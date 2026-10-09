@@ -1,0 +1,90 @@
+seed_id: T2-005
+template: T2
+domain: open_qa
+complexity: medium
+xbase: 我四个月大的小狗大约三周前开始大肆啃咬家具。他有磨牙玩具，但每到傍晚变得烦躁时就对玩具置之不理。{DS}
+focal_diagnostic_feature: 小狗在同一时期平均每天只有约 15 分钟的户外活动。
+low_diagnostic_proposition: The chewing began after new curtains were put up in the
+  room.
+oracle_action: ANSWER
+oracle_focus: Increase exercise and enrichment substantially; the pattern fits under-stimulation
+  more than a curtain reaction.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame the curtains without checking routine. Ask
+  about walks, play, naps, and enrichment.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame the curtains without checking routine. Ask about walks, play,
+      naps, and enrichment.
+  LL:
+    action: ASK
+    focus: Do not blame the curtains without checking routine. Ask about walks, play,
+      naps, and enrichment.
+  HH:
+    action: ANSWER
+    focus: Increase exercise and enrichment substantially; the pattern fits under-stimulation
+      more than a curtain reaction.
+  LH:
+    action: ANSWER
+    focus: Increase exercise and enrichment substantially; the pattern fits under-stimulation
+      more than a curtain reaction.
+variants:
+  HL:
+    distractor: 问题恰好从我们在客厅挂上厚重的蓝色窗帘之后开始；第一天晚上他盯着窗帘足足看了整整一分钟。
+    diagnosticity: low
+    salience: high
+    proposition: The chewing began after new curtains were put up in the room.
+    salience_source: temporal coincidence with visible domestic change
+    why_plausible: A new object in the puppy's environment feels like a possible trigger.
+    why_irrelevant: The exercise deficit is a direct behavioural driver; curtains
+      do not account for sustained under-stimulation.
+  LL:
+    distractor: 这个行为大约是在房间内的家居陈设发生细微变化之后开始的。
+    diagnosticity: low
+    salience: low
+    proposition: The chewing began after new curtains were put up in the room.
+    matched_to: HL
+  HH:
+    distractor: 受天气和工作影响，他每天只能在户外活动约 15 分钟，对于一只充满傍晚活力的四个月大的小狗来说实在太少了。
+    diagnosticity: high
+    salience: high
+    proposition: The puppy has averaged only about 15 minutes of outdoor activity
+      per day during the same period.
+    salience_source: large routine deficit
+  LH:
+    distractor: 小狗每天的户外活动时间约为 15 分钟，远低于其年龄段的正常需求。
+    diagnosticity: high
+    salience: low
+    proposition: The puppy has averaged only about 15 minutes of outdoor activity
+      per day during the same period.
+    matched_to: HH
+distractor_direction:
+  label: 对家居陈设变化的反应
+  description: 调查小狗是否在对近期房间陈设变化做出反应或受其刺激。
+plausible_alternative_directions:
+- label: 换牙行为
+  description: 小狗因符合年龄阶段的换牙不适而啃咬物品。
+- label: 分离焦虑
+  description: 小狗在独处或预感到主人离开时啃咬行为更为严重。
+- label: 磨牙替代品不足
+  description: 现有的磨牙玩具对小狗缺乏吸引力、不易获取或未能定期更换。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-005.yaml
+  source_xbase_sha256: dc70349f71b068b3
+  translated_content_sha256: 4f2977f4778bc060
+  translation_notes: HL 中'蓝色窗帘'和'盯着看了整整一分钟'等具体细节保留以维持高显著性。'磨牙玩具'对应 chew toys。'换牙'对应
+    teething。'傍晚活力'贴合原文 evening energy 的含义。

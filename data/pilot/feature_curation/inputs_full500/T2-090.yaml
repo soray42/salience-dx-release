@@ -1,0 +1,175 @@
+seed_id: T2-090
+template: T2
+domain: open_qa
+complexity: medium
+xbase: My car insurance renewal quote came in about 40% higher than last year, and
+  I want to figure out why before I decide whether to accept it or shop around. I
+  have not had any accidents, claims, or tickets this year, and I have not moved or
+  changed my car. I am the only driver on the policy and my mileage is about the same.
+  The renewal letter itself lists the new premium and a short summary of the rating.
+  {DS}
+focal_diagnostic_feature: The renewal letter states the insurer applied a flat across-the-book
+  base-rate increase this year for all customers in the user's region, independent
+  of any individual driving record.
+low_diagnostic_proposition: The premium increase appeared the same month the user
+  switched their household electricity supplier.
+oracle_action: ANSWER
+oracle_focus: The increase is a market-wide base-rate rise the insurer applied to
+  everyone in the region, not something the user triggered; treat it as a reason to
+  compare other insurers' quotes, not to look for a personal mistake to undo.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect an electricity-supplier switch to the
+  car premium. Ask what the renewal letter says drove the rating change before attributing
+  it to anything the user did.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect an electricity-supplier switch to the car premium. Ask what
+      the renewal letter says drove the rating change before attributing it to anything
+      the user did.
+  LL:
+    action: ASK
+    focus: Do not connect an electricity-supplier switch to the car premium. Ask what
+      the renewal letter says drove the rating change before attributing it to anything
+      the user did.
+  HH:
+    action: ANSWER
+    focus: The increase is a market-wide base-rate rise the insurer applied to everyone
+      in the region, not something the user triggered; treat it as a reason to compare
+      other insurers' quotes, not to look for a personal mistake to undo.
+  LH:
+    action: ANSWER
+    focus: The increase is a market-wide base-rate rise the insurer applied to everyone
+      in the region, not something the user triggered; treat it as a reason to compare
+      other insurers' quotes, not to look for a personal mistake to undo.
+variants:
+  HL:
+    distractor: The higher quote landed the very same month I switched our household
+      to a new electricity supplier, and the timing lines up uncomfortably well —
+      it feels like everything shifted at once when I rearranged those accounts.
+    diagnosticity: low
+    salience: high
+    proposition: The premium increase appeared the same month the user switched their
+      household electricity supplier.
+    salience_source: B/C — a confident first-person 'the timing lines up uncomfortably
+      well' narrative ties the premium to the same month's account change.
+    why_plausible: People intuitively group simultaneous bill changes into one story,
+      so a same-month supplier switch feels causally linked.
+    why_irrelevant: A household electricity-supplier switch shares no data, rating
+      input, or channel with car-insurance pricing; it cannot move the car premium.
+  LL:
+    distractor: The premium increase appeared the same month the user switched their
+      household electricity supplier.
+    diagnosticity: low
+    salience: low
+    proposition: The premium increase appeared the same month the user switched their
+      household electricity supplier.
+    matched_to: HL
+  HH:
+    distractor: Reading the rating summary on the renewal letter, it says the insurer
+      applied a flat base-rate increase this year to every customer in my region,
+      stated plainly as a book-wide adjustment that has nothing to do with my individual
+      record or claims history.
+    diagnosticity: high
+    salience: high
+    proposition: The renewal letter states the insurer applied a flat across-the-book
+      base-rate increase this year for all customers in the user's region, independent
+      of any individual driving record.
+    salience_source: Quoting the letter's own statement of a region-wide base-rate
+      adjustment makes the true driver concrete and decisive.
+  LH:
+    distractor: The renewal letter states the insurer applied a flat base-rate increase
+      this year to all customers in the region, independent of the user's record.
+    diagnosticity: high
+    salience: low
+    proposition: The renewal letter states the insurer applied a flat across-the-book
+      base-rate increase this year for all customers in the user's region, independent
+      of any individual driving record.
+    matched_to: HH
+distractor_direction:
+  label: Account-switch timing
+  description: Treating the same-month electricity-supplier switch as somehow connected
+    to the car-insurance premium increase.
+plausible_alternative_directions:
+- label: Hidden record change
+  description: Whether an unnoticed claim
+  conviction: null
+  or address mismatch was added to the user's record and drove the rise.: null
+- label: Coverage or discount lapse
+  description: Whether a discount expired or coverage terms changed at renewal
+  raising the premium.: null
+leak_audit:
+  ll_atomic_claims:
+  - The user switched their household electricity supplier.
+  - The premium increase appeared that same month.
+  hh_atomic_claims:
+  - The renewal letter states a flat base-rate increase this year.
+  - It applies to all customers in the user's region.
+  - It is independent of the user's individual driving record.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person same-month 'bills crept up together' chronology.
+    confident_assertion: Frames the timing as lining up uncomfortably well.
+    concrete_detail: Detail about the user's own account change (the supplier switch,
+      the month) only — no claim about the insurer's rating.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 84
+  hl_word_count: 36
+  ll_word_count: 16
+  hh_word_count: 42
+  lh_word_count: 24
+  notes: 'xbase rules out the individual-record levers the user can see (no accidents/claims/tickets,
+    no move, no car
+
+    change, same mileage) and notes the renewal letter carries a rating summary —
+    but never reveals what that
+
+    summary says, so HL/LL cannot resolve the cause; the decisive base-rate statement
+    lives only in HH/LH. The
+
+    ''only driver'' detail is context, not the focal feature. HL''s only added material
+    is the user''s own supplier
+
+    switch framing; LL keeps the bare same-month coincidence.
+
+    '
+causal_audit:
+  steelman: 'To steelman the electricity-supplier switch as causal, I would need a
+    channel by which changing a household
+
+    energy provider influences car-insurance pricing. Insurance premiums are rated
+    on driver, vehicle, location,
+
+    claims history, and the insurer''s base rates; none of these read from a customer''s
+    choice of electricity
+
+    supplier, and the two services share no data feed, bureau, or scoring input. There
+    is no soft-credit, address,
+
+    or risk-signal coupling that a supplier switch would trip for motor cover. The
+    timing is coincidental with no
+
+    constructible mechanism; the true driver is the insurer''s book-wide base-rate
+    increase.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states no accidents, claims, tickets, move, car change,
+    or mileage change, foreclosing the individual-record pathways; the book-wide base-rate
+    increase that explains the rise lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A car-insurance renewal jumped 40% due to a region-wide base-rate increase
+    stated in the letter, unrelated to a coincidental same-month electricity-supplier
+    switch.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

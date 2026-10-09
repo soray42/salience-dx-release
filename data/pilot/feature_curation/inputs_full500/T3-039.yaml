@@ -1,0 +1,182 @@
+seed_id: T3-039
+template: T3
+domain: open_qa
+complexity: medium
+xbase: My gas oven has stopped igniting reliably on the first two or three tries.
+  After repeated clicking it eventually catches and lights. The oven is eight years
+  old and the behaviour started about a month ago. My stovetop burners still light
+  normally on the first click. {DS}
+focal_diagnostic_feature: The igniter element fails to glow on the first two or three
+  clicks before faintly appearing, identifying the igniter element itself as the faulty
+  component at around £25 — not the control board.
+low_diagnostic_proposition: Delayed oven ignition on a unit this age almost always
+  indicates control board failure, which is seldom economic to repair.
+oracle_action: ANSWER
+oracle_focus: Replace the oven igniter element, which costs around £25 and is a straightforward
+  swap; do not condemn the control board before testing the igniter directly.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the control-board diagnosis from authority
+  alone. Ask whether the igniter element glows during a click attempt before assuming
+  the more expensive component has failed.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the control-board diagnosis from authority alone. Ask whether
+      the igniter element glows during a click attempt before assuming the more expensive
+      component has failed.
+  LL:
+    action: ASK
+    focus: Do not accept the control-board diagnosis from authority alone. Ask whether
+      the igniter element glows during a click attempt before assuming the more expensive
+      component has failed.
+  HH:
+    action: ANSWER
+    focus: Replace the oven igniter element, which costs around £25 and is a straightforward
+      swap; do not condemn the control board before testing the igniter directly.
+  LH:
+    action: ANSWER
+    focus: Replace the oven igniter element, which costs around £25 and is a straightforward
+      swap; do not condemn the control board before testing the igniter directly.
+variants:
+  HL:
+    distractor: Torben, a domestic appliance engineer I reached through our building
+      maintenance service, told me this symptom is almost always the oven control
+      board failing and that replacing a board on a unit this age usually costs more
+      than buying a new entry-level oven.
+    diagnosticity: low
+    salience: high
+    proposition: Delayed oven ignition on a unit this age almost always indicates
+      control board failure, which is seldom economic to repair.
+    salience_source: 'A: named appliance engineer (Torben) reached through a professional
+      maintenance service; B: professional referral context; C: ''almost always''
+      — confident categorical assertion.'
+    why_plausible: Control board failure is a genuine cause of ignition problems on
+      ageing gas appliances, and a building-maintenance engineer's quick diagnostic
+      pattern sounds authoritative.
+    why_irrelevant: The igniter element glow test (in HH/LH) reveals the element itself
+      is not activating on initial clicks, which localises the fault before the control
+      board is even implicated; stovetop burners lighting normally also suggests the
+      gas valve and control board are functional.
+  LL:
+    distractor: A domestic appliance engineer said delayed oven ignition usually means
+      control board failure, rarely economic to repair.
+    diagnosticity: low
+    salience: low
+    proposition: Delayed oven ignition on a unit this age almost always indicates
+      control board failure, which is seldom economic to repair.
+    matched_to: HL
+  HH:
+    distractor: The oven manufacturer's service guide states the igniter tip should
+      glow orange within three seconds of clicking; mine stays dark for the first
+      two or three tries before a faint glow appears — a faulty igniter element costing
+      around £25 that takes about thirty minutes to swap.
+    diagnosticity: high
+    salience: high
+    proposition: The igniter element fails to glow on the first two or three clicks
+      before faintly appearing, identifying the igniter element itself as the faulty
+      component at around £25 — not the control board.
+    salience_source: 'B: manufacturer specification cited as a reference point (three-second
+      glow standard) with precise behavioural observation (dark on first tries, faint
+      glow late); D: specific repair cost and time cited.'
+  LH:
+    distractor: The igniter element fails to glow on initial clicks; a replacement
+      element costs around £25 and is a straightforward swap.
+    diagnosticity: high
+    salience: low
+    proposition: The igniter element fails to glow on the first two or three clicks
+      before faintly appearing, identifying the igniter element itself as the faulty
+      component at around £25 — not the control board.
+    matched_to: HH
+distractor_direction:
+  label: Control board failure
+  description: Treating the delayed ignition as evidence that the oven's electronic
+    control board has failed, making repair cost-prohibitive on a unit this age.
+plausible_alternative_directions:
+- label: Gas valve solenoid fault
+  description: The oven burner's gas valve solenoid is opening slowly or intermittently,
+    delaying ignition independent of the igniter's electrical function.
+- label: Igniter wiring or connector fault
+  description: Corroded connectors or a damaged wire between the control board and
+    the igniter are causing intermittent signal loss rather than element failure.
+- label: Burner port blockage
+  description: Accumulated food debris or grease has partially blocked the oven burner
+    ports, preventing the gas from reaching the igniter spark on the first attempt.
+leak_audit:
+  ll_atomic_claims:
+  - A domestic appliance engineer made a statement about this symptom.
+  - The engineer linked delayed oven ignition to control board failure.
+  - The engineer said this repair is rarely economic on a unit of this age.
+  hh_atomic_claims:
+  - The oven manufacturer's service guide specifies the igniter tip should glow orange
+    within three seconds of clicking.
+  - The igniter tip stays dark for the first two or three click attempts.
+  - A faint glow eventually appears on later attempts.
+  - A faulty igniter element costs around £25 to replace.
+  - Replacing the igniter takes about thirty minutes.
+  hl_salience_dimensions:
+    source_credibility: 'A: named appliance engineer (Torben) from a professional
+      building maintenance service.'
+    narrative_coherence: 'B: professional referral context — reached through a service,
+      not a casual acquaintance.'
+    confident_assertion: 'C: ''almost always the oven control board failing'' — strong
+      categorical language.'
+    concrete_detail: N/A — the cost comparison ('replacing a board costs more than
+      a new entry-level oven') is about general repair economics, not a quote for
+      this case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 43
+  ll_word_count: 17
+  hh_word_count: 46
+  lh_word_count: 20
+  notes: 'xbase notes stovetop burners light normally — a narrow pathway closure that
+    makes
+
+    a total electrical/gas control failure implausible without naming the igniter
+    as
+
+    the cause (C4 compliant). HL adds Torben''s identity, professional context, and
+
+    confident categorical framing; LL is the same claim without any of that. HH:LH
+
+    atomic-claims diff verified: LH carries all five claims from HH in flat form.
+
+    Ratios: HL:LL = 2.53, HH:LH = 2.30.
+
+    '
+causal_audit:
+  steelman: 'A senior appliance technician could argue: the oven''s control board
+    regulates
+
+    both the spark frequency and the igniter heating element power; a partially
+
+    failing board might intermittently send insufficient voltage to the igniter,
+
+    causing the delayed glow the user observes. The stovetop working normally is
+
+    not conclusive because stovetop sparkers often run on a separate circuit from
+
+    the oven igniter within the same board.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase notes the stovetop burners light normally, which
+    suggests the gas supply and at least part of the spark/ignition circuit are intact.
+    The HH/LH igniter glow test provides the structural exclusion: an igniter that
+    glows faintly is degraded, not dead — consistent with element failure rather than
+    total board signal loss.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Gas oven delayed ignition blamed on control board failure by authority;
+    real cause is a faulty igniter element that fails to glow on initial clicks, a
+    £25 part swap.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

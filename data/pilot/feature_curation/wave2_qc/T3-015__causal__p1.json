@@ -1,0 +1,9 @@
+{
+  "seed_id": "T3-015",
+  "steelman": "One could argue that the screwdriver penetration test may reflect localised conditions rather than the whole lawn — particularly if tested on a naturally wetter or more recently disturbed patch — and that the easy penetration does not necessarily rule out surface capping in higher-traffic zones near the edges. Furthermore, some extension-service guidance recommends annual autumn aeration as low-cost preventive maintenance even on non-compacted soils, on the grounds that aeration improves winter water infiltration and root-zone gas exchange regardless of current compaction level. A garden adviser who had not examined the lawn and was applying a blanket seasonal heuristic might plausibly put aeration on a default maintenance checklist for any UK garden lawn, especially one described as showing sparse patches.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Generic preventive-aeration argument: aeration improves water infiltration and gas exchange even without compaction. This is a maintenance rationale, not a diagnostic one — it does not provide a mechanism by which compaction causes this lawn's specific thinning pattern.",
+  "pathway_closure_check": "effective",
+  "notes": "The screwdriver-to-hilt-with-one-hand result is the accepted field standard for ruling out soil compaction, and it passes definitively here. The spatial pattern of thinning (under deepest canopy, not foot-traffic paths) provides a second independent closure of the compaction pathway. The only steelman available reduces to generic preventive-maintenance advice that does not implicate compaction as a cause — no competent practitioner confronted with these two findings would list aeration as a diagnostic response. Seed passes this lens cleanly. No repairs needed."
+}

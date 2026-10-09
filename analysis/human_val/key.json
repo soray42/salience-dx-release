@@ -1,0 +1,3629 @@
+{
+  "hv-0000": {
+    "item_id": "T3-043|gemini-3.5-flash|LL",
+    "seed": "T3-043",
+    "model": "gemini-3.5-flash",
+    "cell": "LL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T3-043|gemini-3.5-flash|LL"
+  },
+  "hv-0001": {
+    "item_id": "T1-009|gemini-3.5-flash|LL",
+    "seed": "T1-009",
+    "model": "gemini-3.5-flash",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T1-009|gemini-3.5-flash|LL"
+  },
+  "hv-0002": {
+    "item_id": "T6-024|google/gemma-4-31B-it|LH",
+    "seed": "T6-024",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T6",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "distractor",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T6-024|google/gemma-4-31B-it|LH"
+  },
+  "hv-0003": {
+    "item_id": "T2-034|google/gemma-4-31B-it|LH",
+    "seed": "T2-034",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T2",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T2-034|google/gemma-4-31B-it|LH"
+  },
+  "hv-0004": {
+    "item_id": "T5-041|gemini-3.5-flash|HL",
+    "seed": "T5-041",
+    "model": "gemini-3.5-flash",
+    "cell": "HL",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T5-041|gemini-3.5-flash|HL"
+  },
+  "hv-0005": {
+    "item_id": "T3-018|llama3.1:8b|HL",
+    "seed": "T3-018",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "focal",
+      "C": "plausible",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T3-018|llama3.1:8b|HL"
+  },
+  "hv-0006": {
+    "item_id": "T6-001|llama3.1:8b|LL",
+    "seed": "T6-001",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "proto_ISB",
+    "true_id": "T6-001|llama3.1:8b|LL"
+  },
+  "hv-0007": {
+    "item_id": "T1-009|gemini-3.5-flash|LH",
+    "seed": "T1-009",
+    "model": "gemini-3.5-flash",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T1-009|gemini-3.5-flash|LH"
+  },
+  "hv-0008": {
+    "item_id": "T1-062|claude-sonnet-4-6|HL",
+    "seed": "T1-062",
+    "model": "claude-sonnet-4-6",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T1-062|claude-sonnet-4-6|HL"
+  },
+  "hv-0009": {
+    "item_id": "T6-034|google/gemma-4-31B-it|LL",
+    "seed": "T6-034",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "proto_vigilance",
+    "true_id": "T6-034|google/gemma-4-31B-it|LL"
+  },
+  "hv-0010": {
+    "item_id": "T1-006|google/gemma-4-31B-it|LH",
+    "seed": "T1-006",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T1-006|google/gemma-4-31B-it|LH"
+  },
+  "hv-0011": {
+    "item_id": "T5-002|gemini-3.5-flash|LL",
+    "seed": "T5-002",
+    "model": "gemini-3.5-flash",
+    "cell": "LL",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T5-002|gemini-3.5-flash|LL"
+  },
+  "hv-0012": {
+    "item_id": "T1-049|llama3.1:8b|LH",
+    "seed": "T1-049",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "distractor",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T1-049|llama3.1:8b|LH"
+  },
+  "hv-0013": {
+    "item_id": "T1-003|claude-sonnet-4-6|HL",
+    "seed": "T1-003",
+    "model": "claude-sonnet-4-6",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "proto_vigilance",
+    "true_id": "T1-003|claude-sonnet-4-6|HL"
+  },
+  "hv-0014": {
+    "item_id": "T3-074|gemini-3.5-flash|HL",
+    "seed": "T3-074",
+    "model": "gemini-3.5-flash",
+    "cell": "HL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T3-074|gemini-3.5-flash|HL"
+  },
+  "hv-0015": {
+    "item_id": "T6-047|claude-sonnet-4-6|LL",
+    "seed": "T6-047",
+    "model": "claude-sonnet-4-6",
+    "cell": "LL",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T6-047|claude-sonnet-4-6|LL"
+  },
+  "hv-0016": {
+    "item_id": "T2-001|claude-sonnet-4-6|HL",
+    "seed": "T2-001",
+    "model": "claude-sonnet-4-6",
+    "cell": "HL",
+    "template": "T2",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T2-001|claude-sonnet-4-6|HL"
+  },
+  "hv-0017": {
+    "item_id": "T3-043|gemini-3.5-flash|LH",
+    "seed": "T3-043",
+    "model": "gemini-3.5-flash",
+    "cell": "LH",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T3-043|gemini-3.5-flash|LH"
+  },
+  "hv-0018": {
+    "item_id": "T3-100|google/gemma-4-31B-it|LL",
+    "seed": "T3-100",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T3",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T3-100|google/gemma-4-31B-it|LL"
+  },
+  "hv-0019": {
+    "item_id": "T5-012|google/gemma-4-31B-it|LH",
+    "seed": "T5-012",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "considered_rejected",
+    "pair_bucket": "vigilance",
+    "true_id": "T5-012|google/gemma-4-31B-it|LH"
+  },
+  "hv-0020": {
+    "item_id": "T2-013|gemini-3.5-flash|LL",
+    "seed": "T2-013",
+    "model": "gemini-3.5-flash",
+    "cell": "LL",
+    "template": "T2",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T2-013|gemini-3.5-flash|LL"
+  },
+  "hv-0021": {
+    "item_id": "T1-059|gemini-3.5-flash|HL",
+    "seed": "T1-059",
+    "model": "gemini-3.5-flash",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T1-059|gemini-3.5-flash|HL"
+  },
+  "hv-0022": {
+    "item_id": "T6-009|google/gemma-4-31B-it|HL",
+    "seed": "T6-009",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible",
+      "E": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T6-009|google/gemma-4-31B-it|HL"
+  },
+  "hv-0023": {
+    "item_id": "T1-031|gemini-3.5-flash|LL",
+    "seed": "T1-031",
+    "model": "gemini-3.5-flash",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T1-031|gemini-3.5-flash|LL"
+  },
+  "hv-0024": {
+    "item_id": "T1-019|google/gemma-4-31B-it|LL",
+    "seed": "T1-019",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T1-019|google/gemma-4-31B-it|LL"
+  },
+  "hv-0025": {
+    "item_id": "T6-082|claude-sonnet-4-6|HL",
+    "seed": "T6-082",
+    "model": "claude-sonnet-4-6",
+    "cell": "HL",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "proto_vigilance",
+    "true_id": "T6-082|claude-sonnet-4-6|HL"
+  },
+  "hv-0026": {
+    "item_id": "T3-060|llama3.1:8b|LH",
+    "seed": "T3-060",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T3",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "focal",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T3-060|llama3.1:8b|LH"
+  },
+  "hv-0027": {
+    "item_id": "T3-060|llama3.1:8b|HL",
+    "seed": "T3-060",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T3",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "focal",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T3-060|llama3.1:8b|HL"
+  },
+  "hv-0028": {
+    "item_id": "T5-020|gemini-3.5-flash|HL",
+    "seed": "T5-020",
+    "model": "gemini-3.5-flash",
+    "cell": "HL",
+    "template": "T5",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T5-020|gemini-3.5-flash|HL"
+  },
+  "hv-0029": {
+    "item_id": "T1-051|llama3.1:8b|HL",
+    "seed": "T1-051",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "proto_ISB",
+    "true_id": "T1-051|llama3.1:8b|HL"
+  },
+  "hv-0030": {
+    "item_id": "T5-054|claude-sonnet-4-6|HL",
+    "seed": "T5-054",
+    "model": "claude-sonnet-4-6",
+    "cell": "HL",
+    "template": "T5",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T5-054|claude-sonnet-4-6|HL"
+  },
+  "hv-0031": {
+    "item_id": "T6-085|claude-sonnet-4-6|LH",
+    "seed": "T6-085",
+    "model": "claude-sonnet-4-6",
+    "cell": "LH",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T6-085|claude-sonnet-4-6|LH"
+  },
+  "hv-0032": {
+    "item_id": "T2-045|llama3.1:8b|HL",
+    "seed": "T2-045",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T2",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T2-045|llama3.1:8b|HL"
+  },
+  "hv-0033": {
+    "item_id": "T1-049|llama3.1:8b|HL",
+    "seed": "T1-049",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "distractor",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T1-049|llama3.1:8b|HL"
+  },
+  "hv-0034": {
+    "item_id": "T5-045|claude-sonnet-4-6|LL",
+    "seed": "T5-045",
+    "model": "claude-sonnet-4-6",
+    "cell": "LL",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "focal",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T5-045|claude-sonnet-4-6|LL"
+  },
+  "hv-0035": {
+    "item_id": "T3-011|claude-sonnet-4-6|LL",
+    "seed": "T3-011",
+    "model": "claude-sonnet-4-6",
+    "cell": "LL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T3-011|claude-sonnet-4-6|LL"
+  },
+  "hv-0036": {
+    "item_id": "T6-047|claude-sonnet-4-6|HL",
+    "seed": "T6-047",
+    "model": "claude-sonnet-4-6",
+    "cell": "HL",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T6-047|claude-sonnet-4-6|HL"
+  },
+  "hv-0037": {
+    "item_id": "T3-011|claude-sonnet-4-6|HL",
+    "seed": "T3-011",
+    "model": "claude-sonnet-4-6",
+    "cell": "HL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T3-011|claude-sonnet-4-6|HL"
+  },
+  "hv-0038": {
+    "item_id": "T5-002|gemini-3.5-flash|HL",
+    "seed": "T5-002",
+    "model": "gemini-3.5-flash",
+    "cell": "HL",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T5-002|gemini-3.5-flash|HL"
+  },
+  "hv-0039": {
+    "item_id": "T6-085|claude-sonnet-4-6|HL",
+    "seed": "T6-085",
+    "model": "claude-sonnet-4-6",
+    "cell": "HL",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T6-085|claude-sonnet-4-6|HL"
+  },
+  "hv-0040": {
+    "item_id": "T5-045|claude-sonnet-4-6|HL",
+    "seed": "T5-045",
+    "model": "claude-sonnet-4-6",
+    "cell": "HL",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "focal",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T5-045|claude-sonnet-4-6|HL"
+  },
+  "hv-0041": {
+    "item_id": "T5-090|gemini-3.5-flash|HL",
+    "seed": "T5-090",
+    "model": "gemini-3.5-flash",
+    "cell": "HL",
+    "template": "T5",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T5-090|gemini-3.5-flash|HL"
+  },
+  "hv-0042": {
+    "item_id": "T3-066|claude-sonnet-4-6|HL",
+    "seed": "T3-066",
+    "model": "claude-sonnet-4-6",
+    "cell": "HL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "focal",
+      "C": "plausible",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T3-066|claude-sonnet-4-6|HL"
+  },
+  "hv-0043": {
+    "item_id": "T6-001|llama3.1:8b|HL",
+    "seed": "T6-001",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "proto_ISB",
+    "true_id": "T6-001|llama3.1:8b|HL"
+  },
+  "hv-0044": {
+    "item_id": "T1-095|claude-sonnet-4-6|LH",
+    "seed": "T1-095",
+    "model": "claude-sonnet-4-6",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T1-095|claude-sonnet-4-6|LH"
+  },
+  "hv-0045": {
+    "item_id": "T1-006|google/gemma-4-31B-it|HL",
+    "seed": "T1-006",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T1-006|google/gemma-4-31B-it|HL"
+  },
+  "hv-0046": {
+    "item_id": "T5-038|google/gemma-4-31B-it|LH",
+    "seed": "T5-038",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T5",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T5-038|google/gemma-4-31B-it|LH"
+  },
+  "hv-0047": {
+    "item_id": "T6-045|llama3.1:8b|LL",
+    "seed": "T6-045",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "focal",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T6-045|llama3.1:8b|LL"
+  },
+  "hv-0048": {
+    "item_id": "T3-095|google/gemma-4-31B-it|LL",
+    "seed": "T3-095",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T3-095|google/gemma-4-31B-it|LL"
+  },
+  "hv-0049": {
+    "item_id": "T1-003|llama3.1:8b|LL",
+    "seed": "T1-003",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "proto_vigilance",
+    "true_id": "T1-003|llama3.1:8b|LL"
+  },
+  "hv-0050": {
+    "item_id": "T1-005|gemini-3.5-flash|LH",
+    "seed": "T1-005",
+    "model": "gemini-3.5-flash",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T1-005|gemini-3.5-flash|LH"
+  },
+  "hv-0051": {
+    "item_id": "T3-014|claude-sonnet-4-6|LH",
+    "seed": "T3-014",
+    "model": "claude-sonnet-4-6",
+    "cell": "LH",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T3-014|claude-sonnet-4-6|LH"
+  },
+  "hv-0052": {
+    "item_id": "T2-094|google/gemma-4-31B-it|LL",
+    "seed": "T2-094",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T2",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T2-094|google/gemma-4-31B-it|LL"
+  },
+  "hv-0053": {
+    "item_id": "T5-097|llama3.1:8b|LL",
+    "seed": "T5-097",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T5-097|llama3.1:8b|LL"
+  },
+  "hv-0054": {
+    "item_id": "T1-009|gemini-3.5-flash|HL",
+    "seed": "T1-009",
+    "model": "gemini-3.5-flash",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T1-009|gemini-3.5-flash|HL"
+  },
+  "hv-0055": {
+    "item_id": "T6-043|gemini-3.5-flash|HL",
+    "seed": "T6-043",
+    "model": "gemini-3.5-flash",
+    "cell": "HL",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T6-043|gemini-3.5-flash|HL"
+  },
+  "hv-0056": {
+    "item_id": "T6-043|gemini-3.5-flash|LH",
+    "seed": "T6-043",
+    "model": "gemini-3.5-flash",
+    "cell": "LH",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "considered_rejected",
+    "pair_bucket": "ISB",
+    "true_id": "T6-043|gemini-3.5-flash|LH"
+  },
+  "hv-0057": {
+    "item_id": "T2-013|gemini-3.5-flash|LH",
+    "seed": "T2-013",
+    "model": "gemini-3.5-flash",
+    "cell": "LH",
+    "template": "T2",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T2-013|gemini-3.5-flash|LH"
+  },
+  "hv-0058": {
+    "item_id": "T3-095|google/gemma-4-31B-it|LH",
+    "seed": "T3-095",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T3-095|google/gemma-4-31B-it|LH"
+  },
+  "hv-0059": {
+    "item_id": "T5-097|llama3.1:8b|HL",
+    "seed": "T5-097",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T5-097|llama3.1:8b|HL"
+  },
+  "hv-0060": {
+    "item_id": "T2-020|llama3.1:8b|LL",
+    "seed": "T2-020",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T2",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "focal",
+      "C": "plausible",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T2-020|llama3.1:8b|LL"
+  },
+  "hv-0061": {
+    "item_id": "T3-067|google/gemma-4-31B-it|LL",
+    "seed": "T3-067",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T3-067|google/gemma-4-31B-it|LL"
+  },
+  "hv-0062": {
+    "item_id": "T5-080|llama3.1:8b|LL",
+    "seed": "T5-080",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T5",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "proto_ISB",
+    "true_id": "T5-080|llama3.1:8b|LL"
+  },
+  "hv-0063": {
+    "item_id": "T5-038|google/gemma-4-31B-it|HL",
+    "seed": "T5-038",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T5",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T5-038|google/gemma-4-31B-it|HL"
+  },
+  "hv-0064": {
+    "item_id": "T6-024|google/gemma-4-31B-it|HL",
+    "seed": "T6-024",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T6",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "distractor",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T6-024|google/gemma-4-31B-it|HL"
+  },
+  "hv-0065": {
+    "item_id": "T1-059|gemini-3.5-flash|LL",
+    "seed": "T1-059",
+    "model": "gemini-3.5-flash",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T1-059|gemini-3.5-flash|LL"
+  },
+  "hv-0066": {
+    "item_id": "T6-033|google/gemma-4-31B-it|LH",
+    "seed": "T6-033",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T6-033|google/gemma-4-31B-it|LH"
+  },
+  "hv-0067": {
+    "item_id": "T1-002|llama3.1:8b|LH",
+    "seed": "T1-002",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T1-002|llama3.1:8b|LH"
+  },
+  "hv-0068": {
+    "item_id": "T3-018|llama3.1:8b|LH",
+    "seed": "T3-018",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "focal",
+      "C": "plausible",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T3-018|llama3.1:8b|LH"
+  },
+  "hv-0069": {
+    "item_id": "T6-067|google/gemma-4-31B-it|LH",
+    "seed": "T6-067",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T6-067|google/gemma-4-31B-it|LH"
+  },
+  "hv-0070": {
+    "item_id": "T1-005|gemini-3.5-flash|HL",
+    "seed": "T1-005",
+    "model": "gemini-3.5-flash",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T1-005|gemini-3.5-flash|HL"
+  },
+  "hv-0071": {
+    "item_id": "T6-034|google/gemma-4-31B-it|HL",
+    "seed": "T6-034",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "proto_vigilance",
+    "true_id": "T6-034|google/gemma-4-31B-it|HL"
+  },
+  "hv-0072": {
+    "item_id": "T3-095|google/gemma-4-31B-it|HL",
+    "seed": "T3-095",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T3-095|google/gemma-4-31B-it|HL"
+  },
+  "hv-0073": {
+    "item_id": "T2-020|llama3.1:8b|LH",
+    "seed": "T2-020",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T2",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "focal",
+      "C": "plausible",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T2-020|llama3.1:8b|LH"
+  },
+  "hv-0074": {
+    "item_id": "T1-003|claude-sonnet-4-6|LH",
+    "seed": "T1-003",
+    "model": "claude-sonnet-4-6",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "proto_vigilance",
+    "true_id": "T1-003|claude-sonnet-4-6|LH"
+  },
+  "hv-0075": {
+    "item_id": "T2-074|llama3.1:8b|LL",
+    "seed": "T2-074",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T2",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T2-074|llama3.1:8b|LL"
+  },
+  "hv-0076": {
+    "item_id": "T1-003|claude-sonnet-4-6|LL",
+    "seed": "T1-003",
+    "model": "claude-sonnet-4-6",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "proto_vigilance",
+    "true_id": "T1-003|claude-sonnet-4-6|LL"
+  },
+  "hv-0077": {
+    "item_id": "T5-097|llama3.1:8b|LH",
+    "seed": "T5-097",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T5-097|llama3.1:8b|LH"
+  },
+  "hv-0078": {
+    "item_id": "T2-040|llama3.1:8b|HL",
+    "seed": "T2-040",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T2",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T2-040|llama3.1:8b|HL"
+  },
+  "hv-0079": {
+    "item_id": "T2-045|llama3.1:8b|LL",
+    "seed": "T2-045",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T2",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T2-045|llama3.1:8b|LL"
+  },
+  "hv-0080": {
+    "item_id": "T2-088|gemini-3.5-flash|HL",
+    "seed": "T2-088",
+    "model": "gemini-3.5-flash",
+    "cell": "HL",
+    "template": "T2",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "proto_ISB",
+    "true_id": "T2-088|gemini-3.5-flash|HL"
+  },
+  "hv-0081": {
+    "item_id": "T6-034|google/gemma-4-31B-it|LH",
+    "seed": "T6-034",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "proto_vigilance",
+    "true_id": "T6-034|google/gemma-4-31B-it|LH"
+  },
+  "hv-0082": {
+    "item_id": "T3-014|claude-sonnet-4-6|LL",
+    "seed": "T3-014",
+    "model": "claude-sonnet-4-6",
+    "cell": "LL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T3-014|claude-sonnet-4-6|LL"
+  },
+  "hv-0083": {
+    "item_id": "T5-012|google/gemma-4-31B-it|LL",
+    "seed": "T5-012",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T5-012|google/gemma-4-31B-it|LL"
+  },
+  "hv-0084": {
+    "item_id": "T2-094|google/gemma-4-31B-it|HL",
+    "seed": "T2-094",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T2",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T2-094|google/gemma-4-31B-it|HL"
+  },
+  "hv-0085": {
+    "item_id": "T3-060|llama3.1:8b|LL",
+    "seed": "T3-060",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T3",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "focal",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T3-060|llama3.1:8b|LL"
+  },
+  "hv-0086": {
+    "item_id": "T5-012|google/gemma-4-31B-it|HL",
+    "seed": "T5-012",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "considered_rejected",
+    "pair_bucket": "vigilance",
+    "true_id": "T5-012|google/gemma-4-31B-it|HL"
+  },
+  "hv-0087": {
+    "item_id": "T5-054|claude-sonnet-4-6|LH",
+    "seed": "T5-054",
+    "model": "claude-sonnet-4-6",
+    "cell": "LH",
+    "template": "T5",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T5-054|claude-sonnet-4-6|LH"
+  },
+  "hv-0088": {
+    "item_id": "T6-047|claude-sonnet-4-6|LH",
+    "seed": "T6-047",
+    "model": "claude-sonnet-4-6",
+    "cell": "LH",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T6-047|claude-sonnet-4-6|LH"
+  },
+  "hv-0089": {
+    "item_id": "T1-058|google/gemma-4-31B-it|LH",
+    "seed": "T1-058",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T1-058|google/gemma-4-31B-it|LH"
+  },
+  "hv-0090": {
+    "item_id": "T2-089|gemini-3.5-flash|HL",
+    "seed": "T2-089",
+    "model": "gemini-3.5-flash",
+    "cell": "HL",
+    "template": "T2",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T2-089|gemini-3.5-flash|HL"
+  },
+  "hv-0091": {
+    "item_id": "T1-019|google/gemma-4-31B-it|LH",
+    "seed": "T1-019",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "considered_rejected",
+    "pair_bucket": "vigilance",
+    "true_id": "T1-019|google/gemma-4-31B-it|LH"
+  },
+  "hv-0092": {
+    "item_id": "T1-091|llama3.1:8b|LL",
+    "seed": "T1-091",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T1-091|llama3.1:8b|LL"
+  },
+  "hv-0093": {
+    "item_id": "T1-003|llama3.1:8b|LH",
+    "seed": "T1-003",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "proto_vigilance",
+    "true_id": "T1-003|llama3.1:8b|LH"
+  },
+  "hv-0094": {
+    "item_id": "T3-066|claude-sonnet-4-6|LL",
+    "seed": "T3-066",
+    "model": "claude-sonnet-4-6",
+    "cell": "LL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "focal",
+      "C": "plausible",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T3-066|claude-sonnet-4-6|LL"
+  },
+  "hv-0095": {
+    "item_id": "T1-095|claude-sonnet-4-6|HL",
+    "seed": "T1-095",
+    "model": "claude-sonnet-4-6",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T1-095|claude-sonnet-4-6|HL"
+  },
+  "hv-0096": {
+    "item_id": "T5-013|google/gemma-4-31B-it|LL",
+    "seed": "T5-013",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T5",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T5-013|google/gemma-4-31B-it|LL"
+  },
+  "hv-0097": {
+    "item_id": "T2-001|claude-sonnet-4-6|LH",
+    "seed": "T2-001",
+    "model": "claude-sonnet-4-6",
+    "cell": "LH",
+    "template": "T2",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T2-001|claude-sonnet-4-6|LH"
+  },
+  "hv-0098": {
+    "item_id": "T1-003|llama3.1:8b|HL",
+    "seed": "T1-003",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "proto_vigilance",
+    "true_id": "T1-003|llama3.1:8b|HL"
+  },
+  "hv-0099": {
+    "item_id": "T6-033|google/gemma-4-31B-it|LL",
+    "seed": "T6-033",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T6-033|google/gemma-4-31B-it|LL"
+  },
+  "hv-0100": {
+    "item_id": "T3-014|claude-sonnet-4-6|HL",
+    "seed": "T3-014",
+    "model": "claude-sonnet-4-6",
+    "cell": "HL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T3-014|claude-sonnet-4-6|HL"
+  },
+  "hv-0101": {
+    "item_id": "T3-018|llama3.1:8b|LL",
+    "seed": "T3-018",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "focal",
+      "C": "plausible",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T3-018|llama3.1:8b|LL"
+  },
+  "hv-0102": {
+    "item_id": "T3-066|claude-sonnet-4-6|LH",
+    "seed": "T3-066",
+    "model": "claude-sonnet-4-6",
+    "cell": "LH",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "focal",
+      "C": "plausible",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T3-066|claude-sonnet-4-6|LH"
+  },
+  "hv-0103": {
+    "item_id": "T5-041|gemini-3.5-flash|LL",
+    "seed": "T5-041",
+    "model": "gemini-3.5-flash",
+    "cell": "LL",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T5-041|gemini-3.5-flash|LL"
+  },
+  "hv-0104": {
+    "item_id": "T6-009|google/gemma-4-31B-it|LH",
+    "seed": "T6-009",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible",
+      "E": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T6-009|google/gemma-4-31B-it|LH"
+  },
+  "hv-0105": {
+    "item_id": "T2-040|llama3.1:8b|LH",
+    "seed": "T2-040",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T2",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T2-040|llama3.1:8b|LH"
+  },
+  "hv-0106": {
+    "item_id": "T1-091|llama3.1:8b|HL",
+    "seed": "T1-091",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T1-091|llama3.1:8b|HL"
+  },
+  "hv-0107": {
+    "item_id": "T5-002|gemini-3.5-flash|LH",
+    "seed": "T5-002",
+    "model": "gemini-3.5-flash",
+    "cell": "LH",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T5-002|gemini-3.5-flash|LH"
+  },
+  "hv-0108": {
+    "item_id": "T5-013|google/gemma-4-31B-it|HL",
+    "seed": "T5-013",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T5",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T5-013|google/gemma-4-31B-it|HL"
+  },
+  "hv-0109": {
+    "item_id": "T2-094|google/gemma-4-31B-it|LH",
+    "seed": "T2-094",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T2",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T2-094|google/gemma-4-31B-it|LH"
+  },
+  "hv-0110": {
+    "item_id": "T2-034|google/gemma-4-31B-it|HL",
+    "seed": "T2-034",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T2",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T2-034|google/gemma-4-31B-it|HL"
+  },
+  "hv-0111": {
+    "item_id": "T6-021|claude-sonnet-4-6|LH",
+    "seed": "T6-021",
+    "model": "claude-sonnet-4-6",
+    "cell": "LH",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T6-021|claude-sonnet-4-6|LH"
+  },
+  "hv-0112": {
+    "item_id": "T1-019|google/gemma-4-31B-it|HL",
+    "seed": "T1-019",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T1-019|google/gemma-4-31B-it|HL"
+  },
+  "hv-0113": {
+    "item_id": "T2-088|gemini-3.5-flash|LH",
+    "seed": "T2-088",
+    "model": "gemini-3.5-flash",
+    "cell": "LH",
+    "template": "T2",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "proto_ISB",
+    "true_id": "T2-088|gemini-3.5-flash|LH"
+  },
+  "hv-0114": {
+    "item_id": "T1-016|llama3.1:8b|LL",
+    "seed": "T1-016",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T1-016|llama3.1:8b|LL"
+  },
+  "hv-0115": {
+    "item_id": "T6-021|claude-sonnet-4-6|HL",
+    "seed": "T6-021",
+    "model": "claude-sonnet-4-6",
+    "cell": "HL",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T6-021|claude-sonnet-4-6|HL"
+  },
+  "hv-0116": {
+    "item_id": "T3-078|llama3.1:8b|LH",
+    "seed": "T3-078",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T3-078|llama3.1:8b|LH"
+  },
+  "hv-0117": {
+    "item_id": "T6-045|llama3.1:8b|LH",
+    "seed": "T6-045",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "focal",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T6-045|llama3.1:8b|LH"
+  },
+  "hv-0118": {
+    "item_id": "T2-045|llama3.1:8b|LH",
+    "seed": "T2-045",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T2",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T2-045|llama3.1:8b|LH"
+  },
+  "hv-0119": {
+    "item_id": "T5-054|claude-sonnet-4-6|LL",
+    "seed": "T5-054",
+    "model": "claude-sonnet-4-6",
+    "cell": "LL",
+    "template": "T5",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T5-054|claude-sonnet-4-6|LL"
+  },
+  "hv-0120": {
+    "item_id": "T5-080|llama3.1:8b|LH",
+    "seed": "T5-080",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T5",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "proto_ISB",
+    "true_id": "T5-080|llama3.1:8b|LH"
+  },
+  "hv-0121": {
+    "item_id": "T1-062|claude-sonnet-4-6|LL",
+    "seed": "T1-062",
+    "model": "claude-sonnet-4-6",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T1-062|claude-sonnet-4-6|LL"
+  },
+  "hv-0122": {
+    "item_id": "T6-082|claude-sonnet-4-6|LH",
+    "seed": "T6-082",
+    "model": "claude-sonnet-4-6",
+    "cell": "LH",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "proto_vigilance",
+    "true_id": "T6-082|claude-sonnet-4-6|LH"
+  },
+  "hv-0123": {
+    "item_id": "T3-078|llama3.1:8b|HL",
+    "seed": "T3-078",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T3-078|llama3.1:8b|HL"
+  },
+  "hv-0124": {
+    "item_id": "T3-011|claude-sonnet-4-6|LH",
+    "seed": "T3-011",
+    "model": "claude-sonnet-4-6",
+    "cell": "LH",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T3-011|claude-sonnet-4-6|LH"
+  },
+  "hv-0125": {
+    "item_id": "T1-051|llama3.1:8b|LL",
+    "seed": "T1-051",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "proto_ISB",
+    "true_id": "T1-051|llama3.1:8b|LL"
+  },
+  "hv-0126": {
+    "item_id": "T1-058|google/gemma-4-31B-it|LL",
+    "seed": "T1-058",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T1-058|google/gemma-4-31B-it|LL"
+  },
+  "hv-0127": {
+    "item_id": "T6-001|llama3.1:8b|LH",
+    "seed": "T6-001",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "proto_ISB",
+    "true_id": "T6-001|llama3.1:8b|LH"
+  },
+  "hv-0128": {
+    "item_id": "T1-059|gemini-3.5-flash|LH",
+    "seed": "T1-059",
+    "model": "gemini-3.5-flash",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T1-059|gemini-3.5-flash|LH"
+  },
+  "hv-0129": {
+    "item_id": "T1-016|llama3.1:8b|LH",
+    "seed": "T1-016",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T1-016|llama3.1:8b|LH"
+  },
+  "hv-0130": {
+    "item_id": "T2-013|gemini-3.5-flash|HL",
+    "seed": "T2-013",
+    "model": "gemini-3.5-flash",
+    "cell": "HL",
+    "template": "T2",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T2-013|gemini-3.5-flash|HL"
+  },
+  "hv-0131": {
+    "item_id": "T1-051|llama3.1:8b|LH",
+    "seed": "T1-051",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "proto_ISB",
+    "true_id": "T1-051|llama3.1:8b|LH"
+  },
+  "hv-0132": {
+    "item_id": "T5-075|claude-sonnet-4-6|HL",
+    "seed": "T5-075",
+    "model": "claude-sonnet-4-6",
+    "cell": "HL",
+    "template": "T5",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T5-075|claude-sonnet-4-6|HL"
+  },
+  "hv-0133": {
+    "item_id": "T6-045|llama3.1:8b|HL",
+    "seed": "T6-045",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "focal",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T6-045|llama3.1:8b|HL"
+  },
+  "hv-0134": {
+    "item_id": "T6-021|claude-sonnet-4-6|LL",
+    "seed": "T6-021",
+    "model": "claude-sonnet-4-6",
+    "cell": "LL",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "considered_rejected",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T6-021|claude-sonnet-4-6|LL"
+  },
+  "hv-0135": {
+    "item_id": "T5-075|claude-sonnet-4-6|LL",
+    "seed": "T5-075",
+    "model": "claude-sonnet-4-6",
+    "cell": "LL",
+    "template": "T5",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T5-075|claude-sonnet-4-6|LL"
+  },
+  "hv-0136": {
+    "item_id": "T5-013|google/gemma-4-31B-it|LH",
+    "seed": "T5-013",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T5",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "considered_rejected",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T5-013|google/gemma-4-31B-it|LH"
+  },
+  "hv-0137": {
+    "item_id": "T5-041|gemini-3.5-flash|LH",
+    "seed": "T5-041",
+    "model": "gemini-3.5-flash",
+    "cell": "LH",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T5-041|gemini-3.5-flash|LH"
+  },
+  "hv-0138": {
+    "item_id": "T5-090|gemini-3.5-flash|LH",
+    "seed": "T5-090",
+    "model": "gemini-3.5-flash",
+    "cell": "LH",
+    "template": "T5",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T5-090|gemini-3.5-flash|LH"
+  },
+  "hv-0139": {
+    "item_id": "T1-095|claude-sonnet-4-6|LL",
+    "seed": "T1-095",
+    "model": "claude-sonnet-4-6",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T1-095|claude-sonnet-4-6|LL"
+  },
+  "hv-0140": {
+    "item_id": "T5-045|claude-sonnet-4-6|LH",
+    "seed": "T5-045",
+    "model": "claude-sonnet-4-6",
+    "cell": "LH",
+    "template": "T5",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "focal",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T5-045|claude-sonnet-4-6|LH"
+  },
+  "hv-0141": {
+    "item_id": "T5-075|claude-sonnet-4-6|LH",
+    "seed": "T5-075",
+    "model": "claude-sonnet-4-6",
+    "cell": "LH",
+    "template": "T5",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T5-075|claude-sonnet-4-6|LH"
+  },
+  "hv-0142": {
+    "item_id": "T1-091|llama3.1:8b|LH",
+    "seed": "T1-091",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T1-091|llama3.1:8b|LH"
+  },
+  "hv-0143": {
+    "item_id": "T6-085|claude-sonnet-4-6|LL",
+    "seed": "T6-085",
+    "model": "claude-sonnet-4-6",
+    "cell": "LL",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "considered_rejected",
+    "pair_bucket": "vigilance",
+    "true_id": "T6-085|claude-sonnet-4-6|LL"
+  },
+  "hv-0144": {
+    "item_id": "T3-074|gemini-3.5-flash|LH",
+    "seed": "T3-074",
+    "model": "gemini-3.5-flash",
+    "cell": "LH",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T3-074|gemini-3.5-flash|LH"
+  },
+  "hv-0145": {
+    "item_id": "T1-031|gemini-3.5-flash|HL",
+    "seed": "T1-031",
+    "model": "gemini-3.5-flash",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T1-031|gemini-3.5-flash|HL"
+  },
+  "hv-0146": {
+    "item_id": "T3-067|google/gemma-4-31B-it|LH",
+    "seed": "T3-067",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T3-067|google/gemma-4-31B-it|LH"
+  },
+  "hv-0147": {
+    "item_id": "T1-006|google/gemma-4-31B-it|LL",
+    "seed": "T1-006",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T1-006|google/gemma-4-31B-it|LL"
+  },
+  "hv-0148": {
+    "item_id": "T5-020|gemini-3.5-flash|LL",
+    "seed": "T5-020",
+    "model": "gemini-3.5-flash",
+    "cell": "LL",
+    "template": "T5",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T5-020|gemini-3.5-flash|LL"
+  },
+  "hv-0149": {
+    "item_id": "T5-080|llama3.1:8b|HL",
+    "seed": "T5-080",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T5",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "proto_ISB",
+    "true_id": "T5-080|llama3.1:8b|HL"
+  },
+  "hv-0150": {
+    "item_id": "T6-009|google/gemma-4-31B-it|LL",
+    "seed": "T6-009",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible",
+      "E": "distractor"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T6-009|google/gemma-4-31B-it|LL"
+  },
+  "hv-0151": {
+    "item_id": "T2-074|llama3.1:8b|LH",
+    "seed": "T2-074",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T2",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T2-074|llama3.1:8b|LH"
+  },
+  "hv-0152": {
+    "item_id": "T3-074|gemini-3.5-flash|LL",
+    "seed": "T3-074",
+    "model": "gemini-3.5-flash",
+    "cell": "LL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal",
+      "E": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T3-074|gemini-3.5-flash|LL"
+  },
+  "hv-0153": {
+    "item_id": "T3-043|gemini-3.5-flash|HL",
+    "seed": "T3-043",
+    "model": "gemini-3.5-flash",
+    "cell": "HL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T3-043|gemini-3.5-flash|HL"
+  },
+  "hv-0154": {
+    "item_id": "T6-066|llama3.1:8b|HL",
+    "seed": "T6-066",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T6-066|llama3.1:8b|HL"
+  },
+  "hv-0155": {
+    "item_id": "T6-067|google/gemma-4-31B-it|HL",
+    "seed": "T6-067",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T6-067|google/gemma-4-31B-it|HL"
+  },
+  "hv-0156": {
+    "item_id": "T3-100|google/gemma-4-31B-it|HL",
+    "seed": "T3-100",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T3",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T3-100|google/gemma-4-31B-it|HL"
+  },
+  "hv-0157": {
+    "item_id": "T6-082|claude-sonnet-4-6|LL",
+    "seed": "T6-082",
+    "model": "claude-sonnet-4-6",
+    "cell": "LL",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "proto_vigilance",
+    "true_id": "T6-082|claude-sonnet-4-6|LL"
+  },
+  "hv-0158": {
+    "item_id": "T2-088|gemini-3.5-flash|LL",
+    "seed": "T2-088",
+    "model": "gemini-3.5-flash",
+    "cell": "LL",
+    "template": "T2",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "proto_ISB",
+    "true_id": "T2-088|gemini-3.5-flash|LL"
+  },
+  "hv-0159": {
+    "item_id": "T1-031|gemini-3.5-flash|LH",
+    "seed": "T1-031",
+    "model": "gemini-3.5-flash",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T1-031|gemini-3.5-flash|LH"
+  },
+  "hv-0160": {
+    "item_id": "T2-034|google/gemma-4-31B-it|LL",
+    "seed": "T2-034",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T2",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T2-034|google/gemma-4-31B-it|LL"
+  },
+  "hv-0161": {
+    "item_id": "T6-067|google/gemma-4-31B-it|LL",
+    "seed": "T6-067",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T6-067|google/gemma-4-31B-it|LL"
+  },
+  "hv-0162": {
+    "item_id": "T6-066|llama3.1:8b|LL",
+    "seed": "T6-066",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T6-066|llama3.1:8b|LL"
+  },
+  "hv-0163": {
+    "item_id": "T6-033|google/gemma-4-31B-it|HL",
+    "seed": "T6-033",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T6",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T6-033|google/gemma-4-31B-it|HL"
+  },
+  "hv-0164": {
+    "item_id": "T1-005|gemini-3.5-flash|LL",
+    "seed": "T1-005",
+    "model": "gemini-3.5-flash",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T1-005|gemini-3.5-flash|LL"
+  },
+  "hv-0165": {
+    "item_id": "T6-043|gemini-3.5-flash|LL",
+    "seed": "T6-043",
+    "model": "gemini-3.5-flash",
+    "cell": "LL",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T6-043|gemini-3.5-flash|LL"
+  },
+  "hv-0166": {
+    "item_id": "T3-078|llama3.1:8b|LL",
+    "seed": "T3-078",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T3-078|llama3.1:8b|LL"
+  },
+  "hv-0167": {
+    "item_id": "T3-067|google/gemma-4-31B-it|HL",
+    "seed": "T3-067",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T3",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T3-067|google/gemma-4-31B-it|HL"
+  },
+  "hv-0168": {
+    "item_id": "T1-002|llama3.1:8b|HL",
+    "seed": "T1-002",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T1-002|llama3.1:8b|HL"
+  },
+  "hv-0169": {
+    "item_id": "T1-058|google/gemma-4-31B-it|HL",
+    "seed": "T1-058",
+    "model": "google/gemma-4-31B-it",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "distractor",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T1-058|google/gemma-4-31B-it|HL"
+  },
+  "hv-0170": {
+    "item_id": "T2-074|llama3.1:8b|HL",
+    "seed": "T2-074",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T2",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T2-074|llama3.1:8b|HL"
+  },
+  "hv-0171": {
+    "item_id": "T2-020|llama3.1:8b|HL",
+    "seed": "T2-020",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T2",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "focal",
+      "C": "plausible",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T2-020|llama3.1:8b|HL"
+  },
+  "hv-0172": {
+    "item_id": "T6-024|google/gemma-4-31B-it|LL",
+    "seed": "T6-024",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T6",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "plausible",
+      "D": "distractor",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T6-024|google/gemma-4-31B-it|LL"
+  },
+  "hv-0173": {
+    "item_id": "T3-100|google/gemma-4-31B-it|LH",
+    "seed": "T3-100",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LH",
+    "template": "T3",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T3-100|google/gemma-4-31B-it|LH"
+  },
+  "hv-0174": {
+    "item_id": "T5-090|gemini-3.5-flash|LL",
+    "seed": "T5-090",
+    "model": "gemini-3.5-flash",
+    "cell": "LL",
+    "template": "T5",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T5-090|gemini-3.5-flash|LL"
+  },
+  "hv-0175": {
+    "item_id": "T2-001|claude-sonnet-4-6|LL",
+    "seed": "T2-001",
+    "model": "claude-sonnet-4-6",
+    "cell": "LL",
+    "template": "T2",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T2-001|claude-sonnet-4-6|LL"
+  },
+  "hv-0176": {
+    "item_id": "T5-020|gemini-3.5-flash|LH",
+    "seed": "T5-020",
+    "model": "gemini-3.5-flash",
+    "cell": "LH",
+    "template": "T5",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "distractor"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T5-020|gemini-3.5-flash|LH"
+  },
+  "hv-0177": {
+    "item_id": "T2-089|gemini-3.5-flash|LH",
+    "seed": "T2-089",
+    "model": "gemini-3.5-flash",
+    "cell": "LH",
+    "template": "T2",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T2-089|gemini-3.5-flash|LH"
+  },
+  "hv-0178": {
+    "item_id": "T2-089|gemini-3.5-flash|LL",
+    "seed": "T2-089",
+    "model": "gemini-3.5-flash",
+    "cell": "LL",
+    "template": "T2",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": true,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "stable_reject",
+    "true_id": "T2-089|gemini-3.5-flash|LL"
+  },
+  "hv-0179": {
+    "item_id": "T6-066|llama3.1:8b|LH",
+    "seed": "T6-066",
+    "model": "llama3.1:8b",
+    "cell": "LH",
+    "template": "T6",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "vigilance",
+    "true_id": "T6-066|llama3.1:8b|LH"
+  },
+  "hv-0180": {
+    "item_id": "T1-002|llama3.1:8b|LL",
+    "seed": "T1-002",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "focal",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T1-002|llama3.1:8b|LL"
+  },
+  "hv-0181": {
+    "item_id": "T5-038|google/gemma-4-31B-it|LL",
+    "seed": "T5-038",
+    "model": "google/gemma-4-31B-it",
+    "cell": "LL",
+    "template": "T5",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "plausible",
+      "E": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "ISB",
+    "true_id": "T5-038|google/gemma-4-31B-it|LL"
+  },
+  "hv-0182": {
+    "item_id": "T1-062|claude-sonnet-4-6|LH",
+    "seed": "T1-062",
+    "model": "claude-sonnet-4-6",
+    "cell": "LH",
+    "template": "T1",
+    "complexity": "medium",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "focal",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "absent",
+    "deepseek_focal_role": "primary",
+    "pair_bucket": "ISB",
+    "true_id": "T1-062|claude-sonnet-4-6|LH"
+  },
+  "hv-0183": {
+    "item_id": "T1-016|llama3.1:8b|HL",
+    "seed": "T1-016",
+    "model": "llama3.1:8b",
+    "cell": "HL",
+    "template": "T1",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "plausible",
+      "C": "distractor",
+      "D": "focal",
+      "E": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "vigilance",
+    "true_id": "T1-016|llama3.1:8b|HL"
+  },
+  "hv-0184": {
+    "item_id": "T1-049|llama3.1:8b|LL",
+    "seed": "T1-049",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T1",
+    "complexity": "low",
+    "proxy_letter_to_canonical": {
+      "A": "plausible",
+      "B": "focal",
+      "C": "distractor",
+      "D": "plausible"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "primary",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_adopt",
+    "true_id": "T1-049|llama3.1:8b|LL"
+  },
+  "hv-0185": {
+    "item_id": "T2-040|llama3.1:8b|LL",
+    "seed": "T2-040",
+    "model": "llama3.1:8b",
+    "cell": "LL",
+    "template": "T2",
+    "complexity": "high",
+    "proxy_letter_to_canonical": {
+      "A": "distractor",
+      "B": "plausible",
+      "C": "plausible",
+      "D": "focal"
+    },
+    "has_cot": false,
+    "deepseek_distractor_role": "considered_rejected",
+    "deepseek_focal_role": "absent",
+    "pair_bucket": "stable_reject",
+    "true_id": "T2-040|llama3.1:8b|LL"
+  }
+}

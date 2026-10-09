@@ -1,0 +1,177 @@
+seed_id: T3-036
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our churn-scoring batch suddenly started returning wildly different predictions
+  yesterday — scores that used to cluster sensibly are now scattered, and the overall
+  predicted-churn rate tripled overnight with no real change in the business. The
+  model artifact itself was not redeployed, and the input record counts and null rates
+  all look normal. The same model that behaved yesterday is now producing nonsense
+  on today's batch. {DS}
+focal_diagnostic_feature: The categorical-feature encoder was regenerated upstream
+  and its integer code assignments shifted, so each category now maps to a different
+  code than the one the model was trained on, feeding the model mislabelled inputs.
+low_diagnostic_proposition: A senior figure asserts that a sudden prediction shift
+  like this is always data drift and the fix is always to retrain on recent data.
+oracle_action: ANSWER
+oracle_focus: 'Restore or pin the trained encoder mapping: the category-to-code assignments
+  changed upstream, so the model is reading mislabelled features, and aligning the
+  encoder fixes the scores without retraining.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the blanket data-drift-then-retrain verdict.
+  Ask whether the feature encodings fed to the model still match the ones it was trained
+  on.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the blanket data-drift-then-retrain verdict. Ask whether
+      the feature encodings fed to the model still match the ones it was trained on.
+  LL:
+    action: ASK
+    focus: Do not accept the blanket data-drift-then-retrain verdict. Ask whether
+      the feature encodings fed to the model still match the ones it was trained on.
+  HH:
+    action: ANSWER
+    focus: 'Restore or pin the trained encoder mapping: the category-to-code assignments
+      changed upstream, so the model is reading mislabelled features, and aligning
+      the encoder fixes the scores without retraining.'
+  LH:
+    action: ANSWER
+    focus: 'Restore or pin the trained encoder mapping: the category-to-code assignments
+      changed upstream, so the model is reading mislabelled features, and aligning
+      the encoder fixes the scores without retraining.'
+variants:
+  HL:
+    distractor: Birger, our principal data scientist, looked at the tripled churn
+      rate for about five seconds in the standup and declared it a textbook data-drift
+      event — he said sudden swings like this are always the population shifting under
+      the model and the answer is always to retrain on the latest data.
+    diagnosticity: low
+    salience: high
+    proposition: A senior figure asserts that a sudden prediction shift like this
+      is always data drift and the fix is always to retrain on recent data.
+    salience_source: A/C — a principal data scientist issuing a confident 'always'
+      verdict in standup carries status and certainty.
+    why_plausible: Data drift is a real and common cause of prediction shifts, so
+      a senior 'textbook drift' label sounds authoritative.
+    why_irrelevant: His verdict is a generic pattern label given in seconds; an overnight,
+      model-unchanged shift with normal inputs is not gradual population drift, which
+      his rule never tested.
+  LL:
+    distractor: A senior figure asserts that a sudden prediction shift like this is
+      always data drift and the fix is always to retrain on recent data.
+    diagnosticity: low
+    salience: low
+    proposition: A senior figure asserts that a sudden prediction shift like this
+      is always data drift and the fix is always to retrain on recent data.
+    matched_to: HL
+  HH:
+    distractor: 'I compared the encoder used today against the one baked into training
+      and the integer codes have shifted: the category that was code 3 at training
+      is now code 7, and several others moved too, so the model is being handed mislabelled
+      categories for every row in today''s batch.'
+    diagnosticity: high
+    salience: high
+    proposition: The categorical-feature encoder was regenerated upstream and its
+      integer code assignments shifted, so each category now maps to a different code
+      than the one the model was trained on, feeding the model mislabelled inputs.
+    salience_source: Diffing today's encoder against the trained one and showing codes
+      moved (3 to 7) names the encoding mismatch concretely.
+  LH:
+    distractor: Today's categorical encoder assigns different integer codes than the
+      trained one (e.g., code 3 became 7), so the model receives mislabelled categories
+      for every row.
+    diagnosticity: high
+    salience: low
+    proposition: The categorical-feature encoder was regenerated upstream and its
+      integer code assignments shifted, so each category now maps to a different code
+      than the one the model was trained on, feeding the model mislabelled inputs.
+    matched_to: HH
+distractor_direction:
+  label: Data-drift retrain
+  description: Attributing the prediction shift to population data drift and prescribing
+    a retrain on recent data, per the authority's generic verdict.
+plausible_alternative_directions:
+- label: Silent input feature break
+  description: Whether a feature became all-null or constant upstream
+  distorting predictions without a count change.: null
+- label: Scoring-code or threshold change
+  description: Whether the post-processing or decision threshold in the scoring service
+    changed.
+- label: Train-serve preprocessing skew
+  description: Whether a preprocessing step diverged between training and scoring
+    beyond the encoder.
+leak_audit:
+  ll_atomic_claims:
+  - A senior figure asserts the sudden prediction shift is always data drift.
+  - That same figure asserts the fix is always to retrain on recent data.
+  hh_atomic_claims:
+  - Today's categorical encoder assigns different integer codes than the trained encoder.
+  - For example, the category that was code 3 at training is now code 7, among others.
+  - The model therefore receives mislabelled categories for every row in the batch.
+  hl_salience_dimensions:
+    source_credibility: Principal data scientist (Birger) issuing the verdict in standup.
+    narrative_coherence: N/A
+    confident_assertion: Declared a 'textbook data-drift event', 'always' the population
+      shifting.
+    concrete_detail: Detail about the source's pronouncement (five-second glance,
+      standup) only — no engagement with the encoder or inputs.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 75
+  hl_word_count: 47
+  ll_word_count: 23
+  hh_word_count: 45
+  lh_word_count: 25
+  notes: 'xbase states the overnight shift, unchanged artifact, and normal counts/nulls,
+    but withholds the encoder diff —
+
+    the decisive code-mismatch fact lives only in HH/LH, so HL/LL cannot resolve it.
+    The ''model not redeployed /
+
+    counts and nulls normal'' lines neutrally close the model-change and missing-data
+    pathways. LL carries only the
+
+    flat always-drift-always-retrain claim.
+
+    '
+causal_audit:
+  steelman: 'Defending Birger: data drift is genuinely a leading cause of churn-model
+    degradation, and a tripled predicted
+
+    rate is exactly the kind of swing drift can produce, so a principal data scientist''s
+    instinct to suspect it and
+
+    retrain is reasonable on its face. The weakness is that drift is gradual population
+    change, whereas this is an
+
+    overnight, discontinuous break with the model artifact untouched and input counts
+    and null rates normal — a
+
+    profile drift does not fit. His verdict was a five-second generic label, not an
+    analysis of this batch. The focal
+
+    evidence identifies the true cause — the categorical encoder''s code assignments
+    shifted, so the model reads
+
+    mislabelled features — which retraining would not fix and which is unrelated to
+    any population change.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the model artifact was not redeployed and
+    input counts and null rates are normal, closing the model-change and missing-data
+    pathways, while the decisive encoder mismatch lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A churn model producing nonsense because an upstream categorical encoder's
+    codes shifted, against a principal's generic data-drift-retrain verdict.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

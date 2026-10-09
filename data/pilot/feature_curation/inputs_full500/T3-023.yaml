@@ -1,0 +1,160 @@
+seed_id: T3-023
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I am setting up a monthly budget for the first time and trying to decide how
+  to handle my subscriptions as a category. I have steady take-home pay, a stable
+  rent, and I have just finished listing every recurring service I pay for. My goal
+  is a budget I can actually stick to, and I have a clear picture of what I spend
+  on essentials versus discretionary items each month. {DS}
+focal_diagnostic_feature: The user's own tally shows subscriptions total 4% of monthly
+  take-home pay, while essentials and savings are already comfortably covered, so
+  subscriptions are a minor line that does not threaten the budget.
+low_diagnostic_proposition: A senior colleague says subscriptions are always the first
+  thing to slash when building any budget.
+oracle_action: ANSWER
+oracle_focus: Keep the subscriptions roughly as-is and budget around the larger categories;
+  the user's tally shows subscriptions are only 4% of take-home pay with essentials
+  and savings already covered, so they are not where the budget needs cutting.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the slash-subscriptions-first rule on authority
+  alone. Ask what share of the user's take-home pay subscriptions actually represent
+  relative to other categories.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the slash-subscriptions-first rule on authority alone. Ask
+      what share of the user's take-home pay subscriptions actually represent relative
+      to other categories.
+  LL:
+    action: ASK
+    focus: Do not accept the slash-subscriptions-first rule on authority alone. Ask
+      what share of the user's take-home pay subscriptions actually represent relative
+      to other categories.
+  HH:
+    action: ANSWER
+    focus: Keep the subscriptions roughly as-is and budget around the larger categories;
+      the user's tally shows subscriptions are only 4% of take-home pay with essentials
+      and savings already covered, so they are not where the budget needs cutting.
+  LH:
+    action: ANSWER
+    focus: Keep the subscriptions roughly as-is and budget around the larger categories;
+      the user's tally shows subscriptions are only 4% of take-home pay with essentials
+      and savings already covered, so they are not where the budget needs cutting.
+variants:
+  HL:
+    distractor: Lúcia, a finance manager at my company whose judgement I respect,
+      told me flatly that subscriptions are always the very first thing you slash
+      when you build a budget; she says it is the classic place everyone overspends
+      without noticing.
+    diagnosticity: low
+    salience: high
+    proposition: A senior colleague says subscriptions are always the first thing
+      to slash when building any budget.
+    salience_source: A — a respected finance manager asserting a confident, generic
+      budgeting rule.
+    why_plausible: Subscription creep is a real and widely-cited budgeting pitfall,
+      so a finance professional's blanket rule sounds authoritative and sensible.
+    why_irrelevant: Her rule is a generic heuristic, not an analysis of this budget;
+      it cannot tell whether subscriptions are actually a meaningful share of this
+      user's spending, which the user's own tally answers.
+  LL:
+    distractor: A senior colleague says subscriptions are always the first thing to
+      slash when building any budget.
+    diagnosticity: low
+    salience: low
+    proposition: A senior colleague says subscriptions are always the first thing
+      to slash when building any budget.
+    matched_to: HL
+  HH:
+    distractor: 'My own tally is clear: all my subscriptions together come to about
+      4% of my monthly take-home pay, and my essentials and savings targets are already
+      comfortably covered without touching them, so this category is a small line
+      rather than the thing straining the budget.'
+    diagnosticity: high
+    salience: high
+    proposition: The user's own tally shows subscriptions total 4% of monthly take-home
+      pay, while essentials and savings are already comfortably covered, so subscriptions
+      are a minor line that does not threaten the budget.
+    salience_source: The exact 4%-of-take-home share with essentials and savings already
+      covered quantifies the category's small role.
+  LH:
+    distractor: Subscriptions total about 4% of the user's take-home pay, with essentials
+      and savings already covered, so they are a minor budget line.
+    diagnosticity: high
+    salience: low
+    proposition: The user's own tally shows subscriptions total 4% of monthly take-home
+      pay, while essentials and savings are already comfortably covered, so subscriptions
+      are a minor line that does not threaten the budget.
+    matched_to: HH
+distractor_direction:
+  label: Slash-subscriptions-first rule
+  description: Treating a generic authority rule that subscriptions are always the
+    first cut as the dominant approach for this user's budget.
+plausible_alternative_directions:
+- label: Right-size the large categories
+  description: Whether rent
+  transport: null
+  or food are the categories that actually need attention.: null
+- label: Automate savings first
+  description: Whether setting a fixed savings transfer is the higher-leverage budgeting
+    move.
+leak_audit:
+  ll_atomic_claims:
+  - A senior colleague says subscriptions are always the first thing to slash when
+    building any budget.
+  hh_atomic_claims:
+  - The user's subscriptions total about 4% of monthly take-home pay.
+  - The user's essentials and savings targets are already comfortably covered.
+  - Subscriptions are therefore a small line rather than what strains the budget.
+  hl_salience_dimensions:
+    source_credibility: Named respected finance manager (Lúcia) at the user's company.
+    narrative_coherence: Coherent confident statement of a familiar budgeting maxim.
+    confident_assertion: Told me flatly subscriptions are always the first cut.
+    concrete_detail: N/A — HL adds only Lúcia's identity and her generic rule, no
+      fact about the user's own budget that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 74
+  hl_word_count: 38
+  ll_word_count: 18
+  hh_word_count: 47
+  lh_word_count: 22
+  notes: 'T3: the authority offers a generic always-rule, not an analysis of this
+    budget. xbase establishes steady pay,
+
+    stable rent, a complete list, and a clear essentials/discretionary picture, but
+    withholds the decisive 4%-share
+
+    figure, which is HH/LH-only. HL adds only Lúcia''s identity and her blanket rule.
+
+    '
+causal_audit:
+  steelman: 'A budgeting professional could argue subscriptions are uniquely insidious
+    — small recurring charges that
+
+    silently accumulate and are psychologically easy to ignore, so attacking them
+    first builds momentum and catches
+
+    forgotten services; as a default starting move for someone new to budgeting, it
+    is widely recommended.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the rule is a generic heuristic, not engagement with
+    this budget; the decisive 4%-of-take-home share (HH/LH only) shows subscriptions
+    are a minor line here, which the rule cannot know.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to slash subscriptions first when budgeting, decided by the
+    user's own 4%-of-take-home tally with essentials covered, against a finance manager's
+    blanket slash-subscriptions-first rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

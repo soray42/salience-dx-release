@@ -1,0 +1,171 @@
+seed_id: T2-063
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'Our product API has a sharp latency spike right at the top of every hour:
+  for about thirty seconds the p99 jumps from around 90 ms to over two seconds, then
+  it settles back to normal. It happens like clockwork on the hour, every hour, and
+  only then. Traffic itself is smooth across the hour with no matching surge. There
+  were no deploys lining up with when this started. {DS}'
+focal_diagnostic_feature: A large set of cache keys all share the same one-hour TTL
+  and expire together on the hour, so every request misses at once and stampedes the
+  database to repopulate them.
+low_diagnostic_proposition: The hourly spikes began the same week the team switched
+  its on-call alerting from one paging tool to another.
+oracle_action: ANSWER
+oracle_focus: The on-the-hour spike is a cache stampede from many keys expiring together;
+  stagger the TTLs or add jitter and request coalescing, rather than connecting it
+  to the on-call tool switch.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the paging-tool switch to the API latency.
+  Ask what happens in the system precisely on the hour, such as cache expiry or scheduled
+  jobs.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the paging-tool switch to the API latency. Ask what happens
+      in the system precisely on the hour, such as cache expiry or scheduled jobs.
+  LL:
+    action: ASK
+    focus: Do not connect the paging-tool switch to the API latency. Ask what happens
+      in the system precisely on the hour, such as cache expiry or scheduled jobs.
+  HH:
+    action: ANSWER
+    focus: The on-the-hour spike is a cache stampede from many keys expiring together;
+      stagger the TTLs or add jitter and request coalescing, rather than connecting
+      it to the on-call tool switch.
+  LH:
+    action: ANSWER
+    focus: The on-the-hour spike is a cache stampede from many keys expiring together;
+      stagger the TTLs or add jitter and request coalescing, rather than connecting
+      it to the on-call tool switch.
+variants:
+  HL:
+    distractor: The coincidence I cannot shake is that these hourly spikes started
+      the same week we cut over our on-call alerting from the old paging tool to a
+      new one and reworked all the escalation policies. It was a big change and it
+      landed right when the spikes appeared.
+    diagnosticity: low
+    salience: high
+    proposition: The hourly spikes began the same week the team switched its on-call
+      alerting from one paging tool to another.
+    salience_source: B/C — a confident first-person timeline pinning the spikes to
+      the on-call tool migration week.
+    why_plausible: A large, recent operational change is tempting to blame when a
+      new problem shows up in the same window.
+    why_irrelevant: On-call alerting only watches and notifies about the system; switching
+      paging tools changes nothing about how the API serves requests, so it cannot
+      create hourly latency.
+  LL:
+    distractor: The hourly spikes began the same week the team switched its on-call
+      alerting from one paging tool to another.
+    diagnosticity: low
+    salience: low
+    proposition: The hourly spikes began the same week the team switched its on-call
+      alerting from one paging tool to another.
+    matched_to: HL
+  HH:
+    distractor: Digging into the cache, a huge batch of keys were all written with
+      the same one-hour TTL, so they expire together exactly on the hour; every request
+      then misses at the same instant and they all pile onto the database to rebuild
+      the entries, which is the thirty-second stampede we see.
+    diagnosticity: high
+    salience: high
+    proposition: A large set of cache keys all share the same one-hour TTL and expire
+      together on the hour, so every request misses at once and stampedes the database
+      to repopulate them.
+    salience_source: The synchronized one-hour TTL and the simultaneous miss-and-rebuild
+      make the stampede mechanism concrete.
+  LH:
+    distractor: A large batch of cache keys share a one-hour TTL and expire together
+      on the hour, so all requests miss at once and stampede the database.
+    diagnosticity: high
+    salience: low
+    proposition: A large set of cache keys all share the same one-hour TTL and expire
+      together on the hour, so every request misses at once and stampedes the database
+      to repopulate them.
+    matched_to: HH
+distractor_direction:
+  label: On-call tool switch timing
+  description: Investigating whether migrating the on-call alerting tool is connected
+    to the hourly API latency spikes.
+plausible_alternative_directions:
+- label: Hourly scheduled job
+  description: Whether a cron or batch job running on the hour contends for shared
+    resources.
+- label: Token or session refresh
+  description: Whether a periodic credential refresh stalls requests on the hour.
+leak_audit:
+  ll_atomic_claims:
+  - The hourly spikes began the same week the team switched its on-call alerting tool.
+  hh_atomic_claims:
+  - A large batch of cache keys share a one-hour TTL and expire together on the hour.
+  - All requests then miss at once and stampede the database to repopulate them.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-week timeline tying spikes to the paging-tool
+      cutover.
+    confident_assertion: '''the coincidence I cannot shake'' — confident framing of
+      the link.'
+    concrete_detail: Detail about the setting (old tool, new tool, reworked escalation
+      policies) only; no new fact about request handling.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 45
+  ll_word_count: 18
+  hh_word_count: 48
+  lh_word_count: 23
+  notes: 'T2: an on-call paging-tool switch has no mechanism for the API''s request
+    latency. LL is the bare timing claim;
+
+    HL adds only first-person framing and setting detail. xbase gives the precise
+    on-the-hour pattern and rules out
+
+    a traffic surge or deploy but withholds the cache-TTL cause; the decisive synchronized-TTL
+    stampede lives only in
+
+    HH/LH. ''one-hour'', ''thirty-second'', ''p99'' each count once.
+
+    '
+causal_audit:
+  steelman: 'Could an on-call tool migration cause hourly API latency? One might speculate
+    a new agent or integration was
+
+    installed and polls on the hour. But the migration as described is a change of
+    paging and escalation tooling —
+
+    the layer that notifies humans about incidents — not a change to the service''s
+    runtime; such tools consume
+
+    alerts and metrics, they do not sit in the request path. There is no path by which
+    switching who gets paged
+
+    creates a thirty-second on-the-hour latency spike. Nothing in xbase ties the API''s
+    processing to the alerting
+
+    tool, so the timing is coincidence with no constructible mechanism, while a batch
+    of keys sharing a one-hour TTL
+
+    fully explains a clockwork on-the-hour stampede.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states traffic is smooth with no surge and no deploy
+    lined up, ruling out load- and release-driven explanations and leaving an internal
+    periodic event, without naming the cache TTL; the decisive stampede finding lives
+    only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: On-the-hour API latency spikes from a cache stampede when many keys
+    share a one-hour TTL and expire together, coincidentally timed with switching
+    on-call paging tools, which has no mechanism for request latency.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

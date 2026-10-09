@@ -1,0 +1,173 @@
+seed_id: T1-071
+template: T1
+domain: open_qa
+complexity: medium
+xbase: I'm deciding whether to enrol in a part-time online data-analytics certificate
+  that costs about €2,400 over six months. I work full time and could realistically
+  spend maybe five hours a week on it. The provider has decent public reviews and
+  the syllabus covers tools my field actually uses. My manager has hinted that more
+  analytics skills would help, but nothing is promised in writing. I want to make
+  a sound decision before the early-bird deadline closes. {DS}
+focal_diagnostic_feature: The certificate requires roughly twelve hours of coursework
+  per week to complete on schedule, three times what the user can commit.
+low_diagnostic_proposition: A former colleague enrolled in a similar online certificate
+  and dropped out because the instruction was poorly delivered.
+oracle_action: ANSWER
+oracle_focus: Do not enrol on the current plan; the course needs about twelve hours
+  weekly and the user can give five, so they would fall behind and likely not finish
+  on time.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one colleague's bad experience decide this.
+  Ask how many hours per week the course actually requires and how that compares with
+  the time the user can give.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one colleague's bad experience decide this. Ask how many hours
+      per week the course actually requires and how that compares with the time the
+      user can give.
+  LL:
+    action: ASK
+    focus: Do not let one colleague's bad experience decide this. Ask how many hours
+      per week the course actually requires and how that compares with the time the
+      user can give.
+  HH:
+    action: ANSWER
+    focus: Do not enrol on the current plan; the course needs about twelve hours weekly
+      and the user can give five, so they would fall behind and likely not finish
+      on time.
+  LH:
+    action: ANSWER
+    focus: Do not enrol on the current plan; the course needs about twelve hours weekly
+      and the user can give five, so they would fall behind and likely not finish
+      on time.
+variants:
+  HL:
+    distractor: Tigist, who sat two desks from me at my last job, took an online certificate
+      a lot like this one and quit halfway through; she told me the lecturers were
+      disorganised and the recorded sessions felt thrown together rather than taught.
+    diagnosticity: low
+    salience: high
+    proposition: A former colleague enrolled in a similar online certificate and dropped
+      out because the instruction was poorly delivered.
+    salience_source: A — a named former colleague recounting her own first-hand experience
+      of a comparable course lends the warning credibility.
+    why_plausible: Badly delivered instruction is a genuine reason people abandon
+      online courses, so the cautionary account feels worth weighing.
+    why_irrelevant: Another person's complaint about teaching quality says nothing
+      about whether THIS user can fit the workload into five hours a week, which is
+      the deciding constraint.
+  LL:
+    distractor: A former colleague took a similar online certificate and dropped out
+      because the teaching was poorly delivered.
+    diagnosticity: low
+    salience: low
+    proposition: A former colleague enrolled in a similar online certificate and dropped
+      out because the instruction was poorly delivered.
+    matched_to: HL
+  HH:
+    distractor: I read the course handbook closely and it budgets twelve hours a week
+      of study and assignments to stay on the marked schedule; I can carve out about
+      five hours around my full-time job, so I would be running at less than half
+      the required pace.
+    diagnosticity: high
+    salience: high
+    proposition: The certificate requires roughly twelve hours of coursework per week
+      to complete on schedule, three times what the user can commit.
+    salience_source: Concrete retrieval of the handbook's stated weekly hours set
+      against the user's own available hours makes the mismatch vivid.
+  LH:
+    distractor: The course requires about twelve hours weekly to stay on schedule;
+      the user has about five hours available.
+    diagnosticity: high
+    salience: low
+    proposition: The certificate requires roughly twelve hours of coursework per week
+      to complete on schedule, three times what the user can commit.
+    matched_to: HH
+distractor_direction:
+  label: Teaching-quality risk
+  description: Treating the enrolment decision as mainly about whether the course
+    is well taught, because a colleague dropped out over poor instruction.
+plausible_alternative_directions:
+- label: Career payoff uncertainty
+  description: Whether the skills will actually advance the user's role given no written
+    commitment from the manager.
+- label: Cost versus alternatives
+  description: Whether cheaper or self-paced resources could deliver the same skills
+    for less money.
+leak_audit:
+  ll_atomic_claims:
+  - A former colleague took a similar online certificate.
+  - That colleague dropped out because the teaching was poorly delivered.
+  hh_atomic_claims:
+  - The course handbook budgets about twelve hours of study per week to stay on schedule.
+  - The user has about five hours per week available.
+  - Five hours is less than half the required pace.
+  hl_salience_dimensions:
+    source_credibility: Named former colleague (Tigist) recounting her own first-hand
+      course experience.
+    narrative_coherence: 'Clean sequence: took the course, quit halfway, reported
+      the reason.'
+    confident_assertion: Reported plainly as her direct experience.
+    concrete_detail: Detail about the source (her seating, her account of disorganised
+      lecturers) only — no claim about this user's available time.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 76
+  hl_word_count: 41
+  ll_word_count: 17
+  hh_word_count: 46
+  lh_word_count: 18
+  notes: 'LL carries only the took-course and dropped-out-over-teaching claims; the
+    named source, her seat, and the
+
+    disorganised-lecturers colour are HL-only and all about the source, not about
+    this user''s situation. xbase states
+
+    the time the user can give (five hours) but deliberately withholds the course''s
+    required hours, so the HL/LL cells
+
+    cannot compute the workload mismatch; the decisive twelve-hours fact lives only
+    in HH/LH. The user''s available
+
+    hours are context, not the focal feature — the focal feature is the course requirement
+    that they cannot meet.
+
+    '
+causal_audit:
+  steelman: 'A learning-and-development advisor might argue that instruction quality
+    is a real driver of completion: if the
+
+    course is genuinely badly taught, even an organised learner with ample time can
+    stall, so a credible first-hand
+
+    report of poor delivery is a fair signal of completion risk. But that argument
+    bears on whether the COURSE is
+
+    good, not on whether THIS user can meet its time demand. The deciding fact is
+    the workload-versus-availability
+
+    gap, which is fixed regardless of teaching quality: even a superbly taught course
+    needing twelve hours a week is
+
+    unworkable on five. The colleague''s complaint therefore has no mechanism to inform
+    this user''s go/no-go decision.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase withholds the required-hours figure, so no
+    closure sentence is needed; the focal mismatch is established only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A user weighing an online analytics certificate, where the course's
+    twelve-hour weekly demand against their five available hours, not a colleague's
+    complaint about teaching, is decisive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

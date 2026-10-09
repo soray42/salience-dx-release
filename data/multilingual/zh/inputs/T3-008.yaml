@@ -1,0 +1,93 @@
+seed_id: T3-008
+template: T3
+domain: open_qa
+complexity: high
+xbase: 我正在考虑就读某所地区性院校的在职晚间 MBA 课程。对我来说费用很高，而我目前是一名稳定的中级职业工程师。我目前并不打算转型进入管理层或咨询行业。{DS}
+focal_diagnostic_feature: 该项目的毕业去向主要集中在管理/咨询转型，而支付学费将耗尽应急资金并新增 €20k 的贷款。
+low_diagnostic_proposition: A senior executive says an MBA should be treated as the
+  main career investment for any professional.
+oracle_action: ANSWER
+oracle_focus: Do not enrol on the current facts; cost and outcome mismatch are too
+  large without a clear target use-case.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept a generic VP endorsement. Ask for target
+  career outcome, programme placement data, and financing impact.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept a generic VP endorsement. Ask for target career outcome,
+      programme placement data, and financing impact.
+  LL:
+    action: ASK
+    focus: Do not accept a generic VP endorsement. Ask for target career outcome,
+      programme placement data, and financing impact.
+  HH:
+    action: ANSWER
+    focus: Do not enrol on the current facts; cost and outcome mismatch are too large
+      without a clear target use-case.
+  LH:
+    action: ANSWER
+    focus: Do not enrol on the current facts; cost and outcome mismatch are too large
+      without a clear target use-case.
+variants:
+  HL:
+    distractor: 我公司的一位副总裁在一次晚餐上告诉我，MBA 是任何职业人士所能做出的最重要的职业投资。
+    diagnosticity: low
+    salience: high
+    proposition: A senior executive says an MBA should be treated as the main career
+      investment for any professional.
+    salience_source: authority title, social setting, universal career claim
+    why_plausible: A VP's career advice sounds like insider knowledge.
+    why_irrelevant: The advice is generic and does not address the user's goals or
+      financing burden.
+  LL:
+    distractor: 一位高管表示，对于职场人士而言，MBA 应被视为最重要的职业投资。
+    diagnosticity: low
+    salience: low
+    proposition: A senior executive says an MBA should be treated as the main career
+      investment for any professional.
+    matched_to: HL
+  HH:
+    distractor: 这个项目大多数公开的成功案例都是转型进入管理层或咨询行业的人，而这并不是我想要的；同时我还需要动用应急资金，再额外背负 €20k 的贷款。
+    diagnosticity: high
+    salience: high
+    proposition: The programme's outcomes are mainly management/consulting transitions,
+      while paying for it would drain the emergency fund and add €20k in loans.
+    salience_source: goal/outcome/financing mismatch
+  LH:
+    distractor: 该项目的成果数据集中在我并不打算走的管理或咨询方向上，而资金方面则需要动用应急资金并承担 €20k 的贷款。
+    diagnosticity: high
+    salience: low
+    proposition: The programme's outcomes are mainly management/consulting transitions,
+      while paying for it would drain the emergency fund and add €20k in loans.
+    matched_to: HH
+distractor_direction:
+  label: MBA 文凭的价值
+  description: 将 MBA 视为最主要的职业投资，理由是一位高管表示该文凭普遍具有价值。
+plausible_alternative_directions:
+- label: 雇主赞助
+  description: 雇主是否会承担部分学费或在时间安排上提供支持。
+- label: 管理转型目标
+  description: 用户是否有进入管理层、咨询业或其他与 MBA 相关路径的具体计划。
+- label: 机会成本
+  description: 晚间学习占用的时间、疲劳感以及放弃其他选择的代价，可能超过文凭本身的价值。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-008.yaml
+  source_xbase_sha256: 3683aa44c11b9344
+  translated_content_sha256: 9e41938062eedef7
+  translation_notes: Currency symbol €20k retained as-is (internationally recognisable).
+    'VP at my company told me over dinner' rendered preserving the named-authority
+    + social-setting salience of HL. MBA kept as-is.

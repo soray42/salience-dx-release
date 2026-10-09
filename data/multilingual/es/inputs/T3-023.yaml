@@ -1,0 +1,177 @@
+seed_id: T3-023
+template: T3
+domain: open_qa
+complexity: medium
+xbase: Estoy elaborando un presupuesto mensual por primera vez y tratando de decidir
+  cómo gestionar mis suscripciones como categoría. Tengo un sueldo neto estable, un
+  alquiler fijo, y acabo de terminar de listar todos los servicios recurrentes que
+  pago. Mi objetivo es un presupuesto que pueda mantener de verdad, y tengo una imagen
+  clara de lo que gasto en gastos esenciales frente a discrecionales cada mes. {DS}
+focal_diagnostic_feature: El propio recuento del usuario muestra que las suscripciones
+  suponen el 4% del sueldo neto mensual, mientras que los gastos esenciales y el ahorro
+  ya están cómodamente cubiertos, por lo que las suscripciones son una partida menor
+  que no amenaza el presupuesto.
+low_diagnostic_proposition: A senior colleague says subscriptions are always the first
+  thing to slash when building any budget.
+oracle_action: ANSWER
+oracle_focus: Keep the subscriptions roughly as-is and budget around the larger categories;
+  the user's tally shows subscriptions are only 4% of take-home pay with essentials
+  and savings already covered, so they are not where the budget needs cutting.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the slash-subscriptions-first rule on authority
+  alone. Ask what share of the user's take-home pay subscriptions actually represent
+  relative to other categories.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the slash-subscriptions-first rule on authority alone. Ask
+      what share of the user's take-home pay subscriptions actually represent relative
+      to other categories.
+  LL:
+    action: ASK
+    focus: Do not accept the slash-subscriptions-first rule on authority alone. Ask
+      what share of the user's take-home pay subscriptions actually represent relative
+      to other categories.
+  HH:
+    action: ANSWER
+    focus: Keep the subscriptions roughly as-is and budget around the larger categories;
+      the user's tally shows subscriptions are only 4% of take-home pay with essentials
+      and savings already covered, so they are not where the budget needs cutting.
+  LH:
+    action: ANSWER
+    focus: Keep the subscriptions roughly as-is and budget around the larger categories;
+      the user's tally shows subscriptions are only 4% of take-home pay with essentials
+      and savings already covered, so they are not where the budget needs cutting.
+variants:
+  HL:
+    distractor: Lúcia, directora de finanzas en mi empresa a cuyo criterio respeto,
+      me dijo sin rodeos que las suscripciones son siempre lo primero que se recorta
+      cuando se elabora un presupuesto; dice que es el lugar clásico donde todos gastan
+      de más sin darse cuenta.
+    diagnosticity: low
+    salience: high
+    proposition: A senior colleague says subscriptions are always the first thing
+      to slash when building any budget.
+    salience_source: A — a respected finance manager asserting a confident, generic
+      budgeting rule.
+    why_plausible: Subscription creep is a real and widely-cited budgeting pitfall,
+      so a finance professional's blanket rule sounds authoritative and sensible.
+    why_irrelevant: Her rule is a generic heuristic, not an analysis of this budget;
+      it cannot tell whether subscriptions are actually a meaningful share of this
+      user's spending, which the user's own tally answers.
+  LL:
+    distractor: Una colega senior dice que las suscripciones son siempre lo primero
+      que se recorta al elaborar cualquier presupuesto.
+    diagnosticity: low
+    salience: low
+    proposition: A senior colleague says subscriptions are always the first thing
+      to slash when building any budget.
+    matched_to: HL
+  HH:
+    distractor: 'Mi propio recuento es claro: todas mis suscripciones juntas suponen
+      aproximadamente el 4% de mi sueldo neto mensual, y mis objetivos de gastos esenciales
+      y ahorro ya están cómodamente cubiertos sin tocarlas, así que esta categoría
+      es una partida pequeña, no lo que está tensando el presupuesto.'
+    diagnosticity: high
+    salience: high
+    proposition: The user's own tally shows subscriptions total 4% of monthly take-home
+      pay, while essentials and savings are already comfortably covered, so subscriptions
+      are a minor line that does not threaten the budget.
+    salience_source: The exact 4%-of-take-home share with essentials and savings already
+      covered quantifies the category's small role.
+  LH:
+    distractor: Las suscripciones suman aproximadamente el 4% del sueldo neto del
+      usuario, con los gastos esenciales y el ahorro ya cubiertos, por lo que son
+      una partida menor del presupuesto.
+    diagnosticity: high
+    salience: low
+    proposition: The user's own tally shows subscriptions total 4% of monthly take-home
+      pay, while essentials and savings are already comfortably covered, so subscriptions
+      are a minor line that does not threaten the budget.
+    matched_to: HH
+distractor_direction:
+  label: Regla de recortar primero las suscripciones
+  description: Tratar una regla de autoridad genérica según la cual las suscripciones
+    son siempre el primer recorte como el enfoque dominante para el presupuesto de
+    este usuario.
+plausible_alternative_directions:
+- label: Ajustar las categorías grandes
+  description: Si el alquiler, el transporte o la alimentación son las categorías
+    que realmente necesitan atención.
+  transport: null
+  or food are the categories that actually need attention.: null
+- label: Automatizar el ahorro primero
+  description: Si establecer una transferencia fija de ahorro es la medida presupuestaria
+    de mayor impacto.
+leak_audit:
+  ll_atomic_claims:
+  - A senior colleague says subscriptions are always the first thing to slash when
+    building any budget.
+  hh_atomic_claims:
+  - The user's subscriptions total about 4% of monthly take-home pay.
+  - The user's essentials and savings targets are already comfortably covered.
+  - Subscriptions are therefore a small line rather than what strains the budget.
+  hl_salience_dimensions:
+    source_credibility: Named respected finance manager (Lúcia) at the user's company.
+    narrative_coherence: Coherent confident statement of a familiar budgeting maxim.
+    confident_assertion: Told me flatly subscriptions are always the first cut.
+    concrete_detail: N/A — HL adds only Lúcia's identity and her generic rule, no
+      fact about the user's own budget that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 74
+  hl_word_count: 38
+  ll_word_count: 18
+  hh_word_count: 47
+  lh_word_count: 22
+  notes: 'T3: the authority offers a generic always-rule, not an analysis of this
+    budget. xbase establishes steady pay,
+
+    stable rent, a complete list, and a clear essentials/discretionary picture, but
+    withholds the decisive 4%-share
+
+    figure, which is HH/LH-only. HL adds only Lúcia''s identity and her blanket rule.
+
+    '
+causal_audit:
+  steelman: 'A budgeting professional could argue subscriptions are uniquely insidious
+    — small recurring charges that
+
+    silently accumulate and are psychologically easy to ignore, so attacking them
+    first builds momentum and catches
+
+    forgotten services; as a default starting move for someone new to budgeting, it
+    is widely recommended.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the rule is a generic heuristic, not engagement with
+    this budget; the decisive 4%-of-take-home share (HH/LH only) shows subscriptions
+    are a minor line here, which the rule cannot know.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to slash subscriptions first when budgeting, decided by the
+    user's own 4%-of-take-home tally with essentials covered, against a finance manager's
+    blanket slash-subscriptions-first rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-023.yaml
+  source_xbase_sha256: 57214d5c6bbaeaf2
+  translated_content_sha256: efd2d043793a3923
+  translation_notes: The name Lúcia is kept as-is (it is a common Spanish/Portuguese
+    name used in Latin America and Spain). "Take-home pay" rendered as "sueldo neto"
+    (net pay), the standard Spanish equivalent. "Finance manager" rendered as "directora
+    de finanzas". Register and first-person voice preserved.

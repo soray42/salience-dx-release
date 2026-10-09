@@ -1,0 +1,93 @@
+seed_id: T1-005
+template: T1
+domain: open_qa
+complexity: medium
+xbase: I have an offer for a new role. The base salary is meaningfully higher than
+  my current pay, the company has public financials, and its main product line looks
+  stable. I like my current team but I am unsure whether staying helps my long-term
+  path. {DS}
+focal_diagnostic_feature: The current role has no defined promotion path despite strong
+  reviews, while the new role has a written promotion ladder.
+low_diagnostic_proposition: A comparable job move by an acquaintance ended badly because
+  of team culture.
+oracle_action: ANSWER
+oracle_focus: On the stated facts, the move is favourable, while still leaving room
+  to verify team culture before accepting.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one external culture story override the offer
+  facts. Ask about this specific manager, team norms, and promotion criteria.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one external culture story override the offer facts. Ask about
+      this specific manager, team norms, and promotion criteria.
+  LL:
+    action: ASK
+    focus: Do not let one external culture story override the offer facts. Ask about
+      this specific manager, team norms, and promotion criteria.
+  HH:
+    action: ANSWER
+    focus: On the stated facts, the move is favourable, while still leaving room to
+      verify team culture before accepting.
+  LH:
+    action: ANSWER
+    focus: On the stated facts, the move is favourable, while still leaving room to
+      verify team culture before accepting.
+variants:
+  HL:
+    distractor: Daniel jumped for a higher salary last year, hated the team by month
+      two, and quit after seven miserable months.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable job move by an acquaintance ended badly because of team
+      culture.
+    salience_source: named person, concrete timeline, bad outcome narrative
+    why_plausible: A cautionary story makes any job move feel risky.
+    why_irrelevant: The anecdote concerns another team and cannot substitute for evidence
+      about this offer's manager, role, or progression structure.
+  LL:
+    distractor: An acquaintance accepted a similar higher-paying move and later reported
+      poor team fit.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable job move by an acquaintance ended badly because of team
+      culture.
+    matched_to: HL
+  HH:
+    distractor: I've had strong reviews for three years with no title change and no
+      promotion path; the new role has a written ladder with explicit criteria.
+    diagnosticity: high
+    salience: high
+    proposition: The current role has no defined promotion path despite strong reviews,
+      while the new role has a written promotion ladder.
+    salience_source: career-progression contrast
+  LH:
+    distractor: The current role lacks a defined advancement route despite strong
+      reviews, whereas the offer includes documented promotion criteria.
+    diagnosticity: high
+    salience: low
+    proposition: The current role has no defined promotion path despite strong reviews,
+      while the new role has a written promotion ladder.
+    matched_to: HH
+distractor_direction:
+  label: Poor team fit
+  description: Investigating whether the new role is likely to have culture, manager,
+    or team-fit problems despite higher pay.
+plausible_alternative_directions:
+- label: Company financial stability
+  description: Whether the prospective employer is financially stable enough to support
+    the role long term.
+- label: Current-team retention value
+  description: Whether staying with the current team provides mentorship, sponsorship,
+    or internal mobility advantages.
+- label: Role-scope mismatch
+  description: Whether the new role title and actual responsibilities differ from
+    the user’s career direction.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

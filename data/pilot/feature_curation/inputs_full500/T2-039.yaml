@@ -1,0 +1,172 @@
+seed_id: T2-039
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our nightly analytics rollup job used to finish in about 40 minutes and now
+  takes close to two hours, every night for the past week. The cluster it runs on
+  is the same size, its own transform code has not changed, and resource graphs show
+  no contention from other jobs during its window. The output is still correct; it
+  is purely the runtime that has blown up. {DS}
+focal_diagnostic_feature: An upstream table the job reads was switched from incremental
+  daily partitions to a full historical reload, so the rollup now scans and reprocesses
+  years of data each night instead of one day's slice.
+low_diagnostic_proposition: The slowdown began the same week the company migrated
+  everyone to a new corporate VPN provider.
+oracle_action: ANSWER
+oracle_focus: 'Restore incremental processing: the upstream feed now delivers a full
+  history every night, so reinstate daily partitioning or filter to the new day''s
+  slice so the rollup stops reprocessing all of history.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the VPN migration to the runtime. Ask
+  whether the upstream input the job reads grew in size or scope since the slowdown
+  began.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the VPN migration to the runtime. Ask whether the upstream
+      input the job reads grew in size or scope since the slowdown began.
+  LL:
+    action: ASK
+    focus: Do not connect the VPN migration to the runtime. Ask whether the upstream
+      input the job reads grew in size or scope since the slowdown began.
+  HH:
+    action: ANSWER
+    focus: 'Restore incremental processing: the upstream feed now delivers a full
+      history every night, so reinstate daily partitioning or filter to the new day''s
+      slice so the rollup stops reprocessing all of history.'
+  LH:
+    action: ANSWER
+    focus: 'Restore incremental processing: the upstream feed now delivers a full
+      history every night, so reinstate daily partitioning or filter to the new day''s
+      slice so the rollup stops reprocessing all of history.'
+variants:
+  HL:
+    distractor: What keeps nagging me is the timing — this all started the same week
+      IT cut everyone over to the new corporate VPN. The day my laptop got the new
+      VPN profile pushed was the first night the job ran long, and the slowness has
+      stuck around ever since the switch.
+    diagnosticity: low
+    salience: high
+    proposition: The slowdown began the same week the company migrated everyone to
+      a new corporate VPN provider.
+    salience_source: B/C — a confident first-night-after-the-switch chronology framed
+      as a nagging connection.
+    why_plausible: A network change feels like it could slow things down, and the
+      timing alignment is tempting.
+    why_irrelevant: A corporate VPN affects an employee's laptop connectivity, not
+      a server-side batch job running inside the cluster, which never traverses the
+      VPN.
+  LL:
+    distractor: The slowdown began the same week the company migrated everyone to
+      a new corporate VPN provider.
+    diagnosticity: low
+    salience: low
+    proposition: The slowdown began the same week the company migrated everyone to
+      a new corporate VPN provider.
+    matched_to: HL
+  HH:
+    distractor: I compared input sizes and the upstream table the rollup reads jumped
+      from a single day's partition to the entire history overnight; the feed was
+      switched to a full reload, so the job is now scanning and aggregating years
+      of rows every night instead of one day's slice.
+    diagnosticity: high
+    salience: high
+    proposition: An upstream table the job reads was switched from incremental daily
+      partitions to a full historical reload, so the rollup now scans and reprocesses
+      years of data each night instead of one day's slice.
+    salience_source: Comparing input sizes and naming the incremental-to-full-reload
+      switch makes the reprocessing-everything cause concrete.
+  LH:
+    distractor: The upstream input switched from a daily partition to a full historical
+      reload, so the rollup now reprocesses years of data each night instead of one
+      day.
+    diagnosticity: high
+    salience: low
+    proposition: An upstream table the job reads was switched from incremental daily
+      partitions to a full historical reload, so the rollup now scans and reprocesses
+      years of data each night instead of one day's slice.
+    matched_to: HH
+distractor_direction:
+  label: VPN-migration coincidence
+  description: Treating the corporate VPN provider migration as connected to the nightly
+    job's runtime doubling because the timing aligned.
+plausible_alternative_directions:
+- label: Cluster resource contention
+  description: Whether another job or autoscaling change is now competing for the
+    same compute during the window.
+- label: Data-skew growth
+  description: Whether organic growth or skew in the existing input pushed the job
+    past an efficiency threshold.
+leak_audit:
+  ll_atomic_claims:
+  - The slowdown began the same week the company migrated everyone to a new corporate
+    VPN provider.
+  hh_atomic_claims:
+  - The upstream input the rollup reads grew from a single day's partition to the
+    entire history.
+  - The feed was switched from incremental to a full reload.
+  - The job now reprocesses years of rows each night instead of one day's slice.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-night-after-VPN-profile chronology.
+    confident_assertion: Framed as a nagging, persistent connection since the switch.
+    concrete_detail: Detail about the VPN migration (new profile pushed to the laptop)
+      only — no claim about the job's input.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 45
+  ll_word_count: 16
+  hh_word_count: 46
+  lh_word_count: 25
+  notes: 'xbase states the runtime doubling, unchanged cluster and code, no contention,
+    and correct output, but withholds
+
+    the upstream input-size change — the decisive full-reload fact lives only in HH/LH,
+    so HL/LL cannot resolve it.
+
+    The ''same cluster / no contention'' lines neutrally close the resource pathway.
+    LL carries only the same-week VPN
+
+    coincidence.
+
+    '
+causal_audit:
+  steelman: 'To steelman the VPN: one might argue a new VPN could add latency to data
+    transfers or that the migration came
+
+    bundled with other network changes affecting the cluster. But the rollup is a
+    server-side batch job executing
+
+    within the cluster against the data lake; its reads do not traverse an employee
+    VPN, which governs laptop-to-
+
+    corporate connectivity. A VPN change cannot lengthen in-cluster compute, and ''bundled
+    changes'' are separate
+
+    events, not properties of the VPN swap. The focal evidence shows the real cause
+    — the upstream input ballooned
+
+    from one day to full history because the feed became a full reload — which quadruples
+    the data scanned and is
+
+    entirely independent of the VPN. No mechanism connects the migration to the runtime.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the cluster is the same size with no contention,
+    closing the resource pathway, while the decisive input-size change lives only
+    in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A nightly rollup job slowing because an upstream feed switched to full-history
+    reload, coincident with an unrelated corporate VPN migration.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

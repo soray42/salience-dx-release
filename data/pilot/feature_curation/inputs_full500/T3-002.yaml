@@ -1,0 +1,96 @@
+seed_id: T3-002
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I'm choosing between two Master's programmes. Program A is funded and in the
+  general area I want. Program B is at a more famous university, but I would need
+  loans if I went there. I have about €4,000 in savings. {DS}
+focal_diagnostic_feature: Program A has the exact research fit and a supervisor publishing
+  in the user's target venues, while Program B costs €35,000 and has only loose faculty
+  fit.
+low_diagnostic_proposition: A professor says institutional brand should be the main
+  decision factor for an academic career.
+oracle_action: ANSWER
+oracle_focus: Recommend Program A on funding, research fit, and financial risk unless
+  there is a hidden constraint.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let generic prestige advice decide it. Ask about
+  supervisor fit, funding, publication alignment, and debt load.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let generic prestige advice decide it. Ask about supervisor fit,
+      funding, publication alignment, and debt load.
+  LL:
+    action: ASK
+    focus: Do not let generic prestige advice decide it. Ask about supervisor fit,
+      funding, publication alignment, and debt load.
+  HH:
+    action: ANSWER
+    focus: Recommend Program A on funding, research fit, and financial risk unless
+      there is a hidden constraint.
+  LH:
+    action: ANSWER
+    focus: Recommend Program A on funding, research fit, and financial risk unless
+      there is a hidden constraint.
+variants:
+  HL:
+    distractor: My professor told me, firmly, that university brand name should be
+      the main thing I optimise for if I want any future in academia.
+    diagnosticity: low
+    salience: high
+    proposition: A professor says institutional brand should be the main decision
+      factor for an academic career.
+    salience_source: authority figure, firm advice, absolutist career framing
+    why_plausible: Prestige does matter sometimes, so the advice feels credible.
+    why_irrelevant: The specific programme fit and funding dominate a generic prestige
+      heuristic for this research-track decision.
+  LL:
+    distractor: A faculty member advised that institutional reputation should be the
+      main selection criterion for an academic path.
+    diagnosticity: low
+    salience: low
+    proposition: A professor says institutional brand should be the main decision
+      factor for an academic career.
+    matched_to: HL
+  HH:
+    distractor: Program A matches my exact research niche and the supervisor publishes
+      in my target venues; Program B would mean €35,000 in tuition debt for only loosely
+      related faculty.
+    diagnosticity: high
+    salience: high
+    proposition: Program A has the exact research fit and a supervisor publishing
+      in the user's target venues, while Program B costs €35,000 and has only loose
+      faculty fit.
+    salience_source: fit/funding/debt comparison
+  LH:
+    distractor: Program A offers exact research fit and aligned supervision; Program
+      B requires €35,000 in tuition and has weaker faculty fit.
+    diagnosticity: high
+    salience: low
+    proposition: Program A has the exact research fit and a supervisor publishing
+      in the user's target venues, while Program B costs €35,000 and has only loose
+      faculty fit.
+    matched_to: HH
+distractor_direction:
+  label: Institutional prestige
+  description: Prioritising university brand name and institutional reputation as
+    the dominant criterion for the programme choice.
+plausible_alternative_directions:
+- label: Cohort quality
+  description: The strength, ambition, and peer network of the admitted student cohort
+    may affect future opportunities.
+- label: City living fit
+  description: Cost of living, housing, and day-to-day fit in each programme location
+    may affect feasibility.
+- label: Alumni network access
+  description: Programme alumni placement and mentorship networks may differ from
+    raw institutional brand.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

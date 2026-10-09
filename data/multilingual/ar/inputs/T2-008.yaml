@@ -1,0 +1,98 @@
+seed_id: T2-008
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: تترك غسالتي الملابس مبللة تمامًا في نهاية كل دورة غسيل منذ أسبوع. تكمل الغسالة
+  البرنامج دون أن تُظهر أي رمز خطأ. {DS}
+focal_diagnostic_feature: دورة العصر باتت تبدو أبطأ وأخفض صوتًا وأقصر مما كانت عليه
+  من قبل.
+low_diagnostic_proposition: The issue began around the time of a higher utility bill.
+oracle_action: ANSWER
+oracle_focus: The spin stage is failing mechanically or being interrupted; check load
+  balance, belt/motor, and call service if it repeats.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer appliance cause from a bill. Ask what changed
+  in the spin cycle and whether the machine drains/spins properly.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer appliance cause from a bill. Ask what changed in the spin
+      cycle and whether the machine drains/spins properly.
+  LL:
+    action: ASK
+    focus: Do not infer appliance cause from a bill. Ask what changed in the spin
+      cycle and whether the machine drains/spins properly.
+  HH:
+    action: ANSWER
+    focus: The spin stage is failing mechanically or being interrupted; check load
+      balance, belt/motor, and call service if it repeats.
+  LH:
+    action: ANSWER
+    focus: The spin stage is failing mechanically or being interrupted; check load
+      balance, belt/motor, and call service if it repeats.
+variants:
+  HL:
+    distractor: بدأ هذا الأمر مباشرةً بعد أن استلمنا فاتورة كهرباء أعلى بنسبة 40%
+      من الشهر السابق، مطبوعةً داخل مربع تحذيري باللون الأحمر.
+    diagnosticity: low
+    salience: high
+    proposition: The issue began around the time of a higher utility bill.
+    salience_source: specific percentage, bill warning visual, temporal overlap
+    why_plausible: A big bill makes appliance malfunction feel energy-related.
+    why_irrelevant: The bill does not identify which machine component is failing;
+      the altered spin behaviour directly does.
+  LL:
+    distractor: بدأت المشكلة تقريبًا في الوقت الذي شهدنا فيه ارتفاعًا ملحوظًا في فاتورة
+      الكهرباء.
+    diagnosticity: low
+    salience: low
+    proposition: The issue began around the time of a higher utility bill.
+    matched_to: HL
+  HH:
+    distractor: دورة العصر باتت تُصدر صوتًا أخفض وأبطأ وتنتهي قبل موعدها؛ الملابس
+      تخرج ثقيلة بما يكفي لتقطر على الأرض.
+    diagnosticity: high
+    salience: high
+    proposition: The spin step now sounds slower, lower-pitched, and shorter than
+      it used to.
+    salience_source: changed mechanical sound during spin
+  LH:
+    distractor: دورة العصر مسموعة بشكل أبطأ وأقصر من المعتاد، والملابس تحتفظ بكميات
+      كبيرة من الماء.
+    diagnosticity: high
+    salience: low
+    proposition: The spin step now sounds slower, lower-pitched, and shorter than
+      it used to.
+    matched_to: HH
+distractor_direction:
+  label: شذوذ فاتورة الكهرباء
+  description: التحقيق فيما إذا كانت التغييرات في استهلاك الكهرباء أو الماء بشكل عام
+    تُفسر مشكلة الغسالة.
+plausible_alternative_directions:
+- label: انسداد مضخة التصريف
+  description: بقاء الماء بسبب انسداد جزئي في مضخة التصريف أو خرطوم الصرف أو المصفاة.
+- label: اختلال توازن الحمولة
+  description: الغسالة تقطع دورة العصر بسبب عدم توازن الحمولة داخل الحوض.
+- label: خطأ في إعداد البرنامج
+  description: البرنامج المختار أو إعداد العصر يمنع تنفيذ دورة عصر طبيعية.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-008.yaml
+  source_xbase_sha256: 1a7d32950a5e2017
+  translated_content_sha256: 1f904b660cf4d6de
+  translation_notes: No technical terms required preservation here. The HL salience
+    cue (40% figure + red warning box visual) is preserved in Arabic. 'دورة العصر'
+    is used consistently for 'spin step/stage'. The vivid sensory detail in HH ('تقطر
+    على الأرض' / drip on the floor) is preserved.

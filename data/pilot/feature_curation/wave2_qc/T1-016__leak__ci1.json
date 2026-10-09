@@ -1,0 +1,30 @@
+{
+  "seed_id": "T1-016",
+  "ll_claims_extracted": [
+    "A colleague fixed their mortgage at renewal",
+    "The colleague did so by rolling a home equity line of credit into a single fixed product"
+  ],
+  "hl_case_claims": [
+    "She rolled her home equity line of credit into one consolidated fixed-rate mortgage",
+    "She did this at her renewal"
+  ],
+  "hl_source_claims": [
+    "Her name is Priya",
+    "She is a financial analyst at a regional pension fund",
+    "She is easily the most financially literate person in the team",
+    "She told the speaker directly",
+    "Her renewal was last year"
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 40,
+    "ll": 20,
+    "xbase": 61,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

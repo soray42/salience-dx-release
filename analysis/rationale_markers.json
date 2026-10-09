@@ -1,0 +1,70 @@
+{
+  "note": "Text-pattern proxy for explicit debiasing language (not human rationale coding). Marker set in scripts/rationale_markers.py.",
+  "overall": {
+    "HL_marker_rate_pct": 25.6,
+    "LL_marker_rate_pct": 21.8,
+    "n_pairs": 1992
+  },
+  "by_bucket": {
+    "stable_reject": {
+      "n": 886,
+      "HL_marker_pct": 29.7,
+      "LL_marker_pct": 28.0,
+      "HL_only_pct": 14.3,
+      "LL_only_pct": 12.6,
+      "hl_only_minus_ll_only": 15
+    },
+    "stable_adopt": {
+      "n": 586,
+      "HL_marker_pct": 18.3,
+      "LL_marker_pct": 14.8,
+      "HL_only_pct": 11.4,
+      "LL_only_pct": 8.0,
+      "hl_only_minus_ll_only": 20
+    },
+    "ISB": {
+      "n": 149,
+      "HL_marker_pct": 20.1,
+      "LL_marker_pct": 28.9,
+      "HL_only_pct": 10.1,
+      "LL_only_pct": 18.8,
+      "hl_only_minus_ll_only": -13
+    },
+    "vigilance": {
+      "n": 210,
+      "HL_marker_pct": 39.0,
+      "LL_marker_pct": 21.0,
+      "HL_only_pct": 24.3,
+      "LL_only_pct": 6.2,
+      "hl_only_minus_ll_only": 38
+    },
+    "proto_vigilance": {
+      "n": 64,
+      "HL_marker_pct": 21.9,
+      "LL_marker_pct": 7.8,
+      "HL_only_pct": 17.2,
+      "LL_only_pct": 3.1
+    },
+    "proto_ISB": {
+      "n": 37,
+      "HL_marker_pct": 18.9,
+      "LL_marker_pct": 2.7,
+      "HL_only_pct": 18.9,
+      "LL_only_pct": 2.7
+    },
+    "mixed_other": {
+      "n": 33,
+      "HL_marker_pct": 6.1,
+      "LL_marker_pct": 15.2,
+      "HL_only_pct": 3.0,
+      "LL_only_pct": 12.1
+    },
+    "absent_pair": {
+      "n": 27,
+      "HL_marker_pct": 14.8,
+      "LL_marker_pct": 7.4,
+      "HL_only_pct": 14.8,
+      "LL_only_pct": 7.4
+    }
+  }
+}

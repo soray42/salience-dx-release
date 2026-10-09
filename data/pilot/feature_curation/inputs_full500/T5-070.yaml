@@ -1,0 +1,170 @@
+seed_id: T5-070
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I am choosing between two reformer pilates studios near me. I have been doing
+  reformer classes for about a year and want to keep progressing. Both offer similar
+  class formats and have instructors with standard credentials. The studios are roughly
+  the same travel time from my flat, and the monthly cost is within ten euros of each
+  other. {DS}
+focal_diagnostic_feature: Studio A offers reformer classes at 6:30 a.m. on Tuesdays
+  and Thursdays, the only two mornings the user can attend before work; Studio B's
+  earliest class starts at 9:00 a.m., after the user's work begins.
+low_diagnostic_proposition: A studio that invests this way in its space is probably
+  operating at a higher level.
+oracle_action: ANSWER
+oracle_focus: Choose Studio A; it is the only option with classes that fit the user's
+  pre-work window, making it the only feasible choice regardless of Studio B's aesthetics.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer programme quality from a studio renovation.
+  Ask what class times each studio offers and whether either fits the user's schedule.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer programme quality from a studio renovation. Ask what class
+      times each studio offers and whether either fits the user's schedule.
+  LL:
+    action: ASK
+    focus: Do not infer programme quality from a studio renovation. Ask what class
+      times each studio offers and whether either fits the user's schedule.
+  HH:
+    action: ANSWER
+    focus: Choose Studio A; it is the only option with classes that fit the user's
+      pre-work window, making it the only feasible choice regardless of Studio B's
+      aesthetics.
+  LH:
+    action: ANSWER
+    focus: Choose Studio A; it is the only option with classes that fit the user's
+      pre-work window, making it the only feasible choice regardless of Studio B's
+      aesthetics.
+variants:
+  HL:
+    distractor: Studio B just finished a full renovation — grey upholstered reformers,
+      warm track lighting, and clean branded signage throughout; a studio that invests
+      this way in its space is probably operating at a higher level.
+    diagnosticity: low
+    salience: high
+    proposition: A studio that invests this way in its space is probably operating
+      at a higher level.
+    salience_source: D/B — three specific renovation details (grey upholstered reformers,
+      warm track lighting, branded signage), a narrative of a freshly completed fit-out,
+      and an explicit inferential bridge asserted with confidence.
+    why_plausible: A recent, expensive studio renovation could suggest a business
+      that is serious about the client experience and willing to reinvest in quality,
+      making it tempting to equate the investment with programme standards.
+    why_irrelevant: Renovation investment reflects interior design choices, not instructor
+      quality or scheduling; the focal evidence shows Studio B's earliest class is
+      after the user's work starts, making the studio unusable regardless of its appearance.
+  LL:
+    distractor: Studio B has a newly renovated interior; a studio that invests this
+      way in its space is probably operating at a higher level.
+    diagnosticity: low
+    salience: low
+    proposition: A studio that invests this way in its space is probably operating
+      at a higher level.
+    matched_to: HL
+  HH:
+    distractor: Studio A runs reformer sessions at 6:30 on Tuesdays and Thursdays,
+      which are the only two mornings I can get there before work; Studio B's earliest
+      class is 9:00, which is after I need to be in the office.
+    diagnosticity: high
+    salience: high
+    proposition: Studio A offers reformer classes at 6:30 a.m. on Tuesdays and Thursdays,
+      the only two mornings the user can attend before work; Studio B's earliest class
+      starts at 9:00 a.m., after the user's work begins.
+    salience_source: B/C — precise class times (6:30 vs 9:00), specific days (Tuesdays
+      and Thursdays), first-person confirmation of the only available window, and
+      the direct consequence ("after I need to be in the office") make this vivid
+      and conclusive.
+  LH:
+    distractor: Studio A's 6:30 a.m. classes fit the user's pre-work window on two
+      days; Studio B's earliest class is 9:00 a.m., after work begins.
+    diagnosticity: high
+    salience: low
+    proposition: Studio A offers reformer classes at 6:30 a.m. on Tuesdays and Thursdays,
+      the only two mornings the user can attend before work; Studio B's earliest class
+      starts at 9:00 a.m., after the user's work begins.
+    matched_to: HH
+distractor_direction:
+  label: studio renovation signals programme quality
+  description: Treating Studio B's recently renovated interior as evidence that it
+    operates at a higher instructional level and is the better choice.
+plausible_alternative_directions:
+- label: instructor experience and style
+  description: One instructor may have deeper reformer-specific experience, specialisation
+    in progression, or a teaching style better matched to the user's level.
+- label: class size and individual attention
+  description: One studio may run smaller classes or offer more individual cueing,
+    which would meaningfully affect how quickly the user progresses.
+leak_audit:
+  ll_atomic_claims:
+  - Studio B has a newly renovated interior.
+  - A studio that invests this way in its space is probably operating at a higher
+    level.
+  hh_atomic_claims:
+  - Studio A runs reformer sessions at 6:30 on Tuesdays and Thursdays.
+  - Tuesdays and Thursdays are the only two mornings the user can attend before work.
+  - Studio B's earliest class is at 9:00.
+  - 9:00 is after the user needs to be in the office.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observation, no named external source
+    narrative_coherence: First-person visit to the freshly renovated studio with specific
+      named design elements, flowing into a confident inferential bridge about programme
+      quality.
+    confident_assertion: '''probably operating at a higher level'''
+    concrete_detail: Three specific renovation details (grey upholstered reformers,
+      warm track lighting, branded signage) — all about the studio's visual surface,
+      not about class content.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 58
+  hl_word_count: 34
+  ll_word_count: 23
+  hh_word_count: 39
+  lh_word_count: 23
+  notes: 'T5 inferential bridge ("a studio that invests this way in its space is probably
+
+    operating at a higher level") appears in both HL and LL per C1 and self-check
+    13.
+
+    HL adds concrete renovation details (equipment upholstery, lighting style, signage)
+
+    that are about the studio surface only. LH compresses the four HH claims to twenty
+
+    words; "the only two mornings" in HH maps to "on two days" in LH, which is a flat
+
+    restatement of the same claim. HL:LL = 34:23 = 1.5; HH:LH = 39:23 = 1.7.
+
+    '
+causal_audit:
+  steelman: 'A studio that invests in a full renovation — new equipment, professional
+    lighting,
+
+    branded signage — is likely operating with a stronger business model and higher
+
+    revenue. This could indicate a larger client base, higher instructor compensation
+
+    attracting better talent, and a management team that reinvests profits into quality.
+
+    On this view, studio aesthetics are a weak but non-zero signal of operational
+
+    seriousness and may correlate with programme quality at the margins.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing between two reformer pilates studios where Studio A's 6:30
+    a.m. classes are the only fit for the user's pre-work window while Studio B's
+    earliest class starts after work begins, against the aesthetic inference that
+    Studio B's newly renovated interior signals a higher-quality programme.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

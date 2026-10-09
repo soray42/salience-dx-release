@@ -1,0 +1,185 @@
+seed_id: T5-068
+template: T5
+domain: open_qa
+complexity: high
+xbase: I am looking for a personal trainer to help me build strength over the next
+  six months. I have visited both trainers' facilities and spoken briefly with each
+  of them. Results matter most to me, but I also need someone who can work with my
+  6:00 a.m. weekday availability. My budget is roughly the same for either option.
+  {DS}
+focal_diagnostic_feature: Trainer B holds an NSCA-CSCS certification, four of five
+  recent clients met their strength goals within twelve weeks, and has 6:00 a.m. weekday
+  slots available; Trainer A holds no verifiable certification, has no trackable client
+  outcome data, and does not offer early-morning sessions.
+low_diagnostic_proposition: A training facility this polished is likely run by a more
+  effective trainer.
+oracle_action: ANSWER
+oracle_focus: Choose Trainer B — the certified qualification, documented client outcomes,
+  and schedule fit all point to a clearly better match for the user's stated priorities.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer trainer effectiveness from facility aesthetics.
+  Ask about certifications, client outcome data, and whether either trainer can cover
+  the 6:00 a.m. weekday slots.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer trainer effectiveness from facility aesthetics. Ask about
+      certifications, client outcome data, and whether either trainer can cover the
+      6:00 a.m. weekday slots.
+  LL:
+    action: ASK
+    focus: Do not infer trainer effectiveness from facility aesthetics. Ask about
+      certifications, client outcome data, and whether either trainer can cover the
+      6:00 a.m. weekday slots.
+  HH:
+    action: ANSWER
+    focus: Choose Trainer B — the certified qualification, documented client outcomes,
+      and schedule fit all point to a clearly better match for the user's stated priorities.
+  LH:
+    action: ANSWER
+    focus: Choose Trainer B — the certified qualification, documented client outcomes,
+      and schedule fit all point to a clearly better match for the user's stated priorities.
+variants:
+  HL:
+    distractor: Trainer A's studio has brand-new Rogue equipment, spotless floors,
+      and professional signage throughout; a facility this polished is almost certainly
+      run by someone who delivers better results and operates at a higher level.
+    diagnosticity: low
+    salience: high
+    proposition: A training facility this polished is likely run by a more effective
+      trainer.
+    salience_source: D/B — specific named equipment (Rogue), concrete visual details
+      (spotless floors, professional signage), clean narrative of a visited space
+      making a strong impression, plus an explicit inferential bridge presented with
+      confidence ("almost certainly").
+    why_plausible: Premium equipment and a polished studio suggest business investment,
+      which can correlate loosely with professional commitment; a busy person could
+      easily let the impressiveness of the space stand in for deeper vetting.
+    why_irrelevant: Facility aesthetics reflect capital investment and design choices,
+      not the trainer's qualifications, coaching methodology, or ability to produce
+      client results; the focal evidence shows Trainer A has no verifiable certification
+      and no trackable outcomes, directly contradicting any quality signal from equipment
+      brand.
+  LL:
+    distractor: Trainer A's facility is polished and well-equipped; a facility this
+      polished is likely operated by a more effective trainer.
+    diagnosticity: low
+    salience: low
+    proposition: A training facility this polished is likely run by a more effective
+      trainer.
+    matched_to: HL
+  HH:
+    distractor: Trainer B is NSCA-CSCS certified, four out of five of their recent
+      clients hit their stated strength goal in under twelve weeks, and they have
+      6:00 a.m. slots open; Trainer A showed no certification, could not point me
+      to client results, and does not do early-morning sessions.
+    diagnosticity: high
+    salience: high
+    proposition: Trainer B holds an NSCA-CSCS certification, four of five recent clients
+      met their strength goals within twelve weeks, and has 6:00 a.m. weekday slots
+      available; Trainer A holds no verifiable certification, has no trackable client
+      outcome data, and does not offer early-morning sessions.
+    salience_source: B/C — specific credential name (NSCA-CSCS), concrete success
+      rate (4 of 5 clients, under twelve weeks), explicit schedule availability, and
+      a direct comparison to Trainer A's gaps create a vivid, information-rich account
+      that reads as a confident first-person assessment.
+  LH:
+    distractor: Trainer B holds NSCA-CSCS certification, has a strong client success
+      rate, and offers 6:00 a.m. slots; Trainer A has none of these.
+    diagnosticity: high
+    salience: low
+    proposition: Trainer B holds an NSCA-CSCS certification, four of five recent clients
+      met their strength goals within twelve weeks, and has 6:00 a.m. weekday slots
+      available; Trainer A holds no verifiable certification, has no trackable client
+      outcome data, and does not offer early-morning sessions.
+    matched_to: HH
+distractor_direction:
+  label: facility polish signals quality
+  description: Treating Trainer A's polished, well-equipped studio as evidence of
+    superior coaching quality and better results.
+plausible_alternative_directions:
+- label: coaching style compatibility
+  description: The trainer's communication style, cuing approach, and personality
+    fit with the user may matter as much as credentials for adherence over six months.
+- label: client demographic and goal alignment
+  description: One trainer may specialise in a user population or goal type (e.g.,
+    powerlifting vs general strength) that better matches the user's specific needs.
+- label: session structure and programming depth
+  description: The quality of the periodised programme each trainer designs — not
+    just certifications — may differ in ways worth asking about directly.
+leak_audit:
+  ll_atomic_claims:
+  - Trainer A's facility is polished and well-equipped.
+  - A facility this polished is likely operated by a more effective trainer.
+  hh_atomic_claims:
+  - Trainer B holds NSCA-CSCS certification.
+  - Four of five of Trainer B's recent clients hit their strength goal.
+  - Trainer B's clients hit their goal in under twelve weeks.
+  - Trainer B has 6:00 a.m. slots available.
+  - Trainer A showed no certification.
+  - Trainer A could not provide client results.
+  - Trainer A does not offer early-morning sessions.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observation, no named external source
+    narrative_coherence: First-person visit account with specific named equipment
+      and vivid visual impression, flowing naturally into the inferential bridge.
+    confident_assertion: '''almost certainly run by someone who delivers better results'''
+    concrete_detail: Named equipment brand (Rogue), specific surface details (spotless
+      floors, professional signage) about the visited facility.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 58
+  hl_word_count: 33
+  ll_word_count: 19
+  hh_word_count: 47
+  lh_word_count: 22
+  notes: 'T5 inferential bridge ("a facility this polished is likely run by / operated
+    by
+
+    a more effective trainer") appears in both HL and LL per C1 and self-check 13.
+
+    HL adds the specific equipment name (Rogue) and visual detail about the source
+
+    setting, which are about the facility surface, not case content. LH compresses
+
+    the seven HH claims to three short clauses; "none of these" covers the Trainer
+    A
+
+    gaps. The "high" complexity is calibrated via the multi-axis comparison structure
+
+    (certification + client outcomes + schedule) and the T5 inferential reasoning
+
+    required.
+
+    '
+causal_audit:
+  steelman: 'A premium training space requires significant capital investment in equipment,
+
+    rent, and fit-out. A trainer who makes that investment might plausibly have a
+
+    stronger business orientation, higher self-standards, or a more demanding
+
+    clientele — all of which could correlate with better outcomes. On this view,
+
+    facility polish is not a random signal; it reflects the trainer''s commitment
+
+    level and professional ambitions.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing a personal trainer for a six-month strength goal where Trainer
+    B's NSCA-CSCS credential, 4-of-5 client success rate, and 6:00 a.m. availability
+    clearly dominate, against the aesthetic inference that Trainer A's polished Rogue
+    studio signals superior coaching quality.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

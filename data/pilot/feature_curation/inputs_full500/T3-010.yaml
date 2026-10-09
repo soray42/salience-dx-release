@@ -1,0 +1,92 @@
+seed_id: T3-010
+template: T3
+domain: open_qa
+complexity: low
+xbase: A friend is asking to borrow €2,000 and says they will repay me 'soon'. I have
+  €5,000 saved and am trying to build a deposit for a flat. We have not discussed
+  a written repayment plan. {DS}
+focal_diagnostic_feature: This same friend has had three previous loans from the user;
+  only one was fully repaid, one was partial after 18 months, and one was never repaid.
+low_diagnostic_proposition: A family elder says helping friends financially should
+  be treated as a moral duty.
+oracle_action: ANSWER
+oracle_focus: Do not lend €2,000 on a vague verbal promise; at most offer a smaller
+  amount you can afford to treat as a gift.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a moral proverb replace repayment evidence.
+  Ask for the friend's repayment history and whether the user can afford to lose the
+  money.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a moral proverb replace repayment evidence. Ask for the friend's
+      repayment history and whether the user can afford to lose the money.
+  LL:
+    action: ASK
+    focus: Do not let a moral proverb replace repayment evidence. Ask for the friend's
+      repayment history and whether the user can afford to lose the money.
+  HH:
+    action: ANSWER
+    focus: Do not lend €2,000 on a vague verbal promise; at most offer a smaller amount
+      you can afford to treat as a gift.
+  LH:
+    action: ANSWER
+    focus: Do not lend €2,000 on a vague verbal promise; at most offer a smaller amount
+      you can afford to treat as a gift.
+variants:
+  HL:
+    distractor: My grandmother always said, 'real friends never refuse help in hard
+      times,' and I can practically hear her judging me for saying no.
+    diagnosticity: low
+    salience: high
+    proposition: A family elder says helping friends financially should be treated
+      as a moral duty.
+    salience_source: family authority, quoted proverb, shame pressure
+    why_plausible: Family norms can feel morally binding and override calculation.
+    why_irrelevant: The relevant evidence is this friend's repayment record and the
+      user's savings goal, not a general proverb.
+  LL:
+    distractor: A family elder expressed that helping friends financially is a strong
+      moral obligation.
+    diagnosticity: low
+    salience: low
+    proposition: A family elder says helping friends financially should be treated
+      as a moral duty.
+    matched_to: HL
+  HH:
+    distractor: 'This friend has borrowed from me three times before: one full repayment,
+      one partial repayment after 18 months, and one loan that never came back.'
+    diagnosticity: high
+    salience: high
+    proposition: This same friend has had three previous loans from the user; only
+      one was fully repaid, one was partial after 18 months, and one was never repaid.
+    salience_source: specific repayment history
+  LH:
+    distractor: 'The friend''s repayment history is poor: one prior loan repaid, one
+      partially repaid after 18 months, and one unpaid.'
+    diagnosticity: high
+    salience: low
+    proposition: This same friend has had three previous loans from the user; only
+      one was fully repaid, one was partial after 18 months, and one was never repaid.
+    matched_to: HH
+distractor_direction:
+  label: Moral-duty lending
+  description: Treating the loan decision primarily as an obligation to help a friend
+    financially.
+plausible_alternative_directions:
+- label: Written repayment plan
+  description: Whether a clear written schedule, date, or collateral exists for repayment.
+- label: Gift-affordability framing
+  description: Whether the user can afford to treat some smaller amount as a non-repayable
+    gift.
+- label: Relationship-boundary risk
+  description: Whether refusing or reducing the loan would damage the friendship more
+    than the money risk.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

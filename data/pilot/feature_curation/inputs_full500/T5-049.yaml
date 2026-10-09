@@ -1,0 +1,164 @@
+seed_id: T5-049
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: I use the sqlite3 command-line tool's dot-backup command to back up a small
+  production SQLite database every night. A colleague is arguing that the backup is
+  probably incomplete or corrupt because the sqlite3 CLI looks too primitive to handle
+  a live database safely. We have been using this process for three months without
+  a reported restore failure. {DS}
+focal_diagnostic_feature: Running PRAGMA integrity_check on the backup file returns
+  'ok', and the backup page count matches the source database exactly.
+low_diagnostic_proposition: The sqlite3 CLI's plain minimalist appearance suggests
+  it lacks the sophistication to produce a reliable live-database backup.
+oracle_action: ANSWER
+oracle_focus: The backup is sound; the dot-backup command uses SQLite's Online Backup
+  API, which safely copies a live database without corruption — the integrity check
+  result confirms this directly.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer backup reliability from the CLI's visual
+  simplicity; ask for the result of PRAGMA integrity_check on the backup file and
+  whether any restore test has been performed.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer backup reliability from the CLI's visual simplicity; ask for
+      the result of PRAGMA integrity_check on the backup file and whether any restore
+      test has been performed.
+  LL:
+    action: ASK
+    focus: Do not infer backup reliability from the CLI's visual simplicity; ask for
+      the result of PRAGMA integrity_check on the backup file and whether any restore
+      test has been performed.
+  HH:
+    action: ANSWER
+    focus: The backup is sound; the dot-backup command uses SQLite's Online Backup
+      API, which safely copies a live database without corruption — the integrity
+      check result confirms this directly.
+  LH:
+    action: ANSWER
+    focus: The backup is sound; the dot-backup command uses SQLite's Online Backup
+      API, which safely copies a live database without corruption — the integrity
+      check result confirms this directly.
+variants:
+  HL:
+    distractor: The sqlite3 prompt is a bare greater-than symbol — no progress bar,
+      no output, nothing during the entire backup run. A tool that gives no feedback
+      while copying a live database cannot be trusted to produce a consistent, uncorrupted
+      snapshot.
+    diagnosticity: low
+    salience: high
+    proposition: The sqlite3 CLI's plain minimalist appearance suggests it lacks the
+      sophistication to produce a reliable live-database backup.
+    salience_source: 'B: vivid specific detail about the CLI appearance (bare prompt,
+      no progress bar, silent during backup); C: the inferential bridge (no visual
+      feedback → cannot be trusted for consistent snapshots) is stated as a confident
+      conclusion.'
+    why_plausible: A tool that gives no output during a backup operation genuinely
+      makes it impossible to verify progress interactively, and silent backup tools
+      have historically hidden errors; a busy engineer seeing no feedback might reasonably
+      question whether the copy completed.
+    why_irrelevant: Visual output and terminal polish are diagnostically empty for
+      backup integrity; PRAGMA integrity_check directly tests the page structure and
+      checksum validity of the output file, regardless of what the copying tool displayed.
+  LL:
+    distractor: The sqlite3 CLI's minimalist plain appearance suggests it is too basic
+      to produce a reliable backup of a live database.
+    diagnosticity: low
+    salience: low
+    proposition: The sqlite3 CLI's plain minimalist appearance suggests it lacks the
+      sophistication to produce a reliable live-database backup.
+    matched_to: HL
+  HH:
+    distractor: 'I ran PRAGMA integrity_check on last night''s backup file and it
+      returned a single row: ''ok''. The backup contains exactly the same page count
+      as the live database, and a restore test into a temporary file opened cleanly
+      with all expected rows.'
+    diagnosticity: high
+    salience: high
+    proposition: Running PRAGMA integrity_check on the backup file returns 'ok', and
+      the backup page count matches the source database exactly.
+    salience_source: 'B: specific pragma command named, ''ok'' result quoted, page-count
+      match and restore test stated; C: ''opened cleanly with all expected rows''
+      is a definitive confirmation.'
+  LH:
+    distractor: PRAGMA integrity_check on the backup returns 'ok', page count matches
+      the source, and a restore test confirmed all expected rows.
+    diagnosticity: high
+    salience: low
+    proposition: Running PRAGMA integrity_check on the backup file returns 'ok', and
+      the backup page count matches the source database exactly.
+    matched_to: HH
+distractor_direction:
+  label: CLI visual simplicity as unreliability signal
+  description: Treating the sqlite3 terminal tool's plain, silent interface as evidence
+    that the backup it produces is incomplete or unsafe.
+plausible_alternative_directions:
+- label: Write-ahead log not included
+  description: If the database runs in WAL mode, a naive file copy would miss the
+    WAL file; confirming whether dot-backup captures the WAL is a live concern.
+- label: Backup destination disk space
+  description: Running out of space partway through the backup would silently truncate
+    the output file, which is worth verifying independently of integrity checks.
+- label: Restore process untested
+  description: The backup may be structurally valid but the restore procedure itself
+    — permissions, target path, version compatibility — has not been tested end-to-end.
+leak_audit:
+  ll_atomic_claims:
+  - The sqlite3 CLI's minimalist plain appearance suggests it is too basic for reliable
+    live-database backup.
+  hh_atomic_claims:
+  - PRAGMA integrity_check on the backup file returned 'ok'.
+  - The backup page count matches the live database.
+  - A restore test into a temporary file opened cleanly with all expected rows.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person (colleague's view expressed through speaker).
+    narrative_coherence: Detailed vivid description of the CLI's visual limitations
+      (bare prompt, no progress bar, silent).
+    confident_assertion: 'The inferential bridge is stated definitively: ''cannot
+      be trusted to produce a consistent, uncorrupted snapshot.'''
+    concrete_detail: Bare greater-than prompt, no progress bar, silent during backup
+      — all describe the tool's interface appearance, not the backup output.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 67
+  hl_word_count: 39
+  ll_word_count: 17
+  hh_word_count: 42
+  lh_word_count: 20
+  notes: 'T5 inferential bridge (visual simplicity → unreliability) appears in both
+    HL (reasoned through) and LL (stated flatly). C4 check: xbase discloses the backup
+    tool and the colleague''s concern, but NOT the integrity check result or page
+    count (those live in HH/LH). LH is at the 14-word minimum — checked carefully.
+    Root cause (backup integrity confirmed by pragma) is distinct from all taken seeds.
+    Low complexity appropriate: a single integrity_check command resolves it.
+
+    '
+causal_audit:
+  steelman: 'A practitioner could argue: the sqlite3 CLI''s silent dot-backup gives
+    no feedback on whether the backup started, whether it captured all pages, or whether
+    it completed before the database was modified. In WAL mode, the dot-backup may
+    not automatically checkpoint the WAL, leaving committed data out of the copy if
+    not handled correctly. Without a progress indicator a failure could look identical
+    to success at the shell level.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: PRAGMA integrity_check is a direct structural test of the
+    backup file's page consistency and checksums — it reports 'ok' only when all pages
+    pass. This result is independent of the CLI's visual output during the copy operation.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: SQLite dot-backup command producing valid backups confirmed by PRAGMA
+    integrity_check, against aesthetic inference that the minimalist sqlite3 CLI is
+    too basic for reliable live-database backups.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

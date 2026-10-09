@@ -1,0 +1,184 @@
+seed_id: T6-083
+template: T6
+domain: open_qa
+complexity: medium
+xbase: My rear tire has flatted three times in the past two weeks on the same road
+  bike. Each time I replace the inner tube and the tire holds air for one or two rides,
+  then goes flat again. The bike lives indoors, the wheel rim looks fine, and I have
+  checked the rim tape each time. {DS}
+focal_diagnostic_feature: Careful fingertip inspection of the inside of the tire casing
+  reveals a 4 mm glass shard embedded in the rubber and pointing inward, which pierces
+  each replacement tube after one or two rides.
+low_diagnostic_proposition: All prior flats for this user were simple tube punctures,
+  so this recurrence is probably another defective or unlucky tube.
+oracle_action: ANSWER
+oracle_focus: Remove the embedded glass shard from the tire casing — or replace the
+  tire if the shard has left a through-hole — before fitting another tube; tube replacement
+  alone will not fix a recurring casing-embedded cause.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to a defective or unlucky tube from prior
+  experience. Ask whether the tire casing itself has been checked for embedded debris
+  or damage before replacing the tube again.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to a defective or unlucky tube from prior experience. Ask
+      whether the tire casing itself has been checked for embedded debris or damage
+      before replacing the tube again.
+  LL:
+    action: ASK
+    focus: Do not default to a defective or unlucky tube from prior experience. Ask
+      whether the tire casing itself has been checked for embedded debris or damage
+      before replacing the tube again.
+  HH:
+    action: ANSWER
+    focus: Remove the embedded glass shard from the tire casing — or replace the tire
+      if the shard has left a through-hole — before fitting another tube; tube replacement
+      alone will not fix a recurring casing-embedded cause.
+  LH:
+    action: ANSWER
+    focus: Remove the embedded glass shard from the tire casing — or replace the tire
+      if the shard has left a through-hole — before fitting another tube; tube replacement
+      alone will not fix a recurring casing-embedded cause.
+variants:
+  HL:
+    distractor: Every flat I have fixed on this bike or any other has been a simple
+      tube puncture — a thorn, glass, or pinch — so my whole habit is to swap the
+      tube and call it done; replacing the tube again feels like the natural move
+      here.
+    diagnosticity: low
+    salience: high
+    proposition: All prior flats for this user were simple tube punctures, so this
+      recurrence is probably another defective or unlucky tube.
+    salience_source: B/C — vivid first-person personal history ("every flat I have
+      fixed on this bike or any other") stated with confident habitual framing.
+    why_plausible: Three consecutive flats could plausibly be bad luck with tubes,
+      especially if the last batch of replacements came from a questionable source;
+      swapping tubes is the familiar, low-effort response.
+    why_irrelevant: An embedded casing shard is structurally different from a tube
+      defect; past tube-puncture history tells nothing about whether the tire casing
+      currently contains debris, and the shard persists across every tube replacement.
+  LL:
+    distractor: All prior flats for this user were simple tube punctures, so this
+      recurrence is probably another defective or unlucky tube.
+    diagnosticity: low
+    salience: low
+    proposition: All prior flats for this user were simple tube punctures, so this
+      recurrence is probably another defective or unlucky tube.
+    matched_to: HL
+  HH:
+    distractor: Running a fingertip slowly around the inside of the tire casing turns
+      up a 4 mm shard of glass embedded in the rubber and pointing inward; it has
+      been pricking each new tube after one or two rides.
+    diagnosticity: high
+    salience: high
+    proposition: Careful fingertip inspection of the inside of the tire casing reveals
+      a 4 mm glass shard embedded in the rubber and pointing inward, which pierces
+      each replacement tube after one or two rides.
+    salience_source: The specific 4 mm measurement, the inward orientation, and the
+      causal mechanism (pricking each tube) make the embedded shard finding vivid
+      and immediately actionable.
+  LH:
+    distractor: A 4 mm glass shard is embedded in the tire casing, pointing inward,
+      and punctures each replacement tube after a ride or two.
+    diagnosticity: high
+    salience: low
+    proposition: Careful fingertip inspection of the inside of the tire casing reveals
+      a 4 mm glass shard embedded in the rubber and pointing inward, which pierces
+      each replacement tube after one or two rides.
+    matched_to: HH
+distractor_direction:
+  label: Defective replacement tubes
+  description: Treating the recurring flats as bad luck with a series of defective
+    or fragile inner tubes rather than investigating the tire casing for a persistent
+    embedded cause.
+plausible_alternative_directions:
+- label: Pinch flat from low tyre pressure
+  description: Consistently riding with under-inflated tyres can cause pinch flats
+    that feel like spontaneous tube failures, especially on road bikes.
+- label: Rim tape failure
+  description: A gap or tear in the rim tape exposing a spoke hole could puncture
+    tubes at a consistent location even though the tape looks intact from the outside.
+- label: Valve stem failure
+  description: A valve core that unseats or a stem that cracks near the rim hole can
+    cause repeated slow deflation that mimics puncture behaviour.
+leak_audit:
+  ll_atomic_claims:
+  - All prior flats for this user were simple tube punctures.
+  - This recurrence is probably another defective or unlucky tube.
+  hh_atomic_claims:
+  - A 4 mm glass shard is embedded in the tire casing.
+  - The shard is pointing inward.
+  - The shard pierces each replacement tube after one or two rides.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: A confident first-person account of personal repair history
+      across this bike and others, ending in a natural habitual conclusion.
+    confident_assertion: '"every flat I have fixed", "my whole habit is to swap the
+      tube and call it done" — confident habitual framing.'
+    concrete_detail: Examples of past puncture types (thorn, glass, pinch) are about
+      past cases, not this case's casing condition.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 57
+  hl_word_count: 44
+  ll_word_count: 20
+  hh_word_count: 38
+  lh_word_count: 23
+  notes: 'T6 availability: the user''s past experience of tube punctures as the sole
+    cause
+
+    of flats is structurally different from the present case (casing-embedded debris).
+
+    xbase establishes that rim tape has been checked (closing that pathway) without
+
+    naming the casing-shard cause. The availability inference appears in both HL and
+    LL
+
+    as required. HH/LH carry the casing-shard finding at precisely matching claims.
+
+    Ratios HL:LL=44:20=2.2, HH:LH=38:23=1.65 — both within 4:1.
+
+    '
+causal_audit:
+  steelman: 'Three consecutive tube failures in two weeks is unusual enough that defective
+
+    tubes from the same batch are a plausible explanation. If a batch of inner tubes
+
+    has a manufacturing defect — thin walls, faulty valve crimping — multiple units
+
+    from the same pack could fail in quick succession. Past experience of tube punctures
+
+    is entirely consistent with this scenario. However, the past experience provides
+    no
+
+    information about whether THIS tire casing contains debris, and the rim tape having
+
+    been checked each time rules out the easiest alternative. The embedded-shard focal
+
+    evidence is the only finding that explains why each individual new tube fails
+    at
+
+    roughly the same usage point. Defective batch is a prior but is defeated by the
+
+    specific physical finding.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the rim tape has been checked each time, ruling
+    out the rim-tape pathway. The bike living indoors rules out prolonged UV or storage
+    damage to the casing.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Recurring road bike rear flats caused by a glass shard embedded in
+    the tire casing; user's availability bias toward tube defects from prior flat
+    experience leads them to keep replacing tubes without inspecting the casing.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

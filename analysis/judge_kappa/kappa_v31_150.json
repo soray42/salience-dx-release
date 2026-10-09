@@ -1,0 +1,37 @@
+{
+  "judge_a": "data/full/judge_deepseek_v31.ndjson",
+  "judge_b": "analysis/judge_kappa/gemini_v31_sample.ndjson",
+  "n": 150,
+  "pct_agree": 92.7,
+  "cohen_kappa": 0.855,
+  "kappa_ci_seed_bootstrap": [
+    0.769,
+    0.932
+  ],
+  "models": {
+    "llama3.1:8b": 50,
+    "claude-sonnet-4-6": 50,
+    "google/gemma-4-31B-it": 50
+  },
+  "cells": {
+    "LL": 75,
+    "HL": 75
+  },
+  "per_model": {
+    "claude-sonnet-4-6": {
+      "n": 50,
+      "pct_agree": 96.0,
+      "cohen_kappa": 0.892
+    },
+    "google/gemma-4-31B-it": {
+      "n": 50,
+      "pct_agree": 94.0,
+      "cohen_kappa": 0.875
+    },
+    "llama3.1:8b": {
+      "n": 50,
+      "pct_agree": 88.0,
+      "cohen_kappa": 0.776
+    }
+  }
+}

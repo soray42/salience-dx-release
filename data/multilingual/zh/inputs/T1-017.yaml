@@ -1,0 +1,177 @@
+seed_id: T1-017
+template: T1
+domain: open_qa
+complexity: low
+xbase: 我正在考虑要不要继续保留健身房会员资格，还是取消。每月费用是45欧元，我在一月份报名时打算每周去三次。我喜欢去健身房这个念头，但一直告诉自己这个月情况会改变。我已经每天早上在户外跑步，所以我不依赖健身房来保持运动。合同下周自动续签，所以我必须现在做决定。{DS}
+focal_diagnostic_feature: 用户自己的签到记录显示，过去六个月内共入场四次。
+low_diagnostic_proposition: An acquaintance cancelled a similar membership and then
+  regretted losing their fitness habit.
+oracle_action: ANSWER
+oracle_focus: Cancel the membership; the user's own near-zero attendance over six
+  months means they are paying for access they do not use, and renewing repeats that.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one acquaintance's regret decide this. Ask
+  how often the user has actually attended and whether the spend matches their real
+  usage.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one acquaintance's regret decide this. Ask how often the user
+      has actually attended and whether the spend matches their real usage.
+  LL:
+    action: ASK
+    focus: Do not let one acquaintance's regret decide this. Ask how often the user
+      has actually attended and whether the spend matches their real usage.
+  HH:
+    action: ANSWER
+    focus: Cancel the membership; the user's own near-zero attendance over six months
+      means they are paying for access they do not use, and renewing repeats that.
+  LH:
+    action: ANSWER
+    focus: Cancel the membership; the user's own near-zero attendance over six months
+      means they are paying for access they do not use, and renewing repeats that.
+variants:
+  HL:
+    distractor: 我以前读书会的Beatriz去年春天取消了她的健身房会员，告诉大家她以后就在户外跑步，到了八月她坦白说自己后悔失去了锻炼习惯。
+    diagnosticity: low
+    salience: high
+    proposition: An acquaintance cancelled a similar membership and then regretted
+      losing their fitness habit.
+    salience_source: A — named acquaintance with a coherent, dated personal account
+      lends the regret story credibility.
+    why_plausible: Loss of a structuring routine is a real risk people face when they
+      cancel, so the cautionary tale feels relevant.
+    why_irrelevant: Another person's experience of losing a habit says nothing about
+      whether THIS user actually uses the membership; the deciding fact is the user's
+      own attendance.
+  LL:
+    distractor: 一个认识的人取消了类似的健身房会员资格，之后后悔失去了锻炼习惯。
+    diagnosticity: low
+    salience: low
+    proposition: An acquaintance cancelled a similar membership and then regretted
+      losing their fitness habit.
+    matched_to: HL
+  HH:
+    distractor: 我好奇心驱使打开了健身房应用的签到记录，它显示自一月份以来我实际刷卡进入的次数恰好是四次——六个整月里只去了四次，而这六个月我每个月都付了45欧元。
+    diagnosticity: high
+    salience: high
+    proposition: The user's own check-in records show they have entered the gym four
+      times in the past six months.
+    salience_source: Concrete first-person retrieval of the exact log count makes
+      the underuse vivid and undeniable.
+  LH:
+    distractor: 签到记录显示该用户在过去六个月内共去了四次健身房。
+    diagnosticity: high
+    salience: low
+    proposition: The user's own check-in records show they have entered the gym four
+      times in the past six months.
+    matched_to: HH
+distractor_direction:
+  label: 取消后悔
+  description: 将这个决定视为可能导致悔恨——对失去健身习惯感到遗憾，就像那个取消会员的人一样。
+plausible_alternative_directions:
+- label: 重新开始的意愿
+  description: 是否有可信的计划真正开始定期去健身房，足以证明继续保留会员资格是合理的。
+- label: 更便宜的承诺机制
+  description: 按次付费或更便宜的替代方案是否能以符合实际使用频率的成本维持健身机会。
+leak_audit:
+  ll_atomic_claims:
+  - An acquaintance cancelled a similar gym membership.
+  - That acquaintance afterwards regretted losing their exercise habit.
+  hh_atomic_claims:
+  - The user's own check-in log was consulted.
+  - It records four gym visits.
+  - Those four visits span the past six months.
+  hl_salience_dimensions:
+    source_credibility: Named acquaintance (Beatriz) recounting her own dated experience.
+    narrative_coherence: Clean spring-to-August chronology.
+    confident_assertion: N/A
+    concrete_detail: Detail about the source (book club membership, her stated plan
+      to run outside) only — no claim about the recounted case's outcome beyond the
+      regret itself.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 76
+  hl_word_count: 32
+  ll_word_count: 14
+  hh_word_count: 38
+  lh_word_count: 15
+  notes: 'LL carries only the cancel-then-regret claim; the named source, dates and
+    her running plan are HL-only and are
+
+    all about the source, not about the user''s own usage. xbase deliberately withholds
+    the attendance count so the
+
+    HL/LL cells cannot resolve the decision; it states only cost, intent, the user''s
+    existing outdoor routine, and
+
+    the renewal deadline. Repair round 1: HL previously asserted the acquaintance
+    "had stopped exercising entirely
+
+    and missed the routine of having a place to go" — a case-level severity/consequence
+    claim LL did not carry; it
+
+    is now reduced to "had come to regret losing her exercise habit", matching LL''s
+    atomic claims exactly. xbase
+
+    gained one pathway-closure sentence (an existing outdoor running routine) that
+    forecloses the commitment-device
+
+    mechanism without naming the user''s gym attendance, so the decisive attendance
+    fact still lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A senior life-coach might argue that cancelling carries a genuine behavioural
+    risk: a paid membership can
+
+    function as a commitment device, and removing it can remove the last nudge to
+    exercise at all, so the
+
+    acquaintance''s loss-of-routine regret could foreshadow the same outcome for this
+    user. That mechanism,
+
+    however, depends on the gym being this user''s only exercise structure. xbase
+    now states the user already runs
+
+    outdoors most mornings and is not relying on the gym to stay active, so cancelling
+    cannot strip away their
+
+    exercise routine — the commitment-device pathway is foreclosed and the regret
+    story has no mechanism to bear on
+
+    this user''s decision, whose deciding fact is simply whether they use the access
+    they pay for.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the user already runs outdoors most mornings
+    and is not relying on the gym to stay active, foreclosing the commitment-device
+    / loss-of-routine mechanism without naming the user's gym attendance; the decisive
+    attendance fact still lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A user weighing a gym-membership renewal, where their own four-visits-in-six-months
+    check-in record, not a friend's cancellation regret, is decisive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-017.yaml
+  source_xbase_sha256: ecddeda1abfd7f67
+  translated_content_sha256: ea016d8bd68881e7
+  translation_notes: Beatriz retained as named source to preserve HL salience. '45欧元'
+    kept as-is (currency not localized). '读书会' (book club) is a familiar concept in
+    Chinese culture. No culture-bound salience cues requiring flagging.

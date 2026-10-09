@@ -1,0 +1,210 @@
+seed_id: T2-012
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: 我的电子阅读器续航从三周骤降到两天，我的使用习惯没有任何变化——阅读习惯相同，屏幕亮度也一样。大约同一时间我买了一盏新的床头灯，但电子阅读器与它完全没有连接或插接关系。我也没有安装任何新应用，也不记得修改过任何设置。{DS}
+focal_diagnostic_feature: Wi-Fi已开启并设置为后台自动同步，而在电池开始大量耗电之前它是确认关闭的。
+low_diagnostic_proposition: 'The new bedside lamp is causing the e-reader battery
+  to drain faster.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Disable Wi-Fi or turn off background auto-sync; the enabled Wi-Fi with
+  constant background syncing is the confirmed change that explains the battery life
+  dropping from weeks to days.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Ask the user to check e-reader settings — specifically
+  Wi-Fi status, background sync, screen timeout, and whether a firmware update ran
+  recently — rather than attributing the drain to the lamp, which has no electrical
+  or physical connection to the e-reader.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: 'Ask the user to check e-reader settings — specifically Wi-Fi status, background
+      sync, screen timeout, and whether a firmware update ran recently — rather than
+      attributing the drain to the lamp, which has no electrical or physical connection
+      to the e-reader.
+
+      '
+  LL:
+    action: ASK
+    focus: 'Ask the user to check e-reader settings — specifically Wi-Fi status, background
+      sync, screen timeout, and whether a firmware update ran recently — rather than
+      attributing the drain to the lamp, which has no electrical or physical connection
+      to the e-reader.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Disable Wi-Fi or turn off background auto-sync; the enabled Wi-Fi with
+      constant background syncing is the confirmed change that explains the battery
+      life dropping from weeks to days.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Disable Wi-Fi or turn off background auto-sync; the enabled Wi-Fi with
+      constant background syncing is the confirmed change that explains the battery
+      life dropping from weeks to days.
+
+      '
+variants:
+  HL:
+    distractor: 我的邻居在一家消费电子维修店做技术员，他告诉我那种床头灯可能导致附近设备的电池加速耗电。
+    diagnosticity: low
+    salience: high
+    proposition: The new bedside lamp is causing the e-reader battery to drain faster.
+    salience_source: 'A (source credibility) + C (confident assertion): neighbor identified
+      as a consumer electronics repair technician; "told me" is a direct, confident
+      first-person report of professional knowledge.
+
+      '
+    why_plausible: 'A repair technician is a recognizable authority on device hardware;
+      the claim sounds technically grounded and specific enough to take seriously.
+
+      '
+    why_irrelevant: 'The e-reader has no electrical or physical connection to the
+      lamp; passive radiated EMI from a household lamp cannot account for a roughly
+      ten-fold reduction in battery life, and the confirmed Wi-Fi/auto-sync change
+      (HH/LH) provides a complete, parsimonious explanation.
+
+      '
+  LL:
+    distractor: 有人说新买的床头灯可能导致电子阅读器电池耗电加快。
+    diagnosticity: low
+    salience: low
+    proposition: The new bedside lamp is causing the e-reader battery to drain faster.
+    matched_to: HL
+  HH:
+    distractor: 我刚检查了设置，Wi-Fi是开启状态，后台自动同步也是打开的——我可以确认在电池开始大量耗电之前它是关闭的。
+    diagnosticity: high
+    salience: high
+    proposition: 'Wi-Fi is enabled and set to sync automatically in the background,
+      and it was confirmed off before the battery drain began.
+
+      '
+    salience_source: 'B (narrative coherence) + C (confident assertion) + D (concrete
+      believable detail): first-person verified finding with an explicit before/after
+      contrast, stated as confirmed fact rather than speculation.
+
+      '
+  LH:
+    distractor: Wi-Fi已开启且设置了后台自动同步，而在电池开始大量耗电之前它是关闭的。
+    diagnosticity: high
+    salience: low
+    proposition: 'Wi-Fi is enabled and set to sync automatically in the background,
+      and it was confirmed off before the battery drain began.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: 床头灯干扰
+  description: 新买的床头灯发出的电磁辐射正在干扰电子阅读器，导致其电池加速耗电。
+plausible_alternative_directions:
+- label: 固件更新后台进程
+  description: 自动安装的固件更新引入了后台进程或缺陷，即使设备表面处于待机状态也会持续耗电。
+- label: 屏幕或唤醒设置变更
+  description: 屏幕超时时间被延长，或某项设置导致设备更频繁地被唤醒，使屏幕保持活跃的时间更长。
+leak_audit:
+  ll_atomic_claims:
+  - The new bedside lamp could be causing the e-reader battery to drain faster.
+  hl_salience_dimensions:
+    source_credibility: neighbor identified as a consumer electronics repair technician
+    narrative_coherence: N/A
+    confident_assertion: '"told me" — direct personal communication, no hedging'
+    concrete_detail: '"consumer electronics repair shop" anchors the source setting'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 27
+  ll_word_count: 16
+  notes: 'Repair pass (qc leak p1 2026-06-11): stripped two leaks from HL.
+
+    (1) "new LED bedside lamps with high-frequency switching drivers" was
+
+    replaced with "bedside lamps like that" — the lamp-technology mechanism
+
+    phrase was other_case_content that could redirect a responder toward
+
+    asking whether the user''s specific lamp has switching drivers.
+
+    (2) "are a known cause" was replaced with "could cause" — "known cause"
+
+    escalated epistemic certainty beyond LL''s "could be causing", constituting
+
+    a severity_claim about the distractor''s causal status in the user''s case.
+
+    Post-repair HL contains only source ID (technician at repair shop),
+
+    confident speech verb ("told me"), and a tentative claim matching LL.
+
+    The why_plausible note about LED switching-driver EMI was also removed
+
+    from the field since it referenced the stripped mechanism detail.
+
+    '
+causal_audit:
+  steelman: 'LED bedside lamps with switching-mode power supplies emit electromagnetic
+
+    interference (EMI) across a broad frequency range. An e-reader on a
+
+    nightstand centimetres away could have its Wi-Fi or Bluetooth radio
+
+    disrupted, causing the radio to retry connections more aggressively and
+
+    consume more power. A consumer electronics technician could cite
+
+    documented cases of cheap LED drivers interfering with nearby wireless
+
+    devices. Some poorly shielded lamps can also emit conducted interference
+
+    if sharing a circuit — though the scenario rules out a shared electrical
+
+    connection. Even without a shared circuit, radiated EMI from a lamp
+
+    within 30 cm could in principle add marginal load to a wireless radio.
+
+    This is the strongest argument FOR the lamp hypothesis.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"the e-reader never connects to it or plugs into it in
+    any way" removes any conducted-interference pathway (shared circuit). The radiated
+    EMI pathway is not explicitly closed, but: the magnitude of the drain (roughly
+    10x) is wildly disproportionate to what household lamp EMI could cause; no mainstream
+    e-reader troubleshooting guide lists nearby lamp EMI as a checklist item; the
+    mechanism requires the e-reader radio to already be active, making it downstream
+    of the real cause rather than independent. A senior practitioner would not pursue
+    the lamp hypothesis given a confirmed Wi-Fi/sync change.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 2
+  topic_brief: 'An e-reader battery now drains in two days instead of weeks. Coincidence:
+    started right after buying a new bedside lamp. The lamp must have no mechanism
+    (the e-reader is never plugged into it; state this in xbase).
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: qc leak p1 2026-06-11
+  generator: generator_B
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-012.yaml
+  source_xbase_sha256: 3a2cea0f1ba45fd3
+  translated_content_sha256: 972b68bc562e2623
+  translation_notes: 技术术语（Wi-Fi）保留英文原名。HL的salience来源于具名来源（消费电子维修店技术员邻居）和直接确信的第一人称陈述（'告诉我'），译文均予以保留。HH的salience来源于第一人称亲自核查发现、明确的前后对比以及确信断言（'我可以确认'），译文均予以保留。床头灯的文化意象在中文语境中完全适用，无需本地化注释。

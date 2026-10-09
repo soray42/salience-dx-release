@@ -1,0 +1,170 @@
+seed_id: T6-097
+template: T6
+domain: open_qa
+complexity: low
+xbase: I found a cast-iron skillet at a garage sale this morning for a very low price.
+  The exterior has some surface rust and old seasoning residue. Every used pan I have
+  ever bought turned out to be warped, so I am hesitant. {DS}
+focal_diagnostic_feature: The skillet sits flat on a glass surface with no rocking
+  and a straight-edge across the cooking face shows no gap, confirming it is not warped.
+low_diagnostic_proposition: Past used pans this user bought have generally been warped,
+  so this one is probably warped too.
+oracle_action: ANSWER
+oracle_focus: Buy the skillet; it is not warped, surface rust and old seasoning are
+  fully restorable with standard stripping and re-seasoning.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the prior warping pattern without checking.
+  Ask whether the skillet has been tested on a flat surface or with a straight-edge
+  for warping before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the prior warping pattern without checking. Ask whether the
+      skillet has been tested on a flat surface or with a straight-edge for warping
+      before deciding.
+  LL:
+    action: ASK
+    focus: Do not apply the prior warping pattern without checking. Ask whether the
+      skillet has been tested on a flat surface or with a straight-edge for warping
+      before deciding.
+  HH:
+    action: ANSWER
+    focus: Buy the skillet; it is not warped, surface rust and old seasoning are fully
+      restorable with standard stripping and re-seasoning.
+  LH:
+    action: ANSWER
+    focus: Buy the skillet; it is not warped, surface rust and old seasoning are fully
+      restorable with standard stripping and re-seasoning.
+variants:
+  HL:
+    distractor: Every used pan I have bought has been warped — garage-sale cast iron
+      almost always is — so my instinct says this one is probably warped too and not
+      worth the risk.
+    diagnosticity: low
+    salience: high
+    proposition: Past used pans this user bought have generally been warped, so this
+      one is probably warped too.
+    salience_source: B — vivid personal history narrated in first person with confident
+      first-instinct framing; C — 'almost always is' as a strong probabilistic assertion
+      applied to the present case.
+    why_plausible: The availability pattern is real and common; a buyer who has only
+      encountered warped garage-sale pans would rationally weight that experience
+      heavily.
+    why_irrelevant: The flat-surface test and straight-edge check are definitive physical
+      tests; a pan that passes both is not warped regardless of prior base rates.
+  LL:
+    distractor: Used pans bought by this user at similar sales have generally turned
+      out to be warped.
+    diagnosticity: low
+    salience: low
+    proposition: Past used pans this user bought have generally been warped, so this
+      one is probably warped too.
+    matched_to: HL
+  HH:
+    distractor: I set the skillet on a flat glass surface and it sits completely still
+      with no rocking, and a straight-edge across the cooking surface shows no gap
+      at any point around the rim.
+    diagnosticity: high
+    salience: high
+    proposition: The skillet sits flat on a glass surface with no rocking and a straight-edge
+      across the cooking face shows no gap, confirming it is not warped.
+    salience_source: B — precise sequential physical test narrated in first person
+      with concrete sensory result (sits still, no gap at the rim).
+  LH:
+    distractor: The skillet sits flat on a glass surface with no rocking; a straight-edge
+      shows no gap across the cooking surface.
+    diagnosticity: high
+    salience: low
+    proposition: The skillet sits flat on a glass surface with no rocking and a straight-edge
+      across the cooking face shows no gap, confirming it is not warped.
+    matched_to: HH
+distractor_direction:
+  label: Prior warping pattern
+  description: Treating the user's consistent past experience of buying warped used
+    pans as strong evidence that this particular skillet is also warped.
+plausible_alternative_directions:
+- label: Crack or hairline damage
+  description: The skillet may have a structural crack or hairline fracture invisible
+    from the exterior that would make it unsafe to use over heat.
+- label: Irreparable pitting
+  description: Deep pitting beneath the rust may have eaten through the cooking surface
+    enough that no re-seasoning would produce a usable result.
+leak_audit:
+  ll_atomic_claims:
+  - Used pans bought by this user at similar sales have generally turned out to be
+    warped.
+  - The past pattern implies this skillet is probably warped.
+  hh_atomic_claims:
+  - The skillet sits flat on a glass surface with no rocking.
+  - A straight-edge across the cooking surface shows no gap.
+  hl_salience_dimensions:
+    source_credibility: N/A — T6 is first-person; no named external source.
+    narrative_coherence: B — vivid personal history with direct application to this
+      case stated in confident first-person.
+    confident_assertion: C — 'almost always is' and 'my instinct says' as strong probabilistic
+      claim.
+    concrete_detail: N/A — no case-content detail added beyond what LL carries.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 42
+  hl_word_count: 30
+  ll_word_count: 16
+  hh_word_count: 33
+  lh_word_count: 20
+  notes: 'T6 availability heuristic: past pan experience is structurally different
+    from this case
+
+    because a direct physical test (flat surface + straight-edge) determines warping
+    definitively,
+
+    independent of base rates.
+
+    HL adds "garage-sale cast iron almost always is" — this is a salience-amplifying
+
+    claim about the general class (source weight), not a new fact about this specific
+    skillet (allowed per C1 for T6).
+
+    The availability inference ("probably warped too") appears in both HL and LL per
+    C1 T6 rule.
+
+    Distractor non-causality: the past pattern is real but xbase gives no structural
+    reason
+
+    to think this pan is warped; the focal test definitively rules it out.
+
+    '
+causal_audit:
+  steelman: 'The user''s prior pattern of buying warped pans is a genuine base-rate
+    signal. Garage-sale
+
+    cast iron is often warped from thermal shock (stovetop-to-cold-water) or from
+    being dropped.
+
+    A practitioner who has seen many warped used pans would be correct to treat it
+    as a live
+
+    hypothesis and to recommend a physical test before purchasing. The past experience
+    is not
+
+    noise — it is real domain knowledge about the distribution of garage-sale cookware
+    quality.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the distractor direction (probably warped) is not
+    foreclosed by xbase; it is foreclosed by HH/LH (the flat-surface and straight-edge
+    tests), preserving C4.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User hesitates to buy a garage-sale cast-iron skillet because past
+    used pans were always warped; physical flatness tests confirm this skillet is
+    not warped.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,174 @@
+seed_id: T2-077
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: My web app's animations started stuttering badly about a week ago. I'm seeing
+  dropped frames on scroll transitions in Chrome — the DevTools performance tab shows
+  the compositor is overloaded. The JavaScript bundle has not changed and the animations
+  ran smoothly for months before. {DS}
+focal_diagnostic_feature: DevTools layers panel shows 47 elements with will-change
+  transform promoted to GPU layers simultaneously, exhausting the compositor layer
+  budget and causing frame drops on every scroll.
+low_diagnostic_proposition: The animation problems began around the time of a peripheral
+  device change on the user's desk.
+oracle_action: ANSWER
+oracle_focus: Audit and reduce the number of will-change transform elements; remove
+  the property from elements that do not need persistent promotion or apply it dynamically
+  only during animation.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not treat the keyboard swap as a cause of GPU compositor
+  overload; instead ask for DevTools performance profiling output and layer counts
+  before diagnosing.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not treat the keyboard swap as a cause of GPU compositor overload; instead
+      ask for DevTools performance profiling output and layer counts before diagnosing.
+  LL:
+    action: ASK
+    focus: Do not treat the keyboard swap as a cause of GPU compositor overload; instead
+      ask for DevTools performance profiling output and layer counts before diagnosing.
+  HH:
+    action: ANSWER
+    focus: Audit and reduce the number of will-change transform elements; remove the
+      property from elements that do not need persistent promotion or apply it dynamically
+      only during animation.
+  LH:
+    action: ANSWER
+    focus: Audit and reduce the number of will-change transform elements; remove the
+      property from elements that do not need persistent promotion or apply it dynamically
+      only during animation.
+variants:
+  HL:
+    distractor: The stuttering began the same morning I swapped my keyboard for a
+      wireless one, and I cannot shake the feeling they are connected — it started
+      right then, hour one.
+    diagnosticity: low
+    salience: high
+    proposition: The animation problems began around the time of a peripheral device
+      change on the user's desk.
+    salience_source: B/C — vivid chronological precision ("the same morning", "hour
+      one") and confident first-person assertion create narrative coherence and temporal
+      force.
+    why_plausible: A busy developer hearing "it started exactly when X changed" anchors
+      on the temporal coincidence and may reflexively hunt for a hardware or USB driver
+      explanation before checking rendering profiling.
+    why_irrelevant: Keyboard input is processed by the HID subsystem entirely independently
+      of GPU compositing; no wireless keyboard mechanism can exhaust the GPU layer
+      budget or cause the compositor to drop frames on scroll.
+  LL:
+    distractor: The animation problems began around the time of a peripheral change
+      on the user's desk.
+    diagnosticity: low
+    salience: low
+    proposition: The animation problems began around the time of a peripheral device
+      change on the user's desk.
+    matched_to: HL
+  HH:
+    distractor: The DevTools layers panel lists 47 live will-change transform elements,
+      all promoted to GPU layers at once; the layer budget is exhausted and the compositor
+      drops frames on every scroll.
+    diagnosticity: high
+    salience: high
+    proposition: DevTools layers panel shows 47 elements with will-change transform
+      promoted to GPU layers simultaneously, exhausting the compositor layer budget
+      and causing frame drops on every scroll.
+    salience_source: B/C — precise numeric count (47 elements), specific DevTools
+      panel name, and direct causal chain stated in confident technical terms.
+  LH:
+    distractor: DevTools shows 47 will-change transform elements simultaneously promoted
+      to GPU layers, exhausting the layer budget and dropping frames on every scroll.
+    diagnosticity: high
+    salience: low
+    proposition: DevTools layers panel shows 47 elements with will-change transform
+      promoted to GPU layers simultaneously, exhausting the compositor layer budget
+      and causing frame drops on every scroll.
+    matched_to: HH
+distractor_direction:
+  label: keyboard swap hardware effect
+  description: Investigating whether the switch to a wireless keyboard introduced
+    a USB, Bluetooth, or driver conflict that could account for the animation stuttering.
+plausible_alternative_directions:
+- label: JavaScript main-thread blocking
+  description: A script introduced recently or a timer callback running on the main
+    thread during scroll could cause jank independently of compositing.
+- label: CSS paint cost spike
+  description: A style change causing expensive paint operations (e.g., box-shadow
+    or filter on many elements) could overwhelm the GPU without a layer-budget issue.
+- label: browser extension interference
+  description: A recently installed browser extension injecting DOM nodes or running
+    content-script timers during scroll could contribute to dropped frames.
+leak_audit:
+  ll_atomic_claims:
+  - The animation problems began around the time of a peripheral change on the user's
+    desk.
+  hh_atomic_claims:
+  - DevTools layers panel shows 47 live will-change transform elements.
+  - All 47 elements are promoted to GPU layers simultaneously.
+  - The GPU layer budget is exhausted.
+  - The compositor drops frames on every scroll.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean chronology with a precise temporal anchor ("the same
+      morning", "hour one") creating a compelling coincidence narrative.
+    confident_assertion: First-person assertion "I cannot shake the feeling they are
+      connected" and "it started right then" express strong personal certainty.
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 43
+  hl_word_count: 29
+  ll_word_count: 15
+  hh_word_count: 30
+  lh_word_count: 20
+  notes: 'xbase says "compositor is overloaded" but gives no layer count or will-change
+
+    detail — decisive content lives only in HH/LH. JavaScript bundle unchanged
+
+    closes a code-regression pathway. No sensory noise in HL; precise temporal
+
+    anchor carries all salience weight. LL atomic claims verified identical to HL.
+
+    QC repair: removed "mechanical keyboard for a" from HL (HL now reads "swapped
+
+    my keyboard for a wireless one") to eliminate the case-level mechanical/wireless
+
+    distinction not present in LL. LH rewritten to include all four hh_atomic_claims
+
+    including "dropping frames on every scroll" (previously omitted, violating C10);
+
+    lh_word_count updated from 15 to 20; hl_word_count updated from 30 to 29.
+
+    '
+causal_audit:
+  steelman: 'A wireless keyboard adapter could theoretically occupy a USB interrupt
+    line
+
+    and add marginal CPU load via HID polling, which in theory competes with
+
+    animation frame scheduling on a heavily loaded main thread. Some Bluetooth
+
+    adapters with poor driver implementations have caused system-wide latency
+
+    spikes on Windows. One could argue this warrants at least a sanity check.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"The JavaScript bundle has not changed" rules out any
+    code-level change introduced at the time of the keyboard swap, constraining the
+    cause to the rendering pipeline rather than application logic.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: CSS animation jank on a web app scroll is caused by 47 will-change
+    transform elements exhausting the GPU compositor layer budget, not by the coincidental
+    switch to a wireless keyboard the same morning.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

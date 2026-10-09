@@ -1,0 +1,184 @@
+seed_id: T2-018
+template: T2
+domain: open_qa
+complexity: medium
+xbase: Счёт за электричество в нашем доме примерно удвоился за последние два месяца,
+  и я задумываюсь, не сменить ли поставщика энергии в знак протеста. Тариф в счёте
+  — тот же тариф за киловатт-час, что мы всегда платили, и от поставщика не поступало
+  никакого уведомления о повышении цен. Просто ощущение, что мы внезапно платим слишком
+  много. {DS}
+focal_diagnostic_feature: В детальном счёте видно, что общее потребление киловатт-часов
+  почти удвоилось, а морозильник-ларь был перемещён в неотапливаемый гараж два месяца
+  назад, где теперь работает почти непрерывно.
+low_diagnostic_proposition: The bill increase started the same month the kitchen and
+  dining room were repainted.
+oracle_action: ANSWER
+oracle_focus: Do not switch provider over price; the rate is unchanged and consumption
+  nearly doubled, so address the new always-on load (the garage chest freezer) rather
+  than the tariff.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not tie repainting to the electricity bill. Ask whether
+  metered consumption rose or the rate changed, and what new or relocated appliances
+  are now running.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not tie repainting to the electricity bill. Ask whether metered consumption
+      rose or the rate changed, and what new or relocated appliances are now running.
+  LL:
+    action: ASK
+    focus: Do not tie repainting to the electricity bill. Ask whether metered consumption
+      rose or the rate changed, and what new or relocated appliances are now running.
+  HH:
+    action: ANSWER
+    focus: Do not switch provider over price; the rate is unchanged and consumption
+      nearly doubled, so address the new always-on load (the garage chest freezer)
+      rather than the tariff.
+  LH:
+    action: ANSWER
+    focus: Do not switch provider over price; the rate is unchanged and consumption
+      nearly doubled, so address the new always-on load (the garage chest freezer)
+      rather than the tariff.
+variants:
+  HL:
+    distractor: Меня вдруг осенило, что счета начали расти именно в тот месяц, когда
+      мы наконец покрасили кухню и столовую — два полных выходных, три слоя краски.
+      Рост счёта и покраска пришлись на один и тот же расчётный период.
+    diagnosticity: low
+    salience: high
+    proposition: The bill increase started the same month the kitchen and dining room
+      were repainted.
+    salience_source: B/C — a confident first-person timeline anchoring the cost jump
+      to a vivid, recent home project.
+    why_plausible: Repainting is the most salient recent household change, so it is
+      the natural thing to associate with a same-cycle cost jump.
+    why_irrelevant: Drying paint draws no metered electricity of any consequence;
+      it cannot move kilowatt-hour consumption, which is what actually doubled.
+  LL:
+    distractor: Рост счёта начался в тот же месяц, когда была покрашена кухня и столовая.
+    diagnosticity: low
+    salience: low
+    proposition: The bill increase started the same month the kitchen and dining room
+      were repainted.
+    matched_to: HL
+  HH:
+    distractor: 'Читая детальный счёт, понимаю: дело не в тарифе — киловатт-часов
+      мы потребили почти вдвое больше. Примерно тогда же мы переставили морозильник-ларь
+      в неотапливаемый гараж, и теперь на холоде его компрессор работает почти без
+      остановки, поддерживая температуру.'
+    diagnosticity: high
+    salience: high
+    proposition: The itemised bill shows total kilowatt-hours consumed has nearly
+      doubled, and a chest freezer was moved into the unheated garage two months ago
+      where it now runs almost continuously.
+    salience_source: Reading the metered kWh and naming the relocated, now-overworked
+      freezer makes the consumption cause concrete.
+  LH:
+    distractor: В детальном счёте видно, что потреблённых киловатт-часов почти вдвое
+      больше; морозильник-ларь был перемещён в неотапливаемый гараж два месяца назад
+      и теперь работает почти непрерывно.
+    diagnosticity: high
+    salience: low
+    proposition: The itemised bill shows total kilowatt-hours consumed has nearly
+      doubled, and a chest freezer was moved into the unheated garage two months ago
+      where it now runs almost continuously.
+    matched_to: HH
+distractor_direction:
+  label: совпадение по времени с покраской
+  description: Связь роста счёта с недавней покраской помещений, потому что оба события
+    совпали в одном расчётном периоде.
+plausible_alternative_directions:
+- label: дежурная нагрузка или потребление в режиме ожидания
+  description: Повышенное потребление в режиме ожидания от нескольких устройств, оставленных
+    включёнными, могло увеличить непрерывное потребление.
+- label: ошибка счётчика или расчётного счёта
+  description: Счётчик может давать неверные показания, или счёт выставлен по расчётным,
+    а не фактическим данным.
+leak_audit:
+  ll_atomic_claims:
+  - The bill increase began the same month the kitchen and dining room were repainted.
+  hh_atomic_claims:
+  - The itemised bill shows metered kilowatt-hours nearly doubled.
+  - A chest freezer was moved to the unheated garage two months ago.
+  - In the cold garage it now runs its compressor almost continuously.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent same-billing-cycle account of the repaint.
+    confident_assertion: States the jump and repaint 'landed in the same billing cycle'.
+    concrete_detail: Concrete detail about the repaint (two weekends, three coats)
+      — about the event, not the bill mechanics.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 36
+  ll_word_count: 13
+  hh_word_count: 45
+  lh_word_count: 23
+  notes: 'T2 coincidence: repainting consumes negligible metered electricity, so it
+    has no mechanism for a doubled kWh bill.
+
+    xbase states the rate is unchanged and gives the felt-too-high symptom but withholds
+    the metered-usage breakdown
+
+    and the relocated freezer — the decisive facts — which live only in HH/LH. No
+    effort/severity leak into HL beyond
+
+    source-side colour.
+
+    Repair round 1: removed the sensory_distractor_about_setting clause ("the whole
+    downstairs smelling of paint")
+
+    from HL — it was style-prohibited and absent from LL; HL now carries only the
+    same-cycle timing plus event colour
+
+    (two weekends, three coats), preserving HL/LL propositional equivalence. All five
+    word counts recounted under the
+
+    C9 rule after the edit.
+
+    '
+causal_audit:
+  steelman: 'One might argue fresh paint led the household to keep windows shut and
+    run heating or air handling harder, or to
+
+    spend more time indoors using devices — but those are speculative behavioural
+    chains, not effects of the paint
+
+    itself, and the bill change is a near-doubling of metered consumption traceable
+    to a specific always-on load.
+
+    Painting has no direct electrical draw worth counting.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the per-kWh rate is unchanged with no price-increase
+    notice, closing the tariff pathway and leaving consumption (revealed only in HH/LH)
+    as the live axis.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A doubled electricity bill driven by a relocated chest freezer running
+    constantly in a cold garage, coincidentally timed with repainting, prompting a
+    needless provider switch.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-018.yaml
+  source_xbase_sha256: 33673436c0508b6f
+  translated_content_sha256: c03d5b19a51bf0c0
+  translation_notes: Technical term 'киловатт-час' (kilowatt-hour) is standard Russian.
+    'Морозильник-ларь' is the natural Russian term for chest freezer. 'Детальный счёт'
+    renders 'itemised bill'. No culture-bound salience cues. First-person register
+    preserved throughout.

@@ -1,0 +1,9 @@
+{
+  "seed_id": "T5-015",
+  "steelman": "A competent consumer advisor could argue that companies investing in a modern, functional website signal operational activity and financial stability — a neglected web presence can weakly indicate a business in decline, underinvesting across the board including in staff training and equipment. In the moving industry, where small operators frequently close and reopen under new names, an up-to-date site could weakly correlate with current licensing and insurance compliance. One might also argue that a well-designed site suggests organizational capacity for clear communication, which matters for logistics coordination on move day. Finally, a repeat mover like Petra has implicit comparison data across multiple providers, giving her aesthetic judgment some empirical grounding as a heuristic signal.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The steelman mechanism is at best a weak proxy heuristic (website modernity correlates with operational investment), not a direct causal pathway to insurance coverage levels or service quality outcomes. Critically, xbase closes the pathway entirely: the user has already obtained each company's insurance certificate (read in full) and spoken directly with three recent Company B customers — direct documentary and testimonial evidence that supersedes any proxy inference. A practitioner would not put 'check website aesthetics' on a checklist when current insurance documentation and first-hand references are already confirmed. Seed is clean on this lens; no repair needed."
+}

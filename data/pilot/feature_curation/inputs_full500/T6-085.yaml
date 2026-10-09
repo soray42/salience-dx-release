@@ -1,0 +1,148 @@
+seed_id: T6-085
+template: T6
+domain: open_qa
+complexity: low
+xbase: My bike's front brake has felt progressively spongier over the last month.
+  Even pulling the lever most of the way to the bar, braking feels weak rather than
+  sharp. I have not crashed or bent the wheel, and the cables look intact from the
+  outside. {DS}
+focal_diagnostic_feature: The brake pad friction material is completely worn through
+  on both pads, with the metal backing plate now in direct contact with the braking
+  surface.
+low_diagnostic_proposition: Past brake sponginess for this user was resolved by bleeding
+  the brake line, so the current sponginess is probably the same problem again.
+oracle_action: ANSWER
+oracle_focus: Replace both front brake pads immediately; metal-on-metal contact is
+  unsafe and the worn pads are the direct cause of weak braking force.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the previous bleed diagnosis here; these
+  are cable-actuated brakes with no hydraulic fluid to bleed. Ask about pad thickness
+  and whether the pads still contact the rim squarely.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the previous bleed diagnosis here; these are cable-actuated
+      brakes with no hydraulic fluid to bleed. Ask about pad thickness and whether
+      the pads still contact the rim squarely.
+  LL:
+    action: ASK
+    focus: Do not apply the previous bleed diagnosis here; these are cable-actuated
+      brakes with no hydraulic fluid to bleed. Ask about pad thickness and whether
+      the pads still contact the rim squarely.
+  HH:
+    action: ANSWER
+    focus: Replace both front brake pads immediately; metal-on-metal contact is unsafe
+      and the worn pads are the direct cause of weak braking force.
+  LH:
+    action: ANSWER
+    focus: Replace both front brake pads immediately; metal-on-metal contact is unsafe
+      and the worn pads are the direct cause of weak braking force.
+variants:
+  HL:
+    distractor: Every time my brakes have felt this spongy before, bleeding the line
+      fixed it instantly; I keep thinking I just need to bleed the system again.
+    diagnosticity: low
+    salience: high
+    proposition: Past brake sponginess for this user was resolved by bleeding the
+      brake line, so the current sponginess is probably the same problem again.
+    salience_source: 'B: vivid first-person narrative with a confident ''every time''
+      history and instinctive present framing; C: ''fixed it instantly'' — confident
+      outcome verb'
+  LL:
+    distractor: Past brake sponginess issues for this user were resolved by bleeding
+      the hydraulic line.
+    diagnosticity: low
+    salience: low
+    proposition: Past brake sponginess for this user was resolved by bleeding the
+      brake line, so the current sponginess is probably the same problem again.
+    matched_to: HL
+  HH:
+    distractor: Pulling the brake pad away from the rim and looking at the face, the
+      friction material is gone on both pads and the metal backing plate is sitting
+      flush against the braking surface, with no rubber remaining.
+    diagnosticity: high
+    salience: high
+    proposition: The brake pad friction material is completely worn through on both
+      pads, with the metal backing plate now in direct contact with the braking surface.
+    salience_source: 'B: precise hands-on inspection sequence with a concrete visual
+      finding; C: declarative present-tense result'
+  LH:
+    distractor: Both front brake pads have no friction material remaining; the metal
+      backing plates contact the braking surface directly.
+    diagnosticity: high
+    salience: low
+    proposition: The brake pad friction material is completely worn through on both
+      pads, with the metal backing plate now in direct contact with the braking surface.
+    matched_to: HH
+distractor_direction:
+  label: Hydraulic brake bleed needed
+  description: Investigating whether air in the brake hydraulic line is causing the
+    spongy lever feel, as it did in previous incidents.
+plausible_alternative_directions:
+- label: Cable stretch or fraying
+  description: A stretched or fraying brake cable on a cable-actuated brake reduces
+    mechanical advantage and can produce a spongy lever feel similar to worn pads.
+- label: Brake pivot stiction
+  description: Corroded or dry brake caliper pivots can prevent the pads from returning
+    cleanly
+  reducing effective braking force over time.: null
+leak_audit:
+  ll_atomic_claims:
+  - Past brake sponginess issues for this user were resolved by bleeding the hydraulic
+    line.
+  hh_atomic_claims:
+  - Both brake pads have no friction material remaining.
+  - The metal backing plate is in direct contact with the braking surface.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, T6 template
+    narrative_coherence: Strong first-person history with vivid 'every time ... fixed
+      it instantly' pattern and instinctive present inference
+    confident_assertion: '''every time'' and ''fixed it instantly'' — categorical
+      confident framing'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 45
+  hl_word_count: 28
+  ll_word_count: 14
+  hh_word_count: 37
+  lh_word_count: 17
+  notes: 'T6 availability inference (''same problem again'') appears in both HL and
+    LL per C1/§3 T6 rule.
+
+    The decisive structural difference: past cases were hydraulic brakes; current
+    bike has cable-actuated rim brakes — bleeding is physically inapplicable, not
+    just unwarranted.
+
+    HH/LH focal detail (worn pads, metal backing) lives only in those cells; xbase
+    contains only symptom (spongy lever) and neutral context.
+
+    '
+causal_audit:
+  steelman: 'If the user has previously owned a hydraulic brake bike and that bike''s
+    brake sponginess was fixed by bleeding, the pattern-match to ''spongy brakes''
+    is understandable. Air in a hydraulic line is a real and common cause of spongy
+    feel. However, the HL text itself already notes these are cable-actuated rim brakes,
+    not hydraulics, which means there is no hydraulic fluid to bleed. A cable brake
+    has no bleed port and no fluid circuit; sponginess from worn pads is a fundamentally
+    different mechanism with no overlap with hydraulic air ingress.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the structural inapplicability of hydraulic bleeding
+    to cable-actuated brakes is stated in the HL text as the T6 self-undermining availability
+    narrative; xbase does not need to foreclose this separately
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Front brake sponginess caused by fully worn brake pads with metal backing
+    exposed, with availability distractor of previous hydraulic brake bleed success
+    on a different bike.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

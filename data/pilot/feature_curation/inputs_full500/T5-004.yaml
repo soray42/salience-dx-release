@@ -1,0 +1,93 @@
+seed_id: T5-004
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I'm considering a job offer in another city. The company is a stable mid-sized
+  firm in my field. I like my current city, but I do not have fixed local obligations.
+  {DS}
+focal_diagnostic_feature: The offer raises salary by 30%, covers relocation, the partner's
+  job is fully remote, and there are no children, pets, or caretaking obligations.
+low_diagnostic_proposition: The offer letter and relocation brochure use a grey, austere
+  visual style.
+oracle_action: ANSWER
+oracle_focus: Accept absent undisclosed constraints; the upside and logistics are
+  unusually favourable.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not treat document aesthetics as job or relocation
+  evidence. Ask about pay, partner work, relocation cost, and local obligations.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not treat document aesthetics as job or relocation evidence. Ask about
+      pay, partner work, relocation cost, and local obligations.
+  LL:
+    action: ASK
+    focus: Do not treat document aesthetics as job or relocation evidence. Ask about
+      pay, partner work, relocation cost, and local obligations.
+  HH:
+    action: ANSWER
+    focus: Accept absent undisclosed constraints; the upside and logistics are unusually
+      favourable.
+  LH:
+    action: ANSWER
+    focus: Accept absent undisclosed constraints; the upside and logistics are unusually
+      favourable.
+variants:
+  HL:
+    distractor: The offer packet is all cold grey blocks, thin lines, and stern corporate
+      photos; it makes the whole move feel strangely bleak.
+    diagnosticity: low
+    salience: high
+    proposition: The offer letter and relocation brochure use a grey, austere visual
+      style.
+    salience_source: surface design, colour/texture details, affective framing
+    why_plausible: A bleak-looking packet can colour the user's feeling about the
+      move.
+    why_irrelevant: Document design is not evidence about compensation, relocation
+      support, partner portability, or obligations.
+  LL:
+    distractor: The offer and relocation materials have a relatively austere visual
+      design.
+    diagnosticity: low
+    salience: low
+    proposition: The offer letter and relocation brochure use a grey, austere visual
+      style.
+    matched_to: HL
+  HH:
+    distractor: The salary jumps 30%, relocation is paid, my partner can work remotely
+      from anywhere, and we have no kids, pets, or caretaking ties holding us here.
+    diagnosticity: high
+    salience: high
+    proposition: The offer raises salary by 30%, covers relocation, the partner's
+      job is fully remote, and there are no children, pets, or caretaking obligations.
+    salience_source: logistical and financial constraint removal
+  LH:
+    distractor: The offer includes a 30% salary increase and paid relocation; partner
+      employment is portable and there are no dependents or caretaking constraints.
+    diagnosticity: high
+    salience: low
+    proposition: The offer raises salary by 30%, covers relocation, the partner's
+      job is fully remote, and there are no children, pets, or caretaking obligations.
+    matched_to: HH
+distractor_direction:
+  label: Bleak relocation materials
+  description: Investigating whether the austere visual tone of the offer and relocation
+    packet signals a bad move.
+plausible_alternative_directions:
+- label: Partner logistics
+  description: Whether the partner’s remote work and relocation preferences make the
+    move feasible.
+- label: Local attachment cost
+  description: Whether leaving the current city creates social or emotional costs
+    not otherwise specified.
+- label: Career-growth upside
+  description: Whether the new firm offers learning, promotion, or reputation gains
+    beyond the salary increase.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

@@ -1,0 +1,99 @@
+seed_id: T5-009
+template: T5
+domain: technical_troubleshooting
+complexity: high
+xbase: خدمة gRPC لدينا تعاني من توقفات دورية تنتهي خلالها مهلة جميع طلبات RPC معاً.
+  كل توقف يستمر نحو نصف دقيقة، ويحدث هذا كل عدة دقائق وليس بشكل مستمر. {DS}
+focal_diagnostic_feature: تُظهر سجلات JVM أحداث Full GC تمتد نحو 28 ثانية تتزامن مع
+  نوافذ انتهاء المهلة، مع وصول الجيل القديم إلى أكثر من 90% قبل كل حدث.
+low_diagnostic_proposition: The monitoring dashboard for GC metrics uses a confusing
+  colour scheme.
+oracle_action: ANSWER
+oracle_focus: Treat this as Full-GC pause behaviour under old-gen pressure; tune GC/heap
+  and investigate retained objects.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame dashboard colours. Ask for raw GC logs and
+  alignment with timeout windows.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame dashboard colours. Ask for raw GC logs and alignment with
+      timeout windows.
+  LL:
+    action: ASK
+    focus: Do not blame dashboard colours. Ask for raw GC logs and alignment with
+      timeout windows.
+  HH:
+    action: ANSWER
+    focus: Treat this as Full-GC pause behaviour under old-gen pressure; tune GC/heap
+      and investigate retained objects.
+  LH:
+    action: ANSWER
+    focus: Treat this as Full-GC pause behaviour under old-gen pressure; tune GC/heap
+      and investigate retained objects.
+variants:
+  HL:
+    distractor: 'لوحة مراقبة GC شبه غير قابلة للقراءة: خطوط برتقالية على خلفية صفراء،
+      مع تسميات تختفي عندما تتداخل الخطوط.'
+    diagnosticity: low
+    salience: high
+    proposition: The monitoring dashboard for GC metrics uses a confusing colour scheme.
+    salience_source: ugly chart colours and visual confusion
+    why_plausible: A bad chart can make the measurement itself feel unreliable.
+    why_irrelevant: Raw GC logs matching the timeout windows remain diagnostic regardless
+      of dashboard colour.
+  LL:
+    distractor: لوحة مراقبة GC تستخدم مخططاً لونياً يصعب قراءته.
+    diagnosticity: low
+    salience: low
+    proposition: The monitoring dashboard for GC metrics uses a confusing colour scheme.
+    matched_to: HL
+  HH:
+    distractor: سجل JVM الخام يُظهر Full GC يمتد 28 ثانية كل 7 إلى 9 دقائق، بالتزامن
+      التام مع كل توقف في الطلبات، وتتجاوز نسبة استخدام الجيل القديم 90% قبيل كل حدث
+      مباشرة.
+    diagnosticity: high
+    salience: high
+    proposition: JVM logs show ~28-second Full GC events aligned with the timeout
+      windows, with old-gen above 90% before each event.
+    salience_source: raw log/event timing alignment
+  LH:
+    distractor: أحداث Full GC بمدة نحو 28 ثانية تتزامن مع نوافذ انتهاء مهلة RPC، ويتجاوز
+      استخدام الجيل القديم 90% قبل كل حدث.
+    diagnosticity: high
+    salience: low
+    proposition: JVM logs show ~28-second Full GC events aligned with the timeout
+      windows, with old-gen above 90% before each event.
+    matched_to: HH
+distractor_direction:
+  label: قابلية قراءة لوحة مراقبة GC
+  description: التحقيق فيما إذا كانت رسوم مراقبة GC المربكة أو تداخل التسميات يُفسّران
+    التوقفات المُلاحَظة في الخدمة.
+plausible_alternative_directions:
+- label: استنفاد مجمع الخيوط
+  description: قد تنتهي مهلة طلبات RPC بسبب تشبّع خيوط معالجة الطلبات.
+- label: توقف التبعيات الخارجية
+  description: قد تُعيق تبعية خارجية جميع طلبات RPC بشكل دوري.
+- label: انقطاع الشبكة
+  description: قد تتسبب مشكلة شبكة متكررة أو في موازن الحمل في انتهاء مهل متزامنة.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-009.yaml
+  source_xbase_sha256: bdb1a123a36e588c
+  translated_content_sha256: e6832eb62c3fa0ab
+  translation_notes: Technical terms (gRPC, RPC, GC, Full GC, JVM, old-gen) kept as-is
+    (loan terms standard in Arabic tech contexts). The HL's vivid description (orange
+    on yellow, disappearing labels) translated directly preserving the confusing-chart
+    salience cue.

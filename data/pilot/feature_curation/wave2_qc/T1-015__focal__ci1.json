@@ -1,0 +1,13 @@
+{
+  "seed_id": "T1-015",
+  "my_own_diagnosis": "The bottom-up progression from oldest/lowest leaves upward while new growth stays green is the textbook signature of a mobile-nutrient deficiency — nitrogen being the primary candidate in a fruiting container tomato with depleted potting mix; I would reject the iron/pH lockout hypothesis because iron is immobile and always presents first on young upper tissue.",
+  "focal_decisive": true,
+  "focal_notes": "The ascending progression pattern from oldest to newest leaves is a well-established differential that unambiguously points to mobile-nutrient (nitrogen) deficiency and structurally excludes the iron-lockout distractor.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cell oracles correctly map to the low-diagnostic oracle (withhold nitrogen diagnosis, ask about feeding/potting mix), and HH/LH correctly map to the focal oracle (confirm nitrogen, exclude iron/pH); low_diagnostic_oracle_focus properly withholds the distractor diagnosis.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

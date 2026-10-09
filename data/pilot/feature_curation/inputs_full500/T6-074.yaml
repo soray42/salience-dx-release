@@ -1,0 +1,163 @@
+seed_id: T6-074
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our Kubernetes deployment has been intermittently failing to start new pods
+  for the past two days. The pods enter ImagePullBackOff for several minutes before
+  eventually succeeding or timing out. We are using a private Amazon ECR registry
+  and our CI/CD pipeline pushes images successfully. {DS}
+focal_diagnostic_feature: The affected deployment has imagePullPolicy set to Always;
+  node scale-up events trigger forty concurrent ECR pulls that the kubelet serialises,
+  causing the observed backoff windows.
+low_diagnostic_proposition: Previous image pull failures for the user were generally
+  attributed to Docker Hub anonymous pull rate limits.
+oracle_action: ANSWER
+oracle_focus: Change imagePullPolicy to IfNotPresent where appropriate, or stagger
+  pod start-up; the root cause is serialised concurrent ECR pulls during scale-up,
+  not a registry access problem.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the Docker Hub rate-limit diagnosis; the
+  registry is private ECR, so ask about imagePullPolicy setting, pull concurrency,
+  and timing correlation with node scale-up events before diagnosing.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the Docker Hub rate-limit diagnosis; the registry is private
+      ECR, so ask about imagePullPolicy setting, pull concurrency, and timing correlation
+      with node scale-up events before diagnosing.
+  LL:
+    action: ASK
+    focus: Do not apply the Docker Hub rate-limit diagnosis; the registry is private
+      ECR, so ask about imagePullPolicy setting, pull concurrency, and timing correlation
+      with node scale-up events before diagnosing.
+  HH:
+    action: ANSWER
+    focus: Change imagePullPolicy to IfNotPresent where appropriate, or stagger pod
+      start-up; the root cause is serialised concurrent ECR pulls during scale-up,
+      not a registry access problem.
+  LH:
+    action: ANSWER
+    focus: Change imagePullPolicy to IfNotPresent where appropriate, or stagger pod
+      start-up; the root cause is serialised concurrent ECR pulls during scale-up,
+      not a registry access problem.
+variants:
+  HL:
+    distractor: Every image pull failure I have run into before was Docker Hub rate
+      limiting our anonymous pulls, so my first thought is to check whether something
+      started hitting Hub accidentally.
+    diagnosticity: low
+    salience: high
+    proposition: Previous image pull failures for the user were generally attributed
+      to Docker Hub anonymous pull rate limits.
+    salience_source: B/C — vivid first-person pattern assertion with confident first-instinct
+      framing ("every time", "my first thought").
+    why_plausible: Docker Hub rate limiting has been a widely experienced Kubernetes
+      problem and "something hitting Hub accidentally" is a plausible regression a
+      busy practitioner might check first.
+    why_irrelevant: The registry is explicitly private ECR, which has separate authentication
+      and throttling mechanics; the Docker Hub rate-limit mechanism cannot apply to
+      ECR pulls in this cluster.
+  LL:
+    distractor: Previous image pull failures for the user were generally attributed
+      to Docker Hub anonymous pull rate limits.
+    diagnosticity: low
+    salience: low
+    proposition: Previous image pull failures for the user were generally attributed
+      to Docker Hub anonymous pull rate limits.
+    matched_to: HL
+  HH:
+    distractor: The failing pods all reference the same deployment, which has imagePullPolicy
+      set to Always; during a node scale-up event, forty pods attempt to pull simultaneously
+      from ECR and the node kubelet serialises the requests.
+    diagnosticity: high
+    salience: high
+    proposition: The affected deployment has imagePullPolicy set to Always; node scale-up
+      events trigger forty concurrent ECR pulls that the kubelet serialises, causing
+      the observed backoff windows.
+    salience_source: Concrete policy name (Always), precise count (forty pods), and
+      the serialisation mechanism create an unambiguous causal chain.
+  LH:
+    distractor: The affected deployment has imagePullPolicy set to Always; concurrent
+      pulls during a node scale-up event overwhelm the kubelet pull queue.
+    diagnosticity: high
+    salience: low
+    proposition: The affected deployment has imagePullPolicy set to Always; node scale-up
+      events trigger forty concurrent ECR pulls that the kubelet serialises, causing
+      the observed backoff windows.
+    matched_to: HH
+distractor_direction:
+  label: Docker Hub rate limiting
+  description: Investigating whether the cluster is inadvertently pulling from Docker
+    Hub and hitting anonymous-pull rate limits, causing the ImagePullBackOff errors.
+plausible_alternative_directions:
+- label: ECR authentication expiry
+  description: ECR tokens expire every 12 hours; a credential rotation failure could
+    cause intermittent pull authentication errors that look like backoff.
+- label: image tag mutability race
+  description: If the image tag is being overwritten by concurrent CI pushes while
+    pods are starting, a digest mismatch could cause transient pull failures.
+leak_audit:
+  ll_atomic_claims:
+  - previous image pull failures were attributed to Docker Hub anonymous pull rate
+    limits
+  hh_atomic_claims:
+  - the affected deployment has imagePullPolicy set to Always
+  - a node scale-up event triggered forty concurrent ECR pulls
+  - the kubelet serialises the pull requests causing the backoff windows
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person availability narrative asserting a consistent
+      past pattern as the explanation.
+    confident_assertion: '"every image pull failure" and "my first thought" frame
+      it as a strong established prior.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 30
+  ll_word_count: 17
+  hh_word_count: 34
+  lh_word_count: 20
+  notes: 'The ECR vs Docker Hub distinction is the structural mechanism that makes
+    the
+
+    distractor inapplicable. xbase explicitly names ECR; xbase does not reveal
+
+    the imagePullPolicy or the scale-up correlation, which live only in HH/LH.
+
+    The alternative ECR-auth-expiry direction is live from xbase (intermittent,
+
+    succeeds eventually) and must remain as an alternative.
+
+    '
+causal_audit:
+  steelman: 'A platform engineer could argue that some Kubernetes clusters pull base
+
+    layers or init-containers from Docker Hub even when the main image is on
+
+    ECR, so Docker Hub rate limits could still apply if a dependency image
+
+    references Hub implicitly. This would be worth a quick registry-access
+
+    log check.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"We are using a private Amazon ECR registry and our CI/CD
+    pipeline pushes images successfully" — the successful push path and private registry
+    statement make the accidental-Hub-access mechanism implausible without further
+    evidence.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Kubernetes ImagePullBackOff on private ECR caused by imagePullPolicy
+    Always serialising forty concurrent pulls on node scale-up; availability distractor
+    is the user's prior experience with Docker Hub rate limiting.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,184 @@
+seed_id: T5-048
+template: T5
+domain: open_qa
+complexity: high
+xbase: I am choosing between two single-trip travel insurance policies for a three-week
+  trip to Southeast Asia. Policy A is from a provider I have not heard of before;
+  its purchase website looks old-fashioned with outdated fonts and a plain form layout.
+  Policy B is from a well-known brand with a polished, modern website. The premium
+  difference between them is about €40, with Policy A being cheaper. I have a pre-existing
+  heart condition that I disclosed on both applications. {DS}
+focal_diagnostic_feature: Policy A covers pre-existing conditions up to €500,000 medical
+  evacuation with a claims-paid ratio of 94% reported by the national insurance ombudsman;
+  Policy B explicitly excludes pre-existing conditions and has a claims-paid ratio
+  of 71%.
+low_diagnostic_proposition: Policy A's old-fashioned website suggests it is a less
+  trustworthy or less capable insurer than the modern-branded Policy B.
+oracle_action: ANSWER
+oracle_focus: Choose Policy A; for a traveller with a disclosed pre-existing condition,
+  Policy B's exclusion clause makes it functionally useless for the most likely high-cost
+  claims, while Policy A covers those claims and has a substantially higher claims-paid
+  ratio.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer insurer reliability from website aesthetics;
+  ask for pre-existing condition coverage terms, medical evacuation limits, and claims-paid
+  ratios for both policies before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer insurer reliability from website aesthetics; ask for pre-existing
+      condition coverage terms, medical evacuation limits, and claims-paid ratios
+      for both policies before deciding.
+  LL:
+    action: ASK
+    focus: Do not infer insurer reliability from website aesthetics; ask for pre-existing
+      condition coverage terms, medical evacuation limits, and claims-paid ratios
+      for both policies before deciding.
+  HH:
+    action: ANSWER
+    focus: Choose Policy A; for a traveller with a disclosed pre-existing condition,
+      Policy B's exclusion clause makes it functionally useless for the most likely
+      high-cost claims, while Policy A covers those claims and has a substantially
+      higher claims-paid ratio.
+  LH:
+    action: ANSWER
+    focus: Choose Policy A; for a traveller with a disclosed pre-existing condition,
+      Policy B's exclusion clause makes it functionally useless for the most likely
+      high-cost claims, while Policy A covers those claims and has a substantially
+      higher claims-paid ratio.
+variants:
+  HL:
+    distractor: Policy A's site looks like it was built years ago — plain form layout,
+      no visible HTTPS padlock, and a PDF schedule instead of an inline viewer. That
+      kind of dated and patchy site makes me doubt a complex cardiac claim would get
+      paid.
+    diagnosticity: low
+    salience: high
+    proposition: Policy A's old-fashioned website suggests it is a less trustworthy
+      or less capable insurer than the modern-branded Policy B.
+    salience_source: 'D: concrete detail about the website appearance (form layout,
+      HTTPS padlock, PDF viewer); C: the inferential bridge (dated site → claims doubt)
+      is stated as a confident personal conclusion.'
+    why_plausible: A site without a visible HTTPS padlock genuinely raises security
+      concerns, and operational under-investment in a website sometimes correlates
+      with under-investment in claims processing — a sophisticated reader might link
+      these.
+    why_irrelevant: Website aesthetics are diagnostically empty for claims performance;
+      the ombudsman's claims-paid ratio is a direct measure of actual payout behaviour,
+      which Policy A's 94% vs Policy B's 71% captures definitively regardless of page
+      design.
+  LL:
+    distractor: Policy A's website looks outdated and less polished than Policy B's,
+      which suggests it may be a less reliable insurer for a complex claim.
+    diagnosticity: low
+    salience: low
+    proposition: Policy A's old-fashioned website suggests it is a less trustworthy
+      or less capable insurer than the modern-branded Policy B.
+    matched_to: HL
+  HH:
+    distractor: 'Reading the policy wording carefully: Policy A explicitly covers
+      pre-existing conditions including cardiac events up to €500,000 for medical
+      evacuation, and the national insurance ombudsman''s published data shows its
+      claims-paid ratio at 94% last year. Policy B''s schedule has a blanket exclusion
+      clause for any pre-existing conditions, and its ombudsman-reported claims-paid
+      ratio is 71%.'
+    diagnosticity: high
+    salience: high
+    proposition: Policy A covers pre-existing conditions up to €500,000 medical evacuation
+      with a claims-paid ratio of 94% reported by the national insurance ombudsman;
+      Policy B explicitly excludes pre-existing conditions and has a claims-paid ratio
+      of 71%.
+    salience_source: 'B: precise figures (€500,000, 94%, 71%) from a named authoritative
+      source (national insurance ombudsman); C: blanket exclusion clause described
+      as definitive.'
+  LH:
+    distractor: Policy A covers pre-existing conditions up to €500,000 with a 94%
+      claims-paid ratio; Policy B excludes pre-existing conditions and has a 71% claims-paid
+      ratio.
+    diagnosticity: high
+    salience: low
+    proposition: Policy A covers pre-existing conditions up to €500,000 medical evacuation
+      with a claims-paid ratio of 94% reported by the national insurance ombudsman;
+      Policy B explicitly excludes pre-existing conditions and has a claims-paid ratio
+      of 71%.
+    matched_to: HH
+distractor_direction:
+  label: Website aesthetic as trust signal
+  description: Treating Policy A's old-fashioned website as evidence that the insurer
+    is operationally unreliable or unlikely to pay a complex claim.
+plausible_alternative_directions:
+- label: Brand solvency and regulatory standing
+  description: Policy B's well-known brand may have stronger regulatory capital ratios
+    or ombudsman oversight, independent of the claims-paid ratio.
+- label: Policy exclusions beyond pre-existing conditions
+  description: Other exclusion clauses — activity-based, geographic, or delay-related
+    — may differ materially between the two policies and affect value.
+- label: Claims process ease
+  description: The well-known brand may have a faster or more accessible claims hotline
+    for emergencies in Southeast Asia, which matters operationally even if the payout
+    rate is lower.
+leak_audit:
+  ll_atomic_claims:
+  - Policy A's website looks outdated and less polished than Policy B's.
+  - The outdated appearance suggests Policy A may be a less reliable insurer for a
+    complex claim.
+  hh_atomic_claims:
+  - Policy A explicitly covers pre-existing conditions including cardiac events.
+  - Policy A's medical evacuation limit is €500,000.
+  - The national insurance ombudsman reports Policy A's claims-paid ratio at 94%.
+  - Policy B has a blanket exclusion clause for pre-existing conditions.
+  - Policy B's ombudsman-reported claims-paid ratio is 71%.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observation about the website.
+    narrative_coherence: Specific website details (form layout, HTTPS padlock, PDF
+      viewer) with a plausible inference chain.
+    confident_assertion: 'The inferential bridge is stated as a personal conclusion:
+      ''makes me doubt a complex cardiac claim would get paid.'''
+    concrete_detail: Plain form layout, missing HTTPS padlock, PDF in new tab — all
+      describe the website appearance (source/setting), not the policy terms.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 78
+  hl_word_count: 43
+  ll_word_count: 24
+  hh_word_count: 54
+  lh_word_count: 24
+  notes: 'T5 bridge (website dated → reliability doubt) appears in both HL (explicitly
+    reasoned) and LL (flatly stated as an inference). C4 check: xbase discloses the
+    pre-existing condition, the price gap, and the unfamiliarity of Policy A — it
+    does NOT disclose the claims-paid ratios or exclusion clauses (those live in HH/LH).
+    This is high complexity — the user must evaluate ombudsman data, exclusion clauses,
+    and evacuation limits. Distinct from T5-016 (wealth manager polished office vs
+    returns data) — root cause here is pre-existing condition exclusion determining
+    functional coverage. HL shortened from 69 to 43 words to satisfy C9 hard bound
+    (25-50); LL/HH/LH counts corrected from earlier mis-audit.
+
+    '
+causal_audit:
+  steelman: 'An expert could argue: a website lacking a visible HTTPS padlock on form
+    pages is a genuine security red flag that regulators sometimes use as an indicator
+    of technical under-investment; insurers with outdated digital infrastructure may
+    also have slower claims processing systems and higher manual error rates. Combined
+    with the user''s unfamiliarity with the brand, this creates a real information
+    asymmetry.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — website aesthetics cannot generate or eliminate a
+    policy exclusion clause. The exclusion of pre-existing conditions from Policy
+    B is a contractual term independent of digital infrastructure quality.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Travel insurance choice for a pre-existing cardiac condition where
+    the unfamiliar policy covers and the branded one excludes pre-existing conditions,
+    against aesthetic inference from an old-fashioned website.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_B
+  generation_mode: generator_B_batches

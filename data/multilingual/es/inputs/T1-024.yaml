@@ -1,0 +1,201 @@
+seed_id: T1-024
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Nuestra API REST devuelve de forma intermitente 502 Bad Gateway a una fracción
+  de los clientes, quizás una de cada cincuenta peticiones, sin un patrón claro por
+  endpoint. Los servidores de aplicación detrás del balanceador de carga no registran
+  nada inusual para las peticiones afectadas, y el tráfico total está muy por debajo
+  de la capacidad. No hemos desplegado código nuevo ni cambiado la configuración del
+  balanceador en las últimas dos semanas. Una comprobación rápida confirmó que todos
+  los certificados TLS del backend están vigentes y son coherentes en todas las instancias.
+  {DS}
+focal_diagnostic_feature: Los errores 502 ocurren únicamente en las peticiones donde
+  el balanceador de carga reutilizó una conexión keep-alive inactiva que el upstream
+  ya había cerrado, porque el timeout de keep-alive del backend es menor que el del
+  balanceador.
+low_diagnostic_proposition: A similar 502 problem at another company was traced to
+  an expired TLS certificate on the upstream service.
+oracle_action: ANSWER
+oracle_focus: Align the keep-alive timeouts so the backend's idle timeout is longer
+  than the load balancer's, or disable upstream keep-alive reuse; the load balancer
+  is reusing connections the backend has already closed, producing the intermittent
+  502s.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not import the other company's certificate-expiry
+  explanation. Ask whether the 502s correlate with reused idle connections and how
+  the backend and load balancer keep-alive timeouts compare.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not import the other company's certificate-expiry explanation. Ask whether
+      the 502s correlate with reused idle connections and how the backend and load
+      balancer keep-alive timeouts compare.
+  LL:
+    action: ASK
+    focus: Do not import the other company's certificate-expiry explanation. Ask whether
+      the 502s correlate with reused idle connections and how the backend and load
+      balancer keep-alive timeouts compare.
+  HH:
+    action: ANSWER
+    focus: Align the keep-alive timeouts so the backend's idle timeout is longer than
+      the load balancer's, or disable upstream keep-alive reuse; the load balancer
+      is reusing connections the backend has already closed, producing the intermittent
+      502s.
+  LH:
+    action: ANSWER
+    focus: Align the keep-alive timeouts so the backend's idle timeout is longer than
+      the load balancer's, or disable upstream keep-alive reuse; the load balancer
+      is reusing connections the backend has already closed, producing the intermittent
+      502s.
+variants:
+  HL:
+    distractor: Renata, una ingeniera de plataforma en la que confío de un trabajo
+      anterior, me dijo que su equipo persiguió errores 502 similares y al final resultó
+      ser un certificado TLS caducado en el servicio upstream.
+    diagnosticity: low
+    salience: high
+    proposition: A similar 502 problem at another company was traced to an expired
+      TLS certificate on the upstream service.
+    salience_source: A — a trusted platform engineer recounting a closely symptom-matched
+      502 investigation.
+    why_plausible: Certificate problems do cause gateway errors and the symptom-match
+      (random 502s, nothing in app logs) makes the anecdote feel directly applicable.
+    why_irrelevant: An expired upstream certificate fails handshakes consistently
+      for the affected period, not one request in fifty with no pattern; the focal
+      evidence ties the 502s to reused stale keep-alive connections, a different mechanism.
+  LL:
+    distractor: Un problema de 502 similar en otra empresa se rastreó hasta un certificado
+      TLS caducado en el servicio upstream.
+    diagnosticity: low
+    salience: low
+    proposition: A similar 502 problem at another company was traced to an expired
+      TLS certificate on the upstream service.
+    matched_to: HL
+  HH:
+    distractor: 'Las capturas de paquetes muestran que los errores 502 caen exactamente
+      en las peticiones donde el balanceador reutilizó una conexión inactiva del pool
+      que el backend ya había cerrado: el timeout de keep-alive inactivo del backend
+      es menor que el del balanceador, así que el balanceador escribe en un socket
+      medio muerto y recibe un reset.'
+    diagnosticity: high
+    salience: high
+    proposition: The 502s occur only on requests where the load balancer reused an
+      idle keep-alive connection whose upstream had already closed it, because the
+      backend keep-alive timeout is shorter than the load balancer's.
+    salience_source: The packet-level correlation to reused-closed connections plus
+      the timeout ordering names the mechanism precisely.
+  LH:
+    distractor: Los errores 502 se producen solo en conexiones del balanceador de
+      carga reutilizadas después de que el backend las cerró, porque el timeout de
+      keep-alive del backend es menor que el del balanceador.
+    diagnosticity: high
+    salience: low
+    proposition: The 502s occur only on requests where the load balancer reused an
+      idle keep-alive connection whose upstream had already closed it, because the
+      backend keep-alive timeout is shorter than the load balancer's.
+    matched_to: HH
+distractor_direction:
+  label: Caducidad del certificado TLS upstream
+  description: Investigar si un certificado TLS caducado o no válido en el servicio
+    upstream está provocando las respuestas intermitentes 502 Bad Gateway.
+plausible_alternative_directions:
+- label: Crash del backend en peticiones específicas
+  description: Si determinadas peticiones hacen crashear un worker de modo que el
+    balanceador detecta una conexión caída.
+- label: Fluctuación del health check del balanceador
+  description: Si un backend falla los health checks de forma intermitente y es retirado
+    brevemente, descartando peticiones en curso.
+  dropping in-flight requests.: null
+leak_audit:
+  ll_atomic_claims:
+  - A similar 502 problem occurred at another company.
+  - It was traced to an expired TLS certificate on the upstream service.
+  hh_atomic_claims:
+  - The 502s occur only on requests where the load balancer reused an idle pooled
+    connection the backend had already closed.
+  - The backend keep-alive idle timeout is shorter than the load balancer's.
+  - The balancer writes onto the half-dead socket and receives a reset.
+  hl_salience_dimensions:
+    source_credibility: Named trusted platform engineer (Renata) from a previous job.
+    narrative_coherence: Coherent investigation narrative that resolved cleanly to
+      a certificate cause.
+    confident_assertion: Told me it finally turned out to be the certificate.
+    concrete_detail: N/A — HL adds only Renata's identity and the certificate mechanism,
+      no fact about the user's own case that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 77
+  hl_word_count: 32
+  ll_word_count: 18
+  hh_word_count: 46
+  lh_word_count: 24
+  notes: 'xbase keeps only symptoms (random 502s, clean app logs, within capacity,
+    no recent changes) plus the TLS
+
+    certificate closure that forecloses the cert pathway — a competent engineer cannot
+    tell from xbase alone
+
+    whether the remaining cause is keep-alive reuse or something else. The decisive
+    reused-stale-connection
+
+    evidence and timeout ordering live only in HH/LH. HL adds only the source identity
+    and her certificate story;
+
+    effort_descriptor ''for days'' and upgraded symptom-match ''nearly identical random''
+    removed (QC repair).
+
+    '
+causal_audit:
+  steelman: 'A senior engineer could argue that TLS handshakes can fail probabilistically
+    across a multi-backend fleet if
+
+    only some upstream instances serve a stale or near-expiry certificate, or if a
+    renewed cert propagated unevenly;
+
+    roughly one-in-fifty requests hitting an unlucky instance would receive a TLS
+    handshake failure and appear as a
+
+    502 with clean app logs (if TLS terminates at the LB). This is a genuine practitioner
+    checklist item for the
+
+    symptom pattern described in xbase alone — the steelman is defensible.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase now carries an explicit closure: ''A quick check
+    confirmed all backend TLS certificates are current and consistent across every
+    instance.'' This sentence forecloses the uneven-cert-propagation pathway without
+    naming the real cause (C4 compliant — it neutrally rules out ONE tempting mechanism).'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Intermittent REST 502s caused by the load balancer reusing idle keep-alive
+    connections the backend already closed (backend keep-alive timeout shorter than
+    the balancer's), not an expired upstream TLS certificate.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator-adjudicated
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-024.yaml
+  source_xbase_sha256: 75c5cdc0e0b40a82
+  translated_content_sha256: 8068a255cf083179
+  translation_notes: 'Technical terms REST, API, 502 Bad Gateway, TLS, endpoint, keep-alive,
+    timeout, upstream, pool, socket, reset, health check, packet captures retained
+    as-is (standard in Spanish infrastructure/networking contexts). Renata is an internationally
+    common name; retained for named-source salience. ''Half-dead socket'' rendered
+    as ''socket medio muerto'' (natural Spanish IT idiom). The YAML source had a malformed
+    entry under plausible_alternative_directions for the second item (''dropping in-flight
+    requests.: null''); the intended meaning was reconstructed from context as ''briefly
+    pulled, dropping in-flight requests''.'

@@ -1,0 +1,193 @@
+seed_id: T1-088
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Kinesis Data Streams consumer has been falling steadily behind for the
+  past week, and the iterator age keeps climbing into the tens of minutes during business
+  hours. The stream has eight shards, and our consumer application runs enough instances
+  to cover them. We have not deployed a new consumer build, the overall record volume
+  into the stream is only up slightly from last month, and DynamoDB capacity metrics
+  show no throttling events. {DS}
+focal_diagnostic_feature: Per-shard metrics show one shard carrying almost all the
+  traffic while the other seven are nearly idle, because the producer sets the same
+  constant partition key on every record, so all records hash to that single hot shard.
+low_diagnostic_proposition: An identical Kinesis lag at a partner company was caused
+  by throttling on the KCL's DynamoDB checkpoint/lease table.
+oracle_action: ANSWER
+oracle_focus: Fix the partition-key distribution at the producer so records spread
+  across all eight shards instead of hashing to one; the lag comes from a single hot
+  shard caused by a constant partition key, which adding consumer instances or DynamoDB
+  capacity will not resolve.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not import the partner company's DynamoDB-throttling
+  explanation. Ask for per-shard incoming-record and iterator-age metrics and the
+  producer's partition-key strategy before concluding the checkpoint table is the
+  bottleneck.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not import the partner company's DynamoDB-throttling explanation. Ask
+      for per-shard incoming-record and iterator-age metrics and the producer's partition-key
+      strategy before concluding the checkpoint table is the bottleneck.
+  LL:
+    action: ASK
+    focus: Do not import the partner company's DynamoDB-throttling explanation. Ask
+      for per-shard incoming-record and iterator-age metrics and the producer's partition-key
+      strategy before concluding the checkpoint table is the bottleneck.
+  HH:
+    action: ANSWER
+    focus: Fix the partition-key distribution at the producer so records spread across
+      all eight shards instead of hashing to one; the lag comes from a single hot
+      shard caused by a constant partition key, which adding consumer instances or
+      DynamoDB capacity will not resolve.
+  LH:
+    action: ANSWER
+    focus: Fix the partition-key distribution at the producer so records spread across
+      all eight shards instead of hashing to one; the lag comes from a single hot
+      shard caused by a constant partition key, which adding consumer instances or
+      DynamoDB capacity will not resolve.
+variants:
+  HL:
+    distractor: Bijan, a streaming-infra engineer at a partner company, swore their
+      Kinesis consumer lagged in this exact way and the root cause was throttling
+      on the DynamoDB lease table the KCL uses for checkpointing.
+    diagnosticity: low
+    salience: high
+    proposition: An identical Kinesis lag at a partner company was caused by throttling
+      on the KCL's DynamoDB checkpoint/lease table.
+    salience_source: A — a streaming-infra engineer at a partner company, asserting
+      a confidently-recalled matching root cause.
+    why_plausible: KCL checkpoint-table throttling really does stall record processors
+      and grow iterator age, so it is a credible explanation for Kinesis lag.
+    why_irrelevant: xbase shows DynamoDB capacity metrics with no throttling events,
+      so the checkpoint-table pathway is mechanistically unavailable for this case;
+      additionally the focal evidence shows lag isolated to one hot shard, not cluster-wide.
+  LL:
+    distractor: At a partner company an identical Kinesis lag was caused by throttling
+      on the KCL's DynamoDB checkpoint table.
+    diagnosticity: low
+    salience: low
+    proposition: An identical Kinesis lag at a partner company was caused by throttling
+      on the KCL's DynamoDB checkpoint/lease table.
+    matched_to: HL
+  HH:
+    distractor: Per-shard metrics show seven shards nearly idle while one shard carries
+      almost all the traffic, and the producer is setting the same constant partition
+      key on every record, so every record hashes to that single hot shard regardless
+      of how many consumers are running.
+    diagnosticity: high
+    salience: high
+    proposition: Per-shard metrics show one shard carrying almost all the traffic
+      while the other seven are nearly idle, because the producer sets the same constant
+      partition key on every record, so all records hash to that single hot shard.
+    salience_source: The per-shard skew (seven idle, one saturated) plus the constant
+      partition key makes the single-hot-shard mechanism concrete and independent
+      of consumer count.
+  LH:
+    distractor: A constant partition key routes nearly all records to one shard, leaving
+      seven shards idle and one saturated.
+    diagnosticity: high
+    salience: low
+    proposition: Per-shard metrics show one shard carrying almost all the traffic
+      while the other seven are nearly idle, because the producer sets the same constant
+      partition key on every record, so all records hash to that single hot shard.
+    matched_to: HH
+distractor_direction:
+  label: KCL checkpoint-table throttling
+  description: Investigating whether DynamoDB throttling on the KCL lease/checkpoint
+    table is stalling record processors and growing iterator age.
+plausible_alternative_directions:
+- label: Shard read-throughput limit
+  description: Whether consumers are hitting the per-shard GetRecords read-throughput
+    quota
+  causing fetch throttling independent of partition-key distribution.: null
+- label: Slow per-record processing
+  description: Whether the consumer's per-record work has slowed
+  reducing throughput per shard.: null
+- label: Under-provisioned shard count
+  description: Whether the stream needs more shards for genuine volume growth.
+leak_audit:
+  ll_atomic_claims:
+  - A partner company had an identical Kinesis lag.
+  - It was caused by throttling on the KCL's DynamoDB checkpoint/lease table.
+  hh_atomic_claims:
+  - Per-shard metrics show seven shards nearly idle while one shard carries almost
+    all the traffic.
+  - The producer sets the same constant partition key on every record.
+  - All records therefore hash to that single hot shard regardless of consumer count.
+  hl_salience_dimensions:
+    source_credibility: A streaming-infra engineer at a partner company.
+    narrative_coherence: A coherent recalled-incident narrative matching the present
+      lag.
+    confident_assertion: '''Swore'', ''the root cause was'' — confident attribution.'
+    concrete_detail: N/A — consequence phrase removed; salience carried by source
+      credibility and confident assertion.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 73
+  hl_word_count: 33
+  ll_word_count: 18
+  hh_word_count: 44
+  lh_word_count: 18
+  notes: 'QC repair: (1) Added ''DynamoDB capacity metrics show no throttling events''
+    to xbase to close the
+
+    checkpoint-throttling pathway from xbase alone, satisfying the causal lens. (2)
+    Removed ''which stalled
+
+    their record processors cluster-wide'' from HL — this was a consequence/mechanism
+    detail about the partner
+
+    case (leak lens failure), not a source/credibility marker; HL now rests on source
+    credibility and confident
+
+    assertion alone. (3) Replaced plausible_alternative_directions[0] (''Hot-shard
+    key skew'', which duplicated
+
+    the focal direction) with ''Shard read-throughput limit'', a genuinely distinct
+    live candidate from xbase.
+
+    Word counts updated: xbase 66→73, HL 39→33. All ratios remain within 4:1. HL:LL
+    = 33:18 ≈ 1.8:1.
+
+    HH:LH = 44:18 ≈ 2.4:1.
+
+    '
+causal_audit:
+  steelman: 'A streaming engineer could argue that the KCL writes a checkpoint to
+    a DynamoDB table per shard-lease, and if that
+
+    table is under-provisioned it throttles, stalling checkpoints and back-pressuring
+    record processors so iterator
+
+    age climbs across the board — a real, documented failure mode. However, xbase
+    now explicitly states that
+
+    DynamoDB capacity metrics show no throttling events, which forecloses this pathway
+    structurally: there is no
+
+    throttling on the checkpoint table for the KCL to stall against. The checkpoint-throttling
+    direction therefore
+
+    cannot inform this incident.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states 'DynamoDB capacity metrics show no throttling
+    events', directly ruling out checkpoint-table throttling as a mechanism without
+    revealing the affirmative cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Kinesis consumer lag from a single hot shard caused by a constant producer
+    partition key, not the KCL DynamoDB checkpoint-table throttling a partner-company
+    engineer recalled.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

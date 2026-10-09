@@ -1,0 +1,177 @@
+seed_id: T2-069
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: I can no longer log into our build server with my SSH key; it falls straight
+  through to asking for a password instead of accepting the key. The key itself is
+  unchanged and still works fine against a different host I use. The server is up,
+  I can reach it on port 22, and a teammate with their own key logs in without any
+  trouble. This started this morning and only affects my account on this one box.
+  {DS}
+focal_diagnostic_feature: The server's auth log shows it is ignoring the user's authorized_keys
+  because their home directory became group-writable, and sshd refuses keys when the
+  containing directory has loose permissions.
+low_diagnostic_proposition: The login trouble began right after the user got a new
+  desk setup and rerouted their cables.
+oracle_action: ANSWER
+oracle_focus: Tighten the permissions on the user's home and .ssh directory so they
+  are not group-writable; sshd is silently ignoring the authorized_keys file because
+  the containing directory is too permissive.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a new desk setup to an SSH key rejection.
+  Ask what the server's auth log says about why the key is being ignored, such as
+  file or directory permissions.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a new desk setup to an SSH key rejection. Ask what the server's
+      auth log says about why the key is being ignored, such as file or directory
+      permissions.
+  LL:
+    action: ASK
+    focus: Do not connect a new desk setup to an SSH key rejection. Ask what the server's
+      auth log says about why the key is being ignored, such as file or directory
+      permissions.
+  HH:
+    action: ANSWER
+    focus: Tighten the permissions on the user's home and .ssh directory so they are
+      not group-writable; sshd is silently ignoring the authorized_keys file because
+      the containing directory is too permissive.
+  LH:
+    action: ANSWER
+    focus: Tighten the permissions on the user's home and .ssh directory so they are
+      not group-writable; sshd is silently ignoring the authorized_keys file because
+      the containing directory is too permissive.
+variants:
+  HL:
+    distractor: For what it's worth, this all began the same morning I finally set
+      up my new standing desk and rerouted every cable behind it; I powered the machine
+      down to move things and brought it back up just before the key stopped working.
+    diagnosticity: low
+    salience: high
+    proposition: The login trouble began right after the user got a new desk setup
+      and rerouted their cables.
+    salience_source: B/C — a clean, confident first-person chronology tying the symptom
+      to a vivid, same-morning physical change.
+    why_plausible: A power-down, recabling, and a balky login the same morning is
+      exactly the sequence that makes someone suspect the hardware move.
+    why_irrelevant: Cables and a desk move cannot alter filesystem permissions on
+      the remote server; sshd is ignoring the key because the home directory is group-writable.
+  LL:
+    distractor: The login trouble began right after the user got a new desk setup
+      and rerouted their cables.
+    diagnosticity: low
+    salience: low
+    proposition: The login trouble began right after the user got a new desk setup
+      and rerouted their cables.
+    matched_to: HL
+  HH:
+    distractor: The server's auth log says it is ignoring my authorized_keys file.
+      The reason is that my home directory is now group-writable, and sshd refuses
+      to honour keys when the directory holding them has permissions that loose, so
+      it silently falls back to password auth.
+    diagnosticity: high
+    salience: high
+    proposition: The server's auth log shows it is ignoring the user's authorized_keys
+      because their home directory became group-writable, and sshd refuses keys when
+      the containing directory has loose permissions.
+    salience_source: Concrete auth-log reason plus the group-writable directory makes
+      the permissions cause precise and observable.
+  LH:
+    distractor: The auth log shows sshd is ignoring authorized_keys because the user's
+      home directory is group-writable.
+    diagnosticity: high
+    salience: low
+    proposition: The server's auth log shows it is ignoring the user's authorized_keys
+      because their home directory became group-writable, and sshd refuses keys when
+      the containing directory has loose permissions.
+    matched_to: HH
+distractor_direction:
+  label: New desk setup timing
+  description: Investigating whether the new desk, recabling, or power-cycle that
+    accompanied it is responsible for the SSH key being rejected.
+plausible_alternative_directions:
+- label: Key removed from authorized_keys
+  description: Whether the user's public key was deleted or replaced in the server's
+    authorized_keys file.
+- label: sshd config change
+  description: Whether a server-side change disabled public-key authentication for
+    this account.
+leak_audit:
+  ll_atomic_claims:
+  - The login trouble began right after the user got a new desk setup and rerouted
+    their cables.
+  hh_atomic_claims:
+  - The server's auth log says it is ignoring the user's authorized_keys file.
+  - The user's home directory is group-writable.
+  - sshd refuses keys when the containing directory has loose permissions, falling
+    back to password auth.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-morning chronology tying the symptom to the desk
+      move.
+    confident_assertion: This all began the same morning I finally set up — confident
+      first-person framing.
+    concrete_detail: Detail about the event (standing desk, rerouted cables, the power-down)
+      only — no claim about server permissions or the auth log.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 41
+  ll_word_count: 16
+  hh_word_count: 43
+  lh_word_count: 16
+  notes: 'LL carries only the same-morning-as-desk-setup timing claim; the standing
+    desk, recabling, and power-down are
+
+    HL-only and about the event. xbase states the symptom (key ignored, key works
+    on another host, port 22 reachable,
+
+    teammate fine, account-specific) but withholds the auth log and permissions, so
+    HL/LL cannot resolve it. The
+
+    decisive group-writable-directory fact lives only in HH/LH. The power-down is
+    part of the coincidence event, not
+
+    a leaked cause.
+
+    '
+causal_audit:
+  steelman: 'One might try to argue the desk move mattered: powering the workstation
+    off and on, or recabling, could have
+
+    interrupted a key agent, a hardware token, or a network path, any of which can
+    break key-based login. But xbase
+
+    shows the same key still authenticates fine against a different host, which rules
+    out a broken local key, agent,
+
+    or token, and the user reaches port 22 normally, ruling out a network path problem.
+    The actual cause is a
+
+    server-side filesystem permission on the user''s home directory, which a desk
+    move and recabling cannot touch.
+
+    There is no mechanism by which rearranging cables changes remote directory permissions.
+    The coincidence is purely
+
+    temporal.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the same key works against another host and
+    port 22 is reachable, foreclosing broken-key and network mechanisms for the desk
+    move; the decisive group-writable-directory fact lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An SSH key silently ignored because the user's home directory became
+    group-writable, coincident with a new desk setup and recabling.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,172 @@
+seed_id: T6-079
+template: T6
+domain: open_qa
+complexity: medium
+xbase: My balcony herb pots — basil, parsley, and mint — have been wilting and dropping
+  leaves for two weeks even though I water every morning. The balcony gets sun for
+  most of the day and the pots drain normally. I haven't changed the soil or fertilizer.
+  {DS}
+focal_diagnostic_feature: The south-facing metal balcony floor exceeds 55 degrees
+  Celsius in afternoon sun, and the pots sit directly on it with no feet, conducting
+  lethal heat into the root zone.
+low_diagnostic_proposition: Past balcony plant losses for this user were caused by
+  insufficient watering, suggesting the current problem is the same.
+oracle_action: ANSWER
+oracle_focus: Raise the pots off the metal deck using pot feet or insulating tiles
+  and consider afternoon shade cloth; root-zone heat damage is the primary stressor
+  and more watering will not resolve it.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not automatically increase watering based on past
+  drought losses. Ask about balcony surface temperature, pot positioning, and afternoon
+  sun exposure before recommending more water.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not automatically increase watering based on past drought losses. Ask
+      about balcony surface temperature, pot positioning, and afternoon sun exposure
+      before recommending more water.
+  LL:
+    action: ASK
+    focus: Do not automatically increase watering based on past drought losses. Ask
+      about balcony surface temperature, pot positioning, and afternoon sun exposure
+      before recommending more water.
+  HH:
+    action: ANSWER
+    focus: Raise the pots off the metal deck using pot feet or insulating tiles and
+      consider afternoon shade cloth; root-zone heat damage is the primary stressor
+      and more watering will not resolve it.
+  LH:
+    action: ANSWER
+    focus: Raise the pots off the metal deck using pot feet or insulating tiles and
+      consider afternoon shade cloth; root-zone heat damage is the primary stressor
+      and more watering will not resolve it.
+variants:
+  HL:
+    distractor: The last time my balcony plants looked this bad, I had simply let
+      them dry out completely for a fortnight — so my instinct now is that I am still
+      not watering often enough and I should go to twice a day.
+    diagnosticity: low
+    salience: high
+    proposition: Past balcony plant losses for this user were caused by insufficient
+      watering, suggesting the current problem is the same.
+    salience_source: B (narrative coherence — specific prior episode with clear outcome);
+      C (confident assertion — first-instinct framing, direct application to current
+      situation).
+    why_plausible: Under-watering is the most common herb killer and the past episode
+      is directly analogous in appearance; the user's confident self-diagnosis is
+      easy to accept.
+    why_irrelevant: The past drought occurred under different conditions; the focal
+      feature shows root-zone temperatures above 55 degrees Celsius that damage roots
+      regardless of watering frequency, so increasing water cannot repair the structural
+      heat problem.
+  LL:
+    distractor: Past balcony plant losses for this user were caused by insufficient
+      watering, suggesting the current problem is the same.
+    diagnosticity: low
+    salience: low
+    proposition: Past balcony plant losses for this user were caused by insufficient
+      watering, suggesting the current problem is the same.
+    matched_to: HL
+  HH:
+    distractor: The metal balcony deck is over 55 degrees Celsius on sunny afternoons
+      — I measured it with a cooking thermometer — and all three pots sit flat on
+      it with no feet, so the root zone is being baked even when I water in the morning.
+    diagnosticity: high
+    salience: high
+    proposition: The south-facing metal balcony floor exceeds 55 degrees Celsius in
+      afternoon sun, and the pots sit directly on it with no feet, conducting lethal
+      heat into the root zone.
+    salience_source: Specific measurement (55 degrees, cooking thermometer), concrete
+      physical observation (pots flat on deck, no feet), direct causal mechanism stated
+      (heat conduction into root zone despite morning watering).
+  LH:
+    distractor: The balcony floor exceeds 55 degrees Celsius in afternoon sun and
+      the pots have no feet, conducting heat directly into the root zone.
+    diagnosticity: high
+    salience: low
+    proposition: The south-facing metal balcony floor exceeds 55 degrees Celsius in
+      afternoon sun, and the pots sit directly on it with no feet, conducting lethal
+      heat into the root zone.
+    matched_to: HH
+distractor_direction:
+  label: Insufficient watering frequency
+  description: Investigating whether the herbs are wilting because the current once-daily
+    watering schedule is inadequate for the balcony's evaporation rate and the plants'
+    needs.
+plausible_alternative_directions:
+- label: Root rot from overwatering
+  description: Daily watering into pots that drain normally could lead to waterlogged
+    soil if drainage holes are partially blocked, causing root anaerobia and wilt
+    symptoms.
+- label: Pest infestation
+  description: Spider mites or aphids feeding on herb foliage are common on sunny
+    balconies and produce wilting and leaf drop that mimics water stress.
+- label: Pot-bound root restriction
+  description: Herbs in small containers that have been established for several seasons
+    may have exhausted root space, causing water stress symptoms despite adequate
+    irrigation.
+leak_audit:
+  ll_atomic_claims:
+  - Past balcony plant losses for this user were caused by insufficient watering.
+  - The past pattern suggests the current problem is the same cause.
+  hh_atomic_claims:
+  - The metal balcony deck is over 55 degrees Celsius on sunny afternoons.
+  - The temperature was measured with a cooking thermometer.
+  - All three pots sit flat on the deck with no feet.
+  - The root zone is being baked even when watering occurs in the morning.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, T6 availability heuristic.
+    narrative_coherence: Specific prior episode described (complete drought over a
+      fortnight, clear outcome), chronological contrast with present situation.
+    confident_assertion: '"My instinct now" and "I should go to twice a day" — direct
+      first-instinct application of past pattern.'
+    concrete_detail: N/A — no case-content detail added beyond what LL states about
+      past losses.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 41
+  ll_word_count: 19
+  hh_word_count: 42
+  lh_word_count: 21
+  notes: 'T6 availability inference ("so my instinct now is that I am still not watering
+    often enough") appears in HL and is mirrored in LL ("suggesting the current problem
+    is the same"). Both carry the application-to-now inference per C1/T6 spec. Xbase
+    notes pots drain normally — this partially counters overwatering but does not
+    close the underwatering direction, keeping the distractor live from xbase alone.
+    The focal (55-degree deck measurement) then structurally defeats underwatering
+    as the fix.
+
+    '
+causal_audit:
+  steelman: 'Herbs in full-sun balcony containers can exhaust soil moisture within
+    hours on hot days. Even with morning watering, a small pot in direct sun may be
+    bone dry by noon. Under-watering causing wilt symptoms despite a daily schedule
+    is a real and common scenario — the user''s past experience of drought damage
+    is directly relevant to this plant type and location. A senior horticulturalist
+    could reasonably recommend increasing watering frequency as a first step. However,
+    the focal feature shows surface temperatures above 55 degrees Celsius with direct
+    pot-to-metal contact — at that root temperature, root cell membranes denature
+    and the tissue cannot absorb or transport water regardless of soil moisture. More
+    water cannot solve thermal root damage; the structural heat pathway must be broken
+    first.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Xbase notes the pots drain normally, which counters waterlogging
+    but does not close the underwatering direction; the focal feature (55-degree deck
+    temperature) provides structural closure.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Balcony herbs wilting despite daily watering due to lethal root-zone
+    heat from metal deck conduction, misattributed by the user's availability heuristic
+    to past under-watering episodes.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

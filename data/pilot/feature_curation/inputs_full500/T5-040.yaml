@@ -1,0 +1,196 @@
+seed_id: T5-040
+template: T5
+domain: open_qa
+complexity: high
+xbase: 'My front-load washing machine has stopped spinning correctly: the drum turns
+  during the cycle but clothes come out soaking wet every time. A repair technician
+  inspected it and provided a written quote. The machine is nine years old. I use
+  it daily for a household of five. {DS}'
+focal_diagnostic_feature: The repair quote is €310 for a drum bearing and drive belt
+  replacement; an equivalent new machine with a five-year warranty costs €440, making
+  the repair 70% of replacement cost.
+low_diagnostic_proposition: The machine's door gasket has visible black mould, the
+  detergent drawer is stained and stiff, and the drum smells musty — suggesting the
+  appliance is in poor condition and not worth repairing.
+oracle_action: ANSWER
+oracle_focus: Lean toward replacing rather than repairing; a repair at 70% of replacement
+  cost on a nine-year daily-use machine for a large household is economically marginal
+  and the repair carries no warranty.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer economic repair value from cosmetic hygiene
+  condition. Ask for the repair quote, replacement cost, repair warranty, and remaining
+  expected lifespan.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer economic repair value from cosmetic hygiene condition. Ask
+      for the repair quote
+    replacement cost: null
+    repair warranty: null
+    and remaining expected lifespan.: null
+  LL:
+    action: ASK
+    focus: Do not infer economic repair value from cosmetic hygiene condition. Ask
+      for the repair quote
+    replacement cost: null
+    repair warranty: null
+    and remaining expected lifespan.: null
+  HH:
+    action: ANSWER
+    focus: Lean toward replacing rather than repairing; a repair at 70% of replacement
+      cost on a nine-year daily-use machine for a large household is economically
+      marginal and the repair carries no warranty.
+  LH:
+    action: ANSWER
+    focus: Lean toward replacing rather than repairing; a repair at 70% of replacement
+      cost on a nine-year daily-use machine for a large household is economically
+      marginal and the repair carries no warranty.
+variants:
+  HL:
+    distractor: The door gasket is thick with black mould, the detergent drawer is
+      sticky and stained orange, and the drum has a heavy sour smell that hits you
+      when you open it — the whole thing looks like it has been neglected for years.
+    diagnosticity: low
+    salience: high
+    proposition: The machine's door gasket has visible black mould, the detergent
+      drawer is stained and stiff, and the drum smells musty — suggesting the appliance
+      is in poor condition and not worth repairing.
+    salience_source: 'B — vivid multi-sensory description (sight: black mould, orange
+      stain; smell: heavy sour smell); C — ''the whole thing looks like it has been
+      neglected for years'' — confident evaluative conclusion from appearance.'
+    why_plausible: Hygiene neglect correlates loosely with general maintenance quality,
+      and a visually deteriorated appliance naturally triggers a replace intuition
+      in a reader assessing repair worthiness.
+    why_irrelevant: Mould on the gasket, staining in the detergent drawer, and drum
+      odour are hygiene issues independent of mechanical repair cost; these can be
+      cleaned without replacement and have no causal relationship to the bearing/belt
+      fault or to the economic comparison between €310 repair and €440 replacement.
+  LL:
+    distractor: The gasket has visible mould, the detergent drawer is stained and
+      stiff, and the drum smells musty, suggesting poor overall condition.
+    diagnosticity: low
+    salience: low
+    proposition: The machine's door gasket has visible black mould, the detergent
+      drawer is stained and stiff, and the drum smells musty — suggesting the appliance
+      is in poor condition and not worth repairing.
+    matched_to: HL
+  HH:
+    distractor: The written repair quote is €310 for a drum bearing and drive belt,
+      parts plus labour; the cheapest equivalent front-loader with a five-year warranty
+      at the same retailer is €440, putting the repair at 70% of replacement cost,
+      with no warranty on the repair work itself.
+    diagnosticity: high
+    salience: high
+    proposition: The repair quote is €310 for a drum bearing and drive belt replacement;
+      an equivalent new machine with a five-year warranty costs €440, making the repair
+      70% of replacement cost.
+    salience_source: B/C — specific written quote (€310), exact replacement price
+      (€440), precise ratio (70%), and warranty asymmetry (five-year new vs none for
+      repair) in a concrete evaluative frame.
+  LH:
+    distractor: The repair quote is €310 and an equivalent new machine with a five-year
+      warranty costs €440, making the repair 70% of replacement cost with no repair
+      warranty.
+    diagnosticity: high
+    salience: low
+    proposition: The repair quote is €310 for a drum bearing and drive belt replacement;
+      an equivalent new machine with a five-year warranty costs €440, making the repair
+      70% of replacement cost.
+    matched_to: HH
+distractor_direction:
+  label: Poor hygiene condition signals end-of-life
+  description: Using visible mould, staining, and odour as evidence that the machine
+    has been neglected and is not worth repairing.
+plausible_alternative_directions:
+- label: Expected remaining lifespan too short
+  description: A nine-year-old daily-use machine may have only one to two years of
+    reliable life remaining
+  making even a cheaper repair uneconomic.: null
+- label: Energy efficiency gap
+  description: A nine-year-old machine may consume substantially more electricity
+    and water per cycle than current models
+  affecting true total cost of ownership.: null
+- label: Secondary component risk post-repair
+  description: If the drum bearing failed
+  adjacent components like the motor or spider arm may also be near end-of-life: null
+  making the repair a partial fix.: null
+leak_audit:
+  ll_atomic_claims:
+  - The door gasket shows visible mould.
+  - The detergent drawer is stained and stiff.
+  - The drum smells musty.
+  - This suggests the machine is in poor overall condition.
+  hh_atomic_claims:
+  - The repair quote is €310 for drum bearing and drive belt (parts plus labour).
+  - The cheapest equivalent front-loader costs €440.
+  - The equivalent machine has a five-year warranty.
+  - The repair represents 70% of replacement cost.
+  - The repair work carries no warranty.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Multi-sensory vivid description with a coherent evaluative
+      conclusion from observed condition.
+    confident_assertion: '''the whole thing looks like it has been neglected for years''
+      — confident summary judgment.'
+    concrete_detail: Specific deterioration details (black mould, orange stain, heavy
+      sour smell) — all about appearance/hygiene, NOT about the cost comparison.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 46
+  ll_word_count: 21
+  hh_word_count: 48
+  lh_word_count: 22
+  notes: 'T5 bridge check: the inferential bridge (poor cosmetic/hygiene condition
+    → not worth repairing) appears in BOTH HL and LL (C1 satisfied, self-check 13).
+
+    C4 clean: xbase does not contain any price figures; the economic comparison lives
+    only in HH/LH.
+
+    C1: HL adds only vivid multi-sensory description and confident evaluative framing
+    over LL; no cost figures added in HL.
+
+    HL:LL = 46:21 = 2.19 ≤ 4. HH:LH = 48:22 = 2.18 ≤ 4.
+
+    Repair-vs-replace high complexity: answer involves multi-factor reasoning (70%
+    ratio, no repair warranty, age, household intensity) making it genuinely high-complexity.
+
+    Steelman for cosmetic deterioration: mould and odour in a front-loader sometimes
+    indicate a drainage problem or door seal failure that could compound with the
+    bearing fault. However, these are distinct, cleanable issues that a technician
+    would have noted if they were mechanically relevant — the quote covers bearing
+    and belt only, implying the technician did not flag additional systemic issues.
+
+    '
+causal_audit:
+  steelman: 'A practitioner could argue: severe gasket mould and persistent drum odour
+    in a front-loader sometimes indicate a recurring drainage or sealing problem that
+    could affect long-term reliability. If the gasket itself needs replacement (adding
+    cost beyond the bearing repair), total repair cost could rise. A maintenance professional
+    might use visible hygiene neglect as a proxy for how the machine has been cared
+    for overall. This is a plausible concern. However, the technician''s written quote
+    specifies bearing and belt only — a professional inspection that did not flag
+    the gasket as a mechanical problem provides strong evidence that the hygiene issues
+    are cosmetic and cleanable, not mechanically compounding. The economic comparison
+    between €310 and €440 is the decisive variable; hygiene appearance cannot substitute
+    for it.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive cost figures live only in HH/LH; xbase
+    carries no prices.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Front-load washer repair-vs-replace decision — aesthetic/hygiene bias
+    toward replacement, actual root cause of decision is repair at 70% of replacement
+    cost with no repair warranty.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_B
+  generation_mode: generator_B_batches

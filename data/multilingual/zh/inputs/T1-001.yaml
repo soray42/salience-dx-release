@@ -1,0 +1,100 @@
+seed_id: T1-001
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: 我们的 CI 从周二开始失败了。单元测试、代码检查和构建仍然通过。只有在集成阶段尝试连接 staging 环境的 Postgres 副本时才会出现失败；错误仅为
+  30 秒连接超时。我们最近没有修改测试或数据库 schema。{DS}
+focal_diagnostic_feature: CI runner 到 Postgres 端口的连接在任何数据库身份验证或查询执行之前就已超时。
+low_diagnostic_proposition: A comparable timeout at another company was attributed
+  to an ORM connection-pool setting.
+oracle_action: ASK
+oracle_focus: Treat this as a reachability problem between CI and the staging replica;
+  check DNS, firewall/security-group rules, routing, NAT/VPN, and DB port access from
+  the runner.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the outside ORM story. Ask for direct connectivity
+  checks from the CI runner to the replica before diagnosing application code.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the outside ORM story. Ask for direct connectivity checks
+      from the CI runner to the replica before diagnosing application code.
+  LL:
+    action: ASK
+    focus: Do not adopt the outside ORM story. Ask for direct connectivity checks
+      from the CI runner to the replica before diagnosing application code.
+  HH:
+    action: ASK
+    focus: Treat this as a reachability problem between CI and the staging replica;
+      check DNS, firewall/security-group rules, routing, NAT/VPN, and DB port access
+      from the runner.
+  LH:
+    action: ASK
+    focus: Treat this as a reachability problem between CI and the staging replica;
+      check DNS, firewall/security-group rules, routing, NAT/VPN, and DB port access
+      from the runner.
+variants:
+  HL:
+    distractor: 另一家金融科技公司的 Marco 发誓他们的 CI 上个月也出现了同样的超时；经过两天排查，他们发现某个 ORM 连接池设置卡在了恰好
+      1 个连接。
+    diagnosticity: low
+    salience: high
+    proposition: A comparable timeout at another company was attributed to an ORM
+      connection-pool setting.
+    salience_source: named third party, exact setting value, similar error label
+    why_plausible: The same visible symptom, 'connection timeout', makes the outside
+      anecdote feel portable.
+    why_irrelevant: The story is from a different stack and points to application
+      pooling; the current failure occurs before database authentication and is isolated
+      to runner-to-replica reachability.
+  LL:
+    distractor: 另一家公司有人遇到了 CI 超时，后来被归因于 ORM 连接池配置问题。
+    diagnosticity: low
+    salience: low
+    proposition: A comparable timeout at another company was attributed to an ORM
+      connection-pool setting.
+    matched_to: HL
+  HH:
+    distractor: 从 CI runner 发起的 socket 连接会一直挂起直到 30 秒超时，Postgres 甚至还没有收到登录请求；完全没有到达
+      ORM 连接池设置可能起作用的阶段。
+    diagnosticity: high
+    salience: high
+    proposition: Connectivity from the CI runner to the Postgres port times out before
+      any database authentication or query runs.
+    salience_source: precise protocol-stage detail
+  LH:
+    distractor: 从 CI runner 直接向 Postgres 端点发起的 TCP 连接在身份验证开始之前就超时了。
+    diagnosticity: high
+    salience: low
+    proposition: Connectivity from the CI runner to the Postgres port times out before
+      any database authentication or query runs.
+    matched_to: HH
+distractor_direction:
+  label: ORM 连接池配置错误
+  description: 应用层连接池耗尽、泄漏或超时配置导致了所观察到的 CI 超时症状。
+plausible_alternative_directions:
+- label: Staging Postgres 过载
+  description: staging 副本已达到连接数、CPU、IO 或锁的上限，与应用代码无关，导致客户端超时。
+- label: CI runner 环境漂移
+  description: runner 镜像、密钥、环境变量或出口配置与上次成功构建时相比发生了偏离。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-001.yaml
+  source_xbase_sha256: d93bad276b6acc3f
+  translated_content_sha256: 891c026b8b41a1ee
+  translation_notes: Technical terms (CI, ORM, Postgres, DNS, TCP, NAT/VPN, schema,
+    staging, runner, socket) kept as-is per instrument. 'Fintech' rendered as 金融科技公司
+    (standard Chinese term). Named person Marco retained for HL salience. Day reference
+    周二 used for Tuesday.

@@ -1,0 +1,191 @@
+seed_id: T1-080
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our single-page dashboard gets slower the longer someone keeps the tab open.
+  After a busy analyst has clicked between views for a couple of hours, scrolling
+  stutters, charts lag, and eventually the tab can crash with an out-of-memory error.
+  A hard reload fixes it instantly, then the slow creep starts again. The bundle size
+  is reasonable and the API responses are quick, so the network is not the problem.
+  Profiling with the charting library removed shows the same growth pattern. {DS}
+focal_diagnostic_feature: Heap snapshots show detached-node counts climbing on every
+  view switch and never falling, because each view registers window listeners on mount
+  and never removes them on unmount, keeping old component trees referenced.
+low_diagnostic_proposition: A peer reported the same memory creep, attributed to a
+  third-party charting library caching every rendered dataset.
+oracle_action: ANSWER
+oracle_focus: Fix the listener leak in the views' lifecycle — remove the window resize
+  and scroll handlers on unmount (return a cleanup function) so detached component
+  trees become collectable; the growth is the application's own un-cleaned listeners,
+  not the charting library's cache.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the peer's charting-library cache explanation.
+  Ask for heap snapshots across navigations and whether detached nodes accumulate
+  and which references retain them.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the peer's charting-library cache explanation. Ask for heap
+      snapshots across navigations and whether detached nodes accumulate and which
+      references retain them.
+  LL:
+    action: ASK
+    focus: Do not adopt the peer's charting-library cache explanation. Ask for heap
+      snapshots across navigations and whether detached nodes accumulate and which
+      references retain them.
+  HH:
+    action: ANSWER
+    focus: Fix the listener leak in the views' lifecycle — remove the window resize
+      and scroll handlers on unmount (return a cleanup function) so detached component
+      trees become collectable; the growth is the application's own un-cleaned listeners,
+      not the charting library's cache.
+  LH:
+    action: ANSWER
+    focus: Fix the listener leak in the views' lifecycle — remove the window resize
+      and scroll handlers on unmount (return a cleanup function) so detached component
+      trees become collectable; the growth is the application's own un-cleaned listeners,
+      not the charting library's cache.
+variants:
+  HL:
+    distractor: Gilang, a staff engineer at another analytics product who I trust,
+      said he is certain this matches a leak his team had where a third-party charting
+      library kept every rendered dataset alive in an internal cache.
+    diagnosticity: low
+    salience: high
+    proposition: A peer reported the same memory creep, attributed to a third-party
+      charting library caching every rendered dataset.
+    salience_source: A — a trusted staff engineer at a peer analytics product confidently
+      recounting an identical long-session memory creep on his own team.
+    why_plausible: Charting libraries can genuinely retain datasets, and a session
+      that crawls over hours is a believable library-cache leak, so a trusted peer's
+      account is tempting to act on.
+    why_irrelevant: The retained memory here is detached component trees pinned by
+      the application's own un-removed window listeners; xbase already shows the growth
+      persists without the charting library, so the library-cache path is structurally
+      closed.
+  LL:
+    distractor: A peer reported the same memory creep, attributed to a third-party
+      charting library caching every rendered dataset.
+    diagnosticity: low
+    salience: low
+    proposition: A peer reported the same memory creep, attributed to a third-party
+      charting library caching every rendered dataset.
+    matched_to: HL
+  HH:
+    distractor: 'Taking heap snapshots across navigations, the detached-node count
+      climbs on every view switch and never falls: each view registers window resize
+      and scroll handlers in a setup hook but never removes them on unmount, so old
+      component trees stay referenced and can never be collected.'
+    diagnosticity: high
+    salience: high
+    proposition: Heap snapshots show detached-node counts climbing on every view switch
+      and never falling, because each view registers window listeners on mount and
+      never removes them on unmount, keeping old component trees referenced.
+    salience_source: Heap-snapshot diffing across navigations exposing the monotonic
+      detached-node growth and the un-removed window listeners retaining old trees.
+  LH:
+    distractor: Heap snapshots show detached nodes accumulating per navigation because
+      each view adds window listeners on mount and never removes them, pinning old
+      trees.
+    diagnosticity: high
+    salience: low
+    proposition: Heap snapshots show detached-node counts climbing on every view switch
+      and never falling, because each view registers window listeners on mount and
+      never removes them on unmount, keeping old component trees referenced.
+    matched_to: HH
+distractor_direction:
+  label: Charting library cache leak
+  description: Investigating whether a third-party charting library retains every
+    rendered dataset internally and should be replaced to stop the memory growth.
+plausible_alternative_directions:
+- label: Un-removed event listeners
+  description: Whether components register global listeners that are never torn down,
+    pinning detached DOM and state across navigations.
+- label: Growing client-side cache
+  description: Whether the app accumulates fetched data in an in-memory store that
+    is never evicted as the session runs.
+leak_audit:
+  ll_atomic_claims:
+  - A peer reported the same long-session memory creep.
+  - It was attributed to a third-party charting library caching every rendered dataset.
+  hh_atomic_claims:
+  - Heap snapshots across navigations show detached-node counts climbing on every
+    view switch and never falling.
+  - Each view registers window resize and scroll handlers on mount.
+  - Those handlers are never removed on unmount.
+  - The un-removed listeners keep old component trees referenced, so they can never
+    be collected.
+  hl_salience_dimensions:
+    source_credibility: Named staff engineer (Gilang) at a peer analytics product
+      the user trusts.
+    narrative_coherence: Coherent peer-recounts-identical-symptom chronology.
+    confident_assertion: Said he is certain it matches his team's leak.
+    concrete_detail: N/A — only the source's role and confident framing; the library-cache
+      mechanism is the shared proposition, not extra case detail.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 36
+  ll_word_count: 17
+  hh_word_count: 45
+  lh_word_count: 23
+  notes: 'QC repair: (1) Added xbase closure sentence "Profiling with the charting
+    library removed shows the same growth
+
+    pattern." — this rules out third-party library retention as a mechanism without
+    supplying the affirmative cause
+
+    (un-removed listeners), satisfying C4''s narrow-pathway-closure allowance. steelman_verdict
+    becomes defensible
+
+    because xbase now structurally forecloses the library-cache path. (2) Deleted
+    the outcome clause "and memory only
+
+    stopped climbing once they swapped the library out entirely" from HL — that was
+    case-outcome content absent from LL,
+
+    violating C1; HL now adds only source identity and confident framing around the
+    same proposition LL states flatly.
+
+    xbase now 80 words (was 69); HL now 36 words (was 48). All five counts within
+    operational targets; HL:LL = 36:17
+
+    (~2.1:1) and HH:LH = 45:23 (~2.0:1), both within 4:1 limit.
+
+    '
+causal_audit:
+  steelman: 'A front-end performance engineer could argue that charting libraries
+    are a classic memory-leak source: many keep
+
+    references to series data or canvas contexts for re-rendering, a dashboard that
+    re-renders charts on every view
+
+    would accumulate them, and a trusted peer who fixed an identical creep by replacing
+    the library has direct evidence.
+
+    However, xbase now directly forecloses this path: profiling with the charting
+    library removed still shows the same
+
+    monotonic growth, which eliminates the library as a necessary or sufficient contributor
+    to this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states 'Profiling with the charting library removed
+    shows the same growth pattern' — this rules out third-party library retention
+    as a causal path for this case specifically, leaving no mechanism by which the
+    charting-library-cache hypothesis could explain the observed growth.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An SPA memory leak from window event listeners never removed on component
+    unmount, misattributed to a third-party charting library's internal dataset cache.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

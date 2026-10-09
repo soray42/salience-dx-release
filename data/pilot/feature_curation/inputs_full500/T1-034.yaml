@@ -1,0 +1,184 @@
+seed_id: T1-034
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our Android app's main screen looks fine on phones, but on tablets several
+  buttons and labels get clipped or overlap each other when the device is in landscape.
+  Users started flagging it after we shipped a redesign of that screen a few weeks
+  ago. The text itself is correct, the data loads, and taps still work where the controls
+  are visible; it is purely a layout problem. We did not change anything about fonts
+  or string resources in that release. {DS}
+focal_diagnostic_feature: The clipping reproduces only at screen widths at or above
+  600dp and in split-screen mode, while ordinary phone widths render correctly, and
+  the redesigned layout uses fixed dp widths instead of responsive constraints.
+low_diagnostic_proposition: A similar clipped-layout bug elsewhere was caused by a
+  custom font that failed to load and fell back to wider glyphs.
+oracle_action: ANSWER
+oracle_focus: 'Treat this as a responsive-layout failure on large screens: replace
+  the fixed dp widths with constraint-based or width-qualified layouts so controls
+  reflow at 600dp and in split-screen instead of being clipped.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the font-fallback explanation from the other
+  case. Ask whether the clipping is tied to screen width or split-screen and whether
+  the redesigned layout uses fixed or responsive sizing before suspecting fonts.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the font-fallback explanation from the other case. Ask whether
+      the clipping is tied to screen width or split-screen and whether the redesigned
+      layout uses fixed or responsive sizing before suspecting fonts.
+  LL:
+    action: ASK
+    focus: Do not adopt the font-fallback explanation from the other case. Ask whether
+      the clipping is tied to screen width or split-screen and whether the redesigned
+      layout uses fixed or responsive sizing before suspecting fonts.
+  HH:
+    action: ANSWER
+    focus: 'Treat this as a responsive-layout failure on large screens: replace the
+      fixed dp widths with constraint-based or width-qualified layouts so controls
+      reflow at 600dp and in split-screen instead of being clipped.'
+  LH:
+    action: ANSWER
+    focus: 'Treat this as a responsive-layout failure on large screens: replace the
+      fixed dp widths with constraint-based or width-qualified layouts so controls
+      reflow at 600dp and in split-screen instead of being clipped.'
+variants:
+  HL:
+    distractor: Emeka, a mobile dev I pair with, hit clipped and overlapping controls
+      in his app and chased it for days before realising a custom font had failed
+      to load and the wider fallback typeface pushed everything out of bounds; he
+      calls a broken font the classic cause of overflowing layouts.
+    diagnosticity: low
+    salience: high
+    proposition: A similar clipped-layout bug elsewhere was caused by a custom font
+      that failed to load and fell back to wider glyphs.
+    salience_source: A — a named developer the user pairs with, recounting his own
+      debugging, gives the font-fallback theory peer credibility.
+    why_plausible: A failed custom font really can fall back to wider glyphs and overflow
+      a layout, so a first-hand account of exactly that feels like a plausible shared
+      cause.
+    why_irrelevant: A font fallback would widen text on every device including phones;
+      here phones render correctly and clipping appears only at large widths and split-screen,
+      so glyph width is not the driver.
+  LL:
+    distractor: A similar clipped-layout bug elsewhere was caused by a custom font
+      that failed to load and fell back to wider glyphs.
+    diagnosticity: low
+    salience: low
+    proposition: A similar clipped-layout bug elsewhere was caused by a custom font
+      that failed to load and fell back to wider glyphs.
+    matched_to: HL
+  HH:
+    distractor: The clipping shows up only once the layout width reaches about 600dp
+      or the app is in split-screen; at ordinary phone widths everything fits, and
+      the redesigned screen pins its controls to fixed dp widths rather than letting
+      them reflow with constraints.
+    diagnosticity: high
+    salience: high
+    proposition: The clipping reproduces only at screen widths at or above 600dp and
+      in split-screen mode, while ordinary phone widths render correctly, and the
+      redesigned layout uses fixed dp widths instead of responsive constraints.
+    salience_source: The exact 600dp/split-screen threshold versus correct phone rendering,
+      plus the fixed-dp-width detail, makes the responsive-layout cause concrete.
+  LH:
+    distractor: Clipping appears only at widths from 600dp and in split-screen while
+      phones render correctly, and the layout uses fixed dp widths.
+    diagnosticity: high
+    salience: low
+    proposition: The clipping reproduces only at screen widths at or above 600dp and
+      in split-screen mode, while ordinary phone widths render correctly, and the
+      redesigned layout uses fixed dp widths instead of responsive constraints.
+    matched_to: HH
+distractor_direction:
+  label: Failed custom font fallback
+  description: Investigating whether a custom font failed to load and the wider fallback
+    typeface is overflowing the layout.
+plausible_alternative_directions:
+- label: Missing tablet resource qualifier
+  description: Whether the redesign omitted a large-screen or sw600dp layout resource
+    so tablets fall back to the phone layout.
+- label: Density-scaling miscalculation
+  description: Whether view sizes computed in pixels rather than density-independent
+    units misrender on high-density tablet panels.
+leak_audit:
+  ll_atomic_claims:
+  - Another app had a similar clipped-layout bug.
+  - It was caused by a custom font that failed to load.
+  - The fallback typeface had wider glyphs.
+  hh_atomic_claims:
+  - Clipping appears only at layout widths at or above 600dp and in split-screen.
+  - At ordinary phone widths everything renders correctly.
+  - The redesigned screen uses fixed dp widths rather than responsive constraints.
+  hl_salience_dimensions:
+    source_credibility: Named developer (Emeka) the user pairs with, recounting his
+      own debugging.
+    narrative_coherence: Clean chased-for-days to font-fallback-realisation chronology.
+    confident_assertion: He 'says' a broken font is the classic cause — confidence
+      about his generic claim, allowed under C1.
+    concrete_detail: Detail about the source (pairing partner, his days of chasing
+      it) only — nothing about this app's present case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 50
+  ll_word_count: 21
+  hh_word_count: 42
+  lh_word_count: 21
+  notes: 'LL carries only the other-app font-fallback claim; the named source, the
+    pairing relationship, his days of
+
+    chasing it and his "classic cause" generalisation are HL-only and concern the
+    source, not this app''s present
+
+    case. xbase states symptoms (tablet landscape clipping after a redesign, text
+    correct, fonts/strings unchanged)
+
+    but withholds the width-threshold/split-screen pattern and the fixed-dp-width
+    detail, so HL/LL cannot rule the
+
+    font theory in or out. The "did not change fonts" line is a symptom that does
+    not alone defeat the theory (a font
+
+    can fail to load without a resource change); the decisive width-threshold and
+    fixed-dp facts live only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'An Android engineer might argue the font-fallback direction is worth
+    ranking: a custom font that fails to load
+
+    swaps in a system fallback whose wider glyphs can overflow tightly packed controls,
+    it needs no string change to
+
+    appear, and it produces exactly the clipped-and-overlapping symptom described.
+    The steelman breaks on the
+
+    case''s geometry, though. A wider fallback font widens text uniformly across all
+    devices, so it would clip phones
+
+    too; here phones render correctly and the breakage is confined to widths at or
+    above 600dp and to split-screen,
+
+    tracking layout width rather than glyph width. That is a fixed-width responsive-layout
+    failure, not a font
+
+    problem, so the font direction has no mechanism for this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the font-fallback pathway is closed by the focal
+    feature (correct phone rendering; breakage only at large widths and split-screen)
+    in HH/LH, not in xbase; xbase keeps only symptoms.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An Android tablet layout clipping caused by fixed-dp widths failing
+    at large screen widths, not a peer's failed-custom-font fallback anecdote.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

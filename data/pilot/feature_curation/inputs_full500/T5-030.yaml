@@ -1,0 +1,224 @@
+seed_id: T5-030
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I am deciding between a six-month renewable contract role and a permanent position.
+  The contract pays a higher day rate, but I would handle my own taxes and receive
+  no employer benefits. The two roles differ in scope and focus, and I have a financial
+  buffer of about three months of expenses. {DS}
+focal_diagnostic_feature: After accounting for employer pension, private health cover,
+  and paid leave, the permanent role's effective annual value exceeds the contract
+  net rate by 14 percent, and only the permanent role is in the user's target growth
+  domain.
+low_diagnostic_proposition: The contract proposal materials are professionally polished,
+  which is taken as a sign the client and opportunity are serious.
+oracle_action: ANSWER
+oracle_focus: Choose the permanent role on the disclosed facts; its effective annual
+  value exceeds the contract net rate by 14 percent once benefits are counted, and
+  it alone aligns with the user's target growth domain, making it superior on both
+  financial and career grounds.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not treat proposal presentation quality as evidence
+  of opportunity value. Ask for the contract's net effective rate after self-employment
+  tax and compare it against the permanent role's total package including benefits
+  before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not treat proposal presentation quality as evidence of opportunity value.
+      Ask for the contract's net effective rate after self-employment tax and compare
+      it against the permanent role's total package including benefits before deciding.
+  LL:
+    action: ASK
+    focus: Do not treat proposal presentation quality as evidence of opportunity value.
+      Ask for the contract's net effective rate after self-employment tax and compare
+      it against the permanent role's total package including benefits before deciding.
+  HH:
+    action: ANSWER
+    focus: Choose the permanent role on the disclosed facts; its effective annual
+      value exceeds the contract net rate by 14 percent once benefits are counted,
+      and it alone aligns with the user's target growth domain, making it superior
+      on both financial and career grounds.
+  LH:
+    action: ANSWER
+    focus: Choose the permanent role on the disclosed facts; its effective annual
+      value exceeds the contract net rate by 14 percent once benefits are counted,
+      and it alone aligns with the user's target growth domain, making it superior
+      on both financial and career grounds.
+variants:
+  HL:
+    distractor: The contract agency sent a beautifully designed pitch deck — sharp
+      branding, clean data tables, and a cover letter that reads like it was drafted
+      by a corporate law firm; a presentation this polished usually means the client
+      and opportunity are serious.
+    diagnosticity: low
+    salience: high
+    proposition: The contract proposal materials are professionally polished, which
+      is taken as a sign the client and opportunity are serious.
+    salience_source: B/C — a vivid, specific sensory description of the pitch deck
+      followed by a confidently stated inference ('usually means') frames the aesthetic
+      as an expert signal.
+    why_plausible: Professional-grade proposal materials do loosely correlate with
+      organised, well-resourced clients, and a user anxious about contract risk might
+      reasonably treat presentation quality as a credibility signal.
+    why_irrelevant: Pitch-deck design is controlled by the agency, not the end client,
+      and says nothing about the contract's net financial value, renewal security,
+      or career-growth alignment once self-employment tax and benefits are factored
+      in.
+  LL:
+    distractor: The contract proposal materials are professionally polished, which
+      I take as a sign the client and opportunity are serious.
+    diagnosticity: low
+    salience: low
+    proposition: The contract proposal materials are professionally polished, which
+      is taken as a sign the client and opportunity are serious.
+    matched_to: HL
+  HH:
+    distractor: After accounting for the employer pension, private health cover, and
+      25 paid leave days, the permanent role's effective annual value is 14 percent
+      above the contract rate after self-employment tax; the permanent role is also
+      in my target growth domain while the contract is not.
+    diagnosticity: high
+    salience: high
+    proposition: After accounting for employer pension, private health cover, and
+      paid leave, the permanent role's effective annual value exceeds the contract
+      net rate by 14 percent, and only the permanent role is in the user's target
+      growth domain.
+    salience_source: Three named benefit components, a precise 14-percent advantage
+      figure adjusted for self-employment tax, and a clear domain-alignment contrast
+      make the permanent role's superiority quantified and checkable.
+  LH:
+    distractor: After benefits, the permanent role's effective value exceeds the contract
+      net rate by 14 percent and matches the user's target growth area.
+    diagnosticity: high
+    salience: low
+    proposition: After accounting for employer pension, private health cover, and
+      paid leave, the permanent role's effective annual value exceeds the contract
+      net rate by 14 percent, and only the permanent role is in the user's target
+      growth domain.
+    matched_to: HH
+distractor_direction:
+  label: Polished pitch materials signal quality
+  description: Using the contract agency's professionally presented proposal as evidence
+    that the contract opportunity is more serious or valuable than the permanent role.
+plausible_alternative_directions:
+- label: Contract flexibility and autonomy
+  description: Whether the renewable contract's flexibility and independence have
+    career or lifestyle value that partially offsets the financial and domain disadvantage.
+- label: Renewal risk under contract
+  description: Whether the six-month renewable nature of the contract introduces income
+    uncertainty that further tilts the decision toward the permanent role.
+leak_audit:
+  ll_atomic_claims:
+  - The contract proposal materials are professionally polished.
+  - The polished appearance is taken as a sign the client and opportunity are serious.
+  hh_atomic_claims:
+  - Employer pension is factored into the comparison.
+  - Private health cover is factored into the comparison.
+  - 25 paid leave days are factored into the comparison.
+  - The permanent role's effective annual value is 14 percent above the contract rate
+    after self-employment tax.
+  - The permanent role is in the user's target growth domain.
+  - The contract role is not in the user's target growth domain.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person description of receiving and reading the
+      pitch deck, flowing naturally into an inference.
+    confident_assertion: '''Usually means'' frames the aesthetic-to-quality inference
+      as an experienced rule rather than a guess.'
+    concrete_detail: Detail about the pitch deck (sharp branding, clean data tables,
+      cover letter like a corporate law firm) describes the proposal document only;
+      no financial or domain fact is added.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 52
+  hl_word_count: 41
+  ll_word_count: 19
+  hh_word_count: 45
+  lh_word_count: 22
+  notes: 'T5 bridge check: the inferential bridge (polished materials → client and
+    opportunity
+
+    serious) appears flatly in LL (''which I take as a sign the client and opportunity
+    are
+
+    serious'') — satisfies C1 self-check 13. HL adds specific visual details (sharp
+    branding,
+
+    data tables, law-firm cover letter) that describe the document appearance, not
+    new facts
+
+    about the opportunity. C4 (post-repair): xbase establishes the higher day rate,
+    states roles differ
+
+    in scope and focus (neutral — no domain identity disclosed), and withholds
+
+    both the benefits comparison and domain-alignment identity; a practitioner
+
+    cannot compute the net advantage without HH/LH. LH word count: After(1)
+
+    benefits(2), the(3) permanent(4) role''s(5) effective(6) value(7) exceeds(8) the(9)
+
+    contract(10) net(11) rate(12) by(13) 14(14) percent(15) and(16) matches(17) the(18)
+
+    user''s(19) target(20) growth(21) area(22). = 22 words. Within target.
+
+    HH covers all six atomic claims; LH covers claims 4-6 with ''after benefits''
+    bundling
+
+    claims 1-3. This is acceptable: the specific benefit enumeration is salience detail
+    in HH;
+
+    the propositional content (14-percent advantage after benefits, domain match for
+    permanent
+
+    only) is present in LH.
+
+    '
+causal_audit:
+  steelman: 'A practitioner might argue that agencies investing in high-quality proposal
+    materials
+
+    tend to work with serious, stable clients who budget properly and honour contracts,
+
+    making the presentation quality a weak but real prior on contract reliability
+    and
+
+    payment terms. Furthermore, contract agencies compete for candidates, and polished
+
+    materials signal they value the candidate''s attention. However, pitch-deck quality
+    is
+
+    controlled by the agency''s marketing budget, not the end client''s operational
+    quality,
+
+    and it says nothing about the net financial comparison once self-employment tax,
+    pension,
+
+    health cover, and leave are accounted for. The 14-percent effective advantage
+    for the
+
+    permanent role is a factual calculation that the proposal''s appearance cannot
+    displace.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase mentions the higher day rate and lack of benefits
+    and notes roles differ in scope and focus (neutral), but withholds the precise
+    benefit-adjusted comparison and domain-alignment identity; those live only in
+    HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Contract vs permanent role decision where a polished agency pitch deck
+    distracts from the permanent role's 14-percent effective value advantage and sole
+    alignment with the user's target growth domain.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

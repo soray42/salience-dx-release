@@ -1,0 +1,177 @@
+seed_id: T1-068
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our API gateway intermittently returns 401 Unauthorized to clients that are
+  presenting valid, unexpired access tokens; a retry of the identical request usually
+  succeeds. The rate of failures is small but steady, around one in eight calls, and
+  it has persisted across three days. The tokens themselves verify fine in our local
+  tooling, and the upstream identity provider reports no errors on its side. We run
+  several gateway replicas behind a load balancer. {DS}
+focal_diagnostic_feature: Every 401 is served by one specific gateway replica whose
+  cached JWKS is stale, so it lacks the new signing key the IdP rotated to four days
+  ago and rejects tokens signed with it.
+low_diagnostic_proposition: A comparable intermittent-401 problem at another company
+  was caused by hitting the identity provider's rate limit.
+oracle_action: ANSWER
+oracle_focus: Force a JWKS refresh on the affected replica and fix its key-cache TTL
+  or rotation handling; it is rejecting tokens signed with a key it never fetched
+  after the IdP's rotation four days ago.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the outside rate-limit story. Ask whether
+  the 401s correlate with a specific replica and whether each replica's signing-key
+  cache is current.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the outside rate-limit story. Ask whether the 401s correlate
+      with a specific replica and whether each replica's signing-key cache is current.
+  LL:
+    action: ASK
+    focus: Do not adopt the outside rate-limit story. Ask whether the 401s correlate
+      with a specific replica and whether each replica's signing-key cache is current.
+  HH:
+    action: ANSWER
+    focus: Force a JWKS refresh on the affected replica and fix its key-cache TTL
+      or rotation handling; it is rejecting tokens signed with a key it never fetched
+      after the IdP's rotation four days ago.
+  LH:
+    action: ANSWER
+    focus: Force a JWKS refresh on the affected replica and fix its key-cache TTL
+      or rotation handling; it is rejecting tokens signed with a key it never fetched
+      after the IdP's rotation four days ago.
+variants:
+  HL:
+    distractor: Dimitris, a staff engineer at a company with a near-identical gateway
+      setup, told me they chased this exact intermittent-401 pattern for days and
+      it turned out they were silently tripping the identity provider's rate limit,
+      which replied with 401s on the calls that got throttled.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable intermittent-401 problem at another company was caused
+      by hitting the identity provider's rate limit.
+    salience_source: A — a named staff engineer with a matching architecture recounting
+      a first-hand debugging effort lends strong domain credibility.
+    why_plausible: Provider rate limits do return auth-style errors intermittently,
+      so for a busy on-call the throttling story fits the one-in-eight pattern.
+    why_irrelevant: The IdP reports no errors and tokens verify locally; a rate-limit
+      cause would show provider-side throttling, not failures concentrated on a single
+      replica's stale key cache.
+  LL:
+    distractor: Another company's similar intermittent-401 issue was caused by hitting
+      the identity provider's rate limit.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable intermittent-401 problem at another company was caused
+      by hitting the identity provider's rate limit.
+    matched_to: HL
+  HH:
+    distractor: 'I correlated the 401s by host and every single one comes from replica
+      three. Its JWKS cache is stale: it never picked up the new signing key the IdP
+      rotated to four days ago, so it rejects any token signed with that key while
+      the other replicas accept them.'
+    diagnosticity: high
+    salience: high
+    proposition: Every 401 is served by one specific gateway replica whose cached
+      JWKS is stale, so it lacks the new signing key the IdP rotated to four days
+      ago and rejects tokens signed with it.
+    salience_source: Concrete by-host correlation pinning all 401s to replica three
+      plus the named four-day-old key rotation makes the cause precise and undeniable.
+  LH:
+    distractor: All 401s come from one replica whose stale JWKS lacks the IdP's signing
+      key rotated four days ago.
+    diagnosticity: high
+    salience: low
+    proposition: Every 401 is served by one specific gateway replica whose cached
+      JWKS is stale, so it lacks the new signing key the IdP rotated to four days
+      ago and rejects tokens signed with it.
+    matched_to: HH
+distractor_direction:
+  label: Provider rate limiting
+  description: Investigating whether the identity provider is throttling the gateway's
+    token-validation traffic and returning 401s on rate-limited calls.
+plausible_alternative_directions:
+- label: Clock skew on a replica
+  description: Whether one replica's clock drift causes it to treat valid tokens as
+    expired or not-yet-valid.
+- label: Load-balancer session affinity
+  description: Whether sticky-session or routing behaviour sends a subset of requests
+    down a misconfigured validation path.
+leak_audit:
+  ll_atomic_claims:
+  - Another company had a similar intermittent-401 issue.
+  - It was caused by hitting the identity provider's rate limit.
+  hh_atomic_claims:
+  - All 401s come from one specific replica (replica three).
+  - That replica's JWKS cache is stale.
+  - It lacks the new signing key the IdP rotated to four days ago.
+  - It rejects tokens signed with that key while other replicas accept them.
+  hl_salience_dimensions:
+    source_credibility: Named staff engineer (Dimitris) at a company with a near-identical
+      setup, recounting first-hand debugging.
+    narrative_coherence: Coherent chased-it-for-days-then-found-throttling arc.
+    confident_assertion: Told me ... it turned out — direct, unhedged report.
+    concrete_detail: Detail about the source's environment (matching gateway setup,
+      their debugging) only — no claim about this system's replicas or key cache.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 44
+  ll_word_count: 15
+  hh_word_count: 46
+  lh_word_count: 17
+  notes: 'LL carries only the rate-limit claim; Dimitris, the matching setup, and
+    the multi-day debugging are HL-only and
+
+    about the source. xbase states the symptom (intermittent 401 on valid tokens,
+    retry succeeds, IdP clean, local
+
+    verify fine, multiple replicas) but withholds the by-host correlation and the
+    stale-key fact, so HL/LL cannot
+
+    resolve it. The decisive single-replica stale-JWKS fact lives only in HH/LH. Distinct
+    root cause from any other
+
+    seed: a per-replica cache that missed a NEW key, not a population-wide failure.
+
+    '
+causal_audit:
+  steelman: 'A senior engineer could argue that identity-provider rate limits are
+    a notorious source of intermittent 401s in
+
+    high-throughput gateways: when token introspection or JWKS fetches exceed a quota,
+    the provider returns auth
+
+    errors on the throttled subset, producing exactly the one-in-eight, retry-succeeds
+    pattern observed. That is a
+
+    legitimate cause-class in general. But it cannot fit THIS case: xbase states the
+    IdP reports no errors on its
+
+    side and tokens verify in local tooling, so the provider is not rejecting anything,
+    and the focal evidence
+
+    concentrates all failures on a single replica''s stale key cache rather than on
+    a provider quota. The rate-limit
+
+    pathway is structurally excluded by the clean provider status and the single-replica
+    concentration.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the IdP reports no errors and tokens verify
+    locally, foreclosing a provider-side rate-limit cause without naming the replica
+    or its key cache; the decisive stale-JWKS fact lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Intermittent gateway 401s caused by one replica's stale JWKS missing
+    a rotated signing key, not the peer's identity-provider rate-limit story.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

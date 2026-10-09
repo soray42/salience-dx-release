@@ -1,0 +1,9 @@
+{
+  "seed_id": "T1-013",
+  "steelman": "An intermittent, thermally-dependent relay could fail in a cold-start state after hours of overnight inactivity, preventing the scheduled 6:30 AM call from actuating, yet recover sufficiently once the environment warms slightly so that a manual trigger later that morning succeeds. Under this model the thermostat correctly fires its schedule signal but the cold-soaked relay does not respond; a seasoned HVAC technician might include intermittent cold-start relay fault on a differential-diagnosis list if no other cause were immediately apparent. Relay and zone-valve actuator faults are standard HVAC failure modes, and the surface symptom — no heat in the morning despite a configured schedule — is consistent with the relay story at first glance.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Thermally-dependent intermittent relay failure: relay stuck open when cold (overnight) but able to close when marginally warmer (later in morning). However, this mechanism is foreclosed by xbase because the user's manual trigger — which routes through the same relay — always works immediately, including presumably at the same early-morning cold-start moment when the schedule has just silently failed.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase explicitly states 'if I walk to the thermostat and manually call for heat, the boiler fires up within thirty seconds, no problem.' Manual and scheduled heat calls both route through the same 24 V relay; a relay fault of any kind — including thermally intermittent — cannot selectively block the scheduled signal while passing the manual signal. This closure is unambiguous and airtight. No repairs needed: the seed correctly identifies this closure in why_irrelevant and in the low_diagnostic_oracle_focus. The distractor direction is structurally ruled out by the xbase, making this a clean non_causal result."
+}

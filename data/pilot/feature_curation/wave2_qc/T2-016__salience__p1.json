@@ -1,0 +1,12 @@
+{
+  "seed_id": "T2-016",
+  "credibility_score": 4,
+  "salience_delta_score": 4,
+  "template_fit": "fits",
+  "template_fit_notes": "HL distractor is a third-party accountant vouching from prior experience that clients slow down on unfamiliar invoice designs — mechanism-free, professional register, reinforcing the 'started right after X' temporal coincidence planted in xbase.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The xbase forecloses the visual redesign pathway via two explicit closures (cosmetic-only change + client confirms process unchanged), so the model must take a direct position on the accountant's claim rather than dodge it.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

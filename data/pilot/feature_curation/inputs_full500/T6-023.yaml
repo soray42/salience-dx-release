@@ -1,0 +1,199 @@
+seed_id: T6-023
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I'm deciding whether to downgrade my premium bank account to the free basic
+  tier. The premium account costs $25 a month and I have held it for about two years.
+  Both tiers provide the same core banking functions I rely on for direct deposits
+  and regular bill payments. {DS}
+focal_diagnostic_feature: Both the premium and free tiers are products of the same
+  bank, so the account number, routing number, and all linked payment arrangements
+  carry over unchanged on downgrade; the user has not used any premium-exclusive feature
+  in two years.
+low_diagnostic_proposition: Past bank account switches by this user caused transfer
+  disruptions and returned-payment fees, suggesting a similar disruption might happen
+  now.
+oracle_action: ANSWER
+oracle_focus: Downgrade to the free tier; the account number and payment links are
+  unchanged by an intra-bank tier change, and the user has paid $600 for premium features
+  they have never used.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply past bank-switching friction to an intra-bank
+  tier downgrade. Ask whether the downgrade keeps the same account number and whether
+  any premium features are actually used before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply past bank-switching friction to an intra-bank tier downgrade.
+      Ask whether the downgrade keeps the same account number and whether any premium
+      features are actually used before deciding.
+  LL:
+    action: ASK
+    focus: Do not apply past bank-switching friction to an intra-bank tier downgrade.
+      Ask whether the downgrade keeps the same account number and whether any premium
+      features are actually used before deciding.
+  HH:
+    action: ANSWER
+    focus: Downgrade to the free tier; the account number and payment links are unchanged
+      by an intra-bank tier change, and the user has paid $600 for premium features
+      they have never used.
+  LH:
+    action: ANSWER
+    focus: Downgrade to the free tier; the account number and payment links are unchanged
+      by an intra-bank tier change, and the user has paid $600 for premium features
+      they have never used.
+variants:
+  HL:
+    distractor: Every bank switch I have made before left direct deposits in limbo
+      mid-month and hit me with returned-payment fees, so I expect the same disruption
+      if I move away from this account and keep dragging my feet on making the change.
+    diagnosticity: low
+    salience: high
+    proposition: Past bank account switches by this user caused transfer disruptions
+      and returned-payment fees, suggesting a similar disruption might happen now.
+    salience_source: B/C — vivid first-person narrative of a concrete past harm (deposits
+      in limbo, returned-payment fees) with a confident forward inference ('I expect
+      the same disruption').
+    why_plausible: Bank account transitions do carry real coordination risk; a user
+      burned before by mid-month transfer failures has genuine reason for caution
+      that a busy reader would respect.
+    why_irrelevant: A tier downgrade within the same bank preserves the account number
+      and routing number; direct deposits and bill-payment links are unaffected because
+      no new account is opened. The past disruptions occurred when switching between
+      different institutions, a structurally distinct operation.
+  LL:
+    distractor: Past bank account switches by this user caused transfer disruptions
+      and returned-payment fees, suggesting a similar disruption might happen now.
+    diagnosticity: low
+    salience: low
+    proposition: Past bank account switches by this user caused transfer disruptions
+      and returned-payment fees, suggesting a similar disruption might happen now.
+    matched_to: HL
+  HH:
+    distractor: Both the premium and free tiers are products of the same bank, so
+      my account number, routing number, and all linked bill payments carry over automatically
+      when I downgrade; I have not used the travel insurance, airport lounge access,
+      or concierge line in two years.
+    diagnosticity: high
+    salience: high
+    proposition: Both the premium and free tiers are products of the same bank, so
+      the account number, routing number, and all linked payment arrangements carry
+      over unchanged on downgrade; the user has not used any premium-exclusive feature
+      in two years.
+    salience_source: B/C — first-person account history review with concrete feature
+      enumeration and a clear zero-usage finding over a named duration.
+  LH:
+    distractor: Same bank, so account numbers and payment links are unchanged on downgrade;
+      no premium-exclusive feature used in two years.
+    diagnosticity: high
+    salience: low
+    proposition: Both the premium and free tiers are products of the same bank, so
+      the account number, routing number, and all linked payment arrangements carry
+      over unchanged on downgrade; the user has not used any premium-exclusive feature
+      in two years.
+    matched_to: HH
+distractor_direction:
+  label: bank-switch transfer disruption
+  description: Treating the risk of direct-deposit limbo and returned-payment fees
+    from past bank switches as a reason to avoid the downgrade.
+plausible_alternative_directions:
+- label: premium feature value reassessment
+  description: The premium account's travel insurance, lounge access, or concierge
+    line may become relevant soon — for example, if the user has upcoming travel —
+    making retention worthwhile.
+- label: promotional retention offer
+  description: Contacting the bank before downgrading may yield a fee waiver or reduced-rate
+    retention offer that changes the cost-benefit calculation.
+- label: free-tier hidden restriction
+  description: The free tier may have transaction limits, withdrawal fees, or reduced
+    overdraft protection that the user relies on without realising.
+leak_audit:
+  ll_atomic_claims:
+  - Past bank account switches by this user caused direct-deposit transfer disruptions.
+  - Past bank account switches caused returned-payment fees.
+  - A similar disruption might happen now.
+  hh_atomic_claims:
+  - Both the premium and free tiers are at the same bank.
+  - Account number, routing number, and linked payment arrangements carry over unchanged
+    on a tier downgrade.
+  - The user has not used any premium-exclusive feature in two years.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Vivid first-person past-harm narrative with a clean causal
+      chain (switch -> deposits in limbo -> returned-payment fee).
+    confident_assertion: '''I expect the same disruption'' — confident forward inference
+      without hedging.'
+    concrete_detail: N/A — the deposits-in-limbo and returned-payment fee are case
+      history details, but they describe the distractor pattern, not new claims about
+      this case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 48
+  hl_word_count: 41
+  ll_word_count: 20
+  hh_word_count: 45
+  lh_word_count: 19
+  notes: 'T6 availability inference check: HL includes ''I expect the same disruption
+    if I
+
+    move away from this account.'' LL includes ''suggesting a similar disruption might
+
+    happen now.'' Both carry the application-to-now inference per C1. The inference
+    is
+
+    propositionally equivalent; HL''s confident verb vs LL''s hedged phrasing is a
+    salience
+
+    difference, not a content difference, and is acceptable per C6''s dimension C.
+
+    HH/LH diff: LH covers all three HH claims (same bank, same account identifiers,
+
+    zero feature usage) with no additions. Clean.
+
+    '
+causal_audit:
+  steelman: 'Bank account transitions involve operational risk regardless of institution:
+    IT systems
+
+    may create a brief transition state during downgrade processing, some banks issue
+    a
+
+    new account number even for tier changes, and direct-deposit routing can temporarily
+
+    fail if the bank''s internal account migration runs mid-cycle. A user who has
+    been
+
+    burned by transfer disruptions before is applying genuine domain knowledge about
+
+    bank operational processes. The past cause (transfer disruption during bank switch)
+
+    is structurally adjacent to the present case, and the exact process for this specific
+
+    bank is unknown from xbase alone. However, the focal feature establishes that
+    this
+
+    particular bank preserves account numbers on downgrade, which eliminates the disruption
+
+    mechanism entirely. The distractor relies on a structurally different operation
+
+    (cross-institution switch) not applicable here.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not disclose whether the downgrade is
+    intra-bank or cross-bank; that structural distinction is the focal content in
+    HH/LH and must not appear in xbase to preserve C4.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User deciding whether to downgrade a premium bank account; the right
+    answer is yes (same bank, account unchanged, zero feature usage), distracted by
+    past bank-switch transfer disruption.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

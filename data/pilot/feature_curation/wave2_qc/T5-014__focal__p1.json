@@ -1,0 +1,13 @@
+{
+  "seed_id": "T5-014",
+  "my_own_diagnosis": "From xbase alone, the user's concern is whether an ugly app produced a correct $1,847 refund figure; the focal feature (an accountant independently calculating the same return line by line and arriving at exactly $1,847) constitutes direct numerical verification, so a competent practitioner would conclude the calculation is correct and the interface aesthetics are irrelevant to accuracy.",
+  "focal_decisive": true,
+  "focal_notes": "An exact independent replication by a CPA on identical inputs is the gold-standard verification for arithmetic correctness, leaving no residual uncertainty.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cell_oracles correctly mirror low_diagnostic_oracle_focus; HH/LH correctly mirror focal oracle_focus; low_diagnostic_oracle_focus explicitly instructs non-adoption of the distractor.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

@@ -1,0 +1,180 @@
+seed_id: T1-093
+template: T1
+domain: open_qa
+complexity: low
+xbase: I'm buying a new dishwasher and at the till the salesperson is pushing a three-year
+  extended warranty for €89 on top of the price. The appliance is a mid-range model
+  from a mainstream brand. I tend to keep appliances a long time and I don't want
+  a nasty surprise if it breaks. I'm trying to decide whether the extended warranty
+  is worth paying for or whether I should skip it. {DS}
+focal_diagnostic_feature: The dishwasher already comes with a two-year manufacturer
+  warranty, and statutory consumer protection covers faults for years beyond that,
+  so the paid plan's first two-plus years duplicate coverage the buyer already has
+  for free.
+low_diagnostic_proposition: A relative was glad they had bought an extended warranty
+  when their appliance failed and the repair was covered.
+oracle_action: ANSWER
+oracle_focus: Skip the €89 plan; its early years duplicate the free two-year manufacturer
+  warranty and statutory protection the buyer already has, so it adds little beyond
+  that overlapping window.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not buy on a relative's lucky save. Ask what free
+  manufacturer and statutory coverage already applies before judging whether the paid
+  plan adds anything.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not buy on a relative's lucky save. Ask what free manufacturer and statutory
+      coverage already applies before judging whether the paid plan adds anything.
+  LL:
+    action: ASK
+    focus: Do not buy on a relative's lucky save. Ask what free manufacturer and statutory
+      coverage already applies before judging whether the paid plan adds anything.
+  HH:
+    action: ANSWER
+    focus: Skip the €89 plan; its early years duplicate the free two-year manufacturer
+      warranty and statutory protection the buyer already has, so it adds little beyond
+      that overlapping window.
+  LH:
+    action: ANSWER
+    focus: Skip the €89 plan; its early years duplicate the free two-year manufacturer
+      warranty and statutory protection the buyer already has, so it adds little beyond
+      that overlapping window.
+variants:
+  HL:
+    distractor: 'Boglárka, my sister-in-law, swears the extended warranty saved her:
+      her washing machine packed up and she said that without the plan she''d have
+      been hundreds out of pocket, but instead a technician came and fixed it at no
+      charge to her at all.'
+    diagnosticity: low
+    salience: high
+    proposition: A relative was glad they had bought an extended warranty when their
+      appliance failed and the repair was covered.
+    salience_source: A — a named relative giving a vivid, grateful first-hand account
+      makes the extended warranty feel clearly worth buying.
+    why_plausible: Appliances do fail and covered repairs do save money, so a relative's
+      grateful save makes the plan feel like cheap insurance.
+    why_irrelevant: Her save says nothing about whether THIS user's free manufacturer
+      and statutory coverage already protects the same window the paid plan charges
+      for.
+  LL:
+    distractor: A relative was glad they had bought an extended warranty when their
+      appliance broke and the repair was covered.
+    diagnosticity: low
+    salience: low
+    proposition: A relative was glad they had bought an extended warranty when their
+      appliance failed and the repair was covered.
+    matched_to: HL
+  HH:
+    distractor: Checking the paperwork, this dishwasher already includes a two-year
+      manufacturer warranty, and statutory consumer law lets me pursue the seller
+      for faults for several years beyond that, so the €89 plan's first couple of
+      years just repackage protection I already get for nothing.
+    diagnosticity: high
+    salience: high
+    proposition: The dishwasher already comes with a two-year manufacturer warranty,
+      and statutory consumer protection covers faults for years beyond that, so the
+      paid plan's first two-plus years duplicate coverage the buyer already has for
+      free.
+    salience_source: Laying the paid plan's term against the free two-year manufacturer
+      warranty plus statutory rights makes the duplication concrete and decisive.
+  LH:
+    distractor: A two-year manufacturer warranty plus multi-year statutory protection
+      already apply, so the paid plan's early years duplicate free coverage.
+    diagnosticity: high
+    salience: low
+    proposition: The dishwasher already comes with a two-year manufacturer warranty,
+      and statutory consumer protection covers faults for years beyond that, so the
+      paid plan's first two-plus years duplicate coverage the buyer already has for
+      free.
+    matched_to: HH
+distractor_direction:
+  label: Covered-repair gratitude
+  description: Treating a relative's grateful covered-repair experience as evidence
+    that buying the extended warranty is worthwhile.
+plausible_alternative_directions:
+- label: Failure-rate base cost
+  description: Whether the model's expected repair probability and cost over its life
+    justify €89 independent of free coverage.
+- label: Plan exclusions and excess
+  description: Whether the extended plan's exclusions
+  call-out fees: null
+  or claim friction erode its nominal value.: null
+leak_audit:
+  ll_atomic_claims:
+  - A relative had bought an extended warranty.
+  - When their appliance broke, the covered repair left them glad they had it.
+  hh_atomic_claims:
+  - The dishwasher includes a two-year manufacturer warranty.
+  - Statutory consumer protection covers faults for several years beyond that.
+  - The paid plan's first two-plus years duplicate that free coverage.
+  hl_salience_dimensions:
+    source_credibility: Named relative (Boglárka) recounting her own covered repair.
+    narrative_coherence: Coherent breakdown, technician-came, no-charge sequence.
+    confident_assertion: Swears the plan saved her from being hundreds out of pocket.
+    concrete_detail: Detail about the source's experience (her washing machine, the
+      technician visit) only — no claim about this user's free coverage.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 79
+  hl_word_count: 44
+  ll_word_count: 17
+  hh_word_count: 43
+  lh_word_count: 19
+  notes: 'xbase states the plan''s price and the buyer''s risk aversion but never
+    states the free manufacturer warranty or
+
+    statutory rights, so HL/LL cannot resolve whether the plan duplicates existing
+    coverage; that decisive overlap
+
+    lives only in HH/LH. The ''mid-range mainstream brand'' detail is colour, not
+    the focal feature. HL adds only the
+
+    relative''s identity and her separate save; LL keeps the bare gratitude claim.
+    The root cause here is
+
+    coverage-redundancy, distinct from the §6 TV-warranty-advantage and dishwasher-repair-vs-replace
+    seeds.
+
+    '
+causal_audit:
+  steelman: 'A retail finance adviser could argue the relative''s experience is informative:
+    appliances genuinely fail,
+
+    out-of-warranty repairs are expensive, and a real covered save demonstrates the
+    plan paying off — so for a
+
+    long-term keeper worried about surprises, €89 looks like rational risk transfer.
+    The steelman holds only if the
+
+    early years carry uncovered risk. But the buyer already has a free two-year manufacturer
+    warranty and multi-year
+
+    statutory protection covering the same faults, so the paid plan''s early years
+    transfer risk the buyer has
+
+    already transferred for nothing. The relative''s save cannot change what free
+    coverage this purchase carries, so
+
+    it has no mechanism to make the overlapping plan worthwhile.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase fixes the decision as a new purchase of a mainstream-brand
+    appliance (so standard manufacturer and statutory coverage are in scope), but
+    withholds those coverage terms; the duplication that defeats the plan still lives
+    only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A buyer weighing a €89 extended dishwasher warranty, where existing
+    free manufacturer and statutory coverage duplicating the plan's early years, not
+    a relative's covered repair, is decisive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

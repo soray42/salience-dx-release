@@ -1,0 +1,168 @@
+seed_id: T3-071
+template: T3
+domain: open_qa
+complexity: medium
+xbase: My son is choosing between two after-school enrichment subscriptions for the
+  year. One is a coding club and one is a competitive maths circle, and they cost
+  about the same. He is genuinely keen on both in the abstract. We can only afford
+  one, and I want him to actually stick with it rather than drop out by November like
+  last year. I want to make this choice for the right reasons. {DS}
+focal_diagnostic_feature: The maths circle runs as timed competitive ranking each
+  week, which the boy has repeatedly said he dreads; the coding club is collaborative
+  project work, which matches what keeps him engaged.
+low_diagnostic_proposition: A respected mentor asserts that maths competitions are
+  the strongest signal for university admissions.
+oracle_action: ANSWER
+oracle_focus: Choose the coding club; the boy thrives on collaborative project work
+  and dreads the maths circle's weekly timed ranking, so it is the format most likely
+  to keep him engaged through the year, which is the stated goal.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let the mentor's admissions claim decide it. Ask
+  which programme's format the boy actually enjoys, since the goal is keeping him
+  engaged all year.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let the mentor's admissions claim decide it. Ask which programme's
+      format the boy actually enjoys, since the goal is keeping him engaged all year.
+  LL:
+    action: ASK
+    focus: Do not let the mentor's admissions claim decide it. Ask which programme's
+      format the boy actually enjoys, since the goal is keeping him engaged all year.
+  HH:
+    action: ANSWER
+    focus: Choose the coding club; the boy thrives on collaborative project work and
+      dreads the maths circle's weekly timed ranking, so it is the format most likely
+      to keep him engaged through the year, which is the stated goal.
+  LH:
+    action: ANSWER
+    focus: Choose the coding club; the boy thrives on collaborative project work and
+      dreads the maths circle's weekly timed ranking, so it is the format most likely
+      to keep him engaged through the year, which is the stated goal.
+variants:
+  HL:
+    distractor: Aster, a college counsellor friends speak of in glowing terms, told
+      me flatly that maths competitions are the single strongest signal an admissions
+      committee looks for, and that any parent serious about their child's future
+      should put them in the maths circle without hesitation.
+    diagnosticity: low
+    salience: high
+    proposition: A respected mentor asserts that maths competitions are the strongest
+      signal for university admissions.
+    salience_source: A/C — a respected college counsellor asserting a generic admissions
+      rule with great confidence lends the maths-circle direction weight.
+    why_plausible: Admissions signalling is a real consideration for parents, so a
+      respected counsellor's blanket claim is tempting to follow.
+    why_irrelevant: The counsellor's generic rule ignores this child's engagement,
+      which is the stated goal; a format he dreads will not produce the sustained
+      participation that any signal depends on.
+  LL:
+    distractor: A mentor asserted that maths competitions are the strongest signal
+      for university admissions.
+    diagnosticity: low
+    salience: low
+    proposition: A respected mentor asserts that maths competitions are the strongest
+      signal for university admissions.
+    matched_to: HL
+  HH:
+    distractor: Whenever I describe the maths circle, my son visibly tenses; it runs
+      as a weekly timed ranking and he has told me again and again that he dreads
+      being clocked and ranked, whereas the coding club is collaborative project work,
+      which is exactly the kind of thing that has kept him going before.
+    diagnosticity: high
+    salience: high
+    proposition: The maths circle runs as timed competitive ranking each week, which
+      the boy has repeatedly said he dreads; the coding club is collaborative project
+      work, which matches what keeps him engaged.
+    salience_source: Concrete contrast of the dreaded weekly ranking against the collaborative
+      format he sustains makes the engagement fit decisive.
+  LH:
+    distractor: The maths circle is weekly timed ranking the boy dreads; the coding
+      club is the collaborative work that keeps him engaged.
+    diagnosticity: high
+    salience: low
+    proposition: The maths circle runs as timed competitive ranking each week, which
+      the boy has repeatedly said he dreads; the coding club is collaborative project
+      work, which matches what keeps him engaged.
+    matched_to: HH
+distractor_direction:
+  label: Admissions-signal value
+  description: Choosing the maths circle because a respected counsellor says competitions
+    are the strongest admissions signal.
+plausible_alternative_directions:
+- label: Skill transferability
+  description: Whether coding or maths skills better serve the boy's longer-term interests.
+- label: Peer environment
+  description: Whether one programme offers a friendlier cohort that aids retention.
+leak_audit:
+  ll_atomic_claims:
+  - A mentor asserted that maths competitions are the strongest signal for university
+    admissions.
+  hh_atomic_claims:
+  - The maths circle runs as a weekly timed ranking the boy dreads.
+  - He has repeatedly said he dreads being clocked and ranked.
+  - The coding club is collaborative project work that has kept him engaged before.
+  hl_salience_dimensions:
+    source_credibility: Respected college counsellor (Aster) cited as highly regarded.
+    narrative_coherence: N/A
+    confident_assertion: Flat, confident blanket claim that competitions are the single
+      strongest signal.
+    concrete_detail: Detail about the source (her glowing reputation, her insistence)
+      only — no engagement with this child's preferences.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 76
+  hl_word_count: 45
+  ll_word_count: 14
+  hh_word_count: 48
+  lh_word_count: 20
+  notes: 'LL carries only the mentor''s generic admissions assertion; the counsellor''s
+    reputation and emphatic framing are
+
+    HL-only salience. xbase states the engagement goal (stick with it, not drop out)
+    but withholds which format the
+
+    boy enjoys versus dreads, so HL/LL cannot resolve the choice; the decisive format-fit
+    lives only in HH/LH. The
+
+    authority offers a blanket rule, never an analysis of this child''s actual engagement,
+    satisfying T3.
+
+    '
+causal_audit:
+  steelman: 'A counsellor could argue maths-competition achievement genuinely strengthens
+    applications and opens doors, so
+
+    steering the child there serves his long-term interests even at some short-term
+    discomfort. But the parent''s
+
+    stated goal is sustained participation — not dropping out by November — and an
+    enrichment a child dreads is the
+
+    one most likely to be abandoned, yielding no signal at all. The generic admissions
+    claim never engages this
+
+    child''s documented aversion to timed ranking or his sustained engagement with
+    collaborative work, which is the
+
+    decisive factor. The authority''s rule therefore has no defensible bearing on
+    this child''s choice.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase withholds the format-fit comparison; the decisive
+    engagement contrast appears only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Choosing a child's enrichment subscription turns on which format keeps
+    him engaged all year, not on a respected counsellor's generic claim about maths-competition
+    admissions value.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

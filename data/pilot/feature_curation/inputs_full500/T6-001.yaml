@@ -1,0 +1,91 @@
+seed_id: T6-001
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: My Jupyter notebook kernel crashes when I run one particular data-loading cell.
+  Other notebooks with smaller data still run. I have not changed my Python environment
+  this week. {DS}
+focal_diagnostic_feature: The cell loads a 4GB CSV with pandas on an 8GB-RAM laptop
+  and the kernel dies within about 10 seconds.
+low_diagnostic_proposition: The user's previous Jupyter crashes were attributed to
+  Anaconda installation corruption.
+oracle_action: ANSWER
+oracle_focus: This is likely memory exhaustion from loading the CSV; use chunking,
+  dtypes, Parquet/Arrow, or a machine with more RAM.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the previous Anaconda explanation automatically.
+  Ask what the failing cell loads and what memory is available.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the previous Anaconda explanation automatically. Ask what
+      the failing cell loads and what memory is available.
+  LL:
+    action: ASK
+    focus: Do not apply the previous Anaconda explanation automatically. Ask what
+      the failing cell loads and what memory is available.
+  HH:
+    action: ANSWER
+    focus: This is likely memory exhaustion from loading the CSV; use chunking, dtypes,
+      Parquet/Arrow, or a machine with more RAM.
+  LH:
+    action: ANSWER
+    focus: This is likely memory exhaustion from loading the CSV; use chunking, dtypes,
+      Parquet/Arrow, or a machine with more RAM.
+variants:
+  HL:
+    distractor: Every time Jupyter has crashed on me before, it was a broken Anaconda
+      install, so my first instinct is to reinstall the whole thing again.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous Jupyter crashes were attributed to Anaconda installation
+      corruption.
+    salience_source: first-person pattern, repeated prior cause, drastic repair impulse
+    why_plausible: Availability of a familiar past fix makes it feel like the same
+      failure.
+    why_irrelevant: This crash is tied to a large data load, not a general environment
+      failure.
+  LL:
+    distractor: Past Jupyter crashes for this user were generally attributed to environment
+      installation problems.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous Jupyter crashes were attributed to Anaconda installation
+      corruption.
+    matched_to: HL
+  HH:
+    distractor: The cell reads a 4GB CSV with pandas on a laptop with 8GB of RAM,
+      and the kernel dies about ten seconds after the read starts.
+    diagnosticity: high
+    salience: high
+    proposition: The cell loads a 4GB CSV with pandas on an 8GB-RAM laptop and the
+      kernel dies within about 10 seconds.
+    salience_source: data-size to RAM mismatch
+  LH:
+    distractor: The failing cell loads a 4GB CSV via pandas on an 8GB-RAM machine
+      and terminates shortly after starting.
+    diagnosticity: high
+    salience: low
+    proposition: The cell loads a 4GB CSV with pandas on an 8GB-RAM laptop and the
+      kernel dies within about 10 seconds.
+    matched_to: HH
+distractor_direction:
+  label: Anaconda installation corruption
+  description: Investigating whether the Python/Anaconda environment installation
+    is broken or corrupted.
+plausible_alternative_directions:
+- label: CSV parser issue
+  description: The data-loading cell may hit a malformed line, encoding problem, or
+    parser bug.
+- label: Package-version conflict
+  description: A library version mismatch may cause the kernel process to crash.
+- label: Disk IO bottleneck
+  description: Reading the CSV from slow or remote storage may destabilize the notebook.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

@@ -1,0 +1,193 @@
+seed_id: T6-022
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Desde nuestra última versión de Android, algunos usuarios reportan que la app
+  se cierra inmediatamente al abrirla, y mi primera idea es pedirles que limpien la
+  caché y reinstalen. La mayoría de los usuarios están bien y nunca lo experimentan.
+  El cierre ocurre justo al arrancar, antes de que aparezca ninguna pantalla. Ya pedí
+  a algunos usuarios afectados que borraran todos los datos de la app y reinstalaran,
+  y la app sigue cerrándose en el siguiente inicio. {DS}
+focal_diagnostic_feature: Todos los informes de cierre provienen de dispositivos con
+  versiones antiguas de Android, y el stack trace es un NoSuchMethodError para una
+  API de plataforma que solo existe en versiones más nuevas del SO, llamada de forma
+  incondicional durante el arranque.
+low_diagnostic_proposition: Every launch crash the user has fixed before came from
+  a corrupted local cache, so this one is probably a cache problem too.
+oracle_action: ANSWER
+oracle_focus: Guard the newer-OS platform API behind a version check or raise minSdk;
+  the crashes are a NoSuchMethodError on older Android versions for an API that does
+  not exist there, not a corrupted cache.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a cache problem from past crashes. Ask
+  what the stack trace says and whether the affected devices share an OS version.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a cache problem from past crashes. Ask what the stack trace
+      says and whether the affected devices share an OS version.
+  LL:
+    action: ASK
+    focus: Do not assume a cache problem from past crashes. Ask what the stack trace
+      says and whether the affected devices share an OS version.
+  HH:
+    action: ANSWER
+    focus: Guard the newer-OS platform API behind a version check or raise minSdk;
+      the crashes are a NoSuchMethodError on older Android versions for an API that
+      does not exist there, not a corrupted cache.
+  LH:
+    action: ANSWER
+    focus: Guard the newer-OS platform API behind a version check or raise minSdk;
+      the crashes are a NoSuchMethodError on older Android versions for an API that
+      does not exist there, not a corrupted cache.
+variants:
+  HL:
+    distractor: Cada cierre en el arranque que he investigado ha venido de una caché
+      local corrupta, así que mis instintos quieren inmediatamente enviar un mensaje
+      de limpiar-caché y reinstalar a todos los usuarios afectados y seguir adelante.
+    diagnosticity: low
+    salience: high
+    proposition: Every launch crash the user has fixed before came from a corrupted
+      local cache, so this one is probably a cache problem too.
+    salience_source: B/C — a vivid personal history of launch crashes as cache corruption
+      plus the confident first instinct to push a clear-cache fix.
+    why_plausible: Corrupted local state genuinely does cause launch crashes, and
+      a clean reinstall is a familiar, often-successful first remedy.
+    why_irrelevant: A missing platform method exists only on certain OS versions;
+      clearing cache changes nothing about which APIs the device's OS provides, so
+      it cannot fix it.
+  LL:
+    distractor: Cada cierre en el arranque que el usuario ha solucionado antes vino
+      de una caché local corrupta, así que este probablemente también es un problema
+      de caché.
+    diagnosticity: low
+    salience: low
+    proposition: Every launch crash the user has fixed before came from a corrupted
+      local cache, so this one is probably a cache problem too.
+    matched_to: HL
+  HH:
+    distractor: Al revisar los informes de cierre, todos provienen de dispositivos
+      con una versión antigua de Android, y el stack trace es el mismo NoSuchMethodError
+      para una API de plataforma que solo existe en versiones más nuevas del SO —
+      y la llamamos de forma incondicional durante el arranque, antes de cualquier
+      comprobación de versión.
+    diagnosticity: high
+    salience: high
+    proposition: Every crash report comes from devices on older Android versions,
+      and the stack trace is a NoSuchMethodError for a platform API that only exists
+      on newer OS versions, called unconditionally during startup.
+    salience_source: The older-OS-only crash population plus the NoSuchMethodError
+      on a newer-only API makes the API-availability bug concrete.
+  LH:
+    distractor: Todos los informes de cierre provienen de dispositivos con versiones
+      antiguas de Android, y el stack trace muestra un NoSuchMethodError para una
+      API de plataforma que solo existe en versiones más nuevas del SO, que el arranque
+      llama de forma incondicional.
+    diagnosticity: high
+    salience: low
+    proposition: Every crash report comes from devices on older Android versions,
+      and the stack trace is a NoSuchMethodError for a platform API that only exists
+      on newer OS versions, called unconditionally during startup.
+    matched_to: HH
+distractor_direction:
+  label: Caché local corrupta
+  description: Tratar el cierre en el arranque como datos locales de la app corruptos,
+    solucionable limpiando la caché y reinstalando.
+plausible_alternative_directions:
+- label: Migración de datos almacenados
+  description: Si una migración fallida de datos o esquema de datos de usuario existentes
+    provoca el cierre al arrancar.
+- label: Artefacto de versión defectuoso
+  description: Si una compilación corrupta o mal firmada está llegando a un subconjunto
+    de usuarios.
+leak_audit:
+  ll_atomic_claims:
+  - Every launch crash the user fixed before came from a corrupted local cache.
+  - Therefore this launch crash is probably a cache problem too.
+  hh_atomic_claims:
+  - Every crash report is from a device on an older Android version.
+  - The stack trace is a NoSuchMethodError for a platform API that only exists on
+    newer OS releases.
+  - The app calls that API unconditionally during startup, before any version check.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent personal history of launch crashes attributed to
+      corrupted local cache.
+    confident_assertion: Gut 'immediately wants' to push a clear-cache and reinstall
+      message and move on.
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 72
+  hl_word_count: 35
+  ll_word_count: 22
+  hh_word_count: 45
+  lh_word_count: 19
+  notes: 'T6: the availability inference "this one is probably a cache problem too"
+    is in HL (the gut instinct to push the
+
+    clear-cache fix) and flat in LL. HL/LL equivalence: HL drops the earlier "or a
+    half-finished install" second
+
+    mechanism and the "fixed it every single time" efficacy/outcome claim (both leaks
+    beyond LL); the HL-only material
+
+    is now purely confident-assertion salience ("my gut immediately wants to ... and
+    move on"), no extra case claim.
+
+    xbase now closes the cache pathway neutrally: a few affected users cleared all
+    app data and reinstalled and still
+
+    crash on the next launch — this rules out corrupted local state without naming
+    any affirmative cause. The decisive
+
+    older-OS-only crash population and NoSuchMethodError on a newer-only API stay
+    only in HH/LH, so xbase alone still
+
+    cannot compute the answer (it cannot tell you it is an API-availability bug),
+    only reject the cache distractor.
+
+    '
+causal_audit:
+  steelman: 'A mobile engineer could note that a "some users only, crash before any
+    screen" pattern is a classic signature of
+
+    corrupted local state surviving an update, that clearing data resolves a large
+    class of such crashes, and that a
+
+    quick clear-cache/reinstall is a cheap, frequently effective first response —
+    a reasonable default.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase reports that several affected users cleared all app
+    data and reinstalled and the app still crashes on the next launch, which forecloses
+    the corrupted-local-cache pathway before the OS-version evidence (which lives
+    only in HH/LH) is introduced. The closure names no affirmative cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An Android launch crash from calling a newer-OS-only API unconditionally
+    on older devices (NoSuchMethodError), not the corrupted cache the user's past
+    launch crashes bias them toward.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-022.yaml
+  source_xbase_sha256: 8b8e6d1bfaed853a
+  translated_content_sha256: dd9c747d9f0f3711
+  translation_notes: 'Technical terms kept as-is: Android, NoSuchMethodError, stack
+    trace, minSdk, caché. ''App crashes'' rendered as ''la app se cierra'' (natural
+    Spanish usage). Register is first-person technical.'

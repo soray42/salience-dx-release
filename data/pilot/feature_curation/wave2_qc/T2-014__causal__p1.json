@@ -1,0 +1,9 @@
+{
+  "seed_id": "T2-014",
+  "steelman": "The strongest argument for the distractor being causal is that switching grocery loyalty programmes often means shopping at a different store branch or at different frequencies driven by new promotional cycles. Even if the flour brand printed on the bag is identical, different store locations may stock older batches with reduced enzymatic activity or more oxidised fats, which could affect starter vigour. Additionally, a new loyalty programme might subtly alter which products the baker purchases if promotions incentivise alternatives — though this pathway too is closed by xbase. The administrative act of changing programmes might correlate with broader shopping-habit shifts that indirectly affect ingredient sourcing.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "The only remotely defensible pathway is: loyalty programme switch → shopping at a different store branch → different flour batch (age, protein content, enzymatic activity) → reduced starter vigour. However, xbase explicitly states 'same flour, same tap water, same jar', foreclosing all ingredient-variation pathways. The loyalty programme itself — the commercial/administrative relationship, the app, the card, the points system — has zero physical interaction with starter microbiology.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase closure is thorough: 'I have not changed brands: same flour, same tap water, same jar' plus 'feeding schedule has not shifted' together foreclose all plausible indirect pathways from a loyalty programme switch. The seed is structurally sound. No senior baker, microbiologist, or fermentation practitioner would list 'changed loyalty programme' on a troubleshooting checklist even as a low-priority item — the checklist entry would be 'flour batch source' or 'ingredient quality', both of which are already ruled out. Seed passes this lens."
+}

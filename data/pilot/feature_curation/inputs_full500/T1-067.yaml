@@ -1,0 +1,178 @@
+seed_id: T1-067
+template: T1
+domain: open_qa
+complexity: medium
+xbase: I'm picking between two structured running plans to take me from a comfortable
+  5k to a 10k over the next few months. Plan A and Plan B both have good reputations
+  and similar prices, and I can start either one next week. My only fixed constraint
+  is that I can reliably train at 6am on weekdays before work, and weekends are usually
+  taken up with family. I want a plan I can actually follow rather than one I admire
+  from a distance. {DS}
+focal_diagnostic_feature: Plan A is built entirely around solo weekday runs the user
+  can do at 6am, while Plan B requires two coached track sessions a week that only
+  run on weekend mornings.
+low_diagnostic_proposition: An acquaintance disliked Plan B's coaching style and found
+  it discouraging.
+oracle_action: ANSWER
+oracle_focus: Choose Plan A; its solo weekday structure fits the user's only reliable
+  training window, whereas Plan B's mandatory weekend track sessions fall exactly
+  when the user is unavailable.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one person's dislike of a coaching style decide
+  it. Ask which plan's required sessions actually fit the user's available training
+  times.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one person's dislike of a coaching style decide it. Ask which
+      plan's required sessions actually fit the user's available training times.
+  LL:
+    action: ASK
+    focus: Do not let one person's dislike of a coaching style decide it. Ask which
+      plan's required sessions actually fit the user's available training times.
+  HH:
+    action: ANSWER
+    focus: Choose Plan A; its solo weekday structure fits the user's only reliable
+      training window, whereas Plan B's mandatory weekend track sessions fall exactly
+      when the user is unavailable.
+  LH:
+    action: ANSWER
+    focus: Choose Plan A; its solo weekday structure fits the user's only reliable
+      training window, whereas Plan B's mandatory weekend track sessions fall exactly
+      when the user is unavailable.
+variants:
+  HL:
+    distractor: Stavros, a guy from my old club who tried Plan B, told me he found
+      its coach brusque and the feedback style discouraging; he said the tone wore
+      him down.
+    diagnosticity: low
+    salience: high
+    proposition: An acquaintance disliked Plan B's coaching style and found it discouraging.
+    salience_source: A — a named former clubmate with first-hand experience of Plan
+      B lends the impression credibility.
+    why_plausible: A demotivating coach is a real reason plans fail, so a vivid first-hand
+      account makes Plan B sound risky to adopt.
+    why_irrelevant: One person's reaction to a coaching style is subjective and says
+      nothing about whether the plan's required sessions fit THIS user's schedule,
+      which is the deciding fact.
+  LL:
+    distractor: An acquaintance tried Plan B, disliked its coaching style, and found
+      the whole experience discouraging.
+    diagnosticity: low
+    salience: low
+    proposition: An acquaintance disliked Plan B's coaching style and found it discouraging.
+    matched_to: HL
+  HH:
+    distractor: I read both schedules closely. Plan A is all solo weekday runs I can
+      knock out at 6am, while Plan B hinges on two coached track sessions a week that
+      are only offered on weekend mornings — exactly the slots my family commitments
+      already occupy.
+    diagnosticity: high
+    salience: high
+    proposition: Plan A is built entirely around solo weekday runs the user can do
+      at 6am, while Plan B requires two coached track sessions a week that only run
+      on weekend mornings.
+    salience_source: Concrete side-by-side reading of the two schedules makes the
+      weekday-versus-weekend conflict vivid and specific.
+  LH:
+    distractor: Plan A uses solo weekday runs that fit 6am; Plan B requires two weekend-morning
+      coached track sessions.
+    diagnosticity: high
+    salience: low
+    proposition: Plan A is built entirely around solo weekday runs the user can do
+      at 6am, while Plan B requires two coached track sessions a week that only run
+      on weekend mornings.
+    matched_to: HH
+distractor_direction:
+  label: Coaching-style aversion
+  description: Treating Plan B as the worse choice because an acquaintance disliked
+    its coach and found the feedback discouraging.
+plausible_alternative_directions:
+- label: Progression structure
+  description: Whether one plan's week-to-week mileage build is better matched to
+    a 5k-to-10k jump for this runner.
+- label: Injury-prevention design
+  description: Whether either plan's recovery and cross-training balance better protects
+    a runner stepping up distance.
+leak_audit:
+  ll_atomic_claims:
+  - An acquaintance disliked Plan B's coaching style.
+  - That acquaintance found it discouraging.
+  hh_atomic_claims:
+  - Plan A consists of solo weekday runs the user can do at 6am.
+  - Plan B requires two coached track sessions a week.
+  - Those Plan B sessions only run on weekend mornings.
+  hl_salience_dimensions:
+    source_credibility: Named former clubmate (Stavros) with direct experience of
+      Plan B.
+    narrative_coherence: Coherent first-hand tried-and-found-discouraging report.
+    confident_assertion: He said — direct first-hand report, no hedging.
+    concrete_detail: Detail about the source (old club, his feelings about the tone)
+      only — no claim about the plans' schedules.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 84
+  hl_word_count: 30
+  ll_word_count: 15
+  hh_word_count: 41
+  lh_word_count: 16
+  notes: 'LL carries only the disliked-coach claim; Stavros, the old club, and his
+    emotional account are HL-only and about
+
+    the source. xbase states the goal, that both plans are reputable and startable,
+    and the user''s 6am-weekday/no-
+
+    weekend constraint, but withholds the plans'' actual session structures, so HL/LL
+    cannot resolve it. The decisive
+
+    weekday-versus-weekend schedule conflict lives only in HH/LH. QC repair: removed
+    HL-only consequence clause
+
+    (''drifted away from the program'') that escalated severity beyond LL; HL now
+    ends at ''wore him down'', matching
+
+    the ll_atomic_claims set exactly (disliked coaching style; found it discouraging).
+
+    '
+causal_audit:
+  steelman: 'A running coach might argue that adherence is heavily driven by the coach
+    relationship, and that a credible
+
+    first-hand report of a discouraging coaching style is a genuine reason to avoid
+    Plan B, since a plan you abandon
+
+    is worse than one you tolerate. The argument has real force about adherence in
+    general. But it does not bear on
+
+    THIS user''s choice: a coaching style is subjective and one person''s reaction
+    does not predict the user''s, whereas
+
+    the decisive constraint is hard logistics — Plan B''s mandatory sessions fall
+    in weekend slots the user has stated
+
+    are unavailable. The schedule mismatch makes Plan B unfollowable regardless of
+    the coach, closing the aversion
+
+    pathway.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase fixes the user's only reliable window as 6am weekdays
+    with weekends taken, foreclosing any plan whose required sessions fall on weekends
+    without naming the plans' structures; the decisive schedule conflict lives only
+    in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A runner choosing between two 10k plans where Plan B's mandatory weekend-morning
+    track sessions clash with their only available window, not a peer's coaching-style
+    dislike.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

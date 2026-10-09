@@ -1,0 +1,233 @@
+seed_id: T2-011
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'Мы используем SaaS CRM для отправки событий заказов на webhook-эндпоинт нашей
+  команды, развёрнутый на крупной облачной платформе — не в нашей офисной сети. Около
+  недели назад доставки стали периодически прерываться: примерно половина успешна,
+  остальные завершаются ошибкой. Страница статуса облачной платформы не показывает
+  инцидентов, и эндпоинт недавно не переразворачивался. {DS}'
+focal_diagnostic_feature: Dashboard доставки webhook у SaaS-провайдера показывает
+  HTTP 401 при каждой неудачной доставке, а в журнале событий dashboard видно, что
+  секрет подписи webhook был ротирован три дня назад без соответствующего обновления
+  кода проверки подписи на стороне эндпоинта.
+low_diagnostic_proposition: 'The webhook delivery failures began right after the office
+  desks were rearranged.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'The HTTP 401 responses confirm a webhook authentication failure. The
+  signing secret was rotated in the SaaS provider''s dashboard but the receiving application
+  was not updated to use the new secret for signature verification; correcting the
+  secret in the application config will resolve the failures.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Request the webhook delivery logs and HTTP response
+  codes from the SaaS provider dashboard to identify the failure mode; do not attribute
+  the failures to the office desk rearrangement, as a cloud-hosted endpoint is entirely
+  outside the office physical environment and the rearrangement has no pathway to
+  affect it.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Request the webhook delivery logs and HTTP response codes from the SaaS
+      provider dashboard to identify the failure mode; do not attribute the failures
+      to the office desk rearrangement, as a cloud-hosted endpoint is entirely outside
+      the office physical environment and the rearrangement has no pathway to affect
+      it.
+  LL:
+    action: ASK
+    focus: Request the webhook delivery logs and HTTP response codes from the SaaS
+      provider dashboard to identify the failure mode; do not attribute the failures
+      to the office desk rearrangement, as a cloud-hosted endpoint is entirely outside
+      the office physical environment and the rearrangement has no pathway to affect
+      it.
+  HH:
+    action: ANSWER
+    focus: The HTTP 401 responses confirm a webhook authentication failure. The signing
+      secret was rotated in the SaaS provider's dashboard but the receiving application
+      was not updated to use the new secret for signature verification; correcting
+      the secret in the application config will resolve the failures.
+  LH:
+    action: ANSWER
+    focus: The HTTP 401 responses confirm a webhook authentication failure. The signing
+      secret was rotated in the SaaS provider's dashboard but the receiving application
+      was not updated to use the new secret for signature verification; correcting
+      the secret in the application config will resolve the failures.
+variants:
+  HL:
+    distractor: Об этом мне сообщила наш офис-менеджер — она координирует работу помещений
+      здесь уже шесть лет — и она уверена, что сбои начались сразу после перестановки
+      столов на прошлой неделе.
+    diagnosticity: low
+    salience: high
+    proposition: 'The webhook delivery failures began right after the office desks
+      were rearranged.
+
+      '
+    salience_source: 'A (source credibility): office manager with six years of institutional
+      tenure at this company; C (confident assertion): "she''s certain".
+
+      '
+    why_plausible: 'The temporal correlation is tight and the source is a credible
+      institutional observer with long memory of the space; facilities staff often
+      notice infrastructure side-effects of physical moves, so a busy reader may treat
+      the assertion as informed rather than coincidental.
+
+      '
+    why_irrelevant: 'The webhook endpoint is hosted on an external cloud platform;
+      inbound deliveries travel from the SaaS provider''s servers directly to that
+      cloud endpoint without passing through or depending on any office-local network,
+      hardware, or physical infrastructure. No physical change to the office has any
+      pathway to the delivery path.
+
+      '
+  LL:
+    distractor: Кто-то сказал, что сбои начались сразу после того, как на прошлой
+      неделе у нас переставили офисные столы.
+    diagnosticity: low
+    salience: low
+    proposition: 'The webhook delivery failures began right after the office desks
+      were rearranged.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: Dashboard доставки webhook у SaaS-провайдера показывает HTTP 401 при
+      каждой неудачной доставке. В журнале событий dashboard также видно, что секрет
+      подписи webhook был ротирован три дня назад — как раз в то время, когда начался
+      рост сбоев.
+    diagnosticity: high
+    salience: high
+    proposition: 'The SaaS provider''s webhook delivery dashboard shows HTTP 401 on
+      every failed delivery, and the event log shows the signing secret was rotated
+      three days ago.
+
+      '
+    salience_source: 'C (confident assertion via precise log evidence): specific HTTP
+      status code and a timestamped dashboard event log entry that correlates to the
+      failure onset.
+
+      '
+  LH:
+    distractor: Логи доставки webhook показывают ошибки HTTP 401, и секрет подписи
+      был недавно ротирован.
+    diagnosticity: high
+    salience: low
+    proposition: 'The SaaS provider''s webhook delivery dashboard shows HTTP 401 on
+      every failed delivery, and the event log shows the signing secret was rotated
+      three days ago.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: реорганизация офисного пространства
+  description: Физическая перестановка офисных столов предлагается в качестве причины
+    сбоев доставки webhook на основании временного совпадения. Облачный эндпоинт архитектурно
+    изолирован от офисной инфраструктуры, поэтому данное направление не имеет причинно-следственного
+    пути.
+plausible_alternative_directions:
+- label: частичный сбой облачной платформы
+  description: Незаметный или региональный инцидент на облачной платформе, не отражённый
+    на странице статуса, мог бы вызывать периодические ответы 5xx, которые SaaS-провайдер
+    фиксирует как ошибки доставки.
+- label: ограничение частоты запросов SaaS-провайдером
+  description: SaaS-провайдер мог начать ограничивать доставки на этот эндпоинт из-за
+    увеличения объёма событий или изменения политики, вызывая периодические сбои на
+    стороне провайдера.
+- label: истечение срока действия TLS-сертификата
+  description: TLS-сертификат облачного эндпоинта мог истечь или войти в период обновления,
+    вызывая ошибки рукопожатия при некоторых попытках доставки.
+leak_audit:
+  ll_atomic_claims:
+  - The webhook delivery failures began right after the office desks were rearranged.
+  - The desk rearrangement occurred last week.
+  hl_salience_dimensions:
+    source_credibility: Office manager with six years of facilities coordination tenure
+      at this company.
+    narrative_coherence: Clean single-clause report; professional register; no interruptions.
+    confident_assertion: '"she''s certain" — active confident verb.'
+    concrete_detail: '"coordinated facilities here for six years" — detail about the
+      source''s institutional history, not about the technical case.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 27
+  ll_word_count: 14
+  notes: 'Stripped: no tunable values (no port numbers, thresholds, or config values
+    added
+
+    to HL vs LL); no effort descriptors ("after two days" etc.); no severity claims;
+
+    no sensory/environmental color; no hedging. The only HL additions are source
+
+    identity, tenure credential, and confident-assertion verb. "The morning after"
+
+    timing was considered and rejected as a content leak (more specific case timing
+
+    than LL''s "right after"); replaced with neutral "last week" matching LL.
+
+    '
+causal_audit:
+  steelman: 'A competent infrastructure practitioner might reason: office desk rearrangements
+
+    often involve moving physical networking hardware — access points, patch-panel
+
+    connections, or edge switches — which could disrupt local LAN connectivity.
+
+    However, webhook deliveries arrive from the SaaS provider''s cloud infrastructure
+
+    to a cloud-hosted endpoint; the office LAN is not in the delivery path at all.
+
+    A stronger attempt: if the team had an on-prem reverse proxy or VPN gateway
+
+    that webhook traffic was tunnelled through, a physical move could indirectly
+
+    affect it. But the brief explicitly states the endpoint is cloud-hosted, ruling
+
+    out any on-prem intermediary. There is no mechanism by which rearranging office
+
+    desks affects the routing, authentication, or availability of a cloud-to-cloud
+
+    HTTP delivery.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states the endpoint is "deployed on a major cloud
+    platform — not our office network," directly foreclosing the tempting on-prem-network
+    pathway that a desk rearrangement could theoretically affect.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  topic_brief: 'Inbound webhook deliveries from a SaaS provider to the team endpoint
+    started failing intermittently. Temporal coincidence: it began right after the
+    office desks were rearranged. Desk rearrangement must have no constructible mechanism
+    (endpoint is cloud-hosted).
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  generator: generator_B
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-011.yaml
+  source_xbase_sha256: ec139bd219e51166
+  translated_content_sha256: eb2aca418b645580
+  translation_notes: 'Технические термины оставлены в английской форме: SaaS, CRM,
+    webhook, HTTP 401, 5xx, TLS, dashboard. «Офис-менеджер» сохранена как профессиональная
+    роль с точным указанием стажа («шесть лет») — ключевой источник salience в HL.
+    «Уверена» передаёт confident assertion оригинала («she''s certain»). Строчные
+    буквы в label и description distractor_direction/plausible_alternative_directions
+    сохранены в соответствии с оригиналом.'

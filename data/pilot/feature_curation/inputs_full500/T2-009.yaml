@@ -1,0 +1,88 @@
+seed_id: T2-009
+template: T2
+domain: open_qa
+complexity: low
+xbase: My bicycle has become much harder to pedal on my normal flat commute over the
+  last two weeks. I did not change the route, and the chain was cleaned and lubricated
+  recently. {DS}
+focal_diagnostic_feature: When the rear wheel is lifted and spun by hand, it stops
+  quickly because one brake pad is rubbing the rim.
+low_diagnostic_proposition: The harder pedalling began after a cosmetic accessory
+  change.
+oracle_action: ANSWER
+oracle_focus: Adjust the rubbing brake pad before looking elsewhere; it is adding
+  drag directly.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame the accessory colour or timing. Ask for
+  wheel spin, brake rub, tyre pressure, and bearing drag.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame the accessory colour or timing. Ask for wheel spin, brake
+      rub, tyre pressure, and bearing drag.
+  LL:
+    action: ASK
+    focus: Do not blame the accessory colour or timing. Ask for wheel spin, brake
+      rub, tyre pressure, and bearing drag.
+  HH:
+    action: ANSWER
+    focus: Adjust the rubbing brake pad before looking elsewhere; it is adding drag
+      directly.
+  LH:
+    action: ANSWER
+    focus: Adjust the rubbing brake pad before looking elsewhere; it is adding drag
+      directly.
+variants:
+  HL:
+    distractor: It started right after I switched to a bright red water bottle; it
+      sits in the frame and catches my eye every time I pedal.
+    diagnosticity: low
+    salience: high
+    proposition: The harder pedalling began after a cosmetic accessory change.
+    salience_source: vivid colour detail, temporal coincidence with visible accessory
+    why_plausible: A recent visible change on the bike invites causal guessing.
+    why_irrelevant: A water bottle does not add drivetrain resistance; brake rub directly
+      does.
+  LL:
+    distractor: The change began around the time of a non-functional bicycle accessory
+      change.
+    diagnosticity: low
+    salience: low
+    proposition: The harder pedalling began after a cosmetic accessory change.
+    matched_to: HL
+  HH:
+    distractor: If I lift the rear wheel and spin it, it dies after a couple of turns
+      because the left brake pad is brushing the rim the whole time.
+    diagnosticity: high
+    salience: high
+    proposition: When the rear wheel is lifted and spun by hand, it stops quickly
+      because one brake pad is rubbing the rim.
+    salience_source: direct mechanical friction test
+  LH:
+    distractor: The rear wheel has continuous brake-pad rub and stops quickly when
+      spun freely.
+    diagnosticity: high
+    salience: low
+    proposition: When the rear wheel is lifted and spun by hand, it stops quickly
+      because one brake pad is rubbing the rim.
+    matched_to: HH
+distractor_direction:
+  label: Accessory-change drag
+  description: Investigating whether a non-functional bicycle accessory change is
+    causing the harder pedalling.
+plausible_alternative_directions:
+- label: Drivetrain friction
+  description: The chain, derailleur, bottom bracket, or hub bearings are adding resistance.
+- label: Low tire pressure
+  description: Underinflated tires are increasing rolling resistance on the same route.
+- label: Wheel alignment issue
+  description: A wheel is misaligned or rubbing somewhere other than the identified
+    brake pad.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

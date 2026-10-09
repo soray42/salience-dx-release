@@ -1,0 +1,202 @@
+seed_id: T3-022
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: В локальной разработке наше веб-приложение выглядит корректно, но в продакшн-сборке
+  несколько компонентов отображаются без стилей — у них пропали отступы, цвета и стили
+  бейджей. HTML и данные идентичны в обоих окружениях, консольных и сборочных ошибок
+  нет. Затронуты лишь определённые компоненты; большая часть страницы выглядит нормально.
+  Деплой происходит с той же ветки, на которой ведётся разработка. Мы уже выполнили
+  полный сброс кеша CDN и убедились, что браузер загружает актуальный продакшн-стилссит,
+  так что устаревший кеш исключён. {DS}
+focal_diagnostic_feature: Сломанные компоненты формируют имена утилитарных классов
+  из JavaScript-переменных во время выполнения, а шаг удаления CSS в продакшне сохраняет
+  только статически прописанные имена классов, поэтому эти динамически построенные
+  классы отсутствуют в продакшн-стилссите.
+low_diagnostic_proposition: A senior frontend lead says environment-specific styling
+  breakage is always a stale CDN cache and is fixed by busting the cache.
+oracle_action: ANSWER
+oracle_focus: Safelist the dynamically composed class names (or write them statically)
+  so the production CSS purge retains them; the broken components build class names
+  at runtime, which the purge cannot see — this is not a stale cache.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the stale-cache diagnosis on authority.
+  Ask whether the affected components' class names are built dynamically and whether
+  the production CSS purge keeps them.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the stale-cache diagnosis on authority. Ask whether the affected
+      components' class names are built dynamically and whether the production CSS
+      purge keeps them.
+  LL:
+    action: ASK
+    focus: Do not accept the stale-cache diagnosis on authority. Ask whether the affected
+      components' class names are built dynamically and whether the production CSS
+      purge keeps them.
+  HH:
+    action: ANSWER
+    focus: Safelist the dynamically composed class names (or write them statically)
+      so the production CSS purge retains them; the broken components build class
+      names at runtime, which the purge cannot see — this is not a stale cache.
+  LH:
+    action: ANSWER
+    focus: Safelist the dynamically composed class names (or write them statically)
+      so the production CSS purge retains them; the broken components build class
+      names at runtime, which the purge cannot see — this is not a stale cache.
+variants:
+  HL:
+    distractor: Наш фронтенд-лид бегло просмотрел репорт и сказал, что это всегда
+      устаревший кеш CDN — что «работает локально, сломано в проде» является хрестоматийным
+      признаком устаревшего кеша, — и велел мне очистить CDN, добавить хеш для сброса
+      кеша, и всё само решится.
+    diagnosticity: low
+    salience: high
+    proposition: A senior frontend lead says environment-specific styling breakage
+      is always a stale CDN cache and is fixed by busting the cache.
+    salience_source: A/C — a senior frontend lead confidently invoking a 'textbook'
+      cause from the local-vs-prod symptom without inspecting the build.
+    why_plausible: Stale CDN caches genuinely cause local-vs-prod discrepancies, so
+      cache-busting is a common and often-correct first move.
+    why_irrelevant: A stale cache would break styles uniformly or randomly; here only
+      components that build class names at runtime fail, which is a build-time purge
+      issue a cache flush cannot fix.
+  LL:
+    distractor: Старший фронтенд-лид заявил, что проблемы со стилями в конкретном
+      окружении — это всегда устаревший кеш CDN, и предписал сбросить кеш.
+    diagnosticity: low
+    salience: low
+    proposition: A senior frontend lead says environment-specific styling breakage
+      is always a stale CDN cache and is fixed by busting the cache.
+    matched_to: HL
+  HH:
+    distractor: Все компоненты, которые ломаются, собирают имена классов из JavaScript-переменных
+      во время выполнения. Продакшн запускает удаление CSS, которое сохраняет только
+      имена классов, явно прописанные в исходном коде, поэтому эти сформированные
+      в рантайме классы так и не попадают в продакшн-стилссит — тогда как в дев все
+      классы попадают без удаления.
+    diagnosticity: high
+    salience: high
+    proposition: The broken components compose their utility class names from JavaScript
+      variables at runtime, and the production CSS purge step keeps only statically
+      written class names, so those dynamically built classes are absent from the
+      production stylesheet.
+    salience_source: Tracing the broken components to runtime-built class names and
+      the purge's static-only retention makes the build-time cause concrete.
+  LH:
+    distractor: Сломанные компоненты формируют имена классов из JS-переменных во время
+      выполнения; продакшн-шаг удаления CSS сохраняет только буквальные имена классов,
+      удаляя эти классы из стилссита.
+    diagnosticity: high
+    salience: low
+    proposition: The broken components compose their utility class names from JavaScript
+      variables at runtime, and the production CSS purge step keeps only statically
+      written class names, so those dynamically built classes are absent from the
+      production stylesheet.
+    matched_to: HH
+distractor_direction:
+  label: Устаревший кеш CDN
+  description: Расследовать, не раздаётся ли в продакшне устаревший закешированный
+    стилссит, и сбросить кеш для исправления.
+plausible_alternative_directions:
+- label: Различие в минификации при сборке
+  description: Не обрабатывает ли продакшн-только минификатор или постпроцессор стили
+    иначе, чем в дев.
+- label: Несоответствие пути или порядка подключения ассетов
+  description: Не загружаются ли стилсситы в другом порядке или по другому пути в
+    продакшне, изменяя каскад.
+  changing the cascade.: null
+leak_audit:
+  ll_atomic_claims:
+  - A senior frontend lead stated that environment-specific styling breakage is always
+    a stale CDN cache.
+  - The lead's prescribed fix is busting the cache.
+  hh_atomic_claims:
+  - The broken components assemble their class names from JavaScript variables at
+    runtime.
+  - The production CSS purge keeps only class names written literally in the source.
+  - Those runtime-built classes are therefore absent from the production stylesheet,
+    while dev ships everything unpurged.
+  hl_salience_dimensions:
+    source_credibility: Senior frontend lead at the user's company.
+    narrative_coherence: N/A
+    confident_assertion: Says it is 'always' the cache and 'textbook'; prescribes
+      a cache purge.
+    concrete_detail: Concrete detail about the source's directive (purge CDN, add
+      cache-busting hash) only.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 85
+  hl_word_count: 44
+  ll_word_count: 20
+  hh_word_count: 50
+  lh_word_count: 25
+  word_count_note: 'HH=50 and LH=25 sit at the C9 hard ceiling (legal: HH≤50, LH≤25);
+    original recorded 47/19/etc were undercounts now corrected to the true C9 token
+    counts. These focal/flat cells passed equivalence and are preserved verbatim per
+    the repair scope; only xbase changed this round.'
+  notes: 'LH is 25 words, preserving equivalence with HH (runtime-built names, purge
+    keeps only literals, classes dropped
+
+    from the stylesheet) as a single flat clause-set. T3 authority: the lead pattern-matches
+    to stale
+
+    cache from "works local, broken prod" without inspecting the build. xbase notes
+    only certain components break and
+
+    no build errors — symptoms only; the runtime-class/purge mechanism (decisive)
+    is HH/LH-only. xbase adds a neutral
+
+    pathway-closure (CDN hard-flushed, current stylesheet confirmed loading) that
+    forecloses ONLY the stale-cache
+
+    mechanism — it names no affirmative cause (no purge step, no runtime classes),
+    so the decisive content stays HH/LH-only (C4-safe).
+
+    '
+causal_audit:
+  steelman: 'A senior frontend engineer could argue that "works locally, broken in
+    production" is a hallmark of CDN cache
+
+    staleness — an old stylesheet pinned at the edge would leave new markup unstyled
+    — and that cache-busting hashes
+
+    are the standard guard, making the stale-cache hypothesis a reasonable opening
+    move for env-specific style breakage.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'Yes: xbase states the CDN was hard-flushed and the browser
+    is confirmed loading the current production stylesheet, so the stale-cache pathway
+    is explicitly foreclosed; this is reinforced by the breakage being confined to
+    specific components rather than the whole page. The closure names no affirmative
+    cause — the CSS-purge/runtime-class mechanism is given only in HH/LH.'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Production-only unstyled components caused by a CSS purge dropping
+    runtime-composed class names, not the stale CDN cache a frontend lead pattern-matched
+    to.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-022.yaml
+  source_xbase_sha256: 78270aaf2fae8a26
+  translated_content_sha256: 3e1d36b4c3c76d37
+  translation_notes: Technical terms CDN, CSS, HTML, JavaScript, JS, runtime kept
+    as-is. 'Stylesheet' rendered as 'стилссит' (common Russian transliteration/loan).
+    'Purge step' rendered as 'шаг удаления CSS' (удаление = removal/purging). 'Cache-busting
+    hash' rendered as 'хеш для сброса кеша'. 'Frontend lead' rendered as 'фронтенд-лид'.
+    No salience cue culture-bound issues.

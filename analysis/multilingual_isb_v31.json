@@ -1,0 +1,197 @@
+{
+  "pooled": {
+    "EN": {
+      "n": 358,
+      "ISB": 20,
+      "vig": 42,
+      "ISB_pct": 5.6,
+      "vig_pct": 11.7,
+      "flip_pct": 17.3,
+      "asym_p": 0.007
+    },
+    "zh": {
+      "n": 360,
+      "ISB": 30,
+      "vig": 38,
+      "ISB_pct": 8.3,
+      "vig_pct": 10.6,
+      "flip_pct": 18.9,
+      "asym_p": 0.396
+    },
+    "ru": {
+      "n": 353,
+      "ISB": 14,
+      "vig": 38,
+      "ISB_pct": 4.0,
+      "vig_pct": 10.8,
+      "flip_pct": 14.7,
+      "asym_p": 0.001
+    },
+    "ar": {
+      "n": 359,
+      "ISB": 34,
+      "vig": 31,
+      "ISB_pct": 9.5,
+      "vig_pct": 8.6,
+      "flip_pct": 18.1,
+      "asym_p": 0.804
+    },
+    "es": {
+      "n": 359,
+      "ISB": 24,
+      "vig": 35,
+      "ISB_pct": 6.7,
+      "vig_pct": 9.7,
+      "flip_pct": 16.4,
+      "asym_p": 0.193
+    }
+  },
+  "per_model": {
+    "EN": {
+      "claude-sonnet-4-6": {
+        "n": 119,
+        "ISB": 5,
+        "vig": 15,
+        "ISB_pct": 4.2,
+        "vig_pct": 12.6,
+        "flip_pct": 16.8,
+        "asym_p": 0.041
+      },
+      "gemini-3.5-flash": {
+        "n": 119,
+        "ISB": 5,
+        "vig": 11,
+        "ISB_pct": 4.2,
+        "vig_pct": 9.2,
+        "flip_pct": 13.4,
+        "asym_p": 0.21
+      },
+      "google/gemma-4-31B-it": {
+        "n": 120,
+        "ISB": 10,
+        "vig": 16,
+        "ISB_pct": 8.3,
+        "vig_pct": 13.3,
+        "flip_pct": 21.7,
+        "asym_p": 0.327
+      }
+    },
+    "zh": {
+      "claude-sonnet-4-6": {
+        "n": 120,
+        "ISB": 8,
+        "vig": 15,
+        "ISB_pct": 6.7,
+        "vig_pct": 12.5,
+        "flip_pct": 19.2,
+        "asym_p": 0.21
+      },
+      "gemini-3.5-flash": {
+        "n": 120,
+        "ISB": 8,
+        "vig": 10,
+        "ISB_pct": 6.7,
+        "vig_pct": 8.3,
+        "flip_pct": 15.0,
+        "asym_p": 0.815
+      },
+      "google/gemma-4-31B-it": {
+        "n": 120,
+        "ISB": 14,
+        "vig": 13,
+        "ISB_pct": 11.7,
+        "vig_pct": 10.8,
+        "flip_pct": 22.5,
+        "asym_p": 1.0
+      }
+    },
+    "ru": {
+      "claude-sonnet-4-6": {
+        "n": 118,
+        "ISB": 4,
+        "vig": 13,
+        "ISB_pct": 3.4,
+        "vig_pct": 11.0,
+        "flip_pct": 14.4,
+        "asym_p": 0.049
+      },
+      "gemini-3.5-flash": {
+        "n": 116,
+        "ISB": 3,
+        "vig": 17,
+        "ISB_pct": 2.6,
+        "vig_pct": 14.7,
+        "flip_pct": 17.2,
+        "asym_p": 0.003
+      },
+      "google/gemma-4-31B-it": {
+        "n": 119,
+        "ISB": 7,
+        "vig": 8,
+        "ISB_pct": 5.9,
+        "vig_pct": 6.7,
+        "flip_pct": 12.6,
+        "asym_p": 1.0
+      }
+    },
+    "ar": {
+      "claude-sonnet-4-6": {
+        "n": 119,
+        "ISB": 7,
+        "vig": 10,
+        "ISB_pct": 5.9,
+        "vig_pct": 8.4,
+        "flip_pct": 14.3,
+        "asym_p": 0.629
+      },
+      "gemini-3.5-flash": {
+        "n": 120,
+        "ISB": 13,
+        "vig": 8,
+        "ISB_pct": 10.8,
+        "vig_pct": 6.7,
+        "flip_pct": 17.5,
+        "asym_p": 0.383
+      },
+      "google/gemma-4-31B-it": {
+        "n": 120,
+        "ISB": 14,
+        "vig": 13,
+        "ISB_pct": 11.7,
+        "vig_pct": 10.8,
+        "flip_pct": 22.5,
+        "asym_p": 1.0
+      }
+    },
+    "es": {
+      "claude-sonnet-4-6": {
+        "n": 120,
+        "ISB": 8,
+        "vig": 10,
+        "ISB_pct": 6.7,
+        "vig_pct": 8.3,
+        "flip_pct": 15.0,
+        "asym_p": 0.815
+      },
+      "gemini-3.5-flash": {
+        "n": 120,
+        "ISB": 6,
+        "vig": 12,
+        "ISB_pct": 5.0,
+        "vig_pct": 10.0,
+        "flip_pct": 15.0,
+        "asym_p": 0.238
+      },
+      "google/gemma-4-31B-it": {
+        "n": 119,
+        "ISB": 10,
+        "vig": 13,
+        "ISB_pct": 8.4,
+        "vig_pct": 10.9,
+        "flip_pct": 19.3,
+        "asym_p": 0.678
+      }
+    }
+  },
+  "n_seeds": 120
+}

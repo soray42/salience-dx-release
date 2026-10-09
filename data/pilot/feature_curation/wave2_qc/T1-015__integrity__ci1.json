@@ -1,0 +1,8 @@
+{
+  "seed_id": "T1-015",
+  "verdict": "clean",
+  "xbase_span": "",
+  "focal_in_hh_lh": true,
+  "reasoning": "xbase describes only non-directional yellowing ('some leaves turning yellow'), consistent watering, moist-but-not-waterlogged soil, and the neighbour anecdote slot — none of this narrates the decisive bottom-up progression pattern (oldest/lowest leaves first, new growth stays green) that defines the mobile-nutrient focal feature. The provenance confirms a prior repair removed that narration from xbase. Both HH and LH distractors carry the full progression pattern ('oldest, lowest leaves and moves upward leaf by leaf, while the newest growth at the shoot tips stays bright green'), so the focal evidence is present where required.",
+  "repair_hint": ""
+}

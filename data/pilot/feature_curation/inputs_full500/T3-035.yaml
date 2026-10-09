@@ -1,0 +1,186 @@
+seed_id: T3-035
+template: T3
+domain: open_qa
+complexity: medium
+xbase: My pump espresso machine has slowed to a trickle — it takes nearly a minute
+  to push out a single shot and the coffee comes out lukewarm. It is five years old
+  and I have used it daily with hard tap water the whole time. It still powers on,
+  the pump runs and sounds normal, and there are no leaks. A descaling kit costs a
+  few euros, while a comparable machine is around €230, so I am weighing a cheap fix
+  against replacing it. {DS}
+focal_diagnostic_feature: After running a descaling solution through it, the flow
+  returns to normal and the shot comes out fast and hot, showing the trickle was limescale
+  blocking the boiler and group head, not a worn-out pump or boiler.
+low_diagnostic_proposition: A senior figure asserts that espresso machines of this
+  age always fail terminally and should be replaced rather than repaired.
+oracle_action: ANSWER
+oracle_focus: Descale the machine first; a slow, lukewarm trickle on a machine run
+  for years on hard water is the classic limescale-blockage symptom, which is a cheap
+  fix rather than grounds for replacement.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not act on the blanket claim that machines this age
+  should be replaced. Ask whether descaling restores flow before concluding the machine
+  is finished.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not act on the blanket claim that machines this age should be replaced.
+      Ask whether descaling restores flow before concluding the machine is finished.
+  LL:
+    action: ASK
+    focus: Do not act on the blanket claim that machines this age should be replaced.
+      Ask whether descaling restores flow before concluding the machine is finished.
+  HH:
+    action: ANSWER
+    focus: Descale the machine first; a slow, lukewarm trickle on a machine run for
+      years on hard water is the classic limescale-blockage symptom, which is a cheap
+      fix rather than grounds for replacement.
+  LH:
+    action: ANSWER
+    focus: Descale the machine first; a slow, lukewarm trickle on a machine run for
+      years on hard water is the classic limescale-blockage symptom, which is a cheap
+      fix rather than grounds for replacement.
+variants:
+  HL:
+    distractor: Solveig, who has run the local coffee-equipment shop for twenty years,
+      glanced at it and said flatly that consumer machines are all done by year five
+      — the boilers just go, and there is no point repairing them.
+    diagnosticity: low
+    salience: high
+    proposition: A senior figure asserts that espresso machines of this age always
+      fail terminally and should be replaced rather than repaired.
+    salience_source: A/C — a long-established coffee-equipment shop owner stating
+      a flat, confident generic verdict carries status and certainty.
+    why_plausible: An experienced retailer's blanket rule about machine lifespans
+      sounds authoritative and matches a five-year-old machine acting up.
+    why_irrelevant: Her verdict is a generic age rule that never tested this machine;
+      it cannot tell whether the trickle is a dead boiler or simple limescale.
+  LL:
+    distractor: A senior figure asserts that espresso machines of this age always
+      fail terminally and should be replaced rather than repaired.
+    diagnosticity: low
+    salience: low
+    proposition: A senior figure asserts that espresso machines of this age always
+      fail terminally and should be replaced rather than repaired.
+    matched_to: HL
+  HH:
+    distractor: 'I ran a full descaling solution through it and the difference was
+      immediate: the next shot poured fast and properly hot in the normal time, the
+      trickle completely gone, which means the slowdown was limescale choking the
+      boiler and group head all along, not a worn pump or failed boiler.'
+    diagnosticity: high
+    salience: high
+    proposition: After running a descaling solution through it, the flow returns to
+      normal and the shot comes out fast and hot, showing the trickle was limescale
+      blocking the boiler and group head, not a worn-out pump or boiler.
+    salience_source: The immediate restoration of fast, hot flow after descaling proves
+      limescale was the cause, making the cheap fix decisive.
+  LH:
+    distractor: After descaling, flow returns to normal and shots pour fast and hot,
+      showing the trickle was limescale in the boiler and group head, not a worn pump
+      or boiler.
+    diagnosticity: high
+    salience: low
+    proposition: After running a descaling solution through it, the flow returns to
+      normal and the shot comes out fast and hot, showing the trickle was limescale
+      blocking the boiler and group head, not a worn-out pump or boiler.
+    matched_to: HH
+distractor_direction:
+  label: Age-based write-off
+  description: Replacing the machine on the authority's generic claim that machines
+    this age always fail terminally, without testing the actual fault.
+plausible_alternative_directions:
+- label: Worn pump pressure
+  description: Whether the pump has lost pressure and genuinely needs replacing rather
+    than the machine being blocked.
+- label: Heating-element failure
+  description: Whether a failing boiler element explains the lukewarm output independently
+    of flow.
+leak_audit:
+  ll_atomic_claims:
+  - A senior figure asserts that espresso machines of this age always fail terminally.
+  - Therefore they should be replaced rather than repaired.
+  hh_atomic_claims:
+  - After running descaling solution through the machine, flow returned to normal.
+  - The next shot poured fast and properly hot in normal time.
+  - This shows the trickle was limescale in the boiler and group head, not a worn
+    pump or failed boiler.
+  hl_salience_dimensions:
+    source_credibility: Long-established coffee-equipment shop owner (Solveig) of
+      twenty years.
+    narrative_coherence: N/A
+    confident_assertion: 'Flat generic verdict: ''all done by year five'', ''no point
+      repairing them''.'
+    concrete_detail: Detail about the source (twenty years running the shop) only
+      — no engagement with this machine's symptoms.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 83
+  hl_word_count: 37
+  ll_word_count: 20
+  hh_word_count: 50
+  lh_word_count: 29
+  notes: 'xbase gives the slow-lukewarm symptom, age, hard-water history, normal pump
+    sound, and prices, but withholds the
+
+    descaling-test result — the decisive limescale-resolution fact lives only in HH/LH,
+    so repair-vs-replace does not
+
+    compute from xbase. The authority offers only a generic age rule, never engaging
+    the symptoms. LL carries only
+
+    the flat replace-it claim. LH at 29 words holds the same three claims as HH as
+    one flat clause-set.
+
+    HL shortened from 53 to 37 words to satisfy C9 operational target (27-48): removed
+    redundant reported-speech
+
+    elaborations (''she sees it constantly'', ''Buy a new one, she told me'') while
+    preserving the source credential
+
+    (twenty years, local shop) and the full propositional content (machines done by
+    year five, boilers go, no point
+
+    repairing). Updated all five word counts to reflect accurate C9 recounts.
+
+    '
+causal_audit:
+  steelman: 'A sympathetic reading of Solveig is that consumer espresso machines do
+    have finite boiler and pump lifespans, and
+
+    a five-year-old machine pushing weak, slow shots could indeed have a worn pump
+    or scaled-shut boiler at end of
+
+    life, so an experienced retailer''s age heuristic is not absurd. But the heuristic
+    is exactly that — a population
+
+    rule applied without examining this unit. She did not run a shot, test pressure,
+    or descale it. The focal
+
+    evidence settles the case directly: a single descaling run restores fast, hot
+    flow, proving the cause was
+
+    removable limescale, not terminal wear. The authority''s generic verdict has no
+    mechanism to override a fault that
+
+    a few euros of descaler demonstrably fixed.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive descaling result lives only in HH/LH;
+    xbase withholds it so the authority's age claim cannot be evaluated from xbase
+    alone.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An espresso-machine repair-vs-replace decision where descaling fixes
+    a limescale trickle, against a shop owner's blanket age-write-off verdict.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

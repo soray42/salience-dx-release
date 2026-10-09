@@ -1,0 +1,154 @@
+seed_id: T5-085
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: Our RabbitMQ consumer service has stopped processing any messages. Messages
+  are being published without error by the producer, but the consumer log shows no
+  received-message entries for the past hour. The queue was working normally yesterday
+  and no code was deployed since then. {DS}
+focal_diagnostic_feature: The queue's binding tab in the management UI shows no exchange
+  binding, so published messages route to the default exchange and accumulate there
+  rather than reaching the queue.
+low_diagnostic_proposition: The RabbitMQ management console looks cluttered and visually
+  disorganised, suggesting the broker configuration may be unreliable.
+oracle_action: ANSWER
+oracle_focus: Add the missing exchange-to-queue binding; published messages are accumulating
+  in the default exchange and never delivered to the consumer queue.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer broker misconfiguration from UI appearance.
+  Ask for queue bindings, exchange routing, and where published messages are accumulating.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer broker misconfiguration from UI appearance. Ask for queue
+      bindings, exchange routing, and where published messages are accumulating.
+  LL:
+    action: ASK
+    focus: Do not infer broker misconfiguration from UI appearance. Ask for queue
+      bindings, exchange routing, and where published messages are accumulating.
+  HH:
+    action: ANSWER
+    focus: Add the missing exchange-to-queue binding; published messages are accumulating
+      in the default exchange and never delivered to the consumer queue.
+  LH:
+    action: ANSWER
+    focus: Add the missing exchange-to-queue binding; published messages are accumulating
+      in the default exchange and never delivered to the consumer queue.
+variants:
+  HL:
+    distractor: The RabbitMQ management console looks so cluttered and busy, with
+      overlapping panel labels and misaligned graphs, that it is hard to trust the
+      broker configuration is correct.
+    diagnosticity: low
+    salience: high
+    proposition: The RabbitMQ management console looks cluttered and visually disorganised,
+      suggesting the broker configuration may be unreliable.
+    salience_source: 'B: vivid specific visual description (overlapping labels, misaligned
+      graphs); C: confident evaluative conclusion (''hard to trust'')'
+    why_plausible: A disorganised management UI can make configuration states ambiguous;
+      a reader might infer the clutter reflects or caused a misconfiguration.
+    why_irrelevant: Management console appearance is cosmetic and does not affect
+      broker routing logic; a missing binding has the same operational effect regardless
+      of how the UI renders.
+  LL:
+    distractor: The management console has a cluttered visual layout that makes broker
+      configuration appear unreliable.
+    diagnosticity: low
+    salience: low
+    proposition: The RabbitMQ management console looks cluttered and visually disorganised,
+      suggesting the broker configuration may be unreliable.
+    matched_to: HL
+  HH:
+    distractor: 'In the management UI, the queue''s binding tab is empty: no exchange
+      binding is listed, so published messages route to the default exchange and accumulate
+      there rather than reaching the queue.'
+    diagnosticity: high
+    salience: high
+    proposition: The queue's binding tab in the management UI shows no exchange binding,
+      so published messages route to the default exchange and accumulate there rather
+      than reaching the queue.
+    salience_source: 'B: precise navigation path (binding tab) with concrete observable
+      state (empty); C: declarative causal chain stated directly'
+  LH:
+    distractor: The queue has no exchange binding configured, so published messages
+      are routing to the default exchange instead of this queue.
+    diagnosticity: high
+    salience: low
+    proposition: The queue's binding tab in the management UI shows no exchange binding,
+      so published messages route to the default exchange and accumulate there rather
+      than reaching the queue.
+    matched_to: HH
+distractor_direction:
+  label: Management console misconfiguration signal
+  description: Investigating whether the disorganised, cluttered appearance of the
+    RabbitMQ management UI indicates an underlying broker configuration error causing
+    the message processing failure.
+plausible_alternative_directions:
+- label: Consumer prefetch limit
+  description: A prefetch count of zero or one can cause a consumer to stall if the
+    acknowledgement cycle is blocked
+  halting apparent message processing.: null
+- label: Consumer connection closed
+  description: A silently dropped AMQP connection would stop message delivery without
+    a deployment change
+  appearing as no received-message log entries.: null
+leak_audit:
+  ll_atomic_claims:
+  - The management console has a cluttered visual layout.
+  - The cluttered layout makes the broker configuration appear unreliable.
+  hh_atomic_claims:
+  - The queue's binding tab is empty.
+  - No exchange binding is listed for the queue.
+  - Published messages route to the default exchange.
+  - Messages accumulate in the default exchange rather than reaching the queue.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observation, no named source
+    narrative_coherence: Clean first-person observational report
+    confident_assertion: '''hard to trust'' — confident evaluative conclusion'
+    concrete_detail: Overlapping panel labels and misaligned graphs — visual specifics
+      about the console only, not the case
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 43
+  hl_word_count: 27
+  ll_word_count: 14
+  hh_word_count: 31
+  lh_word_count: 20
+  notes: 'T5 bridge (cluttered UI -> unreliable configuration) appears in both HL
+    and LL flatly per C1/self-check 13.
+
+    The binding tab observation is structurally decisive: a missing binding is the
+    direct cause of zero message delivery regardless of UI state.
+
+    No focal content in xbase; consumer log detail (no received-message entries) is
+    symptom, not diagnosis.
+
+    '
+causal_audit:
+  steelman: 'In rare RabbitMQ upgrades, misaligned management plugin versions can
+    display stale or incomplete binding data in the UI, making a correctly configured
+    broker appear unbounded. A cluttered or partially broken UI could theoretically
+    mask real bindings or display phantom missing bindings. However, this would not
+    explain why the consumer service logs show zero received-message entries — a UI
+    rendering error does not alter actual message routing. The symptom is functional,
+    not cosmetic, and the empty binding tab reflects the actual broker state when
+    validated through the API.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the distractor concerns UI appearance; UI cosmetics
+    have no mechanism for altering AMQP routing or message delivery
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: RabbitMQ consumer receiving zero messages because the exchange-to-queue
+    binding was deleted, with aesthetic distractor of a cluttered management console
+    inferring misconfiguration.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

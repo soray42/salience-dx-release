@@ -1,0 +1,90 @@
+seed_id: T6-006
+template: T6
+domain: open_qa
+complexity: low
+xbase: My fiddle-leaf fig has been dropping leaves for about two weeks. I water it
+  on a fixed weekly schedule because I am trying to be consistent. {DS}
+focal_diagnostic_feature: The soil is wet all the way down, there is standing water
+  in the saucer, and lower leaves are yellow and soft.
+low_diagnostic_proposition: The user's previous plant losses were usually attributed
+  to not watering enough.
+oracle_action: ANSWER
+oracle_focus: This is over-watering; empty the saucer, let the soil dry, and water
+  by soil condition rather than calendar.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not generalise from past under-watering. Ask about
+  soil moisture, drainage, and leaf texture before adding water.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not generalise from past under-watering. Ask about soil moisture, drainage,
+      and leaf texture before adding water.
+  LL:
+    action: ASK
+    focus: Do not generalise from past under-watering. Ask about soil moisture, drainage,
+      and leaf texture before adding water.
+  HH:
+    action: ANSWER
+    focus: This is over-watering; empty the saucer, let the soil dry, and water by
+      soil condition rather than calendar.
+  LH:
+    action: ANSWER
+    focus: This is over-watering; empty the saucer, let the soil dry, and water by
+      soil condition rather than calendar.
+variants:
+  HL:
+    distractor: Every plant I've killed before dried out because I forgot it, so I
+      have been watering this one even more to avoid repeating that mistake.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous plant losses were usually attributed to not watering
+      enough.
+    salience_source: availability of past failure, compensatory overcorrection
+    why_plausible: A painful repeated mistake makes the opposite action feel safer.
+    why_irrelevant: Current wet soil and soft yellow leaves indicate over-watering,
+      not under-watering.
+  LL:
+    distractor: Past plant losses for the user were generally attributed to insufficient
+      watering.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous plant losses were usually attributed to not watering
+      enough.
+    matched_to: HL
+  HH:
+    distractor: The soil is wet all the way down, water is sitting in the saucer,
+      and the lower leaves are turning yellow and soft.
+    diagnosticity: high
+    salience: high
+    proposition: The soil is wet all the way down, there is standing water in the
+      saucer, and lower leaves are yellow and soft.
+    salience_source: moisture and leaf-symptom pattern
+  LH:
+    distractor: The soil is saturated with standing water in the saucer, and lower
+      leaves show yellowing and softness.
+    diagnosticity: high
+    salience: low
+    proposition: The soil is wet all the way down, there is standing water in the
+      saucer, and lower leaves are yellow and soft.
+    matched_to: HH
+distractor_direction:
+  label: Insufficient watering
+  description: Investigating whether the plant is dropping leaves because it has not
+    received enough water.
+plausible_alternative_directions:
+- label: Pest infestation
+  description: Spider mites, thrips, or other pests may be causing leaf drop and soft
+    damage.
+- label: Light insufficiency
+  description: The plant may be in a location with too little light for sustained
+    growth.
+- label: Cold draft stress
+  description: Temperature swings or drafts may be stressing the plant.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

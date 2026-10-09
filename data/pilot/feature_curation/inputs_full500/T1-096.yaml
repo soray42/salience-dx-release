@@ -1,0 +1,196 @@
+seed_id: T1-096
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: My external SSD on my Linux workstation keeps disappearing mid-session. Files
+  I am editing suddenly become inaccessible and the mount point empties, then it usually
+  comes back if I replug it. It is formatted exFAT and holds my project archives.
+  This has happened several times a day for the past week. I have already tried two
+  known-good cables and a different port, and the drops continue. {DS}
+focal_diagnostic_feature: The kernel logs exFAT I/O errors and a journal-replay failure
+  before remounting the volume read-only, across multiple known-good cables and ports.
+low_diagnostic_proposition: A colleague's external drive kept vanishing; he traced
+  it to a worn USB-C cable and a cable swap fixed it.
+oracle_action: ANSWER
+oracle_focus: Treat this as filesystem or drive-level corruption, not a connection
+  fault; back up immediately, then run fsck.exfat on the unmounted volume and check
+  the drive's SMART health, since errors and read-only remounts persist across good
+  cables and ports.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the worn-cable explanation; the user has
+  already confirmed the drops continue across two known-good cables and a different
+  port. Ask what the kernel log shows around each disconnect.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the worn-cable explanation; the user has already confirmed
+      the drops continue across two known-good cables and a different port. Ask what
+      the kernel log shows around each disconnect.
+  LL:
+    action: ASK
+    focus: Do not adopt the worn-cable explanation; the user has already confirmed
+      the drops continue across two known-good cables and a different port. Ask what
+      the kernel log shows around each disconnect.
+  HH:
+    action: ANSWER
+    focus: Treat this as filesystem or drive-level corruption, not a connection fault;
+      back up immediately, then run fsck.exfat on the unmounted volume and check the
+      drive's SMART health, since errors and read-only remounts persist across good
+      cables and ports.
+  LH:
+    action: ANSWER
+    focus: Treat this as filesystem or drive-level corruption, not a connection fault;
+      back up immediately, then run fsck.exfat on the unmounted volume and check the
+      drive's SMART health, since errors and read-only remounts persist across good
+      cables and ports.
+variants:
+  HL:
+    distractor: Bayani, a backend engineer on the platform team, said his external
+      drive kept vanishing until he traced it to a worn USB-C cable and a cable swap
+      fixed it.
+    diagnosticity: low
+    salience: high
+    proposition: A colleague's external drive kept vanishing; he traced it to a worn
+      USB-C cable and a cable swap fixed it.
+    salience_source: A — a named engineer colleague reporting a matching symptom he
+      personally root-caused.
+    why_plausible: Worn USB-C cables genuinely cause intermittent drive drops, so
+      a matching story from an engineer feels like a ready fix to try first.
+    why_irrelevant: His cable diagnosis is about his hardware; xbase already establishes
+      the drops persist across two known-good cables and a different port, so the
+      cable mechanism is foreclosed before the kernel-log evidence is even added.
+  LL:
+    distractor: A colleague's external drive kept vanishing; he traced it to a worn
+      USB-C cable and a cable swap fixed it.
+    diagnosticity: low
+    salience: low
+    proposition: A colleague's external drive kept vanishing; he traced it to a worn
+      USB-C cable and a cable swap fixed it.
+    matched_to: HL
+  HH:
+    distractor: The drive vanishes on two known-good cables and a different port,
+      and right before each drop dmesg logs exFAT I/O errors and a journal-replay
+      failure, after which the kernel remounts the volume read-only.
+    diagnosticity: high
+    salience: high
+    proposition: The kernel logs exFAT I/O errors and a journal-replay failure before
+      remounting the volume read-only, across multiple known-good cables and ports.
+    salience_source: Concrete kernel-log detail (exFAT I/O errors, journal-replay
+      failure, read-only remount) pins the fault to the filesystem, not the link.
+  LH:
+    distractor: The drive drops on multiple known-good cables and ports; the kernel
+      logs exFAT I/O errors and a journal-replay failure before remounting it read-only.
+    diagnosticity: high
+    salience: low
+    proposition: The kernel logs exFAT I/O errors and a journal-replay failure before
+      remounting the volume read-only, across multiple known-good cables and ports.
+    matched_to: HH
+distractor_direction:
+  label: Worn USB cable
+  description: Investigating whether a frayed or loose USB-C cable is causing the
+    intermittent disconnects, as it did for a colleague.
+plausible_alternative_directions:
+- label: USB bus power insufficiency
+  description: Whether the host USB controller or hub is delivering inadequate power
+  causing surprise removals independently of cable or filesystem state.: null
+- label: USB controller fault
+  description: Whether the host USB controller itself is dropping the device
+  distinct from cable: null
+  power: null
+  or filesystem-level causes.: null
+leak_audit:
+  ll_atomic_claims:
+  - A colleague's external drive kept vanishing.
+  - He traced it to a worn USB-C cable.
+  - A cable swap fixed it.
+  hh_atomic_claims:
+  - The drive drops on multiple known-good cables.
+  - The drive drops on a different port.
+  - The kernel logs exFAT I/O errors before each drop.
+  - A journal-replay failure occurs before each drop.
+  - The kernel remounts the volume read-only afterward.
+  hl_salience_dimensions:
+    source_credibility: Named backend engineer (Bayani) who personally root-caused
+      a matching symptom.
+    narrative_coherence: Clean vanishing-drive-then-cable-swap resolution chronology.
+    confident_assertion: said... traced it... fixed it
+    concrete_detail: Detail about the source's cable (worn USB-C, cable swap) only;
+      no claim about this drive's logs or this user's cable tests.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 29
+  ll_word_count: 20
+  hh_word_count: 33
+  lh_word_count: 23
+  notes: 'LL now carries the same three claims as HL: drive vanishing, worn-cable
+    cause, cable-swap fix. HL adds only
+
+    source name and role (Bayani, backend engineer, platform team) and narrative assertion
+    (''said''). The prior HL
+
+    had three case-content leaks absent from LL (weeks-long duration, connector-worn-loose
+    mechanism, fresh-cable
+
+    confirmation as a separate emphasis) — stripped in this repair. xbase now includes
+    a pathway-closure sentence
+
+    (''already tried two known-good cables and a different port, and the drops continue'')
+    that forecloses the
+
+    cable/port mechanism before HH/LH supply the kernel-log evidence, satisfying the
+    causal-lens hint. LH now
+
+    includes ''a journal-replay failure'' alongside exFAT I/O errors, matching the
+    HH atomic claim that was
+
+    previously absent from LH. ''Failing drive hardware'' replaced with ''USB bus
+    power insufficiency'' as a
+
+    genuinely orthogonal alternative not subsumed by the filesystem/SMART oracle.
+
+    '
+causal_audit:
+  steelman: 'A hardware engineer could note that worn USB-C cables are a leading cause
+    of intermittent external-drive drops:
+
+    a flexed or oxidised connector breaks the data link, the OS sees a surprise removal,
+    and replugging restores it
+
+    exactly as described. That mechanism is real in general and matches the surface
+    symptom. However, xbase now
+
+    explicitly states the user has already tried two known-good cables and a different
+    port with drops continuing,
+
+    which forecloses the cable/port mechanism entirely in xbase itself. Even without
+    that closure, a cable fault
+
+    does not write exFAT filesystem errors or trigger journal replay — those kernel
+    events point to storage-layer
+
+    corruption rather than link interruption. The focal evidence (HH/LH) structurally
+    rules out the cable both
+
+    by persistence across hardware substitution and by the nature of the logged errors.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the user has already tried two known-good
+    cables and a different port with drops continuing, foreclosing the worn-cable
+    mechanism before HH/LH supply the kernel-log evidence.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An external exFAT SSD that drops out, where exFAT errors and read-only
+    remounts persisting across known-good cables and ports, not a colleague's worn-cable
+    story, point to filesystem or drive corruption.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

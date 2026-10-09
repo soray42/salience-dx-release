@@ -1,0 +1,34 @@
+{
+  "seed_id": "T5-014",
+  "ll_claims_extracted": [
+    "The tool's interface looks sloppy and outdated.",
+    "This appearance makes the user wonder if its calculations can be trusted."
+  ],
+  "hl_case_claims": [
+    "The interface looks like it was thrown together by someone with no QA process.",
+    "A tool that sloppy-looking almost never has reliable calculation logic."
+  ],
+  "hl_source_claims": [
+    "Tariq is the user's colleague.",
+    "Tariq spent five years at an audit firm.",
+    "Tariq glanced at a screenshot the user sent him.",
+    "Tariq told the user his assessment (communication act)."
+  ],
+  "leaks": [
+    {
+      "text": "looks like it was thrown together by someone with no QA process",
+      "category": "severity_claim"
+    }
+  ],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 47,
+    "ll": 17,
+    "xbase": 52,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "fail",
+  "repair_hint": "Remove or neutralise the 'no QA process' phrase from the HL distractor — it introduces a case claim about development-process deficiency not present in LL. Replace with a phrase that characterises only the visual impression, e.g. 'the interface looks like it was thrown together carelessly' (staying within the aesthetic/sloppy-appearance frame)."
+}

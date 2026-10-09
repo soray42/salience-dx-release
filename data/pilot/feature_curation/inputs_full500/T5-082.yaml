@@ -1,0 +1,195 @@
+seed_id: T5-082
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Several users have reported seeing invisible text for a few seconds on our
+  marketing pages after page load before the text snaps into view. This happens in
+  Chrome and Firefox on first visits. The font files themselves load successfully
+  according to DevTools network logs. {DS}
+focal_diagnostic_feature: Every @font-face rule in the stylesheet omits the font-display
+  descriptor, defaulting to block behaviour with a 3-second invisible period that
+  matches the reported symptom.
+low_diagnostic_proposition: The font provider's documentation site looks outdated,
+  suggesting their service is unreliable and behind on browser standards.
+oracle_action: ANSWER
+oracle_focus: Add font-display:swap (or font-display:fallback) to every @font-face
+  rule; the missing descriptor causes the browser to hide text during font load using
+  the default block strategy.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer font service reliability from the appearance
+  of documentation pages. Ask for the font-display descriptor value in the @font-face
+  rules and check which render strategy the browser is using for the font.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer font service reliability from the appearance of documentation
+      pages. Ask for the font-display descriptor value in the @font-face rules and
+      check which render strategy the browser is using for the font.
+  LL:
+    action: ASK
+    focus: Do not infer font service reliability from the appearance of documentation
+      pages. Ask for the font-display descriptor value in the @font-face rules and
+      check which render strategy the browser is using for the font.
+  HH:
+    action: ANSWER
+    focus: Add font-display:swap (or font-display:fallback) to every @font-face rule;
+      the missing descriptor causes the browser to hide text during font load using
+      the default block strategy.
+  LH:
+    action: ANSWER
+    focus: Add font-display:swap (or font-display:fallback) to every @font-face rule;
+      the missing descriptor causes the browser to hide text during font load using
+      the default block strategy.
+variants:
+  HL:
+    distractor: The font provider documentation site is cluttered with broken image
+      links, outdated copyright notices, and styling errors, which to me signals a
+      service that does not keep up with modern browser standards.
+    diagnosticity: low
+    salience: high
+    proposition: The font provider's documentation site looks outdated, suggesting
+      their service is unreliable and behind on browser standards.
+    salience_source: B — vivid accumulation of surface detail (broken images, outdated
+      notices, styling errors); C — confident inferential framing ("signals a service
+      that does not keep up")
+    why_plausible: A developer encountering multiple signs of neglect on a provider's
+      docs site might reasonably question whether the service itself has fallen behind
+      on implementing modern CSS descriptors or browser compatibility requirements.
+    why_irrelevant: The appearance of a documentation site has no causal relationship
+      to the CSS delivered by the font service or the @font-face rules written in
+      the project's stylesheet; font-display is a descriptor set by the consuming
+      stylesheet, not supplied by the provider's servers.
+  LL:
+    distractor: The font provider's documentation site looks outdated, suggesting
+      their service is unreliable and behind on browser standards.
+    diagnosticity: low
+    salience: low
+    proposition: The font provider's documentation site looks outdated, suggesting
+      their service is unreliable and behind on browser standards.
+    matched_to: HL
+  HH:
+    distractor: Every @font-face rule omits font-display, defaulting to block behaviour;
+      a 3-second blocking period matches the invisible-text window exactly, and adding
+      font-display:swap removes the symptom entirely on test devices.
+    diagnosticity: high
+    salience: high
+    proposition: Every @font-face rule in the stylesheet omits the font-display descriptor,
+      defaulting to block behaviour with a 3-second invisible period that matches
+      the reported symptom.
+    salience_source: D — exact numeric match (3-second block period aligns with user
+      reports) plus a confirmed fix; B — precise technical finding with causal completeness
+  LH:
+    distractor: All @font-face rules lack font-display, so the default 3-second block
+      matches the invisible-text window, and font-display:swap removes the symptom
+      on test devices.
+    diagnosticity: high
+    salience: low
+    proposition: Every @font-face rule in the stylesheet omits the font-display descriptor,
+      defaulting to block behaviour with a 3-second invisible period that matches
+      the reported symptom.
+    matched_to: HH
+distractor_direction:
+  label: font provider service neglect
+  description: Investigating whether a poorly maintained or outdated font provider's
+    service is causing invisible text by delivering fonts that are incompatible with
+    or unsupported in current browser versions.
+plausible_alternative_directions:
+- label: font preloading missing
+  description: The font files may not be preloaded with a link rel=preload hint, causing
+    the browser to discover and request them late in the render pipeline and producing
+    a longer swap-in delay.
+- label: CORS misconfiguration on font origin
+  description: Missing or incorrect Cross-Origin headers on the font server could
+    cause the browser to silently block font loading on some origins, producing blank
+    text that resolves only after a fallback timeout.
+leak_audit:
+  ll_atomic_claims:
+  - The font provider's documentation site looks outdated.
+  - This suggests the provider's service is unreliable and behind on browser standards.
+  hh_atomic_claims:
+  - Every @font-face rule omits the font-display descriptor.
+  - The default behaviour without font-display is block.
+  - The block period is 3 seconds.
+  - The 3-second period matches the reported invisible-text window.
+  - Adding font-display:swap removes the symptom entirely on test devices.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Vivid first-person discovery of documentation page problems
+      with a clear inferential chain to service quality
+    confident_assertion: '"signals a service that does not keep up with modern browser
+      standards"'
+    concrete_detail: Broken image links, outdated copyright notices, styling errors
+      — surface observations about the docs page, not about the font delivery pipeline
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 32
+  ll_word_count: 17
+  hh_word_count: 28
+  lh_word_count: 22
+  notes: 'T5 bridge check: the inferential bridge (outdated docs site → unreliable/behind
+    service)
+
+    appears in both HL ("signals a service that does not keep up") and LL ("suggesting
+    their
+
+    service is unreliable and behind on browser standards"). C1 satisfied.
+
+    font-display is a descriptor in the project''s own stylesheet, not served by the
+    provider —
+
+    this makes the docs-site distractor structurally non-causal even if the provider
+    were unreliable.
+
+    HH/LH claim diff (post-repair): LH now includes all five hh_atomic_claims — absent
+    font-display,
+
+    default block, 3-second period, symptom match, and confirmed fix (adding font-display:swap
+
+    removes symptom on test devices). LH word count 18, within 14-23 target. C10 satisfied.
+
+    '
+causal_audit:
+  steelman: 'A font provider whose documentation is visibly neglected might also be
+    running an
+
+    outdated font-serving infrastructure. Some font services inject their own CSS
+
+    (including @font-face rules) rather than having the consumer write them. If this
+
+    provider''s injected stylesheet also omits font-display, then the docs neglect
+
+    and the missing descriptor would share a common cause (organisational neglect).
+
+    A practitioner might thus treat docs quality as weak corroborating evidence and
+
+    recommend switching providers. However, xbase states the fonts load successfully
+
+    per DevTools network logs — the serving infrastructure is functional. The font-display
+
+    descriptor is typically set in the consuming project''s own CSS, not by the provider.
+
+    No constructible mechanism makes doc-site aesthetics causally upstream of the
+    @font-face
+
+    rules written in this project''s stylesheet.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Fonts load successfully per DevTools network logs, ruling
+    out server-side delivery failure as the cause of the invisible-text symptom.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Marketing page text is invisible for 3 seconds due to missing font-display
+    descriptor in @font-face rules causing browser block behaviour; aesthetic distractor
+    is the font provider's visually neglected documentation site.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator
+  generator: generator_B
+  generation_mode: generator_B_batches

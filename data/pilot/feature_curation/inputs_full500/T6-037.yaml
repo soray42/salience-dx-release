@@ -1,0 +1,153 @@
+seed_id: T6-037
+template: T6
+domain: open_qa
+complexity: low
+xbase: My dishwasher has been leaving food residue on plates and cloudy film on glasses
+  for the past three weeks. I run it on the normal cycle with the same detergent I
+  have used for two years. The water heater setting has not changed. {DS}
+focal_diagnostic_feature: Both spray arms are clogged with mineral deposits and food
+  debris, blocking most water jets.
+low_diagnostic_proposition: Past dishwasher cleaning problems for the user were generally
+  caused by using too little detergent.
+oracle_action: ANSWER
+oracle_focus: Clean or replace the spray arms; the blockage is preventing adequate
+  water distribution to dishes.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to detergent quantity from past experience.
+  Ask whether the spray arms spin freely and whether the jets are clear.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to detergent quantity from past experience. Ask whether
+      the spray arms spin freely and whether the jets are clear.
+  LL:
+    action: ASK
+    focus: Do not default to detergent quantity from past experience. Ask whether
+      the spray arms spin freely and whether the jets are clear.
+  HH:
+    action: ANSWER
+    focus: Clean or replace the spray arms; the blockage is preventing adequate water
+      distribution to dishes.
+  LH:
+    action: ANSWER
+    focus: Clean or replace the spray arms; the blockage is preventing adequate water
+      distribution to dishes.
+variants:
+  HL:
+    distractor: Every time my dishwasher underperformed before, I was skimping on
+      detergent and adding a full pod fixed it instantly, so that is where I always
+      start.
+    diagnosticity: low
+    salience: high
+    proposition: Past dishwasher cleaning problems for the user were generally caused
+      by using too little detergent.
+    salience_source: C — confident first-instinct assertion with vivid personal history
+      of a reliable fix (adds a pod, fixed it instantly); B — clean chronological
+      narrative of repeated past success with this remedy.
+    why_plausible: A competent reader recognises detergent dosing as a common dishwasher
+      cause and the confident personal history pattern makes it feel settled.
+    why_irrelevant: The past cases involved detergent quantity; the focal evidence
+      shows a physical blockage in the spray arms that would persist regardless of
+      detergent amount.
+  LL:
+    distractor: Past dishwasher cleaning problems for this user were generally attributed
+      to insufficient detergent use.
+    diagnosticity: low
+    salience: low
+    proposition: Past dishwasher cleaning problems for the user were generally caused
+      by using too little detergent.
+    matched_to: HL
+  HH:
+    distractor: When I pulled out the lower spray arm, roughly half its jets were
+      completely plugged with white mineral scale and a chunk of dried food; the upper
+      arm was in similar shape, with only two of eight holes open.
+    diagnosticity: high
+    salience: high
+    proposition: Both spray arms are clogged with mineral deposits and food debris,
+      blocking most water jets.
+    salience_source: B/C — precise physical inspection with specific counts (half
+      the jets, two of eight holes open) reported in vivid observational detail.
+  LH:
+    distractor: Both spray arms have most jets blocked by mineral scale and food debris.
+    diagnosticity: high
+    salience: low
+    proposition: Both spray arms are clogged with mineral deposits and food debris,
+      blocking most water jets.
+    matched_to: HH
+distractor_direction:
+  label: Insufficient detergent dosing
+  description: Investigating whether the user has been using too little detergent
+    per cycle, causing inadequate cleaning action on dishes and glassware.
+plausible_alternative_directions:
+- label: Hard-water mineral buildup on interior
+  description: Mineral scale on interior walls and heating element reducing cleaning
+    effectiveness independently of spray arm condition.
+- label: Filter clog
+  description: The dishwasher's mesh filter at the bottom is partially blocked
+  reducing water circulation pressure.: null
+- label: Water temperature insufficient
+  description: The water entering the dishwasher is not reaching the temperature needed
+    to dissolve grease effectively.
+leak_audit:
+  ll_atomic_claims:
+  - Past dishwasher cleaning problems for this user were caused by insufficient detergent.
+  hh_atomic_claims:
+  - The lower spray arm has approximately half its jets plugged with white mineral
+    scale.
+  - The lower spray arm also has dried food blocking jets.
+  - The upper spray arm has only two of eight holes open.
+  - Both spray arms are assessed as similarly blocked.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean chronological pattern — repeated past occurrences,
+      reliable remedy each time.
+    confident_assertion: always start there; fixed it instantly — confident and definitive.
+    concrete_detail: N/A — no case-specific added detail.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 54
+  hl_word_count: 33
+  ll_word_count: 16
+  hh_word_count: 44
+  lh_word_count: 14
+  notes: 'xbase does not reveal spray arm condition — the decisive content lives only
+    in HH/LH (C4 clean).
+
+    HL adds only source framing (personal history pattern, confident assertion) over
+    LL — no case content added (C1 clean).
+
+    Steelman for detergent: very common cause, plausible. But xbase states two years
+    of same detergent with no prior complaints; nothing independently elevates it
+    for this case; the focal evidence (blocked spray arms) structurally rules it out
+    as the cause.
+
+    HL:LL ratio 33:16 = 2.06 ≤ 4. HH:LH ratio 44:14 = 3.14 ≤ 4.
+
+    '
+causal_audit:
+  steelman: 'A practitioner could argue: perhaps the detergent formulation degraded
+    (old stock) or the user unconsciously began using less. Insufficient detergent
+    causes exactly the filmed-glass and residue symptoms described. However, xbase
+    explicitly states same detergent used for two years without change and the water
+    heater is unchanged — there is no independent signal in xbase that elevates detergent
+    as the leading hypothesis over any other cause for this specific case. The focal
+    evidence (blocked spray arms) is a mechanical blockage that renders detergent
+    quantity irrelevant to diagnosis.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes same detergent used for two years — forecloses
+    the 'wrong detergent' pathway while not naming the cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Dishwasher leaving dirty dishes — availability bias toward detergent
+    dosing, actual root cause is clogged spray arms.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

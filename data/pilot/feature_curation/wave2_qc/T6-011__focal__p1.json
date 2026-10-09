@@ -1,0 +1,13 @@
+{
+  "seed_id": "T6-011",
+  "my_own_diagnosis": "The offline voice memo recorded locally without any network connection also sounds robotic, which physically eliminates every router or ISP pathway; the distortion must originate in local audio capture or processing, most likely CPU thermal throttling, an audio driver or power-management fault, or microphone hardware degradation that worsens after extended uptime.",
+  "focal_decisive": true,
+  "focal_notes": "The offline recording test is a clean, unambiguous control that a competent practitioner immediately reads as eliminating all network causes and pointing squarely to local audio hardware or software.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracles correctly map HL/LL to the low-diagnostic (ASK, non-adoption of router hypothesis) oracle and HH/LH to the focal (ANSWER, investigate local audio processing) oracle; low_diagnostic_oracle_focus explicitly blocks distractor adoption and requests further local-capture diagnostics.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

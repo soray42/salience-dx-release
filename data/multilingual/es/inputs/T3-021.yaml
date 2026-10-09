@@ -1,0 +1,182 @@
+seed_id: T3-021
+template: T3
+domain: open_qa
+complexity: low
+xbase: Estoy a punto de comprar una lavadora y estoy decidiendo si pagarla con mi
+  tarjeta de crédito o simplemente con mi tarjeta de débito. Es una compra bastante
+  grande para mí. El dinero no está ajustado este mes, y quiero tomar la decisión
+  que me cueste menos y me proteja mejor. No hay prisa; puedo pagar de cualquiera
+  de las dos formas hoy. {DS}
+focal_diagnostic_feature: El usuario paga el saldo de la tarjeta de crédito íntegramente
+  cada mes, por lo que no genera intereses, y esta tarjeta ofrece un 2% de cashback
+  más una garantía extendida de protección de compra en el electrodoméstico.
+low_diagnostic_proposition: A frugal family member insists credit cards are always
+  a debt trap and that paying by debit is always the safer choice.
+oracle_action: ANSWER
+oracle_focus: Use the credit card; since the user pays in full monthly there is no
+  interest, and the card adds 2% cash back plus purchase protection that debit does
+  not, so it strictly dominates here.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept "credit cards are always a trap" as a rule.
+  Ask whether the user pays the balance in full and what rewards or protections the
+  card offers.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept "credit cards are always a trap" as a rule. Ask whether the
+      user pays the balance in full and what rewards or protections the card offers.
+  LL:
+    action: ASK
+    focus: Do not accept "credit cards are always a trap" as a rule. Ask whether the
+      user pays the balance in full and what rewards or protections the card offers.
+  HH:
+    action: ANSWER
+    focus: Use the credit card; since the user pays in full monthly there is no interest,
+      and the card adds 2% cash back plus purchase protection that debit does not,
+      so it strictly dominates here.
+  LH:
+    action: ANSWER
+    focus: Use the credit card; since the user pays in full monthly there is no interest,
+      and the card adds 2% cash back plus purchase protection that debit does not,
+      so it strictly dominates here.
+variants:
+  HL:
+    distractor: Mi tía Marisol, que sacó a su familia de las deudas hace años y ahora
+      lleva un presupuesto doméstico muy ajustado, me dice con firmeza que las tarjetas
+      de crédito son siempre una trampa y que pagar con débito es la única forma segura.
+    diagnosticity: low
+    salience: high
+    proposition: A frugal family member insists credit cards are always a debt trap
+      and that paying by debit is always the safer choice.
+    salience_source: A/C — a family member with hard-won budgeting credibility stating
+      the rule firmly.
+    why_plausible: Credit-card debt genuinely ruins many people, and her lived experience
+      makes the warning feel earned and weighty.
+    why_irrelevant: The trap is carrying a balance and paying interest; this user
+      clears the card monthly, so the rule's premise does not apply to them.
+  LL:
+    distractor: Un familiar afirmó que las tarjetas de crédito son siempre una trampa
+      para el endeudamiento y que pagar con débito es siempre más seguro.
+    diagnosticity: low
+    salience: low
+    proposition: A frugal family member insists credit cards are always a debt trap
+      and that paying by debit is always the safer choice.
+    matched_to: HL
+  HH:
+    distractor: Lo cierto es que cancelo mi tarjeta a cero cada mes, así que nunca
+      pago ni un céntimo de intereses. Además, esta tarjeta da un 2% de cashback y
+      añade una garantía extendida de protección de compra en electrodomésticos, ninguna
+      de las cuales tiene mi tarjeta de débito.
+    diagnosticity: high
+    salience: high
+    proposition: The user pays their credit-card balance in full every month so carries
+      no interest, and this card gives 2% cash back plus extended purchase-protection
+      warranty on the appliance.
+    salience_source: The pay-in-full habit plus the named 2% cash back and purchase
+      protection make the card's advantage concrete.
+  LH:
+    distractor: El usuario salda el saldo de la tarjeta mensualmente y no paga ningún
+      interés, y la tarjeta añade un 2% de cashback y protección de compra extendida
+      que el débito no ofrece.
+    diagnosticity: high
+    salience: low
+    proposition: The user pays their credit-card balance in full every month so carries
+      no interest, and this card gives 2% cash back plus extended purchase-protection
+      warranty on the appliance.
+    matched_to: HH
+distractor_direction:
+  label: Las tarjetas de crédito son una trampa
+  description: Pagar con débito porque las tarjetas de crédito se consideran intrínsecamente
+    peligrosas independientemente de cómo las use este usuario.
+plausible_alternative_directions:
+- label: Disciplina de solo débito
+  description: Recomendar débito para mantener la disciplina de gasto aunque el usuario
+    actualmente pague el saldo completo, porque el hábito podría deteriorarse ante
+    una compra grande.
+  because the habit could erode on a large purchase.: null
+- label: Autocontrol ante el gasto excesivo
+  description: Si usar crédito arriesga tentar al usuario a gastar más de lo planeado.
+leak_audit:
+  ll_atomic_claims:
+  - A family member stated that credit cards are always a debt trap.
+  - The family member stated that paying by debit is always safer.
+  hh_atomic_claims:
+  - The user clears the credit-card balance to zero every month and pays no interest.
+  - The card gives 2% cash back.
+  - The card adds an extended purchase-protection warranty on appliances that debit
+    does not.
+  hl_salience_dimensions:
+    source_credibility: Family member (aunt Marisol) who cleared family debt and budgets
+      tightly.
+    narrative_coherence: N/A
+    confident_assertion: Says 'always' and 'the only safe way', stated firmly.
+    concrete_detail: Concrete detail about the source's background (cleared debt,
+      tight budget) only.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 65
+  hl_word_count: 39
+  ll_word_count: 19
+  hh_word_count: 45
+  lh_word_count: 25
+  notes: 'LH is 25 words to keep equivalence with HH (pay-in-full, 2% cash back, purchase
+    protection, debit lacks both);
+
+    single flat clause-set at the 25-word cap. T3 authority: the aunt asserts a blanket
+    rule and
+
+    never engages how this user actually uses credit. xbase says money is not tight
+    but withholds the pay-in-full
+
+    habit and the card''s rewards/protection — decisive facts in HH/LH only. QC repair
+    round 1: removed the HL-only
+
+    severity sentence "She is adamant the card will bite me eventually" (a consequence/severity
+    claim absent from LL,
+
+    leaking a negative outcome prediction) so HL now matches LL''s atomic claims with
+    only source-credibility framing added.
+
+    '
+causal_audit:
+  steelman: 'A debt-averse budgeter could argue that credit cards encourage overspending,
+    that interest and fees compound
+
+    quickly, and that debit enforces living within means — all genuinely true for
+    many people, which is why "avoid
+
+    credit, use debit" is sound default advice in the abstract.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the pay-in-full habit and the card's rewards/protection
+    that overturn the rule live only in HH/LH; xbase does not foreclose the debit
+    recommendation.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to pay for a washing machine by credit (pay-in-full, 2% cash
+    back, purchase protection) or debit, against a family member's blanket 'credit
+    cards are always a trap' rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-021.yaml
+  source_xbase_sha256: 663dfeb3e8781535
+  translated_content_sha256: 84c118f9934c4e52
+  translation_notes: The name Marisol is kept as it is naturally Spanish. "Cash back"
+    rendered as "cashback" (standard loan term in Spanish). "Purchase-protection warranty"
+    rendered as "garantía extendida de protección de compra", which is the standard
+    Spanish term. First-person register preserved.

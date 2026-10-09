@@ -1,0 +1,35 @@
+{
+  "seed_id": "T3-015",
+  "ll_claims_extracted": [
+    "The lawn needs core aeration this autumn."
+  ],
+  "hl_case_claims": [
+    "Every lawn in our climate needs core aeration every autumn without fail.",
+    "Skipping aeration is why most lawns thin out over winter."
+  ],
+  "hl_source_claims": [
+    "She told me straight away (delivery style of the source).",
+    "It is the standard recommendation she always gives (source's habitual pattern)."
+  ],
+  "leaks": [
+    {
+      "text": "every lawn in our climate needs core aeration every autumn without fail",
+      "category": "tunable_value"
+    },
+    {
+      "text": "skipping it is why most lawns thin out over winter",
+      "category": "consequence"
+    }
+  ],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 39,
+    "ll": 13,
+    "xbase": 68,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "fail",
+  "repair_hint": "Leak 1 ('every lawn...every autumn without fail'): replace with a claim scoped to this lawn only, matching LL's 'the lawn needs core aeration this autumn' — e.g. remove 'every lawn in our climate' and 'without fail', keeping the salience via the source's confident delivery. Leak 2 ('skipping it is why most lawns thin out over winter'): delete entirely — this adds a consequence/causal claim that speaks to the user's presenting symptom (thin patches) and would shift a responder's assessment of the case."
+}

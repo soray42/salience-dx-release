@@ -1,0 +1,196 @@
+seed_id: T1-086
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our worker service pulls jobs from an Amazon SQS queue, and lately some jobs
+  are being processed two or three times, sending duplicate emails to customers. The
+  queue is a standard SQS queue, and the duplication is not constant; it clusters
+  around our heavier jobs. We have not changed the producer or the queue settings
+  this sprint, and CloudWatch shows no redrive to a dead-letter queue. {DS}
+focal_diagnostic_feature: Heavy jobs routinely take 90 to 140 seconds while the queue's
+  visibility timeout is 60 seconds, so SQS makes a message visible again and delivers
+  it to a second worker before the first finishes and deletes it.
+low_diagnostic_proposition: An identical duplicate-processing issue at another team
+  turned out to be the producer enqueuing each job twice.
+oracle_action: ANSWER
+oracle_focus: Increase the visibility timeout above the worst-case processing time
+  (or extend it via heartbeat while a job runs), since heavy jobs outlast the 60-second
+  timeout and get redelivered to a second worker before the first deletes them; optionally
+  add idempotent handling.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the producer double-enqueue explanation
+  from another team. Ask how long the heavy jobs take to process relative to the queue's
+  visibility timeout before concluding the duplicates originate at the producer.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the producer double-enqueue explanation from another team.
+      Ask how long the heavy jobs take to process relative to the queue's visibility
+      timeout before concluding the duplicates originate at the producer.
+  LL:
+    action: ASK
+    focus: Do not adopt the producer double-enqueue explanation from another team.
+      Ask how long the heavy jobs take to process relative to the queue's visibility
+      timeout before concluding the duplicates originate at the producer.
+  HH:
+    action: ANSWER
+    focus: Increase the visibility timeout above the worst-case processing time (or
+      extend it via heartbeat while a job runs), since heavy jobs outlast the 60-second
+      timeout and get redelivered to a second worker before the first deletes them;
+      optionally add idempotent handling.
+  LH:
+    action: ANSWER
+    focus: Increase the visibility timeout above the worst-case processing time (or
+      extend it via heartbeat while a job runs), since heavy jobs outlast the 60-second
+      timeout and get redelivered to a second worker before the first deletes them;
+      optionally add idempotent handling.
+variants:
+  HL:
+    distractor: Roya, a backend lead I trust from a previous team, told me she chased
+      an identical duplicate-processing bug and it came down to their producer accidentally
+      enqueuing each job twice, so the duplicates were there from the start.
+    diagnosticity: low
+    salience: high
+    proposition: An identical duplicate-processing issue at another team turned out
+      to be the producer enqueuing each job twice.
+    salience_source: A — a trusted backend lead, recounting a closely matching bug
+      she personally diagnosed.
+    why_plausible: A producer enqueuing each job twice genuinely produces duplicate
+      processing, so a trusted peer's matching story makes the producer the obvious
+      place to look.
+    why_irrelevant: Here the messages are enqueued once; duplicates arise because
+      heavy jobs outlast the visibility timeout and SQS redelivers them, which the
+      producer cannot cause or prevent.
+  LL:
+    distractor: A former colleague said her identical duplicate-processing issue was
+      the producer enqueuing each job twice.
+    diagnosticity: low
+    salience: low
+    proposition: An identical duplicate-processing issue at another team turned out
+      to be the producer enqueuing each job twice.
+    matched_to: HL
+  HH:
+    distractor: Timing the heavy jobs shows they routinely take 90 to 140 seconds,
+      while the queue's visibility timeout is set to 60 seconds, so SQS makes a message
+      visible again and hands it to a second worker long before the first worker finishes
+      and deletes it.
+    diagnosticity: high
+    salience: high
+    proposition: Heavy jobs routinely take 90 to 140 seconds while the queue's visibility
+      timeout is 60 seconds, so SQS makes a message visible again and delivers it
+      to a second worker before the first finishes and deletes it.
+    salience_source: Concrete processing-time range against the exact visibility-timeout
+      value makes the redelivery mechanism unambiguous and tied to the heavy-job clustering.
+  LH:
+    distractor: Heavy jobs take 90–140 seconds; the 60-second timeout causes SQS to
+      redeliver each message to a second worker before the first deletes it.
+    diagnosticity: high
+    salience: low
+    proposition: Heavy jobs routinely take 90 to 140 seconds while the queue's visibility
+      timeout is 60 seconds, so SQS makes a message visible again and delivers it
+      to a second worker before the first finishes and deletes it.
+    matched_to: HH
+distractor_direction:
+  label: Producer double-enqueue
+  description: Investigating whether the producer is enqueuing each job more than
+    once, so duplicates exist before any worker runs.
+plausible_alternative_directions:
+- label: Visibility-timeout expiry
+  description: Whether processing exceeds the visibility timeout
+  causing SQS to redeliver in-flight messages.: null
+- label: Standard-queue at-least-once
+  description: Whether the standard queue's inherent at-least-once delivery needs
+    idempotent handling.
+- label: Worker delete-after-failure
+  description: Whether workers fail to delete messages on success
+  leaving them to reappear.: null
+leak_audit:
+  ll_atomic_claims:
+  - A former colleague had an identical duplicate-processing issue.
+  - It turned out to be the producer enqueuing each job twice.
+  hh_atomic_claims:
+  - Heavy jobs routinely take 90 to 140 seconds.
+  - The queue's visibility timeout is set to 60 seconds.
+  - SQS makes a message visible again and delivers it to a second worker before the
+    first finishes and deletes it.
+  hl_salience_dimensions:
+    source_credibility: A trusted backend lead from a previous team.
+    narrative_coherence: A coherent week-long-chase narrative landing on a clear root
+      cause.
+    confident_assertion: '''It came down to'', ''there from the start'' — confident
+      resolution.'
+    concrete_detail: Detail about the retried API call double-enqueue — about the
+      source's case, not this one.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 38
+  ll_word_count: 15
+  hh_word_count: 45
+  lh_word_count: 23
+  notes: 'Clean T1: a producer double-enqueue is a real general cause of duplicate
+    processing, so the anecdote is sound on
+
+    its own — but the focal feature (processing time exceeding the visibility timeout,
+    causing redelivery)
+
+    structurally relocates the cause to the consumer side. xbase notes the duplication
+    clusters around heavy jobs as
+
+    a symptom clue, but does not state processing times or the visibility-timeout
+    value, so a reader cannot reject
+
+    the producer story from xbase alone; the timing-vs-timeout comparison lives only
+    in HH/LH. "no redrive to DLQ"
+
+    in xbase neutrally closes the failed-job-replay pathway without naming the real
+    cause.
+
+    QC repair: LH originally omitted the ''second worker'' claim present in HH and
+    listed in hh_atomic_claims[2].
+
+    Expanded LH to ''Heavy jobs take 90–140 seconds; the 60-second timeout causes
+    SQS to redeliver each message to
+
+    a second worker before the first deletes it.'' (23 words, within 14-23 target,
+    ratio HH/LH = 45/23 ≈ 2.0:1 ≤ 4:1).
+
+    '
+causal_audit:
+  steelman: 'A senior engineer could argue that an upstream API retry, a buggy outbox
+    flush, or a double-send in the producer
+
+    would put two copies of a job on the queue, and that this matches duplicate customer
+    emails perfectly — producer
+
+    duplication is a real and common root cause. But it does not fit this case: the
+    duplicates cluster on heavy jobs
+
+    specifically, and the focal evidence shows those jobs run 90-140 seconds against
+    a 60-second visibility timeout,
+
+    so SQS itself redelivers the in-flight message to a second worker. The producer
+    enqueues each job once, so the
+
+    producer direction cannot inform this incident.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states CloudWatch shows no redrive to a dead-letter
+    queue, neutrally closing the failed-job-replay pathway, while withholding the
+    decisive processing-time-versus-visibility-timeout comparison.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: SQS duplicate processing caused by heavy jobs outlasting the 60-second
+    visibility timeout and being redelivered, not the producer double-enqueue a trusted
+    peer recalled.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator-adjudicated
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

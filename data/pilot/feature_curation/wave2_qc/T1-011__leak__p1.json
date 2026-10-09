@@ -1,0 +1,31 @@
+{
+  "seed_id": "T1-011",
+  "ll_claims_extracted": [
+    "Someone at another company had a release-only startup crash.",
+    "That crash was attributed to OEM-specific device customizations."
+  ],
+  "hl_case_claims": [
+    "Their release build had a startup crash.",
+    "The crash was caused by OEM-specific device customizations."
+  ],
+  "hl_source_claims": [
+    "Named person 'Priya' at a named peer company 'Vantara Mobile'.",
+    "She leads Android platform at Vantara Mobile (her role).",
+    "She personally told the user this (mode of transmission).",
+    "'Last year' — temporal anchor for the other company's incident.",
+    "'After their incident review' — process/setting that anchors source credibility.",
+    "'They confirmed it was' — confident assertion framing by the source."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "ll": 14,
+    "hl": 31,
+    "xbase": 51,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

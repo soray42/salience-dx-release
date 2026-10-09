@@ -1,0 +1,191 @@
+seed_id: T5-056
+template: T5
+domain: open_qa
+complexity: high
+xbase: I am relocating for a two-year contract role and deciding whether to rent or
+  buy a condo in the new city. Listings in the area I am looking at are plentiful
+  on both sides. My employer covers neither purchase closing costs nor any relocation
+  allowance. I have a stable income but no existing property to sell. {DS}
+focal_diagnostic_feature: Monthly mortgage payments on comparable condos exceed the
+  rental rate for identical units in the same buildings by roughly 40%, and a two-year
+  sale horizon means closing and transaction costs would consume most or all of any
+  plausible price appreciation.
+low_diagnostic_proposition: The listing photos are professionally staged; a condo
+  that photographs this well in this neighbourhood is likely well maintained and a
+  solid long-term investment.
+oracle_action: ANSWER
+oracle_focus: Rent; the negative carry gap and two-year horizon make purchasing a
+  clear financial negative regardless of property quality.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer investment quality or financial soundness
+  from listing photography. Ask for the mortgage-to-rent comparison, expected hold
+  period, closing costs, and available savings before advising.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer investment quality or financial soundness from listing photography.
+      Ask for the mortgage-to-rent comparison, expected hold period, closing costs,
+      and available savings before advising.
+  LL:
+    action: ASK
+    focus: Do not infer investment quality or financial soundness from listing photography.
+      Ask for the mortgage-to-rent comparison, expected hold period, closing costs,
+      and available savings before advising.
+  HH:
+    action: ANSWER
+    focus: Rent; the negative carry gap and two-year horizon make purchasing a clear
+      financial negative regardless of property quality.
+  LH:
+    action: ANSWER
+    focus: Rent; the negative carry gap and two-year horizon make purchasing a clear
+      financial negative regardless of property quality.
+variants:
+  HL:
+    distractor: The listing photos are all wide-angle natural-light shots with polished
+      countertops and fresh staging; a condo that photographs this well in this neighbourhood
+      is clearly well maintained and a solid long-term investment.
+    diagnosticity: low
+    salience: high
+    proposition: The listing photos are professionally staged; a condo that photographs
+      this well in this neighbourhood is likely well maintained and a solid long-term
+      investment.
+    salience_source: B/C — vivid concrete visual detail about the listing presentation
+      combined with a confident assertion about what it implies; the inference is
+      offered as a reason, not a preference.
+    why_plausible: Buyers routinely use listing presentation as a proxy for property
+      care and neighbourhood desirability; a well-staged listing does correlate weakly
+      with professional management.
+    why_irrelevant: Listing photography quality has no bearing on the mortgage-to-rent
+      ratio or the transaction-cost math for a two-year hold; even a superbly maintained
+      condo cannot overcome a 40% payment gap and short holding horizon.
+  LL:
+    distractor: The listing photos are professionally staged; a condo that photographs
+      this well is likely well maintained and a solid long-term investment.
+    diagnosticity: low
+    salience: low
+    proposition: The listing photos are professionally staged; a condo that photographs
+      this well in this neighbourhood is likely well maintained and a solid long-term
+      investment.
+    matched_to: HL
+  HH:
+    distractor: The monthly mortgage payment on comparable condos is about 40% above
+      the rental rate for identical units in the same buildings, and a two-year sale
+      horizon means closing and transaction costs alone would consume most of any
+      price appreciation.
+    diagnosticity: high
+    salience: high
+    proposition: Monthly mortgage payments on comparable condos exceed the rental
+      rate for identical units in the same buildings by roughly 40%, and a two-year
+      sale horizon means closing and transaction costs would consume most or all of
+      any plausible price appreciation.
+    salience_source: Precise numeric anchor (40% gap) combined with a concrete cost
+      mechanism makes the financial logic vivid and immediately computable.
+  LH:
+    distractor: Mortgage payments exceed comparable rents by about 40%, and a two-year
+      horizon makes transaction costs prohibitive.
+    diagnosticity: high
+    salience: low
+    proposition: Monthly mortgage payments on comparable condos exceed the rental
+      rate for identical units in the same buildings by roughly 40%, and a two-year
+      sale horizon means closing and transaction costs would consume most or all of
+      any plausible price appreciation.
+    matched_to: HH
+distractor_direction:
+  label: Listing quality as investment signal
+  description: Treating the professional quality of listing photography as evidence
+    that the condo is well maintained and the neighbourhood is a sound market to buy
+    into, making purchase the preferred choice.
+plausible_alternative_directions:
+- label: Insufficient savings for purchase
+  description: Evaluating whether the absence of a downpayment or closing-cost buffer
+    alone rules out buying, independently of the payment-to-rent comparison.
+- label: Market appreciation potential
+  description: Investigating whether expected local price growth over the contract
+    period could offset the negative carry and transaction costs.
+- label: Lease flexibility vs ownership
+  description: Weighing the option value of renting given an uncertain post-contract
+    path versus the illiquidity of owning for a short horizon.
+leak_audit:
+  ll_atomic_claims:
+  - The listing photos are professionally staged.
+  - A condo that photographs this well is likely well maintained.
+  - A condo that photographs this well is a solid long-term investment.
+  hh_atomic_claims:
+  - The monthly mortgage payment on comparable condos is about 40% above the rental
+    rate for identical units in the same buildings.
+  - A two-year sale horizon means closing and transaction costs would consume most
+    of any price appreciation.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean visual description followed by a confident causal inference,
+      read as a reasoned observation rather than an aesthetic aside.
+    confident_assertion: '''clearly well maintained and a solid long-term investment''
+      — confident bridging from surface to conclusion.'
+    concrete_detail: '''wide-angle natural-light shots with polished countertops and
+      fresh staging'' — concrete detail about the listing presentation only, not the
+      case financials.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 56
+  hl_word_count: 32
+  ll_word_count: 21
+  hh_word_count: 39
+  lh_word_count: 16
+  notes: 'HL detail kept to listing photos and staging only — no case financial facts.
+
+    LL retains the inferential bridge flatly (T5 C1 requirement met).
+
+    HH gives both the payment gap and the two-year transaction-cost mechanism;
+
+    LH collapses both into one clause at the lower end of the target range.
+
+    Ratio HL:LL = 1.52; HH:LH = 2.44; both within 4:1.
+
+    '
+causal_audit:
+  steelman: 'A senior buyer''s agent could argue: professionally staged listings in
+    a given
+
+    neighbourhood often concentrate in areas with strong landlord professionalism,
+
+    good maintenance, and rising demand — all of which correlate with price
+
+    appreciation. Buying into a well-maintained building reduces hidden ownership
+
+    costs and may outperform a rough estimate of the payment-to-rent gap. This
+
+    is the strongest version of the aesthetic-as-investment-signal argument.
+
+    However, the inferential chain (photo quality → building quality → market
+
+    return) has no bearing on the payment-to-rent ratio computed from current
+
+    listing prices, nor on the transaction-cost math for a two-year hold period.
+
+    Even a perfectly maintained, appreciating condo cannot overcome a 40% carry
+
+    gap within a two-year horizon using typical closing-cost assumptions. The
+
+    photographic quality provides zero input to the financial model that governs
+
+    this decision.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase establishes the two-year contract horizon and
+    employer covers no closing costs, framing the transaction-cost exposure, but the
+    decisive mortgage-to-rent comparison lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Rent-vs-buy decision for a two-year contract relocator where the mortgage
+    payment exceeds comparable rent by 40% and transaction costs make buying financially
+    dominated.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,182 @@
+seed_id: T6-021
+template: T6
+domain: open_qa
+complexity: low
+xbase: بالوعة مغسلة الحمام لديّ تصرف ببطء وأنا على وشك إحضار أنبوب تسليك المجاري لتنظيفها
+  بنفسي كما أفعل دائماً. البالوعة لم تنسد كلياً بعد، بل هي بطيئة فحسب. البيت قديم
+  لكنني لم أواجه مشاكل سباكة هنا من قبل. أفضّل ألا أدفع ثمن سبّاك لأمر أستطيع معالجته
+  في عشر دقائق في عطلة نهاية الأسبوع. {DS}
+focal_diagnostic_feature: الماء يرتفع من المرحاض والبانيو في آنٍ واحد عند استخدام
+  المغسلة، وتصدر قرقرة من صرفيات متعددة — علامات تدل على أن الانسداد في خط مجاري الصرف
+  الرئيسي المشترك لا في مصيدة صرفية واحدة.
+low_diagnostic_proposition: Every drain clog the user has cleared before was a simple
+  hair or debris clog in the trap, so this one is probably the same.
+oracle_action: ANSWER
+oracle_focus: Call a professional for the main line; backups and gurgling across the
+  toilet, tub, and sink together point to a shared sewer-line blockage that a fixture
+  drain snake cannot reach, not a local trap clog.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a simple trap clog from past experience.
+  Ask whether other fixtures back up or gurgle when this drain is used.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a simple trap clog from past experience. Ask whether other
+      fixtures back up or gurgle when this drain is used.
+  LL:
+    action: ASK
+    focus: Do not assume a simple trap clog from past experience. Ask whether other
+      fixtures back up or gurgle when this drain is used.
+  HH:
+    action: ANSWER
+    focus: Call a professional for the main line; backups and gurgling across the
+      toilet, tub, and sink together point to a shared sewer-line blockage that a
+      fixture drain snake cannot reach, not a local trap clog.
+  LH:
+    action: ANSWER
+    focus: Call a professional for the main line; backups and gurgling across the
+      toilet, tub, and sink together point to a shared sewer-line blockage that a
+      fixture drain snake cannot reach, not a local trap clog.
+variants:
+  HL:
+    distractor: كل انسداد صرف عالجته كان مجرد كتلة من الشعر والأوساخ في مصيدة البالوعة،
+      لذا فإن حدسي كله يقول إن هذه المغسلة البطيئة هي بالضبط نفس نوع الانسداد البسيط
+      في المصيدة الذي واجهته دائماً.
+    diagnosticity: low
+    salience: high
+    proposition: Every drain clog the user has cleared before was a simple hair or
+      debris clog in the trap, so this one is probably the same.
+    salience_source: B/C — a vivid personal history of easy trap clogs plus the confident
+      first-instinct that this is the same simple job.
+    why_plausible: A consistent run of trivial, snake-able clogs makes 'same easy
+      fix' the natural assumption for another slow drain.
+    why_irrelevant: Past clogs were all local trap blockages; this symptom set points
+      to the shared main line, which past single-fixture fixes give no reason to expect
+      or address.
+  LL:
+    distractor: كل انسداد صرف عالجه المستخدم من قبل كان انسداداً بسيطاً في المصيدة،
+      لذا فمن المرجح أن يكون هذا الانسداد مماثلاً.
+    diagnosticity: low
+    salience: low
+    proposition: Every drain clog the user has cleared before was a simple hair or
+      debris clog in the trap, so this one is probably the same.
+    matched_to: HL
+  HH:
+    distractor: حين أشغّل المغسلة، يرتفع الماء فعلاً من المرحاض ومن البانيو في آنٍ
+      واحد، وأسمع قرقرة من عدة صرفيات معاً. هذا ليس انسداداً في مصيدة واحدة — بل يشير
+      إلى انسداد في خط مجاري الصرف الرئيسي الذي يشترك فيه الحمام بأكمله.
+    diagnosticity: high
+    salience: high
+    proposition: Water backs up out of the toilet and the bathtub at the same time
+      the sink is used, and gurgling comes from multiple fixtures — signs the blockage
+      is in the shared main sewer line, not a single fixture's trap.
+    salience_source: The simultaneous toilet/tub backup and multi-fixture gurgling
+      on sink use make the shared-main-line blockage concrete.
+  LH:
+    distractor: استخدام المغسلة يدفع الماء للارتفاع من المرحاض والبانيو في آنٍ واحد
+      ويُحدث قرقرة في صرفيات متعددة، مما يشير إلى انسداد في خط مجاري رئيسي مشترك وليس
+      في مصيدة صرفية واحدة.
+    diagnosticity: high
+    salience: low
+    proposition: Water backs up out of the toilet and the bathtub at the same time
+      the sink is used, and gurgling comes from multiple fixtures — signs the blockage
+      is in the shared main sewer line, not a single fixture's trap.
+    matched_to: HH
+distractor_direction:
+  label: انسداد بسيط في المصيدة
+  description: التعامل مع بطء الصرف باعتباره انسداداً موضعياً بسيطاً في مصيدة البالوعة
+    لتسليكه بالأنبوب كما في الحالات السابقة.
+plausible_alternative_directions:
+- label: انسداد قناة التهوية
+  description: ما إذا كان انسداد قناة تهوية السباكة هو سبب بطء الصرف والقرقرة.
+- label: انسداد جزئي في الفرع الموضعي
+  description: ما إذا كان انسداد جزئي في الفرع المخصص لهذه الصرفية هو المسؤول.
+leak_audit:
+  ll_atomic_claims:
+  - Every drain clog the user cleared before was a simple trap clog.
+  - Therefore this clog is probably the same.
+  hh_atomic_claims:
+  - Running the sink pushes water up out of the toilet and the bathtub at the same
+    time.
+  - Gurgling comes from several drains at once.
+  - This points to a blockage in the shared main sewer line rather than one fixture's
+    trap.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent personal history of easy hair-clog fixes with the
+      snake.
+    confident_assertion: Whole instinct says this is 'the very same kind of easy clog'
+      as always.
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 42
+  ll_word_count: 18
+  hh_word_count: 47
+  lh_word_count: 25
+  notes: 'T6: the availability inference "this one is probably the same" is in HL
+    and flat in LL. xbase says the sink is
+
+    merely sluggish and the user has had no prior trouble here — symptoms; the
+
+    multi-fixture backup/gurgling that reveals a main-line blockage (decisive) lives
+    only in HH/LH.
+
+    QC repair round 1: stripped two case claims from HL that LL lacked — the effort
+    descriptor
+
+    "that a few minutes with the snake cleared right out" (forbidden effort_descriptor)
+    and the action
+
+    consequence "and I should just handle it myself". HL now carries only the vivid
+    hair-and-gunk trap
+
+    elaboration plus the confident availability inference, matching LL''s two atomic
+    claims exactly.
+
+    HL recounted from 48 to 41 words.
+
+    '
+causal_audit:
+  steelman: 'A handy homeowner could argue that slow single-sink drainage is overwhelmingly
+    a local trap clog, that hair and
+
+    soap scum are by far the most common cause, and that a personal history of snaking
+    such clogs successfully makes
+
+    the DIY approach a reasonable default for another sluggish drain.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the multi-fixture backup and gurgling that reveal
+    a shared main-line blockage live only in HH/LH; xbase does not foreclose the DIY
+    trap-clog assumption.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A slow sink that is actually a shared main-sewer-line blockage (multi-fixture
+    backup and gurgling), against the user's availability bias that past clogs were
+    simple snake-able trap clogs.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 (orchestrator-adjudicated leak fix per protocol max-2-rounds)
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-021.yaml
+  source_xbase_sha256: 9511fced42c71cbd
+  translated_content_sha256: a90c9b1fdc736fb6
+  translation_notes: No culture-bound salience issues. The vivid HL personal-history
+    framing preserved via 'حدسي كله يقول' (my whole instinct says). Plumbing terms
+    kept natural in Arabic. 'مصيدة البالوعة' used for trap; 'خط مجاري الصرف الرئيسي'
+    for main sewer line.

@@ -1,0 +1,187 @@
+seed_id: T3-080
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our web app shows a white flash during page transitions in Safari on iOS, lasting
+  about 120 milliseconds. Chrome and Firefox on the same device do not flash. The
+  transitions have worked for eight months and started misbehaving after we updated
+  the component library two weeks ago. {DS}
+focal_diagnostic_feature: 'The transitioning container has both an opacity animation
+  and overflow: hidden set simultaneously; Safari does not promote overflow-hidden
+  elements to compositor layers, forcing a full main-thread repaint that produces
+  the white frame on each transition.'
+low_diagnostic_proposition: Safari iOS white flashes during transitions are almost
+  always caused by viewport meta tag misconfiguration.
+oracle_action: ANSWER
+oracle_focus: 'Remove overflow: hidden from the transitioning container or isolate
+  it into a separate stacking-context wrapper so Safari can promote the animated element
+  to a compositor layer and eliminate the repaint flash.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the viewport meta tag fix from authority
+  alone. Ask for the computed CSS on the transitioning element — specifically any
+  overflow property co-occurring with opacity or transform animations — and whether
+  the component library update changed these properties.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the viewport meta tag fix from authority alone. Ask for the
+      computed CSS on the transitioning element — specifically any overflow property
+      co-occurring with opacity or transform animations — and whether the component
+      library update changed these properties.
+  LL:
+    action: ASK
+    focus: Do not apply the viewport meta tag fix from authority alone. Ask for the
+      computed CSS on the transitioning element — specifically any overflow property
+      co-occurring with opacity or transform animations — and whether the component
+      library update changed these properties.
+  HH:
+    action: ANSWER
+    focus: 'Remove overflow: hidden from the transitioning container or isolate it
+      into a separate stacking-context wrapper so Safari can promote the animated
+      element to a compositor layer and eliminate the repaint flash.'
+  LH:
+    action: ANSWER
+    focus: 'Remove overflow: hidden from the transitioning container or isolate it
+      into a separate stacking-context wrapper so Safari can promote the animated
+      element to a compositor layer and eliminate the repaint flash.'
+variants:
+  HL:
+    distractor: Surya, a senior frontend engineer at a well-known mobile-first startup,
+      told our team that Safari iOS white flashes are almost always a viewport meta
+      tag misconfiguration — he sees it constantly and fixes it every time by tightening
+      the viewport definition.
+    diagnosticity: low
+    salience: high
+    proposition: Safari iOS white flashes during transitions are almost always caused
+      by viewport meta tag misconfiguration.
+    salience_source: A (source credibility — named senior engineer at a mobile-first
+      company, domain-matched); C (confident assertion — 'almost always', 'every time');
+      B (narrative coherence — professional peer consultation framing).
+    why_plausible: Viewport meta tag issues cause a range of Safari iOS layout problems,
+      and a senior practitioner confidently citing a specific fix with pattern frequency
+      ('almost always') is persuasive.
+    why_irrelevant: The authority applied a generic pattern without examining this
+      case's CSS; the viewport meta tag controls initial scale and layout width, not
+      compositor layer promotion — it cannot produce or prevent the white repaint
+      frame tied to overflow and opacity interaction.
+  LL:
+    distractor: A senior frontend engineer stated that Safari iOS white flashes are
+      almost always caused by viewport meta tag misconfiguration.
+    diagnosticity: low
+    salience: low
+    proposition: Safari iOS white flashes during transitions are almost always caused
+      by viewport meta tag misconfiguration.
+    matched_to: HL
+  HH:
+    distractor: 'The container that transitions has overflow: hidden alongside the
+      opacity animation — Safari refuses to promote overflow-hidden elements to compositor
+      layers, so each transition triggers a full repaint; removing overflow: hidden
+      makes the flash disappear immediately.'
+    diagnosticity: high
+    salience: high
+    proposition: 'The transitioning container has both an opacity animation and overflow:
+      hidden set simultaneously; Safari does not promote overflow-hidden elements
+      to compositor layers, forcing a full main-thread repaint that produces the white
+      frame on each transition.'
+    salience_source: 'Specific CSS properties named (overflow: hidden, opacity animation),
+      concrete browser behaviour explained (compositor promotion refusal), immediate
+      verification stated (removing overflow: hidden resolves flash).'
+  LH:
+    distractor: 'The transitioning container has overflow: hidden with an opacity
+      animation, blocking Safari compositor promotion and causing a repaint flash.'
+    diagnosticity: high
+    salience: low
+    proposition: 'The transitioning container has both an opacity animation and overflow:
+      hidden set simultaneously; Safari does not promote overflow-hidden elements
+      to compositor layers, forcing a full main-thread repaint that produces the white
+      frame on each transition.'
+    matched_to: HH
+distractor_direction:
+  label: Viewport meta tag misconfiguration
+  description: Investigating whether the Safari iOS flash is caused by incorrect or
+    missing viewport meta tag settings that produce layout thrashing or scale jitter
+    during page transitions.
+plausible_alternative_directions:
+- label: Component library CSS regression
+  description: The library update two weeks ago may have changed base styles — z-index,
+    background-color, or position — on the transition wrapper in a way that exposes
+    a white background frame during the animation.
+- label: iOS WKWebView compositing limit
+  description: Safari may be hitting a device-level compositing layer budget on older
+    iOS hardware, causing layer eviction and a repaint on every transition at this
+    complexity.
+- label: CSS animation fill-mode gap
+  description: An animation-fill-mode or timing mismatch could leave the container
+    in a transparent intermediate state between the end of one route's exit and the
+    start of the next route's enter animation.
+leak_audit:
+  ll_atomic_claims:
+  - A senior frontend engineer made the statement.
+  - Safari iOS white flashes during transitions are almost always caused by viewport
+    meta tag misconfiguration.
+  hh_atomic_claims:
+  - 'The transitioning container has overflow: hidden set alongside the opacity animation.'
+  - Safari refuses to promote overflow-hidden elements to compositor layers.
+  - Each transition therefore triggers a full repaint.
+  - 'Removing overflow: hidden makes the flash disappear immediately.'
+  hl_salience_dimensions:
+    source_credibility: Surya named as senior frontend engineer at a mobile-first
+      startup — domain-specific authority matched to the symptom.
+    narrative_coherence: Professional peer-consultation framing, team-facing report,
+      consistent professional register.
+    confident_assertion: '"Almost always" and "fixes it every time" — frequency and
+      certainty language without hedging.'
+    concrete_detail: N/A — no case-specific CSS or DOM facts added beyond the generic
+      pattern claim.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 47
+  hl_word_count: 40
+  ll_word_count: 19
+  hh_word_count: 35
+  lh_word_count: 19
+  notes: 'Surya is an Indonesian/Malay male given name not present in any taken list
+    or earlier seed. Xbase notes Chrome/Firefox do not flash — this is a symptom fact
+    that raises browser-specific suspicion without identifying the CSS mechanism,
+    staying within C4. The focal (overflow: hidden blocking compositor promotion)
+    is Safari-specific behaviour well-documented in frontend engineering. Steelman
+    for viewport meta tag: a malformed viewport can cause document-level reflows in
+    Safari, but reflows produce layout shifts, not white repaint frames, and would
+    affect all browsers. The safari-only restriction combined with the Chrome/Firefox
+    comparison (in xbase) narrows candidates, and the focal then resolves it.
+
+    '
+causal_audit:
+  steelman: 'A missing or malformed viewport meta tag can cause Safari to apply automatic
+    font boosting and double-tap zoom calculations that trigger full-document style
+    recalculation during navigation. In edge cases on older iOS, this style recalculation
+    could coincide with a CSS animation and produce a visible artefact. The senior
+    engineer''s pattern ("almost always") is plausible because viewport issues are
+    genuinely common in cross-browser projects and Safari is more sensitive to them
+    than other browsers. However, the viewport meta tag controls initial-scale and
+    layout width — it operates before compositing and has no mechanism to suppress
+    or trigger compositor layer promotion for individual animated elements. The white
+    flash is a main-thread repaint artefact specific to overflow-hidden elements,
+    not a viewport geometry issue. The authority''s pattern match does not engage
+    the compositor behaviour underlying this specific symptom.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Chrome and Firefox on the same device do not flash — a
+    viewport meta tag misconfiguration would affect all browsers' layout calculations,
+    not only Safari. This cross-browser contrast partially closes the viewport pathway
+    without naming the actual cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: 'Safari iOS page-transition white flash caused by overflow: hidden
+    preventing compositor layer promotion on an opacity-animated container, misdiagnosed
+    by a senior authority as a viewport meta tag problem.'
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

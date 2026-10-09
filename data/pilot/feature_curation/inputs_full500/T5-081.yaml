@@ -1,0 +1,178 @@
+seed_id: T5-081
+template: T5
+domain: open_qa
+complexity: low
+xbase: I am choosing a potting mix for a collection of small succulents I recently
+  moved into new pots. Both mixes cost about the same and come from brands I have
+  not used before. I want to pick one up today from the garden centre. {DS}
+focal_diagnostic_feature: Terracotta Pro contains 40% perlite and coarse sand for
+  rapid drainage; the competing mix lists peat as the primary ingredient, which retains
+  moisture that causes succulent root rot.
+low_diagnostic_proposition: One mix has premium-looking packaging, suggesting it is
+  the better-formulated soil product.
+oracle_action: ANSWER
+oracle_focus: Choose Terracotta Pro; its perlite-and-sand composition provides the
+  fast drainage succulents require, whereas the peat-based mix retains moisture that
+  leads to root rot.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not choose based on packaging appearance. Ask about
+  the drainage composition, perlite or grit percentage, and primary ingredients of
+  each mix before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not choose based on packaging appearance. Ask about the drainage composition,
+      perlite or grit percentage, and primary ingredients of each mix before deciding.
+  LL:
+    action: ASK
+    focus: Do not choose based on packaging appearance. Ask about the drainage composition,
+      perlite or grit percentage, and primary ingredients of each mix before deciding.
+  HH:
+    action: ANSWER
+    focus: Choose Terracotta Pro; its perlite-and-sand composition provides the fast
+      drainage succulents require, whereas the peat-based mix retains moisture that
+      leads to root rot.
+  LH:
+    action: ANSWER
+    focus: Choose Terracotta Pro; its perlite-and-sand composition provides the fast
+      drainage succulents require, whereas the peat-based mix retains moisture that
+      leads to root rot.
+variants:
+  HL:
+    distractor: The Terracotta Pro bag has a sleek matte-black finish with embossed
+      lettering, which to me signals a more carefully formulated product compared
+      to the plain-looking alternative on the shelf.
+    diagnosticity: low
+    salience: high
+    proposition: One mix has premium-looking packaging, suggesting it is the better-formulated
+      soil product.
+    salience_source: B — vivid sensory description of the packaging (matte-black,
+      embossed lettering); C — confident first-person inference framing ("signals
+      a more carefully formulated product")
+    why_plausible: Premium product packaging frequently correlates with higher-end
+      ingredients in consumer goods categories, and a buyer under time pressure might
+      use visual cues as a proxy for formulation quality.
+    why_irrelevant: Packaging aesthetics have no causal relationship to substrate
+      composition; perlite percentage and primary ingredients are printed on the label
+      and are the only relevant differentiators for succulent drainage needs.
+  LL:
+    distractor: One mix has premium-looking packaging, which suggests to the user
+      it is the better-formulated soil product.
+    diagnosticity: low
+    salience: low
+    proposition: One mix has premium-looking packaging, suggesting it is the better-formulated
+      soil product.
+    matched_to: HL
+  HH:
+    distractor: Terracotta Pro lists 40% perlite and coarse sand on the label, giving
+      it fast drainage; the other mix lists peat as the first ingredient, which holds
+      moisture that rots succulent roots.
+    diagnosticity: high
+    salience: high
+    proposition: Terracotta Pro contains 40% perlite and coarse sand for rapid drainage;
+      the competing mix lists peat as the primary ingredient, which retains moisture
+      that causes succulent root rot.
+    salience_source: D — specific numeric composition (40% perlite) and named ingredients
+      with a clear causal mechanism (peat retains moisture → root rot)
+  LH:
+    distractor: Terracotta Pro contains 40% perlite and coarse sand for fast drainage;
+      the competing mix lists peat first, retaining moisture that rots succulent roots.
+    diagnosticity: high
+    salience: low
+    proposition: Terracotta Pro contains 40% perlite and coarse sand for rapid drainage;
+      the competing mix lists peat as the primary ingredient, which retains moisture
+      that causes succulent root rot.
+    matched_to: HH
+distractor_direction:
+  label: premium packaging as quality signal
+  description: Treating the matte-black embossed packaging of Terracotta Pro as evidence
+    that it contains better-formulated ingredients than the plainly packaged alternative.
+plausible_alternative_directions:
+- label: brand reputation or reviews
+  description: Online reviews or gardening community feedback about either brand could
+    provide evidence of formulation quality independent of the label.
+- label: price as quality proxy
+  description: If the mixes differ in price despite appearing similar, the price gap
+    might signal a meaningful formulation difference worth investigating.
+leak_audit:
+  ll_atomic_claims:
+  - One mix has premium-looking packaging.
+  - Premium packaging suggests it is the better-formulated soil product.
+  hh_atomic_claims:
+  - Terracotta Pro lists 40% perlite and coarse sand on the label.
+  - This composition gives fast drainage.
+  - The other mix lists peat as the first ingredient.
+  - Peat holds moisture that rots succulent roots.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person vivid description of packaging encounter; clean
+      inferential bridge (visual premium → formulation quality)
+    confident_assertion: '"signals a more carefully formulated product"'
+    concrete_detail: Packaging details (matte-black, embossed lettering) are about
+      the product's surface — not about soil composition or case performance
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 29
+  ll_word_count: 16
+  hh_word_count: 31
+  lh_word_count: 23
+  notes: 'T5 bridge check: the inferential bridge (premium packaging → better-formulated
+    product)
+
+    appears in both HL ("signals a more carefully formulated product") and LL ("suggests
+    it is
+
+    the better-formulated soil product"). C1 satisfied.
+
+    HL adds only: visual/sensory description of the packaging (matte-black, embossed
+    lettering)
+
+    and the specific brand name as the concrete detail — no case content added.
+
+    HH/LH verified: both claim perlite+sand (40%), peat as first ingredient, moisture-retention
+
+    mechanism. No additional claims in HH.
+
+    '
+causal_audit:
+  steelman: 'Higher-end potting mixes in the premium consumer market are sometimes
+    genuinely better
+
+    formulated, and brands that invest in attractive packaging also often invest in
+    product
+
+    development. A buyer could reasonably hypothesise that Terracotta Pro''s premium
+    presentation
+
+    reflects a higher-quality substrate. However, packaging aesthetics provide zero
+    information
+
+    about the actual perlite percentage or peat content — two variables that directly
+    determine
+
+    drainage suitability for succulents. The decision criterion (fast drainage vs
+    moisture
+
+    retention) can be read directly from the ingredient label on either bag, making
+    the packaging
+
+    signal entirely non-diagnostic for this specific choice.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing a succulent potting mix where Terracotta Pro's perlite-and-sand
+    composition is decisive for drainage; aesthetic distractor is the premium matte-black
+    packaging of the same brand.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

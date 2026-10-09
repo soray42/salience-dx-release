@@ -1,0 +1,103 @@
+seed_id: T3-001
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: تستغرق مهمة تدريب نموذج التعلم الآلي لديّ نحو ست ساعات لكل حقبة على وحدة A100
+  واحدة. زميل يستخدم النموذج ذاته والبيانات ذاتها على إعداد A100 مماثل ينهي الحقبة
+  في نحو 90 دقيقة. {DS}
+focal_diagnostic_feature: يكشف التنميط عن انخفاض استخدام وحدة GPU مع قضاء معظم الوقت
+  في محمّل البيانات، وتقع مجموعة البيانات على محرك مثبّت عبر الشبكة.
+low_diagnostic_proposition: A senior lab member states that the CUDA driver version
+  is the main cause of this kind of slowdown.
+oracle_action: ANSWER
+oracle_focus: Treat this as an input pipeline/storage bottleneck; move data to local
+  NVMe and tune dataloader workers/prefetching.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the driver diagnosis from authority alone.
+  Ask for profiler output, GPU utilisation, and storage location.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the driver diagnosis from authority alone. Ask for profiler
+      output, GPU utilisation, and storage location.
+  LL:
+    action: ASK
+    focus: Do not accept the driver diagnosis from authority alone. Ask for profiler
+      output, GPU utilisation, and storage location.
+  HH:
+    action: ANSWER
+    focus: Treat this as an input pipeline/storage bottleneck; move data to local
+      NVMe and tune dataloader workers/prefetching.
+  LH:
+    action: ANSWER
+    focus: Treat this as an input pipeline/storage bottleneck; move data to local
+      NVMe and tune dataloader workers/prefetching.
+variants:
+  HL:
+    distractor: ألقى المشرف الأول في مختبري نظرة على وقت التشغيل، وقال بثقة تامة إن
+      هذا دائماً ناتج عن خطأ في إصدار مشغّل CUDA.
+    diagnosticity: low
+    salience: high
+    proposition: A senior lab member states that the CUDA driver version is the main
+      cause of this kind of slowdown.
+    salience_source: authority title, confident universal claim, technical-sounding
+      cause
+    why_plausible: CUDA mismatches are real and the PI's status makes the explanation
+      feel reliable.
+    why_irrelevant: The profiler points to data loading and under-utilised GPU, which
+      is not the signature of a driver-version bottleneck.
+  LL:
+    distractor: أفاد أحد الأعضاء الأقدم في المختبر بأن إصدار مشغّل CUDA هو السبب الرئيسي
+      لهذا النوع من التباطؤ.
+    diagnosticity: low
+    salience: low
+    proposition: A senior lab member states that the CUDA driver version is the main
+      cause of this kind of slowdown.
+    matched_to: HL
+  HH:
+    distractor: يتذبذب استخدام وحدة GPU بين 5% و30%، ويُظهر المحلّل أن المهمة تنتظر
+      في محمّل البيانات بينما تقع البيانات على وحدة SSD مثبّتة عبر الشبكة.
+    diagnosticity: high
+    salience: high
+    proposition: Profiling shows low GPU utilisation with most time spent in the dataloader,
+      and the dataset is on a network-mounted drive.
+    salience_source: profiler attribution and resource-utilisation pattern
+  LH:
+    distractor: يُظهر التنميط انخفاض استخدام وحدة GPU مع تنفيذ مرتبط بمحمّل البيانات؛
+      والبيانات مخزّنة على وحدة تخزين مثبّتة عبر الشبكة.
+    diagnosticity: high
+    salience: low
+    proposition: Profiling shows low GPU utilisation with most time spent in the dataloader,
+      and the dataset is on a network-mounted drive.
+    matched_to: HH
+distractor_direction:
+  label: تعارض في إصدار مشغّل CUDA
+  description: التحقيق في ما إذا كان إصدار مشغّل CUDA المثبَّت خاطئاً أو غير متوافق،
+    مما يتسبب في تباطؤ التدريب.
+plausible_alternative_directions:
+- label: الدقة المختلطة معطّلة
+  description: المهمة تعمل بالدقة الكاملة بينما تستخدم مهمة المقارنة الدقة المختلطة.
+- label: تعارض في حجم الدُفعة
+  description: يستخدم التشغيل المحلي حجم دُفعة فعلياً مختلفاً أو إعداداً مختلفاً لتراكم
+    التدرجات.
+- label: اختناق المعالجة المسبقة على المعالج المركزي
+  description: فك ترميز البيانات أو معالجتها المسبقة مشبع قبل وصول الموترات إلى وحدة
+    GPU.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-001.yaml
+  source_xbase_sha256: b325472be67a0a65
+  translated_content_sha256: aabb85eeb15213cf
+  translation_notes: ''

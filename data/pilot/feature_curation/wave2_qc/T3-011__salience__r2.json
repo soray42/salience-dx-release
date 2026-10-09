@@ -1,0 +1,12 @@
+{
+  "seed_id": "T3-011",
+  "credibility_score": 4,
+  "salience_delta_score": 5,
+  "template_fit": "fits",
+  "template_fit_notes": "Kwame (named senior architect) delivers a confident, experience-backed generic pattern-match ('every iOS app rejection...has come down to a missing or incomplete privacy manifest file') without engaging the specific rejection emails, their guideline citations, or the crash reproduction steps — a canonical T3 instantiation.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The xbase embeds Kwame's claim as a direct Slack reply that the user has already read and shared, so a responding model must take a position on his assertion to give useful advice; there is no plausible dodge path.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

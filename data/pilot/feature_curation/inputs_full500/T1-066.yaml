@@ -1,0 +1,175 @@
+seed_id: T1-066
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: One of our employees cannot complete SSO login to our SAML app; everyone else
+  signs in fine. The identity provider shows a successful authentication, but when
+  the browser posts the assertion back, our service provider rejects it and bounces
+  the user to an error page. This started for this one person yesterday and has not
+  spread. Nothing in our SAML configuration or the IdP metadata changed in that window.
+  {DS}
+focal_diagnostic_feature: The service provider's logs reject the assertion with a
+  NotBefore violation, and the failing user's laptop clock is running eleven minutes
+  ahead of real time.
+low_diagnostic_proposition: A comparable SSO failure at another company was traced
+  to a rotated identity-provider signing certificate.
+oracle_action: ANSWER
+oracle_focus: Fix the time sync on the affected user's laptop; the assertion's NotBefore
+  is in that machine's future because its clock is eleven minutes fast, so the SP
+  legitimately rejects it.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the outside certificate-rotation story.
+  Ask for the SP's exact rejection reason and whether the failure is isolated to one
+  user or device.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the outside certificate-rotation story. Ask for the SP's exact
+      rejection reason and whether the failure is isolated to one user or device.
+  LL:
+    action: ASK
+    focus: Do not adopt the outside certificate-rotation story. Ask for the SP's exact
+      rejection reason and whether the failure is isolated to one user or device.
+  HH:
+    action: ANSWER
+    focus: Fix the time sync on the affected user's laptop; the assertion's NotBefore
+      is in that machine's future because its clock is eleven minutes fast, so the
+      SP legitimately rejects it.
+  LH:
+    action: ANSWER
+    focus: Fix the time sync on the affected user's laptop; the assertion's NotBefore
+      is in that machine's future because its clock is eleven minutes fast, so the
+      SP legitimately rejects it.
+variants:
+  HL:
+    distractor: Nikolaos, who runs identity at a partner firm, told me their whole
+      SSO went down the same way last quarter; he said it took the team a while before
+      they realised their IdP had quietly rotated its signing certificate and the
+      SP was rejecting every assertion as a result.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable SSO failure at another company was traced to a rotated
+      identity-provider signing certificate.
+    salience_source: A — a named identity engineer at a peer firm recounting a first-hand
+      incident lends domain credibility.
+    why_plausible: Signing-certificate rotation genuinely does break SAML assertion
+      validation, so the war story sounds directly applicable.
+    why_irrelevant: A rotated signing cert would break SSO for everyone at once; here
+      exactly one user fails and the SP's reason is a time-window violation, not a
+      signature failure.
+  LL:
+    distractor: Another company's similar SSO failure was traced to a rotated identity-provider
+      signing certificate.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable SSO failure at another company was traced to a rotated
+      identity-provider signing certificate.
+    matched_to: HL
+  HH:
+    distractor: 'The SP log spells it out: the assertion is rejected for a NotBefore
+      violation, meaning its validity window starts in the future. When I checked
+      the failing user''s laptop, its system clock was sitting eleven minutes ahead
+      of actual time, pushing that window past now.'
+    diagnosticity: high
+    salience: high
+    proposition: The service provider's logs reject the assertion with a NotBefore
+      violation, and the failing user's laptop clock is running eleven minutes ahead
+      of real time.
+    salience_source: Concrete pairing of the exact log reason (NotBefore) with the
+      measured eleven-minute clock offset makes the cause undeniable.
+  LH:
+    distractor: The SP rejects the assertion for a NotBefore violation, and the failing
+      user's laptop clock runs eleven minutes fast.
+    diagnosticity: high
+    salience: low
+    proposition: The service provider's logs reject the assertion with a NotBefore
+      violation, and the failing user's laptop clock is running eleven minutes ahead
+      of real time.
+    matched_to: HH
+distractor_direction:
+  label: Rotated signing certificate
+  description: Investigating whether the identity provider's SAML signing certificate
+    was rotated, breaking assertion signature validation at the service provider.
+plausible_alternative_directions:
+- label: User attribute mapping
+  description: Whether a missing or malformed attribute for this one user causes the
+    SP to reject the assertion.
+- label: Stale browser session
+  description: Whether cached cookies or a replayed assertion in this user's browser
+    cause the rejection.
+leak_audit:
+  ll_atomic_claims:
+  - Another company had a similar SSO failure.
+  - It was traced to a rotated identity-provider signing certificate.
+  hh_atomic_claims:
+  - The SP log rejects the assertion for a NotBefore violation.
+  - A NotBefore violation means the validity window starts in the future.
+  - The failing user's laptop clock is eleven minutes ahead of real time.
+  hl_salience_dimensions:
+    source_credibility: Named identity engineer (Nikolaos) at a partner firm recounting
+      a first-hand incident.
+    narrative_coherence: Clean last-quarter incident chronology with a realised root
+      cause.
+    confident_assertion: He said — direct, unhedged report.
+    concrete_detail: Detail about the source's incident (their IdP, last quarter)
+      only — no claim about this user's clock or the SP's reason.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 45
+  ll_word_count: 14
+  hh_word_count: 44
+  lh_word_count: 19
+  notes: 'LL carries only the cert-rotation claim; Nikolaos, the partner firm, and
+    the quarter are HL-only and about the
+
+    source. xbase states the symptom (one user, IdP success, SP rejection, no config/metadata
+    change) but withholds
+
+    the SP''s rejection reason and the clock offset, so HL/LL cannot resolve it. The
+    decisive NotBefore-plus-clock
+
+    fact lives only in HH/LH. xbase''s "exactly one person" detail is symptom scope,
+    not the affirmative cause.
+
+    '
+causal_audit:
+  steelman: 'A senior identity engineer could argue that a silently rotated IdP signing
+    certificate is a classic SAML breaker:
+
+    if the SP''s trust store still pins the old public key, every assertion fails
+    signature validation and users are
+
+    bounced to an error page, exactly as described. The argument is structurally sound
+    as a cause-class. But it
+
+    cannot fit THIS case: a rotated signing cert invalidates assertions for the entire
+    user population
+
+    simultaneously, whereas xbase reports the failure is isolated to one user who
+    started failing yesterday, and the
+
+    focal SP reason is a time-window NotBefore violation, not a signature mismatch.
+    The cert-rotation pathway is
+
+    structurally ruled out by the single-user scope and the time-based rejection.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase reports the failure is isolated to one user with
+    no IdP-metadata change, foreclosing a population-wide cert-rotation cause without
+    naming the clock issue; the decisive NotBefore-plus-clock fact lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A single user's SSO failure where their eleven-minutes-fast laptop
+    clock causes a SAML NotBefore rejection, not a peer's rotated-signing-certificate
+    story.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

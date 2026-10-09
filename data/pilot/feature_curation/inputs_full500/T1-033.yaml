@@ -1,0 +1,195 @@
+seed_id: T1-033
+template: T1
+domain: open_qa
+complexity: low
+xbase: My manager has offered to promote me into a team-lead role, and I have to give
+  an answer this week. It comes with a noticeable raise and it is something I actually
+  asked for after enjoying the informal mentoring I already do. Part of me worries
+  that stepping up means losing the hands-on work I love to endless meetings. I keep
+  replaying a cautionary story a friend told me and second-guessing whether I really
+  want this, though the offer does include a written hands-on-time commitment. {DS}
+focal_diagnostic_feature: The promotion comes with a written agreement protecting
+  fifty percent hands-on engineering time and a twenty-five percent raise, and the
+  user requested it after a year of mentoring they have enjoyed.
+low_diagnostic_proposition: A peer took a management role, burned out, and hated losing
+  all of their hands-on work.
+oracle_action: ANSWER
+oracle_focus: Lean toward accepting; the role is something the user wanted, includes
+  a written guarantee of half their time on hands-on work, and carries a meaningful
+  raise, so the main feared downside is contractually mitigated.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one peer's burnout story decide this. Ask
+  how much hands-on time this specific role protects, whether the user wants it, and
+  what the compensation is before treating the promotion as a trap.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one peer's burnout story decide this. Ask how much hands-on
+      time this specific role protects, whether the user wants it, and what the compensation
+      is before treating the promotion as a trap.
+  LL:
+    action: ASK
+    focus: Do not let one peer's burnout story decide this. Ask how much hands-on
+      time this specific role protects, whether the user wants it, and what the compensation
+      is before treating the promotion as a trap.
+  HH:
+    action: ANSWER
+    focus: Lean toward accepting; the role is something the user wanted, includes
+      a written guarantee of half their time on hands-on work, and carries a meaningful
+      raise, so the main feared downside is contractually mitigated.
+  LH:
+    action: ANSWER
+    focus: Lean toward accepting; the role is something the user wanted, includes
+      a written guarantee of half their time on hands-on work, and carries a meaningful
+      raise, so the main feared downside is contractually mitigated.
+variants:
+  HL:
+    distractor: Tunde, an old colleague of mine, stepped into a team-lead job last
+      year and burned out; he told me at a reunion that he came to hate it because
+      management swallowed every bit of the hands-on work he used to love.
+    diagnosticity: low
+    salience: high
+    proposition: A peer took a management role, burned out, and hated losing all of
+      their hands-on work.
+    salience_source: A — a named former colleague recounting his own first-hand burnout
+      gives the cautionary tale credibility.
+    why_plausible: New managers genuinely do burn out and miss hands-on work, so a
+      vivid first-hand account of exactly that fate feels like a real reason to hesitate.
+    why_irrelevant: His role apparently gave him no protected hands-on time; it says
+      nothing about this promotion, which the user wanted and which contractually
+      preserves hands-on work (with the specific extent only in HH/LH).
+  LL:
+    distractor: A peer took a management role, burned out, and hated losing all of
+      their hands-on work.
+    diagnosticity: low
+    salience: low
+    proposition: A peer took a management role, burned out, and hated losing all of
+      their hands-on work.
+    matched_to: HL
+  HH:
+    distractor: The offer puts a written guarantee of fifty percent hands-on engineering
+      time into the role and comes with a twenty-five percent raise, and I asked for
+      it in the first place after a full year of mentoring teammates that I genuinely
+      enjoyed.
+    diagnosticity: high
+    salience: high
+    proposition: The promotion comes with a written agreement protecting fifty percent
+      hands-on engineering time and a twenty-five percent raise, and the user requested
+      it after a year of mentoring they have enjoyed.
+    salience_source: The concrete written 50%-time guarantee, the 25% raise, and the
+      year of enjoyed mentoring make the role's fit and protection vivid.
+  LH:
+    distractor: The role contractually protects fifty percent hands-on time and a
+      twenty-five percent raise, and the user requested it after a year of enjoyed
+      mentoring.
+    diagnosticity: high
+    salience: low
+    proposition: The promotion comes with a written agreement protecting fifty percent
+      hands-on engineering time and a twenty-five percent raise, and the user requested
+      it after a year of mentoring they have enjoyed.
+    matched_to: HH
+distractor_direction:
+  label: Management burnout risk
+  description: Treating the promotion as likely to cause burnout and loss of hands-on
+    work, as happened to a peer who became a manager.
+plausible_alternative_directions:
+- label: Skill-direction fit
+  description: Whether the user's longer-term goals favour deepening technical skills
+    over a leadership track.
+- label: Reversibility
+  description: Whether the user could return to an individual-contributor role if
+    the lead position does not suit them.
+leak_audit:
+  ll_atomic_claims:
+  - A peer took a management role.
+  - That peer burned out.
+  - That peer hated losing all of their hands-on work.
+  hh_atomic_claims:
+  - The role includes a written guarantee of fifty percent hands-on engineering time.
+  - The role comes with a twenty-five percent raise.
+  - The user requested the role after a year of mentoring they enjoyed.
+  hl_salience_dimensions:
+    source_credibility: Named former colleague (Tunde) recounting his own first-hand
+      burnout.
+    narrative_coherence: Clean last-year, within-months chronology ending at a reunion.
+    confident_assertion: N/A
+    concrete_detail: Detail about the source (old colleague, reunion) only — no claim
+      about this user's own offer terms.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 85
+  hl_word_count: 41
+  ll_word_count: 16
+  hh_word_count: 42
+  lh_word_count: 24
+  notes: 'QC repair: (1) Removed ''and he eventually stepped back down'' from HL —
+    it was a consequence-category leak
+
+    (Tunde''s outcome, absent from LL, raising perceived peer severity). HL now stops
+    at ''the hands-on work he
+
+    used to love.'' (2) Added ''though the offer does include a written hands-on-time
+    commitment'' to xbase to
+
+    close the burnout-via-loss-of-hands-on pathway, satisfying the causal lens. xbase
+    does not carry the
+
+    specific percentage or raise amount, which remain exclusively in HH/LH. (3) Trimmed
+    ''giving up ... and
+
+    turning into someone who only sits in meetings'' to ''losing ... to endless meetings''
+    to keep xbase within
+
+    the 42-88 operational target after adding the pathway-closure clause.
+
+    LL carries only the peer''s took-role-burned-out-hated-losing-hands-on claims;
+    named source, the reunion,
+
+    and the step-down are absent. xbase withholds the protected-time percentage, the
+    raise size, and the year
+
+    of enjoyed mentoring so HL/LL cannot resolve the decision.
+
+    '
+causal_audit:
+  steelman: 'A career practitioner might argue: management roles routinely erode hands-on
+    time regardless of initial
+
+    promises, and a competent adviser would put ''verify hands-on-time protection''
+    on the checklist — making the
+
+    peer''s burnout at least a warning worth probing. However, xbase now explicitly
+    states the offer includes a
+
+    written hands-on-time commitment, directly closing the ''this role will remove
+    all hands-on work'' mechanism
+
+    that gives the peer''s story its bite. With that pathway blocked in xbase itself,
+    the distractor has no
+
+    remaining constructible mechanism for predicting this user''s outcome: the peer
+    apparently had no such
+
+    written protection, while this role does. The distractor therefore cannot inform
+    the case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states 'the offer does include a written hands-on-time
+    commitment', directly foreclosing the mechanism by which the peer's burnout (rooted
+    in losing all hands-on work with no contractual protection) predicts this user's
+    outcome. The specific extent (50%) remains focal, preserved exclusively in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A user weighing a team-lead promotion they requested, where the written
+    50% hands-on-time guarantee and raise, not a peer's management burnout, are decisive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator-adjudicated
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

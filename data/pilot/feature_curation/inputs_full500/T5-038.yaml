@@ -1,0 +1,179 @@
+seed_id: T5-038
+template: T5
+domain: open_qa
+complexity: medium
+xbase: My clothes dryer stopped heating about two weeks ago. Clothes tumble through
+  the full cycle but come out damp. A local appliance technician visited and gave
+  me a written repair quote. The dryer is seven years old and I run it almost daily.
+  {DS}
+focal_diagnostic_feature: The repair quote is €95, and an equivalent new dryer costs
+  €380, making the repair 25% of replacement cost.
+low_diagnostic_proposition: The dryer's drum interior looks stained and the door seal
+  is discoloured, suggesting the appliance is worn out and not worth fixing.
+oracle_action: ANSWER
+oracle_focus: Proceed with the repair; at 25% of replacement cost with a single-component
+  fault, repair is economically favourable.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer economic value from cosmetic appearance.
+  Ask for the repair quote, replacement cost, and appliance age before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer economic value from cosmetic appearance. Ask for the repair
+      quote
+    replacement cost: null
+    and appliance age before deciding.: null
+  LL:
+    action: ASK
+    focus: Do not infer economic value from cosmetic appearance. Ask for the repair
+      quote
+    replacement cost: null
+    and appliance age before deciding.: null
+  HH:
+    action: ANSWER
+    focus: Proceed with the repair; at 25% of replacement cost with a single-component
+      fault, repair is economically favourable.
+  LH:
+    action: ANSWER
+    focus: Proceed with the repair; at 25% of replacement cost with a single-component
+      fault, repair is economically favourable.
+variants:
+  HL:
+    distractor: The drum interior is covered in brownish stains and the door seal
+      has gone grey and cracked; looking at it, I get the sense it has given what
+      it can and replacing it would be the smarter call.
+    diagnosticity: low
+    salience: high
+    proposition: The dryer's drum interior looks stained and the door seal is discoloured,
+      suggesting the appliance is worn out and not worth fixing.
+    salience_source: B — vivid sensory description of specific deterioration (brownish
+      stains, grey cracked seal) with a personal inference offered as reasoning; C
+      — confident inferential framing ('I get the sense', 'smarter call').
+    why_plausible: Cosmetic wear correlates loosely with appliance age and past reliability,
+      and a non-expert reader naturally uses visible condition as a proxy for remaining
+      useful life.
+    why_irrelevant: Surface staining and seal discolouration provide no information
+      about the cost-effectiveness of a specific known repair; the economic comparison
+      between repair cost and replacement cost is the decisive variable, not appearance.
+  LL:
+    distractor: The dryer's drum interior is stained and the door seal is discoloured,
+      suggesting it is worn out and not worth repairing.
+    diagnosticity: low
+    salience: low
+    proposition: The dryer's drum interior looks stained and the door seal is discoloured,
+      suggesting the appliance is worn out and not worth fixing.
+    matched_to: HL
+  HH:
+    distractor: The technician quoted €95 to replace the failed heating element, and
+      the cheapest equivalent dryer at the same retailer is €380; the repair is 25%
+      of the replacement price, and the fault is a single replaceable component with
+      no sign of secondary damage.
+    diagnosticity: high
+    salience: high
+    proposition: The repair quote is €95, and an equivalent new dryer costs €380,
+      making the repair 25% of replacement cost.
+    salience_source: B/C — precise cost figures (€95 vs €380), exact ratio stated
+      (25%), and specific fault characterisation (single component, no secondary damage)
+      in a clear evaluative frame.
+  LH:
+    distractor: The quote is €95, a replacement costs €380 (25% ratio), the fault
+      is a single replaceable component, and there is no secondary damage.
+    diagnosticity: high
+    salience: low
+    proposition: The repair quote is €95, and an equivalent new dryer costs €380,
+      making the repair 25% of replacement cost.
+    matched_to: HH
+distractor_direction:
+  label: Cosmetic wear signals end-of-life
+  description: Treating visible staining and seal discolouration as evidence that
+    the dryer has degraded beyond economic repair.
+plausible_alternative_directions:
+- label: Hidden secondary damage
+  description: The no-heat fault may indicate a failing control board or motor rather
+    than a simple heating element
+  making repair riskier.: null
+- label: Energy efficiency gap
+  description: A seven-year-old daily-use dryer may consume significantly more energy
+    than current models
+  affecting total cost of ownership.: null
+- label: Repair warranty absence
+  description: If the repair carries no labour warranty
+  a recurrence within months would bring total cost close to replacement.: null
+leak_audit:
+  ll_atomic_claims:
+  - The dryer's drum interior is stained.
+  - The door seal is discoloured.
+  - This suggests the dryer is worn out and not worth repairing.
+  hh_atomic_claims:
+  - The repair quote is €95 for a failed heating element replacement.
+  - An equivalent new dryer costs €380 at the same retailer.
+  - The repair is 25% of the replacement price.
+  - The fault is a single replaceable component.
+  - There is no sign of secondary damage.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Vivid first-person sensory description with a coherent inference
+      chain from appearance to recommendation.
+    confident_assertion: '''I get the sense'', ''smarter call'' — confident evaluative
+      framing.'
+    concrete_detail: Specific deterioration details (brownish stains, grey cracked
+      seal) about the appliance's appearance — NOT about the economic comparison.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 43
+  hl_word_count: 38
+  ll_word_count: 21
+  hh_word_count: 43
+  lh_word_count: 23
+  notes: 'C1 clean: HL adds vivid appearance description and confident inference (surface
+    → worn out) but adds NO economic figures — the repair cost and replacement cost
+    live only in HH/LH.
+
+    T5 bridge check: the inferential bridge (cosmetic wear → not worth fixing) appears
+    in BOTH HL and LL (C1, self-check 13).
+
+    C4 clean: xbase does not state any prices — the answer cannot be computed from
+    xbase alone.
+
+    C10 repair: LH updated to include ''single replaceable component'' and ''no secondary
+    damage'' claims present in HH, restoring HH/LH propositional equivalence.
+
+    Steelman: cosmetic wear correlates with maintenance history. Rebuttal: correlation
+    with appearance gives zero information about THIS specific repair''s cost-effectiveness;
+    the focal evidence (25% ratio) is the only basis for the decision.
+
+    HL:LL = 38:21 = 1.81 ≤ 4. HH:LH = 43:23 = 1.87 ≤ 4.
+
+    '
+causal_audit:
+  steelman: 'A practitioner could argue: heavy staining and a cracked door seal on
+    a seven-year-old daily-use dryer correlate with hard use that may indicate additional
+    wear on bearings, motor brushes, or the drum belt — making a repair less reliable.
+    A reputable repair specialist might use cosmetic condition as one input to assess
+    overall appliance care. This reasoning has surface plausibility. However, xbase
+    provides no independent signal of mechanical degradation beyond the no-heat symptom,
+    and the cosmetic observations (staining, seal colour) have no causal mechanism
+    for the heating element failure that is being quoted for repair. The economic
+    calculation between €95 repair and €380 replacement is the only defensible basis
+    for the repair-vs-replace decision in this case; appearance cannot substitute
+    for it.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive content (cost figures) lives only in
+    HH/LH; xbase carries neither price.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Dryer repair-vs-replace decision — aesthetic bias toward replacement
+    based on visible staining, actual root cause of decision is repair at 25% of replacement
+    cost.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

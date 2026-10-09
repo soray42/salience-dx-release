@@ -1,0 +1,251 @@
+seed_id: T2-015
+template: T2
+domain: open_qa
+complexity: medium
+xbase: Nuestro club de lectura mensual lleva dos años en marcha. En los últimos tres
+  meses la asistencia ha caído de unas doce personas a cinco o seis, y varios habituales
+  han dejado de responder al hilo de planificación en silencio. La bajada comenzó
+  aproximadamente el mismo mes en que yo pasé de los libros en papel a leer en un
+  e-reader. {DS}
+focal_diagnostic_feature: El club de lectura se trasladó de una biblioteca en ubicación
+  céntrica (a 10 minutos a pie del metro) a un piso en las afueras, lo que dejó el
+  local inaccesible para la mayoría de los miembros que dependen del transporte público.
+low_diagnostic_proposition: 'When an organiser switches to an e-reader, members who
+  prefer physical books tend to drift away.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Advise investigating the venue change as the primary driver of the
+  attendance drop; the move from a transit-accessible central library to a peripheral
+  flat created a structural access barrier for most members.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Decline to adopt the e-reader-culture hypothesis as
+  an explanation; instead ask whether anything else changed around the same time (venue,
+  schedule, format) before drawing any conclusion.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: 'Decline to adopt the e-reader-culture hypothesis as an explanation; instead
+      ask whether anything else changed around the same time (venue, schedule, format)
+      before drawing any conclusion.
+
+      '
+  LL:
+    action: ASK
+    focus: 'Decline to adopt the e-reader-culture hypothesis as an explanation; instead
+      ask whether anything else changed around the same time (venue, schedule, format)
+      before drawing any conclusion.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Advise investigating the venue change as the primary driver of the attendance
+      drop; the move from a transit-accessible central library to a peripheral flat
+      created a structural access barrier for most members.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Advise investigating the venue change as the primary driver of the attendance
+      drop; the move from a transit-accessible central library to a peripheral flat
+      created a structural access barrier for most members.
+
+      '
+variants:
+  HL:
+    distractor: 'Naoko, que dirige la asociación local de lectores y hace seguimiento
+      de las tendencias de los clubes de lectura en toda la ciudad, me dijo que ya
+      ha visto este patrón antes: cuando un organizador pasa al e-reader, los miembros
+      que prefieren el libro físico suelen irse alejando en silencio.'
+    diagnosticity: low
+    salience: high
+    proposition: 'When an organiser switches to an e-reader, members who prefer physical
+      books tend to drift away.
+
+      '
+    salience_source: 'A (source credibility): named expert with a city-wide tracking
+      role in the exact domain; C (confident assertion): "told me" + "she''s seen
+      this pattern before".
+
+      '
+    why_plausible: 'A credentialed city-wide observer naming a specific behavioural
+      pattern makes it easy for a reader to accept the explanation without probing
+      whether the organiser''s private device choice could actually affect anyone
+      else''s attendance.
+
+      '
+    why_irrelevant: 'The organiser''s personal reading device is not part of the meeting
+      experience and has no structural effect on members'' ability or motivation to
+      attend; the causal pathway runs entirely through the venue access barrier exposed
+      by the focal feature.
+
+      '
+  LL:
+    distractor: Alguien sugirió que cuando un organizador pasa al e-reader, los miembros
+      que prefieren el libro físico tienden a alejarse.
+    diagnosticity: low
+    salience: low
+    proposition: 'When an organiser switches to an e-reader, members who prefer physical
+      books tend to drift away.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: Las actas del grupo muestran que el club se trasladó de la biblioteca
+      central —a 10 minutos a pie del metro— a un piso en las afueras de la ciudad;
+      una encuesta entre los que no volvieron confirmó que la mayoría citaron el cambio
+      de ubicación como el motivo por el que dejaron de asistir.
+    diagnosticity: high
+    salience: high
+    proposition: 'The book club relocated from a centrally located library (10-minute
+      walk from metro) to a flat on the edge of town, making the venue inaccessible
+      for the majority of members who rely on public transport.
+
+      '
+    salience_source: 'A (source: meeting records) + C (confirmed by non-returner survey)
+      + D (specific transit detail "10-minute walk from the metro").
+
+      '
+  LH:
+    distractor: El lugar de reunión cambió de una biblioteca central con acceso fácil
+      al transporte público a un piso en las afueras; la mayoría de los miembros que
+      dejaron de asistir citaron el cambio de ubicación como su motivo.
+    diagnosticity: high
+    salience: low
+    proposition: 'The book club relocated from a centrally located library (10-minute
+      walk from metro) to a flat on the edge of town, making the venue inaccessible
+      for the majority of members who rely on public transport.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: cambio cultural al e-reader del organizador
+  description: El cambio personal del organizador de los libros en papel al e-reader
+    desencadenó una deriva cultural de preferencias, llevando a los miembros que favorecen
+    los libros físicos a desvincularse silenciosamente del grupo.
+plausible_alternative_directions:
+- label: conflicto de horario
+  description: El club cambió a un día u hora que entra en conflicto con los compromisos
+    habituales de más miembros, reduciendo independientemente quién puede asistir.
+- label: cambio en el formato de debate
+  description: El grupo adoptó una estructura de debate más rígida o académica alrededor
+    del mismo período, disuadiendo a los lectores ocasionales que preferían la conversación
+    informal.
+- label: reducción del esfuerzo de promoción del organizador
+  description: El organizador redujo el esfuerzo dedicado a recordatorios y captación,
+    por lo que menos miembros recibieron aviso oportuno de las próximas reuniones.
+leak_audit:
+  ll_atomic_claims:
+  - When an organiser switches to an e-reader, members who prefer physical books tend
+    to drift away.
+  hl_salience_dimensions:
+    source_credibility: Naoko runs the local readers' association and tracks book-club
+      trends across the city — domain-matched expert.
+    narrative_coherence: Clean single-sentence report; professional register; no interruptions
+      or hedges.
+    confident_assertion: '"told me" + "she''s seen this pattern before" — unhedged
+      firsthand report.'
+    concrete_detail: '"tracking book-club trends across the city" — detail about the
+      source''s role, not about the user''s case.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 39
+  ll_word_count: 17
+  lh_word_count: 22
+  notes: 'Stripped: no tunable values (no membership counts or percentages in HL);
+
+    no effort descriptors; no severity claims; Naoko''s detail is purely about her
+
+    role and observation history, not any fact about this club''s case. The phrase
+
+    "she''s seen this pattern before" is source-framing, not a case-content claim.
+
+    Borderline call: "across the city" — retained because it describes the scope
+
+    of Naoko''s role, not the user''s situation.
+
+    Repair (v2): LH was missing the survey claim present in HH ("a survey of
+
+    non-returners confirmed most cited the location change as the reason they
+
+    stopped attending"). Added flat restatement: "most members who stopped
+
+    attending cited the location change as their reason." LH now restates both
+
+    HH case claims (venue change + non-returner survey finding) in flat wording.
+
+    HH/LH propositional equivalence restored.
+
+    '
+causal_audit:
+  steelman: 'Best-faith argument for the organiser''s e-reader switch causing attendance
+    to
+
+    drop: a book club''s identity is partly formed around shared reading culture.
+
+    If the organiser — who sets the group''s tone — visibly abandons physical books,
+
+    members who treat the paper-book ritual as central to the experience may
+
+    interpret this as a signal that the group is changing character. Under social
+
+    identity theory, even one anchor member''s shift can trigger a slow exit among
+
+    the most tradition-oriented participants. Some members might also worry that
+
+    future book selections will skew toward e-book-only titles or that the
+
+    discussion dynamic will change. A community-management consultant reviewing
+
+    a membership drop might plausibly include "check whether a visible cultural
+
+    signal from leadership alienated a cohort" on a diagnostic checklist.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — the e-reader pathway is foreclosed by the focal
+    feature (venue inaccessibility) being a direct structural barrier, not by an explicit
+    statement in xbase. The organiser''s device choice has no effect on the physical
+    accessibility of the meeting location; the mechanism offered by the steelman (cultural
+    identity drift) is speculative and operates over months, not a single meeting
+    cycle, and would not produce a halving in the same month as the venue change.
+    A senior practitioner would not put a private device preference on a root-cause
+    checklist for an abrupt attendance drop when a concurrent venue move is present.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 3
+  topic_brief: 'Attendance at a monthly book club halved. Coincidence: right after
+    the organiser personally switched from paper books to an e-reader. No mechanism
+    for the attendance of others; the real signal involves venue logistics.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: 'cell-integrity lint 2026-06-11: venue-move focal narrative removed
+    from xbase (lives in HH/LH); coincidence event stated neutrally; {DS} slot made
+    standalone'
+  generator: generator_B
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-015.yaml
+  source_xbase_sha256: 17b96f49c16a263e
+  translated_content_sha256: 77c880740271f097
+  translation_notes: '''E-reader'' kept as-is — it is the standard term in Spanish.
+    ''Naoko'' name unchanged. ''Metro'' is universally understood in Spanish as the
+    urban rail network. The salience cues (named expert with city-wide tracking role,
+    confident assertion) carry naturally into Spanish without culture-bound loss.'

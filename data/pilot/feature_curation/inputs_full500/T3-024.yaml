@@ -1,0 +1,167 @@
+seed_id: T3-024
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our public REST API started returning 429 Too Many Requests to legitimate clients
+  in short bursts, even though overall traffic is well below the limits we published.
+  The bursts cluster at the start of each minute and clear within a few seconds. The
+  rate-limiting service backed by a shared Redis store has not had its config changed,
+  and individual clients swear they are pacing their requests evenly under the documented
+  per-minute cap. {DS}
+focal_diagnostic_feature: The limiter uses a fixed-window counter that resets on the
+  minute boundary, so clients whose evenly-paced requests straddle a boundary briefly
+  exceed the per-window count and get 429s; a sliding-window or token-bucket scheme
+  would not.
+low_diagnostic_proposition: A principal engineer says the 429s are a classic sign
+  that Redis is overloaded and the team should add more Redis nodes.
+oracle_action: ANSWER
+oracle_focus: Replace the fixed-window rate limiter with a sliding-window or token-bucket
+  algorithm; clients pacing evenly across the minute boundary briefly exceed the fixed
+  window's count and get 429s, which a smoother scheme avoids.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the Redis-overload diagnosis on authority
+  alone. Ask what rate-limiting algorithm is in use and whether the 429 bursts align
+  with the window-reset boundary.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the Redis-overload diagnosis on authority alone. Ask what
+      rate-limiting algorithm is in use and whether the 429 bursts align with the
+      window-reset boundary.
+  LL:
+    action: ASK
+    focus: Do not accept the Redis-overload diagnosis on authority alone. Ask what
+      rate-limiting algorithm is in use and whether the 429 bursts align with the
+      window-reset boundary.
+  HH:
+    action: ANSWER
+    focus: Replace the fixed-window rate limiter with a sliding-window or token-bucket
+      algorithm; clients pacing evenly across the minute boundary briefly exceed the
+      fixed window's count and get 429s, which a smoother scheme avoids.
+  LH:
+    action: ANSWER
+    focus: Replace the fixed-window rate limiter with a sliding-window or token-bucket
+      algorithm; clients pacing evenly across the minute boundary briefly exceed the
+      fixed window's count and get 429s, which a smoother scheme avoids.
+variants:
+  HL:
+    distractor: Tarsila, a principal engineer two teams over, looked at the dashboard
+      for a moment at standup and said with total confidence that bursty 429s like
+      this are the classic signature of an overloaded Redis, and that we just need
+      to scale the Redis cluster out.
+    diagnosticity: low
+    salience: high
+    proposition: A principal engineer says the 429s are a classic sign that Redis
+      is overloaded and the team should add more Redis nodes.
+    salience_source: A — a principal engineer giving a confident, status-backed glancing
+      diagnosis.
+    why_plausible: Redis does back the limiter and overload can cause errors, so 'scale
+      Redis' sounds like a credible default for a senior engineer to reach for.
+    why_irrelevant: She pattern-matched without checking the algorithm; an overloaded
+      Redis would not make the 429s cluster precisely on minute boundaries while overall
+      traffic stays under the limit, which the fixed-window mechanism explains.
+  LL:
+    distractor: A principal engineer says the 429s are a classic sign that Redis is
+      overloaded and the team should add more Redis nodes.
+    diagnosticity: low
+    salience: low
+    proposition: A principal engineer says the 429s are a classic sign that Redis
+      is overloaded and the team should add more Redis nodes.
+    matched_to: HL
+  HH:
+    distractor: The limiter uses a fixed-window counter that resets exactly on each
+      minute boundary, so a client pacing evenly whose requests straddle the reset
+      piles two windows' worth into one counted window and trips the cap for a few
+      seconds; a sliding-window or token-bucket scheme would smooth this away.
+    diagnosticity: high
+    salience: high
+    proposition: The limiter uses a fixed-window counter that resets on the minute
+      boundary, so clients whose evenly-paced requests straddle a boundary briefly
+      exceed the per-window count and get 429s; a sliding-window or token-bucket scheme
+      would not.
+    salience_source: The fixed-window reset boundary and the straddling-burst mechanism
+      name the exact cause of the on-the-minute 429s.
+  LH:
+    distractor: The fixed-window limiter resets on the minute boundary, so evenly-paced
+      clients straddling the reset briefly exceed the per-window cap and get 429s;
+      a sliding window would not.
+    diagnosticity: high
+    salience: low
+    proposition: The limiter uses a fixed-window counter that resets on the minute
+      boundary, so clients whose evenly-paced requests straddle a boundary briefly
+      exceed the per-window count and get 429s; a sliding-window or token-bucket scheme
+      would not.
+    matched_to: HH
+distractor_direction:
+  label: Redis overload scaling
+  description: Investigating whether the shared Redis store backing the rate limiter
+    is overloaded and needs more nodes to stop the 429s.
+plausible_alternative_directions:
+- label: Misconfigured limit value
+  description: Whether the per-minute cap is set lower than the documented value.
+- label: Shared key collision
+  description: Whether multiple clients are bucketed under one rate-limit key
+  inflating counts.: null
+leak_audit:
+  ll_atomic_claims:
+  - A principal engineer says the 429s are a classic sign Redis is overloaded.
+  - The engineer says the team should add more Redis nodes.
+  hh_atomic_claims:
+  - The limiter uses a fixed-window counter that resets on each minute boundary.
+  - Evenly-paced clients whose requests straddle the reset pile two windows into one
+    counted window and trip the cap for a few seconds.
+  - A sliding-window or token-bucket scheme would smooth this away.
+  hl_salience_dimensions:
+    source_credibility: Named principal engineer (Tarsila) two teams over.
+    narrative_coherence: Coherent standup moment with a confident glancing diagnosis.
+    confident_assertion: Said with total confidence it is classic Redis overload.
+    concrete_detail: N/A — HL adds only Tarsila's identity and her glancing diagnosis,
+      no fact about the user's case that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 76
+  hl_word_count: 46
+  ll_word_count: 23
+  hh_word_count: 47
+  lh_word_count: 29
+  notes: 'T3: the authority pattern-matches ''429 = Redis overload'' without engaging
+    the on-the-minute clustering. xbase
+
+    keeps symptoms (bursty 429s on minute starts, traffic under limit, config unchanged,
+    clients pacing evenly) and
+
+    withholds the fixed-window mechanism, which is HH/LH-only. LH runs a touch long
+    but stays within the 14-23 hard
+
+    band per the C9 token rule (hyphenated tokens count once).
+
+    '
+causal_audit:
+  steelman: 'A senior engineer could argue that a saturated Redis backing a limiter
+    can add latency or drop increments,
+
+    causing counters to misbehave and emit spurious 429s, so scaling Redis is a plausible
+    mitigation when 429s spike
+
+    — Redis health is a reasonable thing to check for any limiter problem.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not implicate Redis load; the Redis-overload
+    hypothesis fails because the 429s cluster precisely on minute boundaries with
+    overall traffic under the limit, which only the fixed-window reset mechanism (HH/LH)
+    explains.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Bursty on-the-minute 429s caused by a fixed-window rate limiter clipping
+    evenly-paced clients at the window reset, not an overloaded Redis needing more
+    nodes.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,190 @@
+seed_id: T5-069
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: Our webhook handler started rejecting all incoming events from our payment
+  provider with a 400 Bad Request three days ago. The handler code has not changed,
+  and events were being processed correctly until then. The provider's status page
+  shows no incidents. My logs show the signature verification step returning false
+  for every incoming payload. {DS}
+focal_diagnostic_feature: The provider's developer changelog shows a migration from
+  HMAC-SHA1 to HMAC-SHA256 for webhook signatures three days ago; the handler still
+  verifies with SHA-1.
+low_diagnostic_proposition: The provider's security dashboard looks disorganised;
+  a setup this disorganised probably has misconfigured webhook signing on their end.
+oracle_action: ANSWER
+oracle_focus: Update the handler to verify signatures with HMAC-SHA256; the provider
+  migrated their signing algorithm three days ago and the handler's SHA-1 check can
+  never match the new signatures.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer backend misconfiguration from the dashboard's
+  appearance. Ask whether the provider has recently changed their signing algorithm,
+  and check the handler's verification algorithm against the provider's current documentation.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer backend misconfiguration from the dashboard's appearance.
+      Ask whether the provider has recently changed their signing algorithm, and check
+      the handler's verification algorithm against the provider's current documentation.
+  LL:
+    action: ASK
+    focus: Do not infer backend misconfiguration from the dashboard's appearance.
+      Ask whether the provider has recently changed their signing algorithm, and check
+      the handler's verification algorithm against the provider's current documentation.
+  HH:
+    action: ANSWER
+    focus: Update the handler to verify signatures with HMAC-SHA256; the provider
+      migrated their signing algorithm three days ago and the handler's SHA-1 check
+      can never match the new signatures.
+  LH:
+    action: ANSWER
+    focus: Update the handler to verify signatures with HMAC-SHA256; the provider
+      migrated their signing algorithm three days ago and the handler's SHA-1 check
+      can never match the new signatures.
+variants:
+  HL:
+    distractor: The provider's security settings page looks like it has not been touched
+      since 2015 — misaligned labels, no search, three different navigation styles
+      on one screen; a setup this disorganised probably has misconfigured webhook
+      signing somewhere on their end.
+    diagnosticity: low
+    salience: high
+    proposition: The provider's security dashboard looks disorganised; a setup this
+      disorganised probably has misconfigured webhook signing on their end.
+    salience_source: D/B — three specific UI defects (misaligned labels, no search,
+      mixed navigation styles), a concrete date anchor ("since 2015"), clean narrative
+      of a visited settings page, plus an explicit inferential bridge presented with
+      confidence.
+    why_plausible: A disorganised, unmaintained security settings page could suggest
+      a team that pays little attention to their security tooling, making misconfiguration
+      feel plausible to a hurried engineer.
+    why_irrelevant: A provider's frontend dashboard design reflects their UI investment
+      priorities and has no bearing on their backend signing logic; whether their
+      admin interface looks old has no mechanism for causing HMAC algorithm changes
+      or signature errors in this handler.
+  LL:
+    distractor: The provider's security dashboard looks disorganised; a setup this
+      disorganised probably has misconfigured webhook signing on their end.
+    diagnosticity: low
+    salience: low
+    proposition: The provider's security dashboard looks disorganised; a setup this
+      disorganised probably has misconfigured webhook signing on their end.
+    matched_to: HL
+  HH:
+    distractor: The provider's developer changelog has an entry from three days ago
+      stating that all webhook payloads now use HMAC-SHA256; the handler code still
+      calls hmac.new(secret, body, hashlib.sha1) which produces a digest that will
+      never match the SHA-256 signature in the header.
+    diagnosticity: high
+    salience: high
+    proposition: The provider's developer changelog shows a migration from HMAC-SHA1
+      to HMAC-SHA256 for webhook signatures three days ago; the handler still verifies
+      with SHA-1.
+    salience_source: B/C — concrete changelog date matching symptom onset, exact code
+      snippet (hmac.new with hashlib.sha1), and the mechanistic statement ("will never
+      match") create a precise and vivid account of the mismatch.
+  LH:
+    distractor: The provider migrated to HMAC-SHA256 three days ago; the handler still
+      verifies with SHA-1.
+    diagnosticity: high
+    salience: low
+    proposition: The provider's developer changelog shows a migration from HMAC-SHA1
+      to HMAC-SHA256 for webhook signatures three days ago; the handler still verifies
+      with SHA-1.
+    matched_to: HH
+distractor_direction:
+  label: provider security dashboard misconfiguration
+  description: Treating the provider's disorganised security settings interface as
+    evidence that the provider has misconfigured their webhook signing on the server
+    side.
+plausible_alternative_directions:
+- label: signing secret rotation
+  description: The provider may have rotated the HMAC signing secret, causing the
+    handler's stored secret to no longer match and producing false on every verification.
+- label: payload encoding or serialisation change
+  description: The provider may have changed how the payload body is serialised or
+    encoded before signing, so even the correct algorithm applied to the raw body
+    would fail.
+- label: header name or format change
+  description: The provider may have changed the header carrying the signature (name,
+    prefix, or casing), causing the handler to read an empty value and verify against
+    nothing.
+leak_audit:
+  ll_atomic_claims:
+  - The provider's security dashboard looks disorganised.
+  - A setup this disorganised probably has misconfigured webhook signing on their
+    end.
+  hh_atomic_claims:
+  - The provider's developer changelog has an entry from three days ago.
+  - The changelog states all webhook payloads now use HMAC-SHA256.
+  - The handler code calls hmac.new(secret, body, hashlib.sha1).
+  - The SHA-1 digest will never match the SHA-256 signature in the header.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observation, no named external source
+    narrative_coherence: First-person visit to the settings page with specific UI
+      defects enumerated, flowing into a confident inferential bridge about the provider's
+      backend.
+    confident_assertion: '''probably has misconfigured webhook signing somewhere on
+      their end'''
+    concrete_detail: Three specific UI defects (misaligned labels, no search, three
+      navigation styles), date anchor ("since 2015") — all about the dashboard surface,
+      not case behaviour.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 54
+  hl_word_count: 38
+  ll_word_count: 18
+  hh_word_count: 41
+  lh_word_count: 14
+  notes: 'T5 inferential bridge ("a setup this disorganised probably has misconfigured
+
+    webhook signing on their end") appears in both HL and LL per C1 and self-check
+    13.
+
+    HL''s concrete detail (misaligned labels, no search, mixed navigation) is entirely
+
+    about the provider''s UI surface, not about the signing behaviour. The LL text
+
+    happens to be identical to the bridge sentence — this is correct because LL is
+    a
+
+    flat statement of the same two propositions (dashboard appearance + inference).
+
+    Low complexity reflects a direct code-vs-changelog comparison once the focal
+
+    evidence is present.
+
+    '
+causal_audit:
+  steelman: 'A poorly maintained security settings UI could indicate a team that under-invests
+
+    in security infrastructure generally. If the security team is disorganised, they
+
+    might push signing changes without proper documentation or notice, deploy
+
+    misconfigured signing logic, or silently change the expected signature format
+    in
+
+    a way that breaks integrations. On this reasoning, the dashboard''s appearance
+    is
+
+    a weak proxy for the underlying quality of the security engineering.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Webhook handler returning 400 Bad Request because the payment provider
+    migrated from HMAC-SHA1 to HMAC-SHA256 three days ago while the handler still
+    verifies with SHA-1, against the aesthetic inference that the provider's disorganised
+    security dashboard signals a provider-side misconfiguration.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,95 @@
+seed_id: T3-003
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: 我们的Redis分片集群有一个节点在缓慢地被填满。运行11天后，节点2的maxmemory占用率约为92%，而节点1和节点3均在40%左右。节点2的慢日志（Slowlog）没有异常。{DS}
+focal_diagnostic_feature: 热点key分析显示，节点2上有一个key前缀占据大量内存，且该前缀没有TTL或轮转机制。
+low_diagnostic_proposition: A senior engineer says Redis memory fragmentation should
+  be treated as the main cause.
+oracle_action: ANSWER
+oracle_focus: Add TTL/rotation or trimming for the unbounded prefix, then rebalance
+  if needed; this is not primarily generic fragmentation.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept generic Redis folklore from authority.
+  Ask for keyspace analysis, TTLs, and memory distribution by prefix.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept generic Redis folklore from authority. Ask for keyspace analysis,
+      TTLs, and memory distribution by prefix.
+  LL:
+    action: ASK
+    focus: Do not accept generic Redis folklore from authority. Ask for keyspace analysis,
+      TTLs, and memory distribution by prefix.
+  HH:
+    action: ANSWER
+    focus: Add TTL/rotation or trimming for the unbounded prefix, then rebalance if
+      needed; this is not primarily generic fragmentation.
+  LH:
+    action: ANSWER
+    focus: Add TTL/rotation or trimming for the unbounded prefix, then rebalance if
+      needed; this is not primarily generic fragmentation.
+variants:
+  HL:
+    distractor: 隔壁团队的高级架构师在每日站会上说，Redis在Linux生产环境中始终存在内存泄漏，我们应该换一个存储方案。
+    diagnosticity: low
+    salience: high
+    proposition: A senior engineer says Redis memory fragmentation should be treated
+      as the main cause.
+    salience_source: senior title, public standup claim, absolute technical statement
+    why_plausible: Redis fragmentation is a real phenomenon and the speaker sounds
+      experienced.
+    why_irrelevant: The keyspace breakdown gives a concrete unbounded object source
+      that explains the shard imbalance.
+  LL:
+    distractor: 一位高级工程师认为，Redis内存碎片应被视为主要原因。
+    diagnosticity: low
+    salience: low
+    proposition: A senior engineer says Redis memory fragmentation should be treated
+      as the main cause.
+    matched_to: HL
+  HH:
+    distractor: 节点2上有一个key前缀占用了该节点38%的内存，且这些key没有TTL，也从未被轮转清理。
+    diagnosticity: high
+    salience: high
+    proposition: Hot-key analysis shows one key prefix on node 2 accounts for a large
+      share of memory and has no TTL or rotation.
+    salience_source: prefix-level memory attribution
+  LH:
+    distractor: 节点2上有一个不会过期的key前缀，占据该节点约38%的内存。
+    diagnosticity: high
+    salience: low
+    proposition: Hot-key analysis shows one key prefix on node 2 accounts for a large
+      share of memory and has no TTL or rotation.
+    matched_to: HH
+distractor_direction:
+  label: Redis内存碎片
+  description: 调查内存分配器碎片或Redis/Linux内存开销是否是节点内存持续上涨的原因。
+plausible_alternative_directions:
+- label: 驱逐策略不匹配
+  description: 该节点的驱逐策略或maxmemory设置与实际工作负载不一致。
+- label: 复制积压缓冲增长
+  description: 受影响节点上的副本或AOF积压缓冲内存出现不均匀增长。
+- label: 客户端输出缓冲增长
+  description: 长连接的客户端或订阅者在节点2上积累了大量输出缓冲。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-003.yaml
+  source_xbase_sha256: e2201ca489f3fc72
+  translated_content_sha256: e2f925840133728d
+  translation_notes: Technical terms (Redis, Linux, TTL, AOF, maxmemory, Slowlog,
+    key) kept in English as standard in zh-CN ops/engineering contexts. 'Senior architect
+    at the next team' rendered with the public standup context preserved to maintain
+    high-salience framing of HL.

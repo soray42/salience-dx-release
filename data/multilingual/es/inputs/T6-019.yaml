@@ -1,0 +1,192 @@
+seed_id: T6-019
+template: T6
+domain: open_qa
+complexity: medium
+xbase: Una acción de mi cartera a largo plazo ha bajado cerca del 18% en dos semanas
+  y estoy a punto de pulsar el botón de vender. La compré para mantenerla varios años
+  y la posición representa una pequeña parte de una cartera diversificada. No tengo
+  ninguna necesidad de liquidez que me obligue a venderla. La caída simplemente me
+  inquieta y sigo sintiendo que debería deshacerme de ella antes de que empeore. {DS}
+focal_diagnostic_feature: La caída responde a una liquidación generalizada de todo
+  el sector que afectó a todos los competidores por igual, mientras que los últimos
+  resultados de la compañía superaron las expectativas y la directiva reafirmó unas
+  perspectivas de crecimiento sólidas — sus propios fundamentales no han cambiado.
+low_diagnostic_proposition: Every losing stock the user has held before kept falling,
+  so this one will probably keep falling too.
+oracle_action: ANSWER
+oracle_focus: Do not panic-sell; the drop is an exogenous sector-wide move that hit
+  all peers, while the company's earnings beat and reaffirmed guidance leave its fundamentals
+  intact, so the long-term thesis is unchanged.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not sell on the strength of past losers falling further.
+  Ask whether this drop is company-specific or a sector-wide move and whether fundamentals
+  changed.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not sell on the strength of past losers falling further. Ask whether
+      this drop is company-specific or a sector-wide move and whether fundamentals
+      changed.
+  LL:
+    action: ASK
+    focus: Do not sell on the strength of past losers falling further. Ask whether
+      this drop is company-specific or a sector-wide move and whether fundamentals
+      changed.
+  HH:
+    action: ANSWER
+    focus: Do not panic-sell; the drop is an exogenous sector-wide move that hit all
+      peers, while the company's earnings beat and reaffirmed guidance leave its fundamentals
+      intact, so the long-term thesis is unchanged.
+  LH:
+    action: ANSWER
+    focus: Do not panic-sell; the drop is an exogenous sector-wide move that hit all
+      peers, while the company's earnings beat and reaffirmed guidance leave its fundamentals
+      intact, so the long-term thesis is unchanged.
+variants:
+  HL:
+    distractor: Cada vez que he mantenido una acción que empezó a caer así, no paró
+      de sangrar semana tras semana, así que mis instintos me gritan que esta también
+      seguirá bajando de la misma manera y que debería salir ahora.
+    diagnosticity: low
+    salience: high
+    proposition: Every losing stock the user has held before kept falling, so this
+      one will probably keep falling too.
+    salience_source: B/C — a vivid personal history of losers that kept bleeding plus
+      a confident first-instinct that this one repeats it.
+    why_plausible: A painful, consistent personal record of holdings falling further
+      makes 'this will keep dropping' feel viscerally true.
+    why_irrelevant: Past holdings' paths say nothing about this position, whose decline
+      is an exogenous sector move with unchanged, strong company fundamentals.
+  LL:
+    distractor: Cada acción perdedora que el usuario ha mantenido antes siguió cayendo,
+      así que esta probablemente también seguirá bajando.
+    diagnosticity: low
+    salience: low
+    proposition: Every losing stock the user has held before kept falling, so this
+      one will probably keep falling too.
+    matched_to: HL
+  HH:
+    distractor: Analizando el motivo real de la caída, todo el sector se vendió a
+      la vez durante esas dos semanas y todos los competidores cayeron aproximadamente
+      el mismo porcentaje. Los últimos resultados de esta compañía superaron las expectativas
+      y la directiva reafirmó unas perspectivas sólidas, por lo que nada específico
+      del negocio se ha deteriorado.
+    diagnosticity: high
+    salience: high
+    proposition: The decline tracks a broad sector-wide selloff that hit every peer
+      equally, while this company's latest earnings beat expectations and management
+      reaffirmed strong forward guidance — its own fundamentals are unchanged.
+    salience_source: Tracing the drop to a sector-wide move plus the earnings beat
+      and reaffirmed guidance makes the unchanged-fundamentals picture concrete.
+  LH:
+    distractor: La caída responde a una liquidación sectorial generalizada que afectó
+      a todos los competidores por igual; los resultados de la compañía superaron
+      las expectativas y la directiva reafirmó unas perspectivas sólidas, por lo que
+      los fundamentales no han cambiado.
+    diagnosticity: high
+    salience: low
+    proposition: The decline tracks a broad sector-wide selloff that hit every peer
+      equally, while this company's latest earnings beat expectations and management
+      reaffirmed strong forward guidance — its own fundamentals are unchanged.
+    matched_to: HH
+distractor_direction:
+  label: Los perdedores siguen cayendo
+  description: Vender ahora porque todas las posiciones perdedoras anteriores del
+    usuario siguieron bajando.
+plausible_alternative_directions:
+- label: Tamaño de posición / rebalanceo
+  description: Si el peso o el riesgo de la posición justifican reducirla con independencia
+    de la causa de la caída.
+- label: Consideración fiscal / base de coste
+  description: Si materializar la pérdida ahora ofrece un beneficio de compensación
+    fiscal que vale la pena aprovechar con independencia de la causa de la caída o
+    de los fundamentales de la compañía.
+leak_audit:
+  ll_atomic_claims:
+  - Every losing stock the user held before kept falling.
+  - Therefore this stock will probably keep falling too.
+  hh_atomic_claims:
+  - The whole sector sold off together over the two weeks and every peer fell about
+    the same amount.
+  - The company's latest earnings beat expectations.
+  - Management reaffirmed strong forward guidance, so nothing specific to the business
+    has deteriorated.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent personal history of holdings that bled until a worse-price
+      sale.
+    confident_assertion: Gut is 'screaming' to get out now — first-instinct framing,
+      held to the same 'probably' level as LL.
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 69
+  hl_word_count: 41
+  ll_word_count: 17
+  hh_word_count: 43
+  lh_word_count: 24
+  notes: 'LH keeps equivalence with HH (sector-wide drop, equal peer fall, earnings
+    beat, reaffirmed guidance) as a single
+
+    flat clause-set. T6: the availability inference "this one will probably keep falling
+    too" is in HL
+
+    and flat in LL, held to the same epistemic level. xbase gives only the price drop,
+    the rattled feeling, and that it is a long-term diversified hold;
+
+    the sector-wide cause and fundamentals (decisive) live only in HH/LH.
+
+    Repair round 1: rewrote HL to remove the consequence claim ("until I finally sold
+    at a much worse price")
+
+    and the certainty/severity escalation ("gut is certain", "craters further"), restoring
+    "probably" so HL matches
+
+    LL''s epistemic level while keeping salience via vivid narrative ("bleeding lower
+    week after week") and first-instinct
+
+    framing ("gut is screaming"). HL recount 48 -> 41. xbase recount corrected 72
+    -> 69 (prior miscount).
+
+    '
+causal_audit:
+  steelman: 'A trader could argue the user''s losing positions may share a behavioural
+    origin — picks that were fragile or
+
+    bought on weak theses — so a personal track record of holdings that kept falling
+    might reflect a real, repeating
+
+    weakness in their selection process and be modestly predictive here.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the exogenous sector cause and intact fundamentals
+    that distinguish this case from past losers live only in HH/LH; xbase does not
+    foreclose the sell.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to panic-sell a diversified holding down on an exogenous sector-wide
+    selloff with intact fundamentals, against the user's availability bias that past
+    losers always kept falling.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-019.yaml
+  source_xbase_sha256: 48db7847f8c72c6e
+  translated_content_sha256: aa1b205ca59b3e60
+  translation_notes: No culture-bound salience cues. 'Earnings beat' rendered as 'resultados
+    superaron las expectativas'; 'forward guidance' as 'perspectivas'. Register is
+    informal first-person throughout.

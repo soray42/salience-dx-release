@@ -1,0 +1,192 @@
+seed_id: T6-089
+template: T6
+domain: open_qa
+complexity: low
+xbase: A storm caused a tree branch to fall and crack the skylight in my home office.
+  Water came in and damaged the desk and two monitors. I have a home insurance policy
+  that I renewed three months ago. I have not filed any claim before. I am trying
+  to figure out whether to file a claim or pay for repairs myself. {DS}
+focal_diagnostic_feature: The skylight had a documented pre-existing crack noted in
+  the renewal inspection report, and the policy excludes losses arising from pre-existing
+  damage to the structure.
+low_diagnostic_proposition: The claim is likely to be denied because home insurance
+  policies typically do not cover storm damage to contents inside the property.
+oracle_action: ANSWER
+oracle_focus: The pre-existing structural damage exclusion is the controlling issue;
+  the claim is at high risk of denial on that basis regardless of storm coverage for
+  contents, so the user should review the inspection report and exclusion clause before
+  filing and consider whether the repair cost justifies the attempt.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply a blanket contents-exclusion rule. Ask for
+  the specific policy coverages, the storm damage scope, and whether the damaged items
+  and structure are within the covered categories.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply a blanket contents-exclusion rule. Ask for the specific policy
+      coverages, the storm damage scope, and whether the damaged items and structure
+      are within the covered categories.
+  LL:
+    action: ASK
+    focus: Do not apply a blanket contents-exclusion rule. Ask for the specific policy
+      coverages, the storm damage scope, and whether the damaged items and structure
+      are within the covered categories.
+  HH:
+    action: ANSWER
+    focus: The pre-existing structural damage exclusion is the controlling issue;
+      the claim is at high risk of denial on that basis regardless of storm coverage
+      for contents, so the user should review the inspection report and exclusion
+      clause before filing and consider whether the repair cost justifies the attempt.
+  LH:
+    action: ANSWER
+    focus: The pre-existing structural damage exclusion is the controlling issue;
+      the claim is at high risk of denial on that basis regardless of storm coverage
+      for contents, so the user should review the inspection report and exclusion
+      clause before filing and consider whether the repair cost justifies the attempt.
+variants:
+  HL:
+    distractor: Every time I have heard of someone making a home insurance claim for
+      storm damage to equipment indoors, the insurer pushed back hard on the contents
+      coverage and eventually denied it, so my first instinct is that contents inside
+      are not covered.
+    diagnosticity: low
+    salience: high
+    proposition: The claim is likely to be denied because home insurance policies
+      typically do not cover storm damage to contents inside the property.
+    salience_source: B — coherent personal history pattern with multiple instances;
+      C — "every time" and "eventually denied" carry confident first-instinct framing.
+    why_plausible: Contents coverage limits and sub-limits are genuinely common sources
+      of claim disputes, and a practitioner might reasonably treat past denials as
+      a reliable signal about coverage scope.
+    why_irrelevant: The decisive issue is the pre-existing structural exclusion documented
+      in the inspection report, not a general rule about contents coverage; many standard
+      policies do cover storm-damaged contents, and past anecdotes about different
+      policies cannot determine this specific exclusion clause.
+  LL:
+    distractor: My past experience suggests home insurers typically deny storm damage
+      claims for contents located inside the property.
+    diagnosticity: low
+    salience: low
+    proposition: The claim is likely to be denied because home insurance policies
+      typically do not cover storm damage to contents inside the property.
+    matched_to: HL
+  HH:
+    distractor: Looking at the renewal inspection report the insurer sent three months
+      ago, there is a line noting a pre-existing crack in the skylight structure,
+      and the policy exclusions section clearly states that losses arising from pre-existing
+      structural damage are not covered.
+    diagnosticity: high
+    salience: high
+    proposition: The skylight had a documented pre-existing crack noted in the renewal
+      inspection report, and the policy excludes losses arising from pre-existing
+      damage to the structure.
+    salience_source: First-person retrieval of the specific inspection report line
+      and the exact policy exclusion clause makes the pre-existing-damage bar concrete
+      and traceable.
+  LH:
+    distractor: The renewal inspection report documents a pre-existing skylight crack,
+      and the policy excludes losses from pre-existing structural damage.
+    diagnosticity: high
+    salience: low
+    proposition: The skylight had a documented pre-existing crack noted in the renewal
+      inspection report, and the policy excludes losses arising from pre-existing
+      damage to the structure.
+    matched_to: HH
+distractor_direction:
+  label: Contents coverage exclusion
+  description: Treating storm-damaged indoor contents as categorically excluded from
+    home insurance based on a recalled pattern of past claim denials.
+plausible_alternative_directions:
+- label: Claim deductible vs repair cost
+  description: The repair cost may fall at or below the policy deductible, making
+    a formal claim financially pointless or premium-raising.
+- label: Policy renewal gap or lapse
+  description: The user should confirm the policy was active and in force on the date
+    of the storm, not just renewed before it.
+leak_audit:
+  ll_atomic_claims:
+  - The user's past experience indicates home insurers deny storm claims for indoor
+    contents.
+  hh_atomic_claims:
+  - The renewal inspection report contains a line noting a pre-existing crack in the
+    skylight.
+  - The policy exclusions section states losses from pre-existing structural damage
+    are not covered.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person availability pattern.
+    narrative_coherence: Recurring personal-history pattern (every time) with a consistent
+      outcome.
+    confident_assertion: every time; eventually denied; my first instinct — triple
+      confidence markers.
+    concrete_detail: N/A — no case-specific detail about the source's properties added.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 61
+  hl_word_count: 42
+  ll_word_count: 17
+  hh_word_count: 41
+  lh_word_count: 18
+  notes: 'T6 rule: the availability inference ("so my first instinct is that contents
+    inside are not
+
+    covered") is propositional content under C1 and appears in both HL and LL. LL
+    carries the
+
+    claim flatly ("typically deny storm claims for indoor contents"). The past pattern
+    plus the
+
+    application-to-now inference is consistent between cells. xbase withholds the
+    inspection
+
+    report finding entirely. The distractor (contents exclusion) is structurally different
+    from
+
+    the pre-existing-damage exclusion — both are exclusion-type claims but operate
+    on different
+
+    policy provisions. HL:LL = 47:15 ≈ 3.1:1 ≤ 4:1. HH:LH = 48:15 = 3.2:1 ≤ 4:1.
+
+    '
+causal_audit:
+  steelman: 'An experienced insurance broker might point out that home policies vary
+    widely; some do
+
+    exclude indoor electronics or place low sub-limits on office equipment, so the
+    user''s
+
+    recalled pattern could be directionally correct for policies with weak contents
+    coverage.
+
+    However, the focal feature reveals that the controlling exclusion here is pre-existing
+
+    structural damage — a categorically different policy provision from a contents
+    sub-limit.
+
+    Even if the contents were fully covered, the pre-existing crack documented in
+    the
+
+    inspection report is the mechanism by which the insurer would deny the claim,
+    because the
+
+    storm caused the skylight failure only by acting on an already-cracked structure.
+    The
+
+    contents-exclusion pattern cannot predict or explain that specific exclusion.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Home insurance claim for storm-damaged contents likely denied because
+    of a pre-existing skylight crack documented in the renewal inspection report,
+    not because of a general contents-exclusion rule recalled from past experience.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,219 @@
+{
+  "generators": {
+    "generator_A": 189,
+    "generator_B": 261
+  },
+  "note": "Expanded scenarios only (the 50 hand-written ones carry no generator). Rows are evaluated model x scenario generator.",
+  "by_eval_x_generator": {
+    "claude-sonnet-4-6 on generator_A": {
+      "ISB": {
+        "pct": 5.32,
+        "ci": [
+          2.9,
+          9.5
+        ],
+        "n": 188,
+        "k": 10
+      },
+      "vigilance": {
+        "pct": 18.09,
+        "ci": [
+          13.2,
+          24.2
+        ],
+        "n": 188,
+        "k": 34
+      },
+      "flip_pct": 23.4
+    },
+    "claude-sonnet-4-6 on generator_B": {
+      "ISB": {
+        "pct": 3.45,
+        "ci": [
+          1.8,
+          6.4
+        ],
+        "n": 261,
+        "k": 9
+      },
+      "vigilance": {
+        "pct": 9.2,
+        "ci": [
+          6.3,
+          13.3
+        ],
+        "n": 261,
+        "k": 24
+      },
+      "flip_pct": 12.64
+    },
+    "gemini-3.5-flash on generator_A": {
+      "ISB": {
+        "pct": 4.28,
+        "ci": [
+          2.2,
+          8.2
+        ],
+        "n": 187,
+        "k": 8
+      },
+      "vigilance": {
+        "pct": 5.88,
+        "ci": [
+          3.3,
+          10.2
+        ],
+        "n": 187,
+        "k": 11
+      },
+      "flip_pct": 10.16
+    },
+    "gemini-3.5-flash on generator_B": {
+      "ISB": {
+        "pct": 9.3,
+        "ci": [
+          6.3,
+          13.5
+        ],
+        "n": 258,
+        "k": 24
+      },
+      "vigilance": {
+        "pct": 6.59,
+        "ci": [
+          4.2,
+          10.3
+        ],
+        "n": 258,
+        "k": 17
+      },
+      "flip_pct": 15.89
+    },
+    "google/gemma-4-31B-it on generator_A": {
+      "ISB": {
+        "pct": 10.58,
+        "ci": [
+          7.0,
+          15.8
+        ],
+        "n": 189,
+        "k": 20
+      },
+      "vigilance": {
+        "pct": 8.47,
+        "ci": [
+          5.3,
+          13.3
+        ],
+        "n": 189,
+        "k": 16
+      },
+      "flip_pct": 19.05
+    },
+    "google/gemma-4-31B-it on generator_B": {
+      "ISB": {
+        "pct": 7.31,
+        "ci": [
+          4.7,
+          11.1
+        ],
+        "n": 260,
+        "k": 19
+      },
+      "vigilance": {
+        "pct": 11.92,
+        "ci": [
+          8.5,
+          16.4
+        ],
+        "n": 260,
+        "k": 31
+      },
+      "flip_pct": 19.23
+    },
+    "llama3.1:8b on generator_A": {
+      "ISB": {
+        "pct": 8.47,
+        "ci": [
+          5.3,
+          13.3
+        ],
+        "n": 189,
+        "k": 16
+      },
+      "vigilance": {
+        "pct": 7.94,
+        "ci": [
+          4.9,
+          12.7
+        ],
+        "n": 189,
+        "k": 15
+      },
+      "flip_pct": 16.4
+    },
+    "llama3.1:8b on generator_B": {
+      "ISB": {
+        "pct": 11.49,
+        "ci": [
+          8.2,
+          15.9
+        ],
+        "n": 261,
+        "k": 30
+      },
+      "vigilance": {
+        "pct": 12.26,
+        "ci": [
+          8.8,
+          16.8
+        ],
+        "n": 261,
+        "k": 32
+      },
+      "flip_pct": 23.75
+    }
+  },
+  "generator_B_model_by_generator": {
+    "generator_A": {
+      "ISB": {
+        "pct": 5.32,
+        "ci": [
+          2.9,
+          9.5
+        ],
+        "n": 188,
+        "k": 10
+      },
+      "vig": {
+        "pct": 18.09,
+        "ci": [
+          13.2,
+          24.2
+        ],
+        "n": 188,
+        "k": 34
+      }
+    },
+    "generator_B": {
+      "ISB": {
+        "pct": 3.45,
+        "ci": [
+          1.8,
+          6.4
+        ],
+        "n": 261,
+        "k": 9
+      },
+      "vig": {
+        "pct": 9.2,
+        "ci": [
+          6.3,
+          13.3
+        ],
+        "n": 261,
+        "k": 24
+      }
+    }
+  }
+}

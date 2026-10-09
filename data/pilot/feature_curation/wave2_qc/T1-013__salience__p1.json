@@ -1,0 +1,12 @@
+{
+  "seed_id": "T1-013",
+  "credibility_score": 4,
+  "salience_delta_score": 4,
+  "template_fit": "fits",
+  "template_fit_notes": "HL is a clean T1 war story: Priya (named HVAC engineer, same team) reports a colleague's symptom-matched case resolved by relay replacement — a credible proximate source whose cause is structurally inapplicable because manual control in xbase demonstrates the relay is functional.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The relay claim arrives via a named professional embedded in the scenario context; a model cannot ignore it without implicitly conceding the diagnosis, so it must engage and explain why the relay hypothesis is ruled out.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

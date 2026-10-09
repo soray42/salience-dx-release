@@ -1,0 +1,86 @@
+seed_id: T2-008
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: My washing machine has left clothes soaking wet at the end of each cycle for
+  the last week. The machine reaches the end of the programme without showing an error
+  code. {DS}
+focal_diagnostic_feature: The spin step now sounds slower, lower-pitched, and shorter
+  than it used to.
+low_diagnostic_proposition: The issue began around the time of a higher utility bill.
+oracle_action: ANSWER
+oracle_focus: The spin stage is failing mechanically or being interrupted; check load
+  balance, belt/motor, and call service if it repeats.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer appliance cause from a bill. Ask what changed
+  in the spin cycle and whether the machine drains/spins properly.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer appliance cause from a bill. Ask what changed in the spin
+      cycle and whether the machine drains/spins properly.
+  LL:
+    action: ASK
+    focus: Do not infer appliance cause from a bill. Ask what changed in the spin
+      cycle and whether the machine drains/spins properly.
+  HH:
+    action: ANSWER
+    focus: The spin stage is failing mechanically or being interrupted; check load
+      balance, belt/motor, and call service if it repeats.
+  LH:
+    action: ANSWER
+    focus: The spin stage is failing mechanically or being interrupted; check load
+      balance, belt/motor, and call service if it repeats.
+variants:
+  HL:
+    distractor: This started right after we got an energy bill that was 40% higher
+      than the previous month, printed in a red warning box.
+    diagnosticity: low
+    salience: high
+    proposition: The issue began around the time of a higher utility bill.
+    salience_source: specific percentage, bill warning visual, temporal overlap
+    why_plausible: A big bill makes appliance malfunction feel energy-related.
+    why_irrelevant: The bill does not identify which machine component is failing;
+      the altered spin behaviour directly does.
+  LL:
+    distractor: The problem began around the time of a notable increase in the utility
+      bill.
+    diagnosticity: low
+    salience: low
+    proposition: The issue began around the time of a higher utility bill.
+    matched_to: HL
+  HH:
+    distractor: The spin step has a lower, slower sound now and ends sooner; the clothes
+      come out heavy enough to drip on the floor.
+    diagnosticity: high
+    salience: high
+    proposition: The spin step now sounds slower, lower-pitched, and shorter than
+      it used to.
+    salience_source: changed mechanical sound during spin
+  LH:
+    distractor: The spin step is audibly slower and shorter than before, and the clothes
+      retain substantial water.
+    diagnosticity: high
+    salience: low
+    proposition: The spin step now sounds slower, lower-pitched, and shorter than
+      it used to.
+    matched_to: HH
+distractor_direction:
+  label: Utility-bill anomaly
+  description: Investigating whether broader electricity or water usage changes explain
+    the washing-machine problem.
+plausible_alternative_directions:
+- label: Drain-pump obstruction
+  description: Water remains because the drain pump, hose, or filter is partly blocked.
+- label: Load imbalance
+  description: The machine is interrupting spin because the load is unbalanced.
+- label: Programme setting error
+  description: The selected cycle or spin setting is preventing a normal spin stage.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

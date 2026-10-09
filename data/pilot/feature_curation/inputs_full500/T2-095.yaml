@@ -1,0 +1,161 @@
+seed_id: T2-095
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'My mechanical keyboard has started double-typing on some keys: I press once
+  and get two characters, or a letter repeats on its own mid-word. It is a wired board
+  I have used daily for about three years, and it happens across different applications
+  and after a reboot. The doubling is intermittent but frequent enough that I am constantly
+  going back to fix words. {DS}'
+focal_diagnostic_feature: The doubling is confined to the most-used keys, which a
+  key tester shows emit two press events per single keystroke.
+low_diagnostic_proposition: The double-typing started around the time the desktop
+  wallpaper was changed.
+oracle_action: ANSWER
+oracle_focus: Treat this as switch contact bounce (chatter) on the worn high-use keys;
+  the per-key tester result localises it to those switches, so clean, hot-swap, or
+  resolder the affected switches rather than chasing software settings.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a wallpaper change to key chatter; it
+  has no mechanism. Ask which keys double, whether a key tester shows duplicate press
+  events, and how old the switches are.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a wallpaper change to key chatter; it has no mechanism.
+      Ask which keys double, whether a key tester shows duplicate press events, and
+      how old the switches are.
+  LL:
+    action: ASK
+    focus: Do not connect a wallpaper change to key chatter; it has no mechanism.
+      Ask which keys double, whether a key tester shows duplicate press events, and
+      how old the switches are.
+  HH:
+    action: ANSWER
+    focus: Treat this as switch contact bounce (chatter) on the worn high-use keys;
+      the per-key tester result localises it to those switches, so clean, hot-swap,
+      or resolder the affected switches rather than chasing software settings.
+  LH:
+    action: ANSWER
+    focus: Treat this as switch contact bounce (chatter) on the worn high-use keys;
+      the per-key tester result localises it to those switches, so clean, hot-swap,
+      or resolder the affected switches rather than chasing software settings.
+variants:
+  HL:
+    distractor: I should mention this all began the same day I finally changed my
+      desktop wallpaper from the default to a dark photo of a mountain range; the
+      very first evening with the new background, the double letters showed up.
+    diagnosticity: low
+    salience: high
+    proposition: The double-typing started around the time the desktop wallpaper was
+      changed.
+    salience_source: B/C — vivid first-person dated chronology pinning the symptom's
+      onset to the wallpaper change.
+    why_plausible: Onset coinciding with a deliberate change invites treating that
+      change as the trigger, especially since both touch the computer.
+    why_irrelevant: A static wallpaper image is purely cosmetic and never reaches
+      keystroke processing, so it cannot make a physical switch register twice.
+  LL:
+    distractor: The double-typing started around the time the desktop wallpaper image
+      was changed to a new one.
+    diagnosticity: low
+    salience: low
+    proposition: The double-typing started around the time the desktop wallpaper was
+      changed.
+    matched_to: HL
+  HH:
+    distractor: The double-registration is concentrated on my most-used keys, E, the
+      spacebar, and the left Shift, and a key-tester utility shows each of those producing
+      two rapid press events from one physical keystroke.
+    diagnosticity: high
+    salience: high
+    proposition: The doubling is confined to the most-used keys, which a key tester
+      shows emit two press events per single keystroke.
+    salience_source: Concrete localisation to the highest-wear keys plus the key-tester
+      showing duplicate press events pins it to switch chatter.
+  LH:
+    distractor: The doubling is confined to the most-used keys, which a key tester
+      shows emit two press events per single keystroke.
+    diagnosticity: high
+    salience: low
+    proposition: The doubling is confined to the most-used keys, which a key tester
+      shows emit two press events per single keystroke.
+    matched_to: HH
+distractor_direction:
+  label: Wallpaper change
+  description: Treating the desktop wallpaper change as the trigger for the double-typing
+    because the symptom began around then.
+plausible_alternative_directions:
+- label: Keyboard firmware or debounce
+  description: Whether a firmware/debounce setting or corrupted config is producing
+    repeats across all keys.
+- label: USB or cable fault
+  description: Whether a flaky cable or port is causing spurious repeated input events.
+leak_audit:
+  ll_atomic_claims:
+  - The double-typing started.
+  - It started around the time the desktop wallpaper was changed.
+  hh_atomic_claims:
+  - The doubling is concentrated on the most-used keys (E, spacebar, left Shift).
+  - A key tester shows each affected key emits two press events per single keystroke.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-day, first-evening onset chronology.
+    confident_assertion: I should mention this all began the same day...
+    concrete_detail: Detail about the setting change (default to dark mountain photo)
+      only; no claim about which keys fail.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 39
+  ll_word_count: 16
+  hh_word_count: 32
+  lh_word_count: 20
+  notes: 'LL carries only the started-around-wallpaper-change claim; the wallpaper''s
+    image and the first-evening detail
+
+    are HL-only colour about the change itself. xbase reports symptoms (doubling,
+    cross-app, survives reboot,
+
+    intermittent) and withholds the per-key localisation and tester result, so HL/LL
+    cannot reject the coincidence.
+
+    The decisive most-used-keys-plus-tester evidence lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One could try to argue a wallpaper change implies other concurrent system
+    activity, such as a settings sync or
+
+    background process, that might interfere with input. But that stretches far beyond
+    the stated event: setting a
+
+    static desktop image is a display-layer cosmetic change that never touches the
+    keyboard input path, introduces
+
+    no driver or interrupt behaviour, and cannot cause a single physical key press
+    to be registered twice. There is
+
+    no constructible mechanism by which the wallpaper bears on key chatter, and the
+    focal evidence localises the
+
+    fault to worn switches on specific high-use keys.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the coincidence has no mechanism to close; xbase
+    simply withholds the per-key tester evidence so it lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A mechanical keyboard double-typing, where switch chatter localised
+    to the most-used keys by a key tester, not a coincident wallpaper change, is the
+    cause.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

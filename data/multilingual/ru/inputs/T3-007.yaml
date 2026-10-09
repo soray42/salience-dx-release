@@ -1,0 +1,102 @@
+seed_id: T3-007
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Наш сервис аутентификации иногда выдаёт JWT, в которых поле `exp` уже просрочено
+  на момент выдачи. Это происходит менее чем в 1% токенов. Сервис работает на трёх
+  репликах за балансировщиком нагрузки. {DS}
+focal_diagnostic_feature: Все проблемные токены поступают с реплики 2, системные часы
+  которой отстают от реального времени ровно на 24 часа.
+low_diagnostic_proposition: A principal security engineer says the token library should
+  be treated as the main cause and replaced.
+oracle_action: ANSWER
+oracle_focus: Fix time synchronisation on replica 2, recycle it, and add clock-skew
+  monitoring across replicas.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not jump to library migration from authority alone.
+  Ask for per-replica token attribution and node time checks.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not jump to library migration from authority alone. Ask for per-replica
+      token attribution and node time checks.
+  LL:
+    action: ASK
+    focus: Do not jump to library migration from authority alone. Ask for per-replica
+      token attribution and node time checks.
+  HH:
+    action: ANSWER
+    focus: Fix time synchronisation on replica 2, recycle it, and add clock-skew monitoring
+      across replicas.
+  LH:
+    action: ANSWER
+    focus: Fix time synchronisation on replica 2, recycle it, and add clock-skew monitoring
+      across replicas.
+variants:
+  HL:
+    distractor: Наш главный инженер по безопасности убеждён, что библиотека JWT неисправна,
+      и хочет немедленно перевести весь сервис на PASETO.
+    diagnosticity: low
+    salience: high
+    proposition: A principal security engineer says the token library should be treated
+      as the main cause and replaced.
+    salience_source: senior authority, dramatic migration prescription
+    why_plausible: Security-library bugs are plausible and the role is credible.
+    why_irrelevant: The per-replica pattern and clock offset exactly explain the timestamps;
+      library migration ignores direct node evidence.
+  LL:
+    distractor: Старший инженер по безопасности заявил, что основная причина — библиотека
+      токенов, и её следует заменить.
+    diagnosticity: low
+    salience: low
+    proposition: A principal security engineer says the token library should be treated
+      as the main cause and replaced.
+    matched_to: HL
+  HH:
+    distractor: Все проблемные токены — с реплики 2, а часы этой машины отстают ровно
+      на 24 часа, что в точности совпадает с просроченными значениями `exp`.
+    diagnosticity: high
+    salience: high
+    proposition: All bad tokens come from replica 2, whose system clock is exactly
+      24 hours behind real time.
+    salience_source: per-replica isolation plus clock measurement
+  LH:
+    distractor: Проблемные токены поступают только с реплики 2, системные часы которой
+      отстают от реального времени ровно на 24 часа.
+    diagnosticity: high
+    salience: low
+    proposition: All bad tokens come from replica 2, whose system clock is exactly
+      24 hours behind real time.
+    matched_to: HH
+distractor_direction:
+  label: Дефект библиотеки токенов
+  description: Расследование того, является ли библиотека JWT/токенов неисправной
+    или небезопасной и подлежит ли замене.
+plausible_alternative_directions:
+- label: Проблема маршрутизации балансировщика нагрузки
+  description: Часть запросов может направляться на неправильно настроенный или устаревший
+    экземпляр сервиса.
+- label: Ошибка ротации ключей подписи
+  description: Ротация ключей или кэшированное состояние ключей может приводить к
+    непоследовательной валидации или генерации токенов.
+- label: Ошибка преобразования часового пояса
+  description: Код приложения может некорректно обрабатывать преобразование UTC/локального
+    времени при установке значений срока действия.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-007.yaml
+  source_xbase_sha256: 9e04c14a98719437
+  translated_content_sha256: da040213fe15a1ba
+  translation_notes: ''

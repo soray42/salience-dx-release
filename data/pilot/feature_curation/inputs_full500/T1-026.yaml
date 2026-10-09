@@ -1,0 +1,168 @@
+seed_id: T1-026
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: Clients calling one POST endpoint on our REST API started getting 400 Bad Request
+  responses for some requests since yesterday. The same payloads worked fine before,
+  and a teammate calling the endpoint from a desktop HTTP tool gets a clean 200 every
+  time. The application code handling the route has not changed, and the requests
+  that fail look identical in the browser network tab. {DS}
+focal_diagnostic_feature: The failing requests are the ones whose custom header name
+  contains an underscore; the newly added reverse proxy drops underscore-named headers
+  by default, so the app sees the required header missing and returns 400.
+low_diagnostic_proposition: A comparable 400-error problem on another team was caused
+  by a JSON schema validation library upgrade tightening field constraints.
+oracle_action: ANSWER
+oracle_focus: Enable underscore-in-header support on the reverse proxy (or rename
+  the custom header to use hyphens); the proxy is silently stripping the underscore-named
+  header the app requires, which is why those requests 400 while direct calls succeed.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the other team's validation-library-upgrade
+  explanation. Ask what distinguishes the failing requests from the passing ones,
+  especially headers and the path they take through any proxy.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the other team's validation-library-upgrade explanation. Ask
+      what distinguishes the failing requests from the passing ones, especially headers
+      and the path they take through any proxy.
+  LL:
+    action: ASK
+    focus: Do not adopt the other team's validation-library-upgrade explanation. Ask
+      what distinguishes the failing requests from the passing ones, especially headers
+      and the path they take through any proxy.
+  HH:
+    action: ANSWER
+    focus: Enable underscore-in-header support on the reverse proxy (or rename the
+      custom header to use hyphens); the proxy is silently stripping the underscore-named
+      header the app requires, which is why those requests 400 while direct calls
+      succeed.
+  LH:
+    action: ANSWER
+    focus: Enable underscore-in-header support on the reverse proxy (or rename the
+      custom header to use hyphens); the proxy is silently stripping the underscore-named
+      header the app requires, which is why those requests 400 while direct calls
+      succeed.
+variants:
+  HL:
+    distractor: Joaquim, a backend lead I have worked with for years, told me his
+      team hit a wave of sudden 400s that turned out to be a JSON schema validation
+      library upgrade that quietly tightened the rules on several request fields overnight.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable 400-error problem on another team was caused by a JSON
+      schema validation library upgrade tightening field constraints.
+    salience_source: A — an experienced backend lead recounting a closely matching
+      sudden-400s incident.
+    why_plausible: Validation-library upgrades silently tightening constraints is
+      a real and common cause of new 400s, so it is a natural first hypothesis.
+    why_irrelevant: A stricter validator would reject the same payload everywhere,
+      but the teammate's direct call with identical payload returns 200; the failure
+      depends on the request path through the proxy, not on payload validation.
+  LL:
+    distractor: A comparable 400-error problem on another team was caused by a JSON
+      schema validation library upgrade tightening field constraints.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable 400-error problem on another team was caused by a JSON
+      schema validation library upgrade tightening field constraints.
+    matched_to: HL
+  HH:
+    distractor: The failing requests all carry a custom header whose name contains
+      an underscore, and a new reverse proxy was added yesterday that drops underscore-named
+      headers by default; the app then sees its required header missing and returns
+      400, which is why the direct desktop-tool call succeeds.
+    diagnosticity: high
+    salience: high
+    proposition: The failing requests are the ones whose custom header name contains
+      an underscore; the newly added reverse proxy drops underscore-named headers
+      by default, so the app sees the required header missing and returns 400.
+    salience_source: The underscore-header pattern plus the new proxy's default-drop
+      behaviour names the exact stripping mechanism.
+  LH:
+    distractor: Failing requests carry an underscore-named header that the new reverse
+      proxy drops by default, so the app returns 400 for a missing required header.
+    diagnosticity: high
+    salience: low
+    proposition: The failing requests are the ones whose custom header name contains
+      an underscore; the newly added reverse proxy drops underscore-named headers
+      by default, so the app sees the required header missing and returns 400.
+    matched_to: HH
+distractor_direction:
+  label: Validation-library tightening
+  description: Investigating whether a JSON schema or request-validation library upgrade
+    tightened constraints and is rejecting previously valid payloads.
+plausible_alternative_directions:
+- label: Client serialization change
+  description: Whether a client library update started sending a malformed or differently
+    encoded body that the server rejects.
+- label: Content-Type mismatch
+  description: Whether some clients send a Content-Type the route no longer accepts.
+leak_audit:
+  ll_atomic_claims:
+  - A comparable 400-error problem occurred on another team.
+  - It was caused by a JSON schema validation library upgrade tightening field constraints.
+  hh_atomic_claims:
+  - The failing requests carry a custom header whose name contains an underscore.
+  - A new reverse proxy added yesterday drops underscore-named headers by default.
+  - The app then sees its required header missing and returns 400, while the direct
+    desktop-tool call succeeds.
+  hl_salience_dimensions:
+    source_credibility: Named long-time backend lead (Joaquim).
+    narrative_coherence: Coherent account of a sudden-400s incident resolving to a
+      validation upgrade.
+    confident_assertion: Told me it turned out to be the library upgrade.
+    concrete_detail: N/A — HL adds only Joaquim's identity and his incident, no fact
+      about the user's own requests that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 38
+  ll_word_count: 21
+  hh_word_count: 46
+  lh_word_count: 24
+  notes: 'xbase establishes that identical payloads now fail through the browser but
+    pass via a direct desktop tool, and
+
+    that app code is unchanged — symptoms consistent with many causes. The decisive
+    underscore-header-plus-new-proxy
+
+    evidence is HH/LH-only. The teammate''s clean 200 with the same payload is a neutral
+    observation, not the
+
+    affirmative cause, so it does not let xbase alone reject the validation-upgrade
+    distractor.
+
+    '
+causal_audit:
+  steelman: 'A backend engineer could argue that a transitively pulled validation-library
+    bump is a classic source of
+
+    surprise 400s: lockfiles drift, a stricter default kicks in, and previously tolerated
+    payloads start failing for
+
+    only some clients whose bodies sit near a constraint edge — so auditing recent
+    dependency changes to the
+
+    validator is a sensible first move when 400s appear without code changes.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'Yes (partial): xbase notes a teammate''s direct call with
+    an identical payload returns 200, which is inconsistent with payload-level validation
+    tightening; the affirmative cause (proxy stripping underscore headers) is supplied
+    only in HH/LH.'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: POST endpoint 400s caused by a newly added reverse proxy dropping underscore-named
+    custom headers so the app sees a required header missing, not a JSON validation-library
+    upgrade.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

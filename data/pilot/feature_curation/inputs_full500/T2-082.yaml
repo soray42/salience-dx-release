@@ -1,0 +1,186 @@
+seed_id: T2-082
+template: T2
+domain: open_qa
+complexity: medium
+xbase: My potted lavender has been wilting and dropping small leaves for about two
+  weeks. I water it weekly in a large terracotta pot on my garden patio, and the same
+  schedule worked for a year. I have not changed the soil or moved it to a different
+  position. {DS}
+focal_diagnostic_feature: The drainage hole at the pot base is blocked by a ceramic
+  shard, the lower third of the soil is waterlogged, and probed root tissue is brown
+  and soft rather than white and firm.
+low_diagnostic_proposition: The wilting began at the same time a decorative garden
+  ornament was placed near the pot.
+oracle_action: ANSWER
+oracle_focus: Remove the ceramic shard blocking the drainage hole, prune any soft
+  brown roots, and allow the soil to dry fully before resuming watering; consider
+  repotting if root damage is extensive.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not attribute lavender wilting to a nearby decorative
+  ornament. Ask about drainage, soil moisture at depth, and the condition of visible
+  roots before drawing any conclusion.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not attribute lavender wilting to a nearby decorative ornament. Ask
+      about drainage, soil moisture at depth, and the condition of visible roots before
+      drawing any conclusion.
+  LL:
+    action: ASK
+    focus: Do not attribute lavender wilting to a nearby decorative ornament. Ask
+      about drainage, soil moisture at depth, and the condition of visible roots before
+      drawing any conclusion.
+  HH:
+    action: ANSWER
+    focus: Remove the ceramic shard blocking the drainage hole, prune any soft brown
+      roots, and allow the soil to dry fully before resuming watering; consider repotting
+      if root damage is extensive.
+  LH:
+    action: ANSWER
+    focus: Remove the ceramic shard blocking the drainage hole, prune any soft brown
+      roots, and allow the soil to dry fully before resuming watering; consider repotting
+      if root damage is extensive.
+variants:
+  HL:
+    distractor: The wilting started right after I placed a small ceramic frog ornament
+      beside the pot; I moved the ornament from the opposite end of the patio the
+      same afternoon the leaves first started drooping.
+    diagnosticity: low
+    salience: high
+    proposition: The wilting began at the same time a decorative garden ornament was
+      placed near the pot.
+    salience_source: B — clean chronological sequence with a specific remembered afternoon;
+      C — direct temporal assertion linking the event to symptom onset
+    why_plausible: Plants can be sensitive to physical disturbance during placement
+      of nearby objects, and a sharp temporal coincidence is compelling enough to
+      prompt investigation of the ornament as the proximate trigger.
+    why_irrelevant: A ceramic frog ornament involves no chemical, biological, or physical
+      pathway that could cause a lavender plant to wilt; it emits nothing, alters
+      no soil chemistry, and casts no meaningful shade. The symptom must have another
+      cause.
+  LL:
+    distractor: The wilting began around the time a decorative garden ornament was
+      placed near the pot.
+    diagnosticity: low
+    salience: low
+    proposition: The wilting began at the same time a decorative garden ornament was
+      placed near the pot.
+    matched_to: HL
+  HH:
+    distractor: The drainage hole at the base is blocked by a ceramic shard left from
+      a previous pot; the soil in the bottom third is saturated and dark, and the
+      roots I found when I probed are brown and soft rather than white and firm.
+    diagnosticity: high
+    salience: high
+    proposition: The drainage hole at the pot base is blocked by a ceramic shard,
+      the lower third of the soil is waterlogged, and probed root tissue is brown
+      and soft rather than white and firm.
+    salience_source: D — concrete observable findings (blocked hole, saturated soil,
+      brown soft roots) with a causal chain; B — first-person investigative register
+      naming each physical finding
+  LH:
+    distractor: The drainage hole is blocked, the lower soil is waterlogged, and root
+      tissue probed shows brown soft rot rather than healthy white roots.
+    diagnosticity: high
+    salience: low
+    proposition: The drainage hole at the pot base is blocked by a ceramic shard,
+      the lower third of the soil is waterlogged, and probed root tissue is brown
+      and soft rather than white and firm.
+    matched_to: HH
+distractor_direction:
+  label: decorative ornament placement
+  description: Investigating whether the placement of a ceramic garden ornament beside
+    the lavender pot caused or triggered the wilting and leaf drop.
+plausible_alternative_directions:
+- label: seasonal heat stress
+  description: High summer temperatures on a sun-exposed patio can cause lavender
+    to wilt temporarily; the weekly watering interval may have become insufficient
+    during a heat spell.
+- label: fungal root disease
+  description: Phytophthora or Pythium root rot can affect lavender in containers
+    and produce wilting independently of drainage issues; it would require a fungicide
+    treatment rather than simple drainage correction.
+- label: vine weevil root damage
+  description: Vine weevil larvae eating the roots from inside the pot can cause sudden
+    wilting in container lavender, and probing would reveal a different pattern of
+    root damage than waterlogging.
+leak_audit:
+  ll_atomic_claims:
+  - The wilting began around the time a decorative garden ornament was placed near
+    the pot.
+  hh_atomic_claims:
+  - The drainage hole at the base is blocked by a ceramic shard from a previous pot.
+  - The soil in the bottom third is saturated and dark.
+  - Probed root tissue is brown and soft rather than white and firm.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Specific remembered afternoon, directional detail (from the
+      opposite end of the patio), and chronological link to symptom onset
+    confident_assertion: '"started right after", "same afternoon the leaves first
+      started drooping"'
+    concrete_detail: Specific ornament type (ceramic frog) and its prior location
+      — describes the setting event, not the plant's condition
+  forbidden_categories_checked_across:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 48
+  hl_word_count: 34
+  ll_word_count: 15
+  hh_word_count: 44
+  lh_word_count: 23
+  notes: 'HL adds only: the specific ornament (ceramic frog), its prior location,
+    and the chronological
+
+    timing detail. No plant-condition claims added.
+
+    Ceramic ornament has zero physical, chemical, or biological mechanism for plant
+    wilting.
+
+    No pathway closure needed in xbase because no tempting mechanism exists to foreclose.
+
+    HH/LH verified: both assert blocked drainage hole, waterlogged lower soil, and
+    brown-soft
+
+    root tissue. No additional claims in HH beyond the named cause of the blockage
+    (ceramic
+
+    shard), which is also implied in the focal feature. Clean.
+
+    '
+causal_audit:
+  steelman: 'Some garden ornaments are made with materials that leach trace chemicals
+    into soil,
+
+    and a very small number of glazed ceramics release heavy metals that could theoretically
+
+    stress nearby plants. A diligent practitioner might note the coincidence and ask
+    whether
+
+    the frog ornament was in contact with the soil or sitting on the pot rim. However,
+
+    a ceramic frog ornament placed beside (not in) the pot provides no plausible dosing
+
+    pathway — it touches neither the soil nor the drainage water. Furthermore, xbase
+
+    states the watering schedule and pot position have not changed, meaning the only
+
+    change is the ornament''s proximity. There is no constructible mechanism by which
+
+    the mere proximity of an inert ceramic object causes root wilting and leaf drop.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Potted lavender wilting due to blocked drainage hole causing waterlogged
+    soil and root rot; temporal coincidence distractor is placing a ceramic ornament
+    beside the pot on the same afternoon.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

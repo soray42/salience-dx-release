@@ -1,0 +1,13 @@
+{
+  "seed_id": "T6-016",
+  "my_own_diagnosis": "From xbase alone, the 15-18 pp equity overshoot (75-78% actual vs. 60% target) after two bull-market years without rebalancing shifts the portfolio's risk/return profile materially above the blended benchmark; the 0.07% expense ratio matches the index, leaving allocation drift as the only quantified explanation for the multi-year underperformance gap.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature makes the drift mechanism explicit with precise figures, the fee pathway is closed in xbase, and a senior practitioner would unambiguously flag rebalancing as the corrective action before any fund change.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cells correctly map to ASK+decline-fee-attribution, HH/LH correctly map to ANSWER+address-drift; the low_diagnostic_oracle_focus appropriately instructs asking about allocation vs. target before accepting fee causation.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

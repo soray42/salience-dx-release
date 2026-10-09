@@ -1,0 +1,13 @@
+{
+  "seed_id": "T2-015",
+  "my_own_diagnosis": "The venue move from a transit-accessible central library to an edge-of-town flat created a direct structural access barrier for members who rely on public transport, which straightforwardly explains the halving of attendance in the same month; no other candidate in xbase comes close to matching the timing and magnitude.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature names a concrete, verifiable structural change (venue accessibility) that maps directly onto the observed outcome, leaving no ambiguity about what a competent practitioner would investigate first.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracle mapping is correct: HL/LL both carry the low-diagnostic e-reader distractor and correctly route to ASK/decline-hypothesis; HH/LH both carry the high-diagnostic venue-change information and correctly route to ANSWER/venue-change.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

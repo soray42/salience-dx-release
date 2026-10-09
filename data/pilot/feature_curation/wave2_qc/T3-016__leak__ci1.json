@@ -1,0 +1,31 @@
+{
+  "seed_id": "T3-016",
+  "ll_claims_extracted": [
+    "A friend made the statement about incorporation.",
+    "The friend asserts that incorporation is always the right structure.",
+    "The claim applies universally to any freelancer."
+  ],
+  "hl_case_claims": [
+    "A sole trader structure is never the right call for any serious freelancer (generic rule, not user-specific).",
+    "Incorporation is always the right approach (implied by the negation of sole trader)."
+  ],
+  "hl_source_claims": [
+    "The friend is close.",
+    "The friend runs a successful tech startup.",
+    "The friend told the user very confidently.",
+    "The friend always incorporates from day one (his own practice).",
+    "The friend has incorporated three businesses (source history)."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 39,
+    "ll": 12,
+    "xbase": 46,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

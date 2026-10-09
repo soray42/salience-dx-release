@@ -1,0 +1,175 @@
+seed_id: T3-094
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our product listing pages are loading slowly for users in two European cities.
+  Average page size on the wire is roughly three times larger than expected, and the
+  origin server responds correctly to local curl tests with gzip-encoded bodies. The
+  CDN layer is a Cloudflare Worker setup added three months ago. {DS}
+focal_diagnostic_feature: 'The Cloudflare Worker strips the `Vary: Accept-Encoding`
+  response header before caching, so Cloudflare stores one uncompressed copy and serves
+  it to all clients regardless of their encoding preference.'
+low_diagnostic_proposition: This symptom is always caused by misconfigured server-side
+  compression and is never a CDN-layer issue.
+oracle_action: ANSWER
+oracle_focus: 'Remove or fix the Worker code that strips `Vary: Accept-Encoding`;
+  once the header is preserved, Cloudflare will cache and serve compressed responses
+  to clients that request gzip.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the always-server-side-compression rule
+  given that the origin already serves gzip correctly. Ask for what the Worker does
+  to response headers before caching.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the always-server-side-compression rule given that the origin
+      already serves gzip correctly. Ask for what the Worker does to response headers
+      before caching.
+  LL:
+    action: ASK
+    focus: Do not accept the always-server-side-compression rule given that the origin
+      already serves gzip correctly. Ask for what the Worker does to response headers
+      before caching.
+  HH:
+    action: ANSWER
+    focus: 'Remove or fix the Worker code that strips `Vary: Accept-Encoding`; once
+      the header is preserved, Cloudflare will cache and serve compressed responses
+      to clients that request gzip.'
+  LH:
+    action: ANSWER
+    focus: 'Remove or fix the Worker code that strips `Vary: Accept-Encoding`; once
+      the header is preserved, Cloudflare will cache and serve compressed responses
+      to clients that request gzip.'
+variants:
+  HL:
+    distractor: Borbála, our lead platform engineer, barely looked at the trace before
+      saying this is always a server-side compression issue — she said origins misconfigure
+      mod_deflate and then blame the CDN when it is never the CDN.
+    diagnosticity: low
+    salience: high
+    proposition: This symptom is always caused by misconfigured server-side compression
+      and is never a CDN-layer issue.
+    salience_source: Dimension A (source credibility) — lead platform engineer with
+      domain authority; dimension C (confident assertion) — 'always', 'never the CDN',
+      'barely looked at' signals confident dismissal.
+    why_plausible: Server-side compression misconfiguration (mod_deflate, gzip_static,
+      Accept-Encoding negotiation) is a genuinely common cause of inflated page sizes
+      and would be a reasonable first hypothesis for a senior engineer.
+    why_irrelevant: The xbase explicitly states the origin already returns gzip-encoded
+      bodies in curl tests, closing the server-side pathway. Borbála's rule does not
+      engage this evidence and the Worker header manipulation is the actual cause.
+  LL:
+    distractor: A senior platform engineer stated that this symptom is always caused
+      by misconfigured server-side compression and is never a CDN issue.
+    diagnosticity: low
+    salience: low
+    proposition: This symptom is always caused by misconfigured server-side compression
+      and is never a CDN-layer issue.
+    matched_to: HL
+  HH:
+    distractor: 'The Worker code strips the `Vary: Accept-Encoding` header from every
+      response before caching, so Cloudflare stores one uncompressed copy and serves
+      it to all clients — gzip is never applied at the edge even when browsers request
+      it.'
+    diagnosticity: high
+    salience: high
+    proposition: 'The Cloudflare Worker strips the `Vary: Accept-Encoding` response
+      header before caching, so Cloudflare stores one uncompressed copy and serves
+      it to all clients regardless of their encoding preference.'
+    salience_source: Dimension B (narrative coherence) — precise header name, causal
+      chain from strip to cache behaviour to client impact; dimension C (confident
+      assertion) — 'never applied at the edge' stated categorically.
+  LH:
+    distractor: 'The Worker strips `Vary: Accept-Encoding` before caching, causing
+      Cloudflare to serve one uncompressed response to all clients regardless of their
+      encoding preference.'
+    diagnosticity: high
+    salience: low
+    proposition: 'The Cloudflare Worker strips the `Vary: Accept-Encoding` response
+      header before caching, so Cloudflare stores one uncompressed copy and serves
+      it to all clients regardless of their encoding preference.'
+    matched_to: HH
+distractor_direction:
+  label: server-side compression misconfiguration
+  description: Investigating whether the origin server's gzip or compression module
+    is misconfigured, causing inflated page sizes on the wire.
+plausible_alternative_directions:
+- label: Cloudflare compression setting disabled
+  description: Cloudflare's own compression feature may be disabled or overridden
+    at the zone level, causing uncompressed delivery independent of the Worker.
+- label: geographic routing to distant PoP
+  description: Users in those two cities may be routing to a far Cloudflare PoP, adding
+    latency rather than inflating page size.
+- label: image or asset size regression
+  description: A recent asset build may have included unoptimised images or unminified
+    scripts that inflate the page size independently of compression.
+leak_audit:
+  ll_atomic_claims:
+  - A senior platform engineer stated this symptom is always server-side compression
+    misconfiguration.
+  - The symptom is never caused by the CDN layer.
+  hh_atomic_claims:
+  - The Worker strips the Vary Accept-Encoding header from every response before caching.
+  - Cloudflare stores one uncompressed copy.
+  - That copy is served to all clients.
+  - Gzip is never applied at the edge even when browsers request it.
+  hl_salience_dimensions:
+    source_credibility: Lead platform engineer — authoritative engineering role.
+    narrative_coherence: 'Clean narrative: glanced at trace, issued confident diagnosis,
+      named the generic pattern (mod_deflate blame-shifting).'
+    confident_assertion: '''Always'', ''never the CDN'' — categorical authority-framed
+      dismissal.'
+    concrete_detail: Named failure pattern (origins misconfigure mod_deflate) adds
+      domain-specific texture to the authority claim.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 51
+  hl_word_count: 36
+  ll_word_count: 21
+  hh_word_count: 38
+  lh_word_count: 22
+  notes: 'Source name Borbála: Hungarian female name, not in taken list, culturally
+    consistent.
+
+    xbase closes the server-side-compression pathway by stating ''origin server responds
+    correctly to local curl tests with gzip-encoded bodies'' — this is a narrow closure
+    that blocks that mechanism without naming the Worker header bug.
+
+    C4: Vary header stripping by the Worker lives only in HH/LH.
+
+    T3 authority asserts a generic ''always/never'' pattern without examining the
+    specific evidence available in xbase.
+
+    LH at 22 words is within operational target.
+
+    '
+causal_audit:
+  steelman: 'A senior engineer could argue: curl tests use a simple Accept-Encoding
+    header while real browsers send more complex negotiation headers; origin gzip
+    may work in curl but silently fail for certain Accept-Encoding variants sent by
+    browsers; this could produce inflated body sizes from the origin side rather than
+    from CDN stripping. Additionally, the three-times-larger figure could indicate
+    the origin is sending pre-compressed data that the CDN is then double-encoding
+    or decompressing before re-serving.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the origin 'responds correctly to local curl
+    tests with gzip-encoded bodies' — this closes the standard server-side compression
+    failure pathway. The steelman's browser-negotiation-variant scenario is speculative
+    and is structurally ruled out by the focal feature (Worker explicitly strips Vary
+    header, not the origin sending wrong data).
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Cloudflare Worker strips Vary Accept-Encoding before caching causing
+    uncompressed delivery to all clients; distractor is lead engineer's always-server-side-compression
+    rule despite origin serving gzip correctly.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

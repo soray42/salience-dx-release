@@ -1,0 +1,183 @@
+seed_id: T3-074
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our CI pipeline has been failing intermittently for four days with image pull
+  errors on pods that use standard public base images. The errors are not consistent
+  — the same job passes on retry about half the time. The images have not changed,
+  and our cluster nodes are fresh. {DS}
+focal_diagnostic_feature: Failed pull attempts log HTTP 429 Too Many Requests from
+  registry-1.docker.io; the cluster nodes share a single outbound IP, hitting the
+  unauthenticated Docker Hub rate limit of 100 pulls per six hours per IP.
+low_diagnostic_proposition: This class of image pull error is always caused by a misconfigured
+  imagePullPolicy setting, according to a senior platform engineer.
+oracle_action: ANSWER
+oracle_focus: Authenticate to Docker Hub on the cluster nodes (or configure an image
+  pull secret) to raise the rate limit, and consider mirroring base images to a private
+  registry to eliminate the dependency on Docker Hub pull quotas.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not follow the imagePullPolicy diagnosis from authority
+  alone. Ask for the actual HTTP error code and response from registry-1.docker.io,
+  and check whether the errors are intermittent or consistent, before auditing manifests.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not follow the imagePullPolicy diagnosis from authority alone. Ask for
+      the actual HTTP error code and response from registry-1.docker.io, and check
+      whether the errors are intermittent or consistent, before auditing manifests.
+  LL:
+    action: ASK
+    focus: Do not follow the imagePullPolicy diagnosis from authority alone. Ask for
+      the actual HTTP error code and response from registry-1.docker.io, and check
+      whether the errors are intermittent or consistent, before auditing manifests.
+  HH:
+    action: ANSWER
+    focus: Authenticate to Docker Hub on the cluster nodes (or configure an image
+      pull secret) to raise the rate limit, and consider mirroring base images to
+      a private registry to eliminate the dependency on Docker Hub pull quotas.
+  LH:
+    action: ANSWER
+    focus: Authenticate to Docker Hub on the cluster nodes (or configure an image
+      pull secret) to raise the rate limit, and consider mirroring base images to
+      a private registry to eliminate the dependency on Docker Hub pull quotas.
+variants:
+  HL:
+    distractor: Our head of platform Biruk glanced at the logs for thirty seconds
+      and said he has seen this pattern a dozen times — it is always a misconfigured
+      imagePullPolicy and there is nothing else to look at.
+    diagnosticity: low
+    salience: high
+    proposition: This class of image pull error is always caused by a misconfigured
+      imagePullPolicy setting, according to a senior platform engineer.
+    salience_source: 'A: source credibility (named head of platform Biruk with implied
+      team authority); B: narrative coherence (quick confident on-the-spot verdict,
+      generic experience framing); C: confident assertion ("always", "a dozen times",
+      "nothing else to look at").'
+    why_plausible: imagePullPolicy misconfiguration is a real and common Kubernetes
+      issue that prevents image pulls, so a senior platform engineer's confident diagnosis
+      backed by claimed repeated experience sounds authoritative and practically reasonable.
+    why_irrelevant: imagePullPolicy=Never produces consistent failures every time,
+      not the intermittent 50% pass rate described; the focal evidence shows HTTP
+      429 rate-limiting errors, a completely different failure class from a policy
+      misconfiguration.
+  LL:
+    distractor: A senior platform engineer stated that this type of image pull error
+      is always caused by a misconfigured imagePullPolicy setting.
+    diagnosticity: low
+    salience: low
+    proposition: This class of image pull error is always caused by a misconfigured
+      imagePullPolicy setting, according to a senior platform engineer.
+    matched_to: HL
+  HH:
+    distractor: The failing pull attempts log HTTP 429 Too Many Requests from registry-1.docker.io;
+      our cluster nodes share a single outbound IP and the unauthenticated Docker
+      Hub pull rate limit is 100 pulls per six hours per IP.
+    diagnosticity: high
+    salience: high
+    proposition: Failed pull attempts log HTTP 429 Too Many Requests from registry-1.docker.io;
+      the cluster nodes share a single outbound IP, hitting the unauthenticated Docker
+      Hub rate limit of 100 pulls per six hours per IP.
+    salience_source: Exact HTTP status (429), specific registry hostname, precise
+      rate limit figure (100 pulls/6 hours/IP), concrete shared-IP mechanism.
+  LH:
+    distractor: Failed pull attempts return HTTP 429 from registry-1.docker.io; the
+      cluster nodes share one IP and hit the unauthenticated Docker Hub rate limit.
+    diagnosticity: high
+    salience: low
+    proposition: Failed pull attempts log HTTP 429 Too Many Requests from registry-1.docker.io;
+      the cluster nodes share a single outbound IP, hitting the unauthenticated Docker
+      Hub rate limit of 100 pulls per six hours per IP.
+    matched_to: HH
+distractor_direction:
+  label: imagePullPolicy misconfiguration
+  description: Investigating whether the Kubernetes imagePullPolicy is set incorrectly
+    (e.g., to Never) on one or more deployments, preventing the runtime from pulling
+    the required images.
+plausible_alternative_directions:
+- label: Private registry authentication expiry
+  description: If any of the base images are mirrored through a private registry,
+    an expired image pull secret could produce intermittent 401/403 errors on pods
+    that hit the private registry path.
+- label: Node-level image cache corruption
+  description: A subset of cluster nodes may have a corrupted image cache layer, causing
+    pulls to fail on those nodes while succeeding on nodes with valid cache.
+- label: Network egress flapping to registry
+  description: Intermittent network path issues between the cluster's outbound NAT
+    and registry-1.docker.io could produce intermittent failures independent of rate
+    limiting.
+leak_audit:
+  ll_atomic_claims:
+  - A senior platform engineer stated this error class is always caused by imagePullPolicy
+    misconfiguration.
+  hh_atomic_claims:
+  - Failed pull attempts log HTTP 429 Too Many Requests.
+  - The errors come from registry-1.docker.io.
+  - The cluster nodes share a single outbound IP.
+  - The unauthenticated Docker Hub rate limit is 100 pulls per six hours per IP.
+  hl_salience_dimensions:
+    source_credibility: Named head of platform (Biruk) with implied institutional
+      authority.
+    narrative_coherence: Biruk's on-the-spot review and categorical verdict without
+      checking details creates a confident, authoritative framing.
+    confident_assertion: '"always", "a dozen times", "nothing else to look at"'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 49
+  hl_word_count: 36
+  ll_word_count: 20
+  hh_word_count: 36
+  lh_word_count: 22
+  notes: 'Intermittency in xbase (50% pass on retry) implicitly weakens the
+
+    imagePullPolicy=Never distractor within xbase (Never-policy failures
+
+    are 100% consistent) but does not directly name the cause — C4 compliant.
+
+    The HTTP 429 rate-limit evidence is structural and distinct from any
+
+    policy misconfiguration. Biruk is an Ethiopian name not previously used.
+
+    QC repair: removed tunable_value leak (''probably set to Never'') and
+
+    effort_descriptor leak (''audit every deployment manifest before looking
+
+    anywhere else'') from HL; replaced with generic-experience source framing
+
+    (''seen this pattern a dozen times'') which is allowed under C1. HL word
+
+    count updated from 38 to 36.
+
+    '
+causal_audit:
+  steelman: 'imagePullPolicy can be set to values other than Never that still cause
+
+    intermittent problems: IfNotPresent on nodes without a warm cache, or
+
+    Always on nodes with network congestion, could produce intermittent pull
+
+    failures. A senior platform engineer might reasonably flag policy review
+
+    as a first step before deeper investigation.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes the errors are intermittent (50% pass rate
+    on retry), which is inconsistent with a Never-policy misconfiguration that would
+    fail 100% consistently. The HTTP 429 focal evidence confirms rate limiting, not
+    policy.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Intermittent CI image pull failures caused by Docker Hub unauthenticated
+    rate limiting (HTTP 429) on shared-IP cluster nodes, not imagePullPolicy misconfiguration
+    as the head of platform confidently asserts.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

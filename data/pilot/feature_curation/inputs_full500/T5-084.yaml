@@ -1,0 +1,185 @@
+seed_id: T5-084
+template: T5
+domain: open_qa
+complexity: high
+xbase: I am choosing between two second-hand road bikes at similar asking prices from
+  private sellers. Bike A has visible frame scratches and surface rust on one bolt
+  but was serviced six months ago. Bike B looks almost new, with a flawless gloss
+  finish and matching bar tape. Both are the same frame size, and I did a short test
+  ride on each without finding obvious handling issues. {DS}
+focal_diagnostic_feature: A torch held inside Bike B's top tube reveals a 3 cm inward
+  dent with locally thicker surrounding paint, indicating a respray over impact damage
+  that the pristine exterior conceals; the seller confirmed a prior crash when asked.
+low_diagnostic_proposition: Bike B's near-new appearance suggests it received better
+  care and is the higher-quality choice.
+oracle_action: ANSWER
+oracle_focus: Avoid Bike B; the frame dent under the respray is a structural safety
+  concern that the pristine appearance conceals. Bike A's cosmetic wear is surface-level
+  and does not indicate mechanical problems.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer ownership quality or structural condition
+  from cosmetic finish alone. Ask for crash history from both sellers and physically
+  inspect both frames before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer ownership quality or structural condition from cosmetic finish
+      alone. Ask for crash history from both sellers and physically inspect both frames
+      before deciding.
+  LL:
+    action: ASK
+    focus: Do not infer ownership quality or structural condition from cosmetic finish
+      alone. Ask for crash history from both sellers and physically inspect both frames
+      before deciding.
+  HH:
+    action: ANSWER
+    focus: Avoid Bike B; the frame dent under the respray is a structural safety concern
+      that the pristine appearance conceals. Bike A's cosmetic wear is surface-level
+      and does not indicate mechanical problems.
+  LH:
+    action: ANSWER
+    focus: Avoid Bike B; the frame dent under the respray is a structural safety concern
+      that the pristine appearance conceals. Bike A's cosmetic wear is surface-level
+      and does not indicate mechanical problems.
+variants:
+  HL:
+    distractor: Bike B has that showroom look — flawless gloss, matching bar tape,
+      no age marks anywhere — and to my eye a bike that clean has been genuinely cherished,
+      which usually means better long-term care and fewer hidden problems.
+    diagnosticity: low
+    salience: high
+    proposition: Bike B's near-new appearance suggests it received better care and
+      is the higher-quality choice.
+    salience_source: B/C — confident first-person aesthetic judgement ("to my eye",
+      "genuinely cherished") with vivid sensory surface detail about the bike's appearance.
+    why_plausible: A pristine finish on a used bike is a natural proxy for careful
+      ownership; the inference that "clean = well cared for = fewer problems" is intuitive
+      and widely used by buyers without mechanical inspection skills.
+    why_irrelevant: A respray is specifically used to conceal damage rather than evidence
+      it; the inferential bridge from surface appearance to structural condition breaks
+      down precisely when a fresh coat of paint hides a dent.
+  LL:
+    distractor: Bike B's near-new appearance suggests it received better care and
+      is the higher-quality choice.
+    diagnosticity: low
+    salience: low
+    proposition: Bike B's near-new appearance suggests it received better care and
+      is the higher-quality choice.
+    matched_to: HL
+  HH:
+    distractor: A torch held inside Bike B's top tube at an angle reveals a 3 cm inward
+      dent with paint that is slightly thicker around it, suggesting a respray over
+      impact damage; the seller confirmed it had a previous low-speed crash but described
+      it as cosmetic.
+    diagnosticity: high
+    salience: high
+    proposition: A torch held inside Bike B's top tube reveals a 3 cm inward dent
+      with locally thicker surrounding paint, indicating a respray over impact damage
+      that the pristine exterior conceals; the seller confirmed a prior crash when
+      asked.
+    salience_source: The specific inspection technique (torch at an angle inside the
+      tube), the 3 cm measurement, the thicker-paint indicator, and the seller's confirmation
+      together make the finding concrete and unrepeatable from outside.
+  LH:
+    distractor: Bike B's top tube has a 3 cm inward dent with locally thicker paint
+      indicating a respray; the seller confirmed a prior crash.
+    diagnosticity: high
+    salience: low
+    proposition: A torch held inside Bike B's top tube reveals a 3 cm inward dent
+      with locally thicker surrounding paint, indicating a respray over impact damage
+      that the pristine exterior conceals; the seller confirmed a prior crash when
+      asked.
+    matched_to: HH
+distractor_direction:
+  label: Cosmetic-finish quality inference
+  description: Using Bike B's near-new appearance and flawless gloss finish as evidence
+    that it received superior care and is the structurally safer purchase.
+plausible_alternative_directions:
+- label: Component age and wear comparison
+  description: Inspecting groupset, chain, cassette, and brake wear on both bikes
+    to assess remaining service life independent of frame condition.
+- label: Frame material and geometry check
+  description: Verifying frame material (aluminium vs carbon vs steel) and geometry
+    fit for the intended use, since price similarity does not imply material equivalence.
+- label: Service documentation verification
+  description: Requesting the actual service receipt for Bike A's claimed six-month
+    service to confirm what was replaced and the current mechanical state.
+leak_audit:
+  ll_atomic_claims:
+  - Bike B's near-new appearance suggests it received better care.
+  - Bike B's near-new appearance suggests it is the higher-quality choice.
+  hh_atomic_claims:
+  - A torch held inside Bike B's top tube at an angle reveals a 3 cm inward dent.
+  - The paint surrounding the dent is slightly thicker.
+  - The thicker paint suggests a respray over impact damage.
+  - The seller confirmed a previous low-speed crash when asked.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person aesthetic assessment delivered in a coherent,
+      observational register with a logical inference chain from surface to care to
+      reliability.
+    confident_assertion: '"to my eye a bike that clean has been genuinely cherished"
+      — confident perceptual-to-quality inference.'
+    concrete_detail: Surface details (flawless gloss, matching bar tape, no age marks)
+      are about the bike's appearance, not its structural condition.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 35
+  ll_word_count: 14
+  hh_word_count: 45
+  lh_word_count: 23
+  notes: 'T5 aesthetic: the inferential bridge (near-new appearance → better care
+    →
+
+    higher-quality choice) appears in both HL and LL per C1/self-check 13. The
+
+    decisive focal evidence (torch inspection revealing dent + seller confirmation)
+
+    lives only in HH/LH. Bike A''s cosmetic flaws are introduced in xbase to make
+    the
+
+    appearance-quality inference feel natural. High complexity because the structural
+
+    damage under a respray requires a specific inspection technique and domain knowledge
+
+    to interpret. Ratios HL:LL=37:14=2.6, HH:LH=45:23=1.96 — both within 4:1.
+
+    '
+causal_audit:
+  steelman: 'A pristine used bike is genuinely more likely to have been stored indoors,
+    cleaned
+
+    regularly, and ridden carefully by a fastidious owner. Aesthetic care often correlates
+
+    with mechanical care in practice. The inference "clean exterior → fewer hidden
+
+    problems" is a reasonable prior for many buyers. The seed is clean because the
+
+    specific case introduces a respray — a practice explicitly designed to make damaged
+
+    bikes look new — which is a structural counterexample to the aesthetic-quality
+
+    inference. xbase gives no independent reason to suspect a respray specifically,
+
+    so the distractor direction remains live until the torch inspection in HH/LH.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase gives no independent reason to suspect a respray
+    or frame damage; the distractor direction (appearance = quality) stays live until
+    HH/LH evidence.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Used road bike purchase where the pristine-looking bike has a resprayed
+    frame dent concealing impact damage, while the cosmetically worn bike is structurally
+    sound; aesthetic appearance is offered as quality evidence.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

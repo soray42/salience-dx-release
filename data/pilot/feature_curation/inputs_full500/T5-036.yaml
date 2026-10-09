@@ -1,0 +1,184 @@
+seed_id: T5-036
+template: T5
+domain: open_qa
+complexity: high
+xbase: I am choosing between two air-source heat pumps for my home. Both models are
+  from established manufacturers, both qualify for the same government rebate, and
+  both fit our external wall space. I need a system that will be economical over the
+  next ten to fifteen years. {DS}
+focal_diagnostic_feature: Model B has a SCOP of 4.1 versus Model A's 3.6, a seven-year
+  parts-and-labour warranty versus three years, and independent testing projects annual
+  running costs approximately £310 lower, recovering Model B's £400 price premium
+  in about fifteen months.
+low_diagnostic_proposition: Model A's polished visual design and premium finish suggest
+  it is the higher-quality and more reliable system.
+oracle_action: ANSWER
+oracle_focus: Choose Model B; it has superior efficiency, a substantially longer warranty,
+  and a payback period under two years on the cost difference — the aesthetic premium
+  of Model A has no bearing on long-term running economy.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not use visual finish as a proxy for system quality.
+  Ask for SCOP ratings, warranty terms, and projected running costs for both models
+  before recommending one.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not use visual finish as a proxy for system quality. Ask for SCOP ratings,
+      warranty terms, and projected running costs for both models before recommending
+      one.
+  LL:
+    action: ASK
+    focus: Do not use visual finish as a proxy for system quality. Ask for SCOP ratings,
+      warranty terms, and projected running costs for both models before recommending
+      one.
+  HH:
+    action: ANSWER
+    focus: Choose Model B; it has superior efficiency, a substantially longer warranty,
+      and a payback period under two years on the cost difference — the aesthetic
+      premium of Model A has no bearing on long-term running economy.
+  LH:
+    action: ANSWER
+    focus: Choose Model B; it has superior efficiency, a substantially longer warranty,
+      and a payback period under two years on the cost difference — the aesthetic
+      premium of Model A has no bearing on long-term running economy.
+variants:
+  HL:
+    distractor: Model A has a large colour touchscreen, a brushed-aluminium casing,
+      and a companion app with real-time energy charts — the whole package looks genuinely
+      engineered rather than just assembled, and that impression is hard to shake.
+    diagnosticity: low
+    salience: high
+    proposition: Model A's polished visual design and premium finish suggest it is
+      the higher-quality and more reliable system.
+    salience_source: 'B: vivid enumeration of specific premium design features (touchscreen,
+      brushed aluminium, companion app); C: confident first-person framing (''that
+      impression is hard to shake'') presenting appearance as quality evidence.'
+    why_plausible: Consumer electronics and appliance marketing genuinely correlates
+      premium finish with higher build quality, and a companion app with real-time
+      monitoring sounds like a technically superior product.
+    why_irrelevant: The design finish and app features have no relationship to the
+      heat pump's thermodynamic efficiency (SCOP), mechanical warranty coverage, or
+      projected operating cost over a decade.
+  LL:
+    distractor: Model A has a noticeably more polished and premium visual design than
+      Model B.
+    diagnosticity: low
+    salience: low
+    proposition: Model A's polished visual design and premium finish suggest it is
+      the higher-quality and more reliable system.
+    matched_to: HL
+  HH:
+    distractor: Model B has a SCOP of 4.1 against Model A's 3.6, a seven-year parts-and-labour
+      warranty versus three years, and independent testing puts annual running cost
+      at roughly £310 less at current electricity rates — at that gap, Model B pays
+      for its £400 price premium in about fifteen months.
+    diagnosticity: high
+    salience: high
+    proposition: Model B has a SCOP of 4.1 versus Model A's 3.6, a seven-year parts-and-labour
+      warranty versus three years, and independent testing projects annual running
+      costs approximately £310 lower, recovering Model B's £400 price premium in about
+      fifteen months.
+    salience_source: 'B: concrete numeric comparison across three decision-relevant
+      dimensions (SCOP, warranty years, annual cost delta, payback months); D: specific
+      figures grounded in named independent testing.'
+  LH:
+    distractor: Model B has a higher SCOP rating, a longer warranty, and significantly
+      lower projected annual running costs than Model A.
+    diagnosticity: high
+    salience: low
+    proposition: Model B has a SCOP of 4.1 versus Model A's 3.6, a seven-year parts-and-labour
+      warranty versus three years, and independent testing projects annual running
+      costs approximately £310 lower, recovering Model B's £400 price premium in about
+      fifteen months.
+    matched_to: HH
+distractor_direction:
+  label: Visual design as quality signal
+  description: Treating Model A's premium aesthetic finish and companion app as evidence
+    that it is the higher-quality, more reliable, and more economical heat pump choice.
+plausible_alternative_directions:
+- label: Installer familiarity
+  description: Local heat pump installers are more experienced with one model, affecting
+    installation quality, ongoing support, and warranty claim handling.
+- label: Noise level suitability
+  description: One unit produces meaningfully less noise at the external condenser,
+    which matters for the home's outdoor placement or neighbour proximity.
+- label: Smart-home integration
+  description: One model integrates with existing home automation in a way that the
+    other does not, which could affect practical usability over a fifteen-year horizon.
+leak_audit:
+  ll_atomic_claims:
+  - Model A has a noticeably more polished visual design than Model B.
+  - Model A has a more premium visual design than Model B.
+  hh_atomic_claims:
+  - Model B has a SCOP of 4.1.
+  - Model A has a SCOP of 3.6.
+  - Model B has a seven-year parts-and-labour warranty.
+  - Model A has a three-year warranty.
+  - Independent testing puts annual running cost approximately £310 lower for Model
+    B.
+  - Model B's £400 price premium is recovered in about fifteen months.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person aesthetic observation, no named source.
+    narrative_coherence: 'B: vivid enumeration of premium design features presented
+      as a coherent quality signal.'
+    confident_assertion: 'C: ''that impression is hard to shake'' — confident first-person
+      endorsement of the aesthetic inference.'
+    concrete_detail: 'D: specific product features (touchscreen, brushed-aluminium
+      casing, companion app) as concrete detail about the product appearance, not
+      about case-specific performance data.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 35
+  ll_word_count: 14
+  hh_word_count: 48
+  lh_word_count: 20
+  notes: 'T5 self-check 13: inferential bridge (visual design -> quality/reliability)
+    appears
+
+    in HL (''looks genuinely engineered rather than just assembled'') and LL carries
+
+    it in low_diagnostic_proposition (''suggest it is the higher-quality and more
+
+    reliable system''). Both cells assert the surface-to-quality inference propositionally.
+
+    high complexity justified: SCOP comparison, payback calculation, and warranty
+
+    assessment require domain knowledge to weigh correctly. Ratios: HL:LL = 2.50,
+
+    HH:LH = 2.40.
+
+    '
+causal_audit:
+  steelman: 'A knowledgeable consumer could argue that premium industrial design in
+    heat pump
+
+    manufacturing often correlates with tighter component tolerances, better sealing,
+
+    and higher-quality compressor sourcing — manufacturers who invest in aesthetics
+
+    typically invest in engineering too. The companion app also implies ongoing software
+
+    support and better fault diagnostics, which could matter over a fifteen-year
+
+    lifespan.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase provides no pathway closure; the decisive evidence
+    (SCOP, warranty, running cost) lives entirely in HH/LH and makes the Model A aesthetic
+    advantage irrelevant on its merits.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing between two air-source heat pumps; Model A's premium visual
+    design is offered as a quality signal, but Model B has a higher SCOP, longer warranty,
+    and substantially lower projected running costs.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

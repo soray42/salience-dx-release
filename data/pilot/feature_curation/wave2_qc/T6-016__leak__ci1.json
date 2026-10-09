@@ -1,0 +1,28 @@
+{
+  "seed_id": "T6-016",
+  "ll_claims_extracted": [
+    "The investor's portfolio lagged its benchmark on at least three prior occasions.",
+    "Fund fees turned out to be the cause each of those times."
+  ],
+  "hl_case_claims": [
+    "The portfolio has lagged before on three separate prior occasions.",
+    "Fund fees were the cause that emerged each of those times."
+  ],
+  "hl_source_claims": [
+    "I know this pattern well (speaker's familiarity/confidence marker).",
+    "every single time (rhetorical emphasis, not new case content).",
+    "the cause that emerged (manner-of-discovery framing, not new case content)."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 25,
+    "ll": 15,
+    "xbase": 53,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

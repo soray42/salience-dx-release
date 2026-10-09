@@ -1,0 +1,168 @@
+seed_id: T1-027
+template: T1
+domain: open_qa
+complexity: medium
+xbase: I am reviewing my recurring expenses and looking at my cloud storage subscription.
+  I currently pay for a 2 TB plan, which is the second-highest tier the provider offers.
+  The bill is one of my larger monthly subscriptions, and I set it up years ago when
+  I was archiving a big video project. I can see exactly how much storage I am actually
+  using in the account dashboard. {DS}
+focal_diagnostic_feature: The account dashboard shows the user is storing 180 GB total,
+  comfortably within the provider's 1 TB tier, which costs roughly half of the 2 TB
+  plan.
+low_diagnostic_proposition: A relative downgraded their cloud storage plan and then
+  lost access to syncing some files until they upgraded again.
+oracle_action: ANSWER
+oracle_focus: Downgrade to the 1 TB tier; the dashboard shows only 180 GB stored,
+  well within that tier, so the lower plan covers actual use at roughly half the cost
+  without affecting the stored files.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a relative's downgrade trouble decide it.
+  Ask how much storage the user is actually using relative to the lower tier's limit
+  before downgrading.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a relative's downgrade trouble decide it. Ask how much storage
+      the user is actually using relative to the lower tier's limit before downgrading.
+  LL:
+    action: ASK
+    focus: Do not let a relative's downgrade trouble decide it. Ask how much storage
+      the user is actually using relative to the lower tier's limit before downgrading.
+  HH:
+    action: ANSWER
+    focus: Downgrade to the 1 TB tier; the dashboard shows only 180 GB stored, well
+      within that tier, so the lower plan covers actual use at roughly half the cost
+      without affecting the stored files.
+  LH:
+    action: ANSWER
+    focus: Downgrade to the 1 TB tier; the dashboard shows only 180 GB stored, well
+      within that tier, so the lower plan covers actual use at roughly half the cost
+      without affecting the stored files.
+variants:
+  HL:
+    distractor: Eloá, my cousin who is meticulous about her files, told me she downgraded
+      her own cloud storage plan to save money and then suddenly could not sync some
+      of her files until she gave up and upgraded back to the larger plan.
+    diagnosticity: low
+    salience: high
+    proposition: A relative downgraded their cloud storage plan and then lost access
+      to syncing some files until they upgraded again.
+    salience_source: A — a detail-oriented relative recounting a concrete downgrade-then-regret
+      experience.
+    why_plausible: Downgrading below your actual usage does break syncing, so the
+      story is a real failure mode and a natural caution.
+    why_irrelevant: The cousin's trouble implies she was over the lower tier's limit;
+      it says nothing about the user's footprint, which the dashboard shows sits far
+      under the 1 TB tier.
+  LL:
+    distractor: A relative downgraded their cloud storage plan and then lost access
+      to syncing some files until they upgraded again.
+    diagnosticity: low
+    salience: low
+    proposition: A relative downgraded their cloud storage plan and then lost access
+      to syncing some files until they upgraded again.
+    matched_to: HL
+  HH:
+    distractor: The account dashboard shows I am storing 180 GB in total across everything,
+      which sits comfortably inside the provider's 1 TB tier; that lower plan costs
+      about half of my current 2 TB plan and would still leave me hundreds of gigabytes
+      of headroom.
+    diagnosticity: high
+    salience: high
+    proposition: The account dashboard shows the user is storing 180 GB total, comfortably
+      within the provider's 1 TB tier, which costs roughly half of the 2 TB plan.
+    salience_source: The exact 180 GB usage against the 1 TB tier limit and the roughly-half
+      cost make the downgrade headroom concrete.
+  LH:
+    distractor: The dashboard shows 180 GB stored, within the 1 TB tier at roughly
+      half the cost, leaving hundreds of gigabytes of headroom.
+    diagnosticity: high
+    salience: low
+    proposition: The account dashboard shows the user is storing 180 GB total, comfortably
+      within the provider's 1 TB tier, which costs roughly half of the 2 TB plan.
+    matched_to: HH
+distractor_direction:
+  label: Downgrade-breaks-sync risk
+  description: Treating a relative's experience of losing file syncing after a downgrade
+    as the dominant reason to keep the larger, more expensive plan.
+plausible_alternative_directions:
+- label: Future growth needs
+  description: Whether the user expects a near-term project that would push storage
+    back above the lower tier.
+- label: Bundled features
+  description: Whether the 2 TB plan bundles other features the user relies on beyond
+    raw storage.
+leak_audit:
+  ll_atomic_claims:
+  - A relative downgraded their cloud storage plan.
+  - The relative then lost access to syncing some files.
+  - The relative upgraded again to restore it.
+  hh_atomic_claims:
+  - The dashboard shows the user is storing 180 GB total.
+  - That sits comfortably within the provider's 1 TB tier.
+  - The 1 TB tier costs roughly half of the current 2 TB plan.
+  - The 1 TB tier would still leave hundreds of gigabytes of headroom.
+  hl_salience_dimensions:
+    source_credibility: Named meticulous relative (cousin Eloá) with a firsthand downgrade
+      experience.
+    narrative_coherence: 'Clean cause-effect: downgrade, sync breaks, upgrade back.'
+    confident_assertion: Told me directly what happened to her.
+    concrete_detail: N/A — HL adds only Eloá's identity and her downgrade story, no
+      usage fact about the user that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 76
+  hl_word_count: 41
+  ll_word_count: 21
+  hh_word_count: 44
+  lh_word_count: 22
+  notes: 'xbase says the plan is the 2 TB tier, was set up for an old video project,
+    and that usage is visible — but never
+
+    states the actual 180 GB figure, which is HH/LH-only and decisive. HL adds only
+    Eloá''s identity and her downgrade
+
+    regret. Her trouble implies she exceeded the lower limit, which tells nothing
+    about the user''s far-smaller footprint.
+
+    QC repair: LH revised to add the headroom claim ("leaving hundreds of gigabytes
+    of headroom") so that every claim
+
+    in hh_atomic_claims is represented flatly in LH; hh_atomic_claims updated to enumerate
+    the headroom claim explicitly.
+
+    lh_word_count remains 22 (within 14-23 operational target); HH:LH ratio 44:22
+    = 2:1, within 4:1.
+
+    '
+causal_audit:
+  steelman: 'A careful person could argue that cloud storage usage creeps upward and
+    that downgrading below the cap silently
+
+    halts syncing, locking you out of recent files until you pay again — a relative''s
+    exact experience of this is a
+
+    real risk, so keeping headroom on the larger plan avoids a disruptive and embarrassing
+    forced re-upgrade.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the relative's sync loss implies her own usage exceeded
+    the lower tier; it provides no information about the user's footprint, which the
+    180 GB dashboard figure (HH/LH only) settles as far under the 1 TB limit.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to downgrade an oversized 2 TB cloud storage plan, decided
+    by the dashboard's 180 GB actual usage fitting the cheaper 1 TB tier, not a relative's
+    downgrade-broke-sync story.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

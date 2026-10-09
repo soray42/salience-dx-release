@@ -1,0 +1,240 @@
+seed_id: T5-015
+template: T5
+domain: open_qa
+complexity: low
+xbase: 我正在为下个月的同城搬家从两家本地搬家公司中选择一家。我已从两家公司各获得了书面报价，完整审阅了它们的保险证明，并分别与各自的近期客户进行了交谈。两家公司在保险保障和客户口碑方面存在明显差异。{DS}
+focal_diagnostic_feature: B 公司提供的单件物品保险保额明显更高，且有近期客户的经核实正面评价，直接衡量了财务保障水平和服务记录。
+low_diagnostic_proposition: 'Company A has a more modern and professional-looking
+  website than Company B.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Recommend Company B on the basis of its substantially better insurance
+  terms ($2,000 vs $100 per item) and verified positive customer references, which
+  directly address the user''s core risks of loss and service quality.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Note that website aesthetics do not indicate operational
+  quality or insurance adequacy; advise the user to rely on the insurance terms and
+  customer references they have already gathered when deciding between the two companies.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Note that website aesthetics do not indicate operational quality or insurance
+      adequacy; advise the user to rely on the insurance terms and customer references
+      they have already gathered when deciding between the two companies.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Note that website aesthetics do not indicate operational quality or insurance
+      adequacy; advise the user to rely on the insurance terms and customer references
+      they have already gathered when deciding between the two companies.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Recommend Company B on the basis of its substantially better insurance
+      terms ($2,000 vs $100 per item) and verified positive customer references, which
+      directly address the user''s core risks of loss and service quality.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Recommend Company B on the basis of its substantially better insurance
+      terms ($2,000 vs $100 per item) and verified positive customer references, which
+      directly address the user''s core risks of loss and service quality.
+
+      '
+variants:
+  HL:
+    distractor: 我的邻居 Petra 在过去五年里搬过三次家，她看了两家公司的网站后告诉我，A 公司的网站看起来现代感和精致程度都远胜 B 公司。
+    diagnosticity: low
+    salience: high
+    proposition: 'Company A has a more modern and professional-looking website than
+      Company B.
+
+      '
+    salience_source: 'A: source credibility (neighbor with repeated moving experience
+      framed as a knowledgeable repeat consumer); C: confident assertion ("told me");
+      D: concrete detail about the source''s context ("moved three times in the past
+      five years").
+
+      '
+    why_plausible: 'Website quality is a common proxy heuristic for business quality;
+      a credible source invoking it explicitly gives the inference a confident endorsement
+      that a busy reader may accept without checking the underlying logic.
+
+      '
+    why_irrelevant: 'Website aesthetics have no causal pathway to insurance coverage
+      levels or customer service outcomes; the user has already obtained the direct
+      evidence (insurance certificates, spoken references) that makes the proxy superfluous.
+
+      '
+  LL:
+    distractor: A 公司的网站明显比 B 公司更现代、更专业。
+    diagnosticity: low
+    salience: low
+    proposition: 'Company A has a more modern and professional-looking website than
+      Company B.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 我仔细阅读了两份保险证明：B 公司提供每件物品最高 2,000 美元的无过错责任险，而 A 公司每件物品上限仅为 100 美元。我还直接致电了
+      B 公司的三位近期客户；三人均确认搬运准时到达，且对易碎物品的处理十分妥善。
+    diagnosticity: high
+    salience: high
+    proposition: 'Company B offers materially higher per-item insurance coverage and
+      has verified positive references from recent customers, directly measuring financial
+      protection and service track record.
+
+      '
+    salience_source: 'C: confident first-person assertion of verified facts ("I read",
+      "I called"); D: concrete figures ($2,000 vs $100) and direct-contact details
+      ("called three of Company B''s recent customers directly").
+
+      '
+  LH:
+    distractor: B 公司的保险条款更好，且有经过核实的正面客户评价，A 公司则不如。
+    diagnosticity: high
+    salience: low
+    proposition: 'Company B offers materially higher per-item insurance coverage and
+      has verified positive references from recent customers, directly measuring financial
+      protection and service track record.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: 以网站美观度作为质量代理指标
+  description: A 公司网站的视觉现代感和精致程度被视为 A 公司运营更专业、更可靠的证据，暗示应优先选择 A 公司而非 B 公司。
+plausible_alternative_directions:
+- label: 报价价格差异
+  description: 书面报价的总费用可能存在显著差异，若某家公司在相同服务范围内报价大幅偏低，这可能成为决定性因素。
+- label: 公司资历与投诉记录
+  description: 营业年限、许可资质，或消费者保护机构的正式投诉记录，可提供情景中未提及的独立可靠性信号。
+leak_audit:
+  ll_atomic_claims:
+  - Company A has a more modern website than Company B.
+  - Company A's website looks more professional than Company B's.
+  hl_salience_dimensions:
+    source_credibility: 'Neighbor Petra framed as a repeat mover (three moves in five
+      years), lending consumer-domain credibility to her aesthetic judgment.
+
+      '
+    narrative_coherence: 'Clean report of what Petra did (looked, told me) and what
+      she concluded; no interruptions or tangents.
+
+      '
+    confident_assertion: '"told me", "far more modern and polished" — confident, no
+      hedging.
+
+      '
+    concrete_detail: '"moved three times in the past five years" anchors the source''s
+      experience without adding case facts.
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 28
+  ll_word_count: 14
+  notes: 'Repair pass (revision 3): xbase rewritten to remove focal-decisive content
+
+    per cell-integrity lens. The specific insurance figures ($2,000 vs $100 per
+
+    item) and the outcome of reference checks (praised punctuality, careful
+
+    handling) were moved out of xbase entirely; they now live only in HH (vivid
+
+    form) and LH (flat form), which is the correct cell assignment. xbase now
+
+    states only that the companies differ on insurance coverage and references
+
+    without revealing the direction or magnitude of that difference. The
+
+    low_diagnostic_oracle_focus for HL/LL was updated to reflect that the user
+
+    has already gathered insurance and reference evidence (so "obtain and
+
+    compare" was replaced with "rely on the insurance terms and customer
+
+    references they have already gathered"). pathway_closed_in_xbase updated
+
+    accordingly. HH and LH verified to carry the full focal evidence in
+
+    HH-vivid / LH-flat form with propositional equivalence intact.
+
+    Previous repair (revision 2): removed two leaks from HL. (1) "clearly the
+
+    more professional operation" (severity_claim) replaced with wording confined
+
+    to website appearance only. (2) causal consequence clause removed. LL
+
+    extended from 11 to 14 words to meet the 12-word minimum. HL trimmed from
+
+    53 to 34 words; ratio 34/14 = 2.43, within the 4:1 ceiling.
+
+    '
+causal_audit:
+  steelman: 'A competent consumer advisor might argue: companies that invest in
+
+    maintaining a modern, functional website tend to be operationally active
+
+    and financially stable — a neglected website can be a leading indicator
+
+    of a company in decline, underinvesting across the board, including in
+
+    staff training and equipment maintenance. In the moving industry, where
+
+    small operators frequently close and reopen under new names, an
+
+    up-to-date web presence could weakly correlate with current licensing
+
+    and insurance compliance. One could also argue that a well-designed site
+
+    suggests the company communicates clearly, which matters for logistics
+
+    coordination on move day.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'The user has already reviewed each company''s insurance
+    certificate in full and spoken directly with recent customers of each. This direct
+    evidence supersedes any proxy inference from website aesthetics: coverage terms
+    are confirmed documentary facts and reference quality is first-hand testimony.
+    The steelman''s "leading indicator of decline" pathway is closed because the user
+    holds current proof of both companies'' insurance terms and direct customer testimonials
+    — there is nothing left for the website proxy to inform.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 4
+  topic_brief: 'Choosing between two moving companies: one has a slick modern website,
+    the other an ugly outdated site but materially better insurance terms and references;
+    the site quality is offered as the quality signal.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: 'qc leak ci1 2026-06-11: stripped HL-only Company-B clause'
+  generator: generator_B
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-015.yaml
+  source_xbase_sha256: f06ab75bc73e942f
+  translated_content_sha256: dc2f07fa55c90c01
+  translation_notes: Petra 保留原名以维持具名来源的高显著性属性。'2,000 美元' 和 '100 美元' 保留原始货币数值。'无过错责任险'
+    对应 'no-fault liability coverage'，是中文财产险领域的通行译法。

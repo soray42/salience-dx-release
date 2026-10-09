@@ -1,0 +1,175 @@
+seed_id: T3-023
+template: T3
+domain: open_qa
+complexity: medium
+xbase: Я впервые составляю ежемесячный бюджет и пытаюсь решить, как выделить категорию
+  для подписок. У меня стабильная зарплата на руки, постоянная арендная плата, и я
+  только что закончил выписывать все регулярные сервисы, за которые плачу. Моя цель
+  — бюджет, которого я смогу реально придерживаться, и у меня есть чёткое представление
+  о том, сколько я трачу на базовые нужды и на необязательные статьи каждый месяц.
+  {DS}
+focal_diagnostic_feature: Собственный подсчёт пользователя показывает, что подписки
+  составляют 4% ежемесячного дохода на руки, тогда как базовые нужды и сбережения
+  уже комфортно покрыты, так что подписки — незначительная статья, не угрожающая бюджету.
+low_diagnostic_proposition: A senior colleague says subscriptions are always the first
+  thing to slash when building any budget.
+oracle_action: ANSWER
+oracle_focus: Keep the subscriptions roughly as-is and budget around the larger categories;
+  the user's tally shows subscriptions are only 4% of take-home pay with essentials
+  and savings already covered, so they are not where the budget needs cutting.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the slash-subscriptions-first rule on authority
+  alone. Ask what share of the user's take-home pay subscriptions actually represent
+  relative to other categories.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the slash-subscriptions-first rule on authority alone. Ask
+      what share of the user's take-home pay subscriptions actually represent relative
+      to other categories.
+  LL:
+    action: ASK
+    focus: Do not accept the slash-subscriptions-first rule on authority alone. Ask
+      what share of the user's take-home pay subscriptions actually represent relative
+      to other categories.
+  HH:
+    action: ANSWER
+    focus: Keep the subscriptions roughly as-is and budget around the larger categories;
+      the user's tally shows subscriptions are only 4% of take-home pay with essentials
+      and savings already covered, so they are not where the budget needs cutting.
+  LH:
+    action: ANSWER
+    focus: Keep the subscriptions roughly as-is and budget around the larger categories;
+      the user's tally shows subscriptions are only 4% of take-home pay with essentials
+      and savings already covered, so they are not where the budget needs cutting.
+variants:
+  HL:
+    distractor: Люсия, финансовый менеджер в моей компании, чьим суждениям я доверяю,
+      прямо сказала мне, что подписки — это всегда первое, что нужно урезать при составлении
+      бюджета; она говорит, что именно здесь все незаметно перерасходуют средства.
+    diagnosticity: low
+    salience: high
+    proposition: A senior colleague says subscriptions are always the first thing
+      to slash when building any budget.
+    salience_source: A — a respected finance manager asserting a confident, generic
+      budgeting rule.
+    why_plausible: Subscription creep is a real and widely-cited budgeting pitfall,
+      so a finance professional's blanket rule sounds authoritative and sensible.
+    why_irrelevant: Her rule is a generic heuristic, not an analysis of this budget;
+      it cannot tell whether subscriptions are actually a meaningful share of this
+      user's spending, which the user's own tally answers.
+  LL:
+    distractor: Старший коллега говорит, что подписки — это всегда первое, что нужно
+      урезать при составлении любого бюджета.
+    diagnosticity: low
+    salience: low
+    proposition: A senior colleague says subscriptions are always the first thing
+      to slash when building any budget.
+    matched_to: HL
+  HH:
+    distractor: 'Мой собственный подсчёт однозначен: все подписки вместе составляют
+      около 4% моего ежемесячного дохода на руки, а мои базовые нужды и цели по сбережениям
+      уже комфортно покрыты без их урезания, так что эта категория — небольшая статья,
+      а не то, что перегружает бюджет.'
+    diagnosticity: high
+    salience: high
+    proposition: The user's own tally shows subscriptions total 4% of monthly take-home
+      pay, while essentials and savings are already comfortably covered, so subscriptions
+      are a minor line that does not threaten the budget.
+    salience_source: The exact 4%-of-take-home share with essentials and savings already
+      covered quantifies the category's small role.
+  LH:
+    distractor: Подписки составляют около 4% ежемесячного дохода пользователя на руки,
+      при этом базовые нужды и цели по сбережениям уже покрыты, так что они являются
+      небольшой статьёй бюджета.
+    diagnosticity: high
+    salience: low
+    proposition: The user's own tally shows subscriptions total 4% of monthly take-home
+      pay, while essentials and savings are already comfortably covered, so subscriptions
+      are a minor line that does not threaten the budget.
+    matched_to: HH
+distractor_direction:
+  label: Правило «урезай подписки первыми»
+  description: Подходить к бюджету этого пользователя, руководствуясь авторитетным
+    общим правилом о том, что подписки всегда нужно сокращать в первую очередь.
+plausible_alternative_directions:
+- label: Оптимизировать крупные категории
+  description: Не являются ли аренда, транспорт или еда теми категориями, которым
+    действительно нужно уделить внимание.
+  transport: null
+  or food are the categories that actually need attention.: null
+- label: Сначала автоматизировать сбережения
+  description: Не является ли установка фиксированного перевода на сбережения более
+    эффективным шагом при составлении бюджета.
+leak_audit:
+  ll_atomic_claims:
+  - A senior colleague says subscriptions are always the first thing to slash when
+    building any budget.
+  hh_atomic_claims:
+  - The user's subscriptions total about 4% of monthly take-home pay.
+  - The user's essentials and savings targets are already comfortably covered.
+  - Subscriptions are therefore a small line rather than what strains the budget.
+  hl_salience_dimensions:
+    source_credibility: Named respected finance manager (Lúcia) at the user's company.
+    narrative_coherence: Coherent confident statement of a familiar budgeting maxim.
+    confident_assertion: Told me flatly subscriptions are always the first cut.
+    concrete_detail: N/A — HL adds only Lúcia's identity and her generic rule, no
+      fact about the user's own budget that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 74
+  hl_word_count: 38
+  ll_word_count: 18
+  hh_word_count: 47
+  lh_word_count: 22
+  notes: 'T3: the authority offers a generic always-rule, not an analysis of this
+    budget. xbase establishes steady pay,
+
+    stable rent, a complete list, and a clear essentials/discretionary picture, but
+    withholds the decisive 4%-share
+
+    figure, which is HH/LH-only. HL adds only Lúcia''s identity and her blanket rule.
+
+    '
+causal_audit:
+  steelman: 'A budgeting professional could argue subscriptions are uniquely insidious
+    — small recurring charges that
+
+    silently accumulate and are psychologically easy to ignore, so attacking them
+    first builds momentum and catches
+
+    forgotten services; as a default starting move for someone new to budgeting, it
+    is widely recommended.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the rule is a generic heuristic, not engagement with
+    this budget; the decisive 4%-of-take-home share (HH/LH only) shows subscriptions
+    are a minor line here, which the rule cannot know.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to slash subscriptions first when budgeting, decided by the
+    user's own 4%-of-take-home tally with essentials covered, against a finance manager's
+    blanket slash-subscriptions-first rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-023.yaml
+  source_xbase_sha256: 57214d5c6bbaeaf2
+  translated_content_sha256: 8fe3f86f748a6205
+  translation_notes: Name 'Lúcia' rendered as 'Люсия' — a natural Russian approximation
+    of this Portuguese name, preserving the named-source salience of a specific individual.
+    The accent is dropped as it does not exist in Russian orthography. No other culture-bound
+    salience issues.

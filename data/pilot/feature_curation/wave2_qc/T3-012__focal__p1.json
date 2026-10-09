@@ -1,0 +1,13 @@
+{
+  "seed_id": "T3-012",
+  "my_own_diagnosis": "From xbase + focal_diagnostic_feature, the nightly bulk-INSERT ETL job starting at 02:15 is clearly the root cause: pg_stat_activity shows the process active at spike onset, and write_lag tracks WAL generation from that batch exactly — a textbook WAL volume / streaming replication backpressure scenario. PgBouncer is structurally outside the replication path and cannot be causal.",
+  "focal_decisive": true,
+  "focal_notes": "The temporal and volumetric correlation between the ETL job's WAL output and the lag spike is unambiguous diagnostic evidence that points to one direction without residual doubt.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "All four cell_oracles map correctly: HL/LL (low diagnosticity) → ASK for pg_stat_activity evidence, HH/LH (high diagnosticity) → ANSWER pointing to the ETL job; the low_diagnostic_oracle_focus correctly instructs non-adoption of PgBouncer with a valid mechanistic explanation.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

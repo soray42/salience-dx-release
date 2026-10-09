@@ -1,0 +1,169 @@
+seed_id: T5-051
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our MySQL application has been noticeably slow all week. Read queries that
+  used to complete in under 50 milliseconds now take around two seconds during normal
+  load. Server CPU sits under 30 percent and memory usage looks normal throughout
+  the day. I have not changed any application code or MySQL configuration recently.
+  {DS}
+focal_diagnostic_feature: SHOW GLOBAL STATUS reveals that innodb_buffer_pool_reads
+  is 42 percent of total read requests, and innodb_buffer_pool_size is configured
+  at 512 MB on a server with 16 GB of available memory.
+low_diagnostic_proposition: The database administration interface looks old and cluttered,
+  suggesting the database configuration is poorly maintained.
+oracle_action: ANSWER
+oracle_focus: Increase innodb_buffer_pool_size to at least 8 GB on this 16 GB server;
+  the 42 percent disk-read ratio confirms the working set does not fit in the current
+  buffer pool and reads are hitting disk.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer poor configuration from UI appearance; query
+  SHOW GLOBAL STATUS for innodb_buffer_pool_reads ratio and innodb_buffer_pool_size
+  before drawing any conclusions.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer poor configuration from UI appearance; query SHOW GLOBAL STATUS
+      for innodb_buffer_pool_reads ratio and innodb_buffer_pool_size before drawing
+      any conclusions.
+  LL:
+    action: ASK
+    focus: Do not infer poor configuration from UI appearance; query SHOW GLOBAL STATUS
+      for innodb_buffer_pool_reads ratio and innodb_buffer_pool_size before drawing
+      any conclusions.
+  HH:
+    action: ANSWER
+    focus: Increase innodb_buffer_pool_size to at least 8 GB on this 16 GB server;
+      the 42 percent disk-read ratio confirms the working set does not fit in the
+      current buffer pool and reads are hitting disk.
+  LH:
+    action: ANSWER
+    focus: Increase innodb_buffer_pool_size to at least 8 GB on this 16 GB server;
+      the 42 percent disk-read ratio confirms the working set does not fit in the
+      current buffer pool and reads are hitting disk.
+variants:
+  HL:
+    distractor: 'The phpMyAdmin install is clearly ancient: white-on-grey tables stacked
+      to the edge of the screen, deprecated-looking column labels, and a login page
+      that looks like it predates HTTPS — all of which makes me wonder if anyone has
+      seriously tended this configuration in years.'
+    diagnosticity: low
+    salience: high
+    proposition: The database administration interface looks old and cluttered, suggesting
+      the database configuration is poorly maintained.
+    salience_source: B — clean descriptive catalogue of interface features in confident
+      professional register; C — 'clearly ancient' and the rhetorical question about
+      tended configuration.
+    why_plausible: Teams running visually neglected admin tools often also have other
+      deferred maintenance; associating interface age with configuration hygiene is
+      a plausible proxy a busy reader could accept.
+    why_irrelevant: Admin-interface version or visual style has no constructible mechanism
+      connecting to InnoDB buffer pool settings; the diagnosis requires a metric query,
+      not a UI inspection.
+  LL:
+    distractor: The database administration interface looks old and cluttered, suggesting
+      the database configuration is poorly maintained.
+    diagnosticity: low
+    salience: low
+    proposition: The database administration interface looks old and cluttered, suggesting
+      the database configuration is poorly maintained.
+    matched_to: HL
+  HH:
+    distractor: SHOW GLOBAL STATUS reveals innodb_buffer_pool_reads is 42 percent
+      of all read requests — nearly half of reads are going to disk rather than RAM
+      — and innodb_buffer_pool_size is set to only 512 MB on a server with 16 GB of
+      available memory.
+    diagnosticity: high
+    salience: high
+    proposition: SHOW GLOBAL STATUS reveals that innodb_buffer_pool_reads is 42 percent
+      of total read requests, and innodb_buffer_pool_size is configured at 512 MB
+      on a server with 16 GB of available memory.
+    salience_source: The 42 percent ratio is a vivid concrete metric; the 512 MB versus
+      16 GB contrast makes the misconfiguration immediately apparent; the interpretive
+      aside ('nearly half to disk') sharpens the implication.
+  LH:
+    distractor: innodb_buffer_pool_reads is 42 percent of total read requests, and
+      innodb_buffer_pool_size is 512 MB on a server with 16 GB of memory.
+    diagnosticity: high
+    salience: low
+    proposition: SHOW GLOBAL STATUS reveals that innodb_buffer_pool_reads is 42 percent
+      of total read requests, and innodb_buffer_pool_size is configured at 512 MB
+      on a server with 16 GB of available memory.
+    matched_to: HH
+distractor_direction:
+  label: outdated admin UI implies poor configuration
+  description: Treating the visually old and cluttered database administration interface
+    as a signal that the MySQL configuration has not been properly maintained.
+plausible_alternative_directions:
+- label: slow query log plan regression
+  description: A query plan regression triggered by statistics drift or a recent data
+    distribution shift could cause reads to fall back to table scans, degrading response
+    time without consuming obvious CPU.
+- label: table-level lock contention
+  description: A long-running write transaction or ALTER TABLE operation holding metadata
+    locks could intermittently block reads even when the server appears idle at the
+    OS level.
+- label: connection pool exhaustion
+  description: Application-side connection pool saturation during load peaks could
+    queue queries before they reach MySQL, producing observed latency without database-side
+    CPU or memory symptoms.
+leak_audit:
+  ll_atomic_claims:
+  - The database administration interface looks old and cluttered.
+  - This suggests the database configuration is poorly maintained.
+  hh_atomic_claims:
+  - innodb_buffer_pool_reads is 42 percent of total read requests.
+  - innodb_buffer_pool_size is 512 MB.
+  - The server has 16 GB of available memory.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Confident catalogue of interface features in consistent professional
+      register culminating in a rhetorical inference.
+    confident_assertion: '''clearly ancient'' and ''makes me wonder if anyone has
+      seriously tended this configuration in years'' — strong implied verdict.'
+    concrete_detail: 'Specific visual features: white-on-grey tables, deprecated column
+      labels, pre-HTTPS login page.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 52
+  hl_word_count: 43
+  ll_word_count: 15
+  hh_word_count: 40
+  lh_word_count: 21
+  notes: 'HL:LL ratio = 2.87; HH:LH ratio = 1.90. Both within 4:1.
+
+    T5 bridge in HL: ''makes me wonder if anyone has seriously tended this configuration
+    in years'' (UI age → poorly maintained config). Bridge in LL: ''suggesting the
+    database configuration is poorly maintained''. Both present.
+
+    LH atomic claims match HH exactly: pool_reads ratio, pool_size, server RAM. LH
+    omits the aside ''nearly half to disk'' — that is HH vivid interpretation of the
+    ratio, not an additional atomic claim.
+
+    '
+causal_audit:
+  steelman: 'A senior DBA might argue: teams that run ancient, unpatched phpMyAdmin
+    versions are likely running other outdated or misconfigured components too, including
+    InnoDB settings that were last touched when the server was provisioned years ago.
+    The visual neglect of the admin layer is a reasonable proxy for configuration
+    staleness. This is a plausible administrative heuristic.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not mention the admin interface; the aesthetic
+    observation arrives only in the variant slot and has no independent mechanism
+    linking it to buffer pool sizing.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: A visually dated phpMyAdmin install cannot diagnose an InnoDB buffer
+    pool undersized to 512 MB on a 16 GB server; the disk-read ratio from SHOW GLOBAL
+    STATUS is the decisive metric.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,13 @@
+{
+  "seed_id": "T3-011",
+  "my_own_diagnosis": "The focal_diagnostic_feature is unambiguous: both rejection letters explicitly cite Guideline 4.0 Design with a reproducible iPad landscape-rotation crash in the main navigation stack, documented with identical steps across two submissions. As a senior iOS practitioner, the correct action is to fix the orientation-handling crash — Guideline 4.0 is exclusively for runtime failures, not policy/compliance issues, so the privacy manifest hypothesis is categorically ruled out by the guideline citation alone.",
+  "focal_decisive": true,
+  "focal_notes": "The combination of the specific guideline number (4.0 Design), the crash type (orientation-handling), the affected surface (iPad landscape, main navigation stack), and identical reproduction steps across two separate submissions leaves no ambiguity about the root cause.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracles correctly map HH/LH to the focal ANSWER oracle and HL/LL to the low-diagnostic ASK oracle; low_diagnostic_oracle_focus appropriately instructs non-adoption of the distractor by directing the model to examine the actual rejection letters first.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

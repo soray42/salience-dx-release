@@ -1,0 +1,8 @@
+{
+  "seed_id": "T5-016",
+  "verdict": "clean",
+  "xbase_span": "",
+  "focal_in_hh_lh": true,
+  "reasoning": "The xbase uses only qualitative signals ('charges materially more in annual fees', 'lagged a standard equity benchmark by a wide margin') that partially foreclose the distractor direction but do not supply the decisive quantitative inputs enumerated in focal_diagnostic_feature (1.8% AUM fee, 5.2% vs 13.1% ten-year net return). These qualitative phrases are pathway-closure statements under exception (a) — they block the aesthetic-heuristic mechanism by establishing cost and performance are unfavorable, but they do not provide the affirmative alternative diagnosis with the specific figures a practitioner would need for a conclusive quantitative rejection. The precise fee and return numbers live exclusively in the HH and LH variant distractors, as required.",
+  "repair_hint": ""
+}

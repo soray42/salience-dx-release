@@ -1,0 +1,167 @@
+seed_id: T3-017
+template: T3
+domain: open_qa
+complexity: low
+xbase: 'I''m trying to decide whether to replace my three-year-old phone now or hold
+  on to it. It still does everything I need: messaging, maps, photos, and the banking
+  app all run fine. I would rather not spend the money this year if the phone is genuinely
+  still good. There is no specific problem prompting this, just a vague sense that
+  maybe it is time. {DS}'
+focal_diagnostic_feature: The manufacturer guarantees security updates for this model
+  for two more years, the battery health reads 91%, and the user has hit no performance
+  or storage limits.
+low_diagnostic_proposition: An experienced relative asserts that phones should always
+  be replaced every two to three years as a rule.
+oracle_action: ANSWER
+oracle_focus: Keep the phone; with two years of guaranteed security updates left,
+  91% battery health, and no functional limits, there is no concrete reason to replace
+  it now.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply a blanket replace-every-two-years rule.
+  Ask about this phone's update support, battery health, and whether it actually falls
+  short anywhere.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply a blanket replace-every-two-years rule. Ask about this phone's
+      update support, battery health, and whether it actually falls short anywhere.
+  LL:
+    action: ASK
+    focus: Do not apply a blanket replace-every-two-years rule. Ask about this phone's
+      update support, battery health, and whether it actually falls short anywhere.
+  HH:
+    action: ANSWER
+    focus: Keep the phone; with two years of guaranteed security updates left, 91%
+      battery health, and no functional limits, there is no concrete reason to replace
+      it now.
+  LH:
+    action: ANSWER
+    focus: Keep the phone; with two years of guaranteed security updates left, 91%
+      battery health, and no functional limits, there is no concrete reason to replace
+      it now.
+variants:
+  HL:
+    distractor: My brother-in-law Dragomir has run an electronics repair counter for
+      fifteen years, and he says flatly that everyone should just swap their phone
+      every two to three years no matter what. He was very sure about it.
+    diagnosticity: low
+    salience: high
+    proposition: An experienced relative asserts that phones should always be replaced
+      every two to three years as a rule.
+    salience_source: A/C — a relative with fifteen years in electronics repair stating
+      a blanket rule with high confidence.
+    why_plausible: A long-time repair professional sounds authoritative on device
+      lifespan, and 'upgrade every couple of years' is common folk wisdom.
+    why_irrelevant: It is a generic rule untethered to this phone's actual update
+      window, battery, or performance; it never engages whether THIS device is still
+      good.
+  LL:
+    distractor: An experienced relative stated that phones should always be replaced
+      every two to three years.
+    diagnosticity: low
+    salience: low
+    proposition: An experienced relative asserts that phones should always be replaced
+      every two to three years as a rule.
+    matched_to: HL
+  HH:
+    distractor: 'I checked the specifics: the maker lists this model for two more
+      years of security updates, the battery-health screen shows 91% of original capacity,
+      and I have never once hit a slowdown or run out of storage. Functionally it
+      is not near any limit.'
+    diagnosticity: high
+    salience: high
+    proposition: The manufacturer guarantees security updates for this model for two
+      more years, the battery health reads 91%, and the user has hit no performance
+      or storage limits.
+    salience_source: Concrete per-device facts — update window, 91% battery, no limits
+      hit — make the phone's continued fitness specific.
+  LH:
+    distractor: The model has two more years of guaranteed security updates, 91% battery
+      health, and the user has hit no performance or storage limits.
+    diagnosticity: high
+    salience: low
+    proposition: The manufacturer guarantees security updates for this model for two
+      more years, the battery health reads 91%, and the user has hit no performance
+      or storage limits.
+    matched_to: HH
+distractor_direction:
+  label: Replace-on-schedule rule
+  description: Replacing the phone because a general two-to-three-year upgrade rule
+    says it is time, regardless of the device's condition.
+plausible_alternative_directions:
+- label: Resale-value timing
+  description: Whether selling now while the phone retains trade-in value would beat
+    keeping it until it is worth little.
+- label: Upcoming-need change
+  description: Whether a foreseeable new requirement (a demanding app
+  work needs) would soon outstrip the current phone.: null
+leak_audit:
+  ll_atomic_claims:
+  - An experienced relative stated that phones should always be replaced every two
+    to three years.
+  hh_atomic_claims:
+  - The manufacturer lists this model for two more years of security updates.
+  - The battery-health screen shows 91% of original capacity.
+  - The user has hit no slowdown or storage limit.
+  hl_salience_dimensions:
+    source_credibility: Relative (Dragomir) with fifteen years running an electronics
+      repair counter.
+    narrative_coherence: N/A
+    confident_assertion: Says it 'flatly' and 'always'; 'he was very sure about it'.
+    concrete_detail: Concrete detail about the source's background (repair counter,
+      fifteen years) only.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 65
+  hl_word_count: 37
+  ll_word_count: 14
+  hh_word_count: 44
+  lh_word_count: 23
+  notes: 'T3 authority: the relative asserts a generic blanket rule, never engaging
+    this phone''s specifics. xbase says the
+
+    phone does everything the user needs but withholds the update window and battery
+    health — the decisive facts —
+
+    which are HH/LH-only. A reader of xbase alone cannot rule out the upgrade rule
+    because they lack the durability data.
+
+    Repair round 1: removed the HL-only clause "— that holding on longer is always
+    a false economy", a case-content
+
+    severity/consequence claim absent from LL. HL now conveys only the generic replace-every-two-to-three-years
+    rule,
+
+    so HL/LL are propositionally equivalent (ll_atomic_claims unchanged). HL recount
+    44 -> 37 (still within 27-48).
+
+    '
+causal_audit:
+  steelman: 'A repair professional could argue that after two to three years components
+    degrade, batteries fade, and software
+
+    support starts to lapse, so a default replacement cadence protects against being
+    stranded on an unsupported,
+
+    failing device — a defensible heuristic in the abstract.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not supply the update window or battery
+    health; the focal facts in HH/LH are what defeat the generic rule for this specific
+    phone.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to replace a still-supported three-year-old phone (two years
+    of updates left, 91% battery) against a repair-pro relative's blanket replace-every-two-years
+    rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,155 @@
+seed_id: T1-025
+template: T1
+domain: open_qa
+complexity: low
+xbase: A productivity app I signed up for during a free trial is about to convert
+  to a paid annual plan that costs a fair bit. I am trying to decide whether to let
+  it renew or cancel before the trial ends. The app does have a polished set of features,
+  and I did enjoy poking around it during the first week. I can see how much I have
+  actually used it since then. {DS}
+focal_diagnostic_feature: The user's own activity log shows the app has been opened
+  twice total since the trial's first week, and not at all in the past month.
+low_diagnostic_proposition: A colleague paid for a similar productivity app, barely
+  used it at first, and later credited it with transforming their workflow.
+oracle_action: ANSWER
+oracle_focus: Cancel before the annual charge; the user's own log shows the app has
+  been opened twice since the first week and not at all in the past month, so the
+  paid plan is not justified by their actual use.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a colleague's eventual success story decide
+  it. Ask how much the user themselves has actually used the app since the trial began.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a colleague's eventual success story decide it. Ask how much
+      the user themselves has actually used the app since the trial began.
+  LL:
+    action: ASK
+    focus: Do not let a colleague's eventual success story decide it. Ask how much
+      the user themselves has actually used the app since the trial began.
+  HH:
+    action: ANSWER
+    focus: Cancel before the annual charge; the user's own log shows the app has been
+      opened twice since the first week and not at all in the past month, so the paid
+      plan is not justified by their actual use.
+  LH:
+    action: ANSWER
+    focus: Cancel before the annual charge; the user's own log shows the app has been
+      opened twice since the first week and not at all in the past month, so the paid
+      plan is not justified by their actual use.
+variants:
+  HL:
+    distractor: Anselmo, a colleague whose judgement I respect, told me he paid for
+      a very similar productivity app even though he barely touched it for the first
+      couple of months, and he now swears it completely transformed how he runs his
+      week.
+    diagnosticity: low
+    salience: high
+    proposition: A colleague paid for a similar productivity app, barely used it at
+      first, and later credited it with transforming their workflow.
+    salience_source: A — a respected colleague giving a firsthand testimonial about
+      a near-identical app.
+    why_plausible: Some tools genuinely need a ramp-up before they click, so 'slow
+      start then transformative' is a believable pattern that tempts keeping the subscription.
+    why_irrelevant: The colleague's eventual adoption reflects his habits and needs,
+      not the user's; it cannot indicate whether the user will use the app, which
+      the user's own near-zero activity log answers directly.
+  LL:
+    distractor: A colleague paid for a similar productivity app, barely used it at
+      first, and later credited it with transforming their workflow.
+    diagnosticity: low
+    salience: low
+    proposition: A colleague paid for a similar productivity app, barely used it at
+      first, and later credited it with transforming their workflow.
+    matched_to: HL
+  HH:
+    distractor: 'My activity log inside the app is stark: after the first week I have
+      opened it exactly twice, and the timestamps show I have not launched it at all
+      in the past month, so it has effectively dropped out of my routine entirely.'
+    diagnosticity: high
+    salience: high
+    proposition: The user's own activity log shows the app has been opened twice total
+      since the trial's first week, and not at all in the past month.
+    salience_source: The exact open count (twice) and the month of zero launches make
+      the user's non-use concrete and self-evidenced.
+  LH:
+    distractor: The user's activity log shows the app opened twice total since the
+      first week, and not at all in the past month.
+    diagnosticity: high
+    salience: low
+    proposition: The user's own activity log shows the app has been opened twice total
+      since the trial's first week, and not at all in the past month.
+    matched_to: HH
+distractor_direction:
+  label: Delayed-adoption upside
+  description: Treating a peer's eventual success with a similar app after a slow
+    start as a reason to keep paying despite the user's own low usage.
+plausible_alternative_directions:
+- label: Monthly instead of annual
+  description: Whether switching from the annual plan to a cheaper month-to-month
+    option preserves access at lower commitment.
+- label: Cheaper free alternative
+  description: Whether a free tool covers the same core need the user occasionally
+    has.
+leak_audit:
+  ll_atomic_claims:
+  - A colleague paid for a similar productivity app.
+  - The colleague barely used it at first.
+  - The colleague later credited it with transforming their workflow.
+  hh_atomic_claims:
+  - The user has opened the app twice total since the trial's first week.
+  - The user has not opened the app at all in the past month.
+  hl_salience_dimensions:
+    source_credibility: Named respected colleague (Anselmo) with a firsthand testimonial.
+    narrative_coherence: 'Clean arc: slow start, then transformative adoption.'
+    confident_assertion: He swears it transformed his week.
+    concrete_detail: N/A — HL adds only Anselmo's identity and his testimonial, no
+      fact about the user's own usage that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 76
+  hl_word_count: 41
+  ll_word_count: 22
+  hh_word_count: 43
+  lh_word_count: 18
+  notes: 'xbase notes the app is polished and that the user enjoyed the first week,
+    but never states how little it has
+
+    been used since — that decisive fact is HH/LH-only. HL adds only the colleague
+    and his slow-start success story.
+
+    The distractor speaks to the colleague''s habits, not the user''s, so it cannot
+    inform this case.
+
+    '
+causal_audit:
+  steelman: 'A thoughtful person could argue that productivity tools often have a
+    real adoption curve — the value compounds
+
+    once habits form, and abandoning during the lull is a classic premature-cancellation
+    mistake; a respected
+
+    colleague''s identical slow-start-then-transformation experience is concrete evidence
+    that patience can pay off,
+
+    so keeping it one more cycle is defensible.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the colleague's outcome reflects his own engagement,
+    not the user's; the user's near-zero activity log (HH/LH) is the only evidence
+    about whether the user will actually use the app, and it is withheld from xbase.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to let a free-trial productivity app convert to a paid annual
+    plan, decided by the user's own twice-opened-then-idle activity log, not a colleague's
+    eventual-success testimonial.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

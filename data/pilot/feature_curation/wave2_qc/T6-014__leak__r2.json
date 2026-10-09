@@ -1,0 +1,26 @@
+{
+  "seed_id": "T6-014",
+  "ll_claims_extracted": [
+    "every past pest problem in this plant collection was fungus gnats",
+    "the fungus gnats were caused by overwatering"
+  ],
+  "hl_case_claims": [
+    "every outbreak in this plant collection turned out to be fungus gnats from overwatering"
+  ],
+  "hl_source_claims": [
+    "the speaker has been growing houseplants for over a decade (experience/credibility anchor)",
+    "the speaker is confident this is the same thing again (confident assertion about current belief)"
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 31,
+    "ll": 14,
+    "xbase": 66,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

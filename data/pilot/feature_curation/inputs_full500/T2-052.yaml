@@ -1,0 +1,170 @@
+seed_id: T2-052
+template: T2
+domain: open_qa
+complexity: high
+xbase: My checked suitcase has arrived damaged on my last three flights — a cracked
+  shell one time, a sheared-off wheel the next, a burst zip the third. I use the same
+  hard-shell case I have flown with for years, I pack it the same way, and I have
+  not started overstuffing it. It always comes off the belt looking like it has been
+  through something rough. I am trying to understand the pattern. {DS}
+focal_diagnostic_feature: All three damaged trips were tight connections through the
+  same hub, where bags are short-shipped and run through an automated high-speed sorter
+  known for rough handling on rushed transfers.
+low_diagnostic_proposition: The damage streak began around the time the user switched
+  to a new brand of luggage tag.
+oracle_action: ANSWER
+oracle_focus: 'The common factor is the transfer hub: tight connections route the
+  bag through a high-speed automated sorter that handles rushed transfers roughly,
+  so avoid that hub, allow longer connections, or fly direct.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a luggage-tag brand to case damage. Ask
+  what the three trips had in common — routing, connections, and which airports handled
+  the bag.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a luggage-tag brand to case damage. Ask what the three trips
+      had in common — routing, connections, and which airports handled the bag.
+  LL:
+    action: ASK
+    focus: Do not connect a luggage-tag brand to case damage. Ask what the three trips
+      had in common — routing, connections, and which airports handled the bag.
+  HH:
+    action: ANSWER
+    focus: 'The common factor is the transfer hub: tight connections route the bag
+      through a high-speed automated sorter that handles rushed transfers roughly,
+      so avoid that hub, allow longer connections, or fly direct.'
+  LH:
+    action: ANSWER
+    focus: 'The common factor is the transfer hub: tight connections route the bag
+      through a high-speed automated sorter that handles rushed transfers roughly,
+      so avoid that hub, allow longer connections, or fly direct.'
+variants:
+  HL:
+    distractor: My brother is convinced that switching to a new tag brand is what
+      brought this on — he points out every time that I changed tags right at the
+      start of this streak.
+    diagnosticity: low
+    salience: high
+    proposition: The damage streak began around the time the user switched to a new
+      brand of luggage tag.
+    salience_source: B/C — a confident relative's persistent assertion ('convinced',
+      'points out every time') anchors the tag-switch coincidence as causal.
+    why_plausible: The tag switch is the one deliberate change the user made, so a
+      confident family member's 'began right when' framing is tempting.
+    why_irrelevant: A luggage tag is a passive identifier; it does not determine how
+      forcefully a bag is thrown or sorted and cannot cause a cracked shell or sheared
+      wheel.
+  LL:
+    distractor: The damage streak began around the time the user switched to a new
+      brand of luggage tag.
+    diagnosticity: low
+    salience: low
+    proposition: The damage streak began around the time the user switched to a new
+      brand of luggage tag.
+    matched_to: HL
+  HH:
+    distractor: Looking at the three trips, every one was a tight connection through
+      the same hub airport, where short-shipped bags get rushed onto a high-speed
+      automated sorter that is notorious for slamming cases around during hurried
+      transfers — and only the connecting bags through that hub got wrecked.
+    diagnosticity: high
+    salience: high
+    proposition: All three damaged trips were tight connections through the same hub,
+      where bags are short-shipped and run through an automated high-speed sorter
+      known for rough handling on rushed transfers.
+    salience_source: Concrete shared factor (same hub, tight connections, high-speed
+      sorter, only those bags damaged) makes the cause clear.
+  LH:
+    distractor: All three damaged trips were tight connections through the same hub,
+      whose high-speed automated sorter handles rushed transfer bags roughly.
+    diagnosticity: high
+    salience: low
+    proposition: All three damaged trips were tight connections through the same hub,
+      where bags are short-shipped and run through an automated high-speed sorter
+      known for rough handling on rushed transfers.
+    matched_to: HH
+distractor_direction:
+  label: Luggage-tag brand
+  description: Treating the coincident switch to a new brand of luggage tag as connected
+    to the repeated case damage.
+plausible_alternative_directions:
+- label: Case fatigue
+  description: Whether the years-old hard-shell case has weakened and now fails under
+    normal handling.
+- label: Airline handling standard
+  description: Whether one carrier flown on all three trips has poor baggage handling
+    overall.
+leak_audit:
+  ll_atomic_claims:
+  - The damage streak began around a certain time.
+  - That time was when the user switched to a new brand of luggage tag.
+  hh_atomic_claims:
+  - All three damaged trips were tight connections through the same hub.
+  - At that hub, short-shipped bags run through a high-speed automated sorter.
+  - That sorter handles rushed transfer bags roughly, and only those connecting bags
+    were damaged.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Confident relative's persistent framing anchors the tag-switch
+      as causal.
+    confident_assertion: The brother is convinced; he points out every time.
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 32
+  ll_word_count: 18
+  hh_word_count: 43
+  lh_word_count: 19
+  notes: 'HL shortened from 55 to 32 words to satisfy C9 operational target (27-48).
+    Removed redundant chronology
+
+    repetition ("the damage really did begin right when I started using them") and
+    the "flimsy newer tags somehow
+
+    mark a bag out" case-content phrasing; retained brother''s confident conviction
+    and the tag-switch coincidence
+
+    timing, which are the sole HL-only salience additions. LL atomic claims preserved:
+    (1) streak began around
+
+    a time, (2) that time was the tag switch.
+
+    '
+causal_audit:
+  steelman: 'One might argue a tag that obscures or contradicts a barcode could send
+    a bag to manual handling or off-route,
+
+    raising mishandling. But the focal evidence is physical destruction — cracked
+    shell, sheared wheel, burst zip —
+
+    consistent with mechanical sorter impact, and a passive luggage tag does not govern
+    how hard a bag is thrown or
+
+    slammed by a sorter. The tag''s only function is identification; it has no mechanism
+    to crack a hard shell. The
+
+    streak is explained by the shared rough-handling hub on tight connections, which
+    the tag change cannot touch.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the same case, same packing, and no overstuffing,
+    foreclosing the self-inflicted-load pathway; the decisive shared-hub high-speed-sorter
+    factor lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Repeated checked-bag damage caused by tight connections through one
+    hub's rough high-speed sorter, coincidentally timed with switching luggage-tag
+    brands, which has no mechanism.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

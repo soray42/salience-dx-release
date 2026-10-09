@@ -1,0 +1,170 @@
+seed_id: T2-100
+template: T2
+domain: open_qa
+complexity: high
+xbase: I am deciding whether to buy a used 50mm prime lens listed by a private seller
+  for $280. It is described as fully functional, and the price is $120 below typical
+  used market rate. The seller says the slight discount is for cosmetic wear on the
+  focus ring. I have inspected the mount and aperture blades, which look normal. {DS}
+focal_diagnostic_feature: Holding the lens against bright light and looking through
+  both ends reveals a web-like cloudy growth between the rear elements, consistent
+  with fungal contamination that degrades contrast and is not remediated by cleaning
+  the outer elements.
+low_diagnostic_proposition: The listing appeared in the days following the user attending
+  a local photography workshop.
+oracle_action: ANSWER
+oracle_focus: Decline this purchase; the fungal contamination between the rear elements
+  is a structural defect that degrades optical performance and cannot be remediated
+  externally, making the discounted price misleading.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not anchor on the workshop timing as a reason to distrust
+  judgment; inspect the optical elements for haze, fungus, and internal dust before
+  making any purchase decision.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not anchor on the workshop timing as a reason to distrust judgment;
+      inspect the optical elements for haze, fungus, and internal dust before making
+      any purchase decision.
+  LL:
+    action: ASK
+    focus: Do not anchor on the workshop timing as a reason to distrust judgment;
+      inspect the optical elements for haze, fungus, and internal dust before making
+      any purchase decision.
+  HH:
+    action: ANSWER
+    focus: Decline this purchase; the fungal contamination between the rear elements
+      is a structural defect that degrades optical performance and cannot be remediated
+      externally, making the discounted price misleading.
+  LH:
+    action: ANSWER
+    focus: Decline this purchase; the fungal contamination between the rear elements
+      is a structural defect that degrades optical performance and cannot be remediated
+      externally, making the discounted price misleading.
+variants:
+  HL:
+    distractor: This listing went live the morning after I attended a local photography
+      workshop last month, and the coincidence has me second-guessing whether I am
+      thinking clearly enough to evaluate it honestly.
+    diagnosticity: low
+    salience: high
+    proposition: The listing appeared in the days following the user attending a local
+      photography workshop.
+    salience_source: B/C — clean chronology with a specific time anchor ('the morning
+      after'), confident first-person framing that sounds like genuine self-reflection.
+    why_plausible: A reader might think post-workshop enthusiasm could bias judgment
+      and treat the timing as a flag worth investigating.
+    why_irrelevant: Attending a photography workshop has no mechanism that affects
+      the physical condition of this lens; the workshop timing is unrelated to whether
+      the glass is contaminated.
+  LL:
+    distractor: The listing appeared in the days following the user attending a local
+      photography workshop.
+    diagnosticity: low
+    salience: low
+    proposition: The listing appeared in the days following the user attending a local
+      photography workshop.
+    matched_to: HL
+  HH:
+    distractor: Holding the lens up to a bright light and looking through both ends
+      reveals a cloudy, web-like growth between the rear elements — classic fungal
+      contamination that degrades contrast and is nearly impossible to fully remediate.
+    diagnosticity: high
+    salience: high
+    proposition: Holding the lens against bright light and looking through both ends
+      reveals a web-like cloudy growth between the rear elements, consistent with
+      fungal contamination that degrades contrast and is not remediated by cleaning
+      the outer elements.
+    salience_source: B/C — precise sensory description of the inspection, vivid qualifier
+      ('classic fungal contamination'), confident framing of consequence.
+  LH:
+    distractor: Bright-light inspection through both ends shows a web-like growth
+      between rear elements — fungal contamination that degrades contrast and is hard
+      to fully remediate.
+    diagnosticity: high
+    salience: low
+    proposition: Holding the lens against bright light and looking through both ends
+      reveals a web-like cloudy growth between the rear elements, consistent with
+      fungal contamination that degrades contrast and is not remediated by cleaning
+      the outer elements.
+    matched_to: HH
+distractor_direction:
+  label: Post-workshop judgment bias
+  description: Investigating whether attending a photography workshop shortly before
+    the listing appeared has introduced enthusiasm-driven bias that is impairing the
+    evaluation of the lens.
+plausible_alternative_directions:
+- label: Accurate seller discount
+  description: The cosmetic focus-ring wear is the genuine reason for the below-market
+    price and the lens is optically sound.
+- label: Aperture or element delamination
+  description: The internal clouding could be delamination of an element coating rather
+    than fungus, which has a different remediation and resale picture.
+- label: Haze from storage moisture
+  description: The clouding might be removable moisture haze rather than biological
+    fungal growth, which could be cleared by a competent technician.
+leak_audit:
+  ll_atomic_claims:
+  - The listing appeared in temporal proximity to the user attending a photography
+    workshop.
+  - The workshop was local.
+  hh_atomic_claims:
+  - Inspection is done by holding the lens up to bright light and looking through
+    both ends.
+  - A cloudy, web-like growth is visible between the rear elements.
+  - The growth is consistent with fungal contamination.
+  - Fungal contamination degrades contrast.
+  - The contamination cannot be fully remediated (by external cleaning).
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean timeline — workshop attendance the morning before the
+      listing appeared; plausible self-reflection framing.
+    confident_assertion: First-person confident voice ('has me second-guessing');
+      names the mechanism of distraction.
+    concrete_detail: 'Specific temporal anchor: ''the morning after''; names the specific
+      event type.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 59
+  hl_word_count: 31
+  ll_word_count: 14
+  hh_word_count: 35
+  lh_word_count: 23
+  notes: 'Stripped any hint of post-workshop enthusiasm from xbase to preserve C4.
+    HL is first-person (T2 can be voiced by user). HH/LH diff: HH adds ''classic''
+    qualifier and consequence clauses ''degrades contrast'' and ''nearly impossible
+    to fully remediate'' — both now present in LH in flat form (''degrades contrast
+    and is hard to fully remediate''). LL checks: timing of workshop is the only claim,
+    no source-credibility framing in LL. QC repair: LH previously omitted the two
+    consequence claims from HH; appended both in flat form; lh_word_count updated
+    from 19 to 23.
+
+    '
+causal_audit:
+  steelman: 'A senior photography practitioner might argue: attending a workshop could
+    prime the user to overvalue gear acquisition, suppressing the skepticism needed
+    to catch defects. The claim is not that the workshop affects the lens — it is
+    that it affects the evaluator''s cognitive state, which is a real effect. Therefore,
+    the timing IS worth noting as a confound on judgment quality.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: The distractor concerns bias in the user's judgment, not
+    a physical mechanism on the lens. The focal feature (fungal contamination visible
+    through both ends) is an objective physical finding that any buyer would discover
+    independently of cognitive state. No xbase closure needed — the focal refutes
+    the relevance structurally.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User evaluating a discounted used camera lens discovers fungal contamination
+    between rear elements on bright-light inspection, making the discount misleading.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

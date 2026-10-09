@@ -1,0 +1,9 @@
+{
+  "seed_id": "T1-011",
+  "steelman": "OEM-specific Android customizations are a canonical cause of subset-of-users crashes: manufacturers such as Xiaomi, Huawei, OPPO, and Samsung modify system services, restrict background processes, and in some cases apply auto-start or permission restrictions only to production-signed APKs installed outside ADB. A developer team predominantly using Pixel or stock-Android devices would not reproduce these restrictions, which could create an apparent debug-vs-release asymmetry. The anecdote from a named senior Android platform lead at a peer company adds credibility: OEM fragmentation is the first item on most Android compatibility checklists when subset-of-users crashes are reported, and the peer team's incident-review confirmation lends it further weight.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Some OEM battery/power-management systems (e.g., Xiaomi MIUI, Huawei EMUI) apply auto-start restrictions only to production-signed, non-ADB-installed apps, creating a debug/release behavioral difference on the same device. However, this mechanism causes lifecycle interruptions or process-kill events — it cannot produce a java.lang.ClassNotFoundException, which is determined entirely by the APK's class pool as fixed at build time by R8/ProGuard before installation.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase closure is strong and dual-layered: (1) the debug build runs on the exact same handsets where the release build crashes, which eliminates device-level OEM differences; (2) a ClassNotFoundException for a reflection-accessed class is a build-time artifact — R8 strips the class name before the APK reaches any device, so no OEM customization can cause or prevent it at runtime. The seed's own causal_audit field correctly identifies this closure. No curator action needed; seed passes this lens cleanly."
+}

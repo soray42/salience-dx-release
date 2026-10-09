@@ -1,0 +1,185 @@
+seed_id: T3-077
+template: T3
+domain: open_qa
+complexity: low
+xbase: My basil and parsley seedlings are all growing tall and spindly, with pale
+  green stems that flop over well before they reach five centimetres. They sit in
+  a terracotta pot on an indoor windowsill and I water them every three days. The
+  stems look equally thin from base to tip, with no pinching or collapse where they
+  meet the soil. {DS}
+focal_diagnostic_feature: All seedlings lean at a steep angle toward the window and
+  stems are uniformly thread-thin along their full length, indicating light-deprivation
+  elongation rather than any watering-related stress.
+low_diagnostic_proposition: Spindly seedling stems indicate overwatering and the beginning
+  of root rot.
+oracle_action: ANSWER
+oracle_focus: Move the seedlings to a south-facing window or provide supplemental
+  grow-light; the uniform etiolation and phototropic lean confirm light deficiency
+  as the cause, not overwatering.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the overwatering diagnosis from authority
+  alone; ask about light conditions, windowsill orientation, and whether stems lean
+  toward the light source before attributing the problem to watering frequency.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the overwatering diagnosis from authority alone; ask about
+      light conditions, windowsill orientation, and whether stems lean toward the
+      light source before attributing the problem to watering frequency.
+  LL:
+    action: ASK
+    focus: Do not accept the overwatering diagnosis from authority alone; ask about
+      light conditions, windowsill orientation, and whether stems lean toward the
+      light source before attributing the problem to watering frequency.
+  HH:
+    action: ANSWER
+    focus: Move the seedlings to a south-facing window or provide supplemental grow-light;
+      the uniform etiolation and phototropic lean confirm light deficiency as the
+      cause, not overwatering.
+  LH:
+    action: ANSWER
+    focus: Move the seedlings to a south-facing window or provide supplemental grow-light;
+      the uniform etiolation and phototropic lean confirm light deficiency as the
+      cause, not overwatering.
+variants:
+  HL:
+    distractor: Fajar, who has been growing culinary herbs from seed for twenty years
+      and writes about it, told me he has seen this exact pattern dozens of times
+      — spindly stems always mean overwatering and root rot starting.
+    diagnosticity: low
+    salience: high
+    proposition: Spindly seedling stems indicate overwatering and the beginning of
+      root rot.
+    salience_source: A/B/C — source credibility (twenty years growing herbs, published
+      writer), narrative coherence (direct personal consultation), and confident assertion
+      ("always mean", "dozens of times").
+    why_plausible: Overwatering causing root rot is a genuinely common seedling problem,
+      and a twenty-year expert asserting they have seen this exact pattern many times
+      is compelling to a beginner gardener who may not know etiolation symptoms.
+    why_irrelevant: Spindly elongation toward a light source is phototropic etiolation
+      driven by light deficit; root rot from overwatering produces damping-off collapse
+      at the soil line, not uniform stem elongation from base to tip — a pattern structurally
+      excluded by the xbase observation of no pinching or collapse at the soil line.
+  LL:
+    distractor: An experienced herb gardener stated that spindly seedling stems always
+      indicate overwatering and the start of root rot.
+    diagnosticity: low
+    salience: low
+    proposition: Spindly seedling stems indicate overwatering and the beginning of
+      root rot.
+    matched_to: HL
+  HH:
+    distractor: Every seedling leans at a steep angle toward the window, and all the
+      stems are thread-thin along their full length — the classic elongation pattern
+      of plants stretching for light they cannot get enough of.
+    diagnosticity: high
+    salience: high
+    proposition: All seedlings lean at a steep angle toward the window and stems are
+      uniformly thread-thin along their full length, indicating light-deprivation
+      elongation rather than any watering-related stress.
+    salience_source: B/C — vivid concrete observation (steep angle, thread-thin along
+      full length) with a direct expert framing ("classic elongation pattern of plants
+      stretching for light") stated confidently.
+  LH:
+    distractor: All seedlings lean at a steep angle toward the window and stems are
+      uniformly thread-thin along their full length, indicating light-deprivation
+      elongation.
+    diagnosticity: high
+    salience: low
+    proposition: All seedlings lean at a steep angle toward the window and stems are
+      uniformly thread-thin along their full length, indicating light-deprivation
+      elongation rather than any watering-related stress.
+    matched_to: HH
+distractor_direction:
+  label: overwatering and root rot
+  description: Investigating whether watering every three days is too frequent for
+    the pot size, causing waterlogged soil and root rot that weakens stem tissue.
+plausible_alternative_directions:
+- label: nutrient deficiency
+  description: Pale, weak seedlings can result from depleted or absent nutrients in
+    the potting mix, particularly nitrogen, which is a live hypothesis given no mention
+    of fertilising.
+- label: damping-off fungal disease
+  description: Fungal pathogens causing damping-off can produce collapsing, thin stems
+    in seedlings, especially in humid or poorly ventilated conditions.
+leak_audit:
+  ll_atomic_claims:
+  - Spindly seedling stems indicate overwatering and the beginning of root rot.
+  hh_atomic_claims:
+  - Every seedling leans at a steep angle toward the window.
+  - All stems are thread-thin along their full length.
+  - This is the classic elongation pattern of etiolation.
+  - The plants are stretching for light they cannot get enough of.
+  hl_salience_dimensions:
+    source_credibility: Fajar identified as a twenty-year herb-growing practitioner
+      who writes about the subject, establishing domain expertise directly matched
+      to the problem.
+    narrative_coherence: Direct personal consultation framed as a confident verdict
+      delivered after recognising the pattern.
+    confident_assertion: '"always mean overwatering", "dozens of times" — strong universal
+      and frequency claims conveying certainty.'
+    concrete_detail: '"twenty years", "writes about it" — concrete source background
+      detail (about the source, not the case).'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 60
+  hl_word_count: 36
+  ll_word_count: 18
+  hh_word_count: 34
+  lh_word_count: 22
+  notes: 'Repair: (1) removed ''north-facing'' from windowsill description to eliminate
+
+    partial focal leak (cell lens); (2) added ''with no pinching or collapse where
+
+    they meet the soil'' to xbase to structurally close the root-rot pathway at the
+
+    soil line (causal lens); (3) rewrote LH to include ''at a steep angle'' and
+
+    ''along their full length'' to match all HH atomic claims (leak lens).
+
+    HL adds only source-identity and credibility framing, not case content.
+
+    '
+causal_audit:
+  steelman: 'Watering every three days in a terracotta pot could keep the soil too
+    moist,
+
+    especially for seedlings with shallow root systems. Overwatering is the single
+
+    most common cause of seedling failure, and root rot can weaken stems, causing
+
+    them to go soft and collapse. However, the primary mechanism for root rot is
+
+    collapse or pinching at the soil line (damping-off), not uniform thread-thinness
+
+    from base to tip. The xbase now explicitly records that stems are equally thin
+
+    from base to tip with no pinching or collapse at the soil line, which is
+
+    structurally incompatible with root-rot presentation, removing the defensible
+
+    mechanism for overwatering to produce the observed full-length elongation.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'The sentence ''The stems look equally thin from base to
+    tip, with no pinching or collapse where they meet the soil'' blocks the root-rot
+    mechanism: root rot (damping-off) presents as softening and collapse at the soil
+    line, not as uniform thinness throughout the stem. This narrow closure names no
+    affirmative cause and does not supply the light-deficit diagnosis (which remains
+    exclusively in HH/LH via the phototropic lean).'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Herb seedlings growing leggy and spindly on an indoor windowsill suffer
+    from light-deprivation etiolation, not overwatering as an experienced herb grower
+    asserts based on the symptom pattern.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

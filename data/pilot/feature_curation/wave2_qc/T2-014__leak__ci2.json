@@ -1,0 +1,30 @@
+{
+  "seed_id": "T2-014",
+  "ll_claims_extracted": [
+    "a person (anonymous 'someone') reported this",
+    "the sourdough starter became unreliable",
+    "this happened after changing a grocery loyalty programme"
+  ],
+  "hl_case_claims": [
+    "starters lost reliability after the baker changed their grocery loyalty programme",
+    "the pattern involves multiple starters ('starters that lost reliability')"
+  ],
+  "hl_source_claims": [
+    "Marta runs a popular regional sourdough group",
+    "Marta bakes professionally",
+    "Marta told the user directly (first-person witnessing)",
+    "Marta has seen this pattern repeatedly (frequency of her observation)"
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 32,
+    "ll": 14,
+    "xbase": 45,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": false,
+  "verdict": "fail",
+  "repair_hint": "HH/LH non-equivalence (unrepaired from ci1): LH states only the temperature observation ('kitchen has become noticeably cooler lately, about five degrees below summer temperatures') but omits HH's three mechanistic case claims ('well-known to significantly slow fermentation', 'yeast and lactic acid bacteria activity roughly halves with every ten-degree fall', 'five degrees can push a starter from reliably active to sluggish'). Fix: either (a) strip those three mechanism clauses from HH so both share only the temperature-drop observation, or (b) add flat declarative versions of all three to LH. Option (a) is the shorter edit. Note on HL 'starters' plural and 'repeatedly': the plural starters and 'seen this pattern repeatedly' are classified as source-evidential claims (about Marta's observation history and its breadth), not case claims about the user's situation; they clear the leak threshold under the lens test. The 'subscription or' leak flagged in ci1 is confirmed removed."
+}

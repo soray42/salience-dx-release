@@ -1,0 +1,171 @@
+seed_id: T3-096
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our file-sync service is dropping change events on the monitored directories.
+  Files are being created and modified normally, but the sync daemon misses them and
+  the local index falls behind. The issue started two days ago after we expanded the
+  number of project directories being watched from 40 to 120. No code was deployed
+  to the daemon itself. A clean restart of the daemon did not restore sync. {DS}
+focal_diagnostic_feature: The daemon logs show repeated ENOSPC errors when registering
+  new inotify watches, and fs.inotify.max_user_watches is set to 8,192, which is well
+  below the watch count required for 120 directories and their subdirectory trees.
+low_diagnostic_proposition: A principal infrastructure engineer stated that this type
+  of sync daemon problem is a process-level bug and recommended periodic service restarts.
+oracle_action: ANSWER
+oracle_focus: Raise fs.inotify.max_user_watches to an adequate value (e.g., 524288)
+  and restart the daemon; the ENOSPC errors on watch registration confirm the kernel
+  watch limit is exhausted, not a process bug.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the process-bug diagnosis from authority
+  alone; ask for daemon logs, error codes on watch registration, and the current inotify
+  kernel parameters before restarting anything.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the process-bug diagnosis from authority alone; ask for daemon
+      logs, error codes on watch registration, and the current inotify kernel parameters
+      before restarting anything.
+  LL:
+    action: ASK
+    focus: Do not accept the process-bug diagnosis from authority alone; ask for daemon
+      logs, error codes on watch registration, and the current inotify kernel parameters
+      before restarting anything.
+  HH:
+    action: ANSWER
+    focus: Raise fs.inotify.max_user_watches to an adequate value (e.g., 524288) and
+      restart the daemon; the ENOSPC errors on watch registration confirm the kernel
+      watch limit is exhausted, not a process bug.
+  LH:
+    action: ANSWER
+    focus: Raise fs.inotify.max_user_watches to an adequate value (e.g., 524288) and
+      restart the daemon; the ENOSPC errors on watch registration confirm the kernel
+      watch limit is exhausted, not a process bug.
+variants:
+  HL:
+    distractor: Fernanda, our principal infrastructure engineer, says this class of
+      sync daemon issue is always a process-level bug and told us to restart the service
+      on a rolling schedule every 12 hours until we understand it better.
+    diagnosticity: low
+    salience: high
+    proposition: A principal infrastructure engineer stated that this type of sync
+      daemon problem is a process-level bug and recommended periodic service restarts.
+    salience_source: A/C — source credibility (principal infrastructure engineer),
+      confident assertion ('always a process-level bug'), confident verb of speech
+      ('told us'), concrete recovery prescription ('every 12 hours').
+    why_plausible: Process-level state corruption is a real cause of event-dropping
+      in long-running daemons, and principal engineers' confident pattern diagnoses
+      carry authority; periodic restart is a common operational mitigation.
+    why_irrelevant: The authority applies a generic heuristic ('always') without examining
+      the logs or the timing correlation with the directory count expansion; the ENOSPC
+      error code on watch registration directly identifies the kernel limit as the
+      cause.
+  LL:
+    distractor: A principal infrastructure engineer stated that this type of sync
+      daemon problem is a process-level bug and recommended periodic service restarts.
+    diagnosticity: low
+    salience: low
+    proposition: A principal infrastructure engineer stated that this type of sync
+      daemon problem is a process-level bug and recommended periodic service restarts.
+    matched_to: HL
+  HH:
+    distractor: The daemon logs show repeated ENOSPC errors when registering new inotify
+      watches, and the kernel parameter fs.inotify.max_user_watches is set to 8,192
+      — well below the 120 directories times hundreds of subdirectories now being
+      tracked.
+    diagnosticity: high
+    salience: high
+    proposition: The daemon logs show repeated ENOSPC errors when registering new
+      inotify watches, and fs.inotify.max_user_watches is set to 8,192, which is well
+      below the watch count required for 120 directories and their subdirectory trees.
+    salience_source: B/C — specific error code named (ENOSPC), specific parameter
+      name and value (8,192), concrete arithmetic implicit in the comparison ('120
+      directories times hundreds of subdirectories').
+  LH:
+    distractor: Daemon logs show ENOSPC errors on inotify watch registration; fs.inotify.max_user_watches
+      is 8,192, insufficient for the expanded directory count.
+    diagnosticity: high
+    salience: low
+    proposition: The daemon logs show repeated ENOSPC errors when registering new
+      inotify watches, and fs.inotify.max_user_watches is set to 8,192, which is well
+      below the watch count required for 120 directories and their subdirectory trees.
+    matched_to: HH
+distractor_direction:
+  label: Process-level daemon bug
+  description: Investigating whether the sync daemon has accumulated corrupt internal
+    state or a memory/handle leak that causes it to drop events over time.
+plausible_alternative_directions:
+- label: Event queue overflow
+  description: The kernel inotify event queue itself may be overflowing if events
+    arrive faster than the daemon processes them, causing silent drops.
+- label: Directory permission change
+  description: Some of the newly added directories may lack read permission for the
+    service account, causing those subtrees to be silently ignored.
+- label: Daemon thread starvation
+  description: The expanded watch set may be saturating the daemon's event-processing
+    threads, introducing backpressure that manifests as dropped events under load.
+leak_audit:
+  ll_atomic_claims:
+  - A principal infrastructure engineer diagnosed the problem as a process-level bug.
+  - The recommended mitigation was periodic service restarts.
+  hh_atomic_claims:
+  - The daemon logs contain ENOSPC errors.
+  - The ENOSPC errors occur during inotify watch registration.
+  - The kernel parameter fs.inotify.max_user_watches is set to 8,192.
+  - 8,192 is insufficient for 120 directories and their subdirectory trees.
+  hl_salience_dimensions:
+    source_credibility: Named principal infrastructure engineer — the most senior
+      infrastructure role on the team.
+    narrative_coherence: Direct in-person advice at what sounds like a team discussion;
+      recovery plan with a specific interval (12 hours).
+    confident_assertion: '''Always a process-level bug'', ''told us'' — categorical
+      claim with no hedging.'
+    concrete_detail: 'Specific restart interval: every 12 hours.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 68
+  hl_word_count: 36
+  ll_word_count: 21
+  hh_word_count: 33
+  lh_word_count: 18
+  notes: 'The authority does not engage with the timing correlation (directory count
+    expansion) or any log evidence — pure pattern-matching (''always''). xbase mentions
+    the expansion from 40 to 120 directories as context but does not mention ENOSPC
+    errors or the inotify parameter — those live only in HH/LH. The steelman for process-bug
+    is real but structurally ruled out by the ENOSPC error code, which is a kernel-level
+    resource exhaustion code, not an application error. QC repair: added pathway-closure
+    sentence ''A clean restart of the daemon did not restore sync.'' to xbase; this
+    neutrally blocks the handle-leak/event-queue-corruption mechanism (a restart would
+    clear those) without revealing the root cause. xbase_word_count updated from 58
+    to 68.
+
+    '
+causal_audit:
+  steelman: 'A principal engineer could defend the process-bug diagnosis: file-sync
+    daemons do accumulate watch-handle leaks and event-queue corruption over time,
+    especially when the watched set grows rapidly. Restarting the process clears any
+    leaked handles and resets event queues. The symptom (missed events after directory
+    expansion) is also consistent with a race condition in the daemon''s watch-registration
+    bookkeeping under load.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase now states 'A clean restart of the daemon did not
+    restore sync.' — a clean restart flushes any handle leaks and resets event queues,
+    so persistent failure after restart rules out accumulated process-level state
+    corruption as the cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: File-sync daemon misses events after watched directory count triples;
+    principal engineer diagnoses process bug, but ENOSPC errors in logs reveal inotify
+    max_user_watches limit is exhausted.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

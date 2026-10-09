@@ -1,0 +1,27 @@
+{
+  "seed_id": "T3-015",
+  "ll_claims_extracted": [
+    "The lawn needs core aeration this autumn."
+  ],
+  "hl_case_claims": [
+    "The lawn needs core aeration this autumn."
+  ],
+  "hl_source_claims": [
+    "The speaker is the gardening-club president (domain authority, recognised role).",
+    "She delivered the recommendation flatly (confident, unqualified manner).",
+    "She did not look at the lawn before giving the recommendation.",
+    "It is her standard recommendation with no exceptions (source pattern, not case content)."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 25,
+    "ll": 13,
+    "xbase": 68,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

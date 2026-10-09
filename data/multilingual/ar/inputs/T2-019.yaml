@@ -1,0 +1,200 @@
+seed_id: T2-019
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: تظهر المخططات البيانية على لوحة التحليلات الداخلية لدينا فارغةً لبعض أعضاء
+  الفريق، بينما يراها آخرون بشكل صحيح تماماً. الصفحة نفسها تُحمَّل، وتُعيد واجهة برمجة
+  بيانات API استجابة 200 مع JSON صالح، ولا توجد أخطاء على الخادم. الأشخاص الذين يرون
+  الفراغات يُقسمون أنهم لم يفعلوا شيئاً مختلفاً، ولا تُفيد إعادة التحميل الكاملة عندهم.
+  لم نغيّر مكتبة الرسوم البيانية هذا الربع. {DS}
+focal_diagnostic_feature: تُظهر وحدة تحكم المتصفح للمستخدمين المتأثرين أن طلب حزمة
+  الرسوم البيانية محجوب بفلتر على جانب العميل، وأن الحزمة تُقدَّم من مسار يحتوي على
+  كلمة "analytics" تتطابق معها قوائم حجب الإعلانات.
+low_diagnostic_proposition: The blank charts started appearing right after the team
+  was moved to a new floor with new monitors.
+oracle_action: ANSWER
+oracle_focus: Rename or reverse-proxy the charting bundle off the "analytics"-matching
+  path (or whitelist it); ad-block/content filters are blocking that script for the
+  affected browsers, which is why the API succeeds but charts stay blank.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a floor move or new monitors to blank
+  charts. Ask what the affected users' browser console shows and whether any script
+  request is blocked.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a floor move or new monitors to blank charts. Ask what the
+      affected users' browser console shows and whether any script request is blocked.
+  LL:
+    action: ASK
+    focus: Do not connect a floor move or new monitors to blank charts. Ask what the
+      affected users' browser console shows and whether any script request is blocked.
+  HH:
+    action: ANSWER
+    focus: Rename or reverse-proxy the charting bundle off the "analytics"-matching
+      path (or whitelist it); ad-block/content filters are blocking that script for
+      the affected browsers, which is why the API succeeds but charts stay blank.
+  LH:
+    action: ANSWER
+    focus: Rename or reverse-proxy the charting bundle off the "analytics"-matching
+      path (or whitelist it); ad-block/content filters are blocking that script for
+      the affected browsers, which is why the API succeeds but charts stay blank.
+variants:
+  HL:
+    distractor: لفت انتباهي أن شكاوى المخططات الفارغة ظهرت تزامناً مع انتقالنا إلى
+      الطابق الجديد وتسلّمنا للشاشات الخارجية الجديدة — حزم الجميع أغراضهم يوم الجمعة
+      وفتحوا صناديق الشاشات البرّاقة الاثنين التالي.
+    diagnosticity: low
+    salience: high
+    proposition: The blank charts started appearing right after the team was moved
+      to a new floor with new monitors.
+    salience_source: B/C — a confident first-person timeline pinning the symptom to
+      a concrete, recent workplace change.
+    why_plausible: A move plus new hardware is a big visible change, so it is tempting
+      to treat as the trigger when complaints surface afterward.
+    why_irrelevant: A different floor and new monitors cannot alter which JavaScript
+      a browser blocks; the split tracks browser extensions, not desks or displays.
+  LL:
+    distractor: بدأت المخططات الفارغة في الظهور في الوقت الذي انتقل فيه الفريق إلى
+      طابق جديد مع شاشات جديدة.
+    diagnosticity: low
+    salience: low
+    proposition: The blank charts started appearing right after the team was moved
+      to a new floor with new monitors.
+    matched_to: HL
+  HH:
+    distractor: على أحد الأجهزة المتأثرة، تُظهر وحدة التحكم Console أن طلب حزمة الرسوم
+      البيانية محجوب بفلتر محتوى قبل أن يصل إلى الشبكة. يتم تقديم الحزمة من مسار يحتوي
+      على كلمة "analytics"، وهو ما تتطابق معه قوائم حجب الإعلانات الشائعة، لذلك يفقد
+      مستخدمو أدوات الحجب هذا السكريبت تحديداً بينما لا يزال يتم تحميل بيانات API
+      بشكل طبيعي.
+    diagnosticity: high
+    salience: high
+    proposition: For affected users the browser console shows the charting bundle
+      request blocked by a client-side filter, and the bundle is served from a path
+      containing the word "analytics" that ad-block lists match.
+    salience_source: The console block and the literal 'analytics' path make the client-filter
+      mechanism concrete and reproducible.
+  LH:
+    distractor: تُظهر المتصفحات المتأثرة أن طلب حزمة الرسوم البيانية محجوب بفلتر على
+      جانب العميل؛ وهي تُقدَّم من مسار يحتوي على كلمة "analytics" تتطابق معها قوائم
+      حجب الإعلانات.
+    diagnosticity: high
+    salience: low
+    proposition: For affected users the browser console shows the charting bundle
+      request blocked by a client-side filter, and the bundle is served from a path
+      containing the word "analytics" that ad-block lists match.
+    matched_to: HH
+distractor_direction:
+  label: توقيت الانتقال إلى الطابق الجديد/الشاشات الجديدة
+  description: اعتبار الانتقال المكتبي والشاشات الجديدة هي المسبب لأن الشكاوى بدأت
+    بعدها مباشرة.
+plausible_alternative_directions:
+- label: اختلاف المتصفح أو الإصدار
+  description: ما إذا كان المستخدمون المتأثرون يشتركون في متصفح أو إصدار معين يفشل
+    في تشغيل كود الرسوم البيانية.
+- label: حزمة مخزّنة مؤقتاً قديمة
+  description: ما إذا كان بعض المستخدمين يحتفظون بنسخة معطوبة من سكريبت الرسوم البيانية
+    في الذاكرة المؤقتة.
+leak_audit:
+  ll_atomic_claims:
+  - The blank charts started appearing around the time the team moved to a new floor
+    with new monitors.
+  hh_atomic_claims:
+  - On affected browsers the chart bundle request is blocked by a client-side content
+    filter.
+  - The bundle is served from a URL path containing the word "analytics".
+  - Ad-block lists match that path, so blocker users lose that script while the data
+    API still loads.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent before/after-the-move account.
+    confident_assertion: Confident first-person framing ('It clicked for me') asserting
+      the around-the-time coincidence.
+    concrete_detail: Vivid detail about the move event itself (Friday packing, Monday
+      new displays) — about the setting/event, not the failure mechanics and not a
+      new case fact.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 40
+  ll_word_count: 18
+  hh_word_count: 47
+  lh_word_count: 23
+  notes: 'T2 coincidence: a floor move and new monitors have no mechanism over which
+    scripts a browser''s content filter
+
+    blocks. xbase establishes the page loads, the API returns valid JSON, and the
+    split is per-user — symptoms only;
+
+    the console-block and "analytics" path (decisive) are HH/LH-only. New monitors
+    deliberately do not introduce a
+
+    rendering/GPU red herring into xbase.
+
+    QC repair round 1 (leak lens): HL previously carried three claims LL lacked —
+    a temporal baseline
+
+    ("Before the move nobody mentioned it"), a scope/severity quantifier ("suddenly
+    half the team''s charts were
+
+    empty"), and a precision upgrade ("all started the week" vs LL''s "around the
+    time"). HL rewritten to carry only
+
+    LL''s single claim (blank charts appeared around the time of the move/new monitors),
+    with salience now from
+
+    confident first-person framing and vivid detail about the move event itself (Friday
+    packing, Monday displays),
+
+    not added case facts. HL/LL propositional equivalence restored. Recounted: xbase
+    corrected 70→63 (counter error,
+
+    text unchanged), HL 42→40; LL/HH/LH unchanged.
+
+    '
+causal_audit:
+  steelman: 'One could imagine new monitors at an odd resolution or scaling making
+    zero-size chart canvases, or the new floor
+
+    sitting behind a different network segment with stricter egress — but the data
+    API loads fine on the same network,
+
+    and the blanks follow individuals across refreshes regardless of display, so neither
+    monitors nor floor can be the
+
+    discriminating factor.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the data API returns 200 with valid JSON and
+    a hard refresh does not help, closing the network-egress and stale-cache pathways
+    a floor move might be imagined to touch.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Blank dashboard charts caused by ad-blockers matching an 'analytics'
+    bundle path for some users, coincidentally timed with an office floor move and
+    new monitors.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-019.yaml
+  source_xbase_sha256: 77fffd339fe6fa91
+  translated_content_sha256: 081dc6659a24618f
+  translation_notes: Technical terms (JSON, API, Console, analytics, ad-block) kept
+    in English/loan form as conventional in Arabic technical writing. The {DS} token
+    is preserved literally. HL salience comes from the confident first-person framing
+    and the vivid Friday-packing/Monday-displays detail, matching the English original.

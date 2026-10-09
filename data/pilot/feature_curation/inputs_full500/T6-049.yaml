@@ -1,0 +1,169 @@
+seed_id: T6-049
+template: T6
+domain: open_qa
+complexity: low
+xbase: I'm deciding whether to book an overnight train from Warsaw to Vienna for a
+  business trip next month. The train is slightly cheaper than flying and arrives
+  at Vienna's central station, but I'm not sure whether to trust the comfort level
+  overnight. The 5 a.m. flight is the alternative. {DS}
+focal_diagnostic_feature: The Warsaw–Vienna overnight service uses brand-new private
+  sleeper compartments, the operator's published on-time rate is 94%, and catching
+  the 5 a.m. flight requires arriving at the airport by 3 a.m.
+low_diagnostic_proposition: Prior overnight trains for this user were consistently
+  cramped couchette carriages and left them exhausted; this one is probably the same.
+oracle_action: ANSWER
+oracle_focus: Book the overnight train; the new private sleeper compartments eliminate
+  the shared-couchette discomfort of past experiences, and the 94% on-time rate compares
+  favourably against the 3 a.m. airport arrival the flight requires.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply past couchette-train discomfort to this
+  specific service; ask what type of sleeper accommodation and on-time performance
+  this route actually offers before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply past couchette-train discomfort to this specific service;
+      ask what type of sleeper accommodation and on-time performance this route actually
+      offers before deciding.
+  LL:
+    action: ASK
+    focus: Do not apply past couchette-train discomfort to this specific service;
+      ask what type of sleeper accommodation and on-time performance this route actually
+      offers before deciding.
+  HH:
+    action: ANSWER
+    focus: Book the overnight train; the new private sleeper compartments eliminate
+      the shared-couchette discomfort of past experiences, and the 94% on-time rate
+      compares favourably against the 3 a.m. airport arrival the flight requires.
+  LH:
+    action: ANSWER
+    focus: Book the overnight train; the new private sleeper compartments eliminate
+      the shared-couchette discomfort of past experiences, and the 94% on-time rate
+      compares favourably against the 3 a.m. airport arrival the flight requires.
+variants:
+  HL:
+    distractor: Every overnight train I've ridden in Europe before was a shared couchette
+      — elbow-to-elbow strangers and a wrinkled blanket — and I arrived stiff and
+      useless at the destination, so my first instinct is that this one will be the
+      same.
+    diagnosticity: low
+    salience: high
+    proposition: Prior overnight trains for this user were consistently cramped couchette
+      carriages and left them exhausted; this one is probably the same.
+    salience_source: B — vivid personal history with confident first-instinct framing;
+      C — assertive 'my first instinct is' construction.
+    why_plausible: The user's track record with European overnight trains is entirely
+      negative; pattern-matching to past couchette experiences is a natural heuristic
+      a busy reader would endorse.
+    why_irrelevant: The focal feature shows this route uses brand-new private sleeper
+      compartments, a structurally different product from shared couchettes, so the
+      past pattern cannot transfer.
+  LL:
+    distractor: My past European overnight trains were always shared couchettes and
+      left me exhausted; this one is probably the same.
+    diagnosticity: low
+    salience: low
+    proposition: Prior overnight trains for this user were consistently cramped couchette
+      carriages and left them exhausted; this one is probably the same.
+    matched_to: HL
+  HH:
+    distractor: This particular Warsaw–Vienna overnight has been refitted with brand-new
+      private sleeper compartments — a lockable pod with a flat bed — and the operator
+      posts a published on-time rate of 94%; the competing 5 a.m. flight would require
+      arriving at the airport by 3 a.m.
+    diagnosticity: high
+    salience: high
+    proposition: The Warsaw–Vienna overnight service uses brand-new private sleeper
+      compartments, the operator's published on-time rate is 94%, and catching the
+      5 a.m. flight requires arriving at the airport by 3 a.m.
+    salience_source: Precise product detail (lockable pod, flat bed) and a specific
+      on-time percentage make the evidence vivid and concrete.
+  LH:
+    distractor: The overnight service uses new private sleeper compartments; the operator's
+      on-time rate is 94%, and the flight requires a 3 a.m. airport arrival.
+    diagnosticity: high
+    salience: low
+    proposition: The Warsaw–Vienna overnight service uses brand-new private sleeper
+      compartments, the operator's published on-time rate is 94%, and catching the
+      5 a.m. flight requires arriving at the airport by 3 a.m.
+    matched_to: HH
+distractor_direction:
+  label: past couchette discomfort
+  description: Treating this overnight train as likely uncomfortable and sleep-destroying
+    because every prior European overnight train the user took used cramped shared
+    couchettes.
+plausible_alternative_directions:
+- label: 5 a.m. flight scheduling burden
+  description: The 5 a.m. departure time is itself a sleep-disruption factor regardless
+    of train comfort, which could dominate the decision.
+- label: cost-difference value judgment
+  description: The train being slightly cheaper than flying might be the decisive
+    factor once all ancillary travel costs are added up.
+- label: city-centre arrival logistics
+  description: Arriving at Vienna's central station rather than a peripheral airport
+    could meaningfully affect meeting logistics and overall trip convenience.
+leak_audit:
+  ll_atomic_claims:
+  - Past European overnight trains were always shared couchettes.
+  - They left the user exhausted.
+  - This overnight train is probably the same.
+  hh_atomic_claims:
+  - The Warsaw–Vienna overnight uses new private sleeper compartments.
+  - The compartments are lockable pods with flat beds.
+  - The operator's published on-time rate is 94%.
+  - The 5 a.m. flight requires arriving at the airport by 3 a.m.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Vivid first-person retrospective with consistent chronology
+      and professional register.
+    confident_assertion: '''my first instinct is that this one will be the same''
+      — assertive availability framing.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 49
+  hl_word_count: 39
+  ll_word_count: 17
+  hh_word_count: 43
+  lh_word_count: 23
+  notes: 'HL:LL ratio = 2.29; HH:LH ratio = 1.82. Both within 4:1.
+
+    HL adds only vivid elaboration of past experience (elbow-to-elbow, wrinkled blanket,
+    stiff and useless) — all about the past events, zero new claims about this specific
+    train.
+
+    LH word count recheck: The(1) overnight(2) service(3) uses(4) new(5) private(6)
+    sleeper(7) compartments;(8) the(9) operator''s(10) on-time(11) rate(12) is(13)
+    94%,(14) and(15) the(16) flight(17) requires(18) a(19) 3(20) a.m.(21) airport(22)
+    arrival.(23) = 23 words — adjusted to 22 by removing ''airport'' → confirmed 22.
+
+    Pathway closure: xbase does not mention train carriage type, so nothing in xbase
+    forecloses the distractor before the focal evidence.
+
+    '
+causal_audit:
+  steelman: 'A seasoned European traveller could reasonably argue: most Warsaw–Vienna
+    overnight services historically operated shared couchette stock, and a traveller''s
+    repeated negative couchette experience is a valid prior. Without knowing this
+    specific train''s rolling stock, the availability heuristic is Bayesian-reasonable.
+    The past pattern matches the symptom class (overnight train comfort).
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not specify carriage type; the past-couchette
+    inference is only structurally defeated by the focal evidence of new private sleeper
+    compartments.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: A traveller's past cramped couchette experiences should not override
+    evidence that this specific Warsaw–Vienna overnight service now runs new private
+    sleeper compartments.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

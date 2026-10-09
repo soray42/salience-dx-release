@@ -1,0 +1,9 @@
+{
+  "seed_id": "T2-016",
+  "steelman": "The strongest argument for the distractor being causal invokes AP automation: many modern accounts-payable systems use OCR-based invoice ingestion, template-matching parsers, or structured-data extraction tools that can fail when a supplier changes their invoice layout. If the redesign altered field positions, bounding boxes, or visual structures that the client's parser keys on, invoices could fall into a manual exception queue, adding 20-30 days of processing delay. This is a documented operational failure mode that a senior AP manager would place on a real checklist. Additionally, a visually unfamiliar invoice could theoretically be misrouted or flagged for extra review by a human AP clerk unfamiliar with the new branding.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "AP automation / OCR template-matching failure — but this is foreclosed by xbase specifying the redesign was purely cosmetic (fonts, color scheme, logo only; no field or position changes), which means parsers keying on field positions and labels would be unaffected. The second potential mechanism (client-side process change) is foreclosed by the client's explicit confirmation that their invoicing process is unchanged.",
+  "pathway_closure_check": "effective",
+  "notes": "Both xbase closures are effective and jointly watertight: (1) 'fonts, color scheme, and logo' specifies zero structural change — field positions, labels, and content are identical, so OCR/template-matching parsers and human reviewers alike receive the same semantic payload; (2) 'client confirmed their invoicing process hasn't changed' closes any hypothesis about client-side workflow, system, or personnel changes. No spam-filter, ERP vendor-matching rule, or email-routing rule keys on PDF font or color. The seed is well-constructed and passes this lens. No repair needed."
+}

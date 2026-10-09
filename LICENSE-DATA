@@ -1,0 +1,6 @@
+The scenarios (data/pilot, data/multilingual/*/inputs), their translations and the annotation data
+(analysis/human_val, analysis/human_gold) are licensed under the Creative Commons Attribution 4.0
+International licence (CC BY 4.0): https://creativecommons.org/licenses/by/4.0/legalcode
+
+Model outputs and judge labels (data/full, data/scaling, data/multilingual/*/*.ndjson) are redistributed
+under the respective providers' terms of use. Code is licensed under Apache-2.0 (see LICENSE).

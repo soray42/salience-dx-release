@@ -1,0 +1,13 @@
+{
+  "seed_id": "T1-014",
+  "my_own_diagnosis": "From xbase plus the focal feature, a competent practitioner would recommend repair: the cost ratio (29% of replacement) is well inside the conventional 50% threshold, and the control-board failure is an isolated fault with no signal of systemic deterioration, leaving reasonable useful life at 8 years.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature provides precise cost ratio, an explicit industry threshold, and a fault-type characterisation that together unambiguously support repair over replacement.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracle mapping is correct: HL/LL receive the low-diagnostic oracle that rebuts the inapplicable warranty argument; HH/LH receive the focal oracle recommending repair on cost-ratio and fault-isolation grounds.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

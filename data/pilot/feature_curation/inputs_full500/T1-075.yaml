@@ -1,0 +1,170 @@
+seed_id: T1-075
+template: T1
+domain: open_qa
+complexity: medium
+xbase: I'm deciding whether to register for an in-person weekend coding bootcamp that
+  runs for ten consecutive Saturdays in a city about an hour from me. It costs €1,800
+  and covers web development fundamentals I genuinely want. The reviews are solid
+  and the instructors are practitioners. I work weekdays, so weekends are the only
+  time I have. I want to commit only if I can realistically see it through. {DS}
+focal_diagnostic_feature: The user already has a standing family caregiving commitment
+  every Saturday that cannot be moved, conflicting directly with all ten session days.
+low_diagnostic_proposition: A former classmate took a comparable weekend bootcamp
+  and felt the curriculum was too shallow to justify the price.
+oracle_action: ANSWER
+oracle_focus: Do not register; the bootcamp meets on the exact Saturdays the user
+  has an immovable weekly caregiving commitment, so they could not attend the sessions
+  regardless of the course's quality.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one classmate's quality complaint decide this.
+  Ask whether the user can actually attend every Saturday session given their existing
+  weekend commitments.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one classmate's quality complaint decide this. Ask whether the
+      user can actually attend every Saturday session given their existing weekend
+      commitments.
+  LL:
+    action: ASK
+    focus: Do not let one classmate's quality complaint decide this. Ask whether the
+      user can actually attend every Saturday session given their existing weekend
+      commitments.
+  HH:
+    action: ANSWER
+    focus: Do not register; the bootcamp meets on the exact Saturdays the user has
+      an immovable weekly caregiving commitment, so they could not attend the sessions
+      regardless of the course's quality.
+  LH:
+    action: ANSWER
+    focus: Do not register; the bootcamp meets on the exact Saturdays the user has
+      an immovable weekly caregiving commitment, so they could not attend the sessions
+      regardless of the course's quality.
+variants:
+  HL:
+    distractor: Bethlehem, who studied design with me years ago, signed up for a weekend
+      bootcamp a lot like this one and came away disappointed; she told me the sessions
+      skimmed the surface and that for the price she expected far more depth than
+      the fundamentals they actually delivered.
+    diagnosticity: low
+    salience: high
+    proposition: A former classmate took a comparable weekend bootcamp and felt the
+      curriculum was too shallow to justify the price.
+    salience_source: A — a named former classmate recounting her own first-hand bootcamp
+      experience lends the depth complaint credibility.
+    why_plausible: Overpriced, shallow curricula are a real bootcamp risk, so her
+      firsthand disappointment feels like relevant due diligence.
+    why_irrelevant: Curriculum depth is moot if the user physically cannot attend;
+      the deciding fact is the Saturday scheduling conflict, which her quality complaint
+      does not address.
+  LL:
+    distractor: A former classmate took a comparable weekend bootcamp and felt the
+      curriculum was too shallow for the price.
+    diagnosticity: low
+    salience: low
+    proposition: A former classmate took a comparable weekend bootcamp and felt the
+      curriculum was too shallow to justify the price.
+    matched_to: HL
+  HH:
+    distractor: Looking at my actual calendar, every single Saturday I care for my
+      grandmother while my sibling works, and that cannot be rescheduled; the bootcamp
+      meets on ten straight Saturdays, so I would miss the class portion of every
+      one of the ten sessions.
+    diagnosticity: high
+    salience: high
+    proposition: The user already has a standing family caregiving commitment every
+      Saturday that cannot be moved, conflicting directly with all ten session days.
+    salience_source: Concrete first-person mapping of an immovable weekly Saturday
+      duty onto all ten session dates makes the conflict undeniable.
+  LH:
+    distractor: The user has an immovable Saturday caregiving duty every week, conflicting
+      with all ten bootcamp sessions.
+    diagnosticity: high
+    salience: low
+    proposition: The user already has a standing family caregiving commitment every
+      Saturday that cannot be moved, conflicting directly with all ten session days.
+    matched_to: HH
+distractor_direction:
+  label: Curriculum-value doubt
+  description: Treating the decision as mainly about whether the bootcamp's content
+    is deep enough to justify its price, as a classmate complained.
+plausible_alternative_directions:
+- label: Travel burden
+  description: Whether the hour-each-way commute on ten weekends is sustainable.
+- label: Cost versus self-study
+  description: Whether free or cheaper online material could cover the same fundamentals.
+leak_audit:
+  ll_atomic_claims:
+  - A former classmate took a comparable weekend bootcamp.
+  - That classmate felt the curriculum was too shallow for the price.
+  hh_atomic_claims:
+  - The user cares for their grandmother every Saturday and it cannot be rescheduled.
+  - The bootcamp meets on ten consecutive Saturdays.
+  - The user would miss the class portion of all ten sessions.
+  hl_salience_dimensions:
+    source_credibility: Named former classmate (Bethlehem) recounting her own bootcamp
+      experience.
+    narrative_coherence: Coherent account of signing up, attending, and being disappointed
+      by depth.
+    confident_assertion: Stated plainly as her own conclusion.
+    concrete_detail: Detail about the source (her design study, her depth expectation)
+      only — no claim about this user's Saturdays.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 68
+  hl_word_count: 47
+  ll_word_count: 18
+  hh_word_count: 43
+  lh_word_count: 16
+  notes: 'LL carries only the took-bootcamp and shallow-for-price claims; the named
+    classmate, her design background, and
+
+    her depth expectation are HL-only and about the source. xbase says weekends are
+    the user''s only free time but
+
+    deliberately does not reveal the Saturday caregiving conflict, so HL/LL cannot
+    resolve the decision; the decisive
+
+    scheduling conflict lives only in HH/LH. "Weekends are the only time I have" is
+    neutral availability context that
+
+    does not by itself foreclose attendance — it is the caregiving duty in HH/LH that
+    does.
+
+    '
+causal_audit:
+  steelman: 'An education consumer-advocate might argue curriculum depth is decision-relevant:
+    a shallow, overpriced bootcamp
+
+    wastes €1,800 and ten weekends, and a credible firsthand report of thin content
+    is exactly the kind of warning a
+
+    careful buyer should heed before committing. But quality only matters conditional
+    on being able to attend, and
+
+    the focal feature shows the user has an immovable weekly Saturday duty that conflicts
+    with every session, so the
+
+    course is unattendable for them regardless of how good it is. The classmate''s
+    depth complaint has no mechanism to
+
+    inform a decision that the scheduling conflict already settles.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase withholds the Saturday caregiving conflict;
+    the decisive scheduling clash appears only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A user should decline a ten-Saturday bootcamp because an immovable
+    weekly caregiving duty conflicts with every session, not because a classmate found
+    a similar course too shallow.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

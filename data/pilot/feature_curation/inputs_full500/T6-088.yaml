@@ -1,0 +1,176 @@
+seed_id: T6-088
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Kinesis data stream has one shard receiving nearly all the traffic while
+  the other five shards sit almost idle. Producer throughput is within the provisioned
+  limit across all shards combined. We added two new producer services last week but
+  have not changed the stream's shard count. {DS}
+focal_diagnostic_feature: All new producer services are sending records with a partition
+  key of the string literal "default", resulting in a single shard receiving every
+  record from those producers while the existing hashed keys distribute normally.
+low_diagnostic_proposition: The user's previous Kinesis hot-shard problems were always
+  caused by Lambda consumer throttling feeding back into producer retries, so this
+  pattern is likely the same issue.
+oracle_action: ANSWER
+oracle_focus: 'Fix the partition key in the two new producer services: replace the
+  static ''default'' key with a high-cardinality value such as a record ID or timestamp
+  component so records distribute across all shards.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the previous Lambda-throttling explanation
+  to this case. Ask for the partition keys used by each producer and whether the hot
+  shard load correlates with traffic from the new services before investigating consumer-side
+  throttling.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the previous Lambda-throttling explanation to this case. Ask
+      for the partition keys used by each producer and whether the hot shard load
+      correlates with traffic from the new services before investigating consumer-side
+      throttling.
+  LL:
+    action: ASK
+    focus: Do not apply the previous Lambda-throttling explanation to this case. Ask
+      for the partition keys used by each producer and whether the hot shard load
+      correlates with traffic from the new services before investigating consumer-side
+      throttling.
+  HH:
+    action: ANSWER
+    focus: 'Fix the partition key in the two new producer services: replace the static
+      ''default'' key with a high-cardinality value such as a record ID or timestamp
+      component so records distribute across all shards.'
+  LH:
+    action: ANSWER
+    focus: 'Fix the partition key in the two new producer services: replace the static
+      ''default'' key with a high-cardinality value such as a record ID or timestamp
+      component so records distribute across all shards.'
+variants:
+  HL:
+    distractor: 'Every Kinesis hot-shard incident I have dealt with before started
+      the same way: Lambda consumers getting throttled, backing off, and creating
+      retry pileups that overwhelmed one shard.'
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous Kinesis hot-shard problems were always caused
+      by Lambda consumer throttling feeding back into producer retries, so this pattern
+      is likely the same issue.
+    salience_source: B/C — confident first-person pattern statement ('every incident...
+      started the same way') with a specific mechanism (Lambda throttling → backoff
+      → retry pileup) and a definitive declared first action.
+    why_plausible: Lambda consumer throttling causing retry-driven producer hot shards
+      is a real and well-documented Kinesis failure mode that a practitioner would
+      legitimately check.
+    why_irrelevant: The past incidents involved a consumer-side throttling mechanism
+      feeding back to producers; the focal feature shows the current hot shard is
+      caused by a static partition key on the producer side — a structurally different
+      root cause that produces identical symptoms but has no consumer-throttling component.
+  LL:
+    distractor: Past Kinesis hot-shard problems for this user were caused by Lambda
+      consumer throttling driving producer retries onto one shard.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous Kinesis hot-shard problems were always caused
+      by Lambda consumer throttling feeding back into producer retries, so this pattern
+      is likely the same issue.
+    matched_to: HL
+  HH:
+    distractor: A partition key audit on the two new producers shows both are hardcoded
+      to send every record with PartitionKey='default'; Kinesis hashes that string
+      to one shard consistently, so 100% of the new producers' traffic lands on shard
+      3 while the other five shards see only the original producers' load.
+    diagnosticity: high
+    salience: high
+    proposition: All new producer services are sending records with a partition key
+      of the string literal "default", resulting in a single shard receiving every
+      record from those producers while the existing hashed keys distribute normally.
+    salience_source: B/C — exact string value ('default'), specific shard identifier
+      (shard 3), clear hash-determinism explanation, and a quantified traffic split
+      (100% of new producer traffic) make the finding precise and actionable.
+  LH:
+    distractor: Both new producer services use a hardcoded PartitionKey of 'default',
+      which Kinesis consistently hashes to one shard, concentrating all new-producer
+      traffic there.
+    diagnosticity: high
+    salience: low
+    proposition: All new producer services are sending records with a partition key
+      of the string literal "default", resulting in a single shard receiving every
+      record from those producers while the existing hashed keys distribute normally.
+    matched_to: HH
+distractor_direction:
+  label: Lambda consumer throttling feedback
+  description: Investigating whether Lambda consumer throttling is causing producer
+    retry accumulation that concentrates traffic on one shard.
+plausible_alternative_directions:
+- label: Shard-level write limit breach
+  description: Checking whether the hot shard is simply exceeding its 1 MB/s or 1,000
+    records/s write limit and whether resharding is needed independently of the key
+    distribution.
+- label: Kinesis Enhanced Fan-Out contention
+  description: Assessing whether multiple consumers using Enhanced Fan-Out on the
+    same shard are competing for read throughput, creating apparent imbalance in monitoring
+    metrics.
+- label: Producer batching skew
+  description: Investigating whether one of the existing producers recently changed
+    its batching strategy in a way that concentrates records toward a narrower key
+    space.
+leak_audit:
+  ll_atomic_claims:
+  - Past Kinesis hot-shard problems for this user were caused by Lambda consumer throttling.
+  - The throttling drove producer retries onto one shard.
+  hh_atomic_claims:
+  - Both new producer services are hardcoded to send every record with PartitionKey='default'.
+  - Kinesis hashes that string consistently to one shard (shard 3).
+  - 100% of the new producers' traffic lands on shard 3.
+  - The other five shards see only the original producers' load.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker.
+    narrative_coherence: Consistent personal history pattern stated with a specific
+      mechanism and a declared standard first action.
+    confident_assertion: '''every Kinesis hot-shard incident I have dealt with before
+      started the same way''.'
+    concrete_detail: N/A — mechanism detail (Lambda throttling → backoff → retry pileup)
+      describes past incidents, not this case's configuration.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 65
+  hl_word_count: 27
+  ll_word_count: 19
+  hh_word_count: 48
+  lh_word_count: 22
+  notes: 'T6 availability inference: ''this pattern is likely the same issue'' appears
+    flatly in LL as required. The past incidents were consumer-side throttling; the
+    current case is producer-side static key — structurally different. xbase notes
+    new producer services were added but does not name their partition key strategy,
+    so xbase alone cannot identify the root cause.
+
+    '
+causal_audit:
+  steelman: 'A senior Kinesis engineer would legitimately rank Lambda consumer throttling
+    as a top hypothesis: it is a documented cause of hot shards, and the timing (new
+    services added last week) could equally explain a new consumer misconfiguration.
+    The user''s past experience is statistically relevant. However, the focal feature
+    establishes the cause at the producer key layer: both new producers use a static
+    ''default'' partition key, which deterministically routes all their records to
+    one shard. This is a separate mechanism from consumer throttling — it would produce
+    the same hot-shard symptom even with zero Lambda consumers. The structural difference
+    (producer key vs consumer throttle) means the past incidents do not predict the
+    present cause.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not foreclose the Lambda-throttling pathway;
+    the partition key audit in HH/LH establishes the actual cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: 'Kinesis hot shard: user''s past experience blames Lambda consumer
+    throttling, but new producer services use a hardcoded static partition key ''default''
+    routing all their records to one shard.'
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

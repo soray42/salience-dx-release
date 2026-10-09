@@ -1,0 +1,173 @@
+seed_id: T3-055
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I have a strong offer to buy a house in a town an hour outside the city where
+  I currently rent. The price is good for the space, the place is in fine condition,
+  and I could comfortably afford the mortgage. I work in the city three days a week
+  in a role that cannot go fully remote. I keep weighing the extra space against the
+  move, and I want to make sure I am not missing something that should be decisive.
+  {DS}
+focal_diagnostic_feature: There is no direct public transport from the town to the
+  city, so the three weekly commutes would each be a ninety-minute drive each way
+  through heavy traffic, adding roughly nine hours of driving weekly.
+low_diagnostic_proposition: A relative who is a property developer says you should
+  always buy the biggest house you can afford because space is what holds value.
+oracle_action: ANSWER
+oracle_focus: 'Weigh the commute heavily: with no direct transit, the three in-office
+  days each require a ninety-minute drive each way, roughly nine hours of driving
+  a week, which is the decisive cost the extra space must be judged against.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the buy-the-biggest-house rule from authority.
+  Ask about the commute from this town to the user's in-office days before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the buy-the-biggest-house rule from authority. Ask about
+      the commute from this town to the user's in-office days before deciding.
+  LL:
+    action: ASK
+    focus: Do not accept the buy-the-biggest-house rule from authority. Ask about
+      the commute from this town to the user's in-office days before deciding.
+  HH:
+    action: ANSWER
+    focus: 'Weigh the commute heavily: with no direct transit, the three in-office
+      days each require a ninety-minute drive each way, roughly nine hours of driving
+      a week, which is the decisive cost the extra space must be judged against.'
+  LH:
+    action: ANSWER
+    focus: 'Weigh the commute heavily: with no direct transit, the three in-office
+      days each require a ninety-minute drive each way, roughly nine hours of driving
+      a week, which is the decisive cost the extra space must be judged against.'
+variants:
+  HL:
+    distractor: 'Tolga, my uncle who has developed and flipped houses for twenty-five
+      years and whom the whole family treats as the property oracle, told me firmly
+      that the rule never changes: always buy the biggest house you can afford, because
+      square footage is what holds and grows value over time.'
+    diagnosticity: low
+    salience: high
+    proposition: A relative who is a property developer says you should always buy
+      the biggest house you can afford because space is what holds value.
+    salience_source: A — a long-experienced property developer the family treats as
+      an authority asserting a firm general rule.
+    why_plausible: Floor area does correlate with resale value, so a seasoned developer's
+      maximise-space rule sounds like solid advice.
+    why_irrelevant: The space rule ignores commute entirely; it never engages the
+      nine hours of weekly driving this specific town imposes, which is what actually
+      decides the move.
+  LL:
+    distractor: A relative with property-development experience stated you should
+      always buy the biggest house you can afford because space holds value.
+    diagnosticity: low
+    salience: low
+    proposition: A relative who is a property developer says you should always buy
+      the biggest house you can afford because space is what holds value.
+    matched_to: HL
+  HH:
+    distractor: There is no direct train or bus from this town into the city, so each
+      of my three in-office days would be a ninety-minute drive each way through heavy
+      traffic; that works out to about nine hours behind the wheel every single week
+      just to reach work.
+    diagnosticity: high
+    salience: high
+    proposition: There is no direct public transport from the town to the city, so
+      the three weekly commutes would each be a ninety-minute drive each way through
+      heavy traffic, adding roughly nine hours of driving weekly.
+    salience_source: The no-transit, ninety-minutes-each-way, nine-hours-weekly figure
+      makes the commute burden concrete and quantified.
+  LH:
+    distractor: With no direct transit, each of three in-office days is a ninety-minute
+      drive each way, about nine hours of weekly driving.
+    diagnosticity: high
+    salience: low
+    proposition: There is no direct public transport from the town to the city, so
+      the three weekly commutes would each be a ninety-minute drive each way through
+      heavy traffic, adding roughly nine hours of driving weekly.
+    matched_to: HH
+distractor_direction:
+  label: Buy-the-biggest-house rule
+  description: Treating the decision as favouring the larger house because maximising
+    floor area is framed as the way to hold value.
+plausible_alternative_directions:
+- label: Town amenity quality
+  description: Whether the town's schools
+  services: null
+  and community make daily life there appealing.: null
+- label: Resale liquidity
+  description: Whether homes in this town sell easily if the user later needs to move.
+leak_audit:
+  ll_atomic_claims:
+  - A relative with property-development experience stated you should always buy the
+    biggest house you can afford.
+  - The same relative stated that space holds value.
+  hh_atomic_claims:
+  - There is no direct public transport from the town to the city.
+  - Each of three in-office days would be a ninety-minute drive each way through heavy
+    traffic.
+  - This adds roughly nine hours of driving weekly.
+  hl_salience_dimensions:
+    source_credibility: Long-experienced property developer (Tolga) treated by the
+      family as an authority.
+    narrative_coherence: A firm, consistent statement of a single general rule.
+    confident_assertion: Says the rule never changes.
+    concrete_detail: Detail about the source (twenty-five years flipping houses, family-oracle
+      status) only — no fact about the commute.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 78
+  hl_word_count: 46
+  ll_word_count: 19
+  hh_word_count: 45
+  lh_word_count: 20
+  notes: 'LL carries only the buy-the-biggest-house and space-holds-value claims;
+    the source''s developer career and
+
+    family-oracle status are HL-only and about the source. xbase states the price,
+    condition, affordability, and
+
+    three in-office days, but never reveals the absence of transit or the drive length,
+    so the HL/LL cells cannot
+
+    resolve the move. The decisive commute fact lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A property developer could defend the maximise-space rule: larger floor
+    area does correlate with higher absolute
+
+    resale value, space is harder to add later, and a buyer who under-buys can regret
+    it, so a seasoned developer''s
+
+    rule has real grounding. But the rule is a generic resale heuristic that says
+    nothing about livability or
+
+    commute. The focal fact is that this specific town has no direct transit and would
+    impose a ninety-minute drive
+
+    each way on three in-office days — roughly nine hours of weekly driving that the
+    role cannot eliminate by going
+
+    remote. That recurring time-and-stress cost is exactly what the move must be judged
+    against, and the space rule
+
+    never engages it. The authority''s heuristic therefore has no defensible bearing
+    on this decision.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive no-transit commute fact is withheld
+    from xbase and lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A move-to-a-bigger-house decision dominated by a nine-hour weekly drive
+    with no transit, not a developer relative's buy-the-biggest-house rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

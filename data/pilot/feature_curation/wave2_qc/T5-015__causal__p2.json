@@ -1,0 +1,9 @@
+{
+  "seed_id": "T5-015",
+  "steelman": "A competent consumer advisor might argue that companies investing in a modern, functional website tend to be operationally active and financially stable — a neglected website can be a leading indicator of a business in decline, underinvesting across the board including in staff training and equipment maintenance. In the moving industry, where small operators frequently close and reopen under new names, an up-to-date web presence could weakly correlate with current licensing and insurance compliance. One could further argue that a well-designed site signals the company communicates clearly, which matters for logistics coordination on move day, and that a neighbor with three recent moves is a credible proxy for consumer experience in this domain.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Website modernity as a proxy signal for operational investment and business vitality — but this mechanism is only actionable when direct evidence of insurance and service quality is unavailable; here it is not.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase explicitly states the user has read each company's insurance certificate in full and spoken directly with three recent Company B customers. This direct documentary proof of actual insurance terms ($2,000 vs $100 per item) and first-hand service testimonials completely forecloses any proxy inference from website aesthetics. No competent practitioner would substitute a website-quality proxy for documentary confirmation of the exact facts the proxy is meant to estimate. The steelman mechanism is logically coherent in the abstract but operationally inert here: the causal pathway from website aesthetics to 'better choice' runs entirely through uncertainty about insurance and service quality — uncertainty the user has already resolved. Seed passes this lens."
+}

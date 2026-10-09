@@ -1,0 +1,195 @@
+seed_id: T5-027
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our internal REST endpoint has been returning HTTP 503 intermittently for the
+  past two hours. The errors appear across multiple clients and the application logs
+  show upstream connection failures. We deployed nothing to this service today, and
+  I have checked that DNS resolution and load-balancer health checks look normal.
+  {DS}
+focal_diagnostic_feature: Database connection-pool utilisation is at 100% with a large
+  queue of waiting threads; a single long-running analytical query has held connections
+  open for over 90 minutes without releasing them.
+low_diagnostic_proposition: The observability dashboard looks incomplete and poorly
+  organised, suggesting the monitoring is unreliable and the real failure is probably
+  severe.
+oracle_action: ANSWER
+oracle_focus: Kill or cancel the long-running query holding the connection pool; investigate
+  why it was admitted without a query timeout and add a statement timeout to prevent
+  recurrence.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume severity from dashboard appearance. Ask
+  for connection-pool metrics, active query lists, and application-level error details
+  before concluding how serious the failure is.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume severity from dashboard appearance. Ask for connection-pool
+      metrics, active query lists, and application-level error details before concluding
+      how serious the failure is.
+  LL:
+    action: ASK
+    focus: Do not assume severity from dashboard appearance. Ask for connection-pool
+      metrics, active query lists, and application-level error details before concluding
+      how serious the failure is.
+  HH:
+    action: ANSWER
+    focus: Kill or cancel the long-running query holding the connection pool; investigate
+      why it was admitted without a query timeout and add a statement timeout to prevent
+      recurrence.
+  LH:
+    action: ANSWER
+    focus: Kill or cancel the long-running query holding the connection pool; investigate
+      why it was admitted without a query timeout and add a statement timeout to prevent
+      recurrence.
+variants:
+  HL:
+    distractor: Our observability dashboard has half-configured panels with empty
+      graphs and stale titles from a migration that was never finished. A monitoring
+      setup this disorganised almost certainly means we are not seeing the real failure
+      and should assume the service itself is broken beyond a simple fix.
+    diagnosticity: low
+    salience: high
+    proposition: The observability dashboard looks incomplete and poorly organised,
+      suggesting the monitoring is unreliable and the real failure is probably severe.
+    salience_source: B (specific concrete inventory — half-configured panels, empty
+      graphs, stale titles, unfinished migration — in professional register), C (confident
+      assertion — "almost certainly means")
+    why_plausible: A senior SRE who has inherited poorly maintained observability
+      stacks might genuinely doubt whether incomplete dashboards are masking a deeper
+      systemic failure, and the framing sounds like reasoned engineering caution rather
+      than a guess.
+    why_irrelevant: Dashboard visual completeness has no constructible mechanism for
+      the severity of the underlying service failure; the connection pool being exhausted
+      by one slow query is a specific, fixable condition independent of whether the
+      dashboard panels are configured.
+  LL:
+    distractor: The observability dashboard looks incomplete and poorly organised,
+      suggesting the monitoring is unreliable and the real failure is probably severe.
+    diagnosticity: low
+    salience: low
+    proposition: The observability dashboard looks incomplete and poorly organised,
+      suggesting the monitoring is unreliable and the real failure is probably severe.
+    matched_to: HL
+  HH:
+    distractor: The database connection-pool metrics show 100% utilisation with a
+      queue depth of 47 waiting threads; a single slow analytical query running since
+      this morning has held open connections for over 90 minutes without releasing
+      them.
+    diagnosticity: high
+    salience: high
+    proposition: Database connection-pool utilisation is at 100% with a large queue
+      of waiting threads; a single long-running analytical query has held connections
+      open for over 90 minutes without releasing them.
+    salience_source: B (precise metrics — 100% utilisation, queue depth of 47, 90-minute
+      hold duration — concrete and technically specific)
+  LH:
+    distractor: Database connection-pool utilisation is at 100% with a queue of waiting
+      threads; one long-running query has held connections open for over 90 minutes.
+    diagnosticity: high
+    salience: low
+    proposition: Database connection-pool utilisation is at 100% with a large queue
+      of waiting threads; a single long-running analytical query has held connections
+      open for over 90 minutes without releasing them.
+    matched_to: HH
+distractor_direction:
+  label: Unobservable severe failure
+  description: Treating the incomplete monitoring dashboard as evidence that the real
+    failure is more severe than it appears and cannot be diagnosed without better
+    observability tooling first.
+plausible_alternative_directions:
+- label: Downstream database overload
+  description: The database server itself may be under CPU or I/O pressure from an
+    external source, making all connections slow to process regardless of pool size.
+- label: Thread or goroutine leak
+  description: The application may have a leak in its connection-handling concurrency
+    layer, accumulating blocked threads that are not released even after requests
+    complete.
+- label: Network degradation to database
+  description: Transient packet loss or increased latency on the network path to the
+    database could cause slow queries and connection-hold times without a query-level
+    fault.
+leak_audit:
+  ll_atomic_claims:
+  - The observability dashboard looks incomplete and poorly organised.
+  - The poor organisation suggests the monitoring is unreliable.
+  - The poor organisation suggests the real failure is probably severe.
+  hh_atomic_claims:
+  - Database connection-pool metrics show 100% utilisation.
+  - There is a queue depth of 47 waiting threads.
+  - A single slow analytical query has been running since this morning.
+  - The query has held open connections for over 90 minutes.
+  - The connections have not been released.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Specific inventory of dashboard defects with a causal backstory
+      (unfinished migration) leading to a professional-sounding conclusion about monitoring
+      reliability.
+    confident_assertion: '"almost certainly means we are not seeing the real failure
+      and should assume" — strong epistemic claim with no hedging.'
+    concrete_detail: Named defect types (half-configured panels, empty graphs, stale
+      titles) and causal context (unfinished migration) — all about the monitoring
+      environment, not the service failure.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 49
+  hl_word_count: 46
+  ll_word_count: 20
+  hh_word_count: 35
+  lh_word_count: 23
+  notes: 'T5 inferential bridge ("A monitoring setup this disorganised almost certainly
+    means we are not
+
+    seeing the real failure and should assume the service itself is broken beyond
+    a simple fix")
+
+    appears in HL and is carried flatly in LL as "suggesting the monitoring is unreliable
+    and the
+
+    real failure is probably severe". LH drops the specific queue-depth number (47)
+    and the
+
+    "analytical query" qualifier and "without releasing them" detail, keeping core
+    claims. HL does
+
+    not add any facts about the current service failure. xbase closes no distractor
+    pathways — the
+
+    focal evidence in HH/LH is what resolves the diagnostic direction.
+
+    '
+causal_audit:
+  steelman: 'An experienced SRE might argue: if monitoring is genuinely incomplete,
+    the team may be treating
+
+    a partial view of metrics as complete information, causing them to miss correlated
+    failures (e.g.,
+
+    a memory leak alongside the 503s). Incomplete observability is a real operational
+    risk that a
+
+    practitioner would want to resolve before trusting any single data point. Therefore
+    the dashboard
+
+    quality is a legitimate concern that could inform the diagnostic process.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not close the monitoring-reliability pathway;
+    the decisive evidence lives in HH/LH (the specific connection-pool and long-running
+    query data).
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Internal REST endpoint returns HTTP 503 because a long-running analytical
+    query has exhausted the database connection pool; distractor is the team's incomplete
+    observability dashboard offered as evidence that the failure must be more severe
+    and undiagnosable.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

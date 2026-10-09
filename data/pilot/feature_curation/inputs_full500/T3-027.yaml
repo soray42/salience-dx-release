@@ -1,0 +1,162 @@
+seed_id: T3-027
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I am reviewing my recurring spending and trying to decide what to do about
+  a premium video-streaming tier I pay for. I do watch this service regularly, so
+  I am not cancelling it; the question is whether to stay on the top tier or drop
+  to the cheaper standard tier. I have a clear picture of how and on what devices
+  I actually watch each week. {DS}
+focal_diagnostic_feature: The user only ever watches on a single laptop with a 1080p
+  screen, while the premium tier's only differences from the standard tier are 4K
+  resolution and simultaneous streams the user never uses.
+low_diagnostic_proposition: A senior coworker says you should always buy the top tier
+  of any subscription because the cheaper tiers are deliberately crippled.
+oracle_action: ANSWER
+oracle_focus: Drop to the standard tier; the user only watches on a single 1080p laptop,
+  and the premium tier's only extras are 4K and extra simultaneous streams the user
+  never uses, so the higher price buys nothing they benefit from.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the always-buy-the-top-tier rule on authority
+  alone. Ask which specific premium-tier features the user actually uses given their
+  devices and viewing habits.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the always-buy-the-top-tier rule on authority alone. Ask
+      which specific premium-tier features the user actually uses given their devices
+      and viewing habits.
+  LL:
+    action: ASK
+    focus: Do not accept the always-buy-the-top-tier rule on authority alone. Ask
+      which specific premium-tier features the user actually uses given their devices
+      and viewing habits.
+  HH:
+    action: ANSWER
+    focus: Drop to the standard tier; the user only watches on a single 1080p laptop,
+      and the premium tier's only extras are 4K and extra simultaneous streams the
+      user never uses, so the higher price buys nothing they benefit from.
+  LH:
+    action: ANSWER
+    focus: Drop to the standard tier; the user only watches on a single 1080p laptop,
+      and the premium tier's only extras are 4K and extra simultaneous streams the
+      user never uses, so the higher price buys nothing they benefit from.
+variants:
+  HL:
+    distractor: Bárbara, a senior product lead at my company, told me with real conviction
+      that you should always pay for the top tier of any subscription, because in
+      her experience the cheaper tiers are deliberately crippled to push you upward,
+      so saving a few euros never pays off.
+    diagnosticity: low
+    salience: high
+    proposition: A senior coworker says you should always buy the top tier of any
+      subscription because the cheaper tiers are deliberately crippled.
+    salience_source: A — a senior product lead asserting a confident, generic tier-choice
+      rule.
+    why_plausible: Companies do sometimes degrade lower tiers to upsell, so a product
+      person's cynical blanket rule sounds informed and plausible.
+    why_irrelevant: Her generic rule ignores which features matter to this user; the
+      premium extras here are 4K and extra streams, neither of which a single-1080p-laptop
+      viewer can use, so the higher tier buys nothing for them.
+  LL:
+    distractor: A senior coworker says you should always buy the top tier of any subscription
+      because the cheaper tiers are deliberately crippled.
+    diagnosticity: low
+    salience: low
+    proposition: A senior coworker says you should always buy the top tier of any
+      subscription because the cheaper tiers are deliberately crippled.
+    matched_to: HL
+  HH:
+    distractor: In practice I only ever watch on one laptop with a 1080p screen, never
+      on a 4K TV and never on a second device at the same time; the premium tier's
+      only differences from standard are exactly 4K resolution and extra simultaneous
+      streams, so I am paying more for two features I cannot even use.
+    diagnosticity: high
+    salience: high
+    proposition: The user only ever watches on a single laptop with a 1080p screen,
+      while the premium tier's only differences from the standard tier are 4K resolution
+      and simultaneous streams the user never uses.
+    salience_source: The single-1080p-laptop habit against premium's only-differences
+      (4K and extra streams) shows the unused value concretely.
+  LH:
+    distractor: The user only watches on one 1080p laptop; the premium tier's only
+      extras over standard are 4K and extra simultaneous streams, which the user never
+      uses.
+    diagnosticity: high
+    salience: low
+    proposition: The user only ever watches on a single laptop with a 1080p screen,
+      while the premium tier's only differences from the standard tier are 4K resolution
+      and simultaneous streams the user never uses.
+    matched_to: HH
+distractor_direction:
+  label: Always-top-tier rule
+  description: Treating a generic authority rule that the top tier is always worth
+    it because lower tiers are crippled as the dominant basis for the decision.
+plausible_alternative_directions:
+- label: Content-library differences
+  description: Whether the premium tier unlocks shows or content the standard tier
+    lacks.
+- label: Household sharing need
+  description: Whether other household members need the simultaneous streams the user
+    personally does not.
+leak_audit:
+  ll_atomic_claims:
+  - A senior coworker says you should always buy the top tier of any subscription.
+  - The reason given is that cheaper tiers are deliberately crippled.
+  hh_atomic_claims:
+  - The user only ever watches on a single laptop with a 1080p screen.
+  - The premium tier's only differences from standard are 4K resolution and extra
+    simultaneous streams.
+  - The user never uses 4K or simultaneous streams.
+  hl_salience_dimensions:
+    source_credibility: Named senior product lead (Bárbara) at the user's company.
+    narrative_coherence: Coherent confident statement of a familiar upsell-skeptic
+      rule.
+    confident_assertion: Told me with real conviction to always buy the top tier.
+    concrete_detail: N/A — HL adds only Bárbara's identity and her generic rule, no
+      fact about the user's devices or habits that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 70
+  hl_word_count: 45
+  ll_word_count: 21
+  hh_word_count: 47
+  lh_word_count: 24
+  notes: 'T3: the authority gives an always-top-tier rule, not an analysis of this
+    user''s usage. xbase says the user
+
+    watches regularly and is choosing between tiers, but withholds the decisive single-1080p-laptop
+    habit and the
+
+    premium tier''s only-differences, which are HH/LH-only. HL adds only Bárbara''s
+    identity and her blanket rule.
+
+    '
+causal_audit:
+  steelman: 'A product-savvy person could argue vendors genuinely degrade lower tiers
+    (compression, ads, device caps) in ways
+
+    not obvious until you hit them, so the safe default is the top tier to avoid discovering
+    a missing capability at
+
+    the worst moment — overpaying slightly is cheap insurance against a crippled experience.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the always-top-tier rule ignores this user's actual
+    needs; the decisive single-1080p-laptop habit and premium's only-being-4K-and-extra-streams
+    (HH/LH only) show the higher tier delivers no value the user can use.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to drop from a premium to a standard streaming tier, decided
+    by the user's single-1080p-laptop habit making premium's 4K-and-extra-streams
+    useless, against a coworker's always-buy-the-top-tier rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

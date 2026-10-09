@@ -1,0 +1,188 @@
+seed_id: T3-061
+template: T3
+domain: open_qa
+complexity: low
+xbase: My scrambled eggs always come out rubbery and tough, no matter how many I make.
+  I beat the eggs well and cook them in a non-stick pan with butter. I have tried
+  adding a small splash of milk, which some recipes suggest, but the texture is still
+  the same. I want to know what I am doing wrong so I can get a creamy, soft result.
+  {DS}
+focal_diagnostic_feature: The eggs are cooked on the highest heat setting throughout,
+  completing in about 45 seconds and causing rapid protein coagulation regardless
+  of how much liquid is present.
+low_diagnostic_proposition: A professional cook stated that rubbery scrambled eggs
+  are almost always caused by insufficient liquid in the mixture.
+oracle_action: ANSWER
+oracle_focus: Lower the heat substantially; cooking eggs on the highest setting forces
+  rapid protein coagulation that produces rubbery texture regardless of liquid content,
+  and adding more milk cannot compensate for excessive heat.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the insufficient-liquid diagnosis from
+  authority. Ask about heat level and cooking duration before recommending a change
+  to the egg mixture.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the insufficient-liquid diagnosis from authority. Ask about
+      heat level and cooking duration before recommending a change to the egg mixture.
+  LL:
+    action: ASK
+    focus: Do not accept the insufficient-liquid diagnosis from authority. Ask about
+      heat level and cooking duration before recommending a change to the egg mixture.
+  HH:
+    action: ANSWER
+    focus: Lower the heat substantially; cooking eggs on the highest setting forces
+      rapid protein coagulation that produces rubbery texture regardless of liquid
+      content, and adding more milk cannot compensate for excessive heat.
+  LH:
+    action: ANSWER
+    focus: Lower the heat substantially; cooking eggs on the highest setting forces
+      rapid protein coagulation that produces rubbery texture regardless of liquid
+      content, and adding more milk cannot compensate for excessive heat.
+variants:
+  HL:
+    distractor: Kavitha, a professional cook who has run brunch service at three restaurants
+      and teaches egg technique at a cookery school, confirmed that rubbery scrambled
+      eggs are almost always caused by insufficient liquid — she says most home cooks
+      use far too little and the eggs seize without it.
+    diagnosticity: low
+    salience: high
+    proposition: A professional cook stated that rubbery scrambled eggs are almost
+      always caused by insufficient liquid in the mixture.
+    salience_source: A — a professional cook with named multi-restaurant brunch experience
+      and a cookery-school teaching role; C — "almost always", "eggs seize without
+      it" — confident and categorical assertion.
+    why_plausible: Liquid does slow egg protein coagulation and is a genuine factor
+      in scrambled egg texture; a brunch-experienced cook citing it as the most common
+      home-cook error carries professional authority.
+    why_irrelevant: The user already tried adding milk with no improvement, and the
+      decisive cause is the maximum heat setting — high heat forces coagulation so
+      fast that no amount of liquid can counteract it.
+  LL:
+    distractor: A professional cook stated that rubbery scrambled eggs are almost
+      always caused by insufficient liquid in the mixture.
+    diagnosticity: low
+    salience: low
+    proposition: A professional cook stated that rubbery scrambled eggs are almost
+      always caused by insufficient liquid in the mixture.
+    matched_to: HL
+  HH:
+    distractor: I cook the eggs on the highest heat setting throughout — the pan gets
+      very hot before they go in, and they're done in roughly 45 seconds; high heat
+      forces rapid protein coagulation that makes eggs rubbery regardless of how much
+      liquid was added.
+    diagnosticity: high
+    salience: high
+    proposition: The eggs are cooked on the highest heat setting throughout, completing
+      in about 45 seconds and causing rapid protein coagulation regardless of how
+      much liquid is present.
+    salience_source: The "highest setting", 45-second cook time, and explicit statement
+      that liquid content is irrelevant under those conditions make the heat cause
+      concrete and decisive.
+  LH:
+    distractor: The eggs cook on the highest heat setting in about 45 seconds, causing
+      rapid protein coagulation that produces rubbery texture.
+    diagnosticity: high
+    salience: low
+    proposition: The eggs are cooked on the highest heat setting throughout, completing
+      in about 45 seconds and causing rapid protein coagulation regardless of how
+      much liquid is present.
+    matched_to: HH
+distractor_direction:
+  label: Insufficient liquid
+  description: Investigating whether the scrambled egg mixture lacks enough liquid
+    — milk or cream — to slow protein coagulation and produce a soft, creamy texture.
+plausible_alternative_directions:
+- label: Over-beating before cooking
+  description: Whether beating the eggs too vigorously before cooking breaks down
+    the proteins prematurely, contributing to a tough final texture.
+- label: Wrong pan or fat
+  description: Whether the type of pan or quantity of butter is affecting heat distribution
+    and contributing to the eggs seizing unevenly.
+leak_audit:
+  ll_atomic_claims:
+  - A professional cook stated that rubbery scrambled eggs are almost always caused
+    by insufficient liquid in the mixture.
+  hh_atomic_claims:
+  - The eggs are cooked on the highest heat setting throughout.
+  - The pan gets very hot before the eggs go in.
+  - The eggs are done in roughly 45 seconds.
+  - High heat forces rapid protein coagulation that makes eggs rubbery regardless
+    of how much liquid was added.
+  hl_salience_dimensions:
+    source_credibility: Kavitha is a professional cook with multi-restaurant brunch
+      experience and a cookery-school teaching position.
+    narrative_coherence: A named expert delivering a specific confident pattern diagnosis
+      in a professional context.
+    confident_assertion: '"Almost always", "eggs seize without it" — strong categorical
+      claim.'
+    concrete_detail: Source's three restaurants and cookery-school role — detail about
+      the source only, not about this user's heat level or cooking time.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 48
+  ll_word_count: 18
+  hh_word_count: 44
+  lh_word_count: 20
+  notes: 'LL carries only the insufficient-liquid claim; Kavitha''s name, her three
+
+    restaurants, her cookery-school role, and the "eggs seize" framing are
+
+    HL-only and concern the source. xbase mentions that milk was tried without
+
+    improvement — this forecloses the "just add a splash of milk" mechanism per
+
+    C4''s allowed pathway-closure, without revealing the cause (heat level). The
+
+    decisive heat-level and cooking-time facts live only in HH/LH. Low
+
+    complexity matches the everyday, single-variable scenario.
+
+    '
+causal_audit:
+  steelman: 'A professional cook is correct that liquid content affects scrambled
+    egg
+
+    texture: adding cream or milk dilutes egg proteins and slows coagulation,
+
+    which contributes to a softer, more custardy result. Home cooks frequently
+
+    add insufficient liquid, and a brunch-experienced cook with cookery-school
+
+    authority correctly identifies it as a common error. The inference is
+
+    technically valid as a general principle. The seed is clean because the user
+
+    already tried adding milk with no change, and the decisive variable is the
+
+    highest heat setting throughout cooking. At maximum heat, egg proteins
+
+    coagulate within 45 seconds regardless of added liquid — the coagulation
+
+    kinetics at that temperature are so fast that dilution cannot slow them
+
+    enough to produce soft texture. The liquid-addition mechanism has no
+
+    defensible path to a different outcome when cooking temperature is not also
+
+    reduced.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes that milk was already tried with no improvement,
+    foreclosing the "add a splash of liquid" mechanism without revealing the heat-level
+    cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Rubbery scrambled eggs caused by cooking on the highest heat setting,
+    not by insufficient liquid as a professional cook with brunch experience asserts.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

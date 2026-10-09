@@ -1,0 +1,172 @@
+seed_id: T3-042
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'One of our Kubernetes services can''t reach a dependency by name: the app
+  logs "no such host" when it calls the other service. Other in-cluster calls from
+  the same pod resolve fine, and CoreDNS pods are running and healthy with no errors
+  in their logs. The two services were deployed by different teams and have worked
+  independently for months. {DS}'
+focal_diagnostic_feature: From inside the pod, the short service name fails to resolve,
+  but the fully qualified name `dep.other-namespace.svc.cluster.local` resolves and
+  connects, because the dependency lives in a different namespace and the caller uses
+  the bare service name.
+low_diagnostic_proposition: A principal engineer says intermittent in-cluster name
+  failures are always a CoreDNS bug and the fix is to restart the CoreDNS pods.
+oracle_action: ANSWER
+oracle_focus: Use the fully qualified cross-namespace name (or a matching search domain);
+  the dependency is in another namespace, so the bare name does not resolve while
+  the FQDN does, which is a namespace addressing issue, not a CoreDNS fault.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the "always a CoreDNS bug, restart it"
+  diagnosis from authority. Ask whether the fully qualified cross-namespace name resolves
+  from the pod and which namespace the dependency runs in before touching CoreDNS.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the "always a CoreDNS bug, restart it" diagnosis from authority.
+      Ask whether the fully qualified cross-namespace name resolves from the pod and
+      which namespace the dependency runs in before touching CoreDNS.
+  LL:
+    action: ASK
+    focus: Do not accept the "always a CoreDNS bug, restart it" diagnosis from authority.
+      Ask whether the fully qualified cross-namespace name resolves from the pod and
+      which namespace the dependency runs in before touching CoreDNS.
+  HH:
+    action: ANSWER
+    focus: Use the fully qualified cross-namespace name (or a matching search domain);
+      the dependency is in another namespace, so the bare name does not resolve while
+      the FQDN does, which is a namespace addressing issue, not a CoreDNS fault.
+  LH:
+    action: ANSWER
+    focus: Use the fully qualified cross-namespace name (or a matching search domain);
+      the dependency is in another namespace, so the bare name does not resolve while
+      the FQDN does, which is a namespace addressing issue, not a CoreDNS fault.
+variants:
+  HL:
+    distractor: Our principal engineer Phuc heard the symptom in standup and cut in
+      that in-cluster "no such host" errors are always a flaky CoreDNS, and he told
+      me confidently to just rotate the CoreDNS pods and move on, the way he says
+      he always does when this comes up.
+    diagnosticity: low
+    salience: high
+    proposition: A principal engineer says intermittent in-cluster name failures are
+      always a CoreDNS bug and the fix is to restart the CoreDNS pods.
+    salience_source: A/C — a principal engineer pattern-matching to a blanket cause
+      and prescribing a fix confidently.
+    why_plausible: CoreDNS can genuinely misbehave, so a senior engineer's go-to fix
+      sounds like the experienced shortcut.
+    why_irrelevant: CoreDNS is healthy and other names from the same pod resolve fine;
+      the failure is name-specific because the caller uses a bare name for a service
+      in another namespace, which restarting CoreDNS cannot address.
+  LL:
+    distractor: A principal engineer says these in-cluster name failures are always
+      a CoreDNS bug fixed by restarting CoreDNS.
+    diagnosticity: low
+    salience: low
+    proposition: A principal engineer says intermittent in-cluster name failures are
+      always a CoreDNS bug and the fix is to restart the CoreDNS pods.
+    matched_to: HL
+  HH:
+    distractor: 'I shelled into the pod and dug: the bare service name returns "no
+      such host", but `dep.other-namespace.svc.cluster.local` resolves and connects
+      instantly. The dependency simply lives in a different namespace, and our code
+      calls it by the short name, which only ever resolves within the caller''s own
+      namespace.'
+    diagnosticity: high
+    salience: high
+    proposition: From inside the pod, the short service name fails to resolve, but
+      the fully qualified name `dep.other-namespace.svc.cluster.local` resolves and
+      connects, because the dependency lives in a different namespace and the caller
+      uses the bare service name.
+    salience_source: Concrete dig result (short name fails, cross-namespace FQDN resolves)
+      makes the namespace addressing cause unmistakable.
+  LH:
+    distractor: From the pod, the short name fails but `dep.other-namespace.svc.cluster.local`
+      resolves; the dependency is in another namespace and the caller uses the bare
+      name.
+    diagnosticity: high
+    salience: low
+    proposition: From inside the pod, the short service name fails to resolve, but
+      the fully qualified name `dep.other-namespace.svc.cluster.local` resolves and
+      connects, because the dependency lives in a different namespace and the caller
+      uses the bare service name.
+    matched_to: HH
+distractor_direction:
+  label: CoreDNS bug
+  description: Treating the resolution failure as a CoreDNS defect to be fixed by
+    restarting the CoreDNS pods.
+plausible_alternative_directions:
+- label: NetworkPolicy block
+  description: Whether a NetworkPolicy is blocking traffic or DNS to the dependency
+    from this pod.
+- label: Service or endpoint missing
+  description: Whether the dependency's Service or its endpoints are misconfigured
+    or absent.
+- label: ndots/search-domain config
+  description: Whether the pod's DNS search domains or ndots setting are causing the
+    short name to miss.
+leak_audit:
+  ll_atomic_claims:
+  - A principal engineer says these in-cluster name failures are always a CoreDNS
+    bug.
+  - The principal engineer says the fix is to restart the CoreDNS pods.
+  hh_atomic_claims:
+  - From the pod, the bare service name returns "no such host".
+  - The fully qualified `dep.other-namespace.svc.cluster.local` resolves and connects.
+  - The dependency is in a different namespace and the caller uses the bare service
+    name.
+  hl_salience_dimensions:
+    source_credibility: Principal engineer (Phuc) at the user's company pronouncing
+      the cause in standup.
+    narrative_coherence: A confident, clean go-to diagnosis-and-fix.
+    confident_assertion: He told the user to just rotate the CoreDNS pods and move
+      on.
+    concrete_detail: Detail about it being his standard move — about the source's
+      habit, not this pod's resolution.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 46
+  ll_word_count: 16
+  hh_word_count: 47
+  lh_word_count: 24
+  notes: 'xbase notes CoreDNS is healthy and other names resolve from the pod (symptoms
+    ruling against a broad DNS
+
+    outage) but withholds the short-name-fails / FQDN-resolves / cross-namespace finding,
+    which lives only in HH/LH.
+
+    The authority offers a blanket cause, not an analysis of this name.
+
+    '
+causal_audit:
+  steelman: 'A senior engineer could argue CoreDNS does have real failure modes (cache,
+    upstream, plugin bugs) and a restart
+
+    is a cheap first move. But CoreDNS is healthy, its logs are clean, and other names
+    from the same pod resolve;
+
+    the failure is specific to one bare name for a service in another namespace, which
+    an FQDN resolves immediately,
+
+    so restarting CoreDNS cannot be the fix.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states CoreDNS pods are healthy with clean logs and
+    other in-cluster calls from the same pod resolve fine, foreclosing a cluster-wide
+    CoreDNS outage.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A Kubernetes cross-namespace resolution failure (bare name vs FQDN),
+    against a principal engineer's blanket 'always a CoreDNS bug, restart it' diagnosis.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

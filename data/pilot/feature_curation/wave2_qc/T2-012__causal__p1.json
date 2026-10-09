@@ -1,0 +1,9 @@
+{
+  "seed_id": "T2-012",
+  "steelman": "LED bedside lamps with switching-mode power supplies emit electromagnetic interference (EMI) across a broad frequency range. An e-reader placed centimetres away on a nightstand could have its Wi-Fi or Bluetooth radio disrupted by this EMI, causing the radio to retry connections more aggressively and consuming more power. A consumer electronics repair technician — as invoked in the HL variant — could credibly cite documented cases of cheap LED drivers that fail emissions standards and interfere with nearby wireless receivers. Some poorly shielded lamps emit enough radiated interference to degrade signal quality for devices within close range, and this is a real phenomenon covered in consumer electronics literature.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Radiated EMI from the lamp's switching-mode power supply disrupts the e-reader's wireless radio, causing retries that consume extra power. However, this mechanism cannot plausibly account for a ~10x battery drain (3 weeks → 2 days), no mainstream e-reader troubleshooting guide lists nearby lamp EMI as a checklist item, and the mechanism would be downstream of the radio being active rather than an independent cause.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase closure ('never connects to it or plugs into it in any way') removes conducted interference. The radiated EMI pathway is not explicitly closed in xbase text, but the magnitude mismatch (~10x drain) effectively closes it: household lamp EMI cannot plausibly produce a ten-fold reduction in battery life, no competent practitioner would list this on a troubleshooting checklist, and the real cause (Wi-Fi auto-sync enabled) provides a complete parsimonious explanation. Seed passes this lens cleanly. No curator repair needed."
+}

@@ -1,0 +1,189 @@
+seed_id: T5-063
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our order-processing service has been running without any triggered alerts
+  for three consecutive days. A team member said everything looks fine because the
+  main dashboard overview appears clean and green. I have been getting occasional
+  customer tickets about delayed order confirmations since Tuesday. {DS}
+focal_diagnostic_feature: The job-queue depth panel, on the second dashboard section
+  below the fold, shows the queue at 98% of capacity with a growing backlog for three
+  days, and no alert threshold is configured on that metric.
+low_diagnostic_proposition: The main dashboard overview looks clean and fully green,
+  so the service appears to have no serious problem building underneath.
+oracle_action: ASK
+oracle_focus: Investigate the job-queue depth and backlog trend; configure an alert
+  threshold on the queue metric and identify why the queue is filling while order
+  confirmations are delayed.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not conclude the service is healthy based on the alert-covered
+  dashboard overview alone; ask whether all relevant metrics are covered by alerts
+  and whether queue-depth or backlog panels exist outside the main view.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not conclude the service is healthy based on the alert-covered dashboard
+      overview alone; ask whether all relevant metrics are covered by alerts and whether
+      queue-depth or backlog panels exist outside the main view.
+  LL:
+    action: ASK
+    focus: Do not conclude the service is healthy based on the alert-covered dashboard
+      overview alone; ask whether all relevant metrics are covered by alerts and whether
+      queue-depth or backlog panels exist outside the main view.
+  HH:
+    action: ASK
+    focus: Investigate the job-queue depth and backlog trend; configure an alert threshold
+      on the queue metric and identify why the queue is filling while order confirmations
+      are delayed.
+  LH:
+    action: ASK
+    focus: Investigate the job-queue depth and backlog trend; configure an alert threshold
+      on the queue metric and identify why the queue is filling while order confirmations
+      are delayed.
+variants:
+  HL:
+    distractor: 'The dashboard overview is genuinely reassuring to look at: all green,
+      no red panels, neat layout, everything lined up — and if that top view shows
+      nothing wrong, it is hard to imagine any serious problem is building underneath.'
+    diagnosticity: low
+    salience: high
+    proposition: The main dashboard overview looks clean and fully green, so the service
+      appears to have no serious problem building underneath.
+    salience_source: 'Dimension B (narrative coherence): clean enumeration of reassuring
+      visual signals leading to a confident conclusion; dimension C (confident assertion):
+      "it is hard to imagine any serious problem is building" — strong negative inference
+      from visual observation; dimension D (concrete visual detail about the dashboard''s
+      appearance — "all green, no red panels, neat layout" — all about the tool''s
+      display, not case content).'
+    why_plausible: Alert-driven dashboards are designed so that green means healthy;
+      a team member relying on the absence of alerts and a green top-level view is
+      using the dashboard as intended and would not be unreasonable to conclude the
+      service is fine at a glance.
+    why_irrelevant: Dashboard appearance reflects only what alert thresholds cover;
+      the job-queue metric has no configured alert, so it can saturate silently regardless
+      of how the overview panel looks. The inference from "no red panels" to "no serious
+      problem" is valid only if every relevant metric has an alert threshold.
+  LL:
+    distractor: The main dashboard overview looks clean and fully green, so the service
+      appears to have no serious problem building underneath.
+    diagnosticity: low
+    salience: low
+    proposition: The main dashboard overview looks clean and fully green, so the service
+      appears to have no serious problem building underneath.
+    matched_to: HL
+  HH:
+    distractor: The job-queue depth panel, located below the fold on the second dashboard
+      section, shows the queue at 98% of capacity with a backlog that has been climbing
+      steadily for three days, and no alert threshold is set on that metric.
+    diagnosticity: high
+    salience: high
+    proposition: The job-queue depth panel, on the second dashboard section below
+      the fold, shows the queue at 98% of capacity with a growing backlog for three
+      days, and no alert threshold is configured on that metric.
+    salience_source: Precise saturation figure (98%); specific location ("below the
+      fold on the second dashboard section") making the finding concrete and actionable;
+      three-day backlog trend correlating with the customer complaint timeline; explicit
+      absence of alerting on the saturating metric.
+  LH:
+    distractor: The job-queue depth metric shows 98% capacity with a growing three-day
+      backlog; no alert covers that metric.
+    diagnosticity: high
+    salience: low
+    proposition: The job-queue depth panel, on the second dashboard section below
+      the fold, shows the queue at 98% of capacity with a growing backlog for three
+      days, and no alert threshold is configured on that metric.
+    matched_to: HH
+distractor_direction:
+  label: Alert-free dashboard signals health
+  description: Concluding the service is operating normally because the main dashboard
+    overview shows no triggered alerts and all panels appear green, implying no investigation
+    is needed.
+plausible_alternative_directions:
+- label: Worker process failure or slowdown
+  description: The workers consuming the job queue have crashed or become slow, allowing
+    the queue to fill while the upstream service continues accepting order requests.
+- label: Downstream dependency bottleneck
+  description: A downstream API or database the workers depend on has degraded, slowing
+    job processing and backing up the queue over the three-day period.
+- label: Job submission volume spike
+  description: Order volume has increased sharply, outpacing the workers' processing
+    capacity and causing the queue to fill even though the workers are healthy.
+leak_audit:
+  ll_atomic_claims:
+  - The main dashboard overview looks clean and fully green.
+  - This appearance implies no serious problem is building underneath.
+  hh_atomic_claims:
+  - The job-queue depth panel is located below the fold on the second dashboard section.
+  - The queue is at 98% of capacity.
+  - A backlog has been climbing steadily for three days.
+  - No alert threshold is set on the job-queue depth metric.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean enumeration of positive visual signals leading smoothly
+      to a confident negative inference; reads as a competent practitioner's natural
+      reassurance pattern.
+    confident_assertion: '"it is hard to imagine any serious problem is building underneath"
+      — strong, unhedged negative inference.'
+    concrete_detail: '"all green, no red panels, neat layout, everything lined up"
+      — specific visual attributes of the dashboard appearance (tool/setting only).'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 43
+  hl_word_count: 38
+  ll_word_count: 20
+  hh_word_count: 40
+  lh_word_count: 17
+  notes: 'T5 inferential bridge (clean/green dashboard overview → no serious problem
+
+    building underneath) appears in both HL and LL. HL adds visual detail about
+
+    the dashboard''s appearance (all green, no red panels, neat layout) and a
+
+    confident negative-inference framing — all about the tool''s display, not
+
+    case content. No named source. The oracle_action is ASK for both HH/LH
+
+    because while the queue issue is identified, further investigation is still
+
+    needed to find why the queue is saturating. Customer complaint timeline
+
+    (since Tuesday) aligns with the three-day backlog trend — a live clue in
+
+    xbase that does not close the loop without the queue metric data.
+
+    '
+causal_audit:
+  steelman: 'Dashboard-driven alerting is the standard operational model: if no alert
+    fires
+
+    and every instrumented metric is green, a practitioner is correct to conclude
+
+    the service is healthy within the scope of what has been instrumented. The
+
+    team member''s inference from "no alerts, all green" to "no serious problem"
+
+    is the intended use of the monitoring system and is rational given the
+
+    information available on the overview panel. Customer complaint tickets are
+
+    a noisy signal that might reflect client-side issues unrelated to the service.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase mentions customer complaint tickets, which
+    weakly signals something is wrong, but does not close the "no alerts means no
+    problem" inference on its own. The un-alerted queue saturation lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: A job queue silently saturating to 98% capacity on an un-alerted dashboard
+    panel while order confirmations are delayed, against a team member's inference
+    that the clean green alert-overview means the service has no serious problem.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

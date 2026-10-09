@@ -1,0 +1,32 @@
+{
+  "seed_id": "T6-016",
+  "ll_claims_extracted": [
+    "The investor's portfolio lagged its benchmark on at least three prior occasions.",
+    "Fund fees were identified as the cause on each of those occasions."
+  ],
+  "hl_case_claims": [
+    "The investor's portfolio lagged before on three separate occasions (years).",
+    "Fund fees were the confirmed cause each time."
+  ],
+  "hl_source_claims": [
+    "The speaker knows this pattern well (self-characterized familiarity).",
+    "The cause was eventually confirmed by the speaker (implies investigative effort)."
+  ],
+  "leaks": [
+    {
+      "text": "eventually confirmed",
+      "category": "effort_descriptor"
+    }
+  ],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 26,
+    "ll": 15,
+    "xbase": 59,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "fail",
+  "repair_hint": "Remove 'eventually confirmed' from HL; replace with a passive construction matching LL's epistemic register, e.g. 'the cause that emerged was fund fees' or 'fund fees turned out to be the cause — every single time'. This eliminates the effort_descriptor leak while preserving the high-salience rhetorical markers (first-person, 'every single time', specific count)."
+}

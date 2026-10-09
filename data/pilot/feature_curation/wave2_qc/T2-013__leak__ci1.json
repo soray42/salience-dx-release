@@ -1,0 +1,29 @@
+{
+  "seed_id": "T2-013",
+  "ll_claims_extracted": [
+    "The upload throttling began because of the company's rebrand announcement."
+  ],
+  "hl_case_claims": [
+    "The rebrand announcement triggered the throttling."
+  ],
+  "hl_source_claims": [
+    "Camille is a named individual.",
+    "Camille is the communications lead.",
+    "Camille ran the rebrand launch.",
+    "Camille told the user about this.",
+    "Camille has seen this exact pattern before.",
+    "Camille is confident the rebrand announcement triggered the throttling."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 26,
+    "ll": 13,
+    "xbase": 60,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": false,
+  "verdict": "pass",
+  "repair_hint": "hh_lh_equivalent is false: HH distractor states the refactor happened 'two weeks ago' (a case-content timing claim), but LH distractor says only 'The pipeline now runs 32 parallel shards' omitting the refactor timing. LH should include 'two weeks ago' or equivalent phrasing to match the HH case claim, e.g. 'The pipeline was refactored two weeks ago to run 32 parallel shards that each upload artifacts concurrently, which may exceed the cloud storage per-prefix request rate limit.' No leaks, no style flags, all word counts valid — no other repairs needed."
+}

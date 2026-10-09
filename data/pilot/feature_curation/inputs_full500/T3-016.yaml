@@ -1,0 +1,257 @@
+seed_id: T3-016
+template: T3
+domain: open_qa
+complexity: high
+xbase: I've just gone freelance as a graphic designer, earning around £19,000 in my
+  first year with no employees. All my projects are design work — branding, print,
+  and digital — and I'm trying to decide whether to stay as a sole trader or set up
+  a limited company. {DS}
+focal_diagnostic_feature: 'The user''s accountant has already performed a case-specific
+  cost-benefit analysis confirming that limited-company overhead exceeds corporation-tax
+  savings at £19,000 income, and professional indemnity insurance already covers the
+  user''s liability exposure — both pathways that would justify incorporation are
+  closed by stated facts.
+
+  '
+low_diagnostic_proposition: 'A friend with entrepreneurial experience asserts that
+  incorporation is always the right structure for any freelancer.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Confirm sole trader is correct for this user given the accountant''s
+  explicit cost-benefit finding at £19,000 income and the existing professional indemnity
+  coverage; explain that the friend''s heuristic applies at higher income or higher
+  liability exposure but does not override a qualified professional''s case-specific
+  analysis.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Note that the friend''s assertion is a generic pattern-matching
+  rule ("always") that does not engage with the user''s specific income level or circumstances;
+  advise the user to consult a qualified accountant for a case-specific cost-benefit
+  analysis before deciding, and do not adopt the generic heuristic as the answer.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Note that the friend''s assertion is a generic pattern-matching rule ("always")
+      that does not engage with the user''s specific income level or circumstances;
+      advise the user to consult a qualified accountant for a case-specific cost-benefit
+      analysis before deciding, and do not adopt the generic heuristic as the answer.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Note that the friend''s assertion is a generic pattern-matching rule ("always")
+      that does not engage with the user''s specific income level or circumstances;
+      advise the user to consult a qualified accountant for a case-specific cost-benefit
+      analysis before deciding, and do not adopt the generic heuristic as the answer.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Confirm sole trader is correct for this user given the accountant''s explicit
+      cost-benefit finding at £19,000 income and the existing professional indemnity
+      coverage; explain that the friend''s heuristic applies at higher income or higher
+      liability exposure but does not override a qualified professional''s case-specific
+      analysis.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Confirm sole trader is correct for this user given the accountant''s explicit
+      cost-benefit finding at £19,000 income and the existing professional indemnity
+      coverage; explain that the friend''s heuristic applies at higher income or higher
+      liability exposure but does not override a qualified professional''s case-specific
+      analysis.
+
+      '
+variants:
+  HL:
+    distractor: 'A close friend who runs a successful tech startup told me, very confidently,
+      that he always incorporates from day one — he''s incorporated three businesses
+      and says a sole trader structure is never the right call for any serious freelancer.
+
+      '
+    diagnosticity: low
+    salience: high
+    proposition: 'A friend with entrepreneurial experience asserts that incorporation
+      is always the right structure for any freelancer.
+
+      '
+    salience_source: 'A (source credibility): successful serial entrepreneur with
+      three incorporated businesses; C (confident assertion): "very confidently",
+      "always", "never the right call"; D (concrete detail about source): "incorporated
+      three businesses" is source history, not case content.
+
+      '
+    why_plausible: 'A serial entrepreneur speaking from hands-on experience with multiple
+      ventures carries genuine domain authority; the "always incorporate" heuristic
+      has real validity above certain income thresholds, making it easy for a busy
+      reader to accept the source''s confidence at face value without weighing it
+      against the user''s specific circumstances.
+
+      '
+    why_irrelevant: 'The friend applies a generic rule without engaging the user''s
+      actual numbers; the accountant''s case-specific cost-benefit analysis at £19,000
+      income (carried in HH/LH) and the existing professional indemnity coverage together
+      close both pathways (tax efficiency and liability protection) that would make
+      incorporation correct — the heuristic is inapplicable to this scenario.
+
+      '
+  LL:
+    distractor: A friend said incorporation is always the right structure for any
+      freelancer.
+    diagnosticity: low
+    salience: low
+    proposition: 'A friend with entrepreneurial experience asserts that incorporation
+      is always the right structure for any freelancer.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'My accountant ran the numbers and confirmed that at £19,000 annual
+      income, the combined Companies House filing fees, additional accountancy costs,
+      and payroll administration for a limited company exceed the corporation-tax
+      saving by several hundred pounds per year; and my professional indemnity policy
+      already covers my entire liability exposure.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'The user''s accountant has already performed a case-specific cost-benefit
+      analysis confirming that limited-company overhead exceeds corporation-tax savings
+      at £19,000 income, and professional indemnity insurance already covers the user''s
+      liability exposure — both pathways that would justify incorporation are closed
+      by stated facts.
+
+      '
+    salience_source: 'A (source credibility): qualified accountant with case-specific
+      analysis; C (confident assertion): "confirmed", "exceed by several hundred pounds
+      per year"; D (concrete detail): specific cost categories (Companies House fees,
+      accountancy costs, payroll admin) and quantified directional finding.
+
+      '
+  LH:
+    distractor: 'My accountant confirmed administration costs exceed corporation-tax
+      savings at my income level, and professional indemnity covers my liability.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'The user''s accountant has already performed a case-specific cost-benefit
+      analysis confirming that limited-company overhead exceeds corporation-tax savings
+      at £19,000 income, and professional indemnity insurance already covers the user''s
+      liability exposure — both pathways that would justify incorporation are closed
+      by stated facts.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: generic incorporation heuristic
+  description: 'The friend''s assertion that incorporation is always correct for any
+    freelancer, applied without reference to the user''s specific income, overhead
+    costs, or existing liability coverage.
+
+    '
+plausible_alternative_directions:
+- label: income growth planning
+  description: 'The user should structure their choice around projected future income:
+    if earnings are expected to grow past the break-even threshold within a defined
+    horizon, incorporating now might reduce switching costs.
+
+    '
+- label: client-imposed requirement
+  description: 'Some clients or platforms require suppliers to operate as a limited
+    company for contractual or procurement reasons, which could override the cost-benefit
+    calculus regardless of income level.
+
+    '
+- label: pension contribution efficiency
+  description: 'Director salary-and-dividend structures can improve pension contribution
+    efficiency for certain income profiles, potentially changing the net cost-benefit
+    comparison.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - A friend made the claim.
+  - The claim is that incorporation is always the right structure.
+  - The claim applies to any freelancer.
+  hl_salience_dimensions:
+    source_credibility: '"A close friend who runs a successful tech startup" — peer
+      entrepreneur with direct business formation experience, domain-adjacent authority.
+
+      '
+    narrative_coherence: 'Single clean declarative sentence in professional register;
+      no interruptions or tangents.
+
+      '
+    confident_assertion: '"told me, very confidently", "always incorporates from day
+      one", "never the right call" — unhedged superlatives.
+
+      '
+    concrete_detail: '"he''s incorporated three businesses" — source''s own track
+      record, not a claim about the user''s case.
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 39
+  ll_word_count: 12
+  notes: 'Stripped: any specific financial figures attributed to the friend''s advice
+    (would be a tunable_value leak). The phrase "from day one" describes the friend''s
+    own practice pattern, not the user''s case timeline, so it is retained as source-detail.
+    "Very confidently" is a confident-assertion marker (I5-C), not hedging. No sensory
+    environment, no rambling. The friend''s "never the right call" is part of the
+    generic assertion, not a case-specific severity claim about the user.
+
+    '
+causal_audit:
+  steelman: 'A senior accountant or business formation advisor would always put "consider
+    limited company structure" on a new freelancer''s checklist. The friend''s claim
+    has a genuine general mechanism: limited companies provide liability protection
+    beyond what professional indemnity insurance may cover in edge cases (e.g., a
+    catastrophic claim exceeding policy limits); above approximately £30,000–£35,000
+    net profit, corporation tax (19%) plus director dividends is materially cheaper
+    than income tax plus Class 4 NI at higher rates; and incorporated status signals
+    credibility to certain enterprise clients. These are real factors a CFP or accountant
+    would weigh. The friend, having incorporated three businesses, is drawing on genuine
+    pattern-level knowledge.
+
+    However, the mechanism is foreclosed by two explicit facts carried in HH/LH: (1)
+    the user''s accountant has already run the cost-benefit at £19,000 income and
+    confirmed overhead exceeds savings — the tax-efficiency pathway is closed by a
+    qualified professional''s case-specific finding; (2) the user holds professional
+    indemnity insurance that covers their liability exposure — the liability-protection
+    pathway is closed. The friend is applying a heuristic valid at higher incomes
+    and higher liability profiles to a case where the HH/LH evidence forecloses it.
+    No competent practitioner would override a qualified accountant''s case-specific
+    analysis with a generic rule.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — pathway closure facts (accountant cost-benefit finding
+    and professional indemnity coverage) are carried exclusively in HH/LH variants,
+    not in xbase. xbase establishes only income level, work type, and sole-trader
+    decision context.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 3
+  topic_brief: 'How a new freelancer should structure their business (stay sole trader
+    vs incorporate) given stated income and liability facts. A successful entrepreneur
+    friend insists incorporation is always right.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B

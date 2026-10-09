@@ -1,0 +1,176 @@
+seed_id: T6-092
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our search API, served through CloudFront, has been returning stale or incorrect
+  results to some users for five days. The cache TTL looks fine — I already confirmed
+  it is set to 300 seconds. Request volume has not changed significantly, and there
+  have been no deploys to the origin service this week. {DS}
+focal_diagnostic_feature: The CloudFront cache behavior forwards all query strings
+  to origin but includes none of them in the cache key, so requests for different
+  search terms share one cached response until it expires.
+low_diagnostic_proposition: Past CloudFront issues were all caused by TTL being too
+  short, so a hidden TTL reset is probably responsible here too.
+oracle_action: ANSWER
+oracle_focus: Fix the cache behavior to include search query strings in the cache
+  key, ensuring each distinct query gets its own cached response rather than sharing
+  a single stale entry.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a TTL reset from past experience when the
+  console confirms 300 seconds. Ask for the cache behavior's query-string forwarding
+  and cache-key configuration before diagnosing.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a TTL reset from past experience when the console confirms
+      300 seconds. Ask for the cache behavior's query-string forwarding and cache-key
+      configuration before diagnosing.
+  LL:
+    action: ASK
+    focus: Do not assume a TTL reset from past experience when the console confirms
+      300 seconds. Ask for the cache behavior's query-string forwarding and cache-key
+      configuration before diagnosing.
+  HH:
+    action: ANSWER
+    focus: Fix the cache behavior to include search query strings in the cache key,
+      ensuring each distinct query gets its own cached response rather than sharing
+      a single stale entry.
+  LH:
+    action: ANSWER
+    focus: Fix the cache behavior to include search query strings in the cache key,
+      ensuring each distinct query gets its own cached response rather than sharing
+      a single stale entry.
+variants:
+  HL:
+    distractor: Every CloudFront issue I have ever debugged came down to a TTL that
+      was set too low — pages expiring before they got any meaningful cache hits.
+      My first instinct is that something reset the TTL shorter again, even though
+      the console shows 300 seconds.
+    diagnosticity: low
+    salience: high
+    proposition: Past CloudFront issues were all caused by TTL being too short, so
+      a hidden TTL reset is probably responsible here too.
+    salience_source: Dimension B (narrative coherence) — vivid characterisation of
+      past failure mode with specific mechanism detail; dimension C (confident assertion)
+      — 'every CloudFront issue I have ever debugged' frames the pattern as universal
+      personal experience.
+    why_plausible: TTL misconfiguration is a common real cause of stale CDN responses;
+      a practitioner who has seen it repeatedly will legitimately suspect it first,
+      and the hedged acknowledgement of the console reading adds apparent self-awareness.
+    why_irrelevant: The xbase explicitly confirms TTL is 300 seconds; returning incorrect
+      results for different queries is not explained by a short TTL but by a missing
+      query-string dimension in the cache key — a structurally different problem.
+  LL:
+    distractor: My past CloudFront issues were all caused by TTL being too short;
+      I suspect the same here despite the 300-second reading.
+    diagnosticity: low
+    salience: low
+    proposition: Past CloudFront issues were all caused by TTL being too short, so
+      a hidden TTL reset is probably responsible here too.
+    matched_to: HL
+  HH:
+    distractor: The CloudFront cache behavior is configured to forward all query strings
+      to origin but includes none of them in the cache key — so a search for 'laptops'
+      and a search for 'headphones' both return the same cached response until it
+      expires.
+    diagnosticity: high
+    salience: high
+    proposition: The CloudFront cache behavior forwards all query strings to origin
+      but includes none of them in the cache key, so requests for different search
+      terms share one cached response until it expires.
+    salience_source: Dimension B (narrative coherence) — concrete worked example (two
+      named search terms) makes the misconfiguration's effect immediately tangible;
+      dimension C (confident assertion) — the configuration state is described precisely
+      and definitively.
+  LH:
+    distractor: Query strings are forwarded to origin but excluded from the cache
+      key, so all search requests share one cached response.
+    diagnosticity: high
+    salience: low
+    proposition: The CloudFront cache behavior forwards all query strings to origin
+      but includes none of them in the cache key, so requests for different search
+      terms share one cached response until it expires.
+    matched_to: HH
+distractor_direction:
+  label: hidden TTL reset
+  description: Investigating whether an undisclosed configuration change reset the
+    CloudFront TTL to a shorter value despite the console displaying 300 seconds.
+plausible_alternative_directions:
+- label: origin data staleness
+  description: The origin service is returning stale or cached data from its own internal
+    layer regardless of CDN configuration.
+- label: cache invalidation failure
+  description: A recent content update was not propagated via an invalidation request,
+    leaving old cache entries across edge nodes.
+- label: geo-routing misconfiguration
+  description: Certain user populations are routing to edge PoPs with older cache
+    state due to a routing policy misconfiguration.
+leak_audit:
+  ll_atomic_claims:
+  - Past CloudFront issues were all caused by TTL being too short.
+  - A hidden TTL reset is suspected here despite the 300-second console reading.
+  hh_atomic_claims:
+  - The cache behavior forwards all query strings to origin.
+  - Query strings are not included in the cache key.
+  - A search for different terms returns the same cached response until it expires.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker
+    narrative_coherence: Mechanism of past failures described in specific terms (pages
+      expiring before meaningful cache hits); hedged acknowledgement of console reading
+      adds coherence.
+    confident_assertion: '''Every CloudFront issue I have ever debugged'' — universal
+      framing of personal experience.'
+    concrete_detail: N/A — detail is about past failure mode, which is the availability-bias
+      content for T6.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 52
+  hl_word_count: 45
+  ll_word_count: 21
+  hh_word_count: 42
+  lh_word_count: 20
+  notes: 'T6: availability inference (''my first instinct is that something reset
+    the TTL again'') appears in both HL and LL as required by C1/T6 rule.
+
+    xbase closes the TTL pathway by explicitly confirming ''300 seconds'' — this is
+    a narrow pathway-closure allowed under C4 (blocks one mechanism without naming
+    the true cause).
+
+    Cache-key misconfiguration (query strings excluded from key) lives only in HH/LH.
+
+    High complexity: requires understanding CloudFront cache behavior forwarding vs
+    cache-key configuration as distinct levers.
+
+    HL acknowledges the counter-evidence (''even though the console shows 300 seconds'')
+    — this is propositional content in both HL and LL, not an HL-only addition (C1
+    verified).
+
+    '
+causal_audit:
+  steelman: 'A senior CDN engineer might argue: CloudFront console displays may not
+    immediately reflect infrastructure-level TTL overrides from edge or Lambda@Edge
+    functions; a hidden programmatic TTL override in a Cloudflare Worker or Lambda@Edge
+    response could be setting a shorter effective TTL that bypasses the behavior setting.
+    On this theory, a TTL reset is genuinely worth ruling out even with the console
+    showing 300 seconds.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states 'I already confirmed it is set to 300 seconds'
+    — this closes the simple console-lag pathway. The steelman's Lambda@Edge/hidden-override
+    scenario would also not explain incorrect results for different search queries,
+    which is explained only by the cache-key misconfiguration (focal feature).
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: CloudFront cache behavior excludes query strings from cache key, so
+    all search queries share one cached response; distractor is availability bias
+    toward TTL-too-short from past CDN incidents.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

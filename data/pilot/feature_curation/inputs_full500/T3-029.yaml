@@ -1,0 +1,195 @@
+seed_id: T3-029
+template: T3
+domain: open_qa
+complexity: low
+xbase: I have two job offers to consider at the same time. Company A is a 40-person
+  firm in my exact technical domain, with a senior-level title and a salary about
+  12 percent above my current pay. Company B is a large corporation with thousands
+  of employees, a broader but less defined scope, and a slightly lower offer. {DS}
+focal_diagnostic_feature: Company A has a written 18-month promotion track and a team
+  of domain-matched peers; Company B's headcount is still being assembled and no confirmed
+  hire has direct domain experience.
+low_diagnostic_proposition: A senior career mentor advises that a larger company's
+  brand name always benefits long-term career prospects.
+oracle_action: ANSWER
+oracle_focus: Choose Company A on the disclosed facts; it offers better domain fit,
+  higher compensation, a structured promotion path, and a team of experienced peers,
+  while Company B lacks both team stability and domain depth.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a generic brand-name argument override this
+  offer comparison. Ask for each role's promotion structure, team composition, domain
+  alignment, and specific compensation details before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a generic brand-name argument override this offer comparison.
+      Ask for each role's promotion structure, team composition, domain alignment,
+      and specific compensation details before deciding.
+  LL:
+    action: ASK
+    focus: Do not let a generic brand-name argument override this offer comparison.
+      Ask for each role's promotion structure, team composition, domain alignment,
+      and specific compensation details before deciding.
+  HH:
+    action: ANSWER
+    focus: Choose Company A on the disclosed facts; it offers better domain fit, higher
+      compensation, a structured promotion path, and a team of experienced peers,
+      while Company B lacks both team stability and domain depth.
+  LH:
+    action: ANSWER
+    focus: Choose Company A on the disclosed facts; it offers better domain fit, higher
+      compensation, a structured promotion path, and a team of experienced peers,
+      while Company B lacks both team stability and domain depth.
+variants:
+  HL:
+    distractor: Obinna, who has mentored engineers for over fifteen years and placed
+      dozens of them at leading firms, told me without hesitation that a larger company's
+      brand name always opens more doors later in a career.
+    diagnosticity: low
+    salience: high
+    proposition: A senior career mentor advises that a larger company's brand name
+      always benefits long-term career prospects.
+    salience_source: A — source credibility (fifteen years mentoring, dozens of placements
+      at leading firms) plus C (told me without hesitation) make the generic claim
+      feel authoritative.
+    why_plausible: Brand-name advice is a genuine factor in career strategy, and a
+      well-credentialed mentor confidently asserting it carries real weight for someone
+      with two offers on the table.
+    why_irrelevant: The mentor's claim is a general heuristic that did not engage
+      Company A's promotion path, team quality, or domain fit versus Company B's assembly
+      status; those specifics make the heuristic inapplicable here.
+  LL:
+    distractor: A senior career mentor advised that a larger company's brand name
+      always benefits career prospects.
+    diagnosticity: low
+    salience: low
+    proposition: A senior career mentor advises that a larger company's brand name
+      always benefits long-term career prospects.
+    matched_to: HL
+  HH:
+    distractor: Company A has a written 18-month promotion track and a team of three
+      engineers whose backgrounds match exactly what I need to grow; Company B's headcount
+      is still being hired and no one on the proposed team has direct domain experience.
+    diagnosticity: high
+    salience: high
+    proposition: Company A has a written 18-month promotion track and a team of domain-matched
+      peers; Company B's headcount is still being assembled and no confirmed hire
+      has direct domain experience.
+    salience_source: Concrete contrast — written promotion track with a timeline,
+      named peer count with matched backgrounds, versus B's unbuilt team and absent
+      domain expertise — makes the asymmetry precise and vivid.
+  LH:
+    distractor: Company A has a written 18-month promotion track and domain-matched
+      peers; Company B's team is unbuilt with no confirmed domain-experienced hires.
+    diagnosticity: high
+    salience: low
+    proposition: Company A has a written 18-month promotion track and a team of domain-matched
+      peers; Company B's headcount is still being assembled and no confirmed hire
+      has direct domain experience.
+    matched_to: HH
+distractor_direction:
+  label: Large-company brand-name advantage
+  description: Treating Company B's size and brand name as the dominant reason to
+    choose it, following a mentor's general heuristic.
+plausible_alternative_directions:
+- label: Company B stability and resources
+  description: Whether a large corporation's structural stability
+  benefits: null
+  and resources outweigh the smaller firm's domain alignment and team quality.: null
+- label: Salary differential impact
+  description: Whether the 12-percent pay advantage at Company A is the decisive factor
+    independent of the promotion structure.
+leak_audit:
+  ll_atomic_claims:
+  - A senior career mentor gave advice about this decision.
+  - The advice was that a larger company's brand name always benefits career prospects.
+  hh_atomic_claims:
+  - Company A has a written 18-month promotion track.
+  - Company A has a team of three engineers with backgrounds matching the user's growth
+    needs.
+  - Company B's headcount is still being hired.
+  - No one on Company B's proposed team has direct domain experience.
+  hl_salience_dimensions:
+    source_credibility: Obinna has fifteen years of mentoring engineers and has placed
+      dozens at leading firms — establishes genuine domain-adjacent expertise.
+    narrative_coherence: 'Clean single-sentence scene: mentor consulted, confident
+      assertion delivered without hesitation.'
+    confident_assertion: '''Told me without hesitation'' and ''always opens more doors''
+      signal absolute confidence in the generic rule.'
+    concrete_detail: Detail about the mentor (fifteen years, dozens of placements
+      at leading firms) describes the source only; no fact about either offer is added.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 55
+  hl_word_count: 35
+  ll_word_count: 15
+  hh_word_count: 41
+  lh_word_count: 21
+  notes: 'xbase establishes A''s domain fit, senior title, and salary advantage without
+    revealing the
+
+    promotion structure or team composition, so the decisive facts stay in HH/LH.
+    The mentor''s
+
+    claim is a general heuristic applied to ''any career'' — the HL does not add a
+    specific claim
+
+    about either Company A or B. LL carries only the mentor-gives-brand-advice claim.
+    HH/LH
+
+    atomic claims checked: LH now carries all four HH claims explicitly — written
+    18-month
+
+    promotion track, domain-matched peers at A, B''s team unbuilt, and no confirmed
+
+    domain-experienced hires at B. QC repair: prior LH dropped the ''18-month'' quantifier
+    and
+
+    omitted the affirmative claim that A has domain-matched peers (only negated B''s
+    peer quality).
+
+    '
+causal_audit:
+  steelman: 'A senior mentor''s experience placing engineers at larger firms is real
+    evidence that brand name
+
+    matters for future job searches, referrals, and investor credibility. A practitioner
+    might argue
+
+    that choosing a 40-person startup over a large firm sacrifices network effects
+    and credential
+
+    legibility for subsequent roles, and that this trade-off is the key career question
+    here.
+
+    However, the mentor''s advice is a generic heuristic applied without examining
+    Company A''s
+
+    promotion track, team depth, or domain alignment — all of which are present in
+    HH/LH —
+
+    and without any claim that Company B specifically has strong brand value in the
+    user''s domain.
+
+    The heuristic does not engage the specific evidence that distinguishes these two
+    offers.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not rule out the brand-name argument;
+    the decisive promotion and team composition facts are withheld to HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Choosing between a small domain-matched firm with a written promotion
+    path and a large corporation with an unbuilt team; mentor's generic brand-name
+    advice is the distractor.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

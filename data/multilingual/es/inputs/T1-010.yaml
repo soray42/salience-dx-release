@@ -1,0 +1,108 @@
+seed_id: T1-010
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'Mi VPN al gateway de la empresa es extremadamente lenta: aproximadamente 3
+  Mbps de descarga. Sin la VPN, mi conexión doméstica supera los 400 Mbps. El gateway
+  está en otro país y no he cambiado la configuración de mi cliente VPN esta semana.
+  {DS}'
+focal_diagnostic_feature: Otros compañeros en la misma ciudad usando el mismo gateway
+  hoy obtienen más de 100 Mbps.
+low_diagnostic_proposition: A peer's VPN problem was attributed to ISP-level throttling
+  of encrypted traffic.
+oracle_action: ASK
+oracle_focus: The problem is local to this user's path or device; check Wi-Fi/NIC,
+  MTU, local routing/peering, and compare from another network.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer national ISP throttling from someone else's
+  case. First compare against peers on the same gateway and city.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer national ISP throttling from someone else's case. First compare
+      against peers on the same gateway and city.
+  LL:
+    action: ASK
+    focus: Do not infer national ISP throttling from someone else's case. First compare
+      against peers on the same gateway and city.
+  HH:
+    action: ASK
+    focus: The problem is local to this user's path or device; check Wi-Fi/NIC, MTU,
+      local routing/peering, and compare from another network.
+  LH:
+    action: ASK
+    focus: The problem is local to this user's path or device; check Wi-Fi/NIC, MTU,
+      local routing/peering, and compare from another network.
+variants:
+  HL:
+    distractor: Un amigo del colegio tuvo velocidades de VPN desplomadas durante una
+      crisis política; al parecer, su ISP nacional estaba limitando el tráfico cifrado
+      por las noches.
+    diagnosticity: low
+    salience: high
+    proposition: A peer's VPN problem was attributed to ISP-level throttling of encrypted
+      traffic.
+    salience_source: dramatic geopolitical anecdote, similar VPN symptom
+    why_plausible: VPN slowness plus a throttling story sounds like a plausible hidden-network
+      cause.
+    why_irrelevant: Peers in the same city and gateway being normal rules out a broad
+      citywide or gateway-wide explanation.
+  LL:
+    distractor: Un compañero tuvo un problema de rendimiento de VPN atribuido a la
+      limitación de tráfico cifrado por parte del ISP.
+    diagnosticity: low
+    salience: low
+    proposition: A peer's VPN problem was attributed to ISP-level throttling of encrypted
+      traffic.
+    matched_to: HL
+  HH:
+    distractor: Las personas de mi ciudad en el mismo gateway están obteniendo más
+      de 100 Mbps hoy mientras yo estoy bloqueado a 3 Mbps en esta máquina.
+    diagnosticity: high
+    salience: high
+    proposition: Other colleagues in the same city using the same gateway today get
+      over 100 Mbps.
+    salience_source: peer baseline on same route/gateway
+  LH:
+    distractor: Usuarios comparables en la misma ciudad y en el mismo gateway VPN
+      reportan un rendimiento normal.
+    diagnosticity: high
+    salience: low
+    proposition: Other colleagues in the same city using the same gateway today get
+      over 100 Mbps.
+    matched_to: HH
+distractor_direction:
+  label: Limitación de tráfico del ISP
+  description: Investigar si el proveedor de internet está limitando o moldeando el
+    tráfico VPN cifrado.
+plausible_alternative_directions:
+- label: Problema de capacidad del gateway
+  description: El gateway VPN remoto de la empresa está congestionado o subdimensionado
+    para la carga actual.
+- label: Incompatibilidad del protocolo VPN
+  description: El protocolo VPN, el cifrado o el transporte seleccionado es ineficiente
+    para esta ruta.
+- label: Degradación de la ruta de peering
+  description: La ruta entre el ISP doméstico y el gateway extranjero tiene un peering
+    deficiente o pérdida de paquetes.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-010.yaml
+  source_xbase_sha256: 76743d445a040320
+  translated_content_sha256: 8710c299251dbb23
+  translation_notes: '"ISP" retained as-is (standard term in Spanish). "Gateway" retained
+    as-is (standard technical term). "MTU", "NIC" referenced only in oracle fields
+    (not translated). "Throttling" rendered as "limitación" (standard Spanish networking
+    term).'

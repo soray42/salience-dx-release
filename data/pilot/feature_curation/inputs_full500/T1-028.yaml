@@ -1,0 +1,182 @@
+seed_id: T1-028
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: 'Customers of our payments REST API are occasionally seeing duplicate charges:
+  the same order gets billed twice within a few seconds. It is rare, well under a
+  percent of orders, and our payment processor confirms it received two distinct authorization
+  calls for those orders. The application code that builds the charge request has
+  not changed in months, and our database shows two separate charge rows for each
+  affected order. In each case the two authorization timestamps are about ten seconds
+  apart, consistent with a typical gateway timeout. {DS}'
+focal_diagnostic_feature: The duplicates happen only when the first charge call hit
+  a gateway 504 timeout; the client library automatically retried the POST, but the
+  charge had actually succeeded, and the endpoint accepts no idempotency key to suppress
+  the retry.
+low_diagnostic_proposition: A similar double-charge issue at another company was caused
+  by a race condition where two app threads processed the same order concurrently.
+oracle_action: ANSWER
+oracle_focus: Add idempotency-key support to the charge endpoint so retried POSTs
+  after a 504 do not create a second authorization; the duplicates come from automatic
+  client retries of requests that timed out at the gateway but had already succeeded.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the other company's concurrency-race explanation.
+  Ask whether the duplicate charges follow a gateway timeout and a retry, and whether
+  the endpoint enforces idempotency keys.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the other company's concurrency-race explanation. Ask whether
+      the duplicate charges follow a gateway timeout and a retry, and whether the
+      endpoint enforces idempotency keys.
+  LL:
+    action: ASK
+    focus: Do not adopt the other company's concurrency-race explanation. Ask whether
+      the duplicate charges follow a gateway timeout and a retry, and whether the
+      endpoint enforces idempotency keys.
+  HH:
+    action: ANSWER
+    focus: Add idempotency-key support to the charge endpoint so retried POSTs after
+      a 504 do not create a second authorization; the duplicates come from automatic
+      client retries of requests that timed out at the gateway but had already succeeded.
+  LH:
+    action: ANSWER
+    focus: Add idempotency-key support to the charge endpoint so retried POSTs after
+      a 504 do not create a second authorization; the duplicates come from automatic
+      client retries of requests that timed out at the gateway but had already succeeded.
+variants:
+  HL:
+    distractor: Henrique, a staff engineer I trust from a fintech I used to work at,
+      told me they had nearly identical phantom double-charges and it came down to
+      a concurrency race where two worker threads picked up the same order and billed
+      it at the same instant.
+    diagnosticity: low
+    salience: high
+    proposition: A similar double-charge issue at another company was caused by a
+      race condition where two app threads processed the same order concurrently.
+    salience_source: A — a trusted staff engineer recounting a closely symptom-matched
+      double-charge investigation.
+    why_plausible: Concurrency races are a textbook source of duplicate writes and
+      the symptom (two charge rows for the same order) fits, so it is a natural leading
+      hypothesis.
+    why_irrelevant: A thread race would produce two near-simultaneous calls; xbase
+      shows the two authorizations are about ten seconds apart — consistent with a
+      timeout interval, not concurrent threads — so the race mechanism is implausible
+      from xbase alone.
+  LL:
+    distractor: A similar double-charge issue at another company was caused by a race
+      condition where two app threads processed the same order concurrently.
+    diagnosticity: low
+    salience: low
+    proposition: A similar double-charge issue at another company was caused by a
+      race condition where two app threads processed the same order concurrently.
+    matched_to: HL
+  HH:
+    distractor: 'Tracing shows every duplicate follows the same sequence: the first
+      charge POST hit a 504 at the gateway, the client library automatically retried
+      it, but the original charge had actually gone through; the endpoint accepts
+      no idempotency key, so the retry simply created a second authorization.'
+    diagnosticity: high
+    salience: high
+    proposition: The duplicates happen only when the first charge call hit a gateway
+      504 timeout; the client library automatically retried the POST, but the charge
+      had actually succeeded, and the endpoint accepts no idempotency key to suppress
+      the retry.
+    salience_source: The traced 504-then-retry sequence and the absent idempotency
+      key name the exact duplication mechanism.
+  LH:
+    distractor: Each duplicate follows a 504 timeout and an automatic client retry
+      of a charge that had already succeeded, with no idempotency key to suppress
+      it.
+    diagnosticity: high
+    salience: low
+    proposition: The duplicates happen only when the first charge call hit a gateway
+      504 timeout; the client library automatically retried the POST, but the charge
+      had actually succeeded, and the endpoint accepts no idempotency key to suppress
+      the retry.
+    matched_to: HH
+distractor_direction:
+  label: Concurrency race condition
+  description: Investigating whether two application threads or workers process the
+    same order concurrently and issue two charges.
+plausible_alternative_directions:
+- label: Duplicate webhook/event
+  description: Whether a duplicated upstream event triggers the charge path twice
+    for one order.
+- label: Double form submission
+  description: Whether the client UI submits the order twice from a single user action.
+leak_audit:
+  ll_atomic_claims:
+  - A similar double-charge issue occurred at another company.
+  - It was caused by a race condition where two app threads processed the same order
+    concurrently.
+  hh_atomic_claims:
+  - Each duplicate follows the first charge POST hitting a 504 at the gateway.
+  - The client library automatically retried the POST.
+  - The original charge had actually succeeded, and the endpoint accepts no idempotency
+    key, so the retry created a second authorization.
+  hl_salience_dimensions:
+    source_credibility: Named trusted staff engineer (Henrique) from a former fintech.
+    narrative_coherence: Coherent investigation resolving to a thread race.
+    confident_assertion: Told me it came down to the concurrency race.
+    concrete_detail: N/A — HL adds only Henrique's identity and his race story, no
+      fact about the user's own duplicates that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 87
+  hl_word_count: 46
+  ll_word_count: 22
+  hh_word_count: 45
+  lh_word_count: 25
+  notes: 'xbase keeps symptoms only plus a neutral pathway-closure: the ~10-second
+    gap between each duplicate pair of
+
+    authorization timestamps is consistent with a gateway timeout interval, foreclosing
+    near-simultaneous concurrent
+
+    calls as the mechanism. The pathway-closure does not name the affirmative cause
+    (504 retry) — that lives in HH/LH.
+
+    HL ''spent a sprint on'' removed (effort_descriptor forbidden by C1); rewritten
+    as ''had nearly identical ... and it
+
+    came down to''. HL adds only Henrique and his race anecdote. Two charge rows ~10
+    seconds apart is not consistent
+
+    with a concurrent race, so xbase alone now lets a practitioner deprioritise that
+    direction.
+
+    '
+causal_audit:
+  steelman: 'A senior backend engineer could argue that duplicate writes are most
+    commonly a concurrency defect: an order
+
+    enqueued twice, a missing unique constraint, or two workers racing on the same
+    record will each issue a charge,
+
+    producing exactly two rows seconds apart — so auditing locking, queue delivery,
+    and idempotency at the data layer
+
+    is the standard first response to phantom double-charges.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes that the two authorization timestamps for each
+    duplicate are about ten seconds apart, consistent with a typical gateway timeout
+    interval — a concurrent race would produce near-simultaneous calls, not a sequential
+    gap of that length, making the race mechanism implausible from xbase alone.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Duplicate payment charges caused by automatic client retries of POSTs
+    that timed out with a 504 at the gateway but had already succeeded, with no idempotency
+    key, not a thread concurrency race.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,191 @@
+seed_id: T5-059
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our Prometheus-based alerting system has been firing false positives on our
+  HTTP error-rate alert for three weeks. The alert triggers even when our actual error
+  log counts look normal. We have several alert rules sharing a common set of labels,
+  and the alertmanager routing has not changed. The team wasted two incident calls
+  last week responding to what turned out to be phantom alerts. I am trying to pinpoint
+  the rule that is misfiring. We verified all alert threshold expressions match the
+  intended values in version control. {DS}
+focal_diagnostic_feature: Two alert rules declare a label named the same identifier,
+  causing the availability rule's label value to overwrite the error-rate rule's threshold
+  metadata at evaluation time.
+low_diagnostic_proposition: The alerting configuration page is cluttered, making it
+  likely a rule parameter was misconfigured without anyone noticing.
+oracle_action: ANSWER
+oracle_focus: Rename the colliding label so each rule's threshold metadata is evaluated
+  independently; the false positives are caused by label-name collision, not by any
+  operator error introduced through a confusing interface.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer a misconfiguration from the interface's
+  appearance. Ask for the exact rule definitions and their label declarations before
+  diagnosing the source of false alerts.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer a misconfiguration from the interface's appearance. Ask for
+      the exact rule definitions and their label declarations before diagnosing the
+      source of false alerts.
+  LL:
+    action: ASK
+    focus: Do not infer a misconfiguration from the interface's appearance. Ask for
+      the exact rule definitions and their label declarations before diagnosing the
+      source of false alerts.
+  HH:
+    action: ANSWER
+    focus: Rename the colliding label so each rule's threshold metadata is evaluated
+      independently; the false positives are caused by label-name collision, not by
+      any operator error introduced through a confusing interface.
+  LH:
+    action: ANSWER
+    focus: Rename the colliding label so each rule's threshold metadata is evaluated
+      independently; the false positives are caused by label-name collision, not by
+      any operator error introduced through a confusing interface.
+variants:
+  HL:
+    distractor: The alerting configuration page is genuinely difficult to parse —
+      overlapping rows, unlabelled columns, and inconsistent indentation throughout
+      — and a layout this cluttered makes it very likely a rule parameter was misconfigured
+      without anyone noticing.
+    diagnosticity: low
+    salience: high
+    proposition: The alerting configuration page is cluttered, making it likely a
+      rule parameter was misconfigured without anyone noticing.
+    salience_source: B — a vivid concrete description of the UI problems; C — "very
+      likely" as a confident inferential bridge from surface property to cause.
+    why_plausible: A genuinely hard-to-read configuration interface does increase
+      the probability of operator error, so inferring a mis-set parameter from a cluttered
+      UI is a credible-sounding diagnostic step.
+    why_irrelevant: The label collision is a structural property of the rule definitions
+      themselves, not a presentation artifact; the same collision exists regardless
+      of how the configuration page looks, and no UI change can produce or fix a label-name
+      clash. Furthermore, xbase confirms all threshold expressions were verified against
+      version control, ruling out any mis-set threshold value as the cause.
+  LL:
+    distractor: The alerting configuration page is cluttered, making it likely a rule
+      parameter was misconfigured without anyone noticing.
+    diagnosticity: low
+    salience: low
+    proposition: The alerting configuration page is cluttered, making it likely a
+      rule parameter was misconfigured without anyone noticing.
+    matched_to: HL
+  HH:
+    distractor: Two alert rules — the HTTP error-rate rule and the availability rule
+      — both declare a label named 'severity'; the availability rule's severity label
+      overwrites the error-rate rule's threshold metadata at evaluation time, causing
+      the error-rate alert to fire against the wrong threshold entirely.
+    diagnosticity: high
+    salience: high
+    proposition: Two alert rules declare a label named the same identifier, causing
+      the availability rule's label value to overwrite the error-rate rule's threshold
+      metadata at evaluation time.
+    salience_source: Named rules, the specific colliding label, and the precise overwrite
+      mechanism make the diagnosis concrete and actionable.
+  LH:
+    distractor: Two alert rules declare the same label name, causing the availability
+      rule's value to overwrite the error-rate rule's threshold.
+    diagnosticity: high
+    salience: low
+    proposition: Two alert rules declare a label named the same identifier, causing
+      the availability rule's label value to overwrite the error-rate rule's threshold
+      metadata at evaluation time.
+    matched_to: HH
+distractor_direction:
+  label: Operator misconfiguration via UI
+  description: Investigating whether the cluttered configuration interface led an
+    operator to set a rule parameter incorrectly, causing the false alert firings.
+plausible_alternative_directions:
+- label: Alertmanager routing mismatch
+  description: Whether alertmanager routing rules are sending notifications for a
+    different rule than the one that actually fired.
+- label: Metric scrape gap
+  description: Whether intermittent scrape failures are causing the error-rate metric
+    to show missing data that the alerting rule interprets as elevated.
+leak_audit:
+  ll_atomic_claims:
+  - The alerting configuration page is cluttered.
+  - The clutter makes it likely a rule parameter was misconfigured without anyone
+    noticing.
+  hh_atomic_claims:
+  - Two alert rules both declare a label named 'severity'.
+  - The availability rule's severity label overwrites the error-rate rule's threshold
+    metadata at evaluation time.
+  - This causes the error-rate alert to fire against the wrong threshold.
+  hl_salience_dimensions:
+    source_credibility: N/A — T5 first-person aesthetic observation.
+    narrative_coherence: A vivid description of specific UI problems presented as
+      a causal chain leading to the diagnosis.
+    confident_assertion: '"Very likely" — confident inferential bridge from surface
+      to cause.'
+    concrete_detail: Specific UI defects described (overlapping rows, unlabelled columns,
+      inconsistent indentation) — visual detail about the interface, not about the
+      rule definitions.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 87
+  hl_word_count: 36
+  ll_word_count: 17
+  hh_word_count: 44
+  lh_word_count: 19
+  notes: 'T5 bridge ("a layout this cluttered makes it very likely a rule parameter
+
+    was misconfigured") appears in both HL (vivid + bridge) and LL (flat +
+
+    bridge) per C1 and self-check 13. HL adds only the concrete UI description
+
+    (overlapping rows, unlabelled columns, inconsistent indentation) — surface
+
+    detail about the interface, not about the rule collision. The rule collision
+
+    lives only in HH/LH; xbase reports symptoms and the shared-label context
+
+    but never identifies which rules or labels are involved.
+
+    QC repair: added pathway-closure sentence to xbase ("We verified all alert
+
+    threshold expressions match the intended values in version control") to
+
+    foreclose the mis-set-threshold mechanism identified by the causal lens.
+
+    xbase word count updated from 74 to 87.
+
+    '
+causal_audit:
+  steelman: 'A hard-to-read configuration interface genuinely increases operator error
+
+    risk: if rows are unlabelled and columns are cluttered, a practitioner
+
+    scanning rules could miss a threshold field or read the wrong row and set
+
+    an incorrect value. False-positive alerts are a plausible downstream
+
+    consequence of a mis-entered threshold. The argument from UI confusion to
+
+    misconfiguration is a real causal chain in operations practice.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states "We verified all alert threshold expressions
+    match the intended values in version control" — this forecloses the mis-set-threshold
+    mechanism: even if the UI is cluttered, the threshold values are confirmed correct,
+    so a misconfigured parameter cannot be the cause of the false positives. The distractor''s
+    only plausible causal path (cluttered UI → operator sets wrong threshold → false
+    alert fires) is blocked by this verification statement, leaving the distractor
+    with no defensible mechanism for this case.'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Prometheus false-positive alerts caused by a label-name collision between
+    two alert rules overwriting threshold metadata, not by operator misconfiguration
+    inferred from a cluttered configuration UI.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

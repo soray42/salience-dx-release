@@ -1,0 +1,163 @@
+seed_id: T3-095
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I am deciding between two road bikes at the same price point. Bike A weighs
+  8.9 kg and has an aluminium frame, while Bike B weighs 8.1 kg and has a carbon frame.
+  Both are from established brands. I plan to use the bike mainly for weekend rides
+  of around 60 to 80 km and the occasional sportive. I have not ridden either in person
+  yet. {DS}
+focal_diagnostic_feature: At the same retail price, Bike A includes a Shimano 105
+  groupset with hydraulic disc brakes, while Bike B uses Shimano Claris with mechanical
+  cable discs — two full drivetrain tiers lower.
+low_diagnostic_proposition: A senior cyclist at the local club stated that carbon
+  frame is always worth choosing over aluminium at this price point.
+oracle_action: ANSWER
+oracle_focus: Recommend Bike A; the groupset advantage — 105 with hydraulic discs
+  versus Claris with mechanical discs — outweighs the 800g frame weight difference
+  at this use level and price.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the blanket carbon-is-better rule; ask
+  for groupset specification, brake type, and component tier for both bikes before
+  deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the blanket carbon-is-better rule; ask for groupset specification,
+      brake type, and component tier for both bikes before deciding.
+  LL:
+    action: ASK
+    focus: Do not accept the blanket carbon-is-better rule; ask for groupset specification,
+      brake type, and component tier for both bikes before deciding.
+  HH:
+    action: ANSWER
+    focus: Recommend Bike A; the groupset advantage — 105 with hydraulic discs versus
+      Claris with mechanical discs — outweighs the 800g frame weight difference at
+      this use level and price.
+  LH:
+    action: ANSWER
+    focus: Recommend Bike A; the groupset advantage — 105 with hydraulic discs versus
+      Claris with mechanical discs — outweighs the 800g frame weight difference at
+      this use level and price.
+variants:
+  HL:
+    distractor: Rolando, a senior member of our local cycling club who has raced at
+      regional level for fifteen years, told me firmly that at this price point, carbon
+      is always worth the premium because weight matters on every climb.
+    diagnosticity: low
+    salience: high
+    proposition: A senior cyclist at the local club stated that carbon frame is always
+      worth choosing over aluminium at this price point.
+    salience_source: A/C — source credibility (fifteen years of regional racing),
+      confident assertion ('always worth the premium'), confident verb of speech ('told
+      me firmly').
+    why_plausible: Carbon frames are genuinely superior in many contexts, and an experienced
+      racer's categorical view is credible enough that a buyer might defer without
+      checking component specs.
+    why_irrelevant: The authority uses generic pattern-matching ('always') without
+      engaging the specific groupset comparison; the weight advantage does not compensate
+      for two full drivetrain tiers at this use level.
+  LL:
+    distractor: A senior cyclist at the local club stated that carbon frame is always
+      worth choosing over aluminium at this price point.
+    diagnosticity: low
+    salience: low
+    proposition: A senior cyclist at the local club stated that carbon frame is always
+      worth choosing over aluminium at this price point.
+    matched_to: HL
+  HH:
+    distractor: At the same retail price, Bike A comes with Shimano 105 groupset across
+      all components and hydraulic disc brakes; Bike B, the lighter carbon option,
+      ships with Shimano Claris and mechanical cable discs — two full drivetrain tiers
+      lower.
+    diagnosticity: high
+    salience: high
+    proposition: At the same retail price, Bike A includes a Shimano 105 groupset
+      with hydraulic disc brakes, while Bike B uses Shimano Claris with mechanical
+      cable discs — two full drivetrain tiers lower.
+    salience_source: B/C — specific named component tiers, precise brake-type contrast,
+      confident qualifier ('two full drivetrain tiers lower') makes the evidence hierarchy
+      concrete.
+  LH:
+    distractor: Bike A uses Shimano 105 hydraulic discs; Bike B uses Shimano Claris
+      mechanical discs at the same price — two full drivetrain tiers lower.
+    diagnosticity: high
+    salience: low
+    proposition: At the same retail price, Bike A includes a Shimano 105 groupset
+      with hydraulic disc brakes, while Bike B uses Shimano Claris with mechanical
+      cable discs — two full drivetrain tiers lower.
+    matched_to: HH
+distractor_direction:
+  label: Carbon frame superiority
+  description: Choosing Bike B on the basis that carbon frames are categorically worth
+    paying for over aluminium at any comparable price point.
+plausible_alternative_directions:
+- label: Weight advantage on climbs
+  description: The 800g frame-weight difference may matter meaningfully on sportive
+    routes with significant elevation gain.
+- label: Long-term frame durability
+  description: Carbon frames can be more vulnerable to impact damage than aluminium,
+    which may be relevant for a rider who travels with the bike.
+leak_audit:
+  ll_atomic_claims:
+  - A senior local cyclist stated a preference for carbon over aluminium at this price
+    point.
+  - The stated preference is categorical ('always worth choosing').
+  hh_atomic_claims:
+  - Both bikes are at the same retail price.
+  - Bike A has a Shimano 105 groupset.
+  - Bike A has hydraulic disc brakes.
+  - Bike B has Shimano Claris.
+  - Bike B has mechanical cable discs.
+  - Claris is two full drivetrain tiers below 105.
+  hl_salience_dimensions:
+    source_credibility: Named source with fifteen years of regional racing experience
+      at the same local club.
+    narrative_coherence: Clean setting — direct in-person advice from a club member.
+    confident_assertion: '''Told me firmly'', ''always worth the premium''.'
+    concrete_detail: 'Specific tenure: fifteen years of regional racing.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 38
+  ll_word_count: 21
+  hh_word_count: 38
+  lh_word_count: 23
+  notes: 'Authority uses ''always'' — pure pattern-match, never engages component
+    specs (C3 satisfied). Steelman checked: carbon IS generally better but the advice
+    doesn''t engage the groupset tier difference that is the decisive variable here.
+    xbase mentions neither groupset tier nor brake type, so the decisive fact lives
+    only in HH/LH (C4 satisfied). QC repair: LH was missing the evaluative claim ''two
+    full drivetrain tiers lower'' present in HH (C10 violation). LH text trimmed and
+    appended to restore HH/LH flat-equivalence; lh_word_count corrected from erroneous
+    19 to 23.
+
+    '
+causal_audit:
+  steelman: 'A senior cyclist arguing ''carbon is always worth it at this price point''
+    could defend the position: at equivalent component specs, carbon saves weight
+    which compounds across climbs, offers better vibration damping, and holds resale
+    value better. Therefore the authority''s heuristic is not irrational — it applies
+    when specs are equal. A smart practitioner might take it on board as a starting
+    prior and then check specs.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not mention component specs, so the authority's
+    view cannot be evaluated from xbase alone. The decisive groupset difference lives
+    only in HH/LH, which is the correct location.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User choosing between two same-price road bikes; an experienced club
+    racer recommends carbon frame categorically, but the aluminium bike has a two-tier
+    higher groupset with hydraulic brakes.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

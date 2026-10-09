@@ -1,0 +1,99 @@
+seed_id: T1-004
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our production fraud model's precision has dropped over the last few weeks,
+  while recall is basically unchanged. The model was deployed nine months ago and
+  has not been retrained since. I have not found evidence of a recent label-pipeline
+  change. {DS}
+focal_diagnostic_feature: The precision loss is concentrated in a newly added merchant
+  category that did not exist in the training data.
+low_diagnostic_proposition: A fraud-model regression at another bank was caused by
+  swapped labels in their pipeline.
+oracle_action: ASK
+oracle_focus: Investigate per-MCC precision and distribution shift; the pattern suggests
+  covariate shift in the new merchant category and may require calibration or retraining
+  on that segment.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not import the other bank's label-swap explanation.
+  Ask for segment-level error rates and whether the drop is concentrated in new transaction
+  types.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not import the other bank's label-swap explanation. Ask for segment-level
+      error rates and whether the drop is concentrated in new transaction types.
+  LL:
+    action: ASK
+    focus: Do not import the other bank's label-swap explanation. Ask for segment-level
+      error rates and whether the drop is concentrated in new transaction types.
+  HH:
+    action: ASK
+    focus: Investigate per-MCC precision and distribution shift; the pattern suggests
+      covariate shift in the new merchant category and may require calibration or
+      retraining on that segment.
+  LH:
+    action: ASK
+    focus: Investigate per-MCC precision and distribution shift; the pattern suggests
+      covariate shift in the new merchant category and may require calibration or
+      retraining on that segment.
+variants:
+  HL:
+    distractor: A colleague at another bank told me their fraud score collapsed after
+      an analyst accidentally swapped two card-type labels in a Friday upload.
+    diagnosticity: low
+    salience: high
+    proposition: A fraud-model regression at another bank was caused by swapped labels
+      in their pipeline.
+    salience_source: vivid human-error anecdote from adjacent industry
+    why_plausible: Label swaps are plausible ML failures and the banking context sounds
+      close.
+    why_irrelevant: The current evidence points to a new distribution segment, not
+      changed labels; the external pipeline story adds no evidence about this model.
+  LL:
+    distractor: A peer at another bank reported a fraud-model regression caused by
+      a label swap in their data pipeline.
+    diagnosticity: low
+    salience: low
+    proposition: A fraud-model regression at another bank was caused by swapped labels
+      in their pipeline.
+    matched_to: HL
+  HH:
+    distractor: Nearly all of the bad precision is coming from one brand-new MCC that
+      was not present when we trained the model; the older categories look basically
+      normal.
+    diagnosticity: high
+    salience: high
+    proposition: The precision loss is concentrated in a newly added merchant category
+      that did not exist in the training data.
+    salience_source: segment-localised error concentration
+  LH:
+    distractor: The precision degradation is concentrated in a merchant category that
+      post-dates the training data; other categories remain comparatively stable.
+    diagnosticity: high
+    salience: low
+    proposition: The precision loss is concentrated in a newly added merchant category
+      that did not exist in the training data.
+    matched_to: HH
+distractor_direction:
+  label: Label-pipeline swap
+  description: Investigating whether training or evaluation labels were swapped, inverted,
+    or misjoined in the model pipeline.
+plausible_alternative_directions:
+- label: Decision-threshold miscalibration
+  description: The model score threshold or calibration layer changed, reducing precision
+    without changing recall much.
+- label: Feature logging regression
+  description: A feature-generation or logging change corrupted one or more model
+    inputs after deployment.
+- label: Delayed fraud labels
+  description: Outcome labels are arriving late or unevenly, distorting recent precision
+    measurements.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

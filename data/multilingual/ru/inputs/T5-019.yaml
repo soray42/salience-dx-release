@@ -1,0 +1,204 @@
+seed_id: T5-019
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'Мы используем небольшую библиотеку с открытым исходным кодом для разбора дат,
+  и один из коллег хочет от неё избавиться: страница проекта выглядит заброшенной
+  — голый README, старый логотип, сайт прямо из 2009 года. Мы выяснили, что устаревший
+  вид — это просто минималистский стиль мейнтейнера, который никогда не синхронизируется
+  с проектом, поэтому страница ничего не говорит нам о том, поддерживается ли код.
+  Замена затронет много кода, и я пытаюсь решить, оправдывает ли переход на другую
+  библиотеку этот риск. {DS}'
+focal_diagnostic_feature: В репозитории есть коммиты за последнюю неделю, мейнтейнеры
+  закрывают задачи в течение нескольких дней, на последнем релизе горит зелёный значок
+  CI, и библиотека является объявленной зависимостью нескольких широко используемых
+  фреймворков.
+low_diagnostic_proposition: The library's dated, bare-looking project page indicates
+  it is abandoned and should be replaced.
+oracle_action: ANSWER
+oracle_focus: Keep the library; recent commits, fast issue turnaround, passing CI,
+  and its use by major frameworks show it is actively maintained, so a risky, large
+  swap is not justified by its dated page.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer abandonment from the page's look. Ask about
+  commit recency, issue response times, CI status, and downstream adoption.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer abandonment from the page's look. Ask about commit recency,
+      issue response times, CI status, and downstream adoption.
+  LL:
+    action: ASK
+    focus: Do not infer abandonment from the page's look. Ask about commit recency,
+      issue response times, CI status, and downstream adoption.
+  HH:
+    action: ANSWER
+    focus: Keep the library; recent commits, fast issue turnaround, passing CI, and
+      its use by major frameworks show it is actively maintained, so a risky, large
+      swap is not justified by its dated page.
+  LH:
+    action: ANSWER
+    focus: Keep the library; recent commits, fast issue turnaround, passing CI, and
+      its use by major frameworks show it is actively maintained, so a risky, large
+      swap is not justified by its dated page.
+variants:
+  HL:
+    distractor: Страница проекта действительно выглядит мёртвой — заглушка-README,
+      пикселизированный старый логотип, сайт застрял в 2009-м — и довод коллеги в
+      том, что библиотека, которую никто не удосуживается сделать приличной на вид,
+      — это именно тот тип проектов, который тихо прекращает поддерживаться изнутри.
+    diagnosticity: low
+    salience: high
+    proposition: The library's dated, bare-looking project page indicates it is abandoned
+      and should be replaced.
+    salience_source: B/D — vivid concrete detail of the dated page carrying the bridge
+      that a neglected-looking project is an unmaintained one.
+    why_plausible: Abandoned projects often do have stale, neglected pages, so a dated
+      page is a real and common warning sign.
+    why_irrelevant: Page aesthetics are decoupled from maintenance activity; a plain
+      page can sit atop an actively developed codebase, which only the repo's activity
+      reveals.
+  LL:
+    distractor: Устаревший, невзрачный вид страницы библиотеки говорит о том, что
+      она заброшена и её следует заменить.
+    diagnosticity: low
+    salience: low
+    proposition: The library's dated, bare-looking project page indicates it is abandoned
+      and should be replaced.
+    matched_to: HL
+  HH:
+    distractor: 'Если посмотреть на сам репозиторий, а не на домашнюю страницу: коммиты
+      есть за последнюю неделю, мейнтейнеры закрывают задачи за день-два, на последнем
+      релизе горит зелёный значок CI, и несколько используемых нами фреймворков указывают
+      её как зависимость.'
+    diagnosticity: high
+    salience: high
+    proposition: The repository shows commits within the last week, maintainers closing
+      issues within days, a green CI badge on the latest release, and it is a declared
+      dependency of several widely used frameworks.
+    salience_source: Concrete maintenance signals — fresh commits, days-fast issue
+      turnaround, passing CI, downstream adoption — make active upkeep undeniable.
+  LH:
+    distractor: В репозитории есть коммиты за эту неделю, задачи закрываются в течение
+      нескольких дней, на последнем релизе горит зелёный значок CI, и несколько крупных
+      фреймворков используют библиотеку как объявленную зависимость.
+    diagnosticity: high
+    salience: low
+    proposition: The repository shows commits within the last week, maintainers closing
+      issues within days, a green CI badge on the latest release, and it is a declared
+      dependency of several widely used frameworks.
+    matched_to: HH
+distractor_direction:
+  label: Устаревший-вид-означает-заброшенность
+  description: Замена библиотеки, потому что устаревший, невзрачный вид страницы проекта
+    воспринимается как свидетельство отсутствия поддержки.
+plausible_alternative_directions:
+- label: Соотношение затрат и выгод при миграции
+  description: Оправдывают ли функциональность или безопасность замены большой объём
+    изменений в коде вне зависимости от статуса поддержки.
+- label: Скорость выпуска патчей безопасности
+  description: Будет ли библиотека своевременно выпускать исправления для новых уязвимостей.
+leak_audit:
+  ll_atomic_claims:
+  - The library's project page is dated and bare-looking.
+  - That appearance indicates it is abandoned and should be replaced.
+  hh_atomic_claims:
+  - The repository has commits from the past week.
+  - Maintainers are closing issues within a day or two.
+  - The latest release shows a passing CI badge, and several frameworks in use list
+    it as a dependency.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: N/A
+    confident_assertion: N/A
+    concrete_detail: Vivid concrete detail about the page (stub README, pixelated
+      logo, 2009-era site).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 88
+  hl_word_count: 45
+  ll_word_count: 14
+  hh_word_count: 43
+  lh_word_count: 25
+  notes: 'LH is 25 words, preserving equivalence with HH (commits, issue turnaround,
+    CI, downstream adoption) as a single
+
+    flat clause-set. T5: the bridge "an unpresentable project has quietly gone unmaintained"
+    is in
+
+    HL and flat in LL (self-check 13). xbase establishes the page looks abandoned
+    and that the library currently works,
+
+    but withholds the repo-activity evidence — decisive — which is HH/LH-only. QC
+    repair round 1: added a narrow
+
+    mechanism-blocker to xbase ("the dated look is just the maintainer''s minimalist
+    style and is never synced with the
+
+    project, so the page tells us nothing about whether the code is maintained").
+    This forecloses the only mechanism the
+
+    causal_a lens found (page aesthetics as a proxy for abandonment) without supplying
+    the decisive maintenance signals —
+
+    those (commits this week, days-fast issue turnaround, green CI, downstream framework
+    adoption) remain HH/LH-only, so
+
+    xbase alone still cannot resolve keep-vs-replace (C4 holds; the low-diagnostic
+    oracle remains ASK).
+
+    '
+causal_audit:
+  steelman: 'A pragmatic engineer could note that neglected documentation often does
+    track neglected code, that a stale-looking
+
+    site can signal a maintainer who has moved on, and that depending on an abandoned
+    library is a real supply-chain
+
+    risk — so in the abstract a dated page is a weak prompt to check maintenance status.
+    That single mechanism (page
+
+    aesthetics standing in as a proxy for abandonment) is the only one available to
+    the distractor, and xbase now
+
+    explicitly forecloses it: the dated look is the maintainer''s deliberate minimalist
+    style and is never synced with
+
+    the project, so for THIS case the page carries no information about whether the
+    code is maintained. With the proxy
+
+    cut, no constructible mechanism remains by which the page''s appearance bears
+    on the keep-vs-replace decision.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the dated look is the maintainer's deliberate
+    minimalist style and is never synced with the project, so the page tells us nothing
+    about whether the code is maintained — foreclosing the page-aesthetics-as-abandonment-proxy
+    mechanism while withholding the decisive maintenance evidence (commits, issue
+    turnaround, CI, downstream adoption), which stays HH/LH-only (C4 preserved).
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to replace an actively maintained date-parsing library (recent
+    commits, fast issues, downstream adoption) judged abandoned only because its project
+    page looks dated.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-019.yaml
+  source_xbase_sha256: 58ef2eb5c3249adf
+  translated_content_sha256: 71ee7fb87903e83f
+  translation_notes: ''

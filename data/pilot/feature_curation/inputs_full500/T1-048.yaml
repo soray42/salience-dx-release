@@ -1,0 +1,172 @@
+seed_id: T1-048
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our PostgreSQL primary has been showing rising write latency over the past
+  two weeks, and a few transactions now occasionally hit lock-wait timeouts on a busy
+  orders table. Read traffic is fine and the schema has not changed. We run on provisioned
+  SSD storage that has plenty of headroom on throughput and IOPS graphs. The team
+  is starting to talk about scaling up the instance class. {DS}
+focal_diagnostic_feature: Autovacuum has not completed on the orders table for two
+  weeks, and pg_stat_user_tables shows roughly four million dead tuples accumulating
+  on it.
+low_diagnostic_proposition: A comparable Postgres write-latency problem at another
+  company was traced to an undersized disk that had run out of IOPS.
+oracle_action: ANSWER
+oracle_focus: Address autovacuum on the orders table; the dead-tuple bloat is forcing
+  the planner and locks to traverse millions of dead rows, so tune autovacuum or run
+  a manual vacuum rather than scaling the instance.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not import the other company's disk-IOPS explanation.
+  Ask for autovacuum status, dead-tuple counts, and whether storage metrics are actually
+  saturated before scaling.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not import the other company's disk-IOPS explanation. Ask for autovacuum
+      status, dead-tuple counts, and whether storage metrics are actually saturated
+      before scaling.
+  LL:
+    action: ASK
+    focus: Do not import the other company's disk-IOPS explanation. Ask for autovacuum
+      status, dead-tuple counts, and whether storage metrics are actually saturated
+      before scaling.
+  HH:
+    action: ANSWER
+    focus: Address autovacuum on the orders table; the dead-tuple bloat is forcing
+      the planner and locks to traverse millions of dead rows, so tune autovacuum
+      or run a manual vacuum rather than scaling the instance.
+  LH:
+    action: ANSWER
+    focus: Address autovacuum on the orders table; the dead-tuple bloat is forcing
+      the planner and locks to traverse millions of dead rows, so tune autovacuum
+      or run a manual vacuum rather than scaling the instance.
+variants:
+  HL:
+    distractor: Bartosz, a database lead at a company I used to work with, told me
+      they fought almost identical creeping write latency for a month before they
+      realised their managed volume had simply run out of provisioned IOPS, and bumping
+      the disk tier fixed it overnight.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable Postgres write-latency problem at another company was
+      traced to an undersized disk that had run out of IOPS.
+    salience_source: A — a named database lead at a peer company recounting a closely
+      matching symptom lends the disk story weight.
+    why_plausible: Storage IOPS exhaustion is a real cause of write latency in Postgres,
+      so a matching war story tempts a busy engineer toward a disk upgrade.
+    why_irrelevant: The current instance's throughput and IOPS graphs have headroom,
+      so the other company's saturated-disk mechanism cannot be operating here; the
+      cause is internal table state, not storage limits.
+  LL:
+    distractor: A comparable Postgres write-latency problem at another company was
+      caused by a disk that had exhausted its provisioned IOPS.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable Postgres write-latency problem at another company was
+      traced to an undersized disk that had run out of IOPS.
+    matched_to: HL
+  HH:
+    distractor: Checking pg_stat_user_tables, autovacuum last finished on the orders
+      table two weeks ago and never since; the table now carries about four million
+      dead tuples, so every write and lock is dragging through enormous bloat that
+      vacuum should have reclaimed.
+    diagnosticity: high
+    salience: high
+    proposition: Autovacuum has not completed on the orders table for two weeks, and
+      pg_stat_user_tables shows roughly four million dead tuples accumulating on it.
+    salience_source: Concrete catalog evidence (last autovacuum two weeks ago, four
+      million dead tuples) makes the bloat undeniable.
+  LH:
+    distractor: Autovacuum last completed two weeks ago on the orders table, which
+      now holds about four million dead tuples.
+    diagnosticity: high
+    salience: low
+    proposition: Autovacuum has not completed on the orders table for two weeks, and
+      pg_stat_user_tables shows roughly four million dead tuples accumulating on it.
+    matched_to: HH
+distractor_direction:
+  label: Disk IOPS exhaustion
+  description: Investigating whether the storage volume has run out of provisioned
+    IOPS and the instance must be scaled up.
+plausible_alternative_directions:
+- label: Long-held lock contention
+  description: Whether a long-running transaction or idle-in-transaction session is
+    holding locks on the orders table.
+- label: Index bloat or plan regression
+  description: Whether a bloated or unused index is degrading write paths on the busy
+    table.
+leak_audit:
+  ll_atomic_claims:
+  - A comparable Postgres write-latency problem occurred at another company.
+  - That problem was caused by a disk exhausting its provisioned IOPS.
+  hh_atomic_claims:
+  - Autovacuum last completed on the orders table two weeks ago and not since.
+  - The orders table now holds about four million dead tuples.
+  hl_salience_dimensions:
+    source_credibility: Named database lead (Bartosz) at a peer company describing
+      a near-identical symptom.
+    narrative_coherence: Clean month-long-struggle-then-fix arc.
+    confident_assertion: He framed the disk tier as the fix that worked overnight.
+    concrete_detail: Detail about the source's case (managed volume, disk tier bump)
+      only — no claim about this primary's storage or table state.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 45
+  ll_word_count: 18
+  hh_word_count: 41
+  lh_word_count: 18
+  notes: 'LL carries only the other-company-disk-IOPS claim. The named lead, the month
+    of struggle, and the overnight fix
+
+    are HL-only and about the source''s case. xbase reports that this instance''s
+    throughput and IOPS graphs have
+
+    headroom — a pathway-closure that neutralises the disk-saturation mechanism without
+    naming dead tuples or
+
+    autovacuum, which remain solely in HH/LH. The forbidden ''after a month'' style
+    effort descriptor is kept in HL as
+
+    a fact about the SOURCE''s case, not this case.
+
+    '
+causal_audit:
+  steelman: 'A senior DBA would note that provisioned-IOPS exhaustion genuinely produces
+    creeping write latency and
+
+    occasional lock-wait timeouts as fsyncs queue behind a saturated volume, and the
+    other company''s matching arc
+
+    makes a disk upgrade a natural first move. The defeater is that this instance''s
+    throughput and IOPS graphs show
+
+    plenty of headroom: there is no saturation for that mechanism to act through.
+    With storage demonstrably
+
+    unconstrained, the disk story cannot be the operating cause here; the latency
+    comes from internal table state
+
+    (dead-tuple bloat) that scaling the instance would not fix.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the provisioned SSD storage has plenty of
+    headroom on throughput and IOPS graphs, foreclosing the IOPS-exhaustion mechanism,
+    while withholding the autovacuum/dead-tuple evidence that actually explains the
+    latency — which lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Rising Postgres write latency and lock-wait timeouts caused by autovacuum
+    stalling and dead-tuple bloat on a busy table, not the disk-IOPS exhaustion a
+    peer's war story suggests, with storage graphs showing headroom.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

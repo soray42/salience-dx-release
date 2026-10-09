@@ -1,0 +1,181 @@
+seed_id: T5-055
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our CD pipeline reports a successful deployment every time, but the staging
+  service keeps serving the previous code version. Neither new deployments nor rollbacks
+  appear to take effect — the build SHA in the health endpoint has not changed in
+  four days despite a dozen deploys. {DS}
+focal_diagnostic_feature: The deploy script launches the service restart as a backgrounded
+  subprocess without capturing its exit code; `ps aux` on the staging host confirms
+  the pre-deploy process binary is still running under its original PID.
+low_diagnostic_proposition: The deployment dashboard looks visually outdated and unreliable,
+  suggesting its success indicators cannot be trusted.
+oracle_action: ANSWER
+oracle_focus: Fix the deploy script to run the restart synchronously and capture its
+  exit code, then verify the new PID after restart; the backgrounded nohup call is
+  why every reported success is false.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer script reliability from dashboard aesthetics.
+  Ask for the deploy script's process-management logic and inspect the running process
+  on the staging host before attributing the problem to the dashboard.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer script reliability from dashboard aesthetics. Ask for the
+      deploy script's process-management logic and inspect the running process on
+      the staging host before attributing the problem to the dashboard.
+  LL:
+    action: ASK
+    focus: Do not infer script reliability from dashboard aesthetics. Ask for the
+      deploy script's process-management logic and inspect the running process on
+      the staging host before attributing the problem to the dashboard.
+  HH:
+    action: ANSWER
+    focus: Fix the deploy script to run the restart synchronously and capture its
+      exit code, then verify the new PID after restart; the backgrounded nohup call
+      is why every reported success is false.
+  LH:
+    action: ANSWER
+    focus: Fix the deploy script to run the restart synchronously and capture its
+      exit code, then verify the new PID after restart; the backgrounded nohup call
+      is why every reported success is false.
+variants:
+  HL:
+    distractor: The deployment dashboard uses pixelated icons, misaligned status columns,
+      and colours from what looks like a 2009 admin template — it looks unreliable
+      enough that I wouldn't trust its success indicators.
+    diagnosticity: low
+    salience: high
+    proposition: The deployment dashboard looks visually outdated and unreliable,
+      suggesting its success indicators cannot be trusted.
+    salience_source: B (narrative coherence — three-element enumeration of visual
+      defects with a specific era reference); C (confident negative inference — "I
+      wouldn't trust its success indicators").
+    why_plausible: A visually neglected internal tool can genuinely reflect neglected
+      maintenance; a practitioner might reasonably suspect that an outdated dashboard
+      could misreport job status due to stale integrations or broken webhook listeners.
+    why_irrelevant: Dashboard appearance is a front-end rendering concern; it has
+      no mechanism connecting to whether the deploy script correctly starts and verifies
+      the service process on the target host. The false success originates in the
+      script's process management, not in the dashboard's display layer.
+  LL:
+    distractor: The deployment dashboard looks visually outdated and unreliable, suggesting
+      its success indicators cannot be trusted.
+    diagnosticity: low
+    salience: low
+    proposition: The deployment dashboard looks visually outdated and unreliable,
+      suggesting its success indicators cannot be trusted.
+    matched_to: HL
+  HH:
+    distractor: The deploy script forks the service restart as `nohup ... &` with
+      no exit code capture; `ps aux` on the staging host shows the old binary still
+      running under the same PID from before the first deploy.
+    diagnosticity: high
+    salience: high
+    proposition: The deploy script launches the service restart as a backgrounded
+      subprocess without capturing its exit code; `ps aux` on the staging host confirms
+      the pre-deploy process binary is still running under its original PID.
+    salience_source: B (narrative coherence — script construct named precisely, then
+      verified by server-side evidence in two-step diagnostic chain); C (definitive
+      — "no exit code capture", "same PID from before the first deploy").
+  LH:
+    distractor: The deploy script backgrounds the restart without capturing the exit
+      code, and `ps aux` shows the pre-deploy binary still running.
+    diagnosticity: high
+    salience: low
+    proposition: The deploy script launches the service restart as a backgrounded
+      subprocess without capturing its exit code; `ps aux` on the staging host confirms
+      the pre-deploy process binary is still running under its original PID.
+    matched_to: HH
+distractor_direction:
+  label: dashboard misreporting
+  description: Attributing the false deployment success indicators to a visually outdated
+    dashboard that cannot accurately report pipeline status.
+plausible_alternative_directions:
+- label: wrong deployment target
+  description: The pipeline may be deploying to a different host or environment than
+    the one the health endpoint is querying, making it appear that changes never land.
+- label: service not configured to restart
+  description: The systemd or process-manager unit for the service may be disabled
+    or overridden, so the restart command runs but the unit does not reload the binary.
+leak_audit:
+  ll_atomic_claims:
+  - The deployment dashboard looks visually outdated.
+  - That appearance suggests it is unreliable.
+  - That unreliability implies its success indicators cannot be trusted.
+  hh_atomic_claims:
+  - The deploy script forks the service restart as `nohup ... &`.
+  - There is no exit code capture in the deploy script.
+  - '`ps aux` on the staging host shows the old binary is still running.'
+  - The old binary is running under the same PID as before the first deploy.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observation; no named source.
+    narrative_coherence: Three visual-defect details (pixelated icons, misaligned
+      columns, 2009-era colour scheme) build a coherent picture of dashboard neglect.
+    confident_assertion: '"I wouldn''t trust its success indicators" — direct first-person
+      conclusion from the visual observation.'
+    concrete_detail: N/A — "2009 admin template" characterises the dashboard appearance,
+      not the case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 45
+  hl_word_count: 30
+  ll_word_count: 15
+  hh_word_count: 37
+  lh_word_count: 20
+  notes: 'T5 inferential bridge (visual appearance → unreliability → success indicators
+
+    cannot be trusted) present in both HL and LL. HL adds only vivid visual
+
+    enumeration and the confident inference; no script-level or process facts added.
+
+    HH/LH diff: both assert the nohup backgrounding, no exit code capture, and old
+
+    binary still running; HH adds the specific `nohup ... &` construct and "same
+
+    PID from before the first deploy" for precision. LL counts: "The(1)
+
+    deployment(2) dashboard(3) looks(4) visually(5) outdated(6) and(7) unreliable(8)
+
+    suggesting(9) its(10) success(11) indicators(12) cannot(13) be(14) trusted(15)"
+
+    — 15 words, within 14-23.
+
+    '
+causal_audit:
+  steelman: 'Internal deployment dashboards are frequently built with fragile webhook
+
+    integrations; a neglected UI may genuinely correspond to a neglected
+
+    maintenance posture where status callbacks are stale or disconnected. If the
+
+    dashboard listens on a webhook that the pipeline no longer posts to correctly,
+
+    it could display success regardless of actual outcome, making the visual
+
+    neglect a correlated indicator of a real integration bug.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes that "rollbacks appear to take effect" [sic
+    — neither deployments nor rollbacks take effect], and that the build SHA has not
+    changed in four days despite a dozen deploys. This points to a persistent server-side
+    state problem, not a dashboard display issue — a dashboard bug would not keep
+    the service binary from updating. The dashboard's reported success is downstream
+    of whatever the script reports, not an independent source of truth.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: CD pipeline always reports success but service never updates because
+    the deploy script backgrounds the restart with nohup without exit-code verification;
+    aesthetic distractor is a visually outdated deployment dashboard offered as evidence
+    its success indicators are untrustworthy.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

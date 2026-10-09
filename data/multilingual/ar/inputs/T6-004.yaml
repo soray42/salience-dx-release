@@ -1,0 +1,103 @@
+seed_id: T6-004
+template: T6
+domain: open_qa
+complexity: high
+xbase: أفكر في سداد 40,000 يورو من رهني العقاري مسبقاً. لديّ محفظة استثمارية منفصلة،
+  وأُولي أهمية كبيرة للحفاظ على احتياطي طوارئ صحي. {DS}
+focal_diagnostic_feature: معدل الرهن 2.1% ثابت، والعائد المتوقع بعد الضريبة على المحفظة
+  نحو 5%، والسداد المسبق سيستهلك ثلثَي المدخرات السائلة للطوارئ.
+low_diagnostic_proposition: The user reports that intuitive financial decisions have
+  worked out well in the past.
+oracle_action: ANSWER
+oracle_focus: Do not prepay on these assumptions; the low fixed rate, higher expected
+  alternative return, and liquidity loss argue against it.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not use gut-history as the decision rule. Ask for
+  mortgage rate, alternative expected return, taxes, and liquidity impact.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not use gut-history as the decision rule. Ask for mortgage rate, alternative
+      expected return, taxes, and liquidity impact.
+  LL:
+    action: ASK
+    focus: Do not use gut-history as the decision rule. Ask for mortgage rate, alternative
+      expected return, taxes, and liquidity impact.
+  HH:
+    action: ANSWER
+    focus: Do not prepay on these assumptions; the low fixed rate, higher expected
+      alternative return, and liquidity loss argue against it.
+  LH:
+    action: ANSWER
+    focus: Do not prepay on these assumptions; the low fixed rate, higher expected
+      alternative return, and liquidity loss argue against it.
+variants:
+  HL:
+    distractor: كل قرار مالي كبير تجاهلت فيه جداول الحسابات واتبعت حدسي أدّى إلى نتائج
+      إيجابية، لذا جزء مني يريد الشعور النظيف بالحصول على رهن أصغر.
+    diagnosticity: low
+    salience: high
+    proposition: The user reports that intuitive financial decisions have worked out
+      well in the past.
+    salience_source: availability of past success, clean-debt-free feeling
+    why_plausible: Personal financial wins are memorable and confidence-building.
+    why_irrelevant: The current decision depends on rates, expected returns, and liquidity,
+      not prior intuition.
+  LL:
+    distractor: يُفيد المستخدم بأن قراراته المالية الحدسية السابقة أسفرت عن نتائج
+      مواتية.
+    diagnosticity: low
+    salience: low
+    proposition: The user reports that intuitive financial decisions have worked out
+      well in the past.
+    matched_to: HL
+  HH:
+    distractor: الرهن مقفل عند 2.1%، وتوقعاتي للمحفظة بعد الضريبة نحو 5%، ودفع 40,000
+      يورو سيُمحي ثلثَي أموال الطوارئ السائلة لديّ.
+    diagnosticity: high
+    salience: high
+    proposition: The mortgage rate is 2.1% fixed, expected after-tax portfolio return
+      is about 5%, and the prepayment would use two-thirds of liquid emergency savings.
+    salience_source: rate spread and liquidity cost
+  LH:
+    distractor: معدل الرهن 2.1% ثابت، والعائد المتوقع بعد الضريبة على المحفظة نحو
+      5%، والسداد المسبق سيُقلّص احتياطيات الطوارئ بشكل ملموس.
+    diagnosticity: high
+    salience: low
+    proposition: The mortgage rate is 2.1% fixed, expected after-tax portfolio return
+      is about 5%, and the prepayment would use two-thirds of liquid emergency savings.
+    matched_to: HH
+distractor_direction:
+  label: الاعتماد على الحكم المالي الحدسي
+  description: التحقيق في ما إذا كان ينبغي للمستخدم الاعتماد على الحدس وانتصاراته
+    المالية الحدسية السابقة في قرار السداد المسبق.
+plausible_alternative_directions:
+- label: الارتياح النفسي من تخفيض الديون
+  description: قد يُقدّر المستخدم انخفاض الدين عاطفياً بما يكفي لقبول عائد متوقع أدنى.
+- label: مخاطر المحفظة الاستثمارية
+  description: قد تجعل تقلّبات المحفظة الاستثمارية المقارنة مع معدل الرهن الثابت أقل
+    بساطة.
+- label: احتياجات السيولة المستقبلية
+  description: قد تجعل النفقات القادمة الحفاظ على السيولة أهم من أي مقارنة للعوائد.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-004.yaml
+  source_xbase_sha256: 74d4239e54ab96d7
+  translated_content_sha256: c420fd8f2d3deeeb
+  translation_notes: 'Euro amounts and percentages kept as-is (€40,000, 2.1%, 5%)
+    — numerics carry identical salience. ''mortgage'' rendered as ''رهن عقاري/الرهن''
+    (standard Arabic). ''spreadsheet'' rendered as ''جداول الحسابات'' (accounting
+    tables). Salience contrast preserved: HL retains personal success narrative +
+    emotional debt-free desire; LL is flat third-person attribution.'

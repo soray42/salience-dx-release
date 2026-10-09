@@ -1,0 +1,9 @@
+{
+  "seed_id": "T6-015",
+  "steelman": "A practitioner might argue that even a nominally unchanged detergent brand can deliver different odour outcomes if the manufacturer silently reformulated the product — a common industry practice done without consumer notice. Additionally, changes in local water hardness (seasonal municipal treatment shifts) could alter the detergent's surfactant chemistry, leaving residue on fabrics that hosts odour-causing bacteria. Consumer troubleshooting guides routinely list 'switch or adjust detergent' as a step for persistent musty laundry, and a knowledgeable expert might note that the user's past success linking detergent to odour gives this hypothesis modest empirical grounding from the user's own experience.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase provides a decisive structural exclusion: the detergent brand and formulation have been constant for over three years, while the musty symptom only appeared a few weeks ago. A constant factor cannot explain a new symptom; this is a straightforward application of the 'no-change cannot explain new onset' rule. The steelman's strongest angle — silent manufacturer reformulation or water chemistry shift — requires overriding the user's explicit first-person account of no change and positing an unverifiable external event. No competent practitioner would anchor on that speculative path when the user has directly stated nothing changed. The seed's own causal_audit field correctly identifies this and labels the steelman verdict 'no_defensible_mechanism'. Seed passes this lens cleanly; no repair needed."
+}

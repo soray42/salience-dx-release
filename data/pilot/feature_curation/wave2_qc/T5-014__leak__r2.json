@@ -1,0 +1,28 @@
+{
+  "seed_id": "T5-014",
+  "ll_claims_extracted": [
+    "The tool's interface looks sloppy and outdated.",
+    "This appearance raises doubt about whether its calculations can be trusted."
+  ],
+  "hl_case_claims": [
+    "The interface looks like it was thrown together carelessly.",
+    "A tool that sloppy-looking almost never has reliable calculation logic."
+  ],
+  "hl_source_claims": [
+    "The speaker's colleague Tariq spent five years at an audit firm.",
+    "Tariq glanced at a screenshot the user sent him.",
+    "Tariq told the user his opinion of the interface."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 42,
+    "ll": 17,
+    "xbase": 54,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

@@ -1,0 +1,9 @@
+{
+  "seed_id": "T6-014",
+  "steelman": "Overwatering — the condition the owner correctly identified in all three prior outbreaks — weakens root systems and creates plant stress that is a recognized risk factor for spider mite outbreaks as well as fungus gnat infestations. A cautious IPM practitioner might argue that (a) correcting overwatering is a beneficial shared upstream intervention regardless of which pest is present, and (b) a dual infestation is biologically possible, meaning the fungus-gnat diagnosis could be partially correct even if spider mites are also present. The owner's watering-reduction plan would therefore be non-harmful and possibly even helpful for the current situation.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The steelman collapses on the key question: the distractor is the DIAGNOSIS 'it is fungus gnats again,' not merely 'overwatering is a risk factor.' Fungus gnats (Bradysia spp.) are soil-dwelling dipterans that produce no silk or webbing under any biological circumstances — this is a hard taxonomic fact, not a probability. No IPM practitioner would put 'fungus gnats could produce webbing' on any checklist. The shared-overwatering argument addresses an upstream stressor, not the diagnostic direction itself; a practitioner who sees fine silvery webbing immediately rules out fungus gnats regardless of the watering history. Pathway closure is effective: in the HH/LH variants the visible webbing forecloses the mechanism decisively; in the HL/LL variants the correct oracle action is ASK (inspect before treating), which avoids committing to the false diagnosis and sidesteps contamination structurally. Seed passes this lens with high confidence."
+}

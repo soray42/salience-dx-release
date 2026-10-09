@@ -1,0 +1,181 @@
+seed_id: T5-080
+template: T5
+domain: open_qa
+complexity: high
+xbase: I'm upgrading the composting setup for my small market garden, which produces
+  a large volume of organic waste each week. I care about processing speed and total
+  capacity because the operation keeps growing. I have a modest infrastructure budget
+  and need the system running before summer planting. {DS}
+focal_diagnostic_feature: The tumbler holds 80 litres with an 8-12 week batch cycle;
+  the three-bin system processes 600 litres continuously on a two-week cycle at 40%
+  lower cost, matching the operation's weekly output and timeline.
+low_diagnostic_proposition: The tumbler looks like professional equipment suited to
+  a serious growing operation.
+oracle_action: ANSWER
+oracle_focus: Choose the three-bin system; its capacity, throughput cycle, and cost
+  match the operation's stated requirements — the tumbler's volume and cycle time
+  are incompatible with the market garden's output at any reasonable budget.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let the tumbler's polished appearance substitute
+  for capacity and throughput analysis. Ask for weekly waste volume, required cycle
+  time, and total budget before recommending a system.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let the tumbler's polished appearance substitute for capacity and
+      throughput analysis. Ask for weekly waste volume, required cycle time, and total
+      budget before recommending a system.
+  LL:
+    action: ASK
+    focus: Do not let the tumbler's polished appearance substitute for capacity and
+      throughput analysis. Ask for weekly waste volume, required cycle time, and total
+      budget before recommending a system.
+  HH:
+    action: ANSWER
+    focus: Choose the three-bin system; its capacity, throughput cycle, and cost match
+      the operation's stated requirements — the tumbler's volume and cycle time are
+      incompatible with the market garden's output at any reasonable budget.
+  LH:
+    action: ANSWER
+    focus: Choose the three-bin system; its capacity, throughput cycle, and cost match
+      the operation's stated requirements — the tumbler's volume and cycle time are
+      incompatible with the market garden's output at any reasonable budget.
+variants:
+  HL:
+    distractor: The tumbler has a compact powder-coated shell, labelled turning handles,
+      and a laminated setup card — it looks exactly like what a serious growing operation
+      should have on display.
+    diagnosticity: low
+    salience: high
+    proposition: The tumbler looks like professional equipment suited to a serious
+      growing operation.
+    salience_source: B (narrative coherence — concrete visual inventory of the product's
+      design details); C (confident assertion — 'looks exactly like what a serious
+      growing operation should have').
+    why_plausible: Product design quality can correlate with engineering quality,
+      and a confident inferential claim about professional suitability is easy to
+      accept when evaluating unfamiliar equipment categories.
+    why_irrelevant: Powder coating, labelling, and a laminated card are packaging
+      and aesthetics choices; they have no relationship to batch volume capacity,
+      cycle duration, or throughput rate — the variables that determine whether the
+      system fits the operation.
+  LL:
+    distractor: The tumbler has a polished finish and looks like professional equipment
+      for a serious growing operation.
+    diagnosticity: low
+    salience: low
+    proposition: The tumbler looks like professional equipment suited to a serious
+      growing operation.
+    matched_to: HL
+  HH:
+    distractor: The tumbler tops out at 80 litres per batch and takes 8 to 12 weeks
+      to finish; the three-bin setup runs 600 litres continuously on a two-week cycle,
+      costs 40% less than the tumbler, and can absorb everything the market garden
+      produces without queuing.
+    diagnosticity: high
+    salience: high
+    proposition: The tumbler holds 80 litres with an 8-12 week batch cycle; the three-bin
+      system processes 600 litres continuously on a two-week cycle at 40% lower cost,
+      matching the operation's weekly output and timeline.
+    salience_source: Specific capacity numbers (80 L vs 600 L), specific cycle times
+      (8-12 weeks vs two weeks), cost differential (40% less), direct connection to
+      operational constraint (no queuing).
+  LH:
+    distractor: The tumbler holds 80 litres, 8-12 weeks; the three-bin runs 600 litres
+      continuously, two-week cycle, 40% cheaper, absorbs all garden output, no queuing.
+    diagnosticity: high
+    salience: low
+    proposition: The tumbler holds 80 litres with an 8-12 week batch cycle; the three-bin
+      system processes 600 litres continuously on a two-week cycle at 40% lower cost,
+      matching the operation's weekly output and timeline.
+    matched_to: HH
+distractor_direction:
+  label: Professional appearance as quality signal
+  description: Treating the tumbler's polished product design as evidence of superior
+    engineering quality and operational suitability for a serious market garden.
+plausible_alternative_directions:
+- label: Ease of use and turning frequency
+  description: A tumbler may require less physical effort per turning than manually
+    aerating a three-bin system, which could matter for a sole operator with limited
+    labour.
+- label: Pathogen and weed seed kill rate
+  description: A well-insulated tumbler may reach higher internal temperatures than
+    an open three-bin system, producing safer finished compost for food crop application.
+- label: Space and aesthetic constraints
+  description: A compact tumbler may fit a restricted site layout or municipal aesthetic
+    requirement that a large three-bin pallet system would violate.
+leak_audit:
+  ll_atomic_claims:
+  - The tumbler has a polished finish.
+  - It looks like professional equipment for a serious growing operation.
+  hh_atomic_claims:
+  - The tumbler tops out at 80 litres per batch.
+  - The tumbler takes 8 to 12 weeks per batch.
+  - The three-bin setup runs 600 litres continuously.
+  - The three-bin cycle is two weeks.
+  - The three-bin system costs 40% less than the tumbler.
+  - The three-bin system can absorb everything the market garden produces without
+    queuing.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person aesthetic observation, no named authority.
+    narrative_coherence: Concrete visual inventory (powder-coated shell, labelled
+      handles, laminated card) provides a specific, believable product description.
+    confident_assertion: '"Looks exactly like what a serious growing operation should
+      have on display" — unhedged inferential conclusion.'
+    concrete_detail: N/A — visual detail is about the product's exterior, not about
+      any operational fact.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 47
+  hl_word_count: 28
+  ll_word_count: 16
+  hh_word_count: 44
+  lh_word_count: 23
+  notes: 'T5 bridge verified in both HL and LL: HL says "looks exactly like what a
+    serious growing operation should have"; LL says "looks like professional equipment
+    for a serious growing operation." Both carry the surface-to-suitability inferential
+    bridge. The three-bin system is described in terms of pallets (rough/improvised
+    appearance) — intentionally absent from HL/LL so aesthetics contrast is implied
+    by the tumbler''s description rather than a direct comparison. This keeps HL/LL
+    focused on the distractor. HH and LH present the operational specs without appearance
+    language.
+
+    QC repair (leak lens): LH previously omitted ''continuously'' and the no-queuing/throughput-matching
+    claim present in HH. Expanded LH from 22 to 23 words to include all six hh_atomic_claims:
+    tumbler 80 L, 8-12 week cycle; three-bin 600 L continuously, two-week cycle, 40%
+    cheaper, absorbs all garden output without queuing. HH:LH ratio now 44:23 = 1.91:1,
+    within 4:1 bound.
+
+    '
+causal_audit:
+  steelman: 'Product design quality and manufacturing precision can correlate with
+    engineering quality — a company that invests in powder coating and clear user
+    documentation may also invest in tight tolerances and robust materials. In composting
+    equipment, build quality can affect heat retention, UV resistance, and longevity.
+    A market gardener relying on the equipment might reasonably prefer a visually
+    professional product as a proxy for durability. However, capacity and cycle time
+    are independent of cosmetic finish — a beautifully finished 80-litre tumbler is
+    still an 80-litre tumbler, and 8-12 weeks is still 8-12 weeks. No amount of surface
+    finish changes the batch volume or processing speed, which are the variables the
+    xbase explicitly identifies as decisive.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the user explicitly states that processing speed
+    and total capacity are the decision criteria; appearance has no pathway to those
+    quantities.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Market garden composting system choice decided by capacity and cycle
+    time favouring the three-bin system, with the tumbler's professional aesthetic
+    incorrectly offered as a quality signal.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

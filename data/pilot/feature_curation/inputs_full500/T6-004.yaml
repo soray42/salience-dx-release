@@ -1,0 +1,93 @@
+seed_id: T6-004
+template: T6
+domain: open_qa
+complexity: high
+xbase: I'm considering pre-paying €40,000 of my mortgage. I have a separate investment
+  portfolio and value keeping a healthy emergency reserve. {DS}
+focal_diagnostic_feature: The mortgage rate is 2.1% fixed, expected after-tax portfolio
+  return is about 5%, and the prepayment would use two-thirds of liquid emergency
+  savings.
+low_diagnostic_proposition: The user reports that intuitive financial decisions have
+  worked out well in the past.
+oracle_action: ANSWER
+oracle_focus: Do not prepay on these assumptions; the low fixed rate, higher expected
+  alternative return, and liquidity loss argue against it.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not use gut-history as the decision rule. Ask for
+  mortgage rate, alternative expected return, taxes, and liquidity impact.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not use gut-history as the decision rule. Ask for mortgage rate, alternative
+      expected return, taxes, and liquidity impact.
+  LL:
+    action: ASK
+    focus: Do not use gut-history as the decision rule. Ask for mortgage rate, alternative
+      expected return, taxes, and liquidity impact.
+  HH:
+    action: ANSWER
+    focus: Do not prepay on these assumptions; the low fixed rate, higher expected
+      alternative return, and liquidity loss argue against it.
+  LH:
+    action: ANSWER
+    focus: Do not prepay on these assumptions; the low fixed rate, higher expected
+      alternative return, and liquidity loss argue against it.
+variants:
+  HL:
+    distractor: Every big money decision where I ignored the spreadsheet and followed
+      my gut has paid off, so part of me wants the clean feeling of a smaller mortgage.
+    diagnosticity: low
+    salience: high
+    proposition: The user reports that intuitive financial decisions have worked out
+      well in the past.
+    salience_source: availability of past success, clean-debt-free feeling
+    why_plausible: Personal financial wins are memorable and confidence-building.
+    why_irrelevant: The current decision depends on rates, expected returns, and liquidity,
+      not prior intuition.
+  LL:
+    distractor: The user reports favourable outcomes from prior intuitive financial
+      choices.
+    diagnosticity: low
+    salience: low
+    proposition: The user reports that intuitive financial decisions have worked out
+      well in the past.
+    matched_to: HL
+  HH:
+    distractor: The mortgage is locked at 2.1%, my portfolio expectation after tax
+      is about 5%, and paying €40,000 would wipe out two-thirds of my liquid emergency
+      money.
+    diagnosticity: high
+    salience: high
+    proposition: The mortgage rate is 2.1% fixed, expected after-tax portfolio return
+      is about 5%, and the prepayment would use two-thirds of liquid emergency savings.
+    salience_source: rate spread and liquidity cost
+  LH:
+    distractor: Mortgage rate is 2.1% fixed, expected after-tax portfolio return is
+      ~5%, and prepayment would materially reduce emergency reserves.
+    diagnosticity: high
+    salience: low
+    proposition: The mortgage rate is 2.1% fixed, expected after-tax portfolio return
+      is about 5%, and the prepayment would use two-thirds of liquid emergency savings.
+    matched_to: HH
+distractor_direction:
+  label: Intuitive financial judgment
+  description: Investigating whether the user should rely on intuition and past gut-feel
+    financial wins for the prepayment choice.
+plausible_alternative_directions:
+- label: Psychological debt relief
+  description: The user may value lower debt emotionally enough to accept lower expected
+    return.
+- label: Portfolio risk exposure
+  description: The investment portfolio’s volatility may make the comparison with
+    a fixed mortgage rate less simple.
+- label: Future liquidity needs
+  description: Upcoming expenses could make preserving cash more important than either
+    return comparison.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

@@ -1,0 +1,168 @@
+seed_id: T5-074
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I am comparing two online tutoring subscription services to help me pass a
+  professional licensing exam in six months. Both cover the same exam content. Service
+  A costs slightly less per month than Service B, and I can trial either before committing.
+  {DS}
+focal_diagnostic_feature: Service A has an 81% verified first-attempt pass rate versus
+  54% for Service B, and its question bank is three times larger.
+low_diagnostic_proposition: Service B has a more polished and well-designed interface
+  than Service A, suggesting it was built by people who care more about learning.
+oracle_action: ANSWER
+oracle_focus: Recommend Service A; its pass-rate evidence and larger question bank
+  directly predict exam performance, and it costs less.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not treat interface polish as evidence of learning
+  effectiveness; ask for pass-rate data, question bank size, and reviews from people
+  who sat the specific exam before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not treat interface polish as evidence of learning effectiveness; ask
+      for pass-rate data, question bank size, and reviews from people who sat the
+      specific exam before deciding.
+  LL:
+    action: ASK
+    focus: Do not treat interface polish as evidence of learning effectiveness; ask
+      for pass-rate data, question bank size, and reviews from people who sat the
+      specific exam before deciding.
+  HH:
+    action: ANSWER
+    focus: Recommend Service A; its pass-rate evidence and larger question bank directly
+      predict exam performance, and it costs less.
+  LH:
+    action: ANSWER
+    focus: Recommend Service A; its pass-rate evidence and larger question bank directly
+      predict exam performance, and it costs less.
+variants:
+  HL:
+    distractor: 'Service B has a beautiful interface: custom-designed practice views,
+      smooth progress animations, and a dashboard that genuinely looks like a tool
+      built by people who care more about learning.'
+    diagnosticity: low
+    salience: high
+    proposition: Service B has a more polished and well-designed interface than Service
+      A, suggesting it was built by people who care more about learning.
+    salience_source: B/D — vivid concrete sensory detail about the interface (custom
+      views, animations, dashboard) framed as evidence of underlying organisational
+      care, delivered in a confident first-person register.
+    why_plausible: A polished product interface can signal investment in quality,
+      and engagement concerns are real for self-paced study; a busy reader may conflate
+      UX effort with pedagogical effort.
+    why_irrelevant: Interface polish has no causal connection to pass-rate or question-bank
+      depth; the inferential bridge (looks cared-about → better for learning) is aesthetically
+      grounded and empty of outcome evidence.
+  LL:
+    distractor: Service B has a more polished and well-designed interface than Service
+      A, suggesting it was built by people who care more about learning.
+    diagnosticity: low
+    salience: low
+    proposition: Service B has a more polished and well-designed interface than Service
+      A, suggesting it was built by people who care more about learning.
+    matched_to: HL
+  HH:
+    distractor: 'Service A posts verified pass-rate data: 81% of subscribers pass
+      on the first attempt versus 54% for Service B, and its exam question bank is
+      three times larger.'
+    diagnosticity: high
+    salience: high
+    proposition: Service A has an 81% verified first-attempt pass rate versus 54%
+      for Service B, and its question bank is three times larger.
+    salience_source: Precise verified percentages (81% vs 54%) and a concrete size
+      ratio (three times) create a vivid, unambiguous outcome differential.
+  LH:
+    distractor: Service A has an 81% verified first-attempt pass rate versus 54% for
+      Service B and a three times larger question bank.
+    diagnosticity: high
+    salience: low
+    proposition: Service A has an 81% verified first-attempt pass rate versus 54%
+      for Service B, and its question bank is three times larger.
+    matched_to: HH
+distractor_direction:
+  label: interface polish as quality signal
+  description: Treating Service B's more polished, animated interface as evidence
+    that it was built by people who care more, implying better learning outcomes.
+plausible_alternative_directions:
+- label: engagement and adherence risk
+  description: A less engaging interface might cause the user to study less consistently,
+    independently of Service A's higher pass rate.
+- label: content currency
+  description: The exam content may have been updated recently, and whichever service
+    updates its question bank more frequently could matter more than current bank
+    size.
+leak_audit:
+  ll_atomic_claims:
+  - Service B has a more polished and well-designed interface than Service A
+  - the more polished interface suggests it was built by people who care more about
+    learning
+  hh_atomic_claims:
+  - Service A has an 81% verified first-attempt pass rate
+  - Service B has a 54% first-attempt pass rate
+  - Service A's question bank is three times larger than Service B's
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person description with a consistent progression from
+      visual detail to a care inference, in a confident register.
+    confident_assertion: '"genuinely looks like a tool built by people who care more
+      about learning" delivers the inferential bridge with conviction while sounding
+      like honest personal assessment.'
+    concrete_detail: Specific interface features (custom practice views, progress
+      animations, dashboard) are concrete detail about the product surface, not about
+      exam outcomes.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 42
+  hl_word_count: 29
+  ll_word_count: 23
+  hh_word_count: 28
+  lh_word_count: 21
+  notes: 'Per C1 for T5: the inferential bridge (polished interface → built by people
+
+    who care about learning) appears in both HL and LL as required. HL adds
+
+    concrete interface detail and first-person framing but no new propositional
+
+    claim about exam outcomes. HH/LH carry pass-rate and bank-size only.
+
+    QC repair: removed HL-only case claims (''Service A feels like a textbook
+
+    uploaded online'' and ''I am not sure it would hold my attention''); changed
+
+    LH ''substantially larger'' to ''three times larger'' to match HH exactly.
+
+    '
+causal_audit:
+  steelman: 'A learning-science practitioner might argue that UI quality correlates
+    with
+
+    overall product investment, which in turn correlates with content quality,
+
+    instructor hiring, and question-bank accuracy. If Service B invested heavily
+
+    in UX, they may have invested similarly in content. Additionally, low
+
+    engagement from a clunky UI could indirectly reduce pass rates, making the
+
+    subjective impression causally relevant via adherence.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the engagement-via-adherence pathway is closed structurally
+    in HH/LH by the verified outcome data, not in xbase.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User choosing between two exam-prep tutoring subscriptions; aesthetic
+    distractor is Service B's polished interface offered as evidence of care for learning;
+    focal is Service A's 81% vs 54% verified pass rate and triple-sized question bank.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

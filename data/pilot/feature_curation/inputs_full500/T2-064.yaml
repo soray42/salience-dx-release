@@ -1,0 +1,171 @@
+seed_id: T2-064
+template: T2
+domain: open_qa
+complexity: high
+xbase: 'I do a batch of pressure-canned tomatoes every late summer, and this year
+  a worrying share of the jars failed to seal: the lids did not pop down and stay
+  concave the way sealed ones do, and a few popped back up after cooling. I followed
+  my usual recipe, processed for the usual time, and let the jars cool undisturbed
+  on the counter overnight. The acidity and headspace were what I always use. About
+  half the batch did not take. {DS}'
+focal_diagnostic_feature: The canning lids were reused from a previous year, and their
+  sealing compound is dried out and indented, so it can no longer form an airtight
+  seal.
+low_diagnostic_proposition: The sealing failures began the same week a new water softener
+  was installed in the house.
+oracle_action: ANSWER
+oracle_focus: The reused lids have spent sealing compound and cannot seal; use fresh
+  single-use lids and reprocess, rather than connecting the failures to the new water
+  softener.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the water softener to the jars failing
+  to seal. Ask whether the lids were new single-use lids or reused from a prior year.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the water softener to the jars failing to seal. Ask whether
+      the lids were new single-use lids or reused from a prior year.
+  LL:
+    action: ASK
+    focus: Do not connect the water softener to the jars failing to seal. Ask whether
+      the lids were new single-use lids or reused from a prior year.
+  HH:
+    action: ANSWER
+    focus: The reused lids have spent sealing compound and cannot seal; use fresh
+      single-use lids and reprocess, rather than connecting the failures to the new
+      water softener.
+  LH:
+    action: ANSWER
+    focus: The reused lids have spent sealing compound and cannot seal; use fresh
+      single-use lids and reprocess, rather than connecting the failures to the new
+      water softener.
+variants:
+  HL:
+    distractor: The thing nagging at me is that the seal failures happened the same
+      week we had a new water softener plumbed into the house. Every previous year
+      of canning went smoothly, and this was the first batch since the softener went
+      in, so the timing really stands out to me.
+    diagnosticity: low
+    salience: high
+    proposition: The sealing failures began the same week a new water softener was
+      installed in the house.
+    salience_source: B/C — a confident first-person timeline pinning the seal failures
+      to the water-softener installation.
+    why_plausible: A new household water change feels like it might affect anything
+      involving water, so it is an easy thing to suspect.
+    why_irrelevant: A vacuum seal forms from the lid's sealing compound gripping the
+      jar rim as the contents cool; softened tap water does not touch that seal interface
+      or the lid.
+  LL:
+    distractor: The sealing failures began the same week a new water softener was
+      installed in the house.
+    diagnosticity: low
+    salience: low
+    proposition: The sealing failures began the same week a new water softener was
+      installed in the house.
+    matched_to: HL
+  HH:
+    distractor: Looking at the lids, I realised I reused last year's lids instead
+      of fresh ones, and their sealing compound has gone dry and dented where it pressed
+      on the rims before; that flattened gasket cannot grip the glass to pull a vacuum,
+      which is why so many simply never sealed.
+    diagnosticity: high
+    salience: high
+    proposition: The canning lids were reused from a previous year, and their sealing
+      compound is dried out and indented, so it can no longer form an airtight seal.
+    salience_source: The reused lids and their flattened, dried sealing compound make
+      the failed-seal cause concrete and decisive.
+  LH:
+    distractor: The lids were reused from a previous year and their dried, indented
+      sealing compound can no longer form an airtight seal.
+    diagnosticity: high
+    salience: low
+    proposition: The canning lids were reused from a previous year, and their sealing
+      compound is dried out and indented, so it can no longer form an airtight seal.
+    matched_to: HH
+distractor_direction:
+  label: Water-softener install timing
+  description: Investigating whether the newly installed household water softener
+    is connected to the canning jars failing to seal.
+plausible_alternative_directions:
+- label: Insufficient processing
+  description: Whether the jars were under-processed
+  leaving inadequate vacuum on cooling.: null
+- label: Rim debris or chips
+  description: Whether food residue or nicks on the jar rims prevented a clean seal.
+leak_audit:
+  ll_atomic_claims:
+  - The sealing failures began the same week a new water softener was installed in
+    the house.
+  hh_atomic_claims:
+  - The lids were reused from a previous year.
+  - Their dried, indented sealing compound can no longer form an airtight seal.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean every-previous-year-fine, first-batch-since-the-softener
+      chronology.
+    confident_assertion: '''the timing really stands out to me'' — confident framing.'
+    concrete_detail: Detail about the setting (a softener plumbed in, first batch
+      since) only; no new fact about the lids.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 84
+  hl_word_count: 47
+  ll_word_count: 16
+  hh_word_count: 47
+  lh_word_count: 20
+  notes: 'T2: a household water softener has no mechanism for whether a canning lid
+    forms a vacuum seal. LL is the bare
+
+    timing claim; HL adds only first-person framing and the softener detail. xbase
+    holds recipe, processing time,
+
+    cooling, acidity, and headspace constant but withholds the reused-lid fact; the
+    decisive spent-compound finding
+
+    lives only in HH/LH. ''water softener'', ''single-use'', ''sealing compound''
+    counted per the token rule.
+
+    '
+causal_audit:
+  steelman: 'Could a water softener affect canning? One might argue softened water
+    has different mineral content that could,
+
+    say, alter boil behaviour in the canner. But the seal itself is mechanical and
+    thermal: it forms when the lid''s
+
+    sealing compound presses to the jar rim and the cooling contents draw a vacuum,
+    and the processing water never
+
+    contacts that compound or the jar interior. xbase already holds acidity, headspace,
+    processing time, and cooling
+
+    constant, so water chemistry has no remaining route to the seal. There is no path
+    by which softened tap water
+
+    stops a lid from sealing. Nothing in xbase ties the softener to the seal, so the
+    timing is coincidence with no
+
+    constructible mechanism, while reused lids with spent compound fully explain the
+    failures.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase holds recipe, processing time, cooling, acidity,
+    and headspace constant, foreclosing process-and-chemistry explanations the softener
+    might touch, without naming the reused lids; the decisive spent-compound finding
+    lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Canning jars failing to seal because the lids were reused and their
+    sealing compound is spent, coincidentally timed with a new water-softener install,
+    which has no mechanism for the lid seal.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

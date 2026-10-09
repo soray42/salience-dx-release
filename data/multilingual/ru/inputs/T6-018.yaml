@@ -1,0 +1,192 @@
+seed_id: T6-018
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'Один эндпоинт нашего сервиса возвращает 504 Gateway Timeout, но только при
+  массовом CSV-экспорте — все остальные эндпоинты работают нормально. Это нестабильно:
+  на крупных экспортах происходит сбой, а на маленьких — успешно. Мы недавно не меняли
+  код экспорта, и логи приложения показывают, что обработчик всё ещё работает, а не
+  падает с ошибкой, когда клиент получает 504. Трейс на уровне запросов показывает,
+  что каждый отдельный запрос к базе данных, выполняемый экспортом, завершается менее
+  чем за секунду, даже на самых крупных наборах данных. {DS}'
+focal_diagnostic_feature: 504 срабатывает ровно через 60 секунд, что совпадает с таймаутом
+  простоя балансировщика нагрузки, тогда как крупному экспорту в реальности нужно
+  около 75 секунд от начала до конца.
+low_diagnostic_proposition: Every past 504 the user has dealt with came from a slow
+  database query, so this one is probably a slow query too.
+oracle_action: ANSWER
+oracle_focus: Raise the load balancer's idle/response timeout for this endpoint (or
+  paginate the export); the 504 fires at the LB's 60-second cutoff while a valid ~75-second
+  export is still running.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a slow query from past 504s. Ask at what
+  elapsed time the 504 fires and whether it matches a proxy or load-balancer timeout.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a slow query from past 504s. Ask at what elapsed time the
+      504 fires and whether it matches a proxy or load-balancer timeout.
+  LL:
+    action: ASK
+    focus: Do not assume a slow query from past 504s. Ask at what elapsed time the
+      504 fires and whether it matches a proxy or load-balancer timeout.
+  HH:
+    action: ANSWER
+    focus: Raise the load balancer's idle/response timeout for this endpoint (or paginate
+      the export); the 504 fires at the LB's 60-second cutoff while a valid ~75-second
+      export is still running.
+  LH:
+    action: ANSWER
+    focus: Raise the load balancer's idle/response timeout for this endpoint (or paginate
+      the export); the 504 fires at the LB's 60-second cutoff while a valid ~75-second
+      export is still running.
+variants:
+  HL:
+    distractor: Каждый одиночный 504, который я когда-либо расследовал, оказывался
+      медленным запросом к базе данных — и в момент, когда я увидел этот, мои руки
+      сами потянулись к EXPLAIN и планам запросов, ещё до того, как я посмотрел на
+      что-либо другое.
+    diagnosticity: low
+    salience: high
+    proposition: Every past 504 the user has dealt with came from a slow database
+      query, so this one is probably a slow query too.
+    salience_source: B/C — a vivid personal history of 504s-as-slow-queries plus the
+      confident first instinct to reach for query plans.
+    why_plausible: Slow queries are a genuinely common cause of gateway timeouts,
+      so a strong personal track record makes it the reflexive first guess.
+    why_irrelevant: The 504 lands precisely at the LB's 60-second idle cap while the
+      handler is still working and its queries are already known to be fast; query
+      tuning would not move a fixed proxy timeout.
+  LL:
+    distractor: Каждый прошлый 504, с которым сталкивался пользователь, оказывался
+      медленным запросом к базе данных, так что этот, вероятно, тоже.
+    diagnosticity: low
+    salience: low
+    proposition: Every past 504 the user has dealt with came from a slow database
+      query, so this one is probably a slow query too.
+    matched_to: HL
+  HH:
+    distractor: Засекая время, вижу, что 504 приходит ровно через 60 секунд каждый
+      раз — это таймаут простоя балансировщика нагрузки, — тогда как крупному экспорту
+      в реальности нужно около 75 секунд от начала до конца, чтобы собрать и передать
+      полный файл.
+    diagnosticity: high
+    salience: high
+    proposition: The 504 fires at exactly 60 seconds, matching the load balancer's
+      idle timeout, while the large export legitimately needs about 75 seconds end
+      to end.
+    salience_source: Pinning the 504 to the 60-second LB cap against a ~75-second
+      valid runtime makes the timeout mechanism concrete.
+  LH:
+    distractor: 504 срабатывает ровно через 60 секунд — это таймаут простоя балансировщика
+      нагрузки, — тогда как крупному экспорту в реальности нужно около 75 секунд для
+      завершения.
+    diagnosticity: high
+    salience: low
+    proposition: The 504 fires at exactly 60 seconds, matching the load balancer's
+      idle timeout, while the large export legitimately needs about 75 seconds end
+      to end.
+    matched_to: HH
+distractor_direction:
+  label: медленный запрос к базе данных
+  description: Исследование того, не вызывает ли таймаут неиндексированный или дорогостоящий
+    запрос, который можно устранить оптимизацией запросов.
+plausible_alternative_directions:
+- label: нехватка памяти или CPU при крупном экспорте
+  description: Возможно, формирование крупного CSV в памяти тормозит воркер под нагрузкой.
+- label: медлительность вышестоящего сервиса
+  description: Возможно, узким местом является зависимый сервис, к которому обращается
+    экспорт.
+leak_audit:
+  ll_atomic_claims:
+  - Every past 504 the user dealt with came from a slow database query.
+  - Therefore this 504 is probably a slow query too.
+  hh_atomic_claims:
+  - The 504 returns at exactly 60 seconds every time, matching the load balancer's
+    idle timeout.
+  - The large export genuinely needs about 75 seconds end to end.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent personal history of 504s tracing to slow queries.
+    confident_assertion: Hands go 'straight to EXPLAIN and the query plans before
+      I had looked at anything else'.
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 84
+  hl_word_count: 39
+  ll_word_count: 22
+  hh_word_count: 38
+  lh_word_count: 23
+  notes: 'Repair round 1: xbase now closes the slow-query pathway directly (a query-level
+    trace shows every
+
+    individual query completes in well under a second) — a narrow C4 pathway-closure
+    that neutralises ONE
+
+    tempting mechanism of the distractor without supplying the affirmative cause;
+    the decisive 60s-LB-timeout
+
+    vs ~75s-valid-runtime fact still lives ONLY in HH/LH. The fast-query fact was
+    therefore removed from the
+
+    focal feature, HH, LH, oracle strings, and hh_atomic_claims to avoid duplicating
+    xbase content.
+
+    HL stripped of the case-level sub-mechanism ("hammering an unindexed column")
+    and the trailing
+
+    self-commentary clause so it stays propositionally equal to LL (same past pattern
+    + same applied-to-now
+
+    inference), carrying only B/C salience. LH keeps strict equivalence with HH as
+    a single flat clause-set.
+
+    '
+causal_audit:
+  steelman: 'A backend engineer could note that bulk exports often run heavy aggregate
+    queries, that scaling with export size
+
+    fits a query that degrades on larger row counts, and that 504s very commonly do
+    trace to slow upstream queries —
+
+    so a slow-query hypothesis is a legitimate, common first read of a size-dependent
+    gateway timeout.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'Yes: xbase states a query-level trace shows every individual
+    database query the export runs completes in well under a second even on the largest
+    datasets, foreclosing the slow-query mechanism directly; xbase still does not
+    supply the affirmative LB-timeout cause (the 60s-cutoff vs ~75s-valid-runtime
+    evidence lives only in HH/LH).'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A 504 on large CSV exports caused by the load balancer's 60-second
+    idle timeout cutting off a valid ~75-second request, not the slow query the user's
+    past 504s bias them toward.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-018.yaml
+  source_xbase_sha256: 004a07aa4433651d
+  translated_content_sha256: 4298baa6b3484610
+  translation_notes: 'Technical terms kept as-is: 504 Gateway Timeout, CSV, EXPLAIN,
+    эндпоинт (loan-word standard in Russian tech), балансировщик нагрузки (load balancer).
+    ''Idle timeout'' as ''таймаут простоя''. ''Query plans'' as ''планы запросов''.
+    ''Upstream service'' as ''вышестоящий сервис''. HL salience retained via vivid
+    first-person instinct narrative (''мои руки сами потянулись''). LL preserves third-person
+    phrasing from original English. No culture-bound salience cues.'

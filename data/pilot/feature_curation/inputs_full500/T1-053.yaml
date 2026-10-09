@@ -1,0 +1,172 @@
+seed_id: T1-053
+template: T1
+domain: open_qa
+complexity: low
+xbase: I'm deciding whether to buy the two-bedroom flat I currently rent or keep renting
+  it. The landlord has offered to sell at what looks like a fair market price, and
+  I can cover the deposit without touching my pension. I like the area and could see
+  myself here for a while. The numbers around the purchase itself seem to work on
+  paper, so the question is really about whether owning this particular unit makes
+  sense for me. {DS}
+focal_diagnostic_feature: The user's job requires relocating to a different city within
+  the next eighteen months under a signed transfer agreement.
+low_diagnostic_proposition: A relative bought instead of renting and built substantial
+  equity over the years.
+oracle_action: ANSWER
+oracle_focus: Do not buy this flat; a confirmed relocation inside eighteen months
+  means the user would face buying-and-selling transaction costs over a holding period
+  far too short to recover them, so renting fits their actual horizon.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a relative's equity story decide this. Ask
+  how long the user realistically expects to stay in this flat before judging buy
+  versus rent.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a relative's equity story decide this. Ask how long the user
+      realistically expects to stay in this flat before judging buy versus rent.
+  LL:
+    action: ASK
+    focus: Do not let a relative's equity story decide this. Ask how long the user
+      realistically expects to stay in this flat before judging buy versus rent.
+  HH:
+    action: ANSWER
+    focus: Do not buy this flat; a confirmed relocation inside eighteen months means
+      the user would face buying-and-selling transaction costs over a holding period
+      far too short to recover them, so renting fits their actual horizon.
+  LH:
+    action: ANSWER
+    focus: Do not buy this flat; a confirmed relocation inside eighteen months means
+      the user would face buying-and-selling transaction costs over a holding period
+      far too short to recover them, so renting fits their actual horizon.
+variants:
+  HL:
+    distractor: Emre, who used to manage my old shared house, kept renting for a decade
+      and now says it was his biggest regret, because the friend who bought a similar
+      flat back then has built a serious pile of equity while he has nothing to show
+      for the rent.
+    diagnosticity: low
+    salience: high
+    proposition: A relative bought instead of renting and built substantial equity
+      over the years.
+    salience_source: A — a named former housemate recounting a coherent, lived comparison
+      lends the equity-regret story weight.
+    why_plausible: Long-run owning often does beat renting on equity, so the regret
+      feels like sound general housing wisdom.
+    why_irrelevant: A multi-year equity gain is irrelevant to a buyer who will sell
+      within eighteen months; only the user's holding period decides whether buying
+      recovers its costs.
+  LL:
+    distractor: Someone bought a similar flat rather than renting and accumulated
+      substantial equity over the following years.
+    diagnosticity: low
+    salience: low
+    proposition: A relative bought instead of renting and built substantial equity
+      over the years.
+    matched_to: HL
+  HH:
+    distractor: I signed a transfer agreement with my employer last month committing
+      me to move to our office in another city within eighteen months; the relocation
+      is confirmed in writing, not a maybe, so I will not be living in this flat long
+      enough to call it home.
+    diagnosticity: high
+    salience: high
+    proposition: The user's job requires relocating to a different city within the
+      next eighteen months under a signed transfer agreement.
+    salience_source: The signed, dated transfer commitment makes the short horizon
+      concrete and binding rather than speculative.
+  LH:
+    distractor: A signed employer transfer commits the user to relocate to another
+      city within eighteen months.
+    diagnosticity: high
+    salience: low
+    proposition: The user's job requires relocating to a different city within the
+      next eighteen months under a signed transfer agreement.
+    matched_to: HH
+distractor_direction:
+  label: Long-run equity upside
+  description: Treating the decision as favouring purchase because owning historically
+    builds equity that renting forgoes.
+plausible_alternative_directions:
+- label: Purchase-cost fairness
+  description: Whether the offered price and financing terms are genuinely fair relative
+    to the local market.
+- label: Maintenance and service-charge exposure
+  description: Whether ongoing ownership costs for this specific unit are acceptable.
+leak_audit:
+  ll_atomic_claims:
+  - Someone bought a similar flat instead of renting.
+  - That person accumulated substantial equity over the following years.
+  hh_atomic_claims:
+  - The user signed a transfer agreement with their employer.
+  - It commits them to relocate to another city.
+  - The move must happen within eighteen months.
+  hl_salience_dimensions:
+    source_credibility: Named former housemate (Emre) recounting his own lived rent-versus-buy
+      comparison.
+    narrative_coherence: Clean decade-long retrospective with a single friend as the
+      contrast case.
+    confident_assertion: Calls it his biggest regret.
+    concrete_detail: Detail about the source (housemate role, the friend who bought)
+      only — no fact about the user's own situation.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 80
+  hl_word_count: 48
+  ll_word_count: 14
+  hh_word_count: 46
+  lh_word_count: 14
+  notes: 'LL carries only the bought-not-rented and built-equity claims; the named
+    source, the decade of renting, and the
+
+    contrasting friend are HL-only and all describe the source, not the user. xbase
+    withholds the user''s stay horizon
+
+    entirely — it states price fairness, affordability, and liking the area, none
+    of which resolve buy-versus-rent
+
+    without knowing how long the user will hold. The decisive relocation fact lives
+    only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A property advisor might argue the equity-regret story is decision-relevant
+    because, over long horizons, buying
+
+    typically out-earns renting through principal paydown and appreciation, so a renter
+    who keeps deferring purchase
+
+    can indeed forgo large equity gains, exactly as the housemate describes. That
+    argument, however, assumes a
+
+    holding period long enough for ownership to overcome entry and exit transaction
+    costs. The focal fact — a signed
+
+    transfer forcing a move within eighteen months — collapses the horizon below that
+    break-even, so the long-run
+
+    equity mechanism cannot operate for this user; buying and reselling inside eighteen
+    months almost certainly
+
+    loses money to fees and frictions regardless of how well owning performs over
+    a decade.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive short-horizon fact is withheld from
+    xbase and lives only in HH/LH, so xbase neither supplies nor forecloses it.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A renter weighing whether to buy their flat, where a signed eighteen-month
+    job relocation, not a housemate's long-run equity regret, is decisive against
+    purchase.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

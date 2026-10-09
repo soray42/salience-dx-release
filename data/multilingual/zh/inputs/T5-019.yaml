@@ -1,0 +1,187 @@
+seed_id: T5-019
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: 我们依赖一个小型开源库来解析日期，一位同事想把它去掉，理由是项目主页看起来已经废弃——光秃秃的README、老旧的logo、一个像2009年风格的网站。我们已经了解到，这种过时的外观只是维护者的极简主义风格，与项目本身从不同步，因此页面无法告诉我们代码是否仍在维护。替换它会涉及大量代码改动，我正在考虑这种替换是否值得冒险。{DS}
+focal_diagnostic_feature: 仓库显示过去一周内有提交记录，维护者在数天内关闭issues，最新版本有绿色CI徽章，并且它是多个广泛使用的框架的声明依赖项。
+low_diagnostic_proposition: The library's dated, bare-looking project page indicates
+  it is abandoned and should be replaced.
+oracle_action: ANSWER
+oracle_focus: Keep the library; recent commits, fast issue turnaround, passing CI,
+  and its use by major frameworks show it is actively maintained, so a risky, large
+  swap is not justified by its dated page.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer abandonment from the page's look. Ask about
+  commit recency, issue response times, CI status, and downstream adoption.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer abandonment from the page's look. Ask about commit recency,
+      issue response times, CI status, and downstream adoption.
+  LL:
+    action: ASK
+    focus: Do not infer abandonment from the page's look. Ask about commit recency,
+      issue response times, CI status, and downstream adoption.
+  HH:
+    action: ANSWER
+    focus: Keep the library; recent commits, fast issue turnaround, passing CI, and
+      its use by major frameworks show it is actively maintained, so a risky, large
+      swap is not justified by its dated page.
+  LH:
+    action: ANSWER
+    focus: Keep the library; recent commits, fast issue turnaround, passing CI, and
+      its use by major frameworks show it is actively maintained, so a risky, large
+      swap is not justified by its dated page.
+variants:
+  HL:
+    distractor: 那个项目主页看起来确实死气沉沉——一份残缺的README、一个像素化的旧logo、一个停在2009年的网站——我的同事认为，一个没人费心去维护页面的库，正是那种已经悄然停止维护的项目。
+    diagnosticity: low
+    salience: high
+    proposition: The library's dated, bare-looking project page indicates it is abandoned
+      and should be replaced.
+    salience_source: B/D — vivid concrete detail of the dated page carrying the bridge
+      that a neglected-looking project is an unmaintained one.
+    why_plausible: Abandoned projects often do have stale, neglected pages, so a dated
+      page is a real and common warning sign.
+    why_irrelevant: Page aesthetics are decoupled from maintenance activity; a plain
+      page can sit atop an actively developed codebase, which only the repo's activity
+      reveals.
+  LL:
+    distractor: 这个库过时、简陋的项目主页表明它已经被废弃，应该被替换。
+    diagnosticity: low
+    salience: low
+    proposition: The library's dated, bare-looking project page indicates it is abandoned
+      and should be replaced.
+    matched_to: HL
+  HH:
+    distractor: 查看仓库而非主页，本周有新的提交记录，维护者在一两天内关闭了issues，最新版本显示CI徽章为绿色，而且我们已在使用的几个框架都将其列为依赖项。
+    diagnosticity: high
+    salience: high
+    proposition: The repository shows commits within the last week, maintainers closing
+      issues within days, a green CI badge on the latest release, and it is a declared
+      dependency of several widely used frameworks.
+    salience_source: Concrete maintenance signals — fresh commits, days-fast issue
+      turnaround, passing CI, downstream adoption — make active upkeep undeniable.
+  LH:
+    distractor: 该仓库本周有提交记录，issues在数天内关闭，最新版本有通过的CI徽章，并且被多个主流框架列为依赖项。
+    diagnosticity: high
+    salience: low
+    proposition: The repository shows commits within the last week, maintainers closing
+      issues within days, a green CI badge on the latest release, and it is a declared
+      dependency of several widely used frameworks.
+    matched_to: HH
+distractor_direction:
+  label: 过时页面意味着废弃
+  description: 因项目主页过时简陋而将其视为未维护的证据，从而决定替换该库。
+plausible_alternative_directions:
+- label: 迁移成本收益分析
+  description: 无论维护状态如何，替换方案的功能或安全性是否足以证明大规模代码改动是合理的。
+- label: 安全补丁响应速度
+  description: 该库是否能及时发布针对新披露漏洞的修复补丁。
+leak_audit:
+  ll_atomic_claims:
+  - The library's project page is dated and bare-looking.
+  - That appearance indicates it is abandoned and should be replaced.
+  hh_atomic_claims:
+  - The repository has commits from the past week.
+  - Maintainers are closing issues within a day or two.
+  - The latest release shows a passing CI badge, and several frameworks in use list
+    it as a dependency.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: N/A
+    confident_assertion: N/A
+    concrete_detail: Vivid concrete detail about the page (stub README, pixelated
+      logo, 2009-era site).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 88
+  hl_word_count: 45
+  ll_word_count: 14
+  hh_word_count: 43
+  lh_word_count: 25
+  notes: 'LH is 25 words, preserving equivalence with HH (commits, issue turnaround,
+    CI, downstream adoption) as a single
+
+    flat clause-set. T5: the bridge "an unpresentable project has quietly gone unmaintained"
+    is in
+
+    HL and flat in LL (self-check 13). xbase establishes the page looks abandoned
+    and that the library currently works,
+
+    but withholds the repo-activity evidence — decisive — which is HH/LH-only. QC
+    repair round 1: added a narrow
+
+    mechanism-blocker to xbase ("the dated look is just the maintainer''s minimalist
+    style and is never synced with the
+
+    project, so the page tells us nothing about whether the code is maintained").
+    This forecloses the only mechanism the
+
+    causal_a lens found (page aesthetics as a proxy for abandonment) without supplying
+    the decisive maintenance signals —
+
+    those (commits this week, days-fast issue turnaround, green CI, downstream framework
+    adoption) remain HH/LH-only, so
+
+    xbase alone still cannot resolve keep-vs-replace (C4 holds; the low-diagnostic
+    oracle remains ASK).
+
+    '
+causal_audit:
+  steelman: 'A pragmatic engineer could note that neglected documentation often does
+    track neglected code, that a stale-looking
+
+    site can signal a maintainer who has moved on, and that depending on an abandoned
+    library is a real supply-chain
+
+    risk — so in the abstract a dated page is a weak prompt to check maintenance status.
+    That single mechanism (page
+
+    aesthetics standing in as a proxy for abandonment) is the only one available to
+    the distractor, and xbase now
+
+    explicitly forecloses it: the dated look is the maintainer''s deliberate minimalist
+    style and is never synced with
+
+    the project, so for THIS case the page carries no information about whether the
+    code is maintained. With the proxy
+
+    cut, no constructible mechanism remains by which the page''s appearance bears
+    on the keep-vs-replace decision.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the dated look is the maintainer's deliberate
+    minimalist style and is never synced with the project, so the page tells us nothing
+    about whether the code is maintained — foreclosing the page-aesthetics-as-abandonment-proxy
+    mechanism while withholding the decisive maintenance evidence (commits, issue
+    turnaround, CI, downstream adoption), which stays HH/LH-only (C4 preserved).
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to replace an actively maintained date-parsing library (recent
+    commits, fast issues, downstream adoption) judged abandoned only because its project
+    page looks dated.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-019.yaml
+  source_xbase_sha256: 58ef2eb5c3249adf
+  translated_content_sha256: c1801b162d3fecc7
+  translation_notes: Technical terms (README, CI, logo) kept as-is per instrument.
+    The maintainer's 'minimalist style' framing in xbase is rendered naturally in
+    Chinese. HL vivid detail (pixelated logo, stub README, 2009-era site) preserved.
+    {DS} token unchanged.

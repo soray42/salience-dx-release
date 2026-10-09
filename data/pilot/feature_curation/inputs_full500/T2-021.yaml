@@ -1,0 +1,169 @@
+seed_id: T2-021
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: Some keys on my laptop have started typing the wrong characters. When I press
+  the double-quote key I get an at-sign, the at-sign key gives me a double-quote,
+  and the pound and hash symbols are swapped too. Letters and numbers are fine. It
+  is the same in every application, and the physical keyboard looks undamaged. {DS}
+focal_diagnostic_feature: The swapped characters are exactly the differences between
+  the UK and US keyboard layouts, and the OS input-language indicator now shows US
+  English instead of the UK layout it used to.
+low_diagnostic_proposition: The wrong characters started appearing right after the
+  keyboard was cleaned with a disinfectant wipe.
+oracle_action: ANSWER
+oracle_focus: Switch the OS keyboard layout back to UK English; the specific quote/at
+  and hash/pound swaps are the signature of a US-vs-UK layout mismatch, not a hardware
+  fault.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect wiping the keyboard to character mapping.
+  Ask which exact characters are swapped and what the OS keyboard-layout setting is
+  now set to.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect wiping the keyboard to character mapping. Ask which exact
+      characters are swapped and what the OS keyboard-layout setting is now set to.
+  LL:
+    action: ASK
+    focus: Do not connect wiping the keyboard to character mapping. Ask which exact
+      characters are swapped and what the OS keyboard-layout setting is now set to.
+  HH:
+    action: ANSWER
+    focus: Switch the OS keyboard layout back to UK English; the specific quote/at
+      and hash/pound swaps are the signature of a US-vs-UK layout mismatch, not a
+      hardware fault.
+  LH:
+    action: ANSWER
+    focus: Switch the OS keyboard layout back to UK English; the specific quote/at
+      and hash/pound swaps are the signature of a US-vs-UK layout mismatch, not a
+      hardware fault.
+variants:
+  HL:
+    distractor: It really stands out to me that the wrong characters started right
+      after I cleaned the keyboard with a disinfectant wipe; that timing feels like
+      the obvious cause.
+    diagnosticity: low
+    salience: high
+    proposition: The wrong characters started appearing right after the keyboard was
+      cleaned with a disinfectant wipe.
+    salience_source: B/C — a confident first-person timeline tying the symptom to
+      a specific, recent hands-on action.
+    why_plausible: Cleaning a keyboard the night before a fault feels like the obvious
+      culprit, since hands-on contact with the keys is easy to blame.
+    why_irrelevant: Cleaning cannot remap which character a key produces; consistent
+      symbol swaps across all apps are a software layout setting, not a hardware fault.
+  LL:
+    distractor: The wrong characters started right after the keyboard was cleaned
+      with a disinfectant wipe.
+    diagnosticity: low
+    salience: low
+    proposition: The wrong characters started appearing right after the keyboard was
+      cleaned with a disinfectant wipe.
+    matched_to: HL
+  HH:
+    distractor: Listing the swaps — quote becomes at-sign, hash becomes pound — they
+      are precisely the keys that differ between the US and UK layouts, nothing else.
+      And the input-language indicator in the menu bar now reads "US" where it always
+      used to say "UK".
+    diagnosticity: high
+    salience: high
+    proposition: The swapped characters are exactly the differences between the UK
+      and US keyboard layouts, and the OS input-language indicator now shows US English
+      instead of the UK layout it used to.
+    salience_source: Enumerating the swaps as the exact US/UK delta plus the changed
+      layout indicator makes the mismatch unmistakable.
+  LH:
+    distractor: The swapped symbols are exactly the US-versus-UK layout differences,
+      and the OS input-language indicator now shows US English instead of UK.
+    diagnosticity: high
+    salience: low
+    proposition: The swapped characters are exactly the differences between the UK
+      and US keyboard layouts, and the OS input-language indicator now shows US English
+      instead of the UK layout it used to.
+    matched_to: HH
+distractor_direction:
+  label: Cleaning/liquid damage
+  description: Treating the recent disinfectant cleaning as having damaged the keyboard
+    hardware and scrambled the keys.
+plausible_alternative_directions:
+- label: Stuck modifier key
+  description: Whether a held-down modifier (like a function or shift lock) is altering
+    the characters produced.
+- label: Keyboard firmware/driver fault
+  description: Whether a keyboard driver or firmware issue is remapping inputs at
+    a low level.
+leak_audit:
+  ll_atomic_claims:
+  - The wrong characters started appearing around the time the keyboard was cleaned
+    with a disinfectant wipe.
+  hh_atomic_claims:
+  - The swapped characters (quote/at, hash/pound) are exactly the US-versus-UK layout
+    differences.
+  - No other keys are affected.
+  - The OS input-language indicator now reads US where it used to read UK.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent cleaned-it-then-next-morning timeline.
+    confident_assertion: States the symbols scrambled 'the very next morning'.
+    concrete_detail: Concrete detail about the cleaning action (went over every key,
+      settled overnight) — about the action, not the mapping; no moisture/liquid cue.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 55
+  hl_word_count: 28
+  ll_word_count: 14
+  hh_word_count: 42
+  lh_word_count: 21
+  notes: 'xbase lists the symptom (which symbols look wrong, same across apps, no
+    visible damage) but does NOT identify the
+
+    swaps as the US/UK delta nor mention the layout indicator — those decisive facts
+    are HH/LH-only. A reader of
+
+    xbase alone could not conclusively reject the cleaning-damage story. T2: cleaning
+    the keyboard has no mechanism over OS
+
+    character mapping. QC repair round 1: HL previously read "damp disinfectant cloth
+    ... let it dry overnight", which
+
+    added moisture/drying case-content absent from LL ("cleaned with a disinfectant
+    wipe"). Reworded HL to convey the same
+
+    confident first-person cleaning timeline without any dampness/drying cue, restoring
+    HL/LL propositional equivalence.
+
+    '
+causal_audit:
+  steelman: 'A repair tech might note that physical contact while cleaning could in
+    principle dislodge or stick a key, producing
+
+    wrong or stuck characters, and the timing is suggestive — so a cleaning-related
+    hardware fault is worth a glance. But
+
+    such faults are erratic and physical, not a clean, app-wide, reciprocal swap of
+    exactly the symbols that distinguish
+
+    two standard layouts; that pattern only comes from a layout setting.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes letters and numbers work, the behaviour is
+    identical in every application, and the keyboard looks undamaged — narrowing toward
+    software, though the decisive US/UK identification stays in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Swapped keyboard symbols caused by the OS layout switching from UK
+    to US English, coincidentally timed with cleaning the keyboard with a disinfectant
+    wipe.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator equivalence rewrite (HL source-only
+    framing; HH/LH claim-aligned)
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

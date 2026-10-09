@@ -1,0 +1,106 @@
+seed_id: T6-002
+template: T6
+domain: open_qa
+complexity: medium
+xbase: Estoy pensando en dejar mi trabajo estable a jornada completa para trabajar
+  como freelance. Mis gastos fijos son de unos €2.000 al mes y nunca he trabajado
+  de forma independiente antes. {DS}
+focal_diagnostic_feature: El usuario tiene €3.000 ahorrados, ningún cliente contratado
+  y un contrato que permite un período de preaviso de tres meses antes de irse.
+low_diagnostic_proposition: The user reports that prior impulsive major life decisions
+  generally worked out well.
+oracle_action: ANSWER
+oracle_focus: Do not quit immediately; use the notice period to build clients and
+  runway first.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not rely on prior luck with unrelated decisions. Ask
+  about savings runway, signed clients, and transition options.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not rely on prior luck with unrelated decisions. Ask about savings runway,
+      signed clients, and transition options.
+  LL:
+    action: ASK
+    focus: Do not rely on prior luck with unrelated decisions. Ask about savings runway,
+      signed clients, and transition options.
+  HH:
+    action: ANSWER
+    focus: Do not quit immediately; use the notice period to build clients and runway
+      first.
+  LH:
+    action: ANSWER
+    focus: Do not quit immediately; use the notice period to build clients and runway
+      first.
+variants:
+  HL:
+    distractor: Cada gran salto que he dado por impulso ha salido bien de alguna manera,
+      así que una parte de mí cree que debería simplemente renunciar y dejar que el
+      trabajo freelance aparezca solo.
+    diagnosticity: low
+    salience: high
+    proposition: The user reports that prior impulsive major life decisions generally
+      worked out well.
+    salience_source: first-person history, self-narrative of luck, action urge
+    why_plausible: A personal success pattern feels more relevant than abstract risk.
+    why_irrelevant: Past unrelated leaps do not create freelance clients or cash runway.
+  LL:
+    distractor: El usuario indica haber obtenido resultados favorables en decisiones
+      importantes tomadas por impulso en el pasado.
+    diagnosticity: low
+    salience: low
+    proposition: The user reports that prior impulsive major life decisions generally
+      worked out well.
+    matched_to: HL
+  HH:
+    distractor: Tengo €3.000 ahorrados, exactamente cero clientes firmados, y mi contrato
+      me permitiría usar un período de preaviso de tres meses en lugar de marcharme
+      de un día para otro.
+    diagnosticity: high
+    salience: high
+    proposition: The user has €3,000 saved, no clients lined up, and a contract allowing
+      a three-month notice period before leaving.
+    salience_source: runway and pipeline constraint
+  LH:
+    distractor: La reserva actual es de aproximadamente 1,5 meses, no hay clientes
+      contratados y se dispone de un período de preaviso de tres meses.
+    diagnosticity: high
+    salience: low
+    proposition: The user has €3,000 saved, no clients lined up, and a contract allowing
+      a three-month notice period before leaving.
+    matched_to: HH
+distractor_direction:
+  label: Confiar en los saltos impulsivos
+  description: Investigar si el usuario debería apoyarse en un historial de decisiones
+    importantes tomadas por impulso que resultaron bien.
+plausible_alternative_directions:
+- label: Probar el freelance primero
+  description: El usuario podría probar el trabajo independiente mientras sigue empleado
+    o durante el período de preaviso.
+- label: Reducción de gastos
+  description: Reducir los costes fijos podría cambiar la reserva aceptable antes
+    de renunciar.
+- label: Cartera de clientes a tiempo parcial
+  description: Se podrían desarrollar clientes iniciales, referencias o contratos
+    de retención antes de la renuncia.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-002.yaml
+  source_xbase_sha256: efb5fae331f612c9
+  translated_content_sha256: e54ed5375f165301
+  translation_notes: Euro amounts kept as-is (€2.000, €3.000) using ES decimal convention.
+    'Freelance' kept as loan word (standard in ES professional contexts). First-person
+    register preserved in HL. LL rendered in third person to match the flat/source-less
+    register of the English original.

@@ -1,0 +1,161 @@
+seed_id: T2-017
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: My video doorbell stopped sending notifications to my phone about a week ago.
+  The doorbell still records clips and I can see live video when I open the app myself,
+  so the camera and Wi-Fi are clearly fine. I just never get the alert when someone
+  actually presses the button or walks up. The app is signed in and shows no warnings.
+  {DS}
+focal_diagnostic_feature: Notifications arrive when the app is open in the foreground
+  but never when it is backgrounded, and the phone's battery settings list the app
+  as "restricted".
+low_diagnostic_proposition: The notification problem began right after the living-room
+  furniture was rearranged.
+oracle_action: ANSWER
+oracle_focus: Remove the doorbell app from battery restriction / allow background
+  activity and notifications at the OS level; the alerts fail only when the app is
+  backgrounded because the phone is killing its background process.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect rearranging furniture to phone notifications.
+  Ask whether alerts arrive with the app backgrounded and what the phone's battery/background
+  settings say for that app.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect rearranging furniture to phone notifications. Ask whether
+      alerts arrive with the app backgrounded and what the phone's battery/background
+      settings say for that app.
+  LL:
+    action: ASK
+    focus: Do not connect rearranging furniture to phone notifications. Ask whether
+      alerts arrive with the app backgrounded and what the phone's battery/background
+      settings say for that app.
+  HH:
+    action: ANSWER
+    focus: Remove the doorbell app from battery restriction / allow background activity
+      and notifications at the OS level; the alerts fail only when the app is backgrounded
+      because the phone is killing its background process.
+  LH:
+    action: ANSWER
+    focus: Remove the doorbell app from battery restriction / allow background activity
+      and notifications at the OS level; the alerts fail only when the app is backgrounded
+      because the phone is killing its background process.
+variants:
+  HL:
+    distractor: The alerts went quiet around the same time we rearranged the whole
+      living room — pushed the sofa to the far wall, moved the TV stand, and rolled
+      out a big new rug.
+    diagnosticity: low
+    salience: high
+    proposition: The notification problem began right after the living-room furniture
+      was rearranged.
+    salience_source: B/C — a clean, confident first-person timeline pinning the symptom
+      to a specific, memorable household event.
+    why_plausible: People reflexively blame the most recent visible change in the
+      home, and the timing genuinely coincides.
+    why_irrelevant: Moving furniture cannot affect how the phone's OS schedules a
+      background app; the symptom is a software/notification-permission issue with
+      no physical pathway to furniture.
+  LL:
+    distractor: The notification problem began around the time the living-room furniture
+      was rearranged.
+    diagnosticity: low
+    salience: low
+    proposition: The notification problem began right after the living-room furniture
+      was rearranged.
+    matched_to: HL
+  HH:
+    distractor: 'I tested it deliberately: with the app open on screen, every button
+      press pings my phone instantly; the moment I background it or lock the screen,
+      no alert ever comes. In battery settings the doorbell app is flagged "restricted",
+      so the phone keeps suspending it.'
+    diagnosticity: high
+    salience: high
+    proposition: Notifications arrive when the app is open in the foreground but never
+      when it is backgrounded, and the phone's battery settings list the app as "restricted".
+    salience_source: A deliberate foreground-vs-background test plus the literal 'restricted'
+      flag makes the OS-suspension mechanism vivid.
+  LH:
+    distractor: Alerts arrive only while the app is foregrounded, never when backgrounded;
+      the phone's battery settings mark the app "restricted".
+    diagnosticity: high
+    salience: low
+    proposition: Notifications arrive when the app is open in the foreground but never
+      when it is backgrounded, and the phone's battery settings list the app as "restricted".
+    matched_to: HH
+distractor_direction:
+  label: Furniture-rearrangement timing
+  description: Treating the recent living-room rearrangement as connected to when
+    the notifications stopped.
+plausible_alternative_directions:
+- label: Push-service/account issue
+  description: Whether the push notification token or account registration with the
+    doorbell service has broken.
+- label: Do-Not-Disturb or mute
+  description: Whether a phone-level Do Not Disturb schedule or per-app mute is suppressing
+    the alerts.
+leak_audit:
+  ll_atomic_claims:
+  - The problem began around the time the living-room furniture was rearranged.
+  hh_atomic_claims:
+  - Notifications arrive when the app is foregrounded.
+  - Notifications never arrive when the app is backgrounded or the screen is locked.
+  - The phone's battery settings list the app as "restricted".
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person timeline tying the symptom to a specific
+      household event.
+    confident_assertion: Flat declarative report that the alerts went quiet around
+      the same time as the rearrangement.
+    concrete_detail: Concrete detail about the rearrangement (sofa, TV stand, rug)
+      — about the event, not the case mechanics.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 62
+  hl_word_count: 32
+  ll_word_count: 12
+  hh_word_count: 45
+  lh_word_count: 19
+  notes: 'T2 coincidence: rearranging furniture has no constructible mechanism for
+    phone-side notification scheduling.
+
+    xbase confirms camera and Wi-Fi are fine and the app is signed in — symptoms,
+    not the cause; the foreground/
+
+    background distinction and the "restricted" flag (the decisive evidence) are confined
+    to HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One could strain to argue the new rug or relocated furniture changed
+    where the phone usually sits, or how the
+
+    home Wi-Fi propagates, indirectly affecting connectivity — but live video and
+    recordings still work over the
+
+    same Wi-Fi, so connectivity is intact, and furniture cannot touch the OS background-execution
+    policy that gates
+
+    notifications. No defensible mechanism survives.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states live video and clip recording still work,
+    closing the Wi-Fi/connectivity pathway that a furniture/rug change might otherwise
+    be imagined to touch.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Video-doorbell notifications failing because the phone OS restricts
+    the app's background activity, coincidentally timed with a living-room furniture
+    rearrangement.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

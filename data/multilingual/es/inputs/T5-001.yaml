@@ -1,0 +1,106 @@
+seed_id: T5-001
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Una consulta Postgres que une tres tablas tarda unos 4 segundos en devolver
+  apenas unos cientos de filas. La tabla más grande tiene alrededor de 12 millones
+  de filas y existe un índice en la columna de unión. {DS}
+focal_diagnostic_feature: EXPLAIN ANALYZE muestra un escaneo secuencial en la tabla
+  de 12 millones de filas y sus estadísticas fueron analizadas por última vez hace
+  seis meses.
+low_diagnostic_proposition: The database administration interface has an old visual
+  theme that makes some output hard to read.
+oracle_action: ANSWER
+oracle_focus: Run ANALYZE/update statistics and recheck the plan; stale stats are
+  likely causing the planner to skip the index.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer query-planner behaviour from UI appearance.
+  Ask for EXPLAIN ANALYZE and table statistics age.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer query-planner behaviour from UI appearance. Ask for EXPLAIN
+      ANALYZE and table statistics age.
+  LL:
+    action: ASK
+    focus: Do not infer query-planner behaviour from UI appearance. Ask for EXPLAIN
+      ANALYZE and table statistics age.
+  HH:
+    action: ANSWER
+    focus: Run ANALYZE/update statistics and recheck the plan; stale stats are likely
+      causing the planner to skip the index.
+  LH:
+    action: ANSWER
+    focus: Run ANALYZE/update statistics and recheck the plan; stale stats are likely
+      causing the planner to skip the index.
+variants:
+  HL:
+    distractor: 'pgAdmin se ve fatal en nuestra configuración: paneles grises desteñidos,
+      fuentes diminutas y una combinación de colores que hace que la salida del plan
+      parezca medio rota.'
+    diagnosticity: low
+    salience: high
+    proposition: The database administration interface has an old visual theme that
+      makes some output hard to read.
+    salience_source: ugly interface, degraded readability, surface-level defect
+    why_plausible: A broken-looking tool can make the tool itself seem suspect.
+    why_irrelevant: Interface styling does not affect the query planner's scan choice
+      or table statistics.
+  LL:
+    distractor: La interfaz de administración de base de datos usa un tema visual
+      anticuado que algunos usuarios encuentran difícil de leer.
+    diagnosticity: low
+    salience: low
+    proposition: The database administration interface has an old visual theme that
+      makes some output hard to read.
+    matched_to: HL
+  HH:
+    distractor: El plan realiza un escaneo secuencial completo sobre 12 millones de
+      filas aunque existe el índice de unión, y las estadísticas de la tabla llevan
+      seis meses sin actualizarse.
+    diagnosticity: high
+    salience: high
+    proposition: EXPLAIN ANALYZE shows a sequential scan on the 12M-row table, and
+      its statistics were last analysed six months ago.
+    salience_source: execution plan plus stale statistics
+  LH:
+    distractor: EXPLAIN ANALYZE selecciona un escaneo secuencial en la tabla de 12
+      millones de filas a pesar de existir un índice; las estadísticas de la tabla
+      tienen seis meses de antigüedad.
+    diagnosticity: high
+    salience: low
+    proposition: EXPLAIN ANALYZE shows a sequential scan on the 12M-row table, and
+      its statistics were last analysed six months ago.
+    matched_to: HH
+distractor_direction:
+  label: Legibilidad de la interfaz de administración
+  description: Investigar si la interfaz de usuario de la base de datos o la legibilidad
+    de los planes mostrados está confundiendo el diagnóstico.
+plausible_alternative_directions:
+- label: Índice compuesto faltante
+  description: La consulta puede carecer de un índice que cubra el patrón real de
+    unión o filtrado.
+- label: Problema en el orden de unión
+  description: El planificador puede estar eligiendo un orden de unión deficiente
+    debido a la distribución de los datos.
+- label: Contención de bloqueos
+  description: La consulta puede estar esperando detrás de bloqueos en lugar de invertir
+    tiempo en el escaneo de datos.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-001.yaml
+  source_xbase_sha256: 8d6cbe6f4d4230fb
+  translated_content_sha256: 3841aef61b9427f2
+  translation_notes: ''

@@ -1,0 +1,98 @@
+seed_id: T5-003
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: Мой тостер перестал подрумянивать хлеб. Ломтики выходят тёплыми, но бледными,
+  независимо от положения регулятора. Такое поведение наблюдается уже два дня. {DS}
+focal_diagnostic_feature: Во время работы тостера светится только один из четырёх
+  нагревательных элементов.
+low_diagnostic_proposition: The toaster casing is yellowed and visually worn.
+oracle_action: ANSWER
+oracle_focus: Replace the toaster; most heating elements are not working and repair
+  is unlikely to be worth it.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not diagnose from casing colour. Ask whether the heating
+  elements actually glow.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not diagnose from casing colour. Ask whether the heating elements actually
+      glow.
+  LL:
+    action: ASK
+    focus: Do not diagnose from casing colour. Ask whether the heating elements actually
+      glow.
+  HH:
+    action: ANSWER
+    focus: Replace the toaster; most heating elements are not working and repair is
+      unlikely to be worth it.
+  LH:
+    action: ANSWER
+    focus: Replace the toaster; most heating elements are not working and repair is
+      unlikely to be worth it.
+variants:
+  HL:
+    distractor: Внешний пластик покрылся пятнистой желтизной, и рядом с моим новым
+      чайником тостер выглядит настолько потрёпанным, что ему самое место на распродаже
+      из гаража.
+    diagnosticity: low
+    salience: high
+    proposition: The toaster casing is yellowed and visually worn.
+    salience_source: visible age/cosmetic wear
+    why_plausible: Old-looking appliances are easy to read as functionally worn out.
+    why_irrelevant: Exterior discolouration is cosmetic; the active heating elements
+      are the functional evidence.
+  LL:
+    distractor: Пластиковый корпус тостера имеет связанное с возрастом обесцвечивание.
+    diagnosticity: low
+    salience: low
+    proposition: The toaster casing is yellowed and visually worn.
+    matched_to: HL
+  HH:
+    distractor: Когда тостер работает, светится только одна из четырёх нитей нагревательного
+      элемента; остальные три остаются полностью тёмными.
+    diagnosticity: high
+    salience: high
+    proposition: Only one of the four heating elements glows when the toaster is running.
+    salience_source: direct observation of heating elements
+  LH:
+    distractor: Во время работы светится только один из четырёх нагревательных элементов.
+    diagnosticity: high
+    salience: low
+    proposition: Only one of the four heating elements glows when the toaster is running.
+    matched_to: HH
+distractor_direction:
+  label: Косметический износ от времени
+  description: Изучение того, объясняет ли внешнее старение, обесцвечивание или косметический
+    износ плохую работу тостера.
+plausible_alternative_directions:
+- label: Неисправность термостата или регулятора
+  description: Регулятор подрумянивания или термостат может давать сбой, пока нагревательные
+    элементы ещё слабо греют.
+- label: Засорение крошками
+  description: Накопившиеся крошки или мусор могут мешать равномерному распределению
+    тепла.
+- label: Проблема с питанием
+  description: Розетка, вилка или внутреннее соединение питания может не обеспечивать
+    нормальное напряжение.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-003.yaml
+  source_xbase_sha256: 81070c83f40577c8
+  translated_content_sha256: a14e6c8acaada18e
+  translation_notes: Выражение «распродажа из гаража» (garage sale) в HL адаптировано
+    буквально — понятие известно в России через интернет-культуру, хотя менее распространено
+    бытово. Salience cue сохранён структурно. При необходимости локализации можно
+    заменить на «барахолку», но буквальный перевод не разрушает образность.

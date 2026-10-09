@@ -1,0 +1,88 @@
+seed_id: T5-005
+template: T5
+domain: technical_troubleshooting
+complexity: high
+xbase: Our mobile app's API client sometimes gets truncated JSON and then throws a
+  parse error. It happens rarely, about one request in a couple hundred. The API is
+  behind an nginx reverse proxy. {DS}
+focal_diagnostic_feature: Truncation occurs near 16,300 bytes, matching nginx's 16k
+  proxy_buffer_size configuration.
+low_diagnostic_proposition: The internal API documentation site looks old and visually
+  neglected.
+oracle_action: ANSWER
+oracle_focus: Increase/tune nginx proxy buffers for this endpoint or adjust buffering;
+  the byte boundary points at proxy buffer limits.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer runtime buffering from docs aesthetics.
+  Ask for truncation byte position and nginx buffer settings.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer runtime buffering from docs aesthetics. Ask for truncation
+      byte position and nginx buffer settings.
+  LL:
+    action: ASK
+    focus: Do not infer runtime buffering from docs aesthetics. Ask for truncation
+      byte position and nginx buffer settings.
+  HH:
+    action: ANSWER
+    focus: Increase/tune nginx proxy buffers for this endpoint or adjust buffering;
+      the byte boundary points at proxy buffer limits.
+  LH:
+    action: ANSWER
+    focus: Increase/tune nginx proxy buffers for this endpoint or adjust buffering;
+      the byte boundary points at proxy buffer limits.
+variants:
+  HL:
+    distractor: 'Our internal docs site looks like 2012: tiny serif headings, bright
+      blue links, and layout boxes that do not line up.'
+    diagnosticity: low
+    salience: high
+    proposition: The internal API documentation site looks old and visually neglected.
+    salience_source: dated typography, visual neglect of adjacent documentation
+    why_plausible: A neglected-looking docs site can imply sloppy API maintenance.
+    why_irrelevant: Documentation styling has no causal link to response truncation;
+      the byte boundary and proxy setting do.
+  LL:
+    distractor: The API documentation site uses an old visual style.
+    diagnosticity: low
+    salience: low
+    proposition: The internal API documentation site looks old and visually neglected.
+    matched_to: HL
+  HH:
+    distractor: The cut-off lands around 16,300 bytes again and again, while nginx
+      is set to a 16k proxy buffer; the numbers line up almost exactly.
+    diagnosticity: high
+    salience: high
+    proposition: Truncation occurs near 16,300 bytes, matching nginx's 16k proxy_buffer_size
+      configuration.
+    salience_source: numeric boundary match
+  LH:
+    distractor: The truncation boundary is near 16,300 bytes, corresponding to the
+      configured 16k nginx proxy buffer size.
+    diagnosticity: high
+    salience: low
+    proposition: Truncation occurs near 16,300 bytes, matching nginx's 16k proxy_buffer_size
+      configuration.
+    matched_to: HH
+distractor_direction:
+  label: Documentation-site neglect
+  description: Investigating whether poor or outdated API documentation is related
+    to the truncated JSON/parse errors.
+plausible_alternative_directions:
+- label: Backend serialization bug
+  description: The API server may sometimes serialize or flush invalid JSON before
+    the proxy sees it.
+- label: Mobile client parser bug
+  description: The mobile client may mishandle valid but large JSON payloads.
+- label: Network packet loss
+  description: Intermittent network loss may truncate responses before they reach
+    the mobile app.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

@@ -1,0 +1,179 @@
+seed_id: T5-046
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I need a portable power bank for travel, mainly to top up a phone and occasionally
+  charge a small laptop. I have narrowed it down to two options at the same price.
+  Option A has a polished matte aluminium enclosure and clean branding. Option B is
+  a plain black plastic case with no visual appeal. Both claim 20,000 mAh capacity.
+  {DS}
+focal_diagnostic_feature: Option B outputs 65W USB-C against Option A's 18W maximum,
+  and independent capacity tests confirm Option B at the full 20,000 mAh while Option
+  A measures only 13,000 mAh actual output.
+low_diagnostic_proposition: Option A's premium finish suggests its internal charging
+  circuitry is also better quality.
+oracle_action: ANSWER
+oracle_focus: Choose Option B; its 65W output covers the laptop use case and its tested
+  capacity of 20,000 mAh versus Option A's actual 13,000 mAh makes it substantially
+  more capable at the same price.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not treat enclosure finish as a proxy for charging
+  quality. Ask for USB-C PD wattage, independently tested capacity, and warranty terms
+  before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not treat enclosure finish as a proxy for charging quality. Ask for
+      USB-C PD wattage, independently tested capacity, and warranty terms before deciding.
+  LL:
+    action: ASK
+    focus: Do not treat enclosure finish as a proxy for charging quality. Ask for
+      USB-C PD wattage, independently tested capacity, and warranty terms before deciding.
+  HH:
+    action: ANSWER
+    focus: Choose Option B; its 65W output covers the laptop use case and its tested
+      capacity of 20,000 mAh versus Option A's actual 13,000 mAh makes it substantially
+      more capable at the same price.
+  LH:
+    action: ANSWER
+    focus: Choose Option B; its 65W output covers the laptop use case and its tested
+      capacity of 20,000 mAh versus Option A's actual 13,000 mAh makes it substantially
+      more capable at the same price.
+variants:
+  HL:
+    distractor: Option A's matte aluminium shell looks properly engineered — the kind
+      of finish that only appears on hardware where the internals received the same
+      attention — which usually means better quality control on the charging circuitry
+      too.
+    diagnosticity: low
+    salience: high
+    proposition: Option A's premium finish suggests its internal charging circuitry
+      is also better quality.
+    salience_source: B/C — specific material description (matte aluminium); confident
+      bridge claim ('only appears on hardware where internals received same attention';
+      'usually means').
+    why_plausible: Premium industrial design in consumer electronics often correlates
+      with overall product investment; a reader who associates aluminium casing with
+      quality devices could accept the finish as a credible quality signal.
+    why_irrelevant: Enclosure material is a cosmetic manufacturing choice independent
+      of the power circuitry and cell quality; measured output and real capacity directly
+      contradict the surface inference in this case.
+  LL:
+    distractor: Option A has a premium finish, which suggests its internal charging
+      circuitry is also better quality.
+    diagnosticity: low
+    salience: low
+    proposition: Option A's premium finish suggests its internal charging circuitry
+      is also better quality.
+    matched_to: HL
+  HH:
+    distractor: Independently tested, Option B's USB-C port outputs 65W against Option
+      A's 18W maximum, and capacity testing confirms Option B delivers the full 20,000
+      mAh while Option A measured only 13,000 mAh real output.
+    diagnosticity: high
+    salience: high
+    proposition: Option B outputs 65W USB-C against Option A's 18W maximum, and independent
+      capacity tests confirm Option B at the full 20,000 mAh while Option A measures
+      only 13,000 mAh actual output.
+    salience_source: B/C — precise wattage figures (65W vs 18W); independently tested
+      capacity numbers (20,000 vs 13,000 mAh); 'independently tested' as credibility
+      anchor.
+  LH:
+    distractor: Option B outputs 65W USB-C against Option A's 18W; tested capacity
+      is 20,000 mAh for Option B and 13,000 mAh for Option A.
+    diagnosticity: high
+    salience: low
+    proposition: Option B outputs 65W USB-C against Option A's 18W maximum, and independent
+      capacity tests confirm Option B at the full 20,000 mAh while Option A measures
+      only 13,000 mAh actual output.
+    matched_to: HH
+distractor_direction:
+  label: premium enclosure as quality proxy
+  description: Treating Option A's matte aluminium enclosure and clean branding as
+    evidence that its internal charging electronics are more reliable or capable than
+    Option B's.
+plausible_alternative_directions:
+- label: charging compatibility
+  description: Checking whether each option's USB-C PD profile is compatible with
+    the specific laptop model, since some laptops require particular power delivery
+    contracts.
+- label: airline carry-on compliance
+  description: Verifying that the 20,000 mAh nominal capacity of either option complies
+    with airline lithium-battery carry-on limits for the user's typical routes.
+- label: port configuration
+  description: Comparing the number and type of simultaneous output ports to support
+    charging multiple devices at once during travel.
+leak_audit:
+  ll_atomic_claims:
+  - Option A has a premium finish.
+  - This suggests its internal charging circuitry is also better quality.
+  hh_atomic_claims:
+  - Option B's USB-C port was independently tested.
+  - Option B outputs 65W.
+  - Option A's maximum output is 18W.
+  - Capacity testing confirms Option B delivers the full 20,000 mAh.
+  - Option A measured only 13,000 mAh in actual capacity testing.
+  hl_salience_dimensions:
+    source_credibility: N/A — no named source; aesthetic impression is the salience
+      vehicle
+    narrative_coherence: Specific material call-out (matte aluminium) followed by
+      a general design-quality correlation claim; confident conditional phrasing gives
+      the inference internal coherence.
+    confident_assertion: '''only appears on hardware where internals received same
+      attention''; ''usually means'' — confident causal bridge.'
+    concrete_detail: Detail is about the enclosure aesthetics (matte aluminium, clean
+      branding), not case-specific charging performance data — C6 compliant.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 35
+  ll_word_count: 16
+  hh_word_count: 33
+  lh_word_count: 23
+  notes: 'T5 bridge ("premium finish → better quality circuitry") appears in both
+    HL and LL per C1.
+
+    xbase states "Both claim 20,000 mAh" without revealing which claim is inflated
+    — the focal
+
+    feature resolves this. HL:LL 2.2:1; HH:LH 1.4:1. The "independently tested" framing
+    in
+
+    HH anchors salience without adding case-specific facts to HL (C6 compliant).
+
+    '
+causal_audit:
+  steelman: 'Premium consumer electronics brands that invest in aluminium enclosures
+    often indicate
+
+    higher manufacturing standards overall. A product that cuts costs on enclosure
+    materials
+
+    may also cut corners on internal components — cell quality, BMS precision, output
+    regulation.
+
+    Matte aluminium as a material choice represents a design investment that correlates,
+    in
+
+    many product categories, with above-average internal component quality.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the focal evidence (65W vs 18W, 20,000 mAh vs 13,000
+    mAh actual) directly contradicts the premium-finish inference. xbase does not
+    reveal which option has superior electrical specs.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing between two same-price power banks where Option A's premium
+    matte aluminium finish is offered as evidence of superior charging quality, but
+    Option B has 65W output versus 18W and delivers 20,000 mAh actual capacity versus
+    Option A's 13,000 mAh tested.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

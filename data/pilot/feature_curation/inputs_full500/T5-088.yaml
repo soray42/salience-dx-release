@@ -1,0 +1,174 @@
+seed_id: T5-088
+template: T5
+domain: open_qa
+complexity: high
+xbase: I am choosing between two used motorcycles in the same price range. Bike A
+  is a 2018 model with 34,000 km that looks dull and has a slightly faded tank. Bike
+  B is a 2020 model with 18,000 km that has a recent respray and looks almost new.
+  Both sellers claim regular servicing. I can get a pre-purchase inspection done on
+  the one I choose. {DS}
+focal_diagnostic_feature: Bike A has a complete stamped service book with dealer records
+  every 6,000 km and a compression test yielding 165/167 psi on both cylinders; Bike
+  B has no service records and a compression test showing 148/112 psi, indicating
+  significant cylinder asymmetry.
+low_diagnostic_proposition: Bike B's near-new appearance and recent respray suggest
+  it has been better looked after than the visually duller Bike A.
+oracle_action: ANSWER
+oracle_focus: Choose Bike A; the compression asymmetry and absent service history
+  on Bike B represent serious mechanical and provenance risk that the cosmetic respray
+  does not address.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not use cosmetic condition as a proxy for mechanical
+  health. Ask for service records, compression test results, and inspection findings
+  for both bikes before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not use cosmetic condition as a proxy for mechanical health. Ask for
+      service records, compression test results, and inspection findings for both
+      bikes before deciding.
+  LL:
+    action: ASK
+    focus: Do not use cosmetic condition as a proxy for mechanical health. Ask for
+      service records, compression test results, and inspection findings for both
+      bikes before deciding.
+  HH:
+    action: ANSWER
+    focus: Choose Bike A; the compression asymmetry and absent service history on
+      Bike B represent serious mechanical and provenance risk that the cosmetic respray
+      does not address.
+  LH:
+    action: ANSWER
+    focus: Choose Bike A; the compression asymmetry and absent service history on
+      Bike B represent serious mechanical and provenance risk that the cosmetic respray
+      does not address.
+variants:
+  HL:
+    distractor: When I stood next to them, Bike B looked genuinely cared-for — fresh
+      paint, clean chrome, tidy wiring — while Bike A had that flat, sun-bleached
+      look of a bike that sat outside for years. The appearance difference made me
+      think Bike B's owner treated it much better.
+    diagnosticity: low
+    salience: high
+    proposition: Bike B's near-new appearance and recent respray suggest it has been
+      better looked after than the visually duller Bike A.
+    salience_source: B/C — vivid first-person sensory comparison (fresh paint, clean
+      chrome, tidy wiring vs flat sun-bleached look) with a confident inference drawn
+      from the appearance difference.
+    why_plausible: A buyer with limited mechanical inspection experience would naturally
+      correlate visible care with actual maintenance quality, and a sun-bleached finish
+      does often correlate with outdoor storage neglect.
+    why_irrelevant: Cosmetic freshness has no diagnostic value for mechanical condition;
+      Bike B's respray actively conceals the surface evidence while the focal feature
+      reveals that Bike B has worse compression and no service records — appearance
+      directly contradicts the mechanical reality.
+  LL:
+    distractor: Bike B's near-new appearance and recent respray suggest its owner
+      maintained it better than the visually duller Bike A.
+    diagnosticity: low
+    salience: low
+    proposition: Bike B's near-new appearance and recent respray suggest it has been
+      better looked after than the visually duller Bike A.
+    matched_to: HL
+  HH:
+    distractor: Bike A has a full dealer-stamped service book with entries every 6,000
+      km and both cylinders tested at 165 and 167 psi. Bike B has no service records
+      at all, and compression came back at 148 and 112 psi — a 36 psi gap between
+      cylinders that points to uneven internal wear.
+    diagnosticity: high
+    salience: high
+    proposition: Bike A has a complete stamped service book with dealer records every
+      6,000 km and a compression test yielding 165/167 psi on both cylinders; Bike
+      B has no service records and a compression test showing 148/112 psi, indicating
+      significant cylinder asymmetry.
+    salience_source: B/C — specific documentation evidence (dealer-stamped book, 6,000
+      km intervals), precise compression numbers for both bikes, and a quantified
+      gap (36 psi) make the contrast vivid and directly actionable.
+  LH:
+    distractor: Bike A has full dealer service records and compression of 165/167
+      psi; Bike B has no service records and shows 148/112 psi compression.
+    diagnosticity: high
+    salience: low
+    proposition: Bike A has a complete stamped service book with dealer records every
+      6,000 km and a compression test yielding 165/167 psi on both cylinders; Bike
+      B has no service records and a compression test showing 148/112 psi, indicating
+      significant cylinder asymmetry.
+    matched_to: HH
+distractor_direction:
+  label: Cosmetic condition as maintenance proxy
+  description: Using Bike B's near-new visual appearance and recent respray as evidence
+    that it has been better maintained and is therefore the safer choice.
+plausible_alternative_directions:
+- label: Age and model-year reliability
+  description: Assessing whether the two-year newer model year on Bike B represents
+    meaningful reliability improvements that outweigh the mechanical findings.
+- label: Lower mileage advantage
+  description: Considering whether Bike B's lower odometer reading (18,000 vs 34,000
+    km) is sufficiently favourable to offset the compression and records concerns.
+- label: Respray concealment risk
+  description: Investigating whether the respray specifically indicates prior damage,
+    corrosion repair, or an accident that the seller has not disclosed.
+leak_audit:
+  ll_atomic_claims:
+  - Bike B has a near-new appearance and a recent respray.
+  - This appearance suggests Bike B's owner maintained it better than the owner of
+    Bike A.
+  hh_atomic_claims:
+  - Bike A has a full dealer-stamped service book with entries every 6,000 km.
+  - Both cylinders on Bike A tested at 165 and 167 psi.
+  - Bike B has no service records.
+  - Bike B compression tested at 148 and 112 psi.
+  - The 36 psi gap between cylinders points to uneven internal wear.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person narrator with no named expert.
+    narrative_coherence: 'Vivid side-by-side comparison scene: standing next to both
+      bikes, specific visual elements listed, coherent inference stated.'
+    confident_assertion: '''made me think Bike B''s owner treated it much better''
+      — direct causal inference from appearance.'
+    concrete_detail: Concrete detail is visual surface attributes (fresh paint, clean
+      chrome, tidy wiring, sun-bleached look) — about the bikes' appearance, not their
+      mechanical state.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 82
+  hl_word_count: 48
+  ll_word_count: 18
+  hh_word_count: 48
+  lh_word_count: 21
+  notes: 'T5 bridge: ''suggest it has been better looked after'' (appearance → maintenance
+    quality inference) appears in both HL and LL, satisfying C1/self-check 13. The
+    cosmetic respray is listed in xbase as a surface fact; the compression results
+    and service records live entirely in HH/LH. C4 check: xbase alone gives both year
+    and mileage but not service records or compression — cannot compute the answer
+    without HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A practical used-vehicle buyer would argue: cosmetic care does correlate
+    with owner conscientiousness in many cases, and a bike that has clearly been cleaned,
+    protected from UV, and kept in good visual shape is more likely to have had its
+    fluids changed and consumables replaced. A sun-bleached finish suggests outdoor
+    storage, which can stress seals and rubber components. This is a real heuristic.
+    However, the focal feature directly falsifies the inference for this specific
+    pair: Bike B''s compression asymmetry (148/112 psi) and absent service records
+    are objective mechanical and provenance findings that the respray cannot address.
+    The heuristic is plausible in general but wrong in this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not foreclose the cosmetic-care heuristic;
+    the focal compression and service-record findings in HH/LH do the ruling out.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: 'Choosing between two used motorcycles: Bike B looks newer with a fresh
+    respray, but compression testing and service records show Bike A is mechanically
+    superior.'
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,206 @@
+seed_id: T3-034
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our Android app has had significant battery drain complaints from users since
+  last week's update. The app pulls REST API data roughly every 30 minutes when backgrounded,
+  and backend request logs confirm the polling job is firing at its scheduled interval
+  with no additional wakeup events. An affected user sent a battery stats screenshot,
+  and I can see their device's system-level Battery section. {DS}
+focal_diagnostic_feature: The battery stats screenshot shows the app consuming 61%
+  of total background battery use, attributed entirely to location services, with
+  the affected user having granted Always-on high-accuracy GPS — a permission introduced
+  in last week's release.
+low_diagnostic_proposition: A senior Android engineer attributed the battery drain
+  to background data sync caused by the app's frequent polling interval.
+oracle_action: ANSWER
+oracle_focus: Treat the drain as caused by Always-on high-accuracy GPS location polling;
+  switch to a coarser location mode or When-In-Use permission and re-evaluate whether
+  continuous location access is required for the app's functionality.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the background sync explanation from authority
+  alone; ask for per-feature battery attribution data — specifically which subsystem
+  is listed under the app's battery consumption — before diagnosing the polling interval.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the background sync explanation from authority alone; ask
+      for per-feature battery attribution data — specifically which subsystem is listed
+      under the app's battery consumption — before diagnosing the polling interval.
+  LL:
+    action: ASK
+    focus: Do not adopt the background sync explanation from authority alone; ask
+      for per-feature battery attribution data — specifically which subsystem is listed
+      under the app's battery consumption — before diagnosing the polling interval.
+  HH:
+    action: ANSWER
+    focus: Treat the drain as caused by Always-on high-accuracy GPS location polling;
+      switch to a coarser location mode or When-In-Use permission and re-evaluate
+      whether continuous location access is required for the app's functionality.
+  LH:
+    action: ANSWER
+    focus: Treat the drain as caused by Always-on high-accuracy GPS location polling;
+      switch to a coarser location mode or When-In-Use permission and re-evaluate
+      whether continuous location access is required for the app's functionality.
+variants:
+  HL:
+    distractor: Seun, our senior Android engineer, looked at the symptom description
+      and said confidently that this is a classic background sync problem — he has
+      seen it in every app that polls on a tight schedule.
+    diagnosticity: low
+    salience: high
+    proposition: A senior Android engineer attributed the battery drain to background
+      data sync caused by the app's frequent polling interval.
+    salience_source: A/C — source credibility (named senior engineer on the same team)
+      plus confident assertion ('said confidently', 'classic', pattern-matching claim
+      of broad experience).
+    why_plausible: Background sync every 30 minutes is a well-known Android battery
+      drain pattern, and a senior engineer citing repeated experience with it is a
+      credible authority signal; a busy developer would reasonably investigate sync
+      first.
+    why_irrelevant: Backend request logs in xbase already confirm normal polling cadence
+      with no extra wakeup events, ruling out the sync pathway before the focal screenshot
+      is considered; Seun's pattern-match does not engage that logged evidence.
+  LL:
+    distractor: A senior Android engineer stated this is a background sync problem,
+      citing frequent polling.
+    diagnosticity: low
+    salience: low
+    proposition: A senior Android engineer attributed the battery drain to background
+      data sync caused by the app's frequent polling interval.
+    matched_to: HL
+  HH:
+    distractor: The battery stats screenshot shows our app at 61% of total background
+      battery consumption, with all of it attributed to location services — the user
+      has granted Always-on high-accuracy GPS, which was added to this release's permission
+      manifest.
+    diagnosticity: high
+    salience: high
+    proposition: The battery stats screenshot shows the app consuming 61% of total
+      background battery use, attributed entirely to location services, with the affected
+      user having granted Always-on high-accuracy GPS — a permission introduced in
+      last week's release.
+    salience_source: B/C — precise percentage (61%), named subsystem (location services),
+      and the causal link to the new permission are stated with technical specificity
+      in a clean declarative sequence.
+  LH:
+    distractor: Battery stats show the app at 61% of background battery, attributed
+      to location services; the user granted Always-on GPS added in this release.
+    diagnosticity: high
+    salience: low
+    proposition: The battery stats screenshot shows the app consuming 61% of total
+      background battery use, attributed entirely to location services, with the affected
+      user having granted Always-on high-accuracy GPS — a permission introduced in
+      last week's release.
+    matched_to: HH
+distractor_direction:
+  label: background data sync drain
+  description: Attributing the battery drain to the app's 30-minute REST API polling
+    interval creating excessive background wakeups and network activity.
+plausible_alternative_directions:
+- label: WorkManager or AlarmManager misfire
+  description: Investigating whether a background job scheduler introduced in the
+    update is firing more frequently than intended, compounding the battery load.
+- label: wake lock not released
+  description: Checking whether a new code path in the update acquires a wake lock
+    during background operations and fails to release it promptly.
+- label: push notification listener loop
+  description: Assessing whether the app's FCM listener is triggering excessive processing
+    cycles in response to delivery receipts or silent push payloads.
+leak_audit:
+  ll_atomic_claims:
+  - A senior Android engineer attributed the drain to background data sync.
+  - The attribution cites the app's frequent polling interval as the cause.
+  hh_atomic_claims:
+  - The app accounts for 61% of total background battery consumption.
+  - The battery usage is attributed entirely to location services, not network activity.
+  - The affected user granted Always-on high-accuracy GPS permission.
+  - The Always-on GPS permission was introduced in last week's release.
+  hl_salience_dimensions:
+    source_credibility: Named senior engineer (Seun) on the same team, directly consulted.
+    narrative_coherence: 'Clean sequence: Seun examined the symptom description, made
+      a confident diagnosis, grounded it in repeated prior experience.'
+    confident_assertion: Said confidently; classic background sync problem; seen in
+      every app that polls on a tight schedule.
+    concrete_detail: N/A — no setting or physical detail added about source; experience
+      claim ('every app that polls') is generic, not case-specific.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 34
+  ll_word_count: 14
+  hh_word_count: 37
+  lh_word_count: 23
+  notes: 'QC repair: added a narrow pathway-closure sentence to xbase — "backend request
+    logs
+
+    confirm the polling job is firing at its scheduled interval with no additional
+    wakeup
+
+    events" — which neutrally rules out the sync/wakeup mechanism (C4-allowed closure)
+
+    without naming the real cause. This closes the defensible causal pathway the steelman
+
+    identified (radio wakeups, network I/O, CPU scheduling from 30-minute polling)
+    so that
+
+    steelman_verdict = no_defensible_mechanism is now warranted. The focal evidence
+
+    (61% location services attribution) remains exclusively in HH/LH. xbase word count
+
+    updated from 44 to 63; all other cell counts unchanged. why_irrelevant updated
+    to
+
+    reflect the xbase closure.
+
+    '
+causal_audit:
+  steelman: 'The app polls a REST API every 30 minutes while backgrounded, which is
+    a well-documented
+
+    Android battery drain pattern: each wakeup triggers radio activity, processor
+    scheduling,
+
+    and network I/O. A senior engineer who has seen multiple such regressions after
+    polling
+
+    interval changes would reasonably rank background sync high on any checklist for
+
+    post-update battery complaints. The 30-minute interval is relatively aggressive
+    for
+
+    an always-on background service, and network wakeups can dwarf the nominal CPU
+    cost
+
+    in some radio environments. However, xbase now directly forecloses this pathway:
+
+    backend request logs confirm the polling job fires at its scheduled interval with
+    no
+
+    additional wakeup events, removing the mechanism (radio wakeups, extra scheduling
+
+    overhead) by which sync polling would produce anomalous drain. No constructible
+
+    mechanism for the observed symptom survives.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Backend request logs confirm the polling job is firing
+    at its scheduled 30-minute interval with no additional wakeup events — this neutrally
+    rules out sync-driven radio wakeups and network I/O as the drain mechanism without
+    naming the actual cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Android app battery drain after an update is caused by Always-on high-accuracy
+    GPS permission introduced in the release, not the background REST API polling
+    interval a senior engineer confidently asserts.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

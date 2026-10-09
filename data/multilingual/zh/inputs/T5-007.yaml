@@ -1,0 +1,92 @@
+seed_id: T5-007
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: 我们的 GitHub Actions 工作流每次运行大约需要 22 分钟。该仓库使用 npm，并有一个已提交的 package-lock.json，该文件只是偶尔变动。{DS}
+focal_diagnostic_feature: 22 分钟中有 18 分钟花费在从头运行 npm install 上，且工作流没有依赖缓存。
+low_diagnostic_proposition: The visual presentation of GitHub Actions logs is unpleasant
+  to read.
+oracle_action: ANSWER
+oracle_focus: Add dependency caching keyed on the lockfile, using setup-node cache
+  or actions/cache.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not mistake ugly logs for slow execution causes. Ask
+  for per-step timings and workflow cache configuration.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not mistake ugly logs for slow execution causes. Ask for per-step timings
+      and workflow cache configuration.
+  LL:
+    action: ASK
+    focus: Do not mistake ugly logs for slow execution causes. Ask for per-step timings
+      and workflow cache configuration.
+  HH:
+    action: ANSWER
+    focus: Add dependency caching keyed on the lockfile, using setup-node cache or
+      actions/cache.
+  LH:
+    action: ANSWER
+    focus: Add dependency caching keyed on the lockfile, using setup-node cache or
+      actions/cache.
+variants:
+  HL:
+    distractor: 日志以一种密密麻麻的字体和刺眼的颜色渲染；运行十分钟后，整个屏幕看起来就像一堆乱码的终端碎片。
+    diagnosticity: low
+    salience: high
+    proposition: The visual presentation of GitHub Actions logs is unpleasant to read.
+    salience_source: visual discomfort, terminal/log aesthetic
+    why_plausible: Bad-looking tooling can feel like malfunctioning tooling.
+    why_irrelevant: Log typography does not explain step duration; per-step timing
+      and missing cache do.
+  LL:
+    distractor: GitHub Actions 的日志有一种团队觉得很难阅读的视觉呈现方式。
+    diagnosticity: low
+    salience: low
+    proposition: The visual presentation of GitHub Actions logs is unpleasant to read.
+    matched_to: HL
+  HH:
+    distractor: 22 分钟里有 18 分钟全是 `npm install` 每次从头冷装，而且整个 YAML 文件里根本没有缓存步骤。
+    diagnosticity: high
+    salience: high
+    proposition: Eighteen of the 22 minutes are spent running npm install from scratch,
+      and the workflow has no dependency cache.
+    salience_source: per-step duration and missing cache
+  LH:
+    distractor: 安装步骤占用了 22 分钟中的 18 分钟，而工作流没有配置依赖缓存。
+    diagnosticity: high
+    salience: low
+    proposition: Eighteen of the 22 minutes are spent running npm install from scratch,
+      and the workflow has no dependency cache.
+    matched_to: HH
+distractor_direction:
+  label: 日志可读性
+  description: 调查难以阅读的 CI 日志或界面呈现方式是否能解释工作流运行时间过长的原因。
+plausible_alternative_directions:
+- label: 测试套件运行缓慢
+  description: 工作流可能将大部分时间花费在测试上，而非依赖安装。
+- label: Registry 延迟
+  description: npm registry 或网络访问在安装过程中可能较慢。
+- label: Runner 资源限制
+  description: GitHub Actions 的 runner 可能受到 CPU 或 IO 的制约。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-007.yaml
+  source_xbase_sha256: e6d6b08fadbc00e5
+  translated_content_sha256: ff32eb18f66242b6
+  translation_notes: Technical terms npm, package-lock.json, GitHub Actions, YAML,
+    CI retained as-is. 'Terminal confetti' rendered as '乱码的终端碎片' (garbled terminal
+    fragments) to preserve the vivid visual confusion cue. Register kept first-person
+    and colloquial where the English was casual.

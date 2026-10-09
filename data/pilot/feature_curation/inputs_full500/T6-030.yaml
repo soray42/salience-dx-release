@@ -1,0 +1,256 @@
+seed_id: T6-030
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our React Native Android app has been showing a blank white screen for some
+  users right after the splash screen disappears. The JavaScript bundle compiles cleanly
+  and is the correct version. Automated crash reports capture no uncaught JavaScript
+  exceptions for the affected sessions. {DS}
+focal_diagnostic_feature: Filtering session reports by device locale shows all blank-screen
+  occurrences on Arabic or Hebrew devices; all other locales render normally; the
+  root container has a hardcoded paddingLeft value that disables RTL layout mirroring
+  and collapses the content area.
+low_diagnostic_proposition: Every previous blank-screen symptom in React Native that
+  the user has seen was caused by a JavaScript bundle failing to load, so the same
+  cause is expected now.
+oracle_action: ANSWER
+oracle_focus: Remove the hardcoded paddingLeft from the root container and replace
+  it with a paddingStart equivalent that supports RTL mirroring; verify the fix on
+  an Arabic or Hebrew locale device; the blank screen is a layout collapse on RTL
+  devices, not a bundle loading failure.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a bundle loading failure from prior experience.
+  Ask for session data filtered by device locale, operating system version, or device
+  model to identify whether the blank screen is isolated to a specific configuration.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a bundle loading failure from prior experience. Ask for session
+      data filtered by device locale, operating system version, or device model to
+      identify whether the blank screen is isolated to a specific configuration.
+  LL:
+    action: ASK
+    focus: Do not assume a bundle loading failure from prior experience. Ask for session
+      data filtered by device locale, operating system version, or device model to
+      identify whether the blank screen is isolated to a specific configuration.
+  HH:
+    action: ANSWER
+    focus: Remove the hardcoded paddingLeft from the root container and replace it
+      with a paddingStart equivalent that supports RTL mirroring; verify the fix on
+      an Arabic or Hebrew locale device; the blank screen is a layout collapse on
+      RTL devices, not a bundle loading failure.
+  LH:
+    action: ANSWER
+    focus: Remove the hardcoded paddingLeft from the root container and replace it
+      with a paddingStart equivalent that supports RTL mirroring; verify the fix on
+      an Arabic or Hebrew locale device; the blank screen is a layout collapse on
+      RTL devices, not a bundle loading failure.
+variants:
+  HL:
+    distractor: Every time I have seen a React Native blank screen on Android before,
+      the culprit was the JavaScript bundle failing to load — Metro bundle hash mismatch
+      or a bad OTA push — and fixing the bundle fixed the screen, so that is where
+      my mind goes first.
+    diagnosticity: low
+    salience: high
+    proposition: Every previous blank-screen symptom in React Native that the user
+      has seen was caused by a JavaScript bundle failing to load, so the same cause
+      is expected now.
+    salience_source: B/C — confident personal-history framing ('every time') with
+      specific technical detail (Metro hash mismatch, OTA push) and an explicit current
+      inference ('that is where my mind goes first') gives the availability pull maximum
+      weight.
+    why_plausible: JavaScript bundle failures are the most common cause of blank screens
+      in React Native, and a developer who has only encountered them as the cause
+      would naturally pattern-match to it; the technical specificity sounds authoritative.
+    why_irrelevant: Past bundle failures produced no rendered content but would not
+      be locale-specific; the current symptom is RTL-locale-exclusive and caused by
+      a native layout collapse, a structurally different mechanism that the bundle
+      itself is irrelevant to.
+  LL:
+    distractor: Every React Native blank screen I have seen before was a failing JavaScript
+      bundle, so I expect the same now.
+    diagnosticity: low
+    salience: low
+    proposition: Every previous blank-screen symptom in React Native that the user
+      has seen was caused by a JavaScript bundle failing to load, so the same cause
+      is expected now.
+    matched_to: HL
+  HH:
+    distractor: Filtering affected sessions by device locale shows every blank-screen
+      occurrence on devices set to Arabic or Hebrew; all other locales render normally,
+      and the root container has a hardcoded paddingLeft value that disables RTL layout
+      mirroring and collapses the visible content area to zero height.
+    diagnosticity: high
+    salience: high
+    proposition: Filtering session reports by device locale shows all blank-screen
+      occurrences on Arabic or Hebrew devices; all other locales render normally;
+      the root container has a hardcoded paddingLeft value that disables RTL layout
+      mirroring and collapses the content area.
+    salience_source: 100-percent locale correlation, explicit zero-height collapse
+      mechanism, and named root-container property together make the RTL layout bug
+      concrete, reproducible, and distinct from any bundle failure.
+  LH:
+    distractor: All blank-screen sessions have Arabic or Hebrew locale; other locales
+      are unaffected; the root container has a hardcoded paddingLeft that collapses
+      RTL layout.
+    diagnosticity: high
+    salience: low
+    proposition: Filtering session reports by device locale shows all blank-screen
+      occurrences on Arabic or Hebrew devices; all other locales render normally;
+      the root container has a hardcoded paddingLeft value that disables RTL layout
+      mirroring and collapses the content area.
+    matched_to: HH
+distractor_direction:
+  label: JavaScript bundle loading failure
+  description: Investigating whether the React Native JavaScript bundle is failing
+    to load due to a hash mismatch, OTA push error, or build artefact issue.
+plausible_alternative_directions:
+- label: Specific Android API level regression
+  description: Whether a particular Android API level introduced a change in how React
+    Native renders the initial view
+  causing the blank screen on that OS version.: null
+- label: Splash screen transition timing issue
+  description: Whether the splash screen dismissal fires before the React Native bridge
+    initialises
+  leaving a white screen before the first render completes.: null
+- label: Native module initialisation crash
+  description: Whether a native module required by the root component throws an unhandled
+    native exception before JavaScript execution begins
+  bypassing crash reports.: null
+leak_audit:
+  ll_atomic_claims:
+  - Every previous blank-screen symptom in React Native the user has seen was caused
+    by a failing JavaScript bundle.
+  - The same cause is expected to apply now.
+  hh_atomic_claims:
+  - Filtering affected sessions by device locale shows every blank-screen occurrence
+    on Arabic or Hebrew devices.
+  - All other locales render normally.
+  - The root container has a hardcoded paddingLeft value.
+  - The hardcoded paddingLeft disables RTL layout mirroring.
+  - The layout collapse reduces the visible content area to zero height.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clear first-person recollection structured as a pattern (every
+      time → specific examples → current inference), maintaining chronological and
+      causal coherence.
+    confident_assertion: '''Every time'' asserts the pattern as exceptionless; ''that
+      is where my mind goes first'' makes the current application of the pattern explicit.'
+    concrete_detail: Technical specifics (Metro bundle hash mismatch, OTA push) describe
+      the historical failure modes the user recalls, not the current case's bundle
+      or session data.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 43
+  hl_word_count: 45
+  ll_word_count: 20
+  hh_word_count: 43
+  lh_word_count: 23
+  notes: 'T6 bridge check: HL says ''that is where my mind goes first'' (applying
+    past pattern to
+
+    now); LL says ''so I expect the same now'' — both apply the past cause to the
+    current case
+
+    as required by C1 for T6. HL technical details (Metro hash mismatch, OTA push)
+    are
+
+    descriptions of the past events, not new claims about the current session data.
+    C4: xbase
+
+    says the bundle compiles cleanly and crash reports show no uncaught JS exceptions
+    — a
+
+    practitioner could argue these narrow but do not conclusively rule out all bundle
+    failure
+
+    modes (e.g. a silent load error). The focal locale correlation and hardcoded paddingLeft
+
+    live only in HH/LH. LH word count: All(1) blank-screen(2) sessions(3) have(4)
+    Arabic(5)
+
+    or(6) Hebrew(7) locale(8); other(9) locales(10) are(11) unaffected(12); the(13)
+    root(14)
+
+    container(15) has(16) a(17) hardcoded(18) paddingLeft(19) that(20) collapses(21)
+    RTL(22)
+
+    layout(23). = 23 words. Within target. LL word count: Every(1) time(2) I(3) have(4)
+
+    seen(5) a(6) React(7) Native(8) blank(9) screen(10) before(11), a(12) failing(13)
+
+    JavaScript(14) bundle(15) was(16) the(17) cause(18), so(19) I(20) expect(21) the(22)
+
+    same(23) now(24). = 24 words? Recount: ''a failing JavaScript bundle'' — a(12)
+    failing(13)
+
+    JavaScript(14) bundle(15). Yes 24. Revise: ''Every React Native blank screen I
+    have seen
+
+    before was a failing JavaScript bundle, so I expect the same now.'' = Every(1)
+    React(2)
+
+    Native(3) blank(4) screen(5) I(6) have(7) seen(8) before(9) was(10) a(11) failing(12)
+
+    JavaScript(13) bundle(14), so(15) I(16) expect(17) the(18) same(19) now(20). =
+    20 words.
+
+    Updated LL text used above.
+
+    '
+causal_audit:
+  steelman: 'JavaScript bundle failures are the single most common cause of blank
+    screens in React
+
+    Native across both Android and iOS. A developer who has consistently seen this
+    pattern
+
+    has strong empirical grounds for treating it as the leading hypothesis. Furthermore,
+
+    the symptom description (blank screen after splash) is exactly what a bundle load
+    failure
+
+    produces. One might also argue that the clean build and no-JS-exception report
+    are
+
+    insufficient to rule out all bundle failure modes, such as a synchronous error
+    caught by
+
+    a top-level boundary that prevents rendering without surfacing as an uncaught
+    exception.
+
+    However, a JavaScript bundle failure is not locale-specific; the same bundle is
+    served to
+
+    all devices regardless of locale. The 100-percent correlation with Arabic and
+    Hebrew
+
+    locales in HH/LH is structurally incompatible with a bundle failure cause, because
+    a
+
+    bundle load issue would affect all locales equally, not exclusively RTL ones.
+    This makes
+
+    the past experience pattern inapplicable to the present case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the bundle compiles cleanly and crash reports
+    show no uncaught JS exceptions, which narrows but does not conclusively rule out
+    all bundle failure modes; the locale correlation ruling it out structurally lives
+    only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: React Native Android blank white screen caused by a hardcoded paddingLeft
+    in the root container collapsing RTL layout on Arabic and Hebrew locales, not
+    a JavaScript bundle failure as past experience suggests.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

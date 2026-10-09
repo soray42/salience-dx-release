@@ -1,0 +1,253 @@
+seed_id: T3-013
+template: T3
+domain: technical_troubleshooting
+complexity: low
+xbase: Мои Bluetooth-наушники начали сильно трещать при подключении к рабочему ноутбуку.
+  Это происходит со всем аудио — музыкой, звонками, видеоконференциями, всем подряд.
+  Наушникам около года, и с телефоном они работают отлично. Проблема появилась недавно,
+  и я не могу понять, что изменилось. Я упомянул об этом нашему офисному IT-специалисту.
+  {DS}
+focal_diagnostic_feature: Треск строго зависит от местоположения — он прекращается,
+  когда пользователь отходит примерно на метр от ноутбука, — что несовместимо с любым
+  объяснением на уровне программного обеспечения или конфигурации профиля и указывает
+  на локальные радиочастотные помехи, создаваемые аппаратной частью ноутбука.
+low_diagnostic_proposition: 'The Bluetooth audio profile is not configured correctly,
+  and this is causing the crackling.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Investigate local RF interference sources from the laptop (USB 3.0
+  peripherals, internal WiFi radio, or other hardware emitting in the 2.4 GHz band);
+  the strictly proximity-dependent symptom rules out software or profile-level causes
+  and points to a hardware RF emission problem within about one meter of the laptop.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Ask clarifying questions about whether the crackling
+  is distance-dependent or constant, and note that audio profile misconfiguration
+  would not explain a spatially variable symptom; do not adopt the profile-misconfiguration
+  story as the working hypothesis.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Ask clarifying questions about whether the crackling is distance-dependent
+      or constant, and note that audio profile misconfiguration would not explain
+      a spatially variable symptom; do not adopt the profile-misconfiguration story
+      as the working hypothesis.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Ask clarifying questions about whether the crackling is distance-dependent
+      or constant, and note that audio profile misconfiguration would not explain
+      a spatially variable symptom; do not adopt the profile-misconfiguration story
+      as the working hypothesis.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Investigate local RF interference sources from the laptop (USB 3.0 peripherals,
+      internal WiFi radio, or other hardware emitting in the 2.4 GHz band); the strictly
+      proximity-dependent symptom rules out software or profile-level causes and points
+      to a hardware RF emission problem within about one meter of the laptop.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Investigate local RF interference sources from the laptop (USB 3.0 peripherals,
+      internal WiFi radio, or other hardware emitting in the 2.4 GHz band); the strictly
+      proximity-dependent symptom rules out software or profile-level causes and points
+      to a hardware RF emission problem within about one meter of the laptop.
+
+      '
+variants:
+  HL:
+    distractor: 'Прия из нашей IT-команды — она отвечает за всё беспроводное оборудование
+      на этаже — сказала мне, что это проблема с аудиопрофилем Bluetooth: профиль
+      настроен неправильно.'
+    diagnosticity: low
+    salience: high
+    proposition: 'The Bluetooth audio profile is not configured correctly, and this
+      is causing the crackling.
+
+      '
+    salience_source: 'A (source credibility: named IT staff who manages wireless gear
+      for the floor); C (confident assertion: "told me it is", "must not be configured
+      right"); D (concrete detail about source role: "handles all the wireless gear
+      for the floor").
+
+      '
+    why_plausible: 'A2DP vs HFP profile selection is a well-known Bluetooth audio
+      quality issue that IT staff genuinely encounter; the source''s stated specialisation
+      in wireless gear lends weight to a confident generic diagnosis.
+
+      '
+    why_irrelevant: 'Audio profile configuration is a fixed session-level parameter
+      that does not vary with physical distance from the laptop; a profile problem
+      would cause uniform degradation everywhere, not crackling that stops one meter
+      away.
+
+      '
+  LL:
+    distractor: Кто-то сказал, что аудиопрофиль Bluetooth может быть настроен неправильно,
+      из-за чего и возникает треск.
+    diagnosticity: low
+    salience: low
+    proposition: 'The Bluetooth audio profile is not configured correctly, and this
+      is causing the crackling.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'Я только что проверил: треск полностью исчезает, как только я отхожу
+      примерно на метр от ноутбука, и возвращается сразу, как только я снова подхожу
+      к столу — симптом полностью зависит от местоположения, что исключает какое-либо
+      программное объяснение или объяснение настройкой профиля.'
+    diagnosticity: high
+    salience: high
+    proposition: 'The crackling is strictly location-dependent — it stops when the
+      user moves approximately one meter from the laptop — which is inconsistent with
+      any software or profile configuration explanation and points to local RF interference
+      emitted by the laptop hardware.
+
+      '
+    salience_source: 'C (first-person confirmed observation, present tense); D (precise
+      distance detail "about one meter" anchors the spatial pattern concretely).
+
+      '
+  LH:
+    distractor: Треск прекращается в метре от ноутбука и возвращается, когда я возвращаюсь
+      на место, — это исключает любое программное или профильное объяснение.
+    diagnosticity: high
+    salience: low
+    proposition: 'The crackling is strictly location-dependent — it stops when the
+      user moves approximately one meter from the laptop — which is inconsistent with
+      any software or profile configuration explanation and points to local RF interference
+      emitted by the laptop hardware.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: некорректная настройка аудиопрофиля Bluetooth
+  description: IT-специалист утверждает, что треск вызван неправильно выбранным или
+    настроенным аудиопрофилем Bluetooth, трактуя проблему как общий вопрос программных
+    настроек.
+plausible_alternative_directions:
+- label: перегрузка диапазона 2,4 ГГц
+  description: Высокая плотность расположенных рядом точек доступа Wi-Fi или Bluetooth-устройств,
+    конкурирующих в диапазоне 2,4 ГГц, может снижать качество соединения и вызывать
+    треск независимо от локального радиочастотного излучения ноутбука.
+- label: разряд аккумулятора наушников
+  description: Низкий заряд аккумулятора наушников может снижать мощность передатчика,
+    делая соединение более уязвимым к любым помехам и вызывая выпадения звука или
+    треск.
+- label: многолучевые физические помехи
+  description: Металлическая офисная мебель, перегородки или соседнее оборудование
+    могут создавать картины отражения, которые ухудшают Bluetooth-сигнал именно на
+    рабочем месте пользователя.
+leak_audit:
+  ll_atomic_claims:
+  - The Bluetooth audio profile is not configured correctly.
+  - Incorrect profile configuration causes the crackling.
+  hl_salience_dimensions:
+    source_credibility: Named IT staff member (Priya) who manages wireless gear for
+      the floor — a role readers associate with Bluetooth expertise.
+    narrative_coherence: Clean, direct report in professional register with no tangents
+      or interruptions.
+    confident_assertion: '"told me it is" and "must not be configured right" — no
+      hedging.'
+    concrete_detail: '"handles all the wireless gear for the floor" — detail about
+      the source''s scope of responsibility, not about the user''s case.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 33
+  ll_word_count: 14
+  notes: 'Repair r3 (cell-integrity lens 2026-06-11):
+
+    Rewrote xbase to remove location-dependence narration (crackle at desk, clear
+
+    away from it) which was the decisive focal evidence. xbase now presents only the
+
+    bare crackling symptom during laptop use, with contrast against phone use. The
+
+    location-dependence observation lives exclusively in HH/LH variants, which were
+
+    already correctly populated. pathway_closed_in_xbase updated to reflect that the
+
+    pathway closure now resides in HH/LH, not xbase.
+
+    Prior repairs (r2, qc leak p1): HL/LL distractor texts, word counts, and all
+
+    other fields unchanged.
+
+    '
+causal_audit:
+  steelman: 'A competent IT practitioner defending the profile-misconfiguration diagnosis
+
+    could argue as follows: when Windows or macOS selects HFP/HSP instead of A2DP
+
+    (which happens automatically when any application opens the headphone microphone),
+
+    audio quality drops sharply — the codec switches from ~320 kbps stereo to 8 kHz
+
+    mono and can manifest as crackling or muffled distortion. Furthermore, some
+
+    Bluetooth stacks re-negotiate profiles dynamically when the connection becomes
+
+    marginal; if there is any ambient RF noise at the desk (from unrelated sources),
+
+    the stack might flip to HFP mid-session, which would superficially appear
+
+    desk-specific if ambient noise happens to be higher there. One could additionally
+
+    argue that a misconfigured audio profile might cause the adapter firmware to poll
+
+    the connection at suboptimal intervals, amplifying sensitivity to whatever
+
+    interference is present.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — xbase presents only the bare crackling symptom (no
+    location information). The spatial pathway closure (crackling stops one meter
+    from the laptop) lives in the HH and LH variants, which carry the decisive focal
+    evidence per cell-integrity design. Profile configuration is distance-invariant
+    by nature; the HH/LH observation forecloses the profile-level explanation structurally.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 3
+  topic_brief: 'Bluetooth headphones crackle only near the laptop. The office IT person
+    says it is always a driver issue. Focal evidence points elsewhere.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-013.yaml
+  source_xbase_sha256: d754a79e2c6ff49e
+  translated_content_sha256: 4c39521f01326b2a
+  translation_notes: 'QC fix (2026-06-22): removed hedge ''по всей видимости'' from
+    HL distractor. The English HL uses a confident assertion (''told me it is'', ''must
+    not be configured right'') with no hedging; the hedge introduced epistemic weakening
+    inconsistent with the high-salience confident-assertion cue. HL now reads as a
+    direct, unhedged claim matching the English source. All other fields unchanged.
+    ''Аудиопрофиль Bluetooth'' is the standard Russian loan-term for Bluetooth audio
+    profile (A2DP/HFP). The named IT person Priya is retained as-is (loan name, consistent
+    with HL salience). Technical terms Bluetooth and Wi-Fi stay in their conventional
+    Russian forms. No culture-bound salience cues requiring flagging.'

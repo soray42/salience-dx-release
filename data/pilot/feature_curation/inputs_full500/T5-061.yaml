@@ -1,0 +1,177 @@
+seed_id: T5-061
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: Our team's distributed-tracing UI looks extremely cluttered on the main service
+  view. I cannot easily read individual spans, and our on-call engineer suggested
+  the tool might be generating unreliable data. We are investigating why p99 response
+  time jumped from 90 ms to nearly 700 ms two days ago and has stayed elevated. {DS}
+focal_diagnostic_feature: Distributed traces show the latency is isolated to calls
+  from the checkout service to a downstream pricing API, with every slow span showing
+  a 580 ms wait inside that single downstream call.
+low_diagnostic_proposition: The tracing UI looks old and hard to read, suggesting
+  the data it presents cannot be trusted.
+oracle_action: ASK
+oracle_focus: Investigate the downstream pricing API as the source of latency; check
+  its health, error rates, and recent changes, and verify whether the slow span pattern
+  holds across a representative sample of traces.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not conclude the tracing data is unreliable based
+  on UI appearance; ask for trace samples and span-level timing before dismissing
+  the observability layer.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not conclude the tracing data is unreliable based on UI appearance;
+      ask for trace samples and span-level timing before dismissing the observability
+      layer.
+  LL:
+    action: ASK
+    focus: Do not conclude the tracing data is unreliable based on UI appearance;
+      ask for trace samples and span-level timing before dismissing the observability
+      layer.
+  HH:
+    action: ASK
+    focus: Investigate the downstream pricing API as the source of latency; check
+      its health, error rates, and recent changes, and verify whether the slow span
+      pattern holds across a representative sample of traces.
+  LH:
+    action: ASK
+    focus: Investigate the downstream pricing API as the source of latency; check
+      its health, error rates, and recent changes, and verify whether the slow span
+      pattern holds across a representative sample of traces.
+variants:
+  HL:
+    distractor: 'The trace viewer looks like it was built in 2013: overlapping spans,
+      no colour coding, and a waterfall layout so dense it is nearly unreadable, which
+      makes me doubt the data it is showing.'
+    diagnosticity: low
+    salience: high
+    proposition: The tracing UI looks old and hard to read, suggesting the data it
+      presents cannot be trusted.
+    salience_source: 'Dimension B (narrative coherence): clean chronology of technical
+      grievances stated in confident professional register; dimension D (concrete
+      detail about the tool''s visual appearance — overlapping spans, no colour coding,
+      dense waterfall — all about the setting, not the recounted case).'
+    why_plausible: A practitioner who has encountered misconfigured or buggy tracing
+      agents might reasonably distrust data from a visually chaotic UI, particularly
+      when latency symptoms are ambiguous.
+    why_irrelevant: UI rendering quality is independent of the accuracy of span data;
+      the traces may be difficult to read yet still correctly record actual timing.
+      Whether spans are rendered badly is not evidence the underlying timing data
+      is wrong.
+  LL:
+    distractor: The trace viewer has an old, hard-to-read layout, which makes me doubt
+      the data it shows.
+    diagnosticity: low
+    salience: low
+    proposition: The tracing UI looks old and hard to read, suggesting the data it
+      presents cannot be trusted.
+    matched_to: HL
+  HH:
+    distractor: Filtering spans by the checkout service, every request above 500 ms
+      shows the same 580 ms gap inside the outbound call to the pricing API, while
+      all other downstream calls finish under 30 ms.
+    diagnosticity: high
+    salience: high
+    proposition: Distributed traces show the latency is isolated to calls from the
+      checkout service to a downstream pricing API, with every slow span showing a
+      580 ms wait inside that single downstream call.
+    salience_source: 'Vivid precision: exact millisecond values, consistent pattern
+      across all slow requests, explicit contrast with sub-30 ms baseline for all
+      other calls.'
+  LH:
+    distractor: Traces isolate the latency to the checkout-to-pricing-API call (~580
+      ms each), while all other downstream calls finish under 30 ms.
+    diagnosticity: high
+    salience: low
+    proposition: Distributed traces show the latency is isolated to calls from the
+      checkout service to a downstream pricing API, with every slow span showing a
+      580 ms wait inside that single downstream call.
+    matched_to: HH
+distractor_direction:
+  label: Tracing data unreliability
+  description: Investigating whether the distributed tracing tool is generating inaccurate
+    or misleading span data due to a bug, misconfiguration, or instrumentation gap,
+    rather than reporting a genuine downstream latency problem.
+plausible_alternative_directions:
+- label: Checkout connection-pool exhaustion
+  description: The checkout service's outbound HTTP connection pool is saturated,
+    causing requests to queue before the call to the pricing API even leaves the service,
+    making the latency appear in the outbound span but originate client-side.
+- label: Network routing change
+  description: A network or routing change between the checkout service and the pricing
+    API introduced additional round-trip time, explaining the steady 580 ms gap.
+- label: Service dependency timeout config
+  description: A misconfigured timeout or retry policy on the checkout-to-pricing
+    call is causing slow requests to wait unnecessarily before failing over.
+leak_audit:
+  ll_atomic_claims:
+  - The trace viewer has an old, hard-to-read layout.
+  - The old/hard-to-read layout makes the user doubt the data the tool shows.
+  hh_atomic_claims:
+  - Filtering spans by the checkout service reveals the pattern.
+  - Every request above 500 ms shows the same 580 ms gap.
+  - The gap is inside the outbound call to the pricing API.
+  - All other downstream calls finish under 30 ms.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Professional technical language, clean grievance sequence
+      (visual chaos → doubt about data quality), confident register throughout.
+    confident_assertion: '"makes me doubt the data it is showing" — direct confident
+      framing of the inferential claim.'
+    concrete_detail: '"overlapping spans, no colour coding, waterfall layout so dense
+      it is nearly unreadable" — specific visual features of the tool (setting only).'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 52
+  hl_word_count: 34
+  ll_word_count: 16
+  hh_word_count: 34
+  lh_word_count: 20
+  notes: 'T5 inferential bridge (cluttered UI → data unreliable) appears in both HL
+    and
+
+    LL as the "makes me doubt the data" clause. HL adds only visual-setting detail
+
+    about the tool''s appearance and one confident first-person assertion.
+
+    No source name needed (no named third party). Checked: no tunable values,
+
+    effort descriptors, or severity claims added in HL vs LL.
+
+    '
+causal_audit:
+  steelman: 'A tracing agent with a serious bug or misconfiguration could emit incorrect
+
+    span timing or duplicate spans, making performance data appear worse or
+
+    better than reality. A practitioner who has debugged faulty instrumentation
+
+    before would reasonably want to verify that the tracing layer itself is
+
+    healthy before trusting its output. If the agent were inserting artificial
+
+    delays into span records, the 580 ms gap could be a measurement artifact.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — the focal evidence (HH/LH) is what structurally
+    closes the distractor: the consistent 580 ms pattern across every slow request,
+    with all other calls under 30 ms, is not a plausible instrumentation artifact
+    pattern. xbase alone leaves the distractor live.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: A p99 latency spike isolated by distributed traces to a downstream
+    pricing API call, against an on-call engineer's inference that the tracing UI's
+    cluttered appearance means its data cannot be trusted.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 — orchestrator
+  generator: generator_B
+  generation_mode: generator_B_batches

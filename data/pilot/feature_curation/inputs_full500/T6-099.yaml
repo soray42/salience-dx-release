@@ -1,0 +1,184 @@
+seed_id: T6-099
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I am renovating a bathroom and need to remove old ceramic tiles from a concrete
+  wall. I am deciding whether to buy an angle grinder with a diamond cup wheel or
+  rent one for the day from the local tool hire shop. Every time I have bought a tool
+  for a one-off project, I have ended up using it again for other jobs. {DS}
+focal_diagnostic_feature: The hire shop stocks the correct 125 mm diamond cup wheel;
+  the day rental costs $18 versus $115 to purchase the grinder and wheel; and no other
+  grinder tasks appear in the rest of the renovation plan.
+low_diagnostic_proposition: Tools bought for one-off jobs by this user have generally
+  been reused on later projects, so buying is likely the smarter move here too.
+oracle_action: ANSWER
+oracle_focus: Rent; the specific wheel is available, the rental cost is a small fraction
+  of the purchase price, and the renovation plan has no other grinder tasks that would
+  justify the investment.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the tool-reuse pattern without checking
+  this case. Ask whether the hire shop has the correct wheel, what the rental versus
+  purchase cost is, and whether other grinder tasks appear elsewhere in the project.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the tool-reuse pattern without checking this case. Ask whether
+      the hire shop has the correct wheel, what the rental versus purchase cost is,
+      and whether other grinder tasks appear elsewhere in the project.
+  LL:
+    action: ASK
+    focus: Do not apply the tool-reuse pattern without checking this case. Ask whether
+      the hire shop has the correct wheel, what the rental versus purchase cost is,
+      and whether other grinder tasks appear elsewhere in the project.
+  HH:
+    action: ANSWER
+    focus: Rent; the specific wheel is available, the rental cost is a small fraction
+      of the purchase price, and the renovation plan has no other grinder tasks that
+      would justify the investment.
+  LH:
+    action: ANSWER
+    focus: Rent; the specific wheel is available, the rental cost is a small fraction
+      of the purchase price, and the renovation plan has no other grinder tasks that
+      would justify the investment.
+variants:
+  HL:
+    distractor: Every one-off tool I have bought has ended up earning its keep on
+      later projects, so buying feels like the smarter move here — I will probably
+      find other uses for an angle grinder around the house over time.
+    diagnosticity: low
+    salience: high
+    proposition: Tools bought for one-off jobs by this user have generally been reused
+      on later projects, so buying is likely the smarter move here too.
+    salience_source: B — vivid personal history narrated in first person with confident
+      application to the present case; C — 'every one-off tool' as a universal claim
+      and 'I will probably find' as confident forward inference.
+    why_plausible: The reuse pattern is real and common; power tools often find second
+      uses that weren't anticipated, and an angle grinder is a versatile tool that
+      many homeowners genuinely do reuse.
+    why_irrelevant: The hire shop stocks the specific niche attachment needed, the
+      rental cost is a small fraction of the purchase price, and the renovation plan
+      has no other identified grinder tasks — these three concrete facts override
+      a general reuse tendency for this case.
+  LL:
+    distractor: Tools bought for one-off jobs by this user have generally been reused
+      on later projects.
+    diagnosticity: low
+    salience: low
+    proposition: Tools bought for one-off jobs by this user have generally been reused
+      on later projects, so buying is likely the smarter move here too.
+    matched_to: HL
+  HH:
+    distractor: The hire shop stocks the exact 125 mm diamond cup wheel needed; the
+      day rental is $18 against $115 to buy the angle grinder and wheel together;
+      no other grinder tasks appear in the rest of the renovation plan.
+    diagnosticity: high
+    salience: high
+    proposition: The hire shop stocks the correct 125 mm diamond cup wheel; the day
+      rental costs $18 versus $115 to purchase the grinder and wheel; and no other
+      grinder tasks appear in the rest of the renovation plan.
+    salience_source: B — three concrete quantified facts (specific wheel model, two
+      prices, task-scope confirmation) form a decisive triangulated case for renting.
+  LH:
+    distractor: The hire shop has the correct wheel; rental is $18 versus $115 to
+      purchase the grinder; no other grinder tasks are planned.
+    diagnosticity: high
+    salience: low
+    proposition: The hire shop stocks the correct 125 mm diamond cup wheel; the day
+      rental costs $18 versus $115 to purchase the grinder and wheel; and no other
+      grinder tasks appear in the rest of the renovation plan.
+    matched_to: HH
+distractor_direction:
+  label: Tool-reuse availability pattern
+  description: Treating the user's consistent past experience of reusing one-off tool
+    purchases as strong evidence that buying the angle grinder is the smarter long-term
+    decision for this project.
+plausible_alternative_directions:
+- label: Rental shop availability uncertainty
+  description: The hire shop may not always have the specific diamond cup wheel in
+    stock; if availability is unreliable, ownership may be preferable for schedule
+    control.
+- label: Grinder condition and safety
+  description: A rented angle grinder may have undetected wear on the guard or spindle
+    that makes it less safe than a new purchase for close-quarters concrete wall work.
+leak_audit:
+  ll_atomic_claims:
+  - Tools bought for one-off jobs by this user have generally been reused on later
+    projects.
+  - Buying is likely the smarter move here based on that pattern.
+  hh_atomic_claims:
+  - The hire shop stocks the correct 125 mm diamond cup wheel.
+  - The day rental costs $18.
+  - Purchasing the grinder and wheel together costs $115.
+  - No other grinder tasks appear in the rest of the renovation plan.
+  hl_salience_dimensions:
+    source_credibility: N/A — T6 first-person; no named external source.
+    narrative_coherence: B — vivid personal history narrated confidently with direct
+      application to the current decision.
+    confident_assertion: C — 'every one-off tool' as a universal and 'I will probably
+      find' as confident forward inference.
+    concrete_detail: N/A — no case-content detail added beyond LL.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 38
+  ll_word_count: 15
+  hh_word_count: 39
+  lh_word_count: 22
+  notes: 'T6 availability: the past reuse pattern is real but structurally different
+    from this
+
+    case because (a) the specific attachment is available for rent eliminating the
+
+    procurement obstacle, (b) the rental cost is <16% of purchase, and (c) no other
+
+    grinder tasks are in scope. All three facts live in HH/LH, not xbase (C4 preserved).
+
+    The availability inference ("buying is likely smarter here too") appears in both
+
+    HL and LL per C1 T6 rule.
+
+    Steelman: angle grinders are genuinely versatile and many homeowners who buy one
+
+    for a single task do find further uses. The pattern is not irrational as a prior,
+
+    but the three concrete focal facts override it for this specific case.
+
+    '
+causal_audit:
+  steelman: 'Angle grinders are among the most versatile tools a homeowner can own
+    — usable
+
+    for cutting metal, grinding welds, removing rust, and tile work. A user who has
+
+    consistently found second uses for purchased tools has accurate domain knowledge
+
+    about their own usage patterns. For a versatile tool like this, buying could
+
+    reasonably save money over two or three subsequent uses. The reuse inference is
+
+    a sound heuristic in general; it fails here specifically because the task uses
+    a
+
+    niche attachment (diamond cup wheel) unlikely to transfer to general-purpose grinder
+
+    work, the rental is cheap, and the scope is demonstrably bounded.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the reuse pattern is not foreclosed by xbase; the
+    three focal facts (wheel availability, rental price, no other tasks) live in HH/LH,
+    preserving C4.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: 'Bathroom tile removal decision: rent vs buy angle grinder; user''s
+    consistent past tool-reuse pattern pulls toward buying, but rental availability,
+    large price gap, and single-task scope make renting the correct choice.'
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

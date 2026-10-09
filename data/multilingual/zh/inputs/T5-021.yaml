@@ -1,0 +1,164 @@
+seed_id: T5-021
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: 我使用一款密码管理器浏览器扩展，现在想换成一款更炫的商业产品。我现在用的这款能正常运行，但界面看起来像自制的——朴素的图标、基础的对话框、没有动效、毫无精致感。备选的那款则看起来华丽而现代。由于这款工具守护着我所有的账户，我想选择实际上最安全的那款。{DS}
+focal_diagnostic_feature: 朴素的扩展是开源的，并且近期发布了独立安全审计报告且无严重问题；而华丽的备选产品是闭源的，从未经过独立审计。
+low_diagnostic_proposition: The polished, modern-looking extension is the more secure
+  and trustworthy choice because of how refined it looks.
+oracle_action: ANSWER
+oracle_focus: Keep the plain extension; an open-source tool with a clean published
+  independent audit is the stronger security choice, and the flashy alternative's
+  unaudited closed source is what actually matters, not its visual polish.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not equate a refined interface with security. Ask
+  whether each extension is open-source and whether it has a published independent
+  security audit.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not equate a refined interface with security. Ask whether each extension
+      is open-source and whether it has a published independent security audit.
+  LL:
+    action: ASK
+    focus: Do not equate a refined interface with security. Ask whether each extension
+      is open-source and whether it has a published independent security audit.
+  HH:
+    action: ANSWER
+    focus: Keep the plain extension; an open-source tool with a clean published independent
+      audit is the stronger security choice, and the flashy alternative's unaudited
+      closed source is what actually matters, not its visual polish.
+  LH:
+    action: ANSWER
+    focus: Keep the plain extension; an open-source tool with a clean published independent
+      audit is the stronger security choice, and the flashy alternative's unaudited
+      closed source is what actually matters, not its visual polish.
+variants:
+  HL:
+    distractor: 那款商业产品单从外观上就更令人信任——流畅的动效、清晰的现代布局、整体精致自信的质感——一款安全产品如此精良、如此专业，正说明其背后的代码在保护密码方面同样严谨细致。
+    diagnosticity: low
+    salience: high
+    proposition: The polished, modern-looking extension is the more secure and trustworthy
+      choice because of how refined it looks.
+    salience_source: B/D — vivid concrete detail of the polished UI carrying the bridge
+      that visual refinement reflects rigorous, secure code.
+    why_plausible: Polish signals investment and professionalism, so a refined security
+      tool intuitively feels like one built with care.
+    why_irrelevant: Interface polish is front-end design effort; it is orthogonal
+      to cryptographic soundness, which only source transparency and independent audits
+      can establish.
+  LL:
+    distractor: 那款外观精良、看起来更现代的扩展是更安全、更值得信赖的选择，因为它看起来更精致。
+    diagnosticity: low
+    salience: low
+    proposition: The polished, modern-looking extension is the more secure and trustworthy
+      choice because of how refined it looks.
+    matched_to: HL
+  HH:
+    distractor: 撇开表面看安全事实：那款朴素的扩展完全开源，刚刚发布了第三方独立审计报告，无严重问题。那款华丽的商业产品是闭源的，根本从未经过独立审计。
+    diagnosticity: high
+    salience: high
+    proposition: The plain extension is open-source and has a recent independent security
+      audit published with no critical findings, while the flashy alternative is closed-source
+      and has never been independently audited.
+    salience_source: Naming the open source, the clean published audit, and the rival's
+      unaudited closed source makes the real security basis concrete.
+  LH:
+    distractor: 那款朴素的扩展是开源的，近期发布了独立安全审计且无严重问题；那款华丽的备选产品是闭源的，从未经过独立审计。
+    diagnosticity: high
+    salience: low
+    proposition: The plain extension is open-source and has a recent independent security
+      audit published with no critical findings, while the flashy alternative is closed-source
+      and has never been independently audited.
+    matched_to: HH
+distractor_direction:
+  label: 精良外观意味着安全
+  description: 选择华丽的扩展，因为其精致的界面被视为更强安全性的证据。
+plausible_alternative_directions:
+- label: 历史安全事件与更新记录
+  description: 任何一款工具是否有过安全漏洞历史，以及是否有及时发布安全更新的良好记录。
+- label: 功能与恢复模型
+  description: 两款产品在加密模型、账户恢复和零知识设计方面的差异对用户是否重要。
+  recovery: null
+  and zero-knowledge design matter for the user.: null
+leak_audit:
+  ll_atomic_claims:
+  - The commercial extension is polished and modern-looking.
+  - That refinement makes it the more secure and trustworthy choice.
+  hh_atomic_claims:
+  - The plain extension is fully open-source.
+  - It has a recently published independent third-party audit with no critical findings.
+  - The flashy commercial alternative is closed-source and has never been independently
+    audited.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: N/A
+    confident_assertion: N/A
+    concrete_detail: Vivid concrete detail about the commercial UI (animations, modern
+      layout, polished feel).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 63
+  hl_word_count: 39
+  ll_word_count: 17
+  hh_word_count: 42
+  lh_word_count: 23
+  notes: 'T5: the bridge "a refined, well-presented product reflects rigorous secure
+    code" is in HL and flat in LL
+
+    (self-check 13). xbase describes the homemade vs gorgeous look and the stakes
+    but withholds the open-source/audit
+
+    facts — decisive — which live only in HH/LH. Appearance is offered AS the reason
+    to switch, not as decoration.
+
+    QC repair round 1: removed the hedging word "surely" from the HL bridge clause
+    ("surely reflects" → "reflects")
+
+    so no hedging_language appears in HL that is absent from LL; the propositional
+    bridge is unchanged, preserving
+
+    HL/LL equivalence. Recount after edit: HL drops to 39 (also corrects a prior off-by-one
+    in the recorded count).
+
+    '
+causal_audit:
+  steelman: 'One could argue that a polished, well-funded commercial security product
+    likely has a larger team, formal QA,
+
+    and resources to harden its code, whereas a homemade-looking tool might be a hobby
+    project with little review —
+
+    so polish is a weak proxy for organisational maturity and, indirectly, security.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the open-source status and independent audit that
+    decide security are supplied only in HH/LH; xbase does not foreclose the switch.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to keep an audited open-source password-manager extension or
+    switch to a flashier closed-source one judged more secure purely on its polished
+    interface.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-021.yaml
+  source_xbase_sha256: d1497ada962aa07d
+  translated_content_sha256: 24702083f690a3c4
+  translation_notes: Technical terms (开源/open-source, 闭源/closed-source, 第三方独立审计/independent
+    third-party audit) kept as standard Chinese equivalents. HL vivid detail (smooth
+    animations, crisp modern layout, polished feel) preserved. {DS} token unchanged.

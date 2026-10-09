@@ -1,0 +1,172 @@
+seed_id: T1-060
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our order-service p99 latency has been climbing for the last week, from about
+  120 ms to roughly 1.4 seconds, while p50 has barely moved. Request volume is flat
+  and there were no deploys to this service in that window. The slow requests are
+  spread across all endpoints, not one route, and CPU and memory on the hosts look
+  unremarkable on the dashboards. The slowness is steady through the day rather than
+  tied to traffic peaks. {DS}
+focal_diagnostic_feature: Distributed traces show the slow requests spending nearly
+  all their time waiting to acquire a connection from the pool to the inventory service,
+  not executing once acquired.
+low_diagnostic_proposition: A similar p99 latency climb at another company was found
+  to be caused by long JVM garbage-collection pauses.
+oracle_action: ANSWER
+oracle_focus: The latency is connection-pool acquisition wait against the inventory
+  service; raise the pool size or fix the slow checkout/leak there, rather than treating
+  it as a runtime or GC problem.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not import the other company's GC explanation. Ask
+  where the slow requests actually spend their time according to traces or profiles.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not import the other company's GC explanation. Ask where the slow requests
+      actually spend their time according to traces or profiles.
+  LL:
+    action: ASK
+    focus: Do not import the other company's GC explanation. Ask where the slow requests
+      actually spend their time according to traces or profiles.
+  HH:
+    action: ANSWER
+    focus: The latency is connection-pool acquisition wait against the inventory service;
+      raise the pool size or fix the slow checkout/leak there, rather than treating
+      it as a runtime or GC problem.
+  LH:
+    action: ANSWER
+    focus: The latency is connection-pool acquisition wait against the inventory service;
+      raise the pool size or fix the slow checkout/leak there, rather than treating
+      it as a runtime or GC problem.
+variants:
+  HL:
+    distractor: 'Karthik, a staff engineer at a company with a similar JVM stack,
+      told me they chased an almost identical p99 creep for weeks and it turned out
+      to be garbage collection: their old generation kept filling and triggering long
+      stop-the-world pauses that dragged the tail latency up exactly like this.'
+    diagnosticity: low
+    salience: high
+    proposition: A similar p99 latency climb at another company was found to be caused
+      by long JVM garbage-collection pauses.
+    salience_source: A — a staff engineer on a matching JVM stack lends the GC-pause
+      explanation strong technical credibility.
+    why_plausible: Long GC pauses are a classic cause of rising tail latency on the
+      JVM, so a busy engineer might anchor on it immediately.
+    why_irrelevant: GC pauses would show up as in-process stalls, but the traces place
+      the slow time in connection-pool acquisition before any work runs, so the runtime
+      is idle, not collecting.
+  LL:
+    distractor: Another company's similar p99 latency climb was found to be caused
+      by long JVM garbage-collection pauses.
+    diagnosticity: low
+    salience: low
+    proposition: A similar p99 latency climb at another company was found to be caused
+      by long JVM garbage-collection pauses.
+    matched_to: HL
+  HH:
+    distractor: Pulling up the slow traces, almost the entire span is the request
+      sitting in a 'waiting for inventory-pool connection' state; once it finally
+      gets a connection the downstream call returns in a few milliseconds, so the
+      time is pure pool-acquisition queueing, not compute or collection.
+    diagnosticity: high
+    salience: high
+    proposition: Distributed traces show the slow requests spending nearly all their
+      time waiting to acquire a connection from the pool to the inventory service,
+      not executing once acquired.
+    salience_source: The trace pinpoints the wait state and contrasts it with the
+      fast post-acquisition call, making the bottleneck unmistakable.
+  LH:
+    distractor: Traces show the slow requests waiting almost entirely on inventory-service
+      pool-connection acquisition, not on execution after acquiring one.
+    diagnosticity: high
+    salience: low
+    proposition: Distributed traces show the slow requests spending nearly all their
+      time waiting to acquire a connection from the pool to the inventory service,
+      not executing once acquired.
+    matched_to: HH
+distractor_direction:
+  label: JVM garbage-collection pauses
+  description: Investigating long stop-the-world GC pauses in the order-service runtime
+    as the cause of the rising tail latency.
+plausible_alternative_directions:
+- label: Inventory service slowdown
+  description: Whether the downstream inventory service itself has become slow to
+    respond.
+- label: Host network saturation
+  description: Whether NIC or network-path saturation is delaying outbound calls.
+leak_audit:
+  ll_atomic_claims:
+  - Another company had a similar p99 latency climb.
+  - It was found to be caused by long JVM garbage-collection pauses.
+  hh_atomic_claims:
+  - The slow traces spend nearly the whole span waiting for an inventory-pool connection.
+  - Once a connection is acquired the downstream call returns within a few milliseconds.
+  hl_salience_dimensions:
+    source_credibility: Named staff engineer (Karthik) on a matching JVM stack.
+    narrative_coherence: Coherent weeks-of-chasing account ending in a GC diagnosis.
+    confident_assertion: '''it turned out to be garbage collection'' — firm conclusion.'
+    concrete_detail: Detail about the source's case (old-generation filling, stop-the-world
+      pauses) only; nothing new about this service.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 82
+  hl_word_count: 47
+  ll_word_count: 17
+  hh_word_count: 45
+  lh_word_count: 18
+  notes: 'LL carries only the other-company / GC-pause claim; Karthik, his stack,
+    the weeks of chasing, and the old-gen
+
+    detail are HL-only and concern the source''s case. xbase deliberately gives no
+    trace breakdown, only the symptom
+
+    shape (p99 up, p50 flat, all endpoints, flat traffic, unremarkable CPU/memory).
+    The decisive trace evidence
+
+    lives only in HH/LH. ''few milliseconds'' and ''1.4 seconds'' each count as one
+    token under the C9 rule.
+
+    '
+causal_audit:
+  steelman: 'A senior JVM engineer would reasonably put GC near the top of the list:
+    a slowly worsening tail with a flat p50
+
+    is a signature of intermittent stop-the-world pauses, and on a JVM service a creeping
+    old-generation or a
+
+    fragmenting heap can produce exactly this pattern over a week without any deploy.
+    That hypothesis is defeated by
+
+    where the time actually goes: the traces show the slow requests parked in connection-pool
+    acquisition and then
+
+    completing the downstream call in milliseconds, meaning the process is idle-waiting
+    on a resource, not paused in
+
+    a collection — a GC pause would appear as in-process stall time, not as queueing
+    for a pool slot. Nothing in
+
+    xbase independently elevates GC for this service, so the anecdote has no mechanism
+    here.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase reports CPU and memory on the hosts as unremarkable
+    and the slowness as steady rather than bursty, which is inconsistent with the
+    bursty stalls of GC pauses, without naming the pool; the decisive trace breakdown
+    lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An order-service p99 latency climb caused by waiting to acquire connections
+    from an exhausted downstream pool (shown in traces), not the JVM GC pauses a staff
+    engineer's anecdote suggests.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

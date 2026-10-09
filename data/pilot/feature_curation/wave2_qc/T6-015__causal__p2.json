@@ -1,0 +1,9 @@
+{
+  "seed_id": "T6-015",
+  "steelman": "Detergent chemistry is a widely documented factor in laundry odour: certain formulations rely on fragrances that mask rather than eliminate microbial growth, and residue left on fabrics can sustain bacteria producing a musty smell. Consumer appliance guides routinely include 'try a different detergent or reduce detergent quantity' as a troubleshooting step for persistent laundry odour. Furthermore, a manufacturer could have quietly reformulated the product in a recent production batch without prominently notifying consumers, meaning the 'same brand' label does not guarantee identical chemistry. A practitioner applying a systematic odour checklist might therefore place 'rule out detergent formula change' on the list rather than dismissing it outright.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Silent manufacturer formula change in a 'same brand' detergent leading to odour-causing residue — speculative and requires ignoring the user's direct no-change account.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase explicitly states 'same detergent I've been using for over three years, same load size, same temperature settings — nothing about my routine has changed at all' and that the problem 'started a few weeks ago'. A constant factor cannot account for a new symptom; the only viable steelman (silent formula change) requires discounting the user's own first-person report, which no competent practitioner would do without external evidence. The seed's own causal_audit correctly diagnoses this as no_defensible_mechanism. Pathway closure is effective. No repair needed — seed passes this lens."
+}

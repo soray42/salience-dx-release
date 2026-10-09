@@ -1,0 +1,175 @@
+seed_id: T2-051
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our Redis instance that backs application sessions has started evicting keys
+  unexpectedly, so users are getting logged out mid-session. It began about five days
+  ago. We have not deployed the application or changed the Redis configuration, and
+  connection counts and command rates look about the same as always on the monitoring
+  graphs. {DS}
+focal_diagnostic_feature: A scheduled job that runs every five days now writes a large
+  batch of cache entries with no TTL into the same instance, pushing it against maxmemory
+  so the eviction policy expels session keys.
+low_diagnostic_proposition: The eviction problem started the same week the team adopted
+  a new chat tool for internal communication.
+oracle_action: ANSWER
+oracle_focus: The eviction is memory pressure from the five-day batch job loading
+  large no-TTL cache entries into the session instance; isolate those entries, give
+  them a TTL, or move them to a separate Redis.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a new chat tool to Redis evictions. Ask
+  what else writes to the instance, its memory usage versus maxmemory, and which keys
+  are being evicted.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a new chat tool to Redis evictions. Ask what else writes
+      to the instance, its memory usage versus maxmemory, and which keys are being
+      evicted.
+  LL:
+    action: ASK
+    focus: Do not connect a new chat tool to Redis evictions. Ask what else writes
+      to the instance, its memory usage versus maxmemory, and which keys are being
+      evicted.
+  HH:
+    action: ANSWER
+    focus: The eviction is memory pressure from the five-day batch job loading large
+      no-TTL cache entries into the session instance; isolate those entries, give
+      them a TTL, or move them to a separate Redis.
+  LH:
+    action: ANSWER
+    focus: The eviction is memory pressure from the five-day batch job loading large
+      no-TTL cache entries into the session instance; isolate those entries, give
+      them a TTL, or move them to a separate Redis.
+variants:
+  HL:
+    distractor: It started the same week we rolled out the new internal chat tool
+      company-wide, and a teammate keeps insisting that all this new software on our
+      laptops must be straining something.
+    diagnosticity: low
+    salience: high
+    proposition: The eviction problem started the same week the team adopted a new
+      chat tool for internal communication.
+    salience_source: B/C — a clean same-week chronology and a teammate's confident
+      insistence make the chat-tool timing feel relevant.
+    why_plausible: A new tool rolled out company-wide in the same week is a salient
+      change people instinctively suspect when something starts misbehaving.
+    why_irrelevant: An internal chat tool runs on people's laptops and its own backend;
+      it never connects to or writes into this Redis session instance, so it cannot
+      drive its memory or evictions.
+  LL:
+    distractor: The eviction problem started the same week the team adopted a new
+      internal chat tool.
+    diagnosticity: low
+    salience: low
+    proposition: The eviction problem started the same week the team adopted a new
+      chat tool for internal communication.
+    matched_to: HL
+  HH:
+    distractor: Inspecting the instance, a scheduled job that fires every five days
+      dumps a huge batch of cache entries with no TTL into this same Redis; that load
+      pushes memory up to maxmemory, and the eviction policy then expels the oldest
+      session keys to make room.
+    diagnosticity: high
+    salience: high
+    proposition: A scheduled job that runs every five days writes a large batch of
+      no-TTL cache entries into the same instance, pushing it against maxmemory so
+      the eviction policy expels session keys.
+    salience_source: Concrete cause (five-day job, large no-TTL batch, maxmemory pressure,
+      session keys evicted) makes the mechanism explicit.
+  LH:
+    distractor: A five-day scheduled job writes a large no-TTL batch into the same
+      Redis, pushing it to maxmemory so session keys are evicted.
+    diagnosticity: high
+    salience: low
+    proposition: A scheduled job that runs every five days writes a large batch of
+      no-TTL cache entries into the same instance, pushing it against maxmemory so
+      the eviction policy expels session keys.
+    matched_to: HH
+distractor_direction:
+  label: New chat-tool timing
+  description: Treating the coincident company-wide rollout of an internal chat tool
+    as connected to the Redis evictions.
+plausible_alternative_directions:
+- label: Memory fragmentation growth
+  description: Whether allocator fragmentation has raised real memory use toward the
+    eviction threshold.
+- label: TTL or policy regression
+  description: Whether a key-expiry or eviction-policy setting changed and is now
+    removing session keys.
+leak_audit:
+  ll_atomic_claims:
+  - The eviction problem started the same week.
+  - That week the team adopted a new internal chat tool.
+  hh_atomic_claims:
+  - A scheduled job that runs every five days writes a large no-TTL batch into the
+    same Redis.
+  - That load pushes the instance to maxmemory.
+  - The eviction policy then expels session keys.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean same-week rollout chronology.
+    confident_assertion: A teammate insists the new software must be straining something.
+    concrete_detail: Detail about the coincidence event (company-wide chat tool on
+      laptops) only — no claim about Redis.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 56
+  hl_word_count: 31
+  ll_word_count: 15
+  hh_word_count: 43
+  lh_word_count: 23
+  notes: 'HL shortened from 53 to 31 words by removing redundant reinforcement phrase
+    ("the start dates genuinely sit
+
+    right on top of each other") and tightening the opening. LL carries only the same-week-chat-tool
+    timing claim.
+
+    The teammate''s insistence and the company-wide rollout detail are HL-only and
+    about the coincidence event/source.
+
+    xbase reports no deploy, no config change, and steady connection and command rates
+    — closing the deploy/config
+
+    pathways — while withholding the five-day batch job; the decisive no-TTL-batch
+    eviction fact lives only in HH/LH.
+
+    An internal chat tool has no path into this Redis instance, satisfying C2 absolute.
+
+    '
+causal_audit:
+  steelman: 'One might argue a heavy chat client consumes laptop resources or network
+    bandwidth that slows clients. But the
+
+    symptom is server-side key eviction inside Redis driven by memory pressure, and
+    an internal chat tool neither
+
+    connects to this Redis nor writes keys into it; it has no presence in the instance''s
+    keyspace or memory. There
+
+    is no mechanism by which adopting a chat tool could push a Redis instance to its
+    maxmemory or evict session keys.
+
+    The timing coincides; the cause is the recurring no-TTL batch job.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states there was no application deploy and no Redis
+    configuration change, with steady connection and command rates, foreclosing the
+    deploy- and config-regression pathways; the decisive five-day batch-job memory
+    pressure lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Redis session-key evictions caused by a five-day scheduled job loading
+    large no-TTL cache entries to maxmemory, coincidentally timed with adopting a
+    new internal chat tool, which has no mechanism.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

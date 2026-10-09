@@ -1,0 +1,12 @@
+{
+  "seed_id": "T6-012",
+  "credibility_score": 4,
+  "salience_delta_score": 4,
+  "template_fit": "fits",
+  "template_fit_notes": "HL presents the user's own first-person history of two factory-reset successes as the instinctive explanation, with confident conviction framing that is structurally different from the present case (past cases were TV-internal; current case is external bandwidth saturation by another device) — a clean T6 instantiation.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The xbase explicitly states the user's plan to factory-reset and the distractor sits squarely in that plan, so a model responding to the user must take a position on the advice rather than treating it as incidental color.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

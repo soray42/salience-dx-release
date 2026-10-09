@@ -1,0 +1,186 @@
+seed_id: T2-078
+template: T2
+domain: open_qa
+complexity: medium
+xbase: My raised vegetable bed has produced far less than last year despite my using
+  the same seeds and watering routines. Courgettes, beans, and lettuce are all noticeably
+  smaller and slower than previous seasons. I cannot work out what changed because
+  I have kept most of my practices the same. The bed is about four metres from a large
+  silver birch in my neighbour's garden. {DS}
+focal_diagnostic_feature: Time-stamped photographs taken at 1pm and 3:30pm across
+  five consecutive sunny days show the silver birch canopy casting complete shadow
+  over the entire raised bed from approximately 12:30pm until after 5pm each day.
+low_diagnostic_proposition: The yield drop coincided with planting a row of marigolds
+  along the front edge of the bed.
+oracle_action: ANSWER
+oracle_focus: The birch canopy is now shading the bed for the core afternoon growing
+  window; consider trimming the canopy with the neighbour's agreement, relocating
+  the bed to a sunnier position, or growing shade-tolerant crops in the affected area.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not attribute a systemic multi-crop yield drop to
+  a front-edge row of companion marigolds; ask for sunlight availability across the
+  full day, check whether any nearby structures or plants have grown taller, and measure
+  how many hours of direct sun the bed now receives.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not attribute a systemic multi-crop yield drop to a front-edge row of
+      companion marigolds; ask for sunlight availability across the full day, check
+      whether any nearby structures or plants have grown taller, and measure how many
+      hours of direct sun the bed now receives.
+  LL:
+    action: ASK
+    focus: Do not attribute a systemic multi-crop yield drop to a front-edge row of
+      companion marigolds; ask for sunlight availability across the full day, check
+      whether any nearby structures or plants have grown taller, and measure how many
+      hours of direct sun the bed now receives.
+  HH:
+    action: ANSWER
+    focus: The birch canopy is now shading the bed for the core afternoon growing
+      window; consider trimming the canopy with the neighbour's agreement, relocating
+      the bed to a sunnier position, or growing shade-tolerant crops in the affected
+      area.
+  LH:
+    action: ANSWER
+    focus: The birch canopy is now shading the bed for the core afternoon growing
+      window; consider trimming the canopy with the neighbour's agreement, relocating
+      the bed to a sunnier position, or growing shade-tolerant crops in the affected
+      area.
+variants:
+  HL:
+    distractor: I planted a row of French marigolds along the front edge of the bed
+      that same month the yields started dropping, and I cannot shake the coincidence
+      — they appeared and the crop fell off together.
+    diagnosticity: low
+    salience: high
+    proposition: The yield drop coincided with planting a row of marigolds along the
+      front edge of the bed.
+    salience_source: B/C — precise temporal narrative ("that same month") and confident
+      expression of unshakeable coincidence feeling create a strong causal impression
+      despite no mechanism being stated.
+    why_plausible: A gardener newly adding plants to a bed and noticing subsequent
+      yield decline would naturally consider whether the addition played a role; marigolds
+      near vegetables have horticultural relevance as companion plants, lending the
+      coincidence surface plausibility.
+    why_irrelevant: A short decorative border of marigolds cannot produce a systemic
+      yield reduction across courgettes, beans, and lettuce throughout the entire
+      raised bed; marigolds are companion plants that aid rather than harm vegetable
+      growth, and their shade footprint is negligible across a whole bed.
+  LL:
+    distractor: The yield drop coincided with planting a row of marigolds along the
+      front edge of the bed.
+    diagnosticity: low
+    salience: low
+    proposition: The yield drop coincided with planting a row of marigolds along the
+      front edge of the bed.
+    matched_to: HL
+  HH:
+    distractor: Photos taken at 1pm and 3:30pm across five sunny days show the birch
+      canopy throwing complete shadow over every part of the raised bed from roughly
+      12:30pm until after 5pm — that is the bulk of the afternoon growing window gone.
+    diagnosticity: high
+    salience: high
+    proposition: Time-stamped photographs taken at 1pm and 3:30pm across five consecutive
+      sunny days show the silver birch canopy casting complete shadow over the entire
+      raised bed from approximately 12:30pm until after 5pm each day.
+    salience_source: B/C — photographic evidence with precise timestamps and a five-day
+      repeated observation pattern, combined with the explicit consequence framing
+      ("the bulk of the afternoon growing window gone").
+  LH:
+    distractor: Time-stamped photos on five clear days show complete birch canopy
+      shadow across the entire bed from 12:30pm to past 5pm.
+    diagnosticity: high
+    salience: low
+    proposition: Time-stamped photographs taken at 1pm and 3:30pm across five consecutive
+      sunny days show the silver birch canopy casting complete shadow over the entire
+      raised bed from approximately 12:30pm until after 5pm each day.
+    matched_to: HH
+distractor_direction:
+  label: marigold border shading
+  description: Investigating whether a newly planted row of French marigolds along
+    the front edge of the bed is partially shading or otherwise harming the vegetable
+    crops.
+plausible_alternative_directions:
+- label: soil nutrient depletion
+  description: Several years of vegetable growing without replenishing compost or
+    fertiliser could exhaust soil nutrients enough to reduce yields progressively,
+    and no recent amendment is mentioned.
+- label: watering volume mismatch
+  description: If the same volume of watering is applied to a larger or more established
+    root system, the actual moisture reaching each plant could have declined, and
+    summer temperatures may have increased evaporation.
+- label: variety or seed quality change
+  description: Even when using the same named variety, a different seed batch or older
+    saved seed could produce weaker germination or lower-vigour plants that yield
+    less.
+leak_audit:
+  ll_atomic_claims:
+  - The yield drop coincided with planting a row of marigolds along the front edge
+    of the bed.
+  hh_atomic_claims:
+  - Photos taken at 1pm and 3:30pm across five sunny days show the birch canopy casting
+    complete shadow over every part of the raised bed.
+  - The shadow falls from roughly 12:30pm until after 5pm.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person coincidence narrative with clear temporal sequencing
+      ("that same month... they appeared and the crop fell off together").
+    confident_assertion: '"I cannot shake the coincidence" — strong personal certainty
+      despite implicit acknowledgement that no mechanism is known.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 35
+  ll_word_count: 17
+  hh_word_count: 41
+  lh_word_count: 20
+  notes: 'The silver birch in xbase is contextual background that raises canopy shadow
+
+    as a live hypothesis but does not conclusively establish the shadow timing;
+
+    the photographic evidence in HH/LH provides that. Marigolds are companion
+
+    plants with genuine gardening relevance, making the distractor credibly
+
+    plausible to a busy gardener. Multi-crop decline (courgettes, beans, lettuce)
+
+    across the whole bed is incompatible with a front-edge border shading mechanism.
+
+    '
+causal_audit:
+  steelman: 'French marigolds grown as a border row could theoretically cast partial
+    shade
+
+    on the lowest-lying plants at the front edge of the bed, particularly lettuce.
+
+    A gardener might reason that even partial shading slows the leading edge crops
+
+    which in turn crowd the bed differently. Some companion planting practitioners
+
+    also worry about allelopathic root exudates from dense marigold plantings,
+
+    although evidence for this is weak in culinary vegetable contexts.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — xbase does not directly close the marigold pathway.
+    The closure is structural: a short border row of low-growing marigolds cannot
+    cause systemic yield reduction across three different crop types spread across
+    an entire raised bed. The silver birch context raises canopy shadow as a live
+    candidate without providing the shadow-timing data that lives in HH/LH.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: A raised vegetable bed producing far less than previous seasons suffers
+    from afternoon canopy shadow cast by a neighbour's silver birch for over four
+    hours daily, not from the coincidental planting of a front-edge marigold border
+    that same month.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

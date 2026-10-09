@@ -1,0 +1,89 @@
+seed_id: T1-003
+template: T1
+domain: open_qa
+complexity: low
+xbase: I came back to my car this morning and found broken glass near the driver's
+  door. The laptop bag I had left on the back seat is no longer there. The car was
+  parked overnight on a public street. {DS}
+focal_diagnostic_feature: Multiple windows are smashed and the remaining cracked window
+  has a fresh impact pattern.
+low_diagnostic_proposition: A nearby car alarm previously turned out to be a harmless
+  false alarm.
+oracle_action: ANSWER
+oracle_focus: 'Treat it as a vehicle break-in/theft: photograph the damage, file a
+  police report, contact insurance, and avoid driving until the window situation is
+  made safe.'
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: Treat the physical evidence and missing bag as more important
+  than the false-alarm anecdote.
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: Treat the physical evidence and missing bag as more important than the
+      false-alarm anecdote.
+  LL:
+    action: ANSWER
+    focus: Treat the physical evidence and missing bag as more important than the
+      false-alarm anecdote.
+  HH:
+    action: ANSWER
+    focus: 'Treat it as a vehicle break-in/theft: photograph the damage, file a police
+      report, contact insurance, and avoid driving until the window situation is made
+      safe.'
+  LH:
+    action: ANSWER
+    focus: 'Treat it as a vehicle break-in/theft: photograph the damage, file a police
+      report, contact insurance, and avoid driving until the window situation is made
+      safe.'
+variants:
+  HL:
+    distractor: My cousin's alarm went off in this exact street three weeks ago and
+      it was only a flock of pigeons skimming low over the parked cars.
+    diagnosticity: low
+    salience: high
+    proposition: A nearby car alarm previously turned out to be a harmless false alarm.
+    salience_source: specific location, named relation, vivid wildlife explanation
+    why_plausible: A story from the same street can make the event feel less serious.
+    why_irrelevant: A prior false alarm does not explain broken glass plus a missing
+      bag on this car.
+  LL:
+    distractor: A relative had a vehicle alarm incident nearby that turned out to
+      be a harmless false alarm.
+    diagnosticity: low
+    salience: low
+    proposition: A nearby car alarm previously turned out to be a harmless false alarm.
+    matched_to: HL
+  HH:
+    distractor: Three windows are smashed, and the fourth has a fresh star-shaped
+      impact crack like something hit it hard from outside.
+    diagnosticity: high
+    salience: high
+    proposition: Multiple windows are smashed and the remaining cracked window has
+      a fresh impact pattern.
+    salience_source: visible physical damage pattern
+  LH:
+    distractor: Several windows are broken and the remaining damaged window shows
+      a recent impact-fracture pattern.
+    diagnosticity: high
+    salience: low
+    proposition: Multiple windows are smashed and the remaining cracked window has
+      a fresh impact pattern.
+    matched_to: HH
+distractor_direction:
+  label: False alarm interpretation
+  description: Treating the event as a non-criminal alarm or nuisance incident rather
+    than an actual vehicle break-in.
+plausible_alternative_directions:
+- label: Vandalism-only damage
+  description: The window damage was deliberate vandalism but not connected to theft
+    of the bag.
+- label: Bag misplaced before parking
+  description: The laptop bag was removed or misplaced before the car was parked overnight.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

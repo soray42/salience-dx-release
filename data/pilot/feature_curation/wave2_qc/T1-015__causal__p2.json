@@ -1,0 +1,9 @@
+{
+  "seed_id": "T1-015",
+  "steelman": "Balcony containers are routinely watered with calcium-heavy tap water, which can raise soil pH above 7.0–7.5 over a season. Elevated pH locks out iron (and manganese) even when those minerals are physically present in the growing medium. Iron deficiency causes chlorosis visually described as 'yellowing,' and the neighbour's case was diagnosed as exactly this mechanism in comparable tomato plants. A cautious gardener consulting a standard RHS or university extension guide for container tomatoes would see pH/iron-lockout listed as a common cause of tomato yellowing and plausibly apply the neighbour's diagnosis to their own situation before checking further.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Alkaline soil (raised by tap water over season) blocks iron uptake → iron deficiency chlorosis presenting as leaf yellowing. This is a real mechanism for container tomatoes generally.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase specifies bottom-up progression from oldest, lowest leaves with healthy new upper growth — the textbook signature of a mobile-nutrient deficiency (nitrogen, magnesium). Iron is an immobile nutrient: the plant cannot redistribute it, so iron deficiency always presents first on the youngest, uppermost leaves as interveinal chlorosis, never as ascending lower-leaf yellowing. The stated symptom pattern structurally forecloses the iron/pH mechanism before the distractor is introduced. Any practitioner with basic plant physiology knowledge (mobile vs. immobile nutrients) would remove iron lockout from their checklist upon hearing 'bottom-up, oldest leaves first.' Closure is effective. Seed passes this lens."
+}

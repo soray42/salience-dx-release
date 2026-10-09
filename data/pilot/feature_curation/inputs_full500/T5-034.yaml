@@ -1,0 +1,187 @@
+seed_id: T5-034
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I have an offer from a company whose main product I use and genuinely admire.
+  My current role pays well and I have a performance review coming up in two months.
+  I am not miserable where I am now but find this offer exciting. {DS}
+focal_diagnostic_feature: The offer is 12% below current total compensation once the
+  smaller equity package and absent pension match are accounted for, and the new company
+  has no defined engineering promotion criteria.
+low_diagnostic_proposition: The product's strong visual polish suggests the engineering
+  team behind it is thoughtfully run.
+oracle_action: ANSWER
+oracle_focus: Do not accept on these terms; the offer represents a 12% total-compensation
+  reduction with no defined promotion path, making it a financial and career-trajectory
+  step backward despite the product's appeal.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not use product aesthetics as a proxy for engineering
+  culture or compensation; ask for a full total-compensation breakdown, equity terms,
+  pension or retirement match, and the company's engineering promotion criteria before
+  evaluating the offer.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not use product aesthetics as a proxy for engineering culture or compensation;
+      ask for a full total-compensation breakdown, equity terms, pension or retirement
+      match, and the company's engineering promotion criteria before evaluating the
+      offer.
+  LL:
+    action: ASK
+    focus: Do not use product aesthetics as a proxy for engineering culture or compensation;
+      ask for a full total-compensation breakdown, equity terms, pension or retirement
+      match, and the company's engineering promotion criteria before evaluating the
+      offer.
+  HH:
+    action: ANSWER
+    focus: Do not accept on these terms; the offer represents a 12% total-compensation
+      reduction with no defined promotion path, making it a financial and career-trajectory
+      step backward despite the product's appeal.
+  LH:
+    action: ANSWER
+    focus: Do not accept on these terms; the offer represents a 12% total-compensation
+      reduction with no defined promotion path, making it a financial and career-trajectory
+      step backward despite the product's appeal.
+variants:
+  HL:
+    distractor: Every screen of their product has this elegant, considered quality
+      — the kind of pixel-level attention that only comes from a team that really
+      cares. A workplace that ships something that beautiful has to be running well.
+    diagnosticity: low
+    salience: high
+    proposition: The product's strong visual polish suggests the engineering team
+      behind it is thoughtfully run.
+    salience_source: B/C — vivid sensory description of the product's quality ('pixel-level
+      attention', 'that beautiful') combined with a confident inferential assertion
+      ('has to be running well'); the aesthetic detail is about the product, not the
+      source.
+    why_plausible: Great product design does sometimes correlate with disciplined
+      engineering culture; a reader who admires the product might readily take polished
+      aesthetics as a proxy for internal quality and team health.
+    why_irrelevant: Product visual quality is produced by design teams and cannot
+      indicate total compensation levels or the existence of a written engineering
+      promotion ladder; the inferential bridge is cross-domain and structurally uninformative
+      for this decision.
+  LL:
+    distractor: The product's strong visual polish suggests the engineering team behind
+      it is thoughtfully run.
+    diagnosticity: low
+    salience: low
+    proposition: The product's strong visual polish suggests the engineering team
+      behind it is thoughtfully run.
+    matched_to: HL
+  HH:
+    distractor: Their offer is 12% below my current total compensation once I subtract
+      the smaller equity package and the missing pension match, and their engineering
+      ladder has no defined promotion criteria at all.
+    diagnosticity: high
+    salience: high
+    proposition: The offer is 12% below current total compensation once the smaller
+      equity package and absent pension match are accounted for, and the new company
+      has no defined engineering promotion criteria.
+    salience_source: B/C — specific percentage (12%), named components (equity package,
+      pension match), and a definitive absence ('no defined promotion criteria at
+      all') give the evidence precision and finality in a clean declarative sentence.
+  LH:
+    distractor: The offer is 12% below current total compensation accounting for smaller
+      equity and absent pension match; no defined promotion criteria exist.
+    diagnosticity: high
+    salience: low
+    proposition: The offer is 12% below current total compensation once the smaller
+      equity package and absent pension match are accounted for, and the new company
+      has no defined engineering promotion criteria.
+    matched_to: HH
+distractor_direction:
+  label: product-aesthetic culture inference
+  description: Treating the product's visual polish and design quality as evidence
+    that the engineering team is well-run, making the offer attractive on cultural
+    grounds.
+plausible_alternative_directions:
+- label: new-company growth trajectory
+  description: Assessing whether the admired company's market position and growth
+    offer career upside that justifies a short-term compensation trade-off.
+- label: current-role advancement timing
+  description: Evaluating whether the upcoming performance review might yield a raise
+    or promotion that changes the relative offer value.
+- label: product mission alignment
+  description: Considering whether working on a product the user genuinely uses and
+    admires has long-term career or satisfaction value not captured by compensation
+    numbers.
+leak_audit:
+  ll_atomic_claims:
+  - The product's strong visual polish is observable.
+  - That polish suggests the engineering team is thoughtfully run.
+  hh_atomic_claims:
+  - The offer is 12% below current total compensation.
+  - The gap includes a smaller equity package at the new company.
+  - The gap includes an absent pension match at the new company.
+  - The new company's engineering ladder has no defined promotion criteria.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observation, no external source cited.
+    narrative_coherence: 'Clean sequence: specific sensory observation of product
+      quality leads directly to a confident causal inference about the team behind
+      it.'
+    confident_assertion: Has to be running well — a strong, unhedged inferential claim.
+    concrete_detail: Pixel-level attention, 'that beautiful' — concrete aesthetic
+      descriptors about the product itself (not the source's identity or setting).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 42
+  hl_word_count: 36
+  ll_word_count: 14
+  hh_word_count: 31
+  lh_word_count: 21
+  notes: 'The inferential bridge (product aesthetic → engineering team thoughtfully
+    run) appears
+
+    in both HL and LL per T5/C1 rules. HL adds vivid sensory detail about the product
+
+    quality and a confident assertion; LL states the bridge flatly and source-lessly.
+
+    No sensory detail in HL refers to setting, environment, or rambling — it is all
+
+    about the product being evaluated. The xbase "pays well" provides context without
+
+    revealing the 12% gap (which lives only in HH/LH). The upcoming performance review
+
+    is genuine context that creates an open_qa alternative direction but does not
+
+    close any direction on its own (C4 compliant).
+
+    '
+causal_audit:
+  steelman: 'There is a real positive correlation, documented in product-culture research,
+    between
+
+    companies that ship high-quality consumer products and engineering cultures that
+    value
+
+    craft, code quality, and disciplined process. A company whose product shows consistent
+
+    pixel-level design attention likely has leadership that prioritises quality over
+
+    shortcuts, which could benefit engineers. A senior career advisor might genuinely
+
+    view product aesthetic quality as a weak but non-zero signal of internal engineering
+
+    standards.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — product aesthetics are ruled out as uninformative
+    not by xbase but structurally: visual polish cannot reveal compensation totals
+    or the existence of a written promotion ladder, which are the focal facts.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: A job offer from an aesthetically admired product company is actually
+    a 12% total-compensation reduction with no defined promotion criteria, making
+    it a step backward despite the product's visual appeal.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

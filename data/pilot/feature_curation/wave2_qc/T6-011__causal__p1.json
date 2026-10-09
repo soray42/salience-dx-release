@@ -1,0 +1,9 @@
+{
+  "seed_id": "T6-011",
+  "steelman": "Evening home-network congestion is one of the most common causes of robotic VoIP audio: residential ISPs throttle bandwidth during peak hours (roughly 7–10 PM), causing packet loss and jitter that force codecs such as Opus into artifact-heavy error-concealment modes. The router itself may accumulate a degraded NAT table or suffer a firmware memory leak after days of continuous uptime, both of which a simple restart clears. A senior network engineer would place 'check for evening packet loss and reboot router' near the top of any home-network VoIP troubleshooting checklist. The user's multi-year, never-failed track record of router-restart success provides strong inductive support for the same root cause now. In the absence of the offline-recording evidence, this distractor would comfortably clear a plausibility bar.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Router NAT-table degradation or ISP peak-hour throttling causing codec packet-loss artifacts in VoIP streams — a valid mechanism in general, but requires the audio to traverse the network, which the offline local recording definitively does not.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase closure is clean and decisive: 'I recorded a short voice memo offline on the same laptop at that hour and it sounded equally robotic.' Local recording uses no network path whatsoever, so every router/ISP/packet-loss mechanism is physically excluded for this episode. The seed is well-constructed; the causal_audit embedded in the YAML reaches the same conclusion. No repair needed."
+}

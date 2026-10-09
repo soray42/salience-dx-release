@@ -1,0 +1,157 @@
+seed_id: T5-053
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: Our team's Docker image build in CI takes over twelve minutes on every push,
+  even when we only change a comment in a source file. The build machine has adequate
+  CPU and memory, and registry pull limits are not being hit. The build log shows
+  all layers rebuilding each time. {DS}
+focal_diagnostic_feature: The Dockerfile copies the full source tree before the dependency
+  install step, invalidating the package-layer cache on every commit and forcing a
+  full dependency re-download regardless of whether dependencies changed.
+low_diagnostic_proposition: The CI pipeline YAML looks visually disorganised, suggesting
+  a misconfiguration is present somewhere.
+oracle_action: ANSWER
+oracle_focus: Reorder the Dockerfile so that dependency files (requirements.txt or
+  package.json) are copied and installed before COPY . ., restoring layer cache reuse.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer build misconfiguration from YAML formatting.
+  Ask for Dockerfile layer order and whether a cache step is configured in the workflow.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer build misconfiguration from YAML formatting. Ask for Dockerfile
+      layer order and whether a cache step is configured in the workflow.
+  LL:
+    action: ASK
+    focus: Do not infer build misconfiguration from YAML formatting. Ask for Dockerfile
+      layer order and whether a cache step is configured in the workflow.
+  HH:
+    action: ANSWER
+    focus: Reorder the Dockerfile so that dependency files (requirements.txt or package.json)
+      are copied and installed before COPY . ., restoring layer cache reuse.
+  LH:
+    action: ANSWER
+    focus: Reorder the Dockerfile so that dependency files (requirements.txt or package.json)
+      are copied and installed before COPY . ., restoring layer cache reuse.
+variants:
+  HL:
+    distractor: Our CI pipeline YAML is a sprawling mess of duplicate keys and inconsistent
+      indentation — it looks like nobody has ever cleaned it up, and that visual disorder
+      probably points to a misconfiguration somewhere.
+    diagnosticity: low
+    salience: high
+    proposition: The CI pipeline YAML looks visually disorganised, suggesting a misconfiguration
+      is present somewhere.
+    salience_source: B (narrative coherence — vivid descriptive enumeration of formatting
+      flaws); C (confident assertion — "probably points to a misconfiguration").
+    why_plausible: Disorganised YAML can contain subtle errors like duplicate keys
+      that CI parsers silently ignore; a practitioner might reasonably start there.
+    why_irrelevant: YAML formatting is a surface property of the pipeline definition
+      file; it has no mechanism connecting to Docker layer caching behaviour, which
+      is determined entirely by Dockerfile instruction order.
+  LL:
+    distractor: The CI configuration file is visually disorganised, and that disorder
+      suggests a misconfiguration is present.
+    diagnosticity: low
+    salience: low
+    proposition: The CI pipeline YAML looks visually disorganised, suggesting a misconfiguration
+      is present somewhere.
+    matched_to: HL
+  HH:
+    distractor: The Dockerfile copies the full source tree with COPY . . at line 4,
+      before the pip install step at line 7, so every commit — even a one-line doc
+      change — busts the cache and forces all dependencies to re-download.
+    diagnosticity: high
+    salience: high
+    proposition: The Dockerfile copies the full source tree before the dependency
+      install step, invalidating the package-layer cache on every commit and forcing
+      a full dependency re-download regardless of whether dependencies changed.
+    salience_source: B (narrative coherence — specific line numbers, concrete mechanism
+      stated end-to-end); C (confident causal framing — "busts the cache").
+  LH:
+    distractor: The Dockerfile places COPY . . before the dependency install step,
+      so every commit invalidates the package cache layer.
+    diagnosticity: high
+    salience: low
+    proposition: The Dockerfile copies the full source tree before the dependency
+      install step, invalidating the package-layer cache on every commit and forcing
+      a full dependency re-download regardless of whether dependencies changed.
+    matched_to: HH
+distractor_direction:
+  label: CI YAML misconfiguration
+  description: Investigating whether messy or malformed CI pipeline YAML contains
+    a configuration error that causes the slow Docker builds.
+plausible_alternative_directions:
+- label: missing build cache mount
+  description: The workflow may lack a BuildKit cache mount or registry cache action,
+    meaning Docker cannot reuse layers across runs even with correct Dockerfile ordering.
+- label: base image pull latency
+  description: The base image may not be locally available and could be pulled fresh
+    each run from a slow or rate-limited registry mirror.
+leak_audit:
+  ll_atomic_claims:
+  - The CI configuration file is visually disorganised.
+  - That visual disorder suggests a misconfiguration is present.
+  hh_atomic_claims:
+  - The Dockerfile has COPY . . at line 4.
+  - The pip install step is at line 7 (after COPY . .).
+  - Every commit invalidates the dependency layer cache.
+  - Even a one-line doc change triggers a full dependency re-download.
+  hl_salience_dimensions:
+    source_credibility: N/A — no named source; first-person observation.
+    narrative_coherence: Vivid enumeration of formatting flaws (duplicate keys, inconsistent
+      indentation) creates a coherent picture of neglect.
+    confident_assertion: '"Probably points to a misconfiguration" — inferential bridge
+      stated assertively.'
+    concrete_detail: N/A — details are about YAML appearance, not the case root cause.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 50
+  hl_word_count: 33
+  ll_word_count: 15
+  hh_word_count: 39
+  lh_word_count: 19
+  notes: 'T5 inferential bridge ("visual disorder → misconfiguration") present in
+    both
+
+    HL and LL. HL adds only vivid description of the surface property and the
+
+    confident inference; no case-specific details added. HH/LH diff: both assert
+
+    the COPY ordering and the cache-bust consequence; HH adds specific line numbers
+
+    (line 4 / line 7) as the vivid/precise dimension.
+
+    '
+causal_audit:
+  steelman: 'YAML formatting errors — such as duplicate anchor names or indentation
+    that
+
+    silently changes a scalar to a list — can cause a CI step to run with wrong
+
+    parameters. If the Dockerfile path or build-context argument were mis-parsed,
+
+    the build could behave unexpectedly including missing caches.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states "The build log shows all layers rebuilding
+    each time" — this pins the problem to Docker layer logic, not to step execution
+    errors that YAML misconfig would produce. A YAML parsing error would more likely
+    cause a step to fail outright or use wrong arguments, not a consistent all-layers-rebuild
+    pattern.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Docker image build in CI rebuilds all layers on every push because
+    COPY . . precedes the dependency install step; aesthetic distractor is messy CI
+    YAML offered as evidence of misconfiguration.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

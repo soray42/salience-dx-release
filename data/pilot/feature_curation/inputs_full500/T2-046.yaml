@@ -1,0 +1,168 @@
+seed_id: T2-046
+template: T2
+domain: open_qa
+complexity: medium
+xbase: 'I''m thinking of returning a wireless keyboard I bought last week because
+  it keeps cutting out: every so often a burst of my typing just doesn''t register
+  and I have to retype it. It''s annoying enough that I assumed I got a faulty unit.
+  The same keyboard pairs and types perfectly when I sit on the sofa with it near
+  my laptop. Its battery is full. {DS}'
+focal_diagnostic_feature: The keyboard's USB receiver is plugged into a USB 3.0 port
+  right beside the dongle, and USB 3.0 ports are a known source of 2.4 GHz interference;
+  moving the receiver to a short extension or a USB 2.0 port makes the dropouts vanish.
+low_diagnostic_proposition: The dropouts started right after the user put a new leather
+  desk mat on the desk.
+oracle_action: ANSWER
+oracle_focus: Do not return the keyboard; the dropouts are USB 3.0 radio interference
+  with the 2.4 GHz receiver, which works flawlessly elsewhere, so move the dongle
+  to a USB 2.0 port or a short extension cable away from the port instead.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a new desk mat to the keyboard dropping
+  out. Ask which USB port the receiver is plugged into and whether moving the dongle
+  away from the computer or a USB 3.0 port changes anything before deciding the unit
+  is faulty.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a new desk mat to the keyboard dropping out. Ask which USB
+      port the receiver is plugged into and whether moving the dongle away from the
+      computer or a USB 3.0 port changes anything before deciding the unit is faulty.
+  LL:
+    action: ASK
+    focus: Do not connect a new desk mat to the keyboard dropping out. Ask which USB
+      port the receiver is plugged into and whether moving the dongle away from the
+      computer or a USB 3.0 port changes anything before deciding the unit is faulty.
+  HH:
+    action: ANSWER
+    focus: Do not return the keyboard; the dropouts are USB 3.0 radio interference
+      with the 2.4 GHz receiver, which works flawlessly elsewhere, so move the dongle
+      to a USB 2.0 port or a short extension cable away from the port instead.
+  LH:
+    action: ANSWER
+    focus: Do not return the keyboard; the dropouts are USB 3.0 radio interference
+      with the 2.4 GHz receiver, which works flawlessly elsewhere, so move the dongle
+      to a USB 2.0 port or a short extension cable away from the port instead.
+variants:
+  HL:
+    distractor: The cutting-out began the very day I rolled out a big new leather
+      desk mat under the keyboard and mouse; the timing was so neat that I keep half-wondering
+      whether the keyboard somehow doesn't like sitting on the new surface, which
+      is pushing me toward just sending it back.
+    diagnosticity: low
+    salience: high
+    proposition: The dropouts started right after the user put a new leather desk
+      mat on the desk.
+    salience_source: B/C — a confident first-person timeline pinning the dropouts
+      to a specific, memorable desk change.
+    why_plausible: People blame the newest thing the device touches, and the mat arrived
+      the same day the typing began cutting out.
+    why_irrelevant: A leather mat is inert and has no electrical or radio properties;
+      it cannot interfere with a 2.4 GHz wireless link, so it has no pathway to the
+      dropouts.
+  LL:
+    distractor: The dropouts started around the time the user put a new leather desk
+      mat on the desk.
+    diagnosticity: low
+    salience: low
+    proposition: The dropouts started right after the user put a new leather desk
+      mat on the desk.
+    matched_to: HL
+  HH:
+    distractor: I noticed the receiver is plugged into a USB 3.0 port right next to
+      itself, and USB 3.0 is notorious for spraying noise across the 2.4 GHz band
+      the dongle uses. The moment I move the receiver onto a short extension or a
+      USB 2.0 port away from the machine, the typing comes through without a single
+      drop.
+    diagnosticity: high
+    salience: high
+    proposition: The keyboard's USB receiver is plugged into a USB 3.0 port right
+      beside the dongle, and USB 3.0 ports are a known source of 2.4 GHz interference;
+      moving the receiver to a short extension or a USB 2.0 port makes the dropouts
+      vanish.
+    salience_source: Concrete cause-and-fix (USB 3.0 noise; relocating the dongle
+      ends the drops) makes the interference mechanism vivid.
+  LH:
+    distractor: The receiver sits in a USB 3.0 port, a known 2.4 GHz noise source;
+      moving it to a USB 2.0 port or extension stops the dropouts.
+    diagnosticity: high
+    salience: low
+    proposition: The keyboard's USB receiver is plugged into a USB 3.0 port right
+      beside the dongle, and USB 3.0 ports are a known source of 2.4 GHz interference;
+      moving the receiver to a short extension or a USB 2.0 port makes the dropouts
+      vanish.
+    matched_to: HH
+distractor_direction:
+  label: New-desk-mat timing
+  description: Treating the recently added leather desk mat as the reason the wireless
+    keyboard cuts out.
+plausible_alternative_directions:
+- label: Faulty unit
+  description: Whether the keyboard or its receiver is genuinely defective and should
+    be returned.
+- label: Driver or pairing fault
+  description: Whether a software pairing or driver glitch is dropping input intermittently.
+- label: Distance or obstruction
+  description: Whether the desk setup places the receiver too far from or blocked
+    relative to the keyboard.
+leak_audit:
+  ll_atomic_claims:
+  - The dropouts started around the time the user put a new leather desk mat on the
+    desk.
+  hh_atomic_claims:
+  - The keyboard's receiver is plugged into a USB 3.0 port right beside the dongle.
+  - USB 3.0 ports are a known source of 2.4 GHz interference.
+  - Moving the receiver to a USB 2.0 port or short extension stops the dropouts.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: A clean same-day timeline tying the dropouts to rolling out
+      the new mat.
+    confident_assertion: The timing was so neat the user is leaning toward sending
+      the keyboard back.
+    concrete_detail: Detail about the big new leather desk mat under the keyboard
+      — about the event, not the interference.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 72
+  hl_word_count: 47
+  ll_word_count: 16
+  hh_word_count: 48
+  lh_word_count: 25
+  notes: 'Per C4, xbase withholds the USB-port placement and the move-it-and-it-works
+    finding (which decides return vs keep);
+
+    it keeps only the symptom and that the keyboard is flawless by the sofa. The decisive
+    USB 3.0 interference evidence
+
+    lives only in HH/LH. A leather mat has no RF mechanism.
+
+    '
+causal_audit:
+  steelman: 'One might argue the mat changed the keyboard''s height or angle, worsening
+    line-of-sight to a low receiver. But
+
+    the keyboard works flawlessly near the laptop on the sofa, and the dropouts vanish
+    purely by relocating the
+
+    receiver away from a noisy USB 3.0 port; an inert leather mat radiates nothing
+    and cannot interfere with a
+
+    2.4 GHz link, so there is no mechanism.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the same keyboard pairs and types perfectly
+    near the laptop on the sofa and its battery is full, foreclosing a faulty-unit
+    or weak-battery pathway and pointing to something specific to the desk setup.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to return a wireless keyboard whose dropouts are USB 3.0 interference
+    with its 2.4 GHz receiver, against new-leather-desk-mat coincidence timing.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

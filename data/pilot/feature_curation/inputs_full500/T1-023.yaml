@@ -1,0 +1,159 @@
+seed_id: T1-023
+template: T1
+domain: open_qa
+complexity: medium
+xbase: I am trying to trim my monthly subscriptions. I went through last year's card
+  statement and listed everything recurring. I pay for two separate streaming services,
+  a cloud storage plan, a music plan, a news site, and a meditation app. I want to
+  cancel whatever I am genuinely not using rather than just guessing, and I have my
+  actual usage history available to check. {DS}
+focal_diagnostic_feature: The user's own viewing history shows one of the two streaming
+  services was opened zero times in the last six months, while the other was used
+  most weeks.
+low_diagnostic_proposition: A friend regretted cancelling a streaming service because
+  a show they later wanted moved exclusively to it.
+oracle_action: ANSWER
+oracle_focus: Cancel the streaming service the user's own history shows unopened for
+  six months; keep the one used most weeks, and review the rest against actual usage
+  the same way rather than against someone else's regret story.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a friend's content-exclusivity regret decide
+  it. Ask for the user's own usage history on each service before cancelling anything.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a friend's content-exclusivity regret decide it. Ask for the
+      user's own usage history on each service before cancelling anything.
+  LL:
+    action: ASK
+    focus: Do not let a friend's content-exclusivity regret decide it. Ask for the
+      user's own usage history on each service before cancelling anything.
+  HH:
+    action: ANSWER
+    focus: Cancel the streaming service the user's own history shows unopened for
+      six months; keep the one used most weeks, and review the rest against actual
+      usage the same way rather than against someone else's regret story.
+  LH:
+    action: ANSWER
+    focus: Cancel the streaming service the user's own history shows unopened for
+      six months; keep the one used most weeks, and review the rest against actual
+      usage the same way rather than against someone else's regret story.
+variants:
+  HL:
+    distractor: Camila, a friend who plans her viewing carefully, told me she cancelled
+      a streaming service to save money and then a show she had been waiting for moved
+      exclusively to that platform, so she had to resubscribe within weeks.
+    diagnosticity: low
+    salience: high
+    proposition: A friend regretted cancelling a streaming service because a show
+      they later wanted moved exclusively to it.
+    salience_source: A — a thoughtful friend recounting a concrete, relatable cancellation-regret
+      experience.
+    why_plausible: Content does migrate between platforms, so the fear of cancelling
+      and losing access to a future show is a common, real hesitation.
+    why_irrelevant: The friend's story is about her viewing preferences, not the user's;
+      it cannot tell which of the user's two services the user themselves actually
+      uses, which the user's own history settles directly.
+  LL:
+    distractor: A friend regretted cancelling a streaming service because a show they
+      later wanted moved exclusively to it.
+    diagnosticity: low
+    salience: low
+    proposition: A friend regretted cancelling a streaming service because a show
+      they later wanted moved exclusively to it.
+    matched_to: HL
+  HH:
+    distractor: 'My account history is unambiguous: one of the two streaming services
+      has not been opened a single time in the last six months, while I have watched
+      something on the other one most weeks across that same stretch.'
+    diagnosticity: high
+    salience: high
+    proposition: The user's own viewing history shows one of the two streaming services
+      was opened zero times in the last six months, while the other was used most
+      weeks.
+    salience_source: The zero-opens-versus-most-weeks contrast over six months is
+      a precise, self-sourced usage record.
+  LH:
+    distractor: One streaming service shows zero opens in the user's history over
+      six months; the other was used most weeks.
+    diagnosticity: high
+    salience: low
+    proposition: The user's own viewing history shows one of the two streaming services
+      was opened zero times in the last six months, while the other was used most
+      weeks.
+    matched_to: HH
+distractor_direction:
+  label: Future-content lock-in regret
+  description: Treating the risk that a future desired show moves exclusively to a
+    cancelled service as the dominant reason to keep both streaming subscriptions.
+plausible_alternative_directions:
+- label: Bundle/annual discount check
+  description: Whether switching either service to an annual or bundled plan changes
+    the cost calculus before cancelling.
+- label: Household shared use
+  description: Whether someone else in the household uses the seemingly-idle service
+    even if the user does not.
+leak_audit:
+  ll_atomic_claims:
+  - A friend cancelled a streaming service.
+  - A show the friend later wanted moved exclusively to that service.
+  - The friend regretted the cancellation.
+  hh_atomic_claims:
+  - One of the two streaming services was opened zero times in the last six months.
+  - The other streaming service was used most weeks over that same six months.
+  hl_salience_dimensions:
+    source_credibility: Named friend (Camila) who plans her viewing carefully, with
+      a firsthand account.
+    narrative_coherence: 'Clean before/after story: cancel, show moves, resubscribe
+      within weeks.'
+    confident_assertion: Told me directly what happened to her.
+    concrete_detail: N/A — HL adds only source identification and the regret mechanism,
+      no usage fact about the user that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 41
+  ll_word_count: 18
+  hh_word_count: 43
+  lh_word_count: 18
+  notes: 'xbase lists the subscriptions and states usage history is available, but
+    never reveals which service is idle —
+
+    that decisive fact lives only in HH/LH. HL adds only Camila''s identity and her
+    regret story, no fact about the
+
+    user''s own usage. The distractor is about the friend''s preferences, structurally
+    unable to inform which of the
+
+    user''s services the user uses.
+
+    '
+causal_audit:
+  steelman: 'A careful budgeter could argue that streaming catalogues are volatile
+    and exclusivity deals shift constantly, so
+
+    a service that looks idle today might host next quarter''s must-watch release;
+    keeping both as cheap insurance
+
+    against forced resubscription churn is a defensible hedge worth weighing before
+    cancelling.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the friend's regret is about her own future viewing
+    wants and says nothing about which of the user's two services the user actually
+    uses; the decisive own-usage record is supplied only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Deciding which of two streaming subscriptions to cancel using the user's
+    own zero-opens-in-six-months viewing history, not a friend's content-exclusivity
+    regret story.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

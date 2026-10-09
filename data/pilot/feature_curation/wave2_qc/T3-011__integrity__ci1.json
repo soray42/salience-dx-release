@@ -1,0 +1,8 @@
+{
+  "seed_id": "T3-011",
+  "verdict": "clean",
+  "xbase_span": "",
+  "focal_in_hh_lh": true,
+  "reasoning": "xbase conveys only that the app was rejected twice, that formal rejection letters were received and shared in Slack, and that Kwame replied without reading the letters — pure context and narrative setup with no guideline citations, crash details, or orientation-handling information. The focal evidence (Guideline 4.0 Design citation, iPad landscape-rotation crash, identical reproduction steps across two submissions) is absent from xbase and lives exclusively in the HH and LH distractor texts, exactly as required. No pathway-closure edge cases apply; the Kwame 'replied without reading' detail is a setup framing device, not a closure that supplies the affirmative diagnosis.",
+  "repair_hint": ""
+}

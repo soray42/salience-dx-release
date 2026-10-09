@@ -1,0 +1,183 @@
+seed_id: T6-048
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: 'Our MongoDB replica set has a secondary that falls out of sync every few days
+  and requires a full resync to rejoin. The secondary''s hardware is healthy: CPU,
+  memory, and network throughput look normal. There have been no explicit replica-set
+  configuration changes. The primary handles a write-heavy workload with many small
+  document updates per second. {DS}'
+focal_diagnostic_feature: The oplog on the primary is configured at 512 MB, but the
+  write rate is generating approximately 8 GB of oplog data per hour; when the secondary
+  lags more than a few minutes it falls behind the oplog window and cannot roll forward,
+  triggering the resync.
+low_diagnostic_proposition: The secondary keeps losing sync because the connection
+  pool between the secondary and primary is becoming exhausted under write pressure,
+  which is what caused similar replica failures the user has encountered before.
+oracle_action: ANSWER
+oracle_focus: Increase the oplog size on the primary substantially (to at least several
+  hours of write volume at current throughput); the resync cycle is driven by the
+  secondary falling outside the oplog window, not by connection pool exhaustion.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the connection-pool explanation from past
+  failures; ask for the oplog size, the write throughput in GB/hour, and whether the
+  secondary's replication lag is exceeding the oplog window before each resync.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the connection-pool explanation from past failures; ask for
+      the oplog size, the write throughput in GB/hour, and whether the secondary's
+      replication lag is exceeding the oplog window before each resync.
+  LL:
+    action: ASK
+    focus: Do not apply the connection-pool explanation from past failures; ask for
+      the oplog size, the write throughput in GB/hour, and whether the secondary's
+      replication lag is exceeding the oplog window before each resync.
+  HH:
+    action: ANSWER
+    focus: Increase the oplog size on the primary substantially (to at least several
+      hours of write volume at current throughput); the resync cycle is driven by
+      the secondary falling outside the oplog window, not by connection pool exhaustion.
+  LH:
+    action: ANSWER
+    focus: Increase the oplog size on the primary substantially (to at least several
+      hours of write volume at current throughput); the resync cycle is driven by
+      the secondary falling outside the oplog window, not by connection pool exhaustion.
+variants:
+  HL:
+    distractor: Every replica sync failure I have dealt with before came down to connection
+      pool exhaustion under write pressure — the pool would saturate and heartbeat
+      timeouts would follow. That is exactly what is happening here, and my instinct
+      is to check pool sizing.
+    diagnosticity: low
+    salience: high
+    proposition: The secondary keeps losing sync because the connection pool between
+      the secondary and primary is becoming exhausted under write pressure, which
+      is what caused similar replica failures the user has encountered before.
+    salience_source: 'B: vivid mechanistic narrative (spike, saturate, heartbeat timeout,
+      kicked from set) from personal experience; C: confident first-instinct framing
+      explicitly applied to the present case.'
+    why_plausible: Connection pool exhaustion under write pressure is a genuine MongoDB
+      failure mode that causes replica nodes to lose heartbeat and be marked unreachable;
+      the symptom of periodic loss followed by resync is consistent with both patterns.
+    why_irrelevant: Connection pool exhaustion shows up as heartbeat timeouts and
+      network-layer errors; the focal feature reveals that the secondary's oplog window
+      is simply too short for its lag — a categorical different failure mode with
+      its own log signature.
+  LL:
+    distractor: Past replica sync failures for this user were caused by connection
+      pool exhaustion under write pressure, and that same pattern seems to apply here.
+    diagnosticity: low
+    salience: low
+    proposition: The secondary keeps losing sync because the connection pool between
+      the secondary and primary is becoming exhausted under write pressure, which
+      is what caused similar replica failures the user has encountered before.
+    matched_to: HL
+  HH:
+    distractor: Checking rs.printReplicationInfo() shows the oplog holds about 3.8
+      minutes of writes at the current rate. The secondary's replication lag before
+      each resync has been hovering around 4 to 5 minutes, meaning the secondary consistently
+      falls just past the oplog tail. The oplog is capped at 512 MB while the write
+      throughput is generating roughly 8 GB of oplog data every hour.
+    diagnosticity: high
+    salience: high
+    proposition: The oplog on the primary is configured at 512 MB, but the write rate
+      is generating approximately 8 GB of oplog data per hour; when the secondary
+      lags more than a few minutes it falls behind the oplog window and cannot roll
+      forward, triggering the resync.
+    salience_source: 'B: precise figures (3.8 minutes, 4-5 minutes lag, 512 MB oplog,
+      8 GB/hour) with named diagnostic command; C: direct causal chain stated (consistently
+      falls just past the oplog tail).'
+  LH:
+    distractor: The oplog window is about 3.8 minutes at current write rate; secondary
+      lag reaches 4-5 minutes before each resync, falling outside the window. Oplog
+      is 512 MB while throughput is ~8 GB/hour.
+    diagnosticity: high
+    salience: low
+    proposition: The oplog on the primary is configured at 512 MB, but the write rate
+      is generating approximately 8 GB of oplog data per hour; when the secondary
+      lags more than a few minutes it falls behind the oplog window and cannot roll
+      forward, triggering the resync.
+    matched_to: HH
+distractor_direction:
+  label: Connection pool exhaustion
+  description: Investigating whether the connection pool between the secondary and
+    primary saturates under write pressure, causing heartbeat timeouts and replica
+    ejection.
+plausible_alternative_directions:
+- label: Secondary disk I/O bottleneck
+  description: Even with normal average throughput, burst write patterns could saturate
+    the secondary's journal write path, causing it to fall behind before recovering.
+- label: Chunk migration interference
+  description: If the deployment is sharded, chunk migrations could generate write
+    bursts that temporarily spike oplog consumption beyond normal throughput estimates.
+- label: Network packet loss on replication link
+  description: Intermittent packet loss between primary and secondary could cause
+    periodic lag spikes that exhaust the oplog window even if average throughput seems
+    fine.
+leak_audit:
+  ll_atomic_claims:
+  - Past replica sync failures for this user were caused by connection pool exhaustion
+    under write pressure.
+  - That same pattern is being applied as an explanation for the current failure.
+  hh_atomic_claims:
+  - rs.printReplicationInfo() shows the oplog holds 3.8 minutes of writes at the current
+    rate.
+  - The secondary's lag before each resync hovers around 4-5 minutes.
+  - The secondary falls just past the oplog tail before resyncing.
+  - The oplog is capped at 512 MB.
+  - Write throughput generates approximately 8 GB of oplog data per hour.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker.
+    narrative_coherence: Detailed mechanistic narrative from personal experience (spike
+      → saturate → heartbeat timeout → kicked from set).
+    confident_assertion: '''My first instinct is to look at pool sizing'' — confident
+      application of past pattern to present case.'
+    concrete_detail: N/A — all detail describes past failure mechanism, not current
+      case facts.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 55
+  hl_word_count: 42
+  ll_word_count: 24
+  hh_word_count: 61
+  lh_word_count: 32
+  notes: 'T6 availability: past connection-pool pattern is structurally distinct from
+    oplog exhaustion — different log signatures, different fix, different MongoDB
+    subsystem. C4 check: xbase discloses write-heavy workload but NOT oplog size or
+    throughput ratio (those live in HH/LH). Root cause is distinct from all taken
+    seeds (T6-007 was Spark OOM/key skew; T6-020 was hourly DB lock on materialized
+    view). High complexity: requires oplog sizing arithmetic and understanding of
+    replica recovery path.
+
+    '
+causal_audit:
+  steelman: 'Connection pool exhaustion is a known MongoDB secondary failure mode:
+    under high write throughput the secondary''s incoming connections spike, the pool
+    hits maxIncomingConnections, heartbeat messages queue behind data messages, the
+    primary marks the secondary as unreachable after the heartbeat timeout, and a
+    resync is triggered. The cycle of failure-and-resync every few days is consistent
+    with this pattern too, and the write-heavy workload mentioned in xbase is a genuine
+    risk factor.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: The secondary's CPU, memory, and network throughput are
+    explicitly normal — there is no saturation signal consistent with connection pool
+    exhaustion. The focal feature (oplog window shorter than lag) is a categorical
+    different failure mode.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: MongoDB secondary repeatedly falling out of sync because the oplog
+    window (512 MB at 8 GB/hour write rate) is shorter than the secondary's lag, against
+    the user's availability bias from past connection-pool failures.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_B
+  generation_mode: generator_B_batches

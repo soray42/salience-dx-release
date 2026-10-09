@@ -1,0 +1,164 @@
+seed_id: T2-061
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: 'Our small monitoring server keeps firing a disk-space alert: the root volume
+  has been climbing toward full for the last few days and crosses the warning threshold
+  most evenings. I clear some space and it just creeps back up again. The amount of
+  metrics data we collect has not changed, and no new services started reporting to
+  it. The growth is steady day over day rather than a sudden jump. {DS}'
+focal_diagnostic_feature: The application log directory holds weeks of uncompressed
+  daily logs because the log-rotation cron job has been failing silently and nothing
+  is being deleted.
+low_diagnostic_proposition: The disk problem began right after the office IT team
+  swapped out the building's network switch.
+oracle_action: ANSWER
+oracle_focus: The disk is filling because log rotation stopped deleting old logs;
+  fix the rotation job so logs are compressed and pruned, rather than connecting it
+  to the network switch.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the network-switch swap to the disk filling.
+  Ask what is actually consuming the growing disk space on the volume.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the network-switch swap to the disk filling. Ask what is
+      actually consuming the growing disk space on the volume.
+  LL:
+    action: ASK
+    focus: Do not connect the network-switch swap to the disk filling. Ask what is
+      actually consuming the growing disk space on the volume.
+  HH:
+    action: ANSWER
+    focus: The disk is filling because log rotation stopped deleting old logs; fix
+      the rotation job so logs are compressed and pruned, rather than connecting it
+      to the network switch.
+  LH:
+    action: ANSWER
+    focus: The disk is filling because log rotation stopped deleting old logs; fix
+      the rotation job so logs are compressed and pruned, rather than connecting it
+      to the network switch.
+variants:
+  HL:
+    distractor: The one thing I keep circling back to is that this all kicked off
+      right after the office IT team came through and swapped the building's main
+      network switch over a weekend. Everything was fine before that, and the alerts
+      started the following week.
+    diagnosticity: low
+    salience: high
+    proposition: The disk problem began right after the office IT team swapped out
+      the building's network switch.
+    salience_source: B/C — a confident first-person timeline pinning the disk alerts
+      to the network-switch swap.
+    why_plausible: A recent, memorable infrastructure change is an easy thing to blame
+      when a problem appears just afterward.
+    why_irrelevant: A network switch moves packets between machines; it has no bearing
+      on how much data accumulates on this server's local disk.
+  LL:
+    distractor: The disk problem began right after the office IT team swapped out
+      the building's network switch.
+    diagnosticity: low
+    salience: low
+    proposition: The disk problem began right after the office IT team swapped out
+      the building's network switch.
+    matched_to: HL
+  HH:
+    distractor: Looking in the log directory, there are weeks of uncompressed daily
+      log files piled up that should have been rotated away; the log-rotation cron
+      job has been failing without warning, so nothing gets compressed or deleted
+      and the files just accumulate until the disk fills.
+    diagnosticity: high
+    salience: high
+    proposition: The application log directory holds weeks of uncompressed daily logs
+      because the log-rotation cron job has been failing silently and nothing is being
+      deleted.
+    salience_source: The pile of unrotated logs and the silently failing rotation
+      job make the cause concrete and decisive.
+  LH:
+    distractor: Weeks of uncompressed logs have accumulated because the log-rotation
+      cron job has been failing silently and deleting nothing.
+    diagnosticity: high
+    salience: low
+    proposition: The application log directory holds weeks of uncompressed daily logs
+      because the log-rotation cron job has been failing silently and nothing is being
+      deleted.
+    matched_to: HH
+distractor_direction:
+  label: Network-switch swap timing
+  description: Investigating whether the recent office network-switch replacement
+    is connected to the server's disk filling.
+plausible_alternative_directions:
+- label: Metrics retention too long
+  description: Whether the monitoring system's retention settings are keeping too
+    much data on disk.
+- label: Runaway temp files
+  description: Whether a process is writing growing temporary files that are never
+    cleaned up.
+leak_audit:
+  ll_atomic_claims:
+  - The disk problem began right after the office network switch was swapped out.
+  hh_atomic_claims:
+  - Weeks of uncompressed logs have accumulated in the log directory.
+  - The log-rotation cron job has been failing silently and deleting nothing.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean fine-before, alerts-after-the-following-week timeline.
+    confident_assertion: '''this all kicked off right after'' — confident framing.'
+    concrete_detail: Detail about the setting (IT came through over a weekend, swapped
+      the main switch) only; no new fact about the disk.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 70
+  hl_word_count: 41
+  ll_word_count: 16
+  hh_word_count: 44
+  lh_word_count: 17
+  notes: 'T2: a network-switch swap has no mechanism for local disk growth. LL is
+    the bare timing claim; HL adds only
+
+    first-person framing and setting detail. xbase rules out a change in metrics volume
+    or new reporters but
+
+    withholds the log-rotation cause; the decisive unrotated-logs finding lives only
+    in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'Could a network switch swap fill a disk? One might imagine that a misconfigured
+    switch causes retries, errors,
+
+    or reconnections that get logged, indirectly inflating log volume. But xbase states
+    the metrics workload is
+
+    unchanged and no new services report in, and a switch operates at the packet-forwarding
+    layer with no control
+
+    over how this server writes or retains files on its own volume. There is no path
+    by which replacing a switch
+
+    causes steady day-over-day local disk growth. Nothing in xbase ties the switch
+    to the disk, so the timing is
+
+    coincidence with no constructible mechanism, while the failed log rotation fully
+    explains the steady fill.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the metrics workload is unchanged and no new
+    services started reporting, foreclosing the idea that the switch added data, without
+    naming the rotation failure; the decisive unrotated-logs finding lives only in
+    HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A monitoring server's disk filling because a silently failing log-rotation
+    cron stopped pruning logs, coincidentally timed with an office network-switch
+    swap, which has no mechanism for local disk growth.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

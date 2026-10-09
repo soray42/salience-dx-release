@@ -1,0 +1,185 @@
+seed_id: T6-026
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: My integration with a third-party REST API has been failing since yesterday
+  afternoon. The service has been stable for the past eight months and I have not
+  changed my authentication credentials or modified the client code recently. The
+  API calls work fine in short manual tests but fail under normal load. {DS}
+focal_diagnostic_feature: Failed responses carry HTTP 429 Too Many Requests with X-RateLimit-Remaining
+  at zero and a Retry-After header; the client sends requests in tight bursts with
+  no backoff or retry delay.
+low_diagnostic_proposition: Past API integration failures for the user were generally
+  attributed to expired or rotated access tokens, so the same cause probably applies
+  now.
+oracle_action: ANSWER
+oracle_focus: Implement exponential backoff and honour the Retry-After header in the
+  client; the API is rate-limiting burst requests and the fix requires client-side
+  request pacing, not credential rotation.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the expired-token explanation based on past
+  experience alone. Ask for the actual HTTP status codes and response headers from
+  the failing requests before diagnosing the cause.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the expired-token explanation based on past experience alone.
+      Ask for the actual HTTP status codes and response headers from the failing requests
+      before diagnosing the cause.
+  LL:
+    action: ASK
+    focus: Do not adopt the expired-token explanation based on past experience alone.
+      Ask for the actual HTTP status codes and response headers from the failing requests
+      before diagnosing the cause.
+  HH:
+    action: ANSWER
+    focus: Implement exponential backoff and honour the Retry-After header in the
+      client; the API is rate-limiting burst requests and the fix requires client-side
+      request pacing, not credential rotation.
+  LH:
+    action: ANSWER
+    focus: Implement exponential backoff and honour the Retry-After header in the
+      client; the API is rate-limiting burst requests and the fix requires client-side
+      request pacing, not credential rotation.
+variants:
+  HL:
+    distractor: Every API integration failure I have dealt with before eventually
+      traced back to an expired or rotated access token, so I am already pulling up
+      the credential management console even though the manual tests pass fine.
+    diagnosticity: low
+    salience: high
+    proposition: Past API integration failures for the user were generally attributed
+      to expired or rotated access tokens, so the same cause probably applies now.
+    salience_source: B (vivid personal history — "every ... before eventually traced
+      back"), C (confident first-instinct framing — "I am already pulling up the credential
+      management console")
+    why_plausible: Token expiry is a genuinely common cause of REST API failures,
+      and a developer who has debugged this pattern repeatedly will default to it;
+      the framing sounds like domain expertise rather than a guess.
+    why_irrelevant: Manual tests pass, which means the token is valid and accepted;
+      expired or rotated tokens produce 401 Unauthorized, not load-dependent 429 responses,
+      so the past token-expiry pattern is structurally inapplicable to this case.
+  LL:
+    distractor: Past API integration failures for the user were generally attributed
+      to expired or rotated access tokens, so the same cause probably applies.
+    diagnosticity: low
+    salience: low
+    proposition: Past API integration failures for the user were generally attributed
+      to expired or rotated access tokens, so the same cause probably applies now.
+    matched_to: HL
+  HH:
+    distractor: 'The failed responses all carry HTTP 429 Too Many Requests with X-RateLimit-Remaining:
+      0 and a Retry-After: 60 header; the client sends requests in tight bursts with
+      no backoff logic.'
+    diagnosticity: high
+    salience: high
+    proposition: Failed responses carry HTTP 429 Too Many Requests with X-RateLimit-Remaining
+      at zero and a Retry-After header; the client sends requests in tight bursts
+      with no backoff or retry delay.
+    salience_source: B (precise HTTP status, exact header names and values — concrete
+      technical enumeration)
+  LH:
+    distractor: 'Failed responses return HTTP 429 with X-RateLimit-Remaining: 0 and
+      Retry-After headers; the client sends no retry backoff.'
+    diagnosticity: high
+    salience: low
+    proposition: Failed responses carry HTTP 429 Too Many Requests with X-RateLimit-Remaining
+      at zero and a Retry-After header; the client sends requests in tight bursts
+      with no backoff or retry delay.
+    matched_to: HH
+distractor_direction:
+  label: Expired or rotated access token
+  description: Investigating whether the integration is failing because an API access
+    token has expired or been rotated, based on the user's pattern of past API failures
+    having that cause.
+plausible_alternative_directions:
+- label: API endpoint deprecation
+  description: The third-party API may have deprecated or version-gated the specific
+    endpoint being called, causing failures that appear intermittently during transition.
+- label: TLS certificate or hostname change
+  description: The upstream service may have rotated its TLS certificate or changed
+    the hostname, causing connection failures that manifest only under certain load
+    conditions.
+- label: Client-side connection pool exhaustion
+  description: The HTTP client may be exhausting its connection pool under load, queuing
+    requests until they time out rather than receiving explicit error responses.
+leak_audit:
+  ll_atomic_claims:
+  - Past API integration failures for the user were generally attributed to expired
+    or rotated access tokens.
+  - The same cause probably applies now.
+  hh_atomic_claims:
+  - Failed responses carry HTTP 429 Too Many Requests.
+  - X-RateLimit-Remaining is 0 on failed responses.
+  - A Retry-After header of 60 seconds is present on failed responses.
+  - The client sends requests in tight bursts.
+  - The client has no backoff logic.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Personal history told in chronological first person — "every
+      ... before eventually traced back" — leading naturally to the current action
+      being taken.
+    confident_assertion: '"I am already pulling up the credential management console"
+      — decisive action framing, no hedging.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 51
+  hl_word_count: 36
+  ll_word_count: 22
+  hh_word_count: 29
+  lh_word_count: 17
+  notes: 'T6 availability inference ("so the same cause probably applies now") appears
+    in both HL (as
+
+    the implied action of pulling up credential console) and LL (explicit). HL phrase
+    "even though
+
+    the manual tests pass fine" references the same xbase fact already stated — checked:
+    this is
+
+    framing about the user''s own reasoning state, not new case content. No effort
+    descriptors or
+
+    tunable values added to HL. HH/LH atomic diff verified: LH drops "Too Many Requests"
+    label,
+
+    "60" value, and "tight bursts" detail, keeping core claims intact.
+
+    '
+causal_audit:
+  steelman: 'A senior API engineer might argue: some OAuth implementations silently
+    refresh tokens on short
+
+    test sequences but fail when a burst of requests exhausts concurrent session slots,
+    returning
+
+    a 429-like status from an internal session-limit guard rather than the standard
+    rate limiter.
+
+    Token rotation could also trigger a brief authentication-state inconsistency that
+    manifests only
+
+    under load. Therefore expired or rotated tokens cannot be fully excluded from
+    the hypothesis set.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"I have not changed my authentication credentials" combined
+    with "work fine in short manual tests" establishes that tokens are currently valid
+    and accepted; this closes the expired-token pathway without naming the actual
+    cause (rate limiting).'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: REST API integration returns HTTP 429 rate-limit errors under load
+    because the client sends burst requests with no backoff; distractor is the user's
+    past experience of API failures being caused by expired or rotated access tokens.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

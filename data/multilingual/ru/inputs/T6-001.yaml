@@ -1,0 +1,103 @@
+seed_id: T6-001
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Ядро моего Jupyter-ноутбука падает при запуске одной конкретной ячейки загрузки
+  данных. Другие ноутбуки с меньшими объёмами данных по-прежнему работают. На этой
+  неделе я не менял окружение Python. {DS}
+focal_diagnostic_feature: Ячейка загружает CSV размером 4 ГБ через pandas на ноутбуке
+  с 8 ГБ ОЗУ, и ядро падает примерно через 10 секунд.
+low_diagnostic_proposition: The user's previous Jupyter crashes were attributed to
+  Anaconda installation corruption.
+oracle_action: ANSWER
+oracle_focus: This is likely memory exhaustion from loading the CSV; use chunking,
+  dtypes, Parquet/Arrow, or a machine with more RAM.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the previous Anaconda explanation automatically.
+  Ask what the failing cell loads and what memory is available.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the previous Anaconda explanation automatically. Ask what
+      the failing cell loads and what memory is available.
+  LL:
+    action: ASK
+    focus: Do not apply the previous Anaconda explanation automatically. Ask what
+      the failing cell loads and what memory is available.
+  HH:
+    action: ANSWER
+    focus: This is likely memory exhaustion from loading the CSV; use chunking, dtypes,
+      Parquet/Arrow, or a machine with more RAM.
+  LH:
+    action: ANSWER
+    focus: This is likely memory exhaustion from loading the CSV; use chunking, dtypes,
+      Parquet/Arrow, or a machine with more RAM.
+variants:
+  HL:
+    distractor: Каждый раз, когда у меня раньше падал Jupyter, причиной была сломанная
+      установка Anaconda, поэтому первый порыв — переустановить всё заново.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous Jupyter crashes were attributed to Anaconda installation
+      corruption.
+    salience_source: first-person pattern, repeated prior cause, drastic repair impulse
+    why_plausible: Availability of a familiar past fix makes it feel like the same
+      failure.
+    why_irrelevant: This crash is tied to a large data load, not a general environment
+      failure.
+  LL:
+    distractor: Предыдущие сбои Jupyter у этого пользователя обычно объяснялись проблемами
+      с установкой окружения.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous Jupyter crashes were attributed to Anaconda installation
+      corruption.
+    matched_to: HL
+  HH:
+    distractor: Ячейка читает CSV размером 4 ГБ через pandas на ноутбуке с 8 ГБ ОЗУ,
+      и ядро падает примерно через десять секунд после начала чтения.
+    diagnosticity: high
+    salience: high
+    proposition: The cell loads a 4GB CSV with pandas on an 8GB-RAM laptop and the
+      kernel dies within about 10 seconds.
+    salience_source: data-size to RAM mismatch
+  LH:
+    distractor: Проблемная ячейка загружает CSV-файл размером 4 ГБ через pandas на
+      машине с 8 ГБ оперативной памяти и завершает работу вскоре после запуска.
+    diagnosticity: high
+    salience: low
+    proposition: The cell loads a 4GB CSV with pandas on an 8GB-RAM laptop and the
+      kernel dies within about 10 seconds.
+    matched_to: HH
+distractor_direction:
+  label: Повреждение установки Anaconda
+  description: Проверка того, не является ли причиной сбоя повреждённая или некорректная
+    установка Python/Anaconda.
+plausible_alternative_directions:
+- label: Проблема парсера CSV
+  description: В ячейке загрузки данных может встречаться некорректная строка, проблема
+    с кодировкой или ошибка парсера.
+- label: Конфликт версий пакетов
+  description: Несовместимость версий библиотек может приводить к падению процесса
+    ядра.
+- label: Узкое место дискового ввода-вывода
+  description: Чтение CSV с медленного или удалённого хранилища может дестабилизировать
+    ноутбук.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-001.yaml
+  source_xbase_sha256: 2147c1bf909bdcff
+  translated_content_sha256: 6fc031ce58ef2585
+  translation_notes: ''

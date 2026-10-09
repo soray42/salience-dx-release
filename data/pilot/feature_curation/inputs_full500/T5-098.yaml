@@ -1,0 +1,195 @@
+seed_id: T5-098
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I am choosing between two trail-running shoes for technical mountain terrain.
+  Model A has a loud neon-orange colorway and looks very aggressive while Model B
+  has a plain grey design. Both cost about the same and are available in my size now.
+  {DS}
+focal_diagnostic_feature: Model A has 5 mm lugs rated better on wet technical rock
+  than Model B with only 2 mm lugs.
+low_diagnostic_proposition: Model A's loud colorway suggests it is a marketing shoe
+  designed for appearance rather than technical trail performance.
+oracle_action: ANSWER
+oracle_focus: Choose Model A; it has deeper lugs and is rated better on wet technical
+  terrain — the decisive factors for the stated use case.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer shoe performance from colorway. Ask for
+  lug depth, heel drop, sole compound, and independent trail reviews on the relevant
+  terrain.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer shoe performance from colorway. Ask for lug depth, heel drop,
+      sole compound, and independent trail reviews on the relevant terrain.
+  LL:
+    action: ASK
+    focus: Do not infer shoe performance from colorway. Ask for lug depth, heel drop,
+      sole compound, and independent trail reviews on the relevant terrain.
+  HH:
+    action: ANSWER
+    focus: Choose Model A; it has deeper lugs and is rated better on wet technical
+      terrain — the decisive factors for the stated use case.
+  LH:
+    action: ANSWER
+    focus: Choose Model A; it has deeper lugs and is rated better on wet technical
+      terrain — the decisive factors for the stated use case.
+variants:
+  HL:
+    distractor: Model A looks like it was designed for a fashion campaign rather than
+      real mountain running — that kind of aggressive colorway almost always signals
+      a marketing shoe rather than a performance one.
+    diagnosticity: low
+    salience: high
+    proposition: Model A's loud colorway suggests it is a marketing shoe designed
+      for appearance rather than technical trail performance.
+    salience_source: B — confident first-person inference stated as general rule;
+      C — 'almost always signals' as a strong confident assertion.
+    why_plausible: Some trail shoes are indeed marketed primarily on colorway; a runner
+      who has been burned by flashy-but-poor-grip shoes would naturally weight this
+      signal.
+    why_irrelevant: Colorway is chosen independently of lug geometry and sole compound;
+      independent tester ratings on wet technical terrain directly measure what colorway
+      cannot.
+  LL:
+    distractor: Model A has a loud colorway that suggests it may be designed for marketing
+      rather than technical performance.
+    diagnosticity: low
+    salience: low
+    proposition: Model A's loud colorway suggests it is a marketing shoe designed
+      for appearance rather than technical trail performance.
+    matched_to: HL
+  HH:
+    distractor: Model A has 5 mm lugs consistently rated by independent testers as
+      better on wet technical rock than Model B, which has only 2 mm lugs and earned
+      repeated poor marks on wet descents in the same reviews.
+    diagnosticity: high
+    salience: high
+    proposition: Model A has 5 mm lugs rated better on wet technical rock than Model
+      B with only 2 mm lugs.
+    salience_source: B — specific quantified lug measurements with independent review
+      consensus stated in a precise comparative frame.
+  LH:
+    distractor: Model A has 5 mm lugs rated better on wet rock; Model B has 2 mm lugs
+      and poor wet-descent marks.
+    diagnosticity: high
+    salience: low
+    proposition: Model A has 5 mm lugs rated better on wet technical rock than Model
+      B with only 2 mm lugs.
+    matched_to: HH
+distractor_direction:
+  label: Colorway as marketing signal
+  description: Treating Model A's loud neon-orange colorway as evidence that it is
+    a fashion-oriented shoe rather than a performance one, and therefore not suited
+    to technical wet terrain.
+plausible_alternative_directions:
+- label: Stack height and cushioning mismatch
+  description: Neither model's stack height or cushioning level is known; either could
+    be poorly matched to the technical terrain regardless of lug depth.
+- label: Sole compound durability
+  description: Lug depth may not capture compound hardness differences; a softer compound
+    on Model B might provide better wet-rock friction than Model A's deeper lugs in
+    a harder compound.
+- label: Fit and toe box width
+  description: For technical descents, an ill-fitting shoe creates instability independent
+    of lug depth, making fit the deciding factor if one model fits poorly.
+leak_audit:
+  ll_atomic_claims:
+  - Model A has a loud colorway.
+  - The colorway suggests it may be designed for marketing rather than technical performance.
+  hh_atomic_claims:
+  - Model A has 5 mm lugs.
+  - Independent testers rated Model A better on wet technical rock.
+  - Model B has 2 mm lugs.
+  - Model B earned poor marks on wet descents in the same reviews.
+  hl_salience_dimensions:
+    source_credibility: N/A — T5 is first-person aesthetic inference, no named source.
+    narrative_coherence: B — confident causal rule stated in first person.
+    confident_assertion: C — 'almost always signals'.
+    concrete_detail: D — 'aggressive colorway' and 'fashion campaign' as specific
+      descriptors of the surface property, not of case performance.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 42
+  hl_word_count: 33
+  ll_word_count: 18
+  hh_word_count: 38
+  lh_word_count: 21
+  notes: 'QC repair: removed ''and I would not trust its grip on wet rock'' from HL
+    (wet-grip
+
+    consequence claim absent from LL, violating C1 HL/LL equivalence). Updated hl_word_count
+
+    from 42 to 33. Updated salience_source and confident_assertion to reflect trimmed
+    text.
+
+    Also added Model B poor wet-descent marks to LH to match hh_atomic_claims claim
+    4,
+
+    restoring HH/LH equivalence (C10). LH rephrased compactly: ''Model A has 5 mm
+    lugs
+
+    rated better on wet rock; Model B has 2 mm lugs and poor wet-descent marks.''
+    (21 words).
+
+    T5 inferential bridge (colorway → marketing shoe → poor technical performance)
+    appears
+
+    flatly in LL per C1 T5 rule: "suggests it may be designed for marketing rather
+    than
+
+    technical performance."
+
+    HL adds confident assertion and vivid first-person framing around the same bridge
+    claim.
+
+    HH/LH: LH now carries all four atomic claims from HH in flat form.
+
+    "5 mm" vs "2 mm" lug depth is quantitative but tester-confirmed, not a subjective
+    aesthetic.
+
+    Steelman: aggressive colorway as marketing-over-performance signal is a real phenomenon
+
+    in trail running (brand collaborations, lifestyle colourways). But the focal lug-depth
+
+    measurements and review ratings are direct performance data that supersede aesthetic
+    inference.
+
+    '
+causal_audit:
+  steelman: 'Some trail shoe manufacturers do produce colorway-heavy releases aimed
+    at casual buyers
+
+    with shallower lugs and softer marketing. A runner who has bought a flashy shoe
+    with
+
+    inadequate grip for serious terrain would be justified in treating aggressive
+    colorways
+
+    as a warning signal. If no other data were available, colorway could be a weak
+    prior.
+
+    The inference is not irrational — it is just structurally empty when direct performance
+
+    data (lug depth, review ratings) exists.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the aesthetic inference is not foreclosed by xbase;
+    it is foreclosed by HH/LH (lug depth measurements and independent wet-terrain
+    ratings), preserving C4.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Trail shoe choice for wet technical mountain terrain; Model A's neon
+    colorway triggers marketing-shoe inference, but lug depth and independent reviews
+    confirm A is the better performer.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

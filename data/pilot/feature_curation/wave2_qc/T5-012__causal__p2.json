@@ -1,0 +1,9 @@
+{
+  "seed_id": "T5-012",
+  "steelman": "A software project with an obviously neglected website might also have neglected code: maintainers who do not update their web presence may not be applying security patches, fixing known bugs, or testing on modern OS versions. An unmaintained backup tool could accumulate silent data-corruption bugs over time. A senior sysadmin doing vendor due diligence would include 'check project maintenance signals' — website recency, last commit date, issue-tracker responsiveness — as an evaluation criterion. Under this chain, a 1990s-looking website is a weak proxy for maintenance neglect, which is a weak proxy for reliability risk, making it something a cautious practitioner might at least note.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The steelman yields only a weak correlation heuristic applicable to tool selection, not a direct causal mechanism for a specific backup corruption event. A practitioner troubleshooting 'is my backup corrupted right now?' does not list website aesthetics on the diagnostic checklist — they look at checksums, disk health, and tool logs. Even the weak proxy argument is fully foreclosed by the xbase context: the user already ran the verify command and all SHA-256 checksums matched the originals, which is the definitive test for byte-level integrity. Website aesthetics have zero pathway to cryptographic hash computation. The seed passes this lens cleanly; no repairs needed."
+}

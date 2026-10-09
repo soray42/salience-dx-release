@@ -1,0 +1,253 @@
+seed_id: T3-013
+template: T3
+domain: technical_troubleshooting
+complexity: low
+xbase: 'My Bluetooth headphones have been crackling badly with my work laptop. It
+  happens across all audio — music, calls, video conferences, everything. I have had
+  the headphones for about a year and they work fine with my phone. It started recently
+  and I cannot figure out what changed. I mentioned it to our office IT person. {DS}
+
+  '
+focal_diagnostic_feature: 'The crackling is strictly location-dependent — it stops
+  when the user moves approximately one meter from the laptop — which is inconsistent
+  with any software or profile configuration explanation and points to local RF interference
+  emitted by the laptop hardware.
+
+  '
+low_diagnostic_proposition: 'The Bluetooth audio profile is not configured correctly,
+  and this is causing the crackling.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Investigate local RF interference sources from the laptop (USB 3.0
+  peripherals, internal WiFi radio, or other hardware emitting in the 2.4 GHz band);
+  the strictly proximity-dependent symptom rules out software or profile-level causes
+  and points to a hardware RF emission problem within about one meter of the laptop.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Ask clarifying questions about whether the crackling
+  is distance-dependent or constant, and note that audio profile misconfiguration
+  would not explain a spatially variable symptom; do not adopt the profile-misconfiguration
+  story as the working hypothesis.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Ask clarifying questions about whether the crackling is distance-dependent
+      or constant, and note that audio profile misconfiguration would not explain
+      a spatially variable symptom; do not adopt the profile-misconfiguration story
+      as the working hypothesis.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Ask clarifying questions about whether the crackling is distance-dependent
+      or constant, and note that audio profile misconfiguration would not explain
+      a spatially variable symptom; do not adopt the profile-misconfiguration story
+      as the working hypothesis.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Investigate local RF interference sources from the laptop (USB 3.0 peripherals,
+      internal WiFi radio, or other hardware emitting in the 2.4 GHz band); the strictly
+      proximity-dependent symptom rules out software or profile-level causes and points
+      to a hardware RF emission problem within about one meter of the laptop.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Investigate local RF interference sources from the laptop (USB 3.0 peripherals,
+      internal WiFi radio, or other hardware emitting in the 2.4 GHz band); the strictly
+      proximity-dependent symptom rules out software or profile-level causes and points
+      to a hardware RF emission problem within about one meter of the laptop.
+
+      '
+variants:
+  HL:
+    distractor: 'Priya in our IT team — she handles all the wireless gear for the
+      floor — told me it is a Bluetooth audio profile issue; she said the audio profile
+      must not be configured right.
+
+      '
+    diagnosticity: low
+    salience: high
+    proposition: 'The Bluetooth audio profile is not configured correctly, and this
+      is causing the crackling.
+
+      '
+    salience_source: 'A (source credibility: named IT staff who manages wireless gear
+      for the floor); C (confident assertion: "told me it is", "must not be configured
+      right"); D (concrete detail about source role: "handles all the wireless gear
+      for the floor").
+
+      '
+    why_plausible: 'A2DP vs HFP profile selection is a well-known Bluetooth audio
+      quality issue that IT staff genuinely encounter; the source''s stated specialisation
+      in wireless gear lends weight to a confident generic diagnosis.
+
+      '
+    why_irrelevant: 'Audio profile configuration is a fixed session-level parameter
+      that does not vary with physical distance from the laptop; a profile problem
+      would cause uniform degradation everywhere, not crackling that stops one meter
+      away.
+
+      '
+  LL:
+    distractor: 'Someone said the Bluetooth audio profile might not be configured
+      correctly, which causes crackling.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: 'The Bluetooth audio profile is not configured correctly, and this
+      is causing the crackling.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'I just confirmed it: the crackling stops completely the moment I
+      step about one meter away from the laptop and comes back as soon as I return
+      to my desk — the symptom is entirely location-dependent, which rules out any
+      software or profile explanation.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'The crackling is strictly location-dependent — it stops when the
+      user moves approximately one meter from the laptop — which is inconsistent with
+      any software or profile configuration explanation and points to local RF interference
+      emitted by the laptop hardware.
+
+      '
+    salience_source: 'C (first-person confirmed observation, present tense); D (precise
+      distance detail "about one meter" anchors the spatial pattern concretely).
+
+      '
+  LH:
+    distractor: 'The crackling stops one meter from the laptop and comes back when
+      I return, ruling out any software or profile explanation.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'The crackling is strictly location-dependent — it stops when the
+      user moves approximately one meter from the laptop — which is inconsistent with
+      any software or profile configuration explanation and points to local RF interference
+      emitted by the laptop hardware.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: Bluetooth audio profile misconfiguration
+  description: 'The IT person asserts the crackling is caused by the Bluetooth audio
+    profile not being properly selected or configured, framing it as a generic software
+    setting issue.
+
+    '
+plausible_alternative_directions:
+- label: 2.4 GHz band congestion
+  description: 'High density of nearby WiFi access points or Bluetooth devices competing
+    in the 2.4 GHz band could degrade link quality and cause crackling, independent
+    of laptop-local RF emission.
+
+    '
+- label: Headphone battery depletion
+  description: 'Low headphone battery can reduce transmit power, making the connection
+    more susceptible to any ambient interference and causing audio dropouts or crackling.
+
+    '
+- label: Physical multipath interference
+  description: 'Metallic office furniture, partitions, or nearby equipment could create
+    reflection patterns that degrade the Bluetooth signal specifically at the user''s
+    desk position.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - The Bluetooth audio profile is not configured correctly.
+  - Incorrect profile configuration causes the crackling.
+  hl_salience_dimensions:
+    source_credibility: Named IT staff member (Priya) who manages wireless gear for
+      the floor — a role readers associate with Bluetooth expertise.
+    narrative_coherence: Clean, direct report in professional register with no tangents
+      or interruptions.
+    confident_assertion: '"told me it is" and "must not be configured right" — no
+      hedging.'
+    concrete_detail: '"handles all the wireless gear for the floor" — detail about
+      the source''s scope of responsibility, not about the user''s case.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 33
+  ll_word_count: 14
+  notes: 'Repair r3 (cell-integrity lens 2026-06-11):
+
+    Rewrote xbase to remove location-dependence narration (crackle at desk, clear
+
+    away from it) which was the decisive focal evidence. xbase now presents only the
+
+    bare crackling symptom during laptop use, with contrast against phone use. The
+
+    location-dependence observation lives exclusively in HH/LH variants, which were
+
+    already correctly populated. pathway_closed_in_xbase updated to reflect that the
+
+    pathway closure now resides in HH/LH, not xbase.
+
+    Prior repairs (r2, qc leak p1): HL/LL distractor texts, word counts, and all
+
+    other fields unchanged.
+
+    '
+causal_audit:
+  steelman: 'A competent IT practitioner defending the profile-misconfiguration diagnosis
+
+    could argue as follows: when Windows or macOS selects HFP/HSP instead of A2DP
+
+    (which happens automatically when any application opens the headphone microphone),
+
+    audio quality drops sharply — the codec switches from ~320 kbps stereo to 8 kHz
+
+    mono and can manifest as crackling or muffled distortion. Furthermore, some
+
+    Bluetooth stacks re-negotiate profiles dynamically when the connection becomes
+
+    marginal; if there is any ambient RF noise at the desk (from unrelated sources),
+
+    the stack might flip to HFP mid-session, which would superficially appear
+
+    desk-specific if ambient noise happens to be higher there. One could additionally
+
+    argue that a misconfigured audio profile might cause the adapter firmware to poll
+
+    the connection at suboptimal intervals, amplifying sensitivity to whatever
+
+    interference is present.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — xbase presents only the bare crackling symptom (no
+    location information). The spatial pathway closure (crackling stops one meter
+    from the laptop) lives in the HH and LH variants, which carry the decisive focal
+    evidence per cell-integrity design. Profile configuration is distance-invariant
+    by nature; the HH/LH observation forecloses the profile-level explanation structurally.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 3
+  topic_brief: 'Bluetooth headphones crackle only near the laptop. The office IT person
+    says it is always a driver issue. Focal evidence points elsewhere.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B

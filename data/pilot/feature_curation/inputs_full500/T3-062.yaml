@@ -1,0 +1,190 @@
+seed_id: T3-062
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our payment-processing service has been showing p99 latency of 820 ms this
+  week, up from a baseline of about 95 ms. No code deployment occurred during that
+  window, the service load is flat at about 2,000 requests per minute, and every percentile
+  from p50 to p99 shifted upward by a similar amount. Connection pool metrics show
+  utilisation has remained below 40 percent throughout the affected window. {DS}
+focal_diagnostic_feature: Distributed traces show each slow request stalls for approximately
+  700 ms inside a DNS lookup for the fraud-check upstream, whose hostname was changed
+  in a config rollout that has no entry in the deployment log.
+low_diagnostic_proposition: A principal SRE stated that this p99 pattern is classic
+  connection-pool exhaustion and pool size should be tuned first.
+oracle_action: ANSWER
+oracle_focus: 'Fix the DNS resolution issue for the fraud-check upstream: verify the
+  changed hostname is correctly propagated, update the service configuration or DNS
+  records as needed, and confirm the config rollout is reflected in change logs.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the connection-pool diagnosis from authority
+  alone; ask for distributed trace data, per-span timing, and whether any configuration
+  or infrastructure change occurred outside of the deployment log.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the connection-pool diagnosis from authority alone; ask for
+      distributed trace data, per-span timing, and whether any configuration or infrastructure
+      change occurred outside of the deployment log.
+  LL:
+    action: ASK
+    focus: Do not accept the connection-pool diagnosis from authority alone; ask for
+      distributed trace data, per-span timing, and whether any configuration or infrastructure
+      change occurred outside of the deployment log.
+  HH:
+    action: ANSWER
+    focus: 'Fix the DNS resolution issue for the fraud-check upstream: verify the
+      changed hostname is correctly propagated, update the service configuration or
+      DNS records as needed, and confirm the config rollout is reflected in change
+      logs.'
+  LH:
+    action: ANSWER
+    focus: 'Fix the DNS resolution issue for the fraud-check upstream: verify the
+      changed hostname is correctly propagated, update the service configuration or
+      DNS records as needed, and confirm the config rollout is reflected in change
+      logs.'
+variants:
+  HL:
+    distractor: Our principal SRE looked at the graph and said immediately that p99
+      jumping from 95 to 800 ms is a classic connection-pool exhaustion pattern and
+      we should tune the pool size before doing anything else.
+    diagnosticity: low
+    salience: high
+    proposition: A principal SRE stated that this p99 pattern is classic connection-pool
+      exhaustion and pool size should be tuned first.
+    salience_source: 'Dimension A (source credibility): "principal SRE" signals deep
+      operational expertise; dimension C (confident assertion): "said immediately,"
+      "classic pattern" — pattern-matching confidence without hedging.'
+    why_plausible: Connection-pool exhaustion causing queued requests is a real and
+      common cause of uniform p99 latency spikes, and a senior SRE pattern-matching
+      from the graph shape is a credible diagnostic move.
+    why_irrelevant: The authority diagnosed from the graph shape alone, not from pool
+      metrics or trace data. xbase already records that pool utilisation remained
+      below 40 percent, directly foreclosing the exhaustion pathway. The trace evidence
+      further shows the stall is inside a DNS lookup for an upstream dependency, a
+      mechanism entirely outside the connection pool.
+  LL:
+    distractor: A principal SRE stated that this p99 pattern is classic connection-pool
+      exhaustion and pool size should be tuned first.
+    diagnosticity: low
+    salience: low
+    proposition: A principal SRE stated that this p99 pattern is classic connection-pool
+      exhaustion and pool size should be tuned first.
+    matched_to: HL
+  HH:
+    distractor: Pulling a trace for any slow request shows 700 ms of dead time inside
+      a DNS resolution attempt for the fraud-check hostname, which changed in a config
+      rollout that has no entry in the deployment log.
+    diagnosticity: high
+    salience: high
+    proposition: Distributed traces show each slow request stalls for approximately
+      700 ms inside a DNS lookup for the fraud-check upstream, whose hostname was
+      changed in a config rollout that has no entry in the deployment log.
+    salience_source: Precise millisecond value (700 ms); specific span name (DNS resolution);
+      specific upstream service (fraud-check); concrete detail about config rollout
+      absent from deployment log — a chain of specific observable facts.
+  LH:
+    distractor: Traces show each slow request spends ~700 ms on a DNS lookup for the
+      fraud-check upstream, whose hostname changed in a config rollout.
+    diagnosticity: high
+    salience: low
+    proposition: Distributed traces show each slow request stalls for approximately
+      700 ms inside a DNS lookup for the fraud-check upstream, whose hostname was
+      changed in a config rollout that has no entry in the deployment log.
+    matched_to: HH
+distractor_direction:
+  label: Connection-pool exhaustion
+  description: Investigating whether the payment-processing service's connection pool
+    to a database or downstream service is exhausted or undersized, causing requests
+    to queue and producing the observed uniform p99 latency increase.
+plausible_alternative_directions:
+- label: Downstream database slowdown
+  description: The primary database serving the payment service degraded around the
+    same time, adding latency to every query and raising all percentiles uniformly.
+- label: Infrastructure change outside deploy log
+  description: A network, load-balancer, or TLS certificate change that bypassed the
+    deployment pipeline is adding latency to every outbound call from the service.
+- label: GC pressure or JVM heap issue
+  description: Increased GC activity or a memory pressure event on the service's JVM
+    is pausing request processing across all percentiles simultaneously.
+leak_audit:
+  ll_atomic_claims:
+  - A principal SRE made the statement.
+  - The SRE called the p99 pattern classic connection-pool exhaustion.
+  - The SRE recommended tuning pool size first.
+  hh_atomic_claims:
+  - Any slow request trace shows 700 ms of dead time.
+  - The dead time is inside a DNS resolution attempt.
+  - The DNS resolution is for the fraud-check hostname.
+  - The fraud-check hostname changed in a config rollout.
+  - The config rollout has no entry in the deployment log.
+  hl_salience_dimensions:
+    source_credibility: '"Principal SRE" — seniority and role specificity establish
+      domain authority.'
+    narrative_coherence: 'Clear event sequence: SRE saw the graph, immediately pattern-matched,
+      issued confident directive — no hedging or qualification.'
+    confident_assertion: '"said immediately," "classic connection-pool exhaustion
+      pattern," "before doing anything else" — strong directional confidence.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 35
+  ll_word_count: 19
+  hh_word_count: 36
+  lh_word_count: 23
+  notes: 'QC repair: added pool-utilisation pathway-closure sentence to xbase ("Connection
+
+    pool metrics show utilisation has remained below 40 percent throughout the
+
+    affected window"). This forecloses the pool-exhaustion mechanism from xbase
+
+    itself, resolving the [causal] lens failure where the steelman_verdict claimed
+
+    no_defensible_mechanism while xbase gave no basis for that claim. The closure
+
+    is narrow (neutrally rules out pool exhaustion only; names no affirmative cause)
+
+    and within C4''s boundary. xbase word count updated from 52 to 66; all other
+
+    word counts unchanged. why_irrelevant updated to reference the xbase closure.
+
+    '
+causal_audit:
+  steelman: 'Connection-pool exhaustion causing queued requests is a textbook explanation
+
+    for a service-wide p99 spike with stable load and no code changes: if something
+
+    external reduced pool slots (a config change, GC pause on the pool manager,
+
+    or a leaked connection pattern), every request would wait for a connection and
+
+    all percentiles would rise uniformly. The uniform percentile shift xbase
+
+    describes is consistent with pool queuing. A principal SRE pattern-matching
+
+    from a latency graph is exercising legitimate domain knowledge, not making
+
+    an unfounded claim.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase records that connection pool utilisation remained
+    below 40 percent throughout the affected window, directly foreclosing pool exhaustion
+    as a mechanism: a pool with substantial headroom cannot produce queuing-driven
+    latency spikes regardless of request rate.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Payment-service p99 latency spike caused by a DNS lookup stall for
+    a fraud-check upstream whose hostname changed in an out-of-band config rollout,
+    against a principal SRE's confident pattern-match to connection-pool exhaustion.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

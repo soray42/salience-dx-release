@@ -1,0 +1,185 @@
+seed_id: T1-100
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: My nightly backup job to my home NAS has failed for the past four nights with
+  a "No space left on device" error. The confusing part is that the storage is clearly
+  not full. The NAS runs Linux with an ext4 volume, and the backup is mostly many
+  small generated thumbnail and cache files from a photo workflow. Nothing about the
+  backup script has changed recently. {DS}
+focal_diagnostic_feature: Byte usage is 41% but df -i shows inodes fully exhausted
+  by the many tiny files, despite free space.
+low_diagnostic_proposition: A colleague got the same "no space left" backup errors
+  because her storage volume had genuinely filled up.
+oracle_action: ANSWER
+oracle_focus: Treat this as inode exhaustion, not byte capacity; free or consolidate
+  the millions of tiny files, exclude regenerable cache from the backup, or recreate
+  the filesystem with more inodes, since df shows ample bytes free while df -i shows
+  inodes at 100%.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the disk-is-full explanation from someone
+  else's array. Ask for both df and df -i output to confirm whether bytes or inodes
+  are actually exhausted before adding storage.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the disk-is-full explanation from someone else's array. Ask
+      for both df and df -i output to confirm whether bytes or inodes are actually
+      exhausted before adding storage.
+  LL:
+    action: ASK
+    focus: Do not adopt the disk-is-full explanation from someone else's array. Ask
+      for both df and df -i output to confirm whether bytes or inodes are actually
+      exhausted before adding storage.
+  HH:
+    action: ANSWER
+    focus: Treat this as inode exhaustion, not byte capacity; free or consolidate
+      the millions of tiny files, exclude regenerable cache from the backup, or recreate
+      the filesystem with more inodes, since df shows ample bytes free while df -i
+      shows inodes at 100%.
+  LH:
+    action: ANSWER
+    focus: Treat this as inode exhaustion, not byte capacity; free or consolidate
+      the millions of tiny files, exclude regenerable cache from the backup, or recreate
+      the filesystem with more inodes, since df shows ample bytes free while df -i
+      shows inodes at 100%.
+variants:
+  HL:
+    distractor: Liwayway, who runs storage for a small studio, told me she hit the
+      identical "no space left" failures on her backup array and found the volume
+      had genuinely filled to the brim.
+    diagnosticity: low
+    salience: high
+    proposition: A colleague got the same "no space left" backup errors because her
+      storage volume had genuinely filled up.
+    salience_source: A — a named storage operator recounting an identical error message
+      she root-caused on her own array.
+    why_plausible: A genuinely full volume is the textbook cause of that exact error,
+      so a matching case from someone who runs storage makes adding capacity feel
+      obvious.
+    why_irrelevant: Her array really was out of bytes; this one has 41% free, so capacity
+      is not the constraint here and larger drives would not raise the exhausted inode
+      limit.
+  LL:
+    distractor: A colleague got the same "no space left" backup errors because her
+      storage volume had genuinely filled up.
+    diagnosticity: low
+    salience: low
+    proposition: A colleague got the same "no space left" backup errors because her
+      storage volume had genuinely filled up.
+    matched_to: HL
+  HH:
+    distractor: Running df shows the volume is 41% full by bytes, but df -i shows
+      inode usage at 100%, since the millions of tiny thumbnail files have exhausted
+      the filesystem inode table even though plenty of byte capacity remains.
+    diagnosticity: high
+    salience: high
+    proposition: Byte usage is 41% but df -i shows inodes fully exhausted by the many
+      tiny files, despite free space.
+    salience_source: Concrete split between df (41% bytes) and df -i (100% inodes)
+      makes the true constraint vivid and unambiguous.
+  LH:
+    distractor: Byte usage is 41% but df -i shows inodes fully exhausted by the many
+      tiny files, despite free space.
+    diagnosticity: high
+    salience: low
+    proposition: Byte usage is 41% but df -i shows inodes fully exhausted by the many
+      tiny files, despite free space.
+    matched_to: HH
+distractor_direction:
+  label: Disk capacity full
+  description: Investigating whether the volume has run out of byte capacity and needs
+    larger drives, as a colleague's array did.
+plausible_alternative_directions:
+- label: Reserved or hidden usage
+  description: Whether snapshots
+  reserved blocks: null
+  or another mount are silently consuming the visible space.: null
+- label: Backup-tool quota
+  description: Whether the backup software's own destination quota or temp area
+  not the filesystem: null
+  is the limit being hit.: null
+leak_audit:
+  ll_atomic_claims:
+  - A colleague got the same "no space left" backup errors.
+  - Her storage volume had genuinely filled up.
+  hh_atomic_claims:
+  - df shows the volume is 41% full by bytes.
+  - df -i shows inode usage at 100%.
+  - Millions of tiny files have exhausted the inode table while byte capacity remains.
+  hl_salience_dimensions:
+    source_credibility: Named storage operator (Liwayway) who root-caused an identical
+      error on her own array.
+    narrative_coherence: Clean identical-error-then-full-disk chronology in professional
+      register.
+    confident_assertion: told me... found the volume had genuinely filled
+    concrete_detail: Detail about the source's array (filled to the brim) only; no
+      claim about this volume's df output.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 32
+  ll_word_count: 18
+  hh_word_count: 38
+  lh_word_count: 19
+  notes: 'LL carries only the colleague-same-error-from-full-volume claim; the named
+    operator is HL-only and about her
+
+    array. xbase reports the error, that storage is "clearly not full," the ext4 volume,
+    and the tiny-file workload,
+
+    but withholds the df-versus-df-i split, so HL/LL cannot reject the add-capacity
+    theory. The decisive
+
+    inode-exhaustion-despite-free-bytes fact lives only in HH/LH. QC repair: removed
+    consequence clause ("the only
+
+    real fix was buying larger drives and migrating everything onto them") from HL
+    — it was a consequence claim
+
+    absent from LL that steered toward drive expansion; HL now ends after "found the
+    volume had genuinely filled to
+
+    the brim."
+
+    '
+causal_audit:
+  steelman: 'A storage admin could argue the error is the canonical out-of-space signal:
+    ENOSPC almost always means the
+
+    filesystem is full, dashboards can lag or mislead, and a peer who runs storage
+    hit the identical message and
+
+    fixed it with capacity, so buying drives is the safe move. That is an argument
+    about ENOSPC in general and about
+
+    the colleague''s full array. It supplies no case-specific reason here, where df
+    shows 41% free bytes and df -i
+
+    shows inodes at 100% because millions of tiny files have used up the inode table.
+    Larger drives do not raise an
+
+    ext4 volume''s fixed inode count, so the capacity pathway cannot inform this case
+    and the inode finding settles
+
+    it.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase asserts storage is not full but withholds the
+    df/df -i split, so the add-capacity theory is only foreclosed by HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A NAS backup failing with ENOSPC despite free space, where ext4 inode
+    exhaustion from millions of tiny files, not a colleague's genuinely full array,
+    is the cause.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

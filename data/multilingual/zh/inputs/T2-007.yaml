@@ -1,0 +1,91 @@
+seed_id: T2-007
+template: T2
+domain: open_qa
+complexity: high
+xbase: 我正在考虑今年是否要将传统IRA转换为Roth IRA。账户余额约为18万美元，距离退休还有大约15年，我会用应税券商账户的资金来支付转换税。{DS}
+focal_diagnostic_feature: 用户今年的边际税率高于其预计的退休边际税率。
+low_diagnostic_proposition: The question arose during news coverage about possible
+  retirement-account legislation.
+oracle_action: ANSWER
+oracle_focus: A full conversion this year is unfavourable in the simple bracket comparison;
+  consider waiting for lower-income years or modelling a ladder.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let speculative news set the answer. Ask for current
+  and expected future tax brackets before judging the conversion.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let speculative news set the answer. Ask for current and expected
+      future tax brackets before judging the conversion.
+  LL:
+    action: ASK
+    focus: Do not let speculative news set the answer. Ask for current and expected
+      future tax brackets before judging the conversion.
+  HH:
+    action: ANSWER
+    focus: A full conversion this year is unfavourable in the simple bracket comparison;
+      consider waiting for lower-income years or modelling a ladder.
+  LH:
+    action: ANSWER
+    focus: A full conversion this year is unfavourable in the simple bracket comparison;
+      consider waiting for lower-income years or modelling a ladder.
+variants:
+  HL:
+    distractor: 这件事之所以提上日程，是因为上周每条财经头条似乎都在大喊国会将修改退休账户规则。
+    diagnosticity: low
+    salience: high
+    proposition: The question arose during news coverage about possible retirement-account
+      legislation.
+    salience_source: temporal link to intense news cycle
+    why_plausible: Pending legislation can feel urgent and action-forcing.
+    why_irrelevant: The disclosed bracket spread is the decision-relevant fact; generic
+      news does not change that arithmetic.
+  LL:
+    distractor: 这个决定是在媒体讨论可能出台退休账户相关立法期间产生的。
+    diagnosticity: low
+    salience: low
+    proposition: The question arose during news coverage about possible retirement-account
+      legislation.
+    matched_to: HL
+  HH:
+    distractor: 今年我处于32%的边际税率档，而我对退休时的预测是约22%，因此现在转换意味着每一美元要多缴大约十个百分点的税。
+    diagnosticity: high
+    salience: high
+    proposition: The user's marginal tax rate is higher this year than their projected
+      retirement marginal rate.
+    salience_source: tax-rate spread
+  LH:
+    distractor: 目前的边际税率约为32%，预计退休时的边际税率约为22%。
+    diagnosticity: high
+    salience: low
+    proposition: The user's marginal tax rate is higher this year than their projected
+      retirement marginal rate.
+    matched_to: HH
+distractor_direction:
+  label: 立法变动顾虑
+  description: 探究可能出台的退休账户相关立法是否应该左右Roth转换的时机。
+plausible_alternative_directions:
+- label: 投资组合流动性影响
+  description: 使用应税账户资金缴纳转换税是否会造成流动性问题或投资配置失衡。
+- label: 分年度转换时机
+  description: 将转换分散到低收入年份进行是否能获得更优的税务结果。
+- label: 遗产规划目标
+  description: 继承人的税务处理方式或遗产传承目标是否使转换在税率成本之外仍具吸引力。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-007.yaml
+  source_xbase_sha256: 98978196061cb01f
+  translated_content_sha256: 87d979eb48d2dc5b
+  translation_notes: IRA/Roth IRA保留英文原名，为中文金融语境中的通用术语。税率档位数字（32%、22%）保持不变。HL的salience来源于'上周每条财经头条'的时间具体性与新闻周期强度，译文保留此特征。

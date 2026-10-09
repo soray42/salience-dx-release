@@ -1,0 +1,176 @@
+seed_id: T3-038
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our daily data ingestion job started failing every morning around 02:00 UTC
+  two weeks ago. The job pulls event records from a third-party API and writes them
+  to our data warehouse. Error logs show records being rejected at the partition-write
+  step. The API contract has not changed and our schema has not been altered. {DS}
+focal_diagnostic_feature: Rejected records carry timestamps in CET (UTC+1) while the
+  partition writer assumes UTC, placing post-23:00 CET records into the wrong partition
+  key and triggering the late-arrival rejection rule.
+low_diagnostic_proposition: The failure pattern matches a classic schema drift between
+  the source API fields and the warehouse table definitions.
+oracle_action: ANSWER
+oracle_focus: Normalise incoming timestamps to UTC at ingestion time, or adjust the
+  partition-write step to handle CET-offset timestamps; add a timezone assertion to
+  the ingestion contract to prevent recurrence.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the schema-drift diagnosis from authority
+  alone. Compare accepted versus rejected records for systematic differences — check
+  field types, timestamp formats, and timezone offsets — before auditing schema definitions.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the schema-drift diagnosis from authority alone. Compare accepted
+      versus rejected records for systematic differences — check field types, timestamp
+      formats, and timezone offsets — before auditing schema definitions.
+  LL:
+    action: ASK
+    focus: Do not adopt the schema-drift diagnosis from authority alone. Compare accepted
+      versus rejected records for systematic differences — check field types, timestamp
+      formats, and timezone offsets — before auditing schema definitions.
+  HH:
+    action: ANSWER
+    focus: Normalise incoming timestamps to UTC at ingestion time, or adjust the partition-write
+      step to handle CET-offset timestamps; add a timezone assertion to the ingestion
+      contract to prevent recurrence.
+  LH:
+    action: ANSWER
+    focus: Normalise incoming timestamps to UTC at ingestion time, or adjust the partition-write
+      step to handle CET-offset timestamps; add a timezone assertion to the ingestion
+      contract to prevent recurrence.
+variants:
+  HL:
+    distractor: Sigrid, our data platform lead who has seen dozens of ingestion failures
+      across the company, said at our standup that this pattern is a classic schema
+      drift and we should audit the source fields against our warehouse definitions
+      right away.
+    diagnosticity: low
+    salience: high
+    proposition: The failure pattern matches a classic schema drift between the source
+      API fields and the warehouse table definitions.
+    salience_source: 'A: source credibility — named data platform lead with broad
+      cross-company ingestion experience; B: professional standup setting; C: ''classic
+      schema drift'' — confident categorical assertion.'
+    why_plausible: Schema drift is a genuine and frequent cause of API ingestion failures,
+      and a data platform lead's pattern-matching from dozens of incidents is a credible
+      prior.
+    why_irrelevant: The API contract and warehouse schema are both confirmed unchanged;
+      the partition-reject pattern is time-of-day specific (02:00 UTC), pointing to
+      a timezone offset rather than structural field mismatch.
+  LL:
+    distractor: A data platform lead said the failure pattern is a classic schema
+      drift and we should audit source fields against warehouse definitions.
+    diagnosticity: low
+    salience: low
+    proposition: The failure pattern matches a classic schema drift between the source
+      API fields and the warehouse table definitions.
+    matched_to: HL
+  HH:
+    distractor: Comparing rejected records against accepted ones shows the source
+      API returns event timestamps in local time (CET, UTC+1), but our partition-write
+      step assumes UTC; records timestamped after 23:00 CET land in tomorrow's partition
+      key and fail the late-arrival rejection rule.
+    diagnosticity: high
+    salience: high
+    proposition: Rejected records carry timestamps in CET (UTC+1) while the partition
+      writer assumes UTC, placing post-23:00 CET records into the wrong partition
+      key and triggering the late-arrival rejection rule.
+    salience_source: 'B: precise comparative analysis (rejected vs accepted records)
+      with specific clock values (23:00 CET, UTC+1) and the exact rejection mechanism
+      named.'
+  LH:
+    distractor: Rejected records carry CET timestamps; the partition writer assumes
+      UTC, placing post-23:00 records into the wrong partition key.
+    diagnosticity: high
+    salience: low
+    proposition: Rejected records carry timestamps in CET (UTC+1) while the partition
+      writer assumes UTC, placing post-23:00 CET records into the wrong partition
+      key and triggering the late-arrival rejection rule.
+    matched_to: HH
+distractor_direction:
+  label: Schema drift
+  description: Investigating whether the source API has quietly changed field names,
+    types, or structure in a way that no longer matches the warehouse table definitions,
+    causing record rejection.
+plausible_alternative_directions:
+- label: Late-arrival window misconfiguration
+  description: The warehouse's late-arrival window setting was recently tightened,
+    causing records that previously landed within tolerance to be rejected.
+- label: API rate limit or partial delivery
+  description: The third-party API is throttling the 02:00 UTC batch pull, delivering
+    incomplete record sets that fail partition validation.
+- label: Partition pruning regression
+  description: A recent warehouse version update changed partition-key resolution
+    behaviour, misrouting records that previously wrote cleanly.
+leak_audit:
+  ll_atomic_claims:
+  - A data platform lead made a statement about this failure.
+  - The lead characterised the pattern as classic schema drift.
+  - The lead recommended auditing source fields against warehouse definitions.
+  hh_atomic_claims:
+  - Rejected and accepted records were compared.
+  - The source API returns timestamps in local time (CET, UTC+1).
+  - The partition-write step assumes UTC.
+  - Records timestamped after 23:00 CET land in tomorrow's partition key.
+  - Those records fail the late-arrival rejection rule.
+  hl_salience_dimensions:
+    source_credibility: 'A: named lead (Sigrid) with cross-company ingestion experience
+      spanning dozens of failures.'
+    narrative_coherence: 'B: standup setting with direct speech and action recommendation.'
+    confident_assertion: 'C: ''classic schema drift'' — categorical, no hedging.'
+    concrete_detail: N/A — no case-specific detail added beyond LL.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 54
+  hl_word_count: 40
+  ll_word_count: 22
+  hh_word_count: 40
+  lh_word_count: 18
+  notes: 'xbase confirms both the API contract and warehouse schema are unchanged,
+    which
+
+    is the natural pathway-closure for schema drift without naming the real cause.
+
+    The 02:00 UTC timing detail is a symptom in xbase but does not itself reveal
+
+    the timezone mechanism (a competent reader might think ''something happens at
+
+    02 UTC daily'' rather than immediately inferring a CET midnight-crossing).
+
+    Ratios: HL:LL = 1.82, HH:LH = 2.22 — both within 4:1.
+
+    '
+causal_audit:
+  steelman: 'A senior data engineer could argue: API providers sometimes roll out
+    schema
+
+    changes in stages — new optional fields, changed nullability, or silently altered
+
+    enum values — without issuing a formal contract update. The ''API contract unchanged''
+
+    note in xbase reflects the user''s belief, not a verified schema comparison.
+
+    Schema drift remains worth auditing before dismissing.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase explicitly states both the API contract and the
+    warehouse schema are unchanged. The HH/LH finding (timezone offset causing partition
+    key mismatch) provides the structural exclusion: the rejected records have valid
+    fields and types — only their inferred partition key differs.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Nightly ingestion job fails at 02:00 UTC; authority diagnoses classic
+    schema drift, but rejected records carry CET timestamps while the partition writer
+    assumes UTC, causing a late-arrival violation.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

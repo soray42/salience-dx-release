@@ -1,0 +1,27 @@
+{
+  "seed_id": "T2-015",
+  "ll_claims_extracted": [
+    "When an organiser switches to an e-reader, members who prefer physical books drift away."
+  ],
+  "hl_case_claims": [
+    "When an organiser switches to an e-reader, members who prefer physical books often quietly drift away."
+  ],
+  "hl_source_claims": [
+    "Priya runs the local readers' association.",
+    "Priya has been tracking book-club trends across the city.",
+    "Priya told the speaker about this pattern.",
+    "She has seen this pattern before."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 40,
+    "ll": 17,
+    "xbase": 54,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": false,
+  "verdict": "fail",
+  "repair_hint": "LH distractor omits the survey claim present in HH ('a survey of non-returners confirmed most cited the location change as the reason they stopped attending'). LH must flatly restate every case claim HH makes. Fix: append a flat statement of the survey finding to LH, e.g., 'The meeting venue changed from a central, transit-accessible library to a flat on the outskirts; most members who stopped attending cited the location change as their reason.'"
+}

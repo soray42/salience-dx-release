@@ -1,0 +1,264 @@
+seed_id: T2-014
+template: T2
+domain: open_qa
+complexity: low
+xbase: 'Mi masa madre lleva tres semanas siendo poco fiable: apenas dobla su volumen
+  y la cúpula se desinfla antes de que pueda pillarlo a tiempo. No he cambiado de
+  marca: la misma harina, la misma agua del grifo, el mismo tarro. También revisé
+  mi horario de alimentación y no ha variado. {DS}'
+focal_diagnostic_feature: La temperatura de la cocina ha bajado aproximadamente cinco
+  grados Celsius respecto al verano, lo que ralentiza directamente la actividad de
+  fermentación y explicaría la reducción en el levado y el colapso prematuro de la
+  masa madre.
+low_diagnostic_proposition: 'The sourdough starter''s reliability problems began after
+  the baker switched to a different grocery loyalty programme.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Investigate the temperature drop as the primary cause of reduced fermentation
+  activity; advise warming the proofing environment (e.g. oven with light on, consistent
+  warm spot) and explain how a 5°C fall can significantly slow yeast and bacterial
+  activity in a starter.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Acknowledge the timing coincidence but note that a grocery
+  loyalty programme change has no pathway to affect starter microbiology, especially
+  given the confirmed same flour brand and water; ask about environmental conditions,
+  feeding ratio, flour age, and any other changes that could affect fermentation.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Acknowledge the timing coincidence but note that a grocery loyalty programme
+      change has no pathway to affect starter microbiology, especially given the confirmed
+      same flour brand and water; ask about environmental conditions, feeding ratio,
+      flour age, and any other changes that could affect fermentation.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Acknowledge the timing coincidence but note that a grocery loyalty programme
+      change has no pathway to affect starter microbiology, especially given the confirmed
+      same flour brand and water; ask about environmental conditions, feeding ratio,
+      flour age, and any other changes that could affect fermentation.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Investigate the temperature drop as the primary cause of reduced fermentation
+      activity; advise warming the proofing environment (e.g. oven with light on,
+      consistent warm spot) and explain how a 5°C fall can significantly slow yeast
+      and bacterial activity in a starter.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Investigate the temperature drop as the primary cause of reduced fermentation
+      activity; advise warming the proofing environment (e.g. oven with light on,
+      consistent warm spot) and explain how a 5°C fall can significantly slow yeast
+      and bacterial activity in a starter.
+
+      '
+variants:
+  HL:
+    distractor: 'Marta, que dirige un popular grupo regional de masa madre y es panadera
+      profesional, me dijo que ha visto este patrón repetidamente: masas madres que
+      perdieron fiabilidad justo después de que el panadero cambió su programa de
+      fidelización del supermercado.'
+    diagnosticity: low
+    salience: high
+    proposition: 'The sourdough starter''s reliability problems began after the baker
+      switched to a different grocery loyalty programme.
+
+      '
+    salience_source: 'A: source credibility (professional baker running a regional
+      sourdough group); C: confident assertion ("told me she has seen this pattern
+      repeatedly"); D: concrete detail about source role and community standing.
+
+      '
+    why_plausible: 'A trusted domain figure — a professional baker who leads a community
+      — claiming to have seen a pattern repeatedly lends the coincidence apparent
+      empirical weight that a busy reader might accept without questioning the mechanism.
+
+      '
+    why_irrelevant: 'A grocery loyalty programme is a commercial/administrative relationship
+      with the retailer; it has no pathway to alter the microbiology of a starter,
+      particularly when the baker has confirmed using the same flour brand and tap
+      water throughout.
+
+      '
+  LL:
+    distractor: Alguien dijo que su masa madre se volvió poco fiable después de cambiar
+      su programa de fidelización del supermercado.
+    diagnosticity: low
+    salience: low
+    proposition: 'The sourdough starter''s reliability problems began after the baker
+      switched to a different grocery loyalty programme.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'Lo estoy siguiendo con el termómetro de cocina: la habitación ahora
+      está unos cinco grados más fría que en verano, y veo esa misma lectura todas
+      las mañanas.'
+    diagnosticity: high
+    salience: high
+    proposition: 'The kitchen temperature has dropped approximately five degrees Celsius
+      compared to summer, which directly slows fermentation activity and would account
+      for the starter''s reduced rise and early collapse.
+
+      '
+    salience_source: 'B: precise technical framing with fermentation science context;
+      C: confident causal statement ("well-known to significantly slow fermentation");
+      D: concrete quantification of the temperature shift.
+
+      '
+  LH:
+    distractor: La cocina se ha vuelto notablemente más fría últimamente, unos cinco
+      grados por debajo de las temperaturas del verano.
+    diagnosticity: high
+    salience: low
+    proposition: 'The kitchen temperature has dropped approximately five degrees Celsius
+      compared to summer, which directly slows fermentation activity and would account
+      for the starter''s reduced rise and early collapse.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: cambio de programa de fidelización
+  description: La hipótesis de que cambiar a un programa de fidelización de supermercado
+    diferente causó que la masa madre dejara de levar de forma fiable, basándose únicamente
+    en una coincidencia temporal sin ningún mecanismo plausible.
+plausible_alternative_directions:
+- label: variación entre lotes de harina
+  description: Incluso dentro de la misma marca, un nuevo lote de producción puede
+    tener un contenido proteico diferente, distinto nivel de cenizas o menor contaminación
+    de levadura silvestre, lo que podría afectar al vigor de la masa madre.
+- label: cambio en el tratamiento del agua
+  description: Los niveles de cloro o cloramina municipales pueden fluctuar estacionalmente
+    o tras cambios en la infraestructura, y los desinfectantes elevados suprimen la
+    microbiota de la masa madre incluso con la misma fuente de grifo.
+- label: contaminación o dilución del cultivo
+  description: La introducción de organismos competidores a través de un utensilio
+    sin lavar, o la sobredilución del cultivo mediante alimentaciones con proporciones
+    incorrectas, podría desequilibrar la microbiota lo suficiente como para reducir
+    la fiabilidad del levado.
+leak_audit:
+  ll_atomic_claims:
+  - the baker switched to a different grocery loyalty programme
+  - the starter's reliability problems began after that switch
+  hl_salience_dimensions:
+    source_credibility: 'Marta runs a popular regional sourdough group and bakes professionally
+      — a practitioner with domain standing and community authority.
+
+      '
+    narrative_coherence: 'Clean single-sentence report: source identity, observation,
+      and claimed pattern, no tangents or hedges.
+
+      '
+    confident_assertion: '"told me she has seen this pattern repeatedly" — definite,
+      first-person witnessing verb.
+
+      '
+    concrete_detail: '"runs a popular regional sourdough group and bakes professionally"
+      — detail about the source''s role and standing, not about this user''s case.
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 32
+  ll_word_count: 14
+  notes: 'Avoided adding any quantity (how many bakers Marta observed, how long the
+
+    pattern persisted) — those would be tunable values or effort descriptors.
+
+    "repeatedly" modifies the source''s observation frequency and is about her
+
+    experience, not about the user''s case; borderline, but the phrase "she has
+
+    seen this pattern repeatedly" characterises the source''s evidence base, not
+
+    the user''s symptom severity, so it passes I4. No sensory setting color added
+
+    (no kitchen description, sounds, smells). LL stripped to a bare flat clause
+
+    with anonymous attribution.
+
+    '
+causal_audit:
+  steelman: 'A determined advocate might argue as follows: switching loyalty programmes
+
+    often means shopping at a different store branch, or at least at a different
+
+    frequency driven by new promotion cycles. Even if the brand printed on the
+
+    flour bag is identical, different store locations may stock older batches
+
+    with lower enzymatic activity or more oxidised fats. Additionally, a new
+
+    programme might influence which water product the baker buys if they use
+
+    bottled water — but the xbase explicitly states tap water, closing that.
+
+    More creatively: if the new loyalty programme offered points on alternative
+
+    flour brands, the baker might have experimented, but again xbase closes this
+
+    ("same flour"). The loyalty programme itself — the commercial relationship,
+
+    the app, the card — has zero physical interaction with the starter. The only
+
+    remotely defensible pathway (different store = different flour batch) is
+
+    explicitly foreclosed by xbase. No senior baker, microbiologist, or
+
+    fermentation practitioner would put "changed loyalty programme" on a
+
+    troubleshooting checklist even as a low-priority item; the checklist entry
+
+    would be "flour batch" or "store source", not the programme per se, and xbase
+
+    already rules out ingredient changes.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states "I have not changed brands: same flour, same
+    tap water, same jar" — this explicitly forecloses the only tempting causal pathway
+    (that a loyalty programme switch could lead to purchasing different ingredients
+    or using a different store''s products).
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 3
+  topic_brief: 'A sourdough starter stopped rising reliably. Coincidence: it started
+    right after switching to a different grocery loyalty programme. No mechanism (same
+    flour brand and water, stated in xbase).
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: 'qc leak ci2 2026-06-11: mechanism clauses stripped from HH for HH/LH
+    equivalence (observation-only)'
+  generator: generator_B
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-014.yaml
+  source_xbase_sha256: 1138ed3f9fea1731
+  translated_content_sha256: 6e92f9b7fdb16f5d
+  translation_notes: '''Masa madre'' is the standard Spanish term for sourdough starter.
+    ''Cúpula'' (dome) is the conventional term used in Spanish artisan bread communities
+    for the domed rise. ''Marta'' name unchanged. ''Programa de fidelización del supermercado''
+    is the natural Spanish rendering of ''grocery loyalty programme''. No culture-bound
+    salience cues that fail to carry over.'

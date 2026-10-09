@@ -1,0 +1,157 @@
+seed_id: T5-066
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I want to commit to a regular strength training schedule and I have been reading
+  about whether to train at 5 AM or in the evenings. I am naturally a night owl and
+  currently have no fixed obligations before 8 AM on any weekday. {DS}
+focal_diagnostic_feature: The user's own training log shows evening sessions averaged
+  90% attendance with progressive weight increases over three months, while morning
+  trials averaged 60% attendance with consistently lower weights.
+low_diagnostic_proposition: The 5 AM plan's website has a modern professional design,
+  which suggests the method is backed by serious evidence.
+oracle_action: ANSWER
+oracle_focus: Continue evening training; the user's own longitudinal data consistently
+  favours evenings in both adherence and performance across three months of trials.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer scientific backing from website design.
+  Ask for the user's own training history, attendance rates, and performance data
+  under each schedule.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer scientific backing from website design. Ask for the user's
+      own training history, attendance rates, and performance data under each schedule.
+  LL:
+    action: ASK
+    focus: Do not infer scientific backing from website design. Ask for the user's
+      own training history, attendance rates, and performance data under each schedule.
+  HH:
+    action: ANSWER
+    focus: Continue evening training; the user's own longitudinal data consistently
+      favours evenings in both adherence and performance across three months of trials.
+  LH:
+    action: ANSWER
+    focus: Continue evening training; the user's own longitudinal data consistently
+      favours evenings in both adherence and performance across three months of trials.
+variants:
+  HL:
+    distractor: The 5 AM plan's website is clean and crisp — minimal design, bold
+      progress photos, and a sign-up flow that looks credibly professional — which
+      makes the 5 AM method feel like the one that is actually backed by serious evidence.
+    diagnosticity: low
+    salience: high
+    proposition: The 5 AM plan's website has a modern professional design, which suggests
+      the method is backed by serious evidence.
+    salience_source: B (narrative coherence — specific visual inventory of website
+      elements); C (confident inference — 'actually backed by serious evidence')
+    why_plausible: Professional web design signals investment and credibility; readers
+      routinely use design quality as a proxy for content quality, making this a plausible
+      shortcut for a busy reader.
+    why_irrelevant: Website design has no causal link to whether a training time has
+      evidence behind it; the user already holds three months of their own attendance
+      and weight data, which is direct empirical evidence.
+  LL:
+    distractor: The 5 AM plan's website has a modern professional design, which suggests
+      the method is backed by serious evidence.
+    diagnosticity: low
+    salience: low
+    proposition: The 5 AM plan's website has a modern professional design, which suggests
+      the method is backed by serious evidence.
+    matched_to: HL
+  HH:
+    distractor: My training log from the past three months shows that 7 PM sessions
+      averaged 90 percent attendance with steadily increasing weights, while the mornings
+      I trialled ran at 60 percent attendance and I consistently lifted lighter.
+    diagnosticity: high
+    salience: high
+    proposition: The user's own training log shows evening sessions averaged 90% attendance
+      with progressive weight increases over three months, while morning trials averaged
+      60% attendance with consistently lower weights.
+    salience_source: B (narrative coherence — specific percentages, time period, two
+      parallel comparisons on two metrics); C (personal first-hand data, confident
+      comparison)
+  LH:
+    distractor: Evening sessions show 90% attendance and progressive weight increases
+      over three months; morning trials averaged 60% attendance with consistently
+      lower weights.
+    diagnosticity: high
+    salience: low
+    proposition: The user's own training log shows evening sessions averaged 90% attendance
+      with progressive weight increases over three months, while morning trials averaged
+      60% attendance with consistently lower weights.
+    matched_to: HH
+distractor_direction:
+  label: Website design as evidence proxy
+  description: Using the professional visual appearance of the 5 AM plan's website
+    as a signal that the method is scientifically supported.
+plausible_alternative_directions:
+- label: Chronotype alignment
+  description: Asking whether the user's self-described night-owl chronotype has been
+    tested against actual morning performance rather than assumed.
+- label: Social accountability
+  description: Considering whether early-morning group classes or a training partner
+    would change adherence independently of time-of-day physiology.
+- label: Schedule flexibility
+  description: Examining whether work or social obligations could shift and make the
+    8 AM buffer unreliable in future.
+leak_audit:
+  ll_atomic_claims:
+  - The 5 AM plan's website has a modern professional design.
+  - This suggests the method is backed by serious evidence.
+  hh_atomic_claims:
+  - Evening sessions averaged 90% attendance over three months.
+  - Evening sessions show steadily increasing weights over three months.
+  - Morning trial sessions averaged 60% attendance.
+  - Morning trial sessions produced consistently lower weights.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person aesthetic observation, no named expert.
+    narrative_coherence: Specific visual inventory ('minimal design, bold progress
+      photos, sign-up flow'); confident inferential bridge.
+    confident_assertion: '''actually backed by serious evidence'' — strong unhedged
+      conclusion from visual impression.'
+    concrete_detail: N/A — detail is about website appearance, not scientific content.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 39
+  ll_word_count: 19
+  hh_word_count: 36
+  lh_word_count: 21
+  notes: 'T5 inferential bridge (professional design → backed by serious evidence)
+    appears in both HL and LL as required by C1/self-check 13.
+
+    Four atomic claims in HH; all four appear in LH (90% evening attendance, progressive
+    weight increase, 60% morning attendance, consistently lower morning weights).
+
+    xbase mentions ''night owl'' and ''no obligations before 8 AM'' but does not reveal
+    the training log data — decisive evidence lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'Website professionalism does correlate weakly with organisational investment,
+    which can correlate with better-researched content. A polished site with progress
+    photos and a clean sign-up flow signals that significant resources were put into
+    the programme, which a busy reader might reasonably interpret as evidence that
+    the methodology was developed carefully.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — website design has no causal connection to the scientific
+    validity of a training time recommendation; the user already possesses direct
+    empirical data from their own trials.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Deciding between 5 AM and evening training schedule; aesthetic distractor
+    is polished website appearance of the 5 AM plan; root cause of evening superiority
+    is the user's own three-month log showing higher attendance and weight progression
+    at 7 PM.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

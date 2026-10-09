@@ -1,0 +1,231 @@
+seed_id: T6-090
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our CDN-fronted marketing site intermittently serves requests from the origin
+  instead of the edge cache, driving unexpected origin costs and occasionally leaking
+  personalisation logic. It happens only on a small fraction of requests, and our
+  CDN hit-rate dashboard shows the bypassed requests as cache-MISS, not BYPASS. Edge-node
+  memory metrics from the CDN provider console are all nominal. We changed nothing
+  in the CDN rules recently. {DS}
+focal_diagnostic_feature: Requests carrying a session cookie are being forwarded to
+  the origin without cache lookup because the CDN strips cache-eligible cookies for
+  most users but the session cookie was added after the CDN forward-cookie list was
+  last updated, so it now passes through unfiltered and forces a cache bypass.
+low_diagnostic_proposition: Cache misses happen because CDN edge nodes lose their
+  cached objects during memory pressure and must re-fetch from origin, which I have
+  seen cause the same hit-rate pattern before.
+oracle_action: ASK
+oracle_focus: 'Audit the CDN''s cookie forwarding configuration: check whether the
+  session cookie is being forwarded to the origin on the affected requests and add
+  it to the strip or ignore list so cache lookups proceed normally for requests that
+  should not vary by session.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the past edge-node memory-pressure explanation.
+  Ask for the request headers on bypassed requests, specifically which cookies are
+  forwarded, and how the CDN cookie-forwarding rules are currently configured.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the past edge-node memory-pressure explanation. Ask for the
+      request headers on bypassed requests, specifically which cookies are forwarded,
+      and how the CDN cookie-forwarding rules are currently configured.
+  LL:
+    action: ASK
+    focus: Do not apply the past edge-node memory-pressure explanation. Ask for the
+      request headers on bypassed requests, specifically which cookies are forwarded,
+      and how the CDN cookie-forwarding rules are currently configured.
+  HH:
+    action: ASK
+    focus: 'Audit the CDN''s cookie forwarding configuration: check whether the session
+      cookie is being forwarded to the origin on the affected requests and add it
+      to the strip or ignore list so cache lookups proceed normally for requests that
+      should not vary by session.'
+  LH:
+    action: ASK
+    focus: 'Audit the CDN''s cookie forwarding configuration: check whether the session
+      cookie is being forwarded to the origin on the affected requests and add it
+      to the strip or ignore list so cache lookups proceed normally for requests that
+      should not vary by session.'
+variants:
+  HL:
+    distractor: Every time I have seen intermittent CDN hit-rate degradation like
+      this, it traced back to edge nodes evicting cached objects under memory pressure
+      and sending those requests to origin as misses, so that is my first instinct
+      here.
+    diagnosticity: low
+    salience: high
+    proposition: Cache misses happen because CDN edge nodes lose their cached objects
+      during memory pressure and must re-fetch from origin, which I have seen cause
+      the same hit-rate pattern before.
+    salience_source: B — coherent recurring personal pattern with causal narrative
+      (memory pressure → eviction → miss); C — "every time" and "first instinct" carry
+      first-person confidence.
+    why_plausible: Cache eviction under memory pressure is a real CDN failure mode
+      that genuinely produces intermittent misses with no BYPASS label, so a practitioner
+      who has seen it before would naturally reach for it first.
+    why_irrelevant: xbase confirms edge-node memory metrics are all nominal, ruling
+      out memory pressure as a driver; the decisive feature then shows the bypassed
+      requests carry a session cookie absent from the CDN strip list — a configuration
+      gap that produces selective misses regardless of edge-node memory state.
+  LL:
+    distractor: CDN edge-node memory pressure causing cache evictions has produced
+      the same hit-rate pattern in my experience before.
+    diagnosticity: low
+    salience: low
+    proposition: Cache misses happen because CDN edge nodes lose their cached objects
+      during memory pressure and must re-fetch from origin, which I have seen cause
+      the same hit-rate pattern before.
+    matched_to: HL
+  HH:
+    distractor: Origin logs show every bypassed request carries a Set-Session cookie
+      and cache-hits carry none; the CDN strip list was frozen eight months ago, the
+      session cookie shipped six months ago and was never added to it, so requests
+      bearing that cookie now bypass the cache entirely.
+    diagnosticity: high
+    salience: high
+    proposition: Requests carrying a session cookie are being forwarded to the origin
+      without cache lookup because the CDN strips cache-eligible cookies for most
+      users but the session cookie was added after the CDN forward-cookie list was
+      last updated, so it now passes through unfiltered and forces a cache bypass.
+    salience_source: First-person origin log analysis isolates the cookie correlation,
+      and the concrete timeline (eight months vs six months) makes the configuration
+      gap traceable.
+  LH:
+    distractor: Bypassed requests carry a session cookie absent from the CDN strip
+      list, introduced after that configuration was last updated.
+    diagnosticity: high
+    salience: low
+    proposition: Requests carrying a session cookie are being forwarded to the origin
+      without cache lookup because the CDN strips cache-eligible cookies for most
+      users but the session cookie was added after the CDN forward-cookie list was
+      last updated, so it now passes through unfiltered and forces a cache bypass.
+    matched_to: HH
+distractor_direction:
+  label: Edge-node cache eviction under memory pressure
+  description: Investigating whether CDN edge nodes are evicting cached objects during
+    memory pressure events, forcing those requests to the origin and showing as misses
+    rather than bypasses.
+plausible_alternative_directions:
+- label: Vary header mismatch
+  description: An upstream Vary header may be causing the CDN to create too many cache
+    variants per URL, effectively making many requests miss because their exact variant
+    combination has not been cached.
+- label: Origin cache-control header inconsistency
+  description: Some origin responses may intermittently set no-store or no-cache,
+    preventing the CDN from caching those specific responses.
+leak_audit:
+  ll_atomic_claims:
+  - CDN edge-node memory pressure has caused cache evictions in the user's past experience.
+  - Those evictions produced the same hit-rate degradation pattern the user now observes.
+  hh_atomic_claims:
+  - Capturing request headers on the origin for bypassed requests shows they all carry
+    a session cookie.
+  - Non-bypassed requests do not carry that cookie.
+  - The CDN forwarding configuration was last updated eight months ago.
+  - The session cookie was introduced six months ago.
+  - The session cookie was therefore never added to the strip list.
+  - Its presence now triggers a cache bypass on every request that carries it.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person availability pattern.
+    narrative_coherence: Recurring personal pattern (every time) with a coherent causal
+      chain.
+    confident_assertion: every time; first instinct — multiple confidence signals.
+    concrete_detail: N/A — no case-specific configuration detail added.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 65
+  hl_word_count: 38
+  ll_word_count: 17
+  hh_word_count: 46
+  lh_word_count: 19
+  notes: 'QC repair: xbase now states "Edge-node memory metrics from the CDN provider
+    console are
+
+    all nominal," which forecloses the eviction-under-memory-pressure distractor pathway
+
+    directly — no memory pressure is present, so eviction cannot be the driver. This
+    is a
+
+    narrow C4-legal closure: it neutrally rules out the eviction mechanism without
+    naming
+
+    the cookie-forwarding cause. The session cookie and forwarding-list gap remain
+    withheld
+
+    entirely from xbase and live only in HH/LH. HL:LL = 38:17 ≈ 2.2:1 ≤ 4:1.
+
+    HH:LH = 46:19 ≈ 2.4:1 ≤ 4:1. xbase recount:
+
+    Our(1) CDN-fronted(2) marketing(3) site(4) intermittently(5) serves(6) requests(7)
+
+    from(8) the(9) origin(10) instead(11) of(12) the(13) edge(14) cache(15) driving(16)
+
+    unexpected(17) origin(18) costs(19) and(20) occasionally(21) leaking(22)
+
+    personalisation(23) logic(24) It(25) happens(26) only(27) on(28) a(29) small(30)
+
+    fraction(31) of(32) requests(33) and(34) our(35) CDN(36) hit-rate(37) dashboard(38)
+
+    shows(39) the(40) bypassed(41) requests(42) as(43) cache-MISS(44) not(45) BYPASS(46)
+
+    Edge-node(47) memory(48) metrics(49) from(50) the(51) CDN(52) provider(53)
+
+    console(54) are(55) all(56) nominal(57) We(58) changed(59) nothing(60) in(61)
+
+    the(62) CDN(63) rules(64) recently(65) = 65 words.
+
+    '
+causal_audit:
+  steelman: 'An experienced CDN engineer might argue that edge-node memory pressure
+    eviction is plausible
+
+    because the fraction of bypassed requests is small and intermittent, matching
+    what eviction
+
+    patterns look like during transient traffic spikes on nodes with limited cache
+    capacity.
+
+    However, xbase now states that edge-node memory metrics from the CDN provider
+    console are
+
+    all nominal, which directly removes the memory-pressure precondition for eviction.
+    Without
+
+    elevated memory usage on the edge nodes, there is no mechanism by which cache
+    objects would
+
+    be evicted. The focal feature additionally shows that bypassed requests carry
+    a specific
+
+    session cookie absent from the strip list — a configuration issue that concentrates
+    misses
+
+    on cookie-bearing traffic rather than spreading them across all request types
+    as eviction
+
+    would. Both the xbase closure and the focal feature independently refute the eviction
+
+    hypothesis.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states "Edge-node memory metrics from the CDN provider
+    console are all nominal," directly ruling out memory pressure as a precondition
+    for eviction. This forecloses the distractor's sole constructible mechanism without
+    naming the session-cookie cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: CDN intermittently bypasses cache on requests carrying a session cookie
+    that was added after the cookie-strip list was last updated; an availability-heuristic
+    eviction memory is the distractor.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

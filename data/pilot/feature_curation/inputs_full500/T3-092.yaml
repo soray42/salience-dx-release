@@ -1,0 +1,220 @@
+seed_id: T3-092
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our API gateway caches short-lived auth tokens and serves them to downstream
+  microservices. For the past week, roughly 3% of service-to-service calls fail with
+  a 401 Unauthorized. The token issuer is healthy and the downstream services are
+  correctly validating tokens on arrival. The failure rate is steady rather than bursty,
+  and it does not correlate with any particular service pair or time of day. {DS}
+focal_diagnostic_feature: The gateway's cache TTL for tokens is set to 900 seconds,
+  but the token issuer signs tokens with a 600-second expiry; tokens spend up to five
+  minutes cached past their expiry before the gateway refreshes them, and the downstream
+  services correctly reject those expired tokens.
+low_diagnostic_proposition: The 401 errors come from token-signature verification
+  failures caused by a key-rotation mismatch between the token issuer and the downstream
+  services.
+oracle_action: ANSWER
+oracle_focus: Reduce the gateway's token cache TTL to below the token expiry window,
+  or configure the cache to respect the token's own exp claim; the gateway is serving
+  expired tokens whose signatures are valid but whose lifetime has elapsed, causing
+  correctly behaving downstream services to reject them.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the key-rotation diagnosis from authority.
+  Ask for the gateway cache TTL, the token expiry window, and whether the 401 responses
+  cite signature failure or expiry as the rejection reason.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the key-rotation diagnosis from authority. Ask for the gateway
+      cache TTL, the token expiry window, and whether the 401 responses cite signature
+      failure or expiry as the rejection reason.
+  LL:
+    action: ASK
+    focus: Do not accept the key-rotation diagnosis from authority. Ask for the gateway
+      cache TTL, the token expiry window, and whether the 401 responses cite signature
+      failure or expiry as the rejection reason.
+  HH:
+    action: ANSWER
+    focus: Reduce the gateway's token cache TTL to below the token expiry window,
+      or configure the cache to respect the token's own exp claim; the gateway is
+      serving expired tokens whose signatures are valid but whose lifetime has elapsed,
+      causing correctly behaving downstream services to reject them.
+  LH:
+    action: ANSWER
+    focus: Reduce the gateway's token cache TTL to below the token expiry window,
+      or configure the cache to respect the token's own exp claim; the gateway is
+      serving expired tokens whose signatures are valid but whose lifetime has elapsed,
+      causing correctly behaving downstream services to reject them.
+variants:
+  HL:
+    distractor: Orsolya, our principal SRE and the person who designed our token infrastructure,
+      looked at the symptom description and said without hesitation that a steady
+      low-rate 401 spread across service pairs is almost always a signing-key rotation
+      that did not propagate to all consumers simultaneously.
+    diagnosticity: low
+    salience: high
+    proposition: The 401 errors come from token-signature verification failures caused
+      by a key-rotation mismatch between the token issuer and the downstream services.
+    salience_source: A — named principal SRE who designed the token infrastructure;
+      C — "without hesitation" and "almost always" carry high-confidence authoritative
+      pattern-matching.
+    why_plausible: Key-rotation propagation failures genuinely cause steady low-rate
+      401s across service pairs without time-of-day correlation, making this a credible
+      first hypothesis that a senior practitioner would articulate.
+    why_irrelevant: The focal feature shows the 401 rejection reason is token expiry,
+      not signature failure; the gateway cache TTL exceeds the token lifetime so valid-signature-but-expired
+      tokens are served, and the downstream services are correctly rejecting them
+      — key-rotation cannot produce expired tokens with valid signatures.
+  LL:
+    distractor: A principal SRE attributed this 401 pattern to a signing-key rotation
+      that did not reach all consuming services.
+    diagnosticity: low
+    salience: low
+    proposition: The 401 errors come from token-signature verification failures caused
+      by a key-rotation mismatch between the token issuer and the downstream services.
+    matched_to: HL
+  HH:
+    distractor: The gateway config shows a 900-second token cache TTL; the token issuer
+      issues tokens with a 600-second exp claim; the downstream service logs show
+      the rejection reason is "token expired", not "invalid signature" — the gateway
+      is handing out tokens that are cryptographically intact but have already elapsed.
+    diagnosticity: high
+    salience: high
+    proposition: The gateway's cache TTL for tokens is set to 900 seconds, but the
+      token issuer signs tokens with a 600-second expiry; tokens spend up to five
+      minutes cached past their expiry before the gateway refreshes them, and the
+      downstream services correctly reject those expired tokens.
+    salience_source: Three concrete configuration values (900s TTL, 600s exp, rejection
+      reason "token expired") form a closed diagnostic chain with no ambiguity.
+  LH:
+    distractor: Gateway token cache TTL is 900 seconds, token expiry is 600 seconds,
+      and downstream logs cite "token expired" as the rejection reason.
+    diagnosticity: high
+    salience: low
+    proposition: The gateway's cache TTL for tokens is set to 900 seconds, but the
+      token issuer signs tokens with a 600-second expiry; tokens spend up to five
+      minutes cached past their expiry before the gateway refreshes them, and the
+      downstream services correctly reject those expired tokens.
+    matched_to: HH
+distractor_direction:
+  label: Signing-key rotation mismatch
+  description: Investigating whether a signing key was rotated at the token issuer
+    without updating the verification key at downstream services, causing signature-validation
+    failures.
+plausible_alternative_directions:
+- label: Clock skew between services
+  description: Significant clock drift between the gateway and the token issuer or
+    downstream services could cause tokens to appear expired to one party even when
+    they should be valid.
+- label: Gateway routing inconsistency
+  description: The gateway may be routing some requests through a code path that skips
+    token refresh, causing stale tokens to reach downstream services for those requests.
+- label: Token issuer partial failure
+  description: If the token issuer is occasionally returning tokens with an incorrect
+    exp value, a subset of tokens could expire unusually quickly regardless of cache
+    configuration.
+leak_audit:
+  ll_atomic_claims:
+  - A principal SRE attributed the 401 pattern to a signing-key rotation.
+  - The rotation did not propagate to all consuming services.
+  hh_atomic_claims:
+  - The gateway token cache TTL is configured at 900 seconds.
+  - The token issuer issues tokens with a 600-second exp claim.
+  - Downstream service logs show the rejection reason is "token expired" not "invalid
+    signature".
+  hl_salience_dimensions:
+    source_credibility: Named principal SRE (Orsolya) who designed the token infrastructure
+      — domain expertise directly matched to the system.
+    narrative_coherence: Clean professional-consultation framing with a precise symptom-to-diagnosis
+      chain.
+    confident_assertion: without hesitation; almost always — double confidence layering.
+    concrete_detail: N/A — no case-specific configuration values added in HL.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 44
+  ll_word_count: 18
+  hh_word_count: 47
+  lh_word_count: 22
+  notes: 'xbase withholds the TTL values and the rejection-reason content entirely;
+    it only states the
+
+    failure rate, its steady non-bursty character, and that the issuer and downstream
+    validation
+
+    are both healthy. The key-rotation distractor is a real auth failure mode with
+    matching
+
+    epidemiology (steady, cross-service, no time-of-day pattern), making it a credible
+    surface
+
+    match. The focal feature distinguishes it: key rotation produces signature-failure
+    401s, not
+
+    expiry 401s, and cannot produce valid-signature expired tokens.
+
+    HH recount: The(1) gateway(2) config(3) shows(4) a(5) 900-second(6) token(7) cache(8)
+
+    TTL(9) the(10) token(11) issuer(12) issues(13) tokens(14) with(15) a(16) 600-second(17)
+
+    exp(18) claim(19) the(20) downstream(21) service(22) logs(23) show(24) the(25)
+
+    rejection(26) reason(27) is(28) "token(29) expired"(30) not(31) "invalid(32) signature"(33)
+
+    the(34) gateway(35) is(36) handing(37) out(38) tokens(39) that(40) are(41)
+
+    cryptographically(42) intact(43) but(44) have(45) already(46) elapsed(47) = 47
+    words.
+
+    Correcting hh_word_count to 47. HL:LL = 44:17 = 2.6:1 ≤ 4:1.
+
+    HH:LH = 47:22 = 2.1:1 ≤ 4:1.
+
+    '
+causal_audit:
+  steelman: 'A security engineer could argue that signing-key rotation propagation
+    failures match this
+
+    exact epidemiology: steady low-rate failures spread across service pairs with
+    no time-of-day
+
+    pattern, because services fetch the verification key on startup or at different
+    intervals,
+
+    so stale keys cause a constant fraction of calls to fail. This is a well-known
+    failure mode
+
+    and a senior SRE who has seen it before would reasonably rank it first. However,
+    the focal
+
+    feature closes this path: the downstream service logs cite "token expired" as
+    the rejection
+
+    reason, not "invalid signature". Key-rotation failures produce signature-validation
+    errors;
+
+    they cannot produce expired tokens. Only a cache-TTL-exceeds-expiry configuration
+    can
+
+    produce valid-signature-but-elapsed tokens in a steady, time-independent pattern.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states downstream services are correctly validating
+    tokens on arrival and the token issuer is healthy, which rules out a broken validation
+    pipeline or issuer failure without identifying the TTL configuration cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: API gateway token cache TTL (900s) exceeds token expiry (600s), causing
+    downstream 401s from expired-but-valid-signature tokens; an authority misattributes
+    this to signing-key rotation mismatch.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

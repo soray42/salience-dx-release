@@ -1,0 +1,104 @@
+{
+  "models": {
+    "claude-sonnet-4-6": {
+      "n_pairs": 499,
+      "adopted_plain_pct": 20.0,
+      "adopted_salient_pct": 11.0,
+      "net_change_pp": -9.0,
+      "p_rejected_salient_given_adopted_plain_pct": 67.0,
+      "p_adopted_salient_given_rejected_plain_pct": 5.7,
+      "pair_outcomes": {
+        "stable_reject": 360,
+        "proto_vigilance": 12,
+        "vigilance": 67,
+        "ISB": 22,
+        "stable_adopt": 32,
+        "mixed_other": 2,
+        "absent_pair": 3,
+        "proto_ISB": 1
+      }
+    },
+    "gemini-3.5-flash": {
+      "n_pairs": 494,
+      "adopted_plain_pct": 39.7,
+      "adopted_salient_pct": 40.9,
+      "net_change_pp": 1.2,
+      "p_rejected_salient_given_adopted_plain_pct": 16.3,
+      "p_adopted_salient_given_rejected_plain_pct": 12.7,
+      "pair_outcomes": {
+        "vigilance": 32,
+        "proto_vigilance": 14,
+        "stable_adopt": 160,
+        "stable_reject": 232,
+        "proto_ISB": 8,
+        "ISB": 34,
+        "mixed_other": 6,
+        "absent_pair": 8
+      }
+    },
+    "llama3.1:8b": {
+      "n_pairs": 500,
+      "adopted_plain_pct": 64.2,
+      "adopted_salient_pct": 64.4,
+      "net_change_pp": 0.2,
+      "p_rejected_salient_given_adopted_plain_pct": 17.4,
+      "p_adopted_salient_given_rejected_plain_pct": 40.7,
+      "pair_outcomes": {
+        "stable_adopt": 252,
+        "ISB": 50,
+        "proto_vigilance": 23,
+        "vigilance": 56,
+        "stable_reject": 66,
+        "proto_ISB": 20,
+        "mixed_other": 20,
+        "absent_pair": 13
+      }
+    },
+    "google/gemma-4-31B-it": {
+      "n_pairs": 499,
+      "adopted_plain_pct": 39.9,
+      "adopted_salient_pct": 38.7,
+      "net_change_pp": -1.2,
+      "p_rejected_salient_given_adopted_plain_pct": 27.6,
+      "p_adopted_salient_given_rejected_plain_pct": 15.7,
+      "pair_outcomes": {
+        "ISB": 43,
+        "vigilance": 55,
+        "proto_vigilance": 15,
+        "stable_adopt": 142,
+        "stable_reject": 228,
+        "proto_ISB": 8,
+        "mixed_other": 5,
+        "absent_pair": 3
+      }
+    },
+    "POOLED": {
+      "n_pairs": 1992,
+      "adopted_plain_pct": 41.0,
+      "adopted_salient_pct": 38.8,
+      "net_change_pp": -2.2,
+      "p_rejected_salient_given_adopted_plain_pct": 25.7,
+      "p_adopted_salient_given_rejected_plain_pct": 14.2,
+      "pair_outcomes": {
+        "stable_reject": 886,
+        "stable_adopt": 586,
+        "ISB": 149,
+        "vigilance": 210,
+        "proto_vigilance": 64,
+        "proto_ISB": 37,
+        "mixed_other": 33,
+        "absent_pair": 27
+      }
+    }
+  },
+  "cue_length_words": {
+    "n_scenarios": 500,
+    "plain_mean": 16.9,
+    "plain_median": 17.0,
+    "salient_mean": 37.8,
+    "salient_median": 39.0,
+    "ratio_mean": 2.28,
+    "ratio_max": 3.92,
+    "scenario_stem_mean": 59.0
+  }
+}

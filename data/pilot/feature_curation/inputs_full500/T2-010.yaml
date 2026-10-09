@@ -1,0 +1,92 @@
+seed_id: T2-010
+template: T2
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Kubernetes ingress controller drops a small but noticeable share of requests
+  with 502 Bad Gateway during traffic spikes. The errors are not present at steady
+  low traffic. {DS}
+focal_diagnostic_feature: The 502s occur when one upstream exceeds about 2,000 concurrent
+  connections, and that service's p99 is close to its one-second readiness timeout.
+low_diagnostic_proposition: The pattern appeared in metrics during a period of dashboard
+  cleanup by a new SRE.
+oracle_action: ANSWER
+oracle_focus: The upstream is likely flapping readiness or failing under spike load;
+  tune readiness timeout/failureThreshold and add capacity or connection limits.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame dashboard housekeeping. Ask for upstream-level
+  correlation, readiness events, and latency near probe thresholds.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame dashboard housekeeping. Ask for upstream-level correlation,
+      readiness events, and latency near probe thresholds.
+  LL:
+    action: ASK
+    focus: Do not blame dashboard housekeeping. Ask for upstream-level correlation,
+      readiness events, and latency near probe thresholds.
+  HH:
+    action: ANSWER
+    focus: The upstream is likely flapping readiness or failing under spike load;
+      tune readiness timeout/failureThreshold and add capacity or connection limits.
+  LH:
+    action: ANSWER
+    focus: The upstream is likely flapping readiness or failing under spike load;
+      tune readiness timeout/failureThreshold and add capacity or connection limits.
+variants:
+  HL:
+    distractor: This first showed up the same week a new SRE deleted a wall of old
+      Grafana panels and renamed half the dashboard folders.
+    diagnosticity: low
+    salience: high
+    proposition: The pattern appeared in metrics during a period of dashboard cleanup
+      by a new SRE.
+    salience_source: named role, vivid dashboard-cleanup event, temporal coincidence
+    why_plausible: Changes near monitoring can make the metric itself feel suspect.
+    why_irrelevant: Dashboard cleanup changes presentation, not live request handling;
+      the upstream/probe correlation is causal evidence.
+  LL:
+    distractor: The metrics appeared around a period of monitoring-dashboard housekeeping.
+    diagnosticity: low
+    salience: low
+    proposition: The pattern appeared in metrics during a period of dashboard cleanup
+      by a new SRE.
+    matched_to: HL
+  HH:
+    distractor: The 502s show up right when one upstream crosses roughly 2,000 concurrent
+      connections, and its 800 ms p99 is uncomfortably close to a 1 s readiness probe
+      timeout.
+    diagnosticity: high
+    salience: high
+    proposition: The 502s occur when one upstream exceeds about 2,000 concurrent connections,
+      and that service's p99 is close to its one-second readiness timeout.
+    salience_source: load threshold plus probe timeout proximity
+  LH:
+    distractor: The errors correlate with an upstream exceeding ~2,000 concurrent
+      connections while its p99 latency is close to the 1s readiness-probe timeout.
+    diagnosticity: high
+    salience: low
+    proposition: The 502s occur when one upstream exceeds about 2,000 concurrent connections,
+      and that service's p99 is close to its one-second readiness timeout.
+    matched_to: HH
+distractor_direction:
+  label: Monitoring artifact
+  description: Investigating whether dashboard cleanup, missing panels, or metric
+    presentation changed how the 502s appear.
+plausible_alternative_directions:
+- label: Ingress timeout configuration
+  description: The ingress controller’s timeout or retry settings are too aggressive
+    during spikes.
+- label: Load-balancer health checks
+  description: Health-check behaviour is temporarily removing upstreams under burst
+    traffic.
+- label: Autoscaling lag
+  description: Capacity scales too slowly for traffic spikes, causing transient upstream
+    failure.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

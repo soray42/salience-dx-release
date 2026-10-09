@@ -1,0 +1,178 @@
+seed_id: T1-058
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our Jenkins pipeline's test stage has started timing out and getting killed
+  at the sixty-minute job limit, where it used to finish in about twenty-five. The
+  test suite itself has not grown much, and running the same tests on a developer
+  laptop finishes in roughly the usual time. The failures began appearing on most
+  branches this week, and re-running sometimes gets further before the limit cuts
+  it off. {DS}
+focal_diagnostic_feature: A new integration test acquires a lock on a shared sandbox
+  database and never releases it, so subsequent tests block waiting on that lock until
+  the job-level timeout fires.
+low_diagnostic_proposition: A comparable Jenkins timeout elsewhere was caused by an
+  undersized executor heap triggering thrashing.
+oracle_action: ANSWER
+oracle_focus: Find the test that holds the shared-database lock and never releases
+  it; later tests block on that lock until the job timeout. Fix the lock-release path
+  or isolate the sandbox so tests stop serialising behind it.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the executor-heap story. Ask where in the
+  run the suite stalls and whether tests are blocking on a shared resource before
+  assuming memory pressure.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the executor-heap story. Ask where in the run the suite stalls
+      and whether tests are blocking on a shared resource before assuming memory pressure.
+  LL:
+    action: ASK
+    focus: Do not adopt the executor-heap story. Ask where in the run the suite stalls
+      and whether tests are blocking on a shared resource before assuming memory pressure.
+  HH:
+    action: ANSWER
+    focus: Find the test that holds the shared-database lock and never releases it;
+      later tests block on that lock until the job timeout. Fix the lock-release path
+      or isolate the sandbox so tests stop serialising behind it.
+  LH:
+    action: ANSWER
+    focus: Find the test that holds the shared-database lock and never releases it;
+      later tests block on that lock until the job timeout. Fix the lock-release path
+      or isolate the sandbox so tests stop serialising behind it.
+variants:
+  HL:
+    distractor: Ayla, a build engineer at a company we partner with, told me they
+      fought a very similar Jenkins timeout for days and it came down to the executor
+      JVM heap being set too low, so the agent spent the run thrashing in garbage
+      collection until everything crawled to a halt.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable Jenkins timeout elsewhere was caused by an undersized
+      executor heap triggering thrashing.
+    salience_source: A — a named build engineer at a partner company recounting a
+      closely matched, multi-day diagnosis.
+    why_plausible: Heap pressure and GC thrashing genuinely do stretch CI run times,
+      so the resource-starvation story fits the symptom shape.
+    why_irrelevant: GC thrashing would slow work uniformly, not stall the run while
+      tests sit idle on a held lock; the lock-contention signature contradicts a heap
+      cause.
+  LL:
+    distractor: A comparable Jenkins timeout elsewhere was attributed to an undersized
+      executor heap causing thrashing.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable Jenkins timeout elsewhere was caused by an undersized
+      executor heap triggering thrashing.
+    matched_to: HL
+  HH:
+    distractor: A newly added integration test grabs a lock on the shared sandbox
+      database and never releases it, so every test after it sits blocked waiting
+      on that lock; the run does no further work and simply idles until the sixty-minute
+      job limit kills it.
+    diagnosticity: high
+    salience: high
+    proposition: A new integration test acquires a lock on a shared sandbox database
+      and never releases it, so subsequent tests block waiting on that lock until
+      the job-level timeout fires.
+    salience_source: The held-lock-then-idle-until-timeout sequence pinpoints contention,
+      not load, as the cause.
+  LH:
+    distractor: A new integration test holds a shared-database lock it never releases,
+      so later tests block until the job timeout fires.
+    diagnosticity: high
+    salience: low
+    proposition: A new integration test acquires a lock on a shared sandbox database
+      and never releases it, so subsequent tests block waiting on that lock until
+      the job-level timeout fires.
+    matched_to: HH
+distractor_direction:
+  label: Executor heap pressure
+  description: Investigating whether the Jenkins executor's JVM heap is undersized
+    and GC thrashing is stretching the run.
+plausible_alternative_directions:
+- label: Agent resource contention
+  description: Whether multiple concurrent jobs on the agent are starving CPU or IO.
+- label: Slow external dependency
+  description: Whether a downstream service the tests call has become slow to respond.
+leak_audit:
+  ll_atomic_claims:
+  - A comparable Jenkins timeout occurred elsewhere.
+  - It was attributed to an undersized executor heap causing thrashing.
+  hh_atomic_claims:
+  - A new integration test acquires a lock on the shared sandbox database.
+  - It never releases that lock.
+  - Subsequent tests block on the lock and the run idles until the job timeout kills
+    it.
+  hl_salience_dimensions:
+    source_credibility: Named build engineer (Ayla) at a partner company recounting
+      a multi-day diagnosis.
+    narrative_coherence: Coherent days-long investigation ending in a heap-sizing
+      finding.
+    confident_assertion: States the cause was the low executor heap.
+    concrete_detail: Detail about the source's incident (garbage-collection thrashing)
+      only — no fact about the user's own tests or locks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 75
+  hl_word_count: 45
+  ll_word_count: 13
+  hh_word_count: 43
+  lh_word_count: 20
+  notes: 'LL carries only the elsewhere-timeout and undersized-heap claims; the named
+    source, the days of fighting, and the
+
+    GC-thrashing detail are HL-only and about the source''s incident. xbase reports
+    the symptom (stage went from
+
+    twenty-five minutes to a sixty-minute kill on most branches, fine on a laptop)
+    but never reveals where the run
+
+    stalls or that any lock is held, so the HL/LL cells cannot localise it. The decisive
+    lock-contention fact lives
+
+    only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A CI engineer could argue executor heap pressure is plausible: long,
+    variable run times that pass quickly on a
+
+    laptop but blow the job limit on the agent are a recognised signature of memory-starved
+    CI, GC thrashing does
+
+    degrade throughput unevenly run to run, and re-runs sometimes getting further
+    fits non-deterministic memory
+
+    behaviour. That mechanism predicts the agent doing slow but continuous work. The
+    focal evidence shows the
+
+    opposite: a new test acquires a shared-database lock and never releases it, so
+    every later test sits blocked and
+
+    the run idles, doing no work, until the timeout fires. Idle blocking on a held
+    lock is not GC thrashing — adding
+
+    heap would not release the lock or unblock the queue — so the executor-heap explanation
+    has no defensible
+
+    mechanism for this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive held-lock fact is withheld from xbase
+    and lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A Jenkins test-stage timeout caused by a new test holding an unreleased
+    shared-database lock, not the undersized executor heap a partner build engineer's
+    anecdote describes.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

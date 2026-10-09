@@ -1,0 +1,181 @@
+seed_id: T1-030
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: Users of our Android app have started reporting that push notifications stop
+  arriving after the phone sits idle for a while. Messages that should ping them in
+  real time only appear hours later, or only once they open the app. This began over
+  the last couple of weeks across several different device models, and we have not
+  changed our notification backend or message format in that window. The same accounts
+  get notifications fine on iOS. {DS}
+focal_diagnostic_feature: When the app is open or was recently used, notifications
+  arrive instantly; the OS battery settings now list the app as "Optimized" rather
+  than "Unrestricted".
+low_diagnostic_proposition: A similar missing-notification problem at another shop
+  was caused by an expired push certificate.
+oracle_action: ANSWER
+oracle_focus: Treat this as background-delivery suppression by Android battery optimisation;
+  the app is being prevented from holding its push connection while idle, so guide
+  users to exempt it from battery optimisation and review background-work limits.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the expired-certificate story from another
+  team. Ask whether notifications arrive when the app is foregrounded and what the
+  per-app battery optimisation setting shows before diagnosing the push backend.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the expired-certificate story from another team. Ask whether
+      notifications arrive when the app is foregrounded and what the per-app battery
+      optimisation setting shows before diagnosing the push backend.
+  LL:
+    action: ASK
+    focus: Do not adopt the expired-certificate story from another team. Ask whether
+      notifications arrive when the app is foregrounded and what the per-app battery
+      optimisation setting shows before diagnosing the push backend.
+  HH:
+    action: ANSWER
+    focus: Treat this as background-delivery suppression by Android battery optimisation;
+      the app is being prevented from holding its push connection while idle, so guide
+      users to exempt it from battery optimisation and review background-work limits.
+  LH:
+    action: ANSWER
+    focus: Treat this as background-delivery suppression by Android battery optimisation;
+      the app is being prevented from holding its push connection while idle, so guide
+      users to exempt it from battery optimisation and review background-work limits.
+variants:
+  HL:
+    distractor: Adebayo, who runs mobile at a partner studio, told me his app went
+      silent on notifications for a week last quarter and it turned out their push
+      certificate had quietly expired on the server side; he swears that is the usual
+      culprit when pushes start vanishing.
+    diagnosticity: low
+    salience: high
+    proposition: A similar missing-notification problem at another shop was caused
+      by an expired push certificate.
+    salience_source: A — a named peer who owns mobile at another studio, recounting
+      his own incident, gives the certificate theory authority.
+    why_plausible: An expired push certificate genuinely does silence notifications,
+      so a confident first-hand account of exactly that feels like a strong lead.
+    why_irrelevant: A dead certificate would block delivery in every app state and
+      on every account; here notifications arrive the moment the app is foregrounded,
+      so the credential path is intact.
+  LL:
+    distractor: A similar missing-notification problem at another shop was traced
+      to an expired push certificate.
+    diagnosticity: low
+    salience: low
+    proposition: A similar missing-notification problem at another shop was caused
+      by an expired push certificate.
+    matched_to: HL
+  HH:
+    distractor: Whenever the app is open or was used in the last few minutes, the
+      same notifications land instantly; the gap only appears once the phone has been
+      idle, and the OS battery screen now lists our app as "Optimized" instead of
+      "Unrestricted".
+    diagnosticity: high
+    salience: high
+    proposition: When the app is open or was recently used, notifications arrive instantly;
+      the OS battery settings now list the app as "Optimized" rather than "Unrestricted".
+    salience_source: The instant-while-foregrounded contrast plus the exact battery-setting
+      label make the background-suppression cause concrete and visible.
+  LH:
+    distractor: Notifications arrive instantly while the app is foregrounded; the
+      battery setting now reads "Optimized" rather than "Unrestricted".
+    diagnosticity: high
+    salience: low
+    proposition: When the app is open or was recently used, notifications arrive instantly;
+      the OS battery settings now list the app as "Optimized" rather than "Unrestricted".
+    matched_to: HH
+distractor_direction:
+  label: Expired push certificate
+  description: Investigating whether a lapsed or invalid push-notification certificate
+    on the server is silencing message delivery.
+plausible_alternative_directions:
+- label: FCM topic/token churn
+  description: Whether device push tokens are being invalidated or unregistered
+  dropping the delivery target.: null
+- label: Notification channel muted
+  description: Whether the app's notification channel importance was lowered so messages
+    arrive silently or deferred.
+leak_audit:
+  ll_atomic_claims:
+  - Another shop had a similar missing-notification problem.
+  - That problem was traced to an expired push certificate.
+  hh_atomic_claims:
+  - When the app is foregrounded or recently used, notifications arrive instantly.
+  - The delivery gap only appears after the phone is idle.
+  - The OS battery screen now lists the app as "Optimized" rather than "Unrestricted".
+  hl_salience_dimensions:
+    source_credibility: Named peer (Adebayo) who runs mobile at a partner studio recounting
+      his own incident.
+    narrative_coherence: Clean last-quarter, one-week chronology of his outage.
+    confident_assertion: He 'swears' it is the usual culprit — confidence about the
+      source's generic experience, allowed under C1.
+    concrete_detail: Detail about the source's role and his own incident only — nothing
+      about this app's present case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 75
+  hl_word_count: 46
+  ll_word_count: 14
+  hh_word_count: 42
+  lh_word_count: 17
+  notes: 'LL carries only the other-shop-expired-certificate claim; the named peer,
+    his role, the "last quarter" timing
+
+    and his "usual culprit" generalisation are HL-only and concern the source, not
+    this app''s present case. xbase
+
+    states symptoms (delayed pushes after idle, several models, iOS fine) but deliberately
+    withholds the
+
+    foregrounded-instant behaviour and the battery-setting label, so HL/LL cannot
+    rule the certificate in or out.
+
+    The decisive foreground-contrast and "Optimized" label live only in HH/LH. The
+    iOS-fine line in xbase is a
+
+    symptom, not the focal feature, and does not by itself defeat a certificate theory
+    (separate certs per platform).
+
+    '
+causal_audit:
+  steelman: 'A mobile engineer could argue an expired or rotated push certificate
+    is a leading suspect: it silences
+
+    notifications without code changes, can manifest gradually as cached tokens age
+    out, and matches a problem that
+
+    started without a backend deploy. The argument collapses against this case''s
+    behaviour, though. An invalid
+
+    certificate causes the push gateway to reject delivery outright, independent of
+    whether the user has the app
+
+    open; it cannot produce notifications that arrive instantly the moment the app
+    is foregrounded and only stall
+
+    after idle. That foreground-versus-idle split is a signature of on-device background
+    suppression, not a
+
+    server-side credential failure, so the certificate direction has no mechanism
+    for this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the certificate pathway is closed by the focal feature
+    (instant delivery while foregrounded) in HH/LH, not in xbase; xbase keeps only
+    symptoms.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An Android app's delayed push notifications caused by OS battery optimisation
+    suppressing background delivery, not a peer's expired-push-certificate anecdote.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

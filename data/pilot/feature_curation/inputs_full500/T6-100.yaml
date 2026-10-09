@@ -1,0 +1,195 @@
+seed_id: T6-100
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: My six-drive ZFS RAIDZ2 pool on a home NAS has shown a degraded state for three
+  days, with no drive showing as offline in `zpool status`. The pool is still serving
+  data but read-back checksums are occasionally failing according to the scrub log.
+  I replaced the HBA about eight months ago but have not touched the drives since
+  the original build two years ago. {DS}
+focal_diagnostic_feature: zpool status -v shows checksum errors concentrated on a
+  single HBA port rather than on any individual drive, all drive SMART self-tests
+  pass clean, and dmesg logs PCIe correctable errors from the HBA.
+low_diagnostic_proposition: The ZFS pool degradation is caused by a dying drive, as
+  has happened before with this pool.
+oracle_action: ANSWER
+oracle_focus: Replace or reseat the HBA; the PCIe correctable errors and port-concentrated
+  checksum pattern point to a faulty controller, not any drive.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the drive-failure diagnosis from past experience
+  alone; ask for per-drive SMART results, zpool status -v checksum error distribution,
+  and dmesg HBA/controller messages.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the drive-failure diagnosis from past experience alone; ask
+      for per-drive SMART results, zpool status -v checksum error distribution, and
+      dmesg HBA/controller messages.
+  LL:
+    action: ASK
+    focus: Do not adopt the drive-failure diagnosis from past experience alone; ask
+      for per-drive SMART results, zpool status -v checksum error distribution, and
+      dmesg HBA/controller messages.
+  HH:
+    action: ANSWER
+    focus: Replace or reseat the HBA; the PCIe correctable errors and port-concentrated
+      checksum pattern point to a faulty controller, not any drive.
+  LH:
+    action: ANSWER
+    focus: Replace or reseat the HBA; the PCIe correctable errors and port-concentrated
+      checksum pattern point to a faulty controller, not any drive.
+variants:
+  HL:
+    distractor: Every time my ZFS pool has degraded before, it was a drive quietly
+      dying — I've caught two that way over the years — and everything in my instincts
+      is saying this is another one doing the same thing.
+    diagnosticity: low
+    salience: high
+    proposition: The ZFS pool degradation is caused by a dying drive, as has happened
+      before with this pool.
+    salience_source: 'B: vivid personal history with confident first-instinct framing;
+      C: confident assertion (everything in my instincts is saying).'
+    why_plausible: ZFS pools do degrade when drives start returning errors; the user
+      has genuine prior experience resolving this exact symptom with drive replacement,
+      making the pattern-match feel reliable.
+    why_irrelevant: The past degradations involved actually dying drives; the focal
+      feature shows checksum errors clustered by HBA port (not by drive), all SMART
+      tests passing, and PCIe correctable errors in dmesg — structurally a controller
+      fault, not a drive fault.
+  LL:
+    distractor: My ZFS pool has gone degraded before because of a dying drive, so
+      this is probably another drive failure.
+    diagnosticity: low
+    salience: low
+    proposition: The ZFS pool degradation is caused by a dying drive, as has happened
+      before with this pool.
+    matched_to: HL
+  HH:
+    distractor: 'A `zpool status -v` shows the checksum errors are on a single controller
+      port, not spread by drive; every drive''s extended SMART self-test passes clean,
+      and `dmesg` has a stream of ''pci 0000:03:00.0: corrected error'' messages from
+      the HBA.'
+    diagnosticity: high
+    salience: high
+    proposition: zpool status -v shows checksum errors concentrated on a single HBA
+      port rather than on any individual drive, all drive SMART self-tests pass clean,
+      and dmesg logs PCIe correctable errors from the HBA.
+    salience_source: 'B: structured diagnostic sequence (zpool command → SMART → dmesg)
+      with precise findings at each step; D: exact command invocation (`zpool status
+      -v`), specific PCIe address string, and tool-level results.'
+  LH:
+    distractor: Checksum errors cluster on one HBA port not by drive; all SMART self-tests
+      pass; dmesg shows PCIe correctable errors from the HBA.
+    diagnosticity: high
+    salience: low
+    proposition: zpool status -v shows checksum errors concentrated on a single HBA
+      port rather than on any individual drive, all drive SMART self-tests pass clean,
+      and dmesg logs PCIe correctable errors from the HBA.
+    matched_to: HH
+distractor_direction:
+  label: Dying drive hardware failure
+  description: Investigating whether one of the six pool drives is beginning to fail
+    and producing the checksum errors that put the RAIDZ2 pool into a degraded state,
+    as occurred in the user's two prior pool degradation events.
+plausible_alternative_directions:
+- label: RAM ECC error corruption
+  description: Uncorrected memory errors in the NAS can corrupt in-flight data and
+    be reported by ZFS as checksum errors on otherwise healthy drives and controller
+    paths.
+- label: ZFS pool metadata corruption
+  description: The pool's on-disk metadata or labels may have been partially corrupted
+    by a prior unclean shutdown, causing intermittent read-back failures independent
+    of drive or controller health.
+- label: Thermal throttling on HBA
+  description: The HBA may be overheating in an undersized NAS enclosure, causing
+    intermittent data errors that manifest as ZFS checksum failures without producing
+    hard PCIe faults visible in SMART.
+leak_audit:
+  ll_atomic_claims:
+  - The ZFS pool has gone degraded before due to a dying drive
+  - The current degradation is probably another drive failure
+  hh_atomic_claims:
+  - zpool status -v shows checksum errors are on a single controller port
+  - The checksum errors are not spread by individual drive
+  - Every drive's extended SMART self-test passes clean
+  - dmesg contains PCIe correctable error messages from the HBA (address 0000:03:00.0)
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person T6 variant; no named external source
+    narrative_coherence: Vivid personal history with two prior cases cited and strong
+      first-instinct framing
+    confident_assertion: everything in my instincts is saying this is another one
+      doing the same thing
+    concrete_detail: N/A — no case-specific detail added beyond the past-pattern proposition
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 39
+  ll_word_count: 19
+  hh_word_count: 39
+  lh_word_count: 22
+  notes: 'T6 availability inference ("so it is probably the same thing again") is
+    propositional content
+
+    per the instrument: it appears in HL ("another one doing the same thing") and
+    in LL
+
+    ("this is probably another drive failure"). C1 satisfied.
+
+    xbase mentions HBA replacement (8 months ago) as context, not as a conclusion
+    — this makes
+
+    controller a live alternative from xbase without foreclosing the drive-failure
+    direction.
+
+    "quietly dying" in HL is vivid narrative color (salience dimension B) not a new
+    case-specific
+
+    claim about the drive''s state — it describes the general pattern from past experience.
+
+    Steelman is genuine but structurally defeated by the port-concentration pattern
+    in HH/LH:
+
+    a dying drive would spread errors by drive vdev, not by controller port.
+
+    '
+causal_audit:
+  steelman: 'ZFS pools enter a degraded state when one or more drives begin returning
+    I/O errors. The user''s
+
+    two prior experiences with pool degradation both resolved by drive replacement,
+    and drives aged
+
+    two years in a NAS environment are statistically within the bathtub-curve period
+    where failure
+
+    rates begin rising. No drive showing as offline is consistent with early-stage
+    failure where
+
+    the drive is still responding but producing intermittent bad sectors ZFS catches
+    via checksums.
+
+    Extended SMART tests can miss intermittent errors that appear only under sustained
+    sequential
+
+    or random I/O — so SMART-clean does not conclusively rule out a marginal drive.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not foreclose drive failure; the HBA replacement
+    mention makes the controller a live alternative but does not close the drive-failure
+    path. The focal feature (port-concentrated checksum errors + all SMART clean +
+    PCIe correctable errors) is what structurally isolates the fault to the controller.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: ZFS RAIDZ2 pool degraded with checksum errors; user's prior pool degradations
+    were always dying drives, but zpool status -v and dmesg reveal HBA PCIe correctable
+    errors with checksum faults clustered by controller port, not by drive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,174 @@
+seed_id: T2-031
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Photos I take with my phone's main camera have started showing an ugly purple-pink
+  flare whenever there is a bright light source in the frame, like the sun or a streetlamp.
+  In ordinary even light the pictures look fine. It happens on every shot with a bright
+  source now, not just occasionally. The phone is otherwise working normally and I
+  have not installed a new camera app. {DS}
+focal_diagnostic_feature: With any phone case removed, the flare still reproduces,
+  and inspecting the main lens under angled light reveals a hairline scratch across
+  the cover glass that produces the internal reflection.
+low_diagnostic_proposition: The flare started right after the user changed their lock-screen
+  wallpaper to a bright photo.
+oracle_action: ANSWER
+oracle_focus: Treat this as a physical defect on the main lens cover glass causing
+  internal reflection under bright light; have the user inspect and clean the lens,
+  then seek lens-glass repair or replacement since a scratch will not resolve in software.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the lock-screen wallpaper change to the
+  camera flare. Ask whether the flare persists with any case removed and what a close
+  inspection of the lens glass shows before treating the wallpaper as relevant.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the lock-screen wallpaper change to the camera flare. Ask
+      whether the flare persists with any case removed and what a close inspection
+      of the lens glass shows before treating the wallpaper as relevant.
+  LL:
+    action: ASK
+    focus: Do not connect the lock-screen wallpaper change to the camera flare. Ask
+      whether the flare persists with any case removed and what a close inspection
+      of the lens glass shows before treating the wallpaper as relevant.
+  HH:
+    action: ANSWER
+    focus: Treat this as a physical defect on the main lens cover glass causing internal
+      reflection under bright light; have the user inspect and clean the lens, then
+      seek lens-glass repair or replacement since a scratch will not resolve in software.
+  LH:
+    action: ANSWER
+    focus: Treat this as a physical defect on the main lens cover glass causing internal
+      reflection under bright light; have the user inspect and clean the lens, then
+      seek lens-glass repair or replacement since a scratch will not resolve in software.
+variants:
+  HL:
+    distractor: The strange part is the timing. The flare appeared right after I finally
+      changed my lock-screen wallpaper to a bright sunrise photo a friend sent me;
+      before that I had used the same dark default image since I bought the phone.
+    diagnosticity: low
+    salience: high
+    proposition: The flare started right after the user changed their lock-screen
+      wallpaper to a bright photo.
+    salience_source: B/C — a clean, confident first-person chronology pinning the
+      flare to the wallpaper swap gives the coincidence narrative weight.
+    why_plausible: Users often blame the most recent visible change they made, and
+      switching to a noticeably bright wallpaper is a salient one to latch onto.
+    why_irrelevant: The lock-screen wallpaper is what the display shows; it has no
+      optical path to the camera lens and cannot create a flare in photos the camera
+      captures.
+  LL:
+    distractor: The flare started right after the user changed their lock-screen wallpaper
+      to a bright photo.
+    diagnosticity: low
+    salience: low
+    proposition: The flare started right after the user changed their lock-screen
+      wallpaper to a bright photo.
+    matched_to: HL
+  HH:
+    distractor: I took the case off entirely and the purple flare still shows up on
+      every bright-light shot, and when I tilt the main lens under a desk lamp I can
+      see a thin hairline scratch running across the cover glass right where the reflection
+      forms.
+    diagnosticity: high
+    salience: high
+    proposition: With any phone case removed, the flare still reproduces, and inspecting
+      the main lens under angled light reveals a hairline scratch across the cover
+      glass that produces the internal reflection.
+    salience_source: The case-off reproduction plus the visible hairline scratch under
+      angled light make the physical lens defect concrete and observable.
+  LH:
+    distractor: With the case removed the flare still reproduces, and the main lens
+      cover glass shows a hairline scratch under angled light.
+    diagnosticity: high
+    salience: low
+    proposition: With any phone case removed, the flare still reproduces, and inspecting
+      the main lens under angled light reveals a hairline scratch across the cover
+      glass that produces the internal reflection.
+    matched_to: HH
+distractor_direction:
+  label: Lock-screen wallpaper change
+  description: Investigating whether changing the lock-screen wallpaper to a bright
+    image is responsible for the purple flare in photos.
+plausible_alternative_directions:
+- label: Camera software/HDR bug
+  description: Whether a camera firmware or HDR-processing issue is introducing the
+    flare artifact.
+- label: Lens smudge or condensation
+  description: Whether a removable smudge
+  grease: null
+  or condensation on the lens is scattering bright light.: null
+leak_audit:
+  ll_atomic_claims:
+  - The user changed the lock-screen wallpaper to a bright photo.
+  - The flare started right after that change.
+  hh_atomic_claims:
+  - With the case removed the flare still reproduces.
+  - The main lens cover glass shows a hairline scratch under angled light.
+  - The scratch is located where the reflection forms.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean before-and-after chronology of the wallpaper swap.
+    confident_assertion: Confident framing ('The strange part is the timing') foregrounds
+      the coincidence.
+    concrete_detail: Detail about the wallpaper (sunrise photo from a friend, prior
+      dark default) only — no claim about the lens.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 74
+  hl_word_count: 42
+  ll_word_count: 16
+  hh_word_count: 42
+  lh_word_count: 21
+  notes: 'LL carries only the wallpaper-changed-then-flare claim; the sunrise photo,
+    the friend who sent it, and the prior
+
+    dark default are HL-only colour about the coincidence event, adding no case fact
+    LL lacks. xbase states symptoms
+
+    (purple flare with bright sources, fine in even light, every shot, no new camera
+    app) but withholds the case-off
+
+    reproduction and the visible lens scratch, so HL/LL cannot resolve it. The "no
+    new camera app" line narrows but
+
+    does not defeat a software theory; the decisive case-off-reproduction and lens-scratch
+    facts live only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'Someone might try to argue the wallpaper matters: a very bright lock-screen
+    could, in principle, be reflected by
+
+    surrounding surfaces or affect display calibration that the user then perceives
+    in their gallery. But this has no
+
+    real mechanism for the symptom. The flare appears in the photographic image the
+    camera sensor records through the
+
+    lens, an optical path entirely separate from what the display renders; a lock-screen
+    image is never in the
+
+    camera''s field of view during a shot. The reproducible case-off flare and the
+    physical scratch on the lens glass
+
+    locate the cause in the optics, where the wallpaper cannot reach.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes the user installed no new camera app, foreclosing
+    the obvious new-software pathway without revealing the case-off reproduction or
+    the lens scratch, which remain only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A phone camera's bright-light flare caused by a hairline scratch on
+    the lens cover glass, not the coincidental lock-screen wallpaper change.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

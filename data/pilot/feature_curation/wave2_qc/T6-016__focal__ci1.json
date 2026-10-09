@@ -1,0 +1,13 @@
+{
+  "seed_id": "T6-016",
+  "my_own_diagnosis": "With fees explicitly closed in xbase (0.07% expense ratio matches the index tracker), and the focal feature revealing the portfolio is approximately 15–18 pp overweight equity (≈75–78% vs 60% target) after 2+ years of non-rebalancing during a bull run, a competent practitioner would conclude allocation drift has shifted the risk/return profile away from the blended benchmark, explaining the underperformance gap without any fee differential — rebalancing toward target is the indicated action.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature provides precise, quantified drift (15–18 pp above 60% target after 2+ bull-run years) which, combined with xbase's explicit closure of the fees pathway, leaves allocation drift as the sole remaining material explanatory variable.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "cell_oracles correctly map HL/LL (low-diagnosticity) to ASK/low-diagnostic oracle and HH/LH (high-diagnosticity) to ANSWER/focal oracle; low_diagnostic_oracle_focus appropriately declines fee attribution and requests allocation/rebalancing context.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

@@ -1,0 +1,9 @@
+{
+  "seed_id": "T1-016",
+  "steelman": "A financially literate colleague (Priya, a pension fund analyst) explicitly chose a fixed-rate product at renewal, providing indirect Bayesian evidence that fixed rates were economically favourable in a recent, comparable rate environment. One could further argue that a forward-looking advisor might probe whether the user intends to open a HELOC for future home renovation, making Priya's consolidation-plus-fix experience prospectively relevant. Additionally, Priya's professional credibility means her implicit endorsement of the fixed product carries informational weight beyond a lay anecdote, and her choice occurred in a recent rate cycle that may still be informative for the current fixed-versus-variable decision.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase statement 'We have no home equity line or other debt tied to the property' directly and completely forecloses the only mechanism by which HELOC consolidation could be relevant. The indirect Bayesian argument (Priya's rate-environment endorsement of fixed) fails because Priya's choice was constrained by and motivated by debt consolidation, not a pure rate-type optimisation identical to the user's situation; a senior financial planner would immediately distinguish these cases. The prospective-HELOC argument requires counterfactual facts not present in the case. No defensible residual mechanism survives the pathway closure. Seed passes this lens."
+}

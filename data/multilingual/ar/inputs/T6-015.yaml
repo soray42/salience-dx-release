@@ -1,0 +1,238 @@
+seed_id: T6-015
+template: T6
+domain: open_qa
+complexity: low
+xbase: 'غسالتي الأمامية تُخرج الغسيل برائحة عفنة مباشرة من الدورة — بدأ الأمر قبل
+  بضعة أسابيع. لم أغيّر أي شيء: نفس مسحوق الغسيل الذي أستخدمه منذ أكثر من ثلاث سنوات،
+  ونفس حجم الحمولة، ونفس إعدادات درجة الحرارة. لم يتغير شيء في روتيني على الإطلاق.
+  {DS}'
+focal_diagnostic_feature: المستخدم يُغلق دائماً باب الغسالة فور الانتهاء من التفريغ
+  ولم ينظف أو يفحص حشية باب المطاط قط.
+low_diagnostic_proposition: 'In the user''s past experience, musty laundry smell was
+  always caused by the detergent brand.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'The door gasket is the primary suspect: keeping the door closed traps
+  moisture and the uncleaned gasket has accumulated mold or mildew that transfers
+  odour onto clothes each cycle. Advise the user to clean the gasket thoroughly and
+  establish a habit of leaving the door ajar between washes.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'The user''s past-experience attribution to detergent
+  brand is not supported by the current case facts — the detergent is unchanged over
+  three-plus years and the problem is new. Do not adopt the detergent-brand hypothesis.
+  Instead, ask about machine maintenance habits: specifically whether the door is
+  left open between cycles and when the gasket was last cleaned.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: 'The user''s past-experience attribution to detergent brand is not supported
+      by the current case facts — the detergent is unchanged over three-plus years
+      and the problem is new. Do not adopt the detergent-brand hypothesis. Instead,
+      ask about machine maintenance habits: specifically whether the door is left
+      open between cycles and when the gasket was last cleaned.'
+  LL:
+    action: ASK
+    focus: 'The user''s past-experience attribution to detergent brand is not supported
+      by the current case facts — the detergent is unchanged over three-plus years
+      and the problem is new. Do not adopt the detergent-brand hypothesis. Instead,
+      ask about machine maintenance habits: specifically whether the door is left
+      open between cycles and when the gasket was last cleaned.'
+  HH:
+    action: ANSWER
+    focus: 'The door gasket is the primary suspect: keeping the door closed traps
+      moisture and the uncleaned gasket has accumulated mold or mildew that transfers
+      odour onto clothes each cycle. Advise the user to clean the gasket thoroughly
+      and establish a habit of leaving the door ajar between washes.'
+  LH:
+    action: ANSWER
+    focus: 'The door gasket is the primary suspect: keeping the door closed traps
+      moisture and the uncleaned gasket has accumulated mold or mildew that transfers
+      odour onto clothes each cycle. Advise the user to clean the gasket thoroughly
+      and establish a habit of leaving the door ajar between washes.'
+variants:
+  HL:
+    distractor: عند التفكير في الماضي، كل مرة واجهت فيها غسيلاً برائحة عفنة، كان السبب
+      في نهاية المطاف هو ماركة مسحوق الغسيل — في كل مرة، دون استثناء. كان هذا النمط
+      متسقاً تماماً في كل مرة واجهت فيها هذه المشكلة.
+    diagnosticity: low
+    salience: high
+    proposition: 'In the user''s past experience, musty laundry smell was always caused
+      by the detergent brand.
+
+      '
+    salience_source: 'C (confident assertion: "every single time...without exception...completely
+      consistent") + B (clean first-person narrative, definitive register, no hedging)
+      — personal emotional familiarity and "first instinct" framing characteristic
+      of T6.
+
+      '
+    why_plausible: 'Detergent brand is a widely recognised factor in laundry odour;
+      a user''s confident streak of past diagnoses pointing to it creates a compelling
+      heuristic that a reader might accept at face value before checking the case
+      facts.
+
+      '
+    why_irrelevant: 'The xbase explicitly states the detergent brand and formulation
+      are unchanged for over three years, and the problem only started recently. A
+      cause that has been constant cannot explain a new symptom; the detergent-brand
+      pathway is structurally closed for this case.
+
+      '
+  LL:
+    distractor: كل مرة واجهت فيها غسيلاً برائحة عفنة في الماضي، تبيّن أن السبب هو
+      ماركة مسحوق الغسيل.
+    diagnosticity: low
+    salience: low
+    proposition: 'In the user''s past experience, musty laundry smell was always caused
+      by the detergent brand.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: أنا دائماً أغلق الباب مباشرة بعد إخراج الغسيل — لا أتركه مفتوحاً لتهوية
+      الهواء. وعند التفكير في الأمر، لا أستطيع تذكر أنني مسحت أو فحصت حشية المطاط
+      المحيطة بالباب في أي وقت، ولا مرة واحدة منذ اقتنائي للغسالة.
+    diagnosticity: high
+    salience: high
+    proposition: 'The user always shuts the washer door immediately after unloading
+      and has never cleaned or inspected the rubber door gasket.
+
+      '
+    salience_source: 'B (vivid first-person chronological recall, active verbs) +
+      C (confident assertion: "always push", "genuinely cannot remember...not once")
+      + D (concrete behavioural detail about the user''s own practice).
+
+      '
+  LH:
+    distractor: أنا دائماً أغلق باب الغسالة مباشرة بعد التفريغ ولم أنظف يوماً حشية
+      باب المطاط.
+    diagnosticity: high
+    salience: low
+    proposition: 'The user always shuts the washer door immediately after unloading
+      and has never cleaned or inspected the rubber door gasket.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: إسناد الرائحة إلى ماركة مسحوق الغسيل
+  description: يعزو المستخدم الرائحة العفنة إلى ماركة مسحوق الغسيل، استناداً إلى نمط
+    متسق من تجارب الغسيل السابقة. في هذه الحالة يُستبعد هذا الافتراض هيكلياً لأن الماركة
+    والاستخدام ظلا ثابتَين لأكثر من ثلاث سنوات بينما ظهر العَرَض مؤخراً فحسب.
+plausible_alternative_directions:
+- label: تراكم في فلتر الطبل أو مصيدة المضخة
+  description: يمكن أن يتسبب تراكم الأوساخ والرواسب في فلتر الطبل أو مصيدة المضخة
+    في روائح كريهة تنتقل إلى الغسيل؛ قد لا يكون لدى المالك لأول مرة قد نظّف هذه المكونات
+    قط.
+- label: مشكلة في خرطوم الصرف أو أنبوب العمود
+  description: يمكن أن يتسبب خرطوم الصرف المسدود جزئياً أو الموضوع بشكل غير صحيح في
+    سيفونة المياه المستعملة مرة أخرى إلى الطبل، تاركاً مياهاً قذرة متبقية تنتج روائح
+    عفنة.
+- label: عفن داخل الطبل أو رواسب مسحوق الغسيل
+  description: يمكن أن ينمو العفن على الجانب الداخلي للطبل أو على طبقة من رواسب مسحوق
+    الغسيل المتراكمة داخل الجهاز، بصرف النظر عن الحشية، لا سيما في الغسالات التي تعمل
+    أساساً بدرجات حرارة منخفضة أو دورات قصيرة.
+leak_audit:
+  ll_atomic_claims:
+  - The user has, on past occasions, had laundry that smelled musty.
+  - On each of those past occasions, the cause was identified as the detergent brand.
+  hl_salience_dimensions:
+    source_credibility: N/A — T6 template; the voice is the user themselves, not a
+      third party
+    narrative_coherence: 'Clean, first-person retrospective statement; professional
+      register; no interruptions or tangents.
+
+      '
+    confident_assertion: '"every single time", "without exception", "completely consistent
+      every time" — highly confident iterative framing.
+
+      '
+    concrete_detail: N/A — no external source or setting detail added
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 46
+  ll_word_count: 18
+  notes: 'HL adds only confidence markers and repetition ("every single time",
+
+    "without exception", "completely consistent") applied to the user''s
+
+    own prior experience — no new facts about the current case, no tunable
+
+    values, no effort descriptors, no sensory environment color.
+
+    LL retains only the two atomic claims (past musty occurrences; attributed
+
+    to detergent brand) with no residual credibility anchors.
+
+    Ratio: 46/18 = 2.56, well within the 4:1 ceiling.
+
+    '
+causal_audit:
+  steelman: 'A competent laundry expert could argue: detergent chemistry matters for
+
+    odour outcomes. Certain detergent lines rely on fragrances that mask
+
+    rather than eliminate microbial odour; if the user''s current brand
+
+    degrades in a new production batch (or if usage concentration has
+
+    subtly drifted) residue on fabrics can begin hosting bacteria and
+
+    produce a musty smell. Consumer troubleshooting guides routinely list
+
+    "try a different detergent" as a step for persistent laundry odour.
+
+    Furthermore, even the "same brand" could have undergone a quiet
+
+    formula change by the manufacturer without consumer notice. Therefore,
+
+    a practitioner might place "revisit detergent type/amount" on their
+
+    checklist.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states "same detergent I''ve been using for over
+    three years, same load size, same temperature settings — nothing about my routine
+    has changed at all." A cause that has been constant for three-plus years cannot
+    explain a symptom that only appeared a few weeks ago. The steelman''s "quiet formula
+    change" scenario is speculative and would require the practitioner to ignore the
+    explicit no-change report from the user; no competent practitioner would anchor
+    on a speculative external change over the user''s direct account of their own
+    routine. The pathway is closed by the explicit no-change assertion combined with
+    the symptom''s recent onset.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  topic_brief: 'Laundry comes out smelling musty. The user: every musty smell before
+    was the detergent brand. Focal: the washer door and gasket habits are the live
+    signal.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  generator: generator_B
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-015.yaml
+  source_xbase_sha256: b44dc0a2e0d5b5c3
+  translated_content_sha256: 602eff880b6e06ad
+  translation_notes: Front-load washer rendered as 'غسالة أمامية'. Gasket rendered
+    as 'حشية' (standard Arabic mechanical term for rubber seal). No technical loan
+    terms required. First-person register preserved. The HL salience is carried by
+    repetitive confident-assertion phrases ('دون استثناء', 'متسقاً تماماً') mirroring
+    'every single time...without exception...completely consistent' in the English.

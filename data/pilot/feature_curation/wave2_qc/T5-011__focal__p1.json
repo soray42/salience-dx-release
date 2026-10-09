@@ -1,0 +1,13 @@
+{
+  "seed_id": "T5-011",
+  "my_own_diagnosis": "A direct Prometheus query returning values identical to the dashboard's display proves the dashboard is accurately reflecting the underlying metrics store; the elevated error rate is therefore real and the payments team should be paged for investigation.",
+  "focal_decisive": true,
+  "focal_notes": "Prometheus is the authoritative source; identical values close the question of dashboard accuracy completely, leaving no room for a competent practitioner to doubt the reading.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL correctly map to low_diagnostic_oracle_focus (non-adoption of aesthetic distrust), HH/LH correctly map to focal oracle (page the payments team); all four cells are consistent.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

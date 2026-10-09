@@ -1,0 +1,89 @@
+seed_id: T6-003
+template: T6
+domain: technical_troubleshooting
+complexity: low
+xbase: My printer's output has become unreliable during every print job. The pages
+  have long vertical gaps where ink or toner does not appear. I have not changed cartridges
+  recently. {DS}
+focal_diagnostic_feature: The printer makes a loud grinding sound that grows louder
+  as the job progresses.
+low_diagnostic_proposition: The user's previous printer problems were generally caused
+  by low ink.
+oracle_action: ASK
+oracle_focus: 'Treat this as likely mechanical: inspect the paper path, carriage rail,
+  rollers/gears, and obstruction before replacing ink.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to low ink from memory. Ask whether there
+  are mechanical noises, jams, or progressive movement symptoms.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to low ink from memory. Ask whether there are mechanical
+      noises, jams, or progressive movement symptoms.
+  LL:
+    action: ASK
+    focus: Do not default to low ink from memory. Ask whether there are mechanical
+      noises, jams, or progressive movement symptoms.
+  HH:
+    action: ASK
+    focus: 'Treat this as likely mechanical: inspect the paper path, carriage rail,
+      rollers/gears, and obstruction before replacing ink.'
+  LH:
+    action: ASK
+    focus: 'Treat this as likely mechanical: inspect the paper path, carriage rail,
+      rollers/gears, and obstruction before replacing ink.'
+variants:
+  HL:
+    distractor: Whenever my printer has acted up before, it was low ink, so I am tempted
+      to order cartridges and ignore the horrible grinding noise.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous printer problems were generally caused by low
+      ink.
+    salience_source: availability cue, familiar household fix, vivid sound
+    why_plausible: Low ink is a common and familiar printer explanation.
+    why_irrelevant: Grinding is mechanical evidence; ink level does not explain worsening
+      mechanical noise.
+  LL:
+    distractor: Past printer issues for the user were generally attributed to low
+      ink.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous printer problems were generally caused by low
+      ink.
+    matched_to: HL
+  HH:
+    distractor: The printer makes a harsh grinding noise on every job, and it gets
+      louder as the paper moves through.
+    diagnosticity: high
+    salience: high
+    proposition: The printer makes a loud grinding sound that grows louder as the
+      job progresses.
+    salience_source: mechanical noise pattern
+  LH:
+    distractor: Printing is accompanied by a progressive grinding noise during each
+      job.
+    diagnosticity: high
+    salience: low
+    proposition: The printer makes a loud grinding sound that grows louder as the
+      job progresses.
+    matched_to: HH
+distractor_direction:
+  label: Low ink or toner
+  description: Investigating whether depleted ink or toner explains the gaps in printed
+    pages.
+plausible_alternative_directions:
+- label: Clogged printhead
+  description: Dried ink or a blocked nozzle may create vertical gaps in output.
+- label: Paper-feed alignment
+  description: The paper path or alignment may be causing repeated print gaps.
+- label: Driver setting issue
+  description: Print quality or media settings may be configured incorrectly.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

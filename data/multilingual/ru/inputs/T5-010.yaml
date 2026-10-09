@@ -1,0 +1,109 @@
+seed_id: T5-010
+template: T5
+domain: open_qa
+complexity: low
+xbase: Я выбираю домашнего интернет-провайдера для своей квартиры. Я работаю из дома
+  два дня в неделю и мне в основном нужны стабильные видеозвонки. Оба провайдера могут
+  провести установку на следующей неделе. {DS}
+focal_diagnostic_feature: Провайдер А предлагает 1 Гбит/с оптоволокно за €35/месяц
+  с фиксацией цены на 24 месяца и более высокими оценками надёжности; провайдер Б
+  предлагает более медленный кабельный интернет за €42/месяц с коротким вводным дисконтом.
+low_diagnostic_proposition: Provider B's retail shop looks newer and more polished
+  than Provider A's shop.
+oracle_action: ANSWER
+oracle_focus: Choose Provider A on speed, price stability, and reliability evidence.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not use retail-shop polish as service evidence. Ask
+  for plan technology, price lock, speed, and reliability reviews.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not use retail-shop polish as service evidence. Ask for plan technology,
+      price lock, speed, and reliability reviews.
+  LL:
+    action: ASK
+    focus: Do not use retail-shop polish as service evidence. Ask for plan technology,
+      price lock, speed, and reliability reviews.
+  HH:
+    action: ANSWER
+    focus: Choose Provider A on speed, price stability, and reliability evidence.
+  LH:
+    action: ANSWER
+    focus: Choose Provider A on speed, price stability, and reliability evidence.
+variants:
+  HL:
+    distractor: Магазин провайдера Б оснащён глянцевой чёрной стойкой, тёплым освещением
+      и стеной аккуратно расставленных роутеров; магазин провайдера А выглядит как
+      билетная касса образца 2008 года.
+    diagnosticity: low
+    salience: high
+    proposition: Provider B's retail shop looks newer and more polished than Provider
+      A's shop.
+    salience_source: polished retail environment, product-display aesthetics
+    why_plausible: A slick shop can feel like a proxy for technical service quality.
+    why_irrelevant: Retail interior design does not determine network performance,
+      price lock, or reliability.
+  LL:
+    distractor: Торговая точка провайдера Б новее и визуально более ухожена, чем у
+      провайдера А.
+    diagnosticity: low
+    salience: low
+    proposition: Provider B's retail shop looks newer and more polished than Provider
+      A's shop.
+    matched_to: HL
+  HH:
+    distractor: Провайдер А — это 1 Гбит/с оптоволокно за €35 с фиксацией цены на
+      24 месяца и лучшими отзывами по надёжности; провайдер Б — 500 Мбит/с кабель
+      за €42 после шестимесячной акции.
+    diagnosticity: high
+    salience: high
+    proposition: Provider A offers 1 Gbps fibre for €35/month with a 24-month price
+      lock and stronger reliability reviews; Provider B offers slower cable for €42/month
+      with a short introductory discount.
+    salience_source: plan technology/price/reliability comparison
+  LH:
+    distractor: Провайдер А предлагает более быструю оптоволоконную связь по более
+      низкой фиксированной цене и имеет более высокие оценки надёжности, чем провайдер
+      Б.
+    diagnosticity: high
+    salience: low
+    proposition: Provider A offers 1 Gbps fibre for €35/month with a 24-month price
+      lock and stronger reliability reviews; Provider B offers slower cable for €42/month
+      with a short introductory discount.
+    matched_to: HH
+distractor_direction:
+  label: Внешний вид розничного магазина
+  description: Исследование того, свидетельствует ли более новый и ухоженный магазин
+    провайдера Б о том, что он является лучшим интернет-провайдером.
+plausible_alternative_directions:
+- label: Качество поддержки клиентов
+  description: Оперативность при установке и поддержке в случае сбоев может отличаться
+    от заявленных скоростей и цен.
+- label: Условия расторжения договора
+  description: Штрафы за досрочное расторжение, повышение цен или условия минимального
+    срока могут повлиять на выбор провайдера.
+- label: Ограничения проводки в здании
+  description: Проводка в жилом доме может ограничивать реальную производительность
+    для одного из провайдеров.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-010.yaml
+  source_xbase_sha256: a40dce19d085a4e6
+  translated_content_sha256: 7a0cfde849153a85
+  translation_notes: Currency symbol €35/€42 preserved as-is — euro amounts are meaningful
+    without localization for a Russian-language benchmark (the scenario is pan-European
+    in feel). 'Ticket office from 2008' translated literally — this aesthetic contrast
+    is universally intelligible. Technical terms (Гбит/с, Мбит/с, оптоволокно) use
+    standard Russian equivalents.

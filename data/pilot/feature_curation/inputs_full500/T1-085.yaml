@@ -1,0 +1,170 @@
+seed_id: T1-085
+template: T1
+domain: open_qa
+complexity: low
+xbase: The rim brakes on my commuter bike have started making a loud squeal every
+  time I slow down, and it is embarrassing on quiet streets. The braking still works
+  and stops the bike fine. I clean and lube the chain fairly often, and I have not
+  crashed or knocked the wheels out of true recently. {DS}
+focal_diagnostic_feature: The brake pads still have ample material and visible grooves
+  left, while the rim braking surface carries an oily film from chain-lube overspray.
+low_diagnostic_proposition: A bike mechanic's identical brake squeal turned out to
+  be worn-out pads, and replacing the brakes fixed it.
+oracle_action: ANSWER
+oracle_focus: Clean the rim braking surface and the pad faces with a degreaser to
+  remove the chain-lube contamination, and apply lube more carefully so it does not
+  reach the rim; the pads are not worn out, so replacing the brakes is unnecessary.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume worn pads from someone else's case. Ask
+  how much pad material is actually left and whether the rim braking surface is contaminated
+  or glazed before recommending new brakes.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume worn pads from someone else's case. Ask how much pad material
+      is actually left and whether the rim braking surface is contaminated or glazed
+      before recommending new brakes.
+  LL:
+    action: ASK
+    focus: Do not assume worn pads from someone else's case. Ask how much pad material
+      is actually left and whether the rim braking surface is contaminated or glazed
+      before recommending new brakes.
+  HH:
+    action: ANSWER
+    focus: Clean the rim braking surface and the pad faces with a degreaser to remove
+      the chain-lube contamination, and apply lube more carefully so it does not reach
+      the rim; the pads are not worn out, so replacing the brakes is unnecessary.
+  LH:
+    action: ANSWER
+    focus: Clean the rim braking surface and the pad faces with a degreaser to remove
+      the chain-lube contamination, and apply lube more carefully so it does not reach
+      the rim; the pads are not worn out, so replacing the brakes is unnecessary.
+variants:
+  HL:
+    distractor: Kamran, who has wrenched on bikes at a co-op for years, told me his
+      brakes squealed exactly like that and it was simply that the pads had worn down
+      past their useful life, so he replaced the whole brake set and the noise vanished.
+    diagnosticity: low
+    salience: high
+    proposition: A bike mechanic's identical brake squeal turned out to be worn-out
+      pads, and replacing the brakes fixed it.
+    salience_source: A — an experienced co-op bike mechanic recounting a matching
+      symptom and a fix that worked for him.
+    why_plausible: Worn pads really are a common cause of brake squeal, so an experienced
+      mechanic's matching story makes replacement feel like the obvious fix.
+    why_irrelevant: This squeal is from chain-lube contamination on the rim, and the
+      pads still have plenty of material, so replacing them would not remove the oily
+      film causing the noise.
+  LL:
+    distractor: A bike mechanic said his identical brake squeal was worn-out pads
+      and replacing the brakes fixed it.
+    diagnosticity: low
+    salience: low
+    proposition: A bike mechanic's identical brake squeal turned out to be worn-out
+      pads, and replacing the brakes fixed it.
+    matched_to: HL
+  HH:
+    distractor: When I actually look, the pads still have plenty of rubber and clear
+      grooves left, but the braking surface of the rim has a slick film on it, and
+      I can see a faint oily sheen where chain-lube overspray has been landing right
+      on the track.
+    diagnosticity: high
+    salience: high
+    proposition: The brake pads still have ample material and visible grooves left,
+      while the rim braking surface carries an oily film from chain-lube overspray.
+    salience_source: The pads-have-material-left observation paired with the visible
+      oily film on the rim makes the contamination cause concrete and the worn-pad
+      story moot.
+  LH:
+    distractor: The pads have ample material left, but the rim braking surface carries
+      an oily film from chain-lube overspray.
+    diagnosticity: high
+    salience: low
+    proposition: The brake pads still have ample material and visible grooves left,
+      while the rim braking surface carries an oily film from chain-lube overspray.
+    matched_to: HH
+distractor_direction:
+  label: Worn brake pads
+  description: Treating the squeal as a sign the pads are worn out and the brakes
+    should be replaced.
+plausible_alternative_directions:
+- label: Pad toe-in/alignment
+  description: Whether the pads are misaligned (no toe-in) and squealing on contact.
+- label: Rim contamination
+  description: Whether the braking surface is contaminated or glazed rather than the
+    pads being worn.
+- label: Glazed pad surface
+  description: Whether the pad faces have hardened and glazed
+  causing the noise.: null
+leak_audit:
+  ll_atomic_claims:
+  - A bike mechanic had an identical brake squeal.
+  - It turned out to be worn-out pads, and replacing the brakes fixed it.
+  hh_atomic_claims:
+  - The brake pads still have plenty of material and visible grooves left.
+  - The rim braking surface has an oily film on it.
+  - The film is chain-lube overspray landing on the braking track.
+  hl_salience_dimensions:
+    source_credibility: An experienced co-op bike mechanic.
+    narrative_coherence: A clean matching-symptom-and-fix story.
+    confident_assertion: '''Simply'', ''the noise vanished'' — confident, resolved
+      framing.'
+    concrete_detail: Detail about replacing the whole brake set — about the source's
+      repair, not this bike's actual pad/rim state.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 55
+  hl_word_count: 44
+  ll_word_count: 17
+  hh_word_count: 46
+  lh_word_count: 18
+  notes: 'Clean T1: worn pads are a genuine common cause of brake squeal, so the anecdote
+    is reasonable in general — but
+
+    the focal feature (pads still have ample material; rim surface oily from lube
+    overspray) structurally rules out
+
+    the worn-pad cause for this bike. xbase mentions frequent chain lubing as neutral
+    maintenance context but does
+
+    NOT state the decisive facts (pad material remaining, oily film on the rim), so
+    a reader cannot conclude
+
+    "contaminated rim" from xbase alone; worn pads, glazing, and alignment all remain
+    live until the HH inspection.
+
+    '
+causal_audit:
+  steelman: 'A seasoned mechanic could argue that squeal-on-braking is a textbook
+    worn-pad symptom: thin pads vibrate, chatter,
+
+    and ring against the rim, and replacing them resolves it nine times out of ten.
+    The reasoning is sound for worn
+
+    pads. But it does not apply here: the focal inspection shows the pads still have
+    plenty of material and grooves,
+
+    while the rim braking surface is fouled with chain-lube overspray, so the noise
+    comes from contamination, not
+
+    wear, and new pads would simply be contaminated by the same film.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive pad-material and rim-contamination observations
+    are intentionally withheld from xbase, which carries only the symptom and routine-maintenance
+    context.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A bike brake squeal caused by chain-lube overspray contaminating the
+    rim braking surface, with the pads still good, not the worn pads an experienced
+    mechanic recalled replacing.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

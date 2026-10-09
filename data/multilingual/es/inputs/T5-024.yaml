@@ -1,0 +1,209 @@
+seed_id: T5-024
+template: T5
+domain: open_qa
+complexity: high
+xbase: Estoy eligiendo una aplicación de presupuesto para hacer seguimiento del gasto
+  en cuatro cuentas bancarias y tres tarjetas de crédito. Mi necesidad principal es
+  una categorización automática precisa sin necesidad de corrección manual constante.
+  He estado comparando dos opciones durante una prueba gratuita de dos semanas y ambas
+  aplicaciones tienen el mismo coste anual. {DS}
+focal_diagnostic_feature: Durante dos semanas, la App A no pudo conectarse automáticamente
+  a dos de las cuatro cuentas bancarias y categorizó incorrectamente 23 de 37 transacciones
+  de restaurantes como supermercado; la App B se conectó a las siete cuentas y categorizó
+  incorrectamente solo 3 de 40 transacciones.
+low_diagnostic_proposition: App A has a visually polished interface, which suggests
+  its underlying data analysis and categorisation may be more reliable than App B's.
+oracle_action: ANSWER
+oracle_focus: Choose App B; its trial data shows substantially better account connectivity
+  and categorisation accuracy, which are the stated requirements, despite its less
+  polished interface.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer categorisation accuracy from interface aesthetics.
+  Ask for actual connection success rates and categorisation error counts from both
+  trials.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer categorisation accuracy from interface aesthetics. Ask for
+      actual connection success rates and categorisation error counts from both trials.
+  LL:
+    action: ASK
+    focus: Do not infer categorisation accuracy from interface aesthetics. Ask for
+      actual connection success rates and categorisation error counts from both trials.
+  HH:
+    action: ANSWER
+    focus: Choose App B; its trial data shows substantially better account connectivity
+      and categorisation accuracy, which are the stated requirements, despite its
+      less polished interface.
+  LH:
+    action: ANSWER
+    focus: Choose App B; its trial data shows substantially better account connectivity
+      and categorisation accuracy, which are the stated requirements, despite its
+      less polished interface.
+variants:
+  HL:
+    distractor: 'La interfaz de la App A es genuinamente llamativa: animaciones de
+      transacciones fluidas, una rueda de gastos codificada por colores y pantallas
+      de resumen mensual que parecen sacadas de una revista de finanzas personales.
+      Ese nivel de pulido visual hace que el análisis de datos subyacente se sienta
+      considerablemente más fiable y cuidadosamente diseñado.'
+    diagnosticity: low
+    salience: high
+    proposition: App A has a visually polished interface, which suggests its underlying
+      data analysis and categorisation may be more reliable than App B's.
+    salience_source: B/C — specific enumeration of three concrete visual features
+      in a confident first-person evaluative voice, with the inferential bridge stated
+      as a direct felt response ('makes the data analysis feel more trustworthy').
+    why_plausible: Design quality does sometimes correlate with engineering investment;
+      a carefully crafted UI can reasonably suggest an organisation that sweats its
+      product details, including backend accuracy.
+    why_irrelevant: UI animation quality and layout fidelity are determined by front-end
+      design resources, not by the accuracy of the categorisation model or bank-connection
+      logic; the two-week trial produces direct empirical evidence that makes the
+      inference unnecessary and wrong in this case.
+  LL:
+    distractor: La App A tiene una interfaz visualmente pulida, lo que sugiere que
+      su análisis de datos y su categorización subyacentes pueden ser más fiables
+      que los de la App B.
+    diagnosticity: low
+    salience: low
+    proposition: App A has a visually polished interface, which suggests its underlying
+      data analysis and categorisation may be more reliable than App B's.
+    matched_to: HL
+  HH:
+    distractor: La App A solo se conectó a dos de las cuatro cuentas bancarias y categorizó
+      incorrectamente 23 de 37 cargos de restaurantes como supermercado; la App B
+      vinculó las siete cuentas sin configuración manual y categorizó incorrectamente
+      solo 3 de 40 transacciones.
+    diagnosticity: high
+    salience: high
+    proposition: Over two weeks, App A failed to connect automatically to two of the
+      four bank accounts and miscategorised 23 of 37 dining transactions as groceries;
+      App B connected to all seven accounts and miscategorised only 3 of 40 transactions.
+    salience_source: B — side-by-side trial counts (23 vs 3 miscategorisations, 2/4
+      vs 7/7 account connections) over an identical test period, directly targeting
+      the stated evaluation criteria.
+  LH:
+    distractor: La App B vinculó las siete cuentas automáticamente con 3 categorizaciones
+      incorrectas; la App A no conectó dos cuentas bancarias y categorizó incorrectamente
+      23 de 37 transacciones de restaurantes.
+    diagnosticity: high
+    salience: low
+    proposition: Over two weeks, App A failed to connect automatically to two of the
+      four bank accounts and miscategorised 23 of 37 dining transactions as groceries;
+      App B connected to all seven accounts and miscategorised only 3 of 40 transactions.
+    matched_to: HH
+distractor_direction:
+  label: Pulido de interfaz como indicador de fiabilidad
+  description: Inferir que la interfaz visualmente sofisticada de la App A indica
+    una mayor fiabilidad y precisión de su lógica de categorización y conexión subyacente.
+plausible_alternative_directions:
+- label: Exportación de datos a largo plazo y portabilidad
+  description: La capacidad de exportar el historial de transacciones en un formato
+    portable (CSV, OFX) puede importar más con el tiempo que la precisión de categorización
+    a corto plazo.
+- label: Soporte al cliente y frecuencia de actualizaciones
+  description: Las integraciones de conexión bancaria se rompen cuando las entidades
+    cambian sus APIs; la velocidad de actualización del proveedor y la capacidad de
+    respuesta del soporte son relevantes para una configuración multicuenta a lo largo
+    de los años.
+- label: Política de privacidad y uso compartido de datos
+  description: Es probable que ambas aplicaciones compartan datos agregados o anonimizados
+    con terceros; las condiciones específicas de uso compartido podrían superar las
+    diferencias de funciones para algunos usuarios.
+leak_audit:
+  ll_atomic_claims:
+  - App A has a visually polished interface.
+  - This visual polish suggests App A's data analysis and categorisation may be more
+    reliable than App B's.
+  hh_atomic_claims:
+  - App A connected automatically to only two of four bank accounts over two weeks.
+  - App A miscategorised 23 of 37 dining transactions as groceries.
+  - App B connected to all seven accounts (four banks, three credit cards) without
+    manual setup.
+  - App B miscategorised only 3 of 40 transactions.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Enumerated specific visual features followed by a clean logical
+      bridge to the reliability inference, in a composed first-person register.
+    confident_assertion: '''Considerably more trustworthy and carefully engineered''
+      — confident unhedged evaluative claim.'
+    concrete_detail: Transaction animations, colour-coded spending wheel, magazine-layout
+      summaries — visual details about the app's UI surface only, not about data quality.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 43
+  ll_word_count: 22
+  hh_word_count: 35
+  lh_word_count: 23
+  notes: 'T5 bridge check: HL states ''that level of visual polish makes the underlying
+    data
+
+    analysis feel considerably more trustworthy and carefully engineered.'' LL states
+
+    ''which suggests its underlying data analysis and categorisation may be more reliable
+
+    than App B''s.'' Both cells carry the inferential bridge (surface -> reliability
+
+    conclusion) per C1 self-check 13. LH was trimmed to 22 words to stay within the
+
+    operational target; all four HH atomic claims are covered at lower resolution.
+
+    '
+causal_audit:
+  steelman: 'Investment in UI/UX quality does sometimes signal broader engineering
+    discipline within
+
+    a company. An organisation that ships polished animations and thoughtful information
+
+    architecture may also invest heavily in its data pipelines and categorisation
+    models.
+
+    Additionally, a well-designed interface can make manual corrections faster and
+    less
+
+    painful, which partly compensates for lower automatic accuracy. However, the two-week
+
+    parallel trial provides direct empirical measurement of both connection reliability
+
+    and categorisation accuracy — the exact criteria stated. The UI quality inference
+
+    is a prior that the trial data directly contradicts for this specific pair of
+    apps;
+
+    there is no defensible mechanism by which spending-wheel animation quality causes
+
+    better bank-API connection handling.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the aesthetic observation has no constructible pathway
+    to bank connection reliability or categorisation algorithm accuracy.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing a budgeting app; App B wins on actual trial data (account
+    connections and categorisation accuracy) despite App A's more polished visual
+    interface.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-024.yaml
+  source_xbase_sha256: 63c755c79794108a
+  translated_content_sha256: 437bcb3f92dc3fb0
+  translation_notes: Technical terms CSV, OFX, API kept as-is. 'Dining transactions
+    as groceries' rendered as 'transacciones de restaurantes como supermercado', which
+    is the natural Spanish equivalent. Colour-coded spending wheel kept as 'rueda
+    de gastos codificada por colores'. No culture-bound salience issues.

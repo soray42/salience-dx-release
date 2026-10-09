@@ -1,0 +1,164 @@
+seed_id: T5-091
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our CDN-fronted image API has had slow first-byte times for three weeks — p95
+  TTFB is up from 90 ms to about 1.4 seconds at busy periods. Origin CPU and memory
+  look healthy, and the asset count has not changed significantly. Our CDN vendor
+  is the same one we have used for two years. {DS}
+focal_diagnostic_feature: Origin shield is disabled in the CDN configuration, so every
+  edge PoP fetches independently from the origin server instead of sharing a single
+  aggregated request path.
+low_diagnostic_proposition: The CDN control panel's dated visual style suggests the
+  platform is managing routes incorrectly.
+oracle_action: ANSWER
+oracle_focus: Diagnose origin shield being disabled; re-enable origin shield so edge
+  PoPs aggregate requests through a single shield node rather than hammering origin
+  in parallel.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer CDN routing quality from control-panel appearance.
+  Ask for CDN configuration details, origin shield settings, and cache-hit ratio before
+  diagnosing the cause.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer CDN routing quality from control-panel appearance. Ask for
+      CDN configuration details, origin shield settings, and cache-hit ratio before
+      diagnosing the cause.
+  LL:
+    action: ASK
+    focus: Do not infer CDN routing quality from control-panel appearance. Ask for
+      CDN configuration details, origin shield settings, and cache-hit ratio before
+      diagnosing the cause.
+  HH:
+    action: ANSWER
+    focus: Diagnose origin shield being disabled; re-enable origin shield so edge
+      PoPs aggregate requests through a single shield node rather than hammering origin
+      in parallel.
+  LH:
+    action: ANSWER
+    focus: Diagnose origin shield being disabled; re-enable origin shield so edge
+      PoPs aggregate requests through a single shield node rather than hammering origin
+      in parallel.
+variants:
+  HL:
+    distractor: 'The CDN control panel looks like a project someone abandoned mid-refresh:
+      misaligned columns, four different button styles, and a colour scheme I would
+      have called vintage in 2013. That dated look makes me genuinely doubt the platform
+      is managing our routes correctly.'
+    diagnosticity: low
+    salience: high
+    proposition: The CDN control panel's dated visual style suggests the platform
+      is managing routes incorrectly.
+    salience_source: Dimension B (narrative coherence) — vivid specific visual detail
+      about the interface; dimension C (confident assertion) — direct expression of
+      doubt framed as a reasoned inference.
+    why_plausible: A busy engineer might reasonably infer that a neglected, poorly-maintained
+      UI reflects broader technical neglect in the platform's routing and configuration
+      layers.
+    why_irrelevant: UI aesthetics have no causal path to CDN routing behaviour or
+      origin shield configuration; the panel's appearance tells nothing about whether
+      origin shield is enabled.
+  LL:
+    distractor: The CDN control panel has a dated visual style that makes me doubt
+      the platform manages our routes correctly.
+    diagnosticity: low
+    salience: low
+    proposition: The CDN control panel's dated visual style suggests the platform
+      is managing routes incorrectly.
+    matched_to: HL
+  HH:
+    distractor: The CDN configuration shows origin shield is completely disabled for
+      our region, so all 23 edge nodes are fetching directly from the origin server
+      in parallel instead of sharing a single aggregated request path.
+    diagnosticity: high
+    salience: high
+    proposition: Origin shield is disabled in the CDN configuration, so every edge
+      PoP fetches independently from the origin server instead of sharing a single
+      aggregated request path.
+    salience_source: Dimension B (narrative coherence) — concrete numeric count of
+      edge nodes; dimension C (confident assertion) — precise configuration state
+      stated directly.
+  LH:
+    distractor: Origin shield is disabled; all 23 edge nodes fetch independently from
+      origin rather than sharing a consolidated request path.
+    diagnosticity: high
+    salience: low
+    proposition: Origin shield is disabled in the CDN configuration, so every edge
+      PoP fetches independently from the origin server instead of sharing a single
+      aggregated request path.
+    matched_to: HH
+distractor_direction:
+  label: CDN platform routing neglect
+  description: Investigating whether the CDN vendor's poorly-maintained interface
+    reflects underlying routing or configuration defects that are causing high TTFB.
+plausible_alternative_directions:
+- label: origin-side bottleneck
+  description: The origin service has a hidden resource constraint or slow path not
+    reflected in aggregate CPU/memory metrics.
+- label: CDN cache-miss spike
+  description: A shift in request patterns or a cache invalidation event is generating
+    a burst of cache misses that overwhelm origin.
+- label: geographic routing misconfiguration
+  description: Requests are being routed to a distant CDN PoP rather than the nearest
+    one, adding network round-trip latency.
+leak_audit:
+  ll_atomic_claims:
+  - The CDN control panel has a dated visual style.
+  - That dated style causes the user to doubt the platform manages routes correctly.
+  hh_atomic_claims:
+  - Origin shield is completely disabled for the region.
+  - All 23 edge nodes fetch directly from the origin server.
+  - Fetching is parallel rather than through a single aggregated request path.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observation, no external source
+    narrative_coherence: 'Specific detail: misaligned columns, four button styles,
+      vintage-2013 colour scheme anchors the claim in a believable observed state.'
+    confident_assertion: '''makes me genuinely doubt'' — direct inferential claim.'
+    concrete_detail: N/A — detail is about the UI surface, which IS the propositional
+      content for T5.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 54
+  hl_word_count: 42
+  ll_word_count: 19
+  hh_word_count: 34
+  lh_word_count: 19
+  notes: 'T5 bridge (dated appearance → routing doubt) present in both HL and LL as
+    required by C1/self-check 13.
+
+    HL adds only vivid UI detail (misaligned columns, button-style count, vintage-2013
+    label) about the surface, not about the case.
+
+    Avoided: no effort descriptors, no case-specific severity claims in HL vs LL.
+
+    xbase does not name origin-shield state; focal content isolated to HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A senior CDN engineer might argue: neglected vendor tooling correlates
+    with poor operational discipline, which could manifest as stale routing tables,
+    unchecked configuration drift, or unreviewed edge settings. A vendor whose UI
+    team has deprioritised maintenance might also deprioritise platform reliability.
+    This could, in principle, raise the probability of a misconfiguration like disabled
+    origin shield.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the UI appearance has no direct causal path to origin-shield
+    state; the steelman shows only a loose correlational argument, not a mechanism,
+    and the CDN vendor has been in use for two years without prior issues.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: CDN origin shield disabled causes every edge node to fetch independently
+    from origin, raising TTFB; distractor is inference from dated CDN admin console
+    appearance.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

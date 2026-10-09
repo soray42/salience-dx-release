@@ -1,0 +1,181 @@
+seed_id: T1-035
+template: T1
+domain: open_qa
+complexity: medium
+xbase: My five-year-old front-loading washing machine has started leaving a small
+  puddle of water on the floor after most wash cycles. The puddle shows up near the
+  front of the machine, the laundry itself comes out properly washed and spun, and
+  there is no error code on the display. A local technician quoted me €140 to come
+  and look at it, and a comparable new machine in the same class runs about €520.
+  I am trying to decide whether this is worth fixing. {DS}
+focal_diagnostic_feature: The water on the floor is clean rinse water and it appears
+  only at the front lip of the door, while the rubber door gasket has a visible split
+  along its lower fold.
+low_diagnostic_proposition: A neighbour's washing machine leaked and the cause turned
+  out to be a corroded outer drum that made repair uneconomical.
+oracle_action: ANSWER
+oracle_focus: Repair it; a split door gasket is a cheap, common, well-bounded part
+  to replace, so the leak does not point to an expensive structural failure that would
+  favour replacement.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a drum failure from the neighbour's case.
+  Ask where the water originates and whether the visible source is a cheap part or
+  a structural one.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a drum failure from the neighbour's case. Ask where the water
+      originates and whether the visible source is a cheap part or a structural one.
+  LL:
+    action: ASK
+    focus: Do not assume a drum failure from the neighbour's case. Ask where the water
+      originates and whether the visible source is a cheap part or a structural one.
+  HH:
+    action: ANSWER
+    focus: Repair it; a split door gasket is a cheap, common, well-bounded part to
+      replace, so the leak does not point to an expensive structural failure that
+      would favour replacement.
+  LH:
+    action: ANSWER
+    focus: Repair it; a split door gasket is a cheap, common, well-bounded part to
+      replace, so the leak does not point to an expensive structural failure that
+      would favour replacement.
+variants:
+  HL:
+    distractor: Sigrid two doors down had a leaking front-loader last winter, and
+      her repairman eventually traced it to a corroded outer drum; she told me the
+      fix cost more than the machine was worth.
+    diagnosticity: low
+    salience: high
+    proposition: A neighbour's washing machine leaked and the cause turned out to
+      be a corroded outer drum that made repair uneconomical.
+    salience_source: A — a named neighbour relaying a tradesman's diagnosis gives
+      the cautionary tale weight.
+    why_plausible: Outer-drum corrosion is a real way a washer can become a write-off,
+      so the story reads as a warning that this leak could be terminal.
+    why_irrelevant: Another machine's drum corrosion says nothing about where THIS
+      machine leaks; the deciding fact is the actual visible source of the water.
+  LL:
+    distractor: A neighbour's washing machine leaked and was traced to a corroded
+      outer drum, making repair uneconomical.
+    diagnosticity: low
+    salience: low
+    proposition: A neighbour's washing machine leaked and the cause turned out to
+      be a corroded outer drum that made repair uneconomical.
+    matched_to: HL
+  HH:
+    distractor: 'I wiped the puddle and tasted nothing soapy, then ran a cycle and
+      watched: the water seeps out right at the front lip of the door, and pulling
+      back the rubber gasket shows a clean split running along its lower fold where
+      the water escapes.'
+    diagnosticity: high
+    salience: high
+    proposition: The water on the floor is clean rinse water and it appears only at
+      the front lip of the door, while the rubber door gasket has a visible split
+      along its lower fold.
+    salience_source: Direct observation of the leak point and the visible gasket split
+      makes the cheap, contained cause concrete.
+  LH:
+    distractor: The leak is clean water at the front door lip, and the rubber door
+      gasket has a visible split along its lower fold.
+    diagnosticity: high
+    salience: low
+    proposition: The water on the floor is clean rinse water and it appears only at
+      the front lip of the door, while the rubber door gasket has a visible split
+      along its lower fold.
+    matched_to: HH
+distractor_direction:
+  label: Structural drum failure
+  description: Treating the leak as a sign of an expensive structural failure (such
+    as a corroded outer drum) that would make repair uneconomical and favour replacement.
+plausible_alternative_directions:
+- label: Drain pump or hose leak
+  description: Whether the water comes from a failing drain pump or a loose drain
+    hose rather than the door area.
+- label: Detergent-drawer overflow
+  description: Whether overfilling or a blocked dispenser drawer is sending water
+    down the front of the machine.
+leak_audit:
+  ll_atomic_claims:
+  - A neighbour's washing machine leaked.
+  - The cause was traced to a corroded outer drum.
+  - The corrosion made repair uneconomical.
+  hh_atomic_claims:
+  - The leaked water is clean (not soapy) rinse water.
+  - It emerges only at the front lip of the door.
+  - The rubber door gasket has a visible split along its lower fold.
+  hl_salience_dimensions:
+    source_credibility: Named neighbour (Sigrid) relaying her repairman's drum-corrosion
+      diagnosis.
+    narrative_coherence: Clean last-winter sequence with a specific tradesman and
+      a cost-based conclusion.
+    confident_assertion: N/A
+    concrete_detail: Detail about the source/setting (Sigrid, two doors down, last
+      winter, repairman) only — no case-content beyond what LL already asserts.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 87
+  hl_word_count: 33
+  ll_word_count: 16
+  hh_word_count: 44
+  lh_word_count: 21
+  notes: 'xbase carries symptoms (puddle near front, clean wash, no error code) plus
+    both prices, but withholds the actual
+
+    leak source so the HL/LL cells cannot resolve repair-vs-replace. The repair-vs-replace
+    answer does NOT compute
+
+    from xbase alone because the decisive fact — that the source is a cheap gasket,
+    not a structural drum — lives only
+
+    in HH/LH. LL carries only the neighbour-drum-corrosion-uneconomical claim; the
+    name (Sigrid), setting (two doors
+
+    down, last winter), and repairman attribution are HL-only source/setting enrichment.
+    The severity amplifier
+
+    ''had rusted through'' and the explicit consequence ''she simply bought a new
+    one'' were removed in QC repair to
+
+    restore C1 propositional equivalence.
+
+    '
+causal_audit:
+  steelman: 'A seasoned appliance technician might argue that a front-loader leak
+    can genuinely originate from a corroded or
+
+    cracked outer drum, and that on a five-year-old machine such corrosion is plausible
+    and would indeed make repair
+
+    uneconomical, so the neighbour''s experience could be a real preview of this machine''s
+    fate. That argument,
+
+    however, treats a possible failure class as if it were established for THIS machine.
+    Nothing in xbase tells the
+
+    user where their water originates; the neighbour''s drum corrosion is a fact about
+    a different machine. The focal
+
+    evidence — clean water at the door lip and a split in the gasket — identifies
+    a cheap, contained part as the
+
+    actual source, leaving the drum-corrosion story with no purchase on this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase withholds the leak source; the decisive gasket
+    evidence that defeats the drum-corrosion story lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A washing-machine repair-vs-replace decision where the leak is a cheap
+    split door gasket, not the expensive drum corrosion a neighbour suffered.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

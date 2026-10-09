@@ -1,0 +1,264 @@
+seed_id: T6-011
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Every single evening around 8 PM my video calls turn robotic to the other participants
+  — my voice cuts out and sounds heavily processed. During the day everything is fine.
+  I have rebooted the laptop and quit background apps with no effect. {DS}
+focal_diagnostic_feature: 'An offline voice recording captured locally on the same
+  laptop at the same hour also sounds robotic, establishing that the distortion exists
+  in local audio capture or processing before any data reaches the network.
+
+  '
+low_diagnostic_proposition: 'The user''s home router has in the past caused robotic
+  video-call audio that was resolved by restarting it.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Investigate local audio processing as the source: check for CPU thermal
+  throttling in the evenings (sustained load raising core temperature and triggering
+  clock-speed reduction), an audio driver fault or power-management profile change
+  that degrades microphone processing, or a hardware issue with the microphone or
+  audio interface that worsens under extended use — all of which can cause distortion
+  irrespective of network state.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Acknowledge the past router-restart experience but do
+  not adopt it as the current explanation; note that it does not account for the offline
+  recording evidence already in the scenario; ask diagnostic questions to locate whether
+  the distortion is in local audio capture (offline test, alternative microphone)
+  or elsewhere.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Acknowledge the past router-restart experience but do not adopt it as the
+      current explanation; note that it does not account for the offline recording
+      evidence already in the scenario; ask diagnostic questions to locate whether
+      the distortion is in local audio capture (offline test, alternative microphone)
+      or elsewhere.
+  LL:
+    action: ASK
+    focus: Acknowledge the past router-restart experience but do not adopt it as the
+      current explanation; note that it does not account for the offline recording
+      evidence already in the scenario; ask diagnostic questions to locate whether
+      the distortion is in local audio capture (offline test, alternative microphone)
+      or elsewhere.
+  HH:
+    action: ANSWER
+    focus: 'Investigate local audio processing as the source: check for CPU thermal
+      throttling in the evenings (sustained load raising core temperature and triggering
+      clock-speed reduction), an audio driver fault or power-management profile change
+      that degrades microphone processing, or a hardware issue with the microphone
+      or audio interface that worsens under extended use — all of which can cause
+      distortion irrespective of network state.'
+  LH:
+    action: ANSWER
+    focus: 'Investigate local audio processing as the source: check for CPU thermal
+      throttling in the evenings (sustained load raising core temperature and triggering
+      clock-speed reduction), an audio driver fault or power-management profile change
+      that degrades microphone processing, or a hardware issue with the microphone
+      or audio interface that worsens under extended use — all of which can cause
+      distortion irrespective of network state.'
+variants:
+  HL:
+    distractor: 'Every time this has happened to me over the past couple of years,
+      restarting my home router fixed the robotic audio — it is my go-to fix and has
+      never failed me on this issue.
+
+      '
+    diagnosticity: low
+    salience: high
+    proposition: 'The user''s home router has in the past caused robotic video-call
+      audio that was resolved by restarting it.
+
+      '
+    salience_source: 'Dimensions C and D: confident assertion ("has never failed me"),
+      concrete personal history ("past couple of years", "go-to fix") conveying emotional
+      familiarity and repeated first-hand success.
+
+      '
+    why_plausible: 'Router restarts are a ubiquitous fix for home network audio issues;
+      the speaker''s confident multi-year track record makes the attribution feel
+      grounded and reliable to a busy reader.
+
+      '
+    why_irrelevant: 'The offline voice memo recorded without any internet connection
+      also sounds robotic, which structurally eliminates every network and router
+      pathway — the distortion pre-dates network transmission and cannot be affected
+      by router state.
+
+      '
+  LL:
+    distractor: 'A few times before, restarting my home router fixed robotic video-call
+      audio.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: 'The user''s home router has in the past caused robotic video-call
+      audio that was resolved by restarting it.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'I recorded a quick voice memo directly on the laptop — microphone
+      only, no internet connection — at 8:15 PM last night, and it sounds exactly
+      as robotic as my call audio. The distortion exists before anything reaches the
+      network.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'An offline voice recording captured locally on the same laptop at
+      the same hour also sounds robotic, establishing that the distortion exists in
+      local audio capture or processing before any data reaches the network.
+
+      '
+    salience_source: 'Dimension D: concrete procedural detail ("microphone only, no
+      internet connection", "8:15 PM last night") anchors the test as deliberate and
+      recent; dimension C: "sounds exactly as robotic" states the finding with confidence.
+
+      '
+  LH:
+    distractor: 'A local offline voice recording made at the same time also sounds
+      robotic.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'An offline voice recording captured locally on the same laptop at
+      the same hour also sounds robotic, establishing that the distortion exists in
+      local audio capture or processing before any data reaches the network.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: home router restart fixes it
+  description: 'The user''s personal history of resolving robotic video-call audio
+    by restarting the home router suggests the current episode is also caused by router
+    state or home network congestion.
+
+    '
+plausible_alternative_directions:
+- label: CPU thermal throttling
+  description: 'The laptop CPU accumulates heat during the day and by evening throttles
+    its clock speed, degrading the audio codec''s real-time processing and producing
+    robotic distortion in local audio capture.
+
+    '
+- label: audio driver or software fault
+  description: 'A driver bug, a recently changed audio configuration, or a conflicting
+    background audio process causes the microphone input pipeline to malfunction,
+    with symptoms appearing only after extended system uptime.
+
+    '
+- label: power management profile change
+  description: 'An automatic switch to a battery-saver or low-power profile in the
+    evening reduces CPU and audio-subsystem priority, causing the audio capture pipeline
+    to drop samples and produce robotic artefacts.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - The user has experienced robotic video-call audio on prior occasions.
+  - Restarting the home router resolved the robotic audio on those prior occasions.
+  hl_salience_dimensions:
+    source_credibility: N/A (source is the user themselves, not a named third party)
+    narrative_coherence: 'Clean, professional register; single direct statement with
+      no interruptions or tangents.
+
+      '
+    confident_assertion: '"has never failed me" — strong positive assertion; "go-to
+      fix" implies repeated confirmed success.
+
+      '
+    concrete_detail: '"past couple of years" grounds the personal history in a specific
+      time span; "go-to fix" conveys habitual use — both are details about the SOURCE''s
+      history, not the current case.
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 37
+  ll_word_count: 14
+  notes: 'Removed an initial draft phrase "within minutes" (effort descriptor).
+
+    No tunable values (no counts, durations, or thresholds about the
+
+    current case). No severity claims. No sensory environment color.
+
+    The phrase "past couple of years" refers to the SOURCE''s history,
+
+    not the current case, so it is permitted as a credibility anchor.
+
+    HL/LL ratio: 37/14 = 2.6:1 — within the 4:1 ceiling.
+
+    '
+causal_audit:
+  steelman: 'Evening home network congestion is one of the most common causes of
+
+    robotic VoIP audio: residential ISPs throttle bandwidth during peak
+
+    hours (7-10 PM), causing packet loss and jitter that forces codecs
+
+    such as Opus into artifact-heavy error-concealment modes. The router
+
+    itself may accumulate a degraded NAT table or suffer a firmware
+
+    memory leak after days of uptime, both of which can be resolved by
+
+    a restart. A senior network engineer would place "check for evening
+
+    packet loss and reboot router" near the top of any home-network
+
+    VoIP troubleshooting checklist. The user''s multi-year track record
+
+    of router-restart success provides inductive support for the same
+
+    diagnosis now.
+
+    However: the xbase explicitly states that a locally recorded voice
+
+    memo captured offline at the same hour also sounds robotic. No
+
+    network state — router memory, ISP congestion, packet loss, jitter —
+
+    can affect audio that is recorded locally without any network
+
+    involvement. The distortion is present before packetisation, which
+
+    is physically incompatible with a network or router cause. The
+
+    steelman''s mechanism is valid in general but is foreclosed by the
+
+    offline recording evidence present in xbase.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'The xbase states "I recorded a short voice memo offline
+    on the same laptop at that hour and it sounded equally robotic." Because local
+    recording requires no network connection, any router or ISP pathway is physically
+    impossible for this specific episode.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 2
+  topic_brief: 'Video-call audio turns robotic on the home network in the evenings.
+    The user instinct: every time before, restarting the router fixed things. Focal
+    evidence points to a structurally different cause this time.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: 'cell-integrity lint 2026-06-11: focal evidence (offline memo) removed
+    from xbase (lives in HH/LH only); {DS} slot made standalone'
+  generator: generator_B

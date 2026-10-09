@@ -1,0 +1,9 @@
+{
+  "seed_id": "T2-016",
+  "steelman": "The strongest argument for causality is through AP automation systems: OCR-based invoice parsers and template-matching tools can fail when a supplier changes their invoice layout, routing affected invoices to a manual exception queue and adding 20-30 days of processing time. Additionally, some ERP vendor-matching systems may key on visual signatures or logos; a changed logo could theoretically disrupt vendor recognition. A human reviewer encountering an unfamiliar-looking invoice might also apply extra scrutiny or route it differently out of uncertainty. These are all documented operational failure modes that a senior AP manager would recognize.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "AP automation / OCR parser failure on layout change — but this pathway is foreclosed by xbase specifying the redesign was fonts/color/logo only (no field or position changes) and the client confirming their invoicing process is unchanged.",
+  "pathway_closure_check": "effective",
+  "notes": "Both xbase closures work in tandem and are robust. Closure 1 ('I updated the fonts, color scheme, and logo') specifies that no fields, positions, or content changed, which forecloses OCR/template-matching parser failures — the only technically defensible mechanism. Closure 2 ('my client confirmed their invoicing process hasn't changed') forecloses the possibility that a new AP system, new approver, or changed workflow was introduced that happened to coincide with the template change. After both closures apply, no competent AP practitioner would list 'cosmetic invoice redesign (font/color/logo only)' as a checklist item for a 30-day payment delay. Seed is clean on this lens."
+}

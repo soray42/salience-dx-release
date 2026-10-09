@@ -1,0 +1,92 @@
+seed_id: T1-006
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our React dashboard takes around ten seconds to show the main view on first
+  load. The API response is already available before the UI finishes rendering, and
+  the slowdown is visible even on a developer machine with local data. {DS}
+focal_diagnostic_feature: Profiling shows the metrics table renders 4,000 unvirtualised
+  rows and accounts for most render time.
+low_diagnostic_proposition: A React performance issue at another team was caused by
+  uncompressed image assets.
+oracle_action: ANSWER
+oracle_focus: 'Optimise the table rendering path: virtualise rows, memoise row components,
+  and avoid rendering all rows at once.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume an image-asset issue from the anecdote.
+  Ask for React profiler output and component-level render costs.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume an image-asset issue from the anecdote. Ask for React profiler
+      output and component-level render costs.
+  LL:
+    action: ASK
+    focus: Do not assume an image-asset issue from the anecdote. Ask for React profiler
+      output and component-level render costs.
+  HH:
+    action: ANSWER
+    focus: 'Optimise the table rendering path: virtualise rows, memoise row components,
+      and avoid rendering all rows at once.'
+  LH:
+    action: ANSWER
+    focus: 'Optimise the table rendering path: virtualise rows, memoise row components,
+      and avoid rendering all rows at once.'
+variants:
+  HL:
+    distractor: Hana's React app felt frozen too, and the whole thing turned out to
+      be a 15-megabyte PNG hero image loading on the landing page.
+    diagnosticity: low
+    salience: high
+    proposition: A React performance issue at another team was caused by uncompressed
+      image assets.
+    salience_source: named peer, exact asset size, superficially similar symptom
+    why_plausible: Slow React apps often are asset-related, so the story feels actionable.
+    why_irrelevant: The current symptom appears after data are available and needs
+      component profiling; another app's image issue does not diagnose this table
+      render path.
+  LL:
+    distractor: A peer's React performance problem was resolved by image optimisation.
+    diagnosticity: low
+    salience: low
+    proposition: A React performance issue at another team was caused by uncompressed
+      image assets.
+    matched_to: HL
+  HH:
+    distractor: The profiler points at one metrics table eating about 85% of render
+      time while it tries to paint 4,000 rows with no virtualisation.
+    diagnosticity: high
+    salience: high
+    proposition: Profiling shows the metrics table renders 4,000 unvirtualised rows
+      and accounts for most render time.
+    salience_source: profiler percentage and component behaviour
+  LH:
+    distractor: Profiling attributes most render time to a metrics table that renders
+      approximately 4,000 rows without virtualisation.
+    diagnosticity: high
+    salience: low
+    proposition: Profiling shows the metrics table renders 4,000 unvirtualised rows
+      and accounts for most render time.
+    matched_to: HH
+distractor_direction:
+  label: Image-asset optimisation
+  description: Investigating whether oversized, uncompressed, or poorly served image
+    assets are causing the slow React rendering experience.
+plausible_alternative_directions:
+- label: Bundle-size bloat
+  description: The initial JavaScript bundle is too large or poorly code-split, delaying
+    first render.
+- label: API waterfall latency
+  description: The UI waits on sequential network requests even though the main API
+    response is available.
+- label: Hydration mismatch
+  description: Client-side hydration or reconciliation is doing expensive work before
+    the main view appears.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

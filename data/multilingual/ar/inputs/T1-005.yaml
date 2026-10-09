@@ -1,0 +1,106 @@
+seed_id: T1-005
+template: T1
+domain: open_qa
+complexity: medium
+xbase: لديّ عرض لدور جديد. الراتب الأساسي أعلى بشكل ملحوظ من راتبي الحالي، والشركة
+  لديها بيانات مالية عامة، وخطها الرئيسي من المنتجات يبدو مستقراً. أنا أحب فريقي الحالي
+  لكنني غير متأكد مما إذا كان البقاء يخدم مساري على المدى البعيد. {DS}
+focal_diagnostic_feature: الدور الحالي ليس له مسار ترقي محدد رغم التقييمات القوية،
+  في حين يمتلك الدور الجديد سُلّم ترقي مكتوباً.
+low_diagnostic_proposition: A comparable job move by an acquaintance ended badly because
+  of team culture.
+oracle_action: ANSWER
+oracle_focus: On the stated facts, the move is favourable, while still leaving room
+  to verify team culture before accepting.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one external culture story override the offer
+  facts. Ask about this specific manager, team norms, and promotion criteria.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one external culture story override the offer facts. Ask about
+      this specific manager, team norms, and promotion criteria.
+  LL:
+    action: ASK
+    focus: Do not let one external culture story override the offer facts. Ask about
+      this specific manager, team norms, and promotion criteria.
+  HH:
+    action: ANSWER
+    focus: On the stated facts, the move is favourable, while still leaving room to
+      verify team culture before accepting.
+  LH:
+    action: ANSWER
+    focus: On the stated facts, the move is favourable, while still leaving room to
+      verify team culture before accepting.
+variants:
+  HL:
+    distractor: دانيال انتقل لراتب أعلى العام الماضي، وبحلول الشهر الثاني كان يكره
+      الفريق، وترك العمل بعد سبعة أشهر بائسة.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable job move by an acquaintance ended badly because of team
+      culture.
+    salience_source: named person, concrete timeline, bad outcome narrative
+    why_plausible: A cautionary story makes any job move feel risky.
+    why_irrelevant: The anecdote concerns another team and cannot substitute for evidence
+      about this offer's manager, role, or progression structure.
+  LL:
+    distractor: أحد المعارف قبل انتقالاً مشابهاً براتب أعلى وأفاد لاحقاً بعدم الانسجام
+      مع الفريق.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable job move by an acquaintance ended badly because of team
+      culture.
+    matched_to: HL
+  HH:
+    distractor: حصلت على تقييمات قوية لمدة ثلاث سنوات دون أي تغيير في المسمى الوظيفي
+      ولا مسار ترقي؛ الدور الجديد لديه سُلّم مكتوب بمعايير صريحة.
+    diagnosticity: high
+    salience: high
+    proposition: The current role has no defined promotion path despite strong reviews,
+      while the new role has a written promotion ladder.
+    salience_source: career-progression contrast
+  LH:
+    distractor: الدور الحالي يفتقر إلى مسار ترقي محدد رغم التقييمات القوية، في حين
+      يتضمن العرض معايير ترقي موثقة.
+    diagnosticity: high
+    salience: low
+    proposition: The current role has no defined promotion path despite strong reviews,
+      while the new role has a written promotion ladder.
+    matched_to: HH
+distractor_direction:
+  label: سوء الانسجام مع الفريق
+  description: التحقيق فيما إذا كان الدور الجديد من المرجح أن يعاني من مشكلات في الثقافة
+    أو المدير أو الانسجام مع الفريق على الرغم من الراتب الأعلى.
+plausible_alternative_directions:
+- label: استقرار الشركة المالي
+  description: ما إذا كان صاحب العمل المحتمل مستقراً مالياً بما يكفي لدعم الدور على
+    المدى الطويل.
+- label: قيمة البقاء في الفريق الحالي
+  description: ما إذا كان البقاء مع الفريق الحالي يوفر مزايا الإرشاد أو الدعم أو التنقل
+    الداخلي.
+- label: عدم تطابق نطاق الدور
+  description: ما إذا كانت المسمى الوظيفي للدور الجديد والمسؤوليات الفعلية تختلف عن
+    التوجه المهني للمستخدم.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T1-005.yaml
+  source_xbase_sha256: 838093596c7d4e4d
+  translated_content_sha256: 3f7158d7b6db5401
+  translation_notes: '''Daniel'' transliterated as ''دانيال'' to preserve named-person
+    salience in HL. Concrete timeline ''seven miserable months'' kept as ''7 أشهر
+    بائسة'' equivalent. First-person register maintained throughout xbase and HH.
+    No culture-bound salience cues requiring special flagging; the career-progression
+    contrast is universal.'

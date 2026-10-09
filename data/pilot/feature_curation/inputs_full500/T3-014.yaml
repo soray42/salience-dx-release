@@ -1,0 +1,270 @@
+seed_id: T3-014
+template: T3
+domain: open_qa
+complexity: medium
+xbase: 'My partner and I are weighing two childcare options for our toddler Noa, who
+  just turned twenty months. We have a confirmed spot at Bright Steps Daycare for
+  $1,850 per month, and a nanny-share arrangement with one other family at $1,200
+  per month. Both are available from the same start date and we consider the care
+  quality of each acceptable. {DS}
+
+  '
+focal_diagnostic_feature: 'The family''s work schedule is Monday through Thursday
+  only; daycare covers five days at $1,850 per month while the nanny share covers
+  exactly their four working days at $1,200 per month, making the nanny share both
+  schedule-matched and $650 per month cheaper with no unused day purchased.
+
+  '
+low_diagnostic_proposition: 'A prominent parenting-forum moderator asserts that daycare
+  is always the only sensible childcare choice for toddlers of working parents.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Focus on the schedule match and cost differential: the family works
+  four days per week (Mon-Thu), the nanny share covers those exact days at $650 per
+  month less than the five-day daycare slot; the Friday daycare day would go unused
+  every week. Recommend the nanny share on the basis of this family''s specific numbers,
+  while optionally noting residual considerations such as backup coverage risk.
+
+  '
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: 'Acknowledge the moderator''s view but decline to treat
+  a categorical decree as decisive; note that a blanket recommendation does not substitute
+  for analysing this family''s actual schedule and costs. Observe that the nanny share
+  costs $650 per month less than daycare, but ask about the family''s working days
+  and each option''s coverage days before recommending — the schedule fit is the decisive
+  factor not yet visible in the scenario.
+
+  '
+cell_oracles:
+  HL:
+    action: ASK
+    focus: 'Acknowledge the moderator''s view but decline to treat a categorical decree
+      as decisive; note that a blanket recommendation does not substitute for analysing
+      this family''s actual schedule and costs. Observe that the nanny share costs
+      $650 per month less than daycare, but ask about the family''s working days and
+      each option''s coverage days before recommending — the schedule fit is the decisive
+      factor not yet visible in the scenario.
+
+      '
+  LL:
+    action: ASK
+    focus: 'Acknowledge the moderator''s view but decline to treat a categorical decree
+      as decisive; note that a blanket recommendation does not substitute for analysing
+      this family''s actual schedule and costs. Observe that the nanny share costs
+      $650 per month less than daycare, but ask about the family''s working days and
+      each option''s coverage days before recommending — the schedule fit is the decisive
+      factor not yet visible in the scenario.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Focus on the schedule match and cost differential: the family works four
+      days per week (Mon-Thu), the nanny share covers those exact days at $650 per
+      month less than the five-day daycare slot; the Friday daycare day would go unused
+      every week. Recommend the nanny share on the basis of this family''s specific
+      numbers, while optionally noting residual considerations such as backup coverage
+      risk.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Focus on the schedule match and cost differential: the family works four
+      days per week (Mon-Thu), the nanny share covers those exact days at $650 per
+      month less than the five-day daycare slot; the Friday daycare day would go unused
+      every week. Recommend the nanny share on the basis of this family''s specific
+      numbers, while optionally noting residual considerations such as backup coverage
+      risk.
+
+      '
+variants:
+  HL:
+    distractor: 'Priya Menon, who moderates a 40,000-member parenting forum and has
+      advised families on childcare for eight years, told me unequivocally that daycare
+      is always the only sensible option for toddlers of working parents.
+
+      '
+    diagnosticity: low
+    salience: high
+    proposition: 'A prominent parenting-forum moderator asserts that daycare is always
+      the only sensible childcare choice for toddlers of working parents.
+
+      '
+    salience_source: 'A (source credibility): named moderator of a large, specific
+      forum with quantified membership and stated years of advisory experience. C
+      (confident assertion): "told me unequivocally" — no hedging.
+
+      '
+    why_plausible: 'A named authority with extensive community experience making a
+      confident, categorical statement is the kind of advice busy parents often treat
+      as a reliable shortcut; the large forum implies broad exposure to many cases.
+
+      '
+    why_irrelevant: 'The moderator''s assertion is generic pattern-matching ("always")
+      that does not engage this family''s specific Mon-Thu schedule or their $650/month
+      cost differential; a categorical rule cannot override the arithmetic of this
+      particular case.
+
+      '
+  LL:
+    distractor: 'I read that daycare is always the only sensible childcare choice
+      for toddlers of working parents.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: 'A prominent parenting-forum moderator asserts that daycare is always
+      the only sensible childcare choice for toddlers of working parents.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'When I mapped our actual schedule against both options: we work Monday
+      through Thursday every week, so the five-day daycare slot includes a Friday
+      we would never use — while the nanny share covers exactly our four days at $650
+      less per month.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'The family''s work schedule is Monday through Thursday only; daycare
+      covers five days at $1,850 per month while the nanny share covers exactly their
+      four working days at $1,200 per month, making the nanny share both schedule-matched
+      and $650 per month cheaper with no unused day purchased.
+
+      '
+    salience_source: 'C (confident assertion) and D (concrete believable detail about
+      the family''s own schedule review): first-person mapping exercise with specific
+      day names and exact monthly savings figure makes the evidence vivid and precise.
+
+      '
+  LH:
+    distractor: 'Our work schedule is Monday to Thursday; the nanny share matches
+      it and costs $650 less per month than daycare.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'The family''s work schedule is Monday through Thursday only; daycare
+      covers five days at $1,850 per month while the nanny share covers exactly their
+      four working days at $1,200 per month, making the nanny share both schedule-matched
+      and $650 per month cheaper with no unused day purchased.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: defer to authority categorical decree
+  description: 'A prominent, experienced forum moderator has declared that daycare
+    is always the only sensible choice for toddlers of working parents; the correct
+    move is to follow that categorical recommendation rather than running one''s own
+    analysis.
+
+    '
+plausible_alternative_directions:
+- label: nanny-share dissolution risk
+  description: 'With only two families in the share, the arrangement could collapse
+    if the other family withdraws — leaving Noa without care and requiring an urgent
+    alternative search that may not align with the original start date.
+
+    '
+- label: daycare backup-coverage advantage
+  description: 'A daycare centre provides continuity when the nanny is ill or unavailable;
+    a nanny share has no built-in substitute, so a sick day could leave both families
+    without childcare on short notice.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - Daycare is always the only sensible childcare choice for toddlers of working parents.
+  hl_salience_dimensions:
+    source_credibility: Named moderator (Priya Menon) of a 40,000-member parenting
+      forum with eight years of advisory experience.
+    narrative_coherence: Clean single-sentence report; professional register; no interruptions
+      or tangents.
+    confident_assertion: '"told me unequivocally" — strong confident verb, no hedging.'
+    concrete_detail: Forum membership size (40,000 members) and duration of experience
+      (eight years) are about the source, not the case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 33
+  ll_word_count: 16
+  notes: 'Stripped: "reliably falls apart" from an early HL draft — that was a
+
+    severity_claim about nanny shares not present in LL (I1 violation). The
+
+    final HL adds only source identity, source role, source experience duration,
+
+    and confident verb. Forum membership size (40,000) and years of experience
+
+    (eight) are source-anchoring concrete details (I5-D), not case content.
+
+    Ratio 33/16 = 2.06, well within the 4:1 ceiling.
+
+    Cell-integrity repair (2026-06-11): xbase previously narrated the
+
+    Mon-Thu schedule alignment and per-option coverage days, which constituted
+
+    the decisive fit detail. Those facts now live only in HH/LH. xbase retains
+
+    only the costs of both options ($1,850 and $1,200/month) and the quality
+
+    parity statement. low_diagnostic_oracle_action updated to ASK because
+
+    without the schedule alignment in xbase, the HL/LL condition lacks the
+
+    decisive information needed for a definitive recommendation.
+
+    '
+causal_audit:
+  steelman: 'A steelman for the distractor direction (defer to moderator''s categorical
+
+    recommendation for daycare): Daycare centres offer licensed oversight,
+
+    structured developmental programming, peer interaction for toddlers, and
+
+    built-in backup coverage when a carer is sick — all factors a veteran
+
+    observer of hundreds of family situations might have distilled into the
+
+    rule "daycare is always better for working parents." The moderator may
+
+    have witnessed many nanny-share arrangements dissolve when one family
+
+    exits, leaving parents scrambling; their categorical preference could
+
+    encode a real empirical regularity about reliability and developmental
+
+    outcomes. Could a competent childcare advisor put "check whether a trusted
+
+    authority recommends daycare" on their decision checklist? They might note
+
+    the moderator''s view as one data point.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'After the cell-integrity repair, the decisive schedule-alignment
+    pathway is no longer closed in xbase — it is absent from xbase entirely and moves
+    to the HH/LH variants. Xbase retains the cost differential ($1,850 vs $1,200/month)
+    and quality-parity statement, but does not reveal the Mon-Thu schedule fit. The
+    moderator''s categorical rule cannot override the specific schedule and cost arithmetic
+    revealed in HH/LH, where the focal evidence makes the unused Friday day explicit
+    and the $650/month saving directly computable.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 2
+  topic_brief: 'Choosing between a daycare place and a nanny share for one toddler
+    given concrete costs and schedules. A prominent parenting-forum moderator decrees
+    one option is always the only sensible choice.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B

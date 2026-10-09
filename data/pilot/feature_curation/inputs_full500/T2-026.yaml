@@ -1,0 +1,161 @@
+seed_id: T2-026
+template: T2
+domain: open_qa
+complexity: medium
+xbase: I am trying to figure out why my monthly spending crept up and landed on my
+  music streaming subscription. The charge is bigger than I remember agreeing to,
+  and it has been at this higher amount for the last three billing cycles. I have
+  not knowingly changed my plan, and I use the service most days, so I am not looking
+  to cancel, just to understand the increase. {DS}
+focal_diagnostic_feature: The account page shows the plan silently switched from an
+  individual tier to a family tier with extra member slots the user never set up,
+  which is why the charge rose.
+low_diagnostic_proposition: The user first noticed the higher charge the same month
+  they repainted their living room.
+oracle_action: ANSWER
+oracle_focus: Switch the plan back from the family tier to the individual tier; the
+  account shows it changed to a multi-member family plan the user never set up, which
+  is why the monthly charge rose.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not tie the increase to the room repainting. Ask what
+  the account's plan and billing page shows about the current tier versus the tier
+  the user expected.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not tie the increase to the room repainting. Ask what the account's
+      plan and billing page shows about the current tier versus the tier the user
+      expected.
+  LL:
+    action: ASK
+    focus: Do not tie the increase to the room repainting. Ask what the account's
+      plan and billing page shows about the current tier versus the tier the user
+      expected.
+  HH:
+    action: ANSWER
+    focus: Switch the plan back from the family tier to the individual tier; the account
+      shows it changed to a multi-member family plan the user never set up, which
+      is why the monthly charge rose.
+  LH:
+    action: ANSWER
+    focus: Switch the plan back from the family tier to the individual tier; the account
+      shows it changed to a multi-member family plan the user never set up, which
+      is why the monthly charge rose.
+variants:
+  HL:
+    distractor: The odd part is that I first clocked the bigger charge the same month
+      I finally repainted the living room; I was already going through every statement
+      to budget for the paint and supplies, and the two events are stuck together
+      in my memory.
+    diagnosticity: low
+    salience: high
+    proposition: The user first noticed the higher charge the same month they repainted
+      their living room.
+    salience_source: B/C — a coherent first-person account anchoring the noticing
+      to a memorable, datable home project.
+    why_plausible: Doing a budget review during a home project makes the timing feel
+      meaningful, and people link costs noticed together.
+    why_irrelevant: Repainting a room cannot change a streaming provider's plan tier
+      or its price; it only happens to be when the user looked closely at the statement.
+  LL:
+    distractor: The user first noticed the higher charge around the time they repainted
+      their living room.
+    diagnosticity: low
+    salience: low
+    proposition: The user first noticed the higher charge the same month they repainted
+      their living room.
+    matched_to: HL
+  HH:
+    distractor: 'The account page settles it: my plan is now listed as a family tier
+      with two extra member slots I never set up, instead of the individual tier I
+      signed up for; the higher monthly charge is exactly the family-tier price, applied
+      since the switch.'
+    diagnosticity: high
+    salience: high
+    proposition: The account page shows the plan silently switched from an individual
+      tier to a family tier with extra member slots the user never set up, which is
+      why the charge rose.
+    salience_source: The account showing a family tier with unset-up member slots
+      at the family price names the exact cause of the increase.
+  LH:
+    distractor: The account shows the plan switched from individual to a family tier
+      with extra member slots the user never set up, at the higher family price.
+    diagnosticity: high
+    salience: low
+    proposition: The account page shows the plan silently switched from an individual
+      tier to a family tier with extra member slots the user never set up, which is
+      why the charge rose.
+    matched_to: HH
+distractor_direction:
+  label: Home-repainting timing
+  description: Treating the room-repainting project as relevant to why the streaming
+    subscription charge increased.
+plausible_alternative_directions:
+- label: Provider price hike
+  description: Whether the service raised its standard plan price across the board.
+- label: Expired promotional rate
+  description: Whether an introductory discount ended and reverted the charge to full
+    price.
+leak_audit:
+  ll_atomic_claims:
+  - The user first noticed the higher charge around the time they repainted their
+    living room.
+  hh_atomic_claims:
+  - The account page lists the plan as a family tier with two extra member slots the
+    user never set up.
+  - The user originally signed up for the individual tier.
+  - The higher monthly charge equals the family-tier price applied since the switch.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person coincidence, no external source.
+    narrative_coherence: Coherent account tying the noticing to a budget review during
+      the repainting.
+    confident_assertion: States the same-month timing plainly.
+    concrete_detail: N/A — about the repainting, not the billing cause; adds no decision
+      fact LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 70
+  hl_word_count: 41
+  ll_word_count: 16
+  hh_word_count: 43
+  lh_word_count: 25
+  notes: 'T2 open_qa: repainting a room has no path to a streaming plan''s price.
+    xbase keeps symptoms (charge bigger than
+
+    expected, stable for three cycles, no knowing plan change, still wants the service)
+    and withholds the decisive
+
+    silent-tier-switch fact, which is HH/LH-only. HL adds no billing fact beyond the
+    timing in LL.
+
+    '
+causal_audit:
+  steelman: 'One might argue that the repainting period coincided with the user adding
+    family members to a shared household
+
+    account, or that a home-project spending spree included a streaming upgrade —
+    but nothing about applying paint to
+
+    walls changes a subscription tier; any plan change would be a separate event the
+    account page records, not a
+
+    consequence of repainting.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — repainting is unrelated to subscription pricing;
+    the decisive silent individual-to-family tier switch is given only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A risen music-subscription charge caused by a silent switch from an
+    individual to a family tier the user never set up, coincidentally noticed during
+    a living-room repainting project.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,169 @@
+seed_id: T6-067
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I started a daily stretching routine two weeks ago and have already missed
+  more sessions than I have completed. I have tried building habits before and struggled
+  whenever I scheduled them late in the day, so this time I put the slot at noon to
+  avoid that problem. The space and privacy are fine. {DS}
+focal_diagnostic_feature: The calendar slot is 8 minutes long, while the full stretching
+  sequence takes approximately 20 minutes.
+low_diagnostic_proposition: Past late-day habits always failed for this user; the
+  time-of-day pattern may be repeating at noon.
+oracle_action: ANSWER
+oracle_focus: Extend or reschedule the stretching block to at least 20 minutes; the
+  8-minute slot is too short to complete the sequence regardless of time of day.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the time-of-day explanation from past habit
+  failures. Ask how long the scheduled block is and how long the routine actually
+  takes to complete.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the time-of-day explanation from past habit failures. Ask
+      how long the scheduled block is and how long the routine actually takes to complete.
+  LL:
+    action: ASK
+    focus: Do not adopt the time-of-day explanation from past habit failures. Ask
+      how long the scheduled block is and how long the routine actually takes to complete.
+  HH:
+    action: ANSWER
+    focus: Extend or reschedule the stretching block to at least 20 minutes; the 8-minute
+      slot is too short to complete the sequence regardless of time of day.
+  LH:
+    action: ANSWER
+    focus: Extend or reschedule the stretching block to at least 20 minutes; the 8-minute
+      slot is too short to complete the sequence regardless of time of day.
+variants:
+  HL:
+    distractor: Every habit I have ever tried building in the afternoon or evening
+      has eventually collapsed on me, and based on that track record alone I am convinced
+      the time-of-day pattern is repeating itself at noon.
+    diagnosticity: low
+    salience: high
+    proposition: Past late-day habits always failed for this user; the time-of-day
+      pattern may be repeating at noon.
+    salience_source: B/C — vivid personal history of repeated pattern, first-person
+      confident assertion ("I am convinced"); the past-collapse narrative creates
+      strong narrative coherence.
+    why_plausible: The user explicitly flagged time-of-day as a past failure mode,
+      making the noon recurrence feel like a natural continuation of a real personal
+      pattern.
+    why_irrelevant: Time of day cannot cause sessions to be missed when the session
+      is always cut short by a slot that ends 12 minutes before the sequence is even
+      half done; the mechanism is structural, not motivational.
+  LL:
+    distractor: Past habits scheduled in the afternoon or evening always failed; the
+      time-of-day pattern may be repeating now.
+    diagnosticity: low
+    salience: low
+    proposition: Past late-day habits always failed for this user; the time-of-day
+      pattern may be repeating at noon.
+    matched_to: HL
+  HH:
+    distractor: When I actually look at the calendar event, it is blocked for 8 minutes,
+      and I timed the full sequence last week — it takes right around 20 minutes,
+      so every session is cut short before I am halfway through.
+    diagnosticity: high
+    salience: high
+    proposition: The calendar slot is 8 minutes long, while the full stretching sequence
+      takes approximately 20 minutes.
+    salience_source: B/C — first-person direct inspection ("I timed the full sequence
+      last week"), precise numeric mismatch (8 vs 20 minutes), and the concrete consequence
+      ("cut short before halfway through") create a vivid and coherent account.
+  LH:
+    distractor: The calendar slot is 8 minutes; the full stretching sequence takes
+      approximately 20 minutes, so every session ends before the sequence is half
+      complete.
+    diagnosticity: high
+    salience: low
+    proposition: The calendar slot is 8 minutes long, while the full stretching sequence
+      takes approximately 20 minutes.
+    matched_to: HH
+distractor_direction:
+  label: time-of-day habit failure
+  description: Investigating whether the noon scheduling repeats the same time-of-day
+    failure pattern that caused this user's previous late-day habits to collapse.
+plausible_alternative_directions:
+- label: habit difficulty or motivation
+  description: The stretching routine may be too demanding or unpleasant, reducing
+    motivation to start regardless of when it is scheduled.
+- label: external interruptions
+  description: Colleagues or work demands may be disrupting the lunch slot in ways
+    not yet identified, causing sessions to be skipped rather than shortened.
+- label: wrong habit-stacking anchor
+  description: The routine may lack a reliable cue or trigger at noon, making it easy
+    to overlook on busier days.
+leak_audit:
+  ll_atomic_claims:
+  - Past habits scheduled in the afternoon or evening always failed for this user.
+  - The time-of-day pattern may be repeating now at noon.
+  hh_atomic_claims:
+  - The calendar event is blocked for 8 minutes.
+  - The full stretching sequence takes approximately 20 minutes.
+  - Every session is cut short before the user is halfway through.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, no named external source
+    narrative_coherence: Clean chronology of repeated past collapses leading to current
+      noon experiment, with confident first-instinct framing.
+    confident_assertion: '''I am convinced the time-of-day pattern is repeating itself'''
+    concrete_detail: N/A — vivid detail is about the speaker's history, not the present
+      case
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 54
+  hl_word_count: 35
+  ll_word_count: 17
+  hh_word_count: 39
+  lh_word_count: 24
+  notes: 'HL adds only the speaker''s personal history (source-side) and the confident
+
+    inference; it does not add any claim about what is happening inside the current
+
+    noon session. The post-lunch circadian dip is a real mechanism, but the focal
+
+    feature (8-minute vs 20-minute slot) structurally rules out time-of-day: the
+
+    session is always truncated by the constraint, not by motivation. Counted {DS}
+
+    as deleted per C9 rule.
+
+    QC repair: appended consequence clause to LH (''so every session ends before the
+
+    sequence is half complete'') to match HH''s third atomic claim; lh_word_count
+
+    updated from 14 to 24 (within hard bound 12-25).
+
+    '
+causal_audit:
+  steelman: 'A senior habit coach could argue that the post-lunch circadian energy
+    trough
+
+    (roughly 13:00–15:00) reduces motivation and focus in a way that mirrors the
+
+    user''s described afternoon/evening failures. On this view, noon is close enough
+
+    to the circadian dip that the same motivational resistance applies, and the
+
+    "time-of-day pattern" claim is not obviously wrong.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — the pathway is closed by the focal feature, not
+    xbase: an 8-minute slot physically prevents completing a 20-minute sequence regardless
+    of energy level, so time-of-day cannot be the operative cause.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User cannot sustain a daily stretching habit because the calendar slot
+    (8 min) is far shorter than the routine (20 min), against an availability bias
+    that time-of-day is the problem based on past afternoon/evening habit failures.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

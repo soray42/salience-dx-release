@@ -1,0 +1,104 @@
+seed_id: T3-003
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Наш шардированный кластер Redis постепенно заполняется на одном узле. Узел
+  2 достиг около 92% от maxmemory за 11 дней, тогда как узлы 1 и 3 находятся в районе
+  40–50%. Slowlog на узле 2 ничего примечательного не показывает. {DS}
+focal_diagnostic_feature: Анализ «горячих» ключей показывает, что один ключевой префикс
+  на узле 2 занимает большую долю памяти и не имеет TTL или ротации.
+low_diagnostic_proposition: A senior engineer says Redis memory fragmentation should
+  be treated as the main cause.
+oracle_action: ANSWER
+oracle_focus: Add TTL/rotation or trimming for the unbounded prefix, then rebalance
+  if needed; this is not primarily generic fragmentation.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept generic Redis folklore from authority.
+  Ask for keyspace analysis, TTLs, and memory distribution by prefix.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept generic Redis folklore from authority. Ask for keyspace analysis,
+      TTLs, and memory distribution by prefix.
+  LL:
+    action: ASK
+    focus: Do not accept generic Redis folklore from authority. Ask for keyspace analysis,
+      TTLs, and memory distribution by prefix.
+  HH:
+    action: ANSWER
+    focus: Add TTL/rotation or trimming for the unbounded prefix, then rebalance if
+      needed; this is not primarily generic fragmentation.
+  LH:
+    action: ANSWER
+    focus: Add TTL/rotation or trimming for the unbounded prefix, then rebalance if
+      needed; this is not primarily generic fragmentation.
+variants:
+  HL:
+    distractor: Старший архитектор из соседней команды заявил на стендапе, что Redis
+      на Linux в продакшене всегда утекает памятью и нам следует сменить хранилище.
+    diagnosticity: low
+    salience: high
+    proposition: A senior engineer says Redis memory fragmentation should be treated
+      as the main cause.
+    salience_source: senior title, public standup claim, absolute technical statement
+    why_plausible: Redis fragmentation is a real phenomenon and the speaker sounds
+      experienced.
+    why_irrelevant: The keyspace breakdown gives a concrete unbounded object source
+      that explains the shard imbalance.
+  LL:
+    distractor: Старший инженер утверждал, что фрагментацию памяти Redis следует считать
+      основной причиной.
+    diagnosticity: low
+    salience: low
+    proposition: A senior engineer says Redis memory fragmentation should be treated
+      as the main cause.
+    matched_to: HL
+  HH:
+    distractor: Один ключевой префикс на узле 2 занимает 38% памяти этого узла, причём
+      у этих ключей нет TTL и они никогда не ротируются.
+    diagnosticity: high
+    salience: high
+    proposition: Hot-key analysis shows one key prefix on node 2 accounts for a large
+      share of memory and has no TTL or rotation.
+    salience_source: prefix-level memory attribution
+  LH:
+    distractor: Один непросроченный ключевой префикс занимает около 38% памяти на
+      узле 2.
+    diagnosticity: high
+    salience: low
+    proposition: Hot-key analysis shows one key prefix on node 2 accounts for a large
+      share of memory and has no TTL or rotation.
+    matched_to: HH
+distractor_direction:
+  label: Фрагментация памяти Redis
+  description: Расследование фрагментации аллокатора или накладных расходов памяти
+    Redis/Linux как причины роста потребления памяти узла.
+plausible_alternative_directions:
+- label: Несоответствие политики вытеснения
+  description: Политика вытеснения или настройка maxmemory узла не соответствует рабочей
+    нагрузке.
+- label: Рост репликационного бэклога
+  description: Память репликационного или AOF-бэклога неравномерно растёт на затронутом
+    узле.
+- label: Рост выходных буферов клиентов
+  description: Долгоживущие клиенты или подписки накапливают выходные буферы на узле
+    2.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-003.yaml
+  source_xbase_sha256: e2201ca489f3fc72
+  translated_content_sha256: a39195851ddef557
+  translation_notes: Technical terms Redis, maxmemory, Slowlog, TTL, AOF left in their
+    conventional English/loan form as standard in Russian technical context.

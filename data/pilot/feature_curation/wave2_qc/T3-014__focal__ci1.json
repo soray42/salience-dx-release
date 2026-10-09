@@ -1,0 +1,13 @@
+{
+  "seed_id": "T3-014",
+  "my_own_diagnosis": "From xbase alone the family faces a cost difference ($1,850 vs $1,200/month) but no schedule information is present; adding the focal feature — Mon-Thu-only schedule, nanny share covers exactly those four days while daycare's fifth day goes unused — makes the recommendation clear: the nanny share is both schedule-matched and $650/month cheaper, so a competent practitioner would recommend it unambiguously.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature supplies the missing schedule-fit information that converts a partial cost comparison into a decisive recommendation for the nanny share.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL correctly map to ASK (schedule data absent) and HH/LH correctly map to ANSWER recommending the nanny share; low_diagnostic_oracle_focus correctly declines the categorical decree and asks for schedule information rather than following the distractor.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

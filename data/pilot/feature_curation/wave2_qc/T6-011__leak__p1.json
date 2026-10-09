@@ -1,0 +1,29 @@
+{
+  "seed_id": "T6-011",
+  "ll_claims_extracted": [
+    "The user has experienced robotic video-call audio on prior occasions.",
+    "Restarting the home router fixed the robotic audio on those prior occasions."
+  ],
+  "hl_case_claims": [
+    "The user has experienced robotic video-call audio on prior occasions.",
+    "Restarting the home router fixed the robotic audio on those prior occasions."
+  ],
+  "hl_source_claims": [
+    "The router-restart fix has worked every single time it has happened, without exception.",
+    "The user's history of using this fix spans the past couple of years.",
+    "Restarting the router is the user's go-to fix for this issue.",
+    "The fix has never failed the user on this issue."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 35,
+    "ll": 12,
+    "xbase": 72,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

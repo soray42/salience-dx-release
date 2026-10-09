@@ -1,0 +1,198 @@
+seed_id: T3-090
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our read-heavy product catalogue API is spiking to 100% origin CPU for about
+  ten seconds every few minutes under moderate traffic. Between spikes the origin
+  sits idle and Redis cache hit rates look healthy at roughly 90%. The pattern started
+  after we doubled our registered-user base last month. We have not changed the caching
+  layer or TTL configuration. {DS}
+focal_diagnostic_feature: When a popular catalogue entry's cache key expires, Redis
+  shows a burst of hundreds of simultaneous cache misses for that same key before
+  any one thread has populated it, causing all those requests to fall through to the
+  origin concurrently.
+low_diagnostic_proposition: The CPU spikes are caused by an undersized origin instance
+  that cannot handle the increased user base.
+oracle_action: ANSWER
+oracle_focus: 'Implement a cache-stampede lock or probabilistic early revalidation:
+  allow only one thread to fetch from the origin on a cache miss for a given key while
+  the rest wait or return a slightly stale value; the origin is not undersized but
+  overwhelmed by coordinated miss bursts on the same key.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the undersized-instance diagnosis from
+  authority. Ask for per-key miss patterns, concurrency on cache misses, and whether
+  origin load is spread uniformly or spikes on specific cache-expiry events.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the undersized-instance diagnosis from authority. Ask for
+      per-key miss patterns, concurrency on cache misses, and whether origin load
+      is spread uniformly or spikes on specific cache-expiry events.
+  LL:
+    action: ASK
+    focus: Do not accept the undersized-instance diagnosis from authority. Ask for
+      per-key miss patterns, concurrency on cache misses, and whether origin load
+      is spread uniformly or spikes on specific cache-expiry events.
+  HH:
+    action: ANSWER
+    focus: 'Implement a cache-stampede lock or probabilistic early revalidation: allow
+      only one thread to fetch from the origin on a cache miss for a given key while
+      the rest wait or return a slightly stale value; the origin is not undersized
+      but overwhelmed by coordinated miss bursts on the same key.'
+  LH:
+    action: ANSWER
+    focus: 'Implement a cache-stampede lock or probabilistic early revalidation: allow
+      only one thread to fetch from the origin on a cache miss for a given key while
+      the rest wait or return a slightly stale value; the origin is not undersized
+      but overwhelmed by coordinated miss bursts on the same key.'
+variants:
+  HL:
+    distractor: Ádám, the lead distributed systems architect at our cloud vendor's
+      solutions team, looked at our growth numbers and said flatly that this is always
+      a compute-capacity problem — a doubled user base demands a proportionally larger
+      origin instance and nothing else will fix it.
+    diagnosticity: low
+    salience: high
+    proposition: The CPU spikes are caused by an undersized origin instance that cannot
+      handle the increased user base.
+    salience_source: A — lead distributed systems architect at the cloud vendor; C
+      — "said flatly" and "always" signal confident authoritative assertion.
+    why_plausible: Doubling the user base genuinely does increase aggregate load,
+      and vertical scaling is the first lever many engineers reach for when CPU spikes
+      appear after user growth.
+    why_irrelevant: The focal feature shows the spikes are synchronised bursts from
+      simultaneous cache misses on the same expiring key, not a sustained high-throughput
+      baseline; an undersized instance would show elevated but continuous CPU, not
+      brief periodic spikes between idle periods.
+  LL:
+    distractor: A lead architect stated that the origin instance is undersized for
+      the doubled user base and needs more compute capacity.
+    diagnosticity: low
+    salience: low
+    proposition: The CPU spikes are caused by an undersized origin instance that cannot
+      handle the increased user base.
+    matched_to: HL
+  HH:
+    distractor: Redis tracing shows that on each popular catalogue-key expiry, roughly
+      200 requests arrive as misses within the same 50ms window before any thread
+      returns a fresh value; all of them then hit the origin together, which is exactly
+      when CPU spikes to 100%.
+    diagnosticity: high
+    salience: high
+    proposition: When a popular catalogue entry's cache key expires, Redis shows a
+      burst of hundreds of simultaneous cache misses for that same key before any
+      one thread has populated it, causing all those requests to fall through to the
+      origin concurrently.
+    salience_source: Precise numeric detail (200 misses, 50ms window) and direct timing
+      correlation with the CPU spike makes the stampede mechanism vivid and traceable.
+  LH:
+    distractor: On cache-key expiry, approximately 200 misses arrive within 50ms before
+      any thread repopulates the key; CPU spikes to 100% at that moment.
+    diagnosticity: high
+    salience: low
+    proposition: When a popular catalogue entry's cache key expires, Redis shows a
+      burst of hundreds of simultaneous cache misses for that same key before any
+      one thread has populated it, causing all those requests to fall through to the
+      origin concurrently.
+    matched_to: HH
+distractor_direction:
+  label: Undersized origin instance
+  description: Treating the periodic CPU spikes as a sustained capacity shortfall
+    requiring vertical or horizontal scaling of the origin service.
+plausible_alternative_directions:
+- label: Hot-key TTL misconfiguration
+  description: Popular keys may have an excessively short TTL set that causes them
+    to expire far more frequently than intended, amplifying the miss burst rate.
+- label: Missing connection pooling
+  description: Catalogue service threads may be opening new database connections on
+    each cache miss rather than reusing a pool, turning each stampede into additional
+    connection overhead.
+leak_audit:
+  ll_atomic_claims:
+  - A lead architect stated the origin instance is undersized.
+  - The claim is attributed to the doubled user base requiring more compute.
+  hh_atomic_claims:
+  - Redis tracing shows high-traffic catalogue keys experiencing mass concurrent misses
+    on expiry.
+  - Approximately 200 miss requests arrive within a 50ms window.
+  - No thread has yet returned the fresh value when this burst occurs.
+  - All those threads then hit the origin simultaneously.
+  - This simultaneous hit corresponds exactly to when origin CPU reaches 100%.
+  hl_salience_dimensions:
+    source_credibility: Named lead distributed systems architect at the cloud vendor
+      (Ádám).
+    narrative_coherence: 'Clean framing: reviewed growth numbers, delivered verdict
+      in professional setting.'
+    confident_assertion: said flatly; always — double emphasis on categorical certainty.
+    concrete_detail: N/A — no case-specific detail added in HL.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 58
+  hl_word_count: 43
+  ll_word_count: 20
+  hh_word_count: 43
+  lh_word_count: 22
+  notes: 'xbase establishes the spike pattern (periodic, brief, between idle periods)
+    and the healthy
+
+    hit rate, making continuous-load undersizing implausible from the pattern alone
+    — but a busy
+
+    practitioner might not parse that nuance before reading the authority claim. HL
+    stays inside
+
+    the source/setting constraint: Ádám''s words and context only; no case-specific
+    claim is added.
+
+    HH/LH carry exactly the same stampede claims (200 misses, 50ms window, CPU-spike
+    correlation).
+
+    QC repair: LH expanded to include the 200-miss/50ms window and CPU-spike timing
+    claims.
+
+    HL:LL = 43:20 = 2.2:1. HH:LH = 43:22 = 2.0:1. Both ≤ 4:1.
+
+    '
+causal_audit:
+  steelman: 'A capacity consultant could argue that doubling users doubles aggregate
+    QPS, pushing the
+
+    origin closer to its saturation point; what looks like brief spikes might just
+    be the
+
+    observed shape of a CPU that is now near ceiling at peak moments. This argument
+    would require
+
+    the origin to show elevated baseline CPU between spikes — xbase explicitly states
+    it "sits
+
+    idle" between events and that cache hit rates remain ~90%, which means per-request
+    origin
+
+    load has not increased; only the synchronised burst pattern is anomalous. Undersizing
+    cannot
+
+    produce idle periods between spikes when the user base is doubled and traffic
+    is continuous.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states origin CPU sits idle between spikes and cache
+    hit rates remain near 90%, directly contradicting the sustained-load pattern that
+    undersizing would produce; this closes the capacity pathway without naming the
+    stampede cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Redis cache-stampede (thundering herd) on expiring hot catalogue keys
+    causes periodic origin CPU spikes; an authority misattributes them to an undersized
+    instance.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

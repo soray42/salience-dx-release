@@ -1,0 +1,190 @@
+seed_id: T6-055
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I am about to sign a three-year lease on a flat I really like. The location
+  and price are right, and I have been renting month-to-month for two years and am
+  ready for stability. My job is at a company that recently announced a restructuring.
+  {DS}
+focal_diagnostic_feature: The user's fixed-term employment contract expires in seven
+  months with no renewal offered, early lease termination carries a penalty equal
+  to four months' rent, and the employer has no role in this city that the user could
+  transfer to.
+low_diagnostic_proposition: My previous long lease worked out well after an initial
+  adjustment, so this one will probably also work out.
+oracle_action: ANSWER
+oracle_focus: Do not sign the three-year lease now; the imminent contract expiry with
+  no renewal and a four-month penalty for early exit create a concrete financial trap
+  if relocation is required in under a year.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not generalise from the prior lease experience. Ask
+  about employment contract duration, renewal likelihood, and early-exit lease penalties
+  before advising.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not generalise from the prior lease experience. Ask about employment
+      contract duration, renewal likelihood, and early-exit lease penalties before
+      advising.
+  LL:
+    action: ASK
+    focus: Do not generalise from the prior lease experience. Ask about employment
+      contract duration, renewal likelihood, and early-exit lease penalties before
+      advising.
+  HH:
+    action: ANSWER
+    focus: Do not sign the three-year lease now; the imminent contract expiry with
+      no renewal and a four-month penalty for early exit create a concrete financial
+      trap if relocation is required in under a year.
+  LH:
+    action: ANSWER
+    focus: Do not sign the three-year lease now; the imminent contract expiry with
+      no renewal and a four-month penalty for early exit create a concrete financial
+      trap if relocation is required in under a year.
+variants:
+  HL:
+    distractor: The last time I signed a long lease — three years in my previous city
+      — it was the single best housing decision I ever made and gave me two years
+      of total peace of mind after the initial wobble.
+    diagnosticity: low
+    salience: high
+    proposition: My previous long lease worked out well after an initial adjustment,
+      so this one will probably also work out.
+    salience_source: B (narrative coherence — specific prior lease duration, superlative
+      evaluation, emotional arc from wobble to peace of mind); C (confident positive
+      framing — "single best housing decision I ever made").
+    why_plausible: A single positive experience with a long lease is meaningful personal
+      data; practitioner might weight it as evidence that the user adapts well to
+      commitment and handles housing transitions stably.
+    why_irrelevant: The previous long lease was signed under structurally different
+      conditions — stable employment, no imminent contract expiry. The prior success
+      does not address the seven-month employment cliff or the four-month exit penalty
+      that define this case's risk.
+  LL:
+    distractor: My previous long lease worked out well, so this one will probably
+      also work out.
+    diagnosticity: low
+    salience: low
+    proposition: My previous long lease worked out well after an initial adjustment,
+      so this one will probably also work out.
+    matched_to: HL
+  HH:
+    distractor: My contract runs out in seven months, my employer has offered no renewal,
+      and early exit from a three-year lease costs the equivalent of four months'
+      rent with no alternative position at this location.
+    diagnosticity: high
+    salience: high
+    proposition: The user's fixed-term employment contract expires in seven months
+      with no renewal offered, early lease termination carries a penalty equal to
+      four months' rent, and the employer has no role in this city that the user could
+      transfer to.
+    salience_source: B (narrative coherence — three distinct risk factors stated in
+      a single forward-looking sequence); C (definitive framing — "no renewal", "costs
+      the equivalent of four months' rent", "no alternative position").
+  LH:
+    distractor: The employment contract expires in seven months without renewal, and
+      early lease termination incurs a four-month rent penalty, with no alternative
+      role at this location.
+    diagnosticity: high
+    salience: low
+    proposition: The user's fixed-term employment contract expires in seven months
+      with no renewal offered, early lease termination carries a penalty equal to
+      four months' rent, and the employer has no role in this city that the user could
+      transfer to.
+    matched_to: HH
+distractor_direction:
+  label: prior-lease success precedent
+  description: Relying on the user's positive experience with a previous three-year
+    lease as evidence that committing to another long lease will also succeed.
+plausible_alternative_directions:
+- label: month-to-month availability
+  description: The landlord may accept a shorter initial term or allow early termination
+    without the full penalty, making the lease risk manageable.
+- label: restructuring impact uncertainty
+  description: The company restructuring may resolve in the user's favour or produce
+    a severance package that offsets lease-exit costs, altering the risk calculus.
+- label: housing market timing
+  description: Waiting for contract clarity may push the user into a tighter rental
+    market where the same flat is unavailable, carrying its own opportunity cost.
+leak_audit:
+  ll_atomic_claims:
+  - The user's previous long lease worked out well.
+  - Therefore this lease will probably also work out.
+  hh_atomic_claims:
+  - The employment contract expires in seven months.
+  - The employer has offered no renewal.
+  - Early exit from the three-year lease costs four months' rent.
+  - The employer has no alternative position in this city.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker; T6 template.
+    narrative_coherence: Specific prior lease duration, superlative judgment, and
+      emotional arc (wobble to peace of mind) create a vivid and coherent personal
+      history.
+    confident_assertion: '"Single best housing decision I ever made" — superlative
+      positive evaluation applied to the prior case as evidence for this one.'
+    concrete_detail: N/A — "three years in my previous city" is about the past case,
+      not this one.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 45
+  hl_word_count: 38
+  ll_word_count: 15
+  hh_word_count: 34
+  lh_word_count: 25
+  notes: 'T6 availability inference (prior lease success → this lease will succeed)
+
+    appears in both HL and LL. HL adds only the prior lease''s duration, the
+
+    superlative evaluation, and the emotional arc; no facts about the current
+
+    contract or penalty added. HH/LH diff: both assert the seven-month expiry,
+
+    no renewal, four-month penalty, and no alternative role at this location —
+
+    all four hh_atomic_claims are now carried by LH. xbase mentions the company
+
+    restructuring — this is a live context signal that makes the distractor
+
+    direction credible-but-insufficient; the focal adds the specific contract
+
+    expiry date and penalty that resolve the question. LH word count is 25,
+
+    at the hard ceiling (12-25); within hard bounds.
+
+    '
+causal_audit:
+  steelman: 'The user has direct positive evidence from an identical commitment type
+    (a
+
+    three-year lease in a new city) and reports adapting well. A practitioner
+
+    might argue this self-knowledge is relevant: someone who handled one long
+
+    lease successfully has demonstrated the psychological and logistical capacity
+
+    to handle another, and that the past success partially predicts future
+
+    adaptability even through a job change.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase mentions a restructuring but does not reveal
+    the contract expiry date or penalty terms. The prior lease was signed under different
+    employment conditions that xbase does not characterise; the structural difference
+    that invalidates the analogy lives entirely in the focal feature.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Long fixed-term lease decision where employment contract expires in
+    seven months with no renewal and early exit incurs a four-month rent penalty;
+    availability distractor is the user's prior successful long lease in a different
+    city.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,182 @@
+seed_id: T2-071
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our Kubernetes service's pods are failing their readiness probe roughly every
+  ten minutes and briefly dropping out of the load-balancer rotation before recovering.
+  This started about five days ago. The application logs look clean during the dips,
+  and CPU and memory stay well within limits. We have not changed the deployment spec
+  or the probe definition. I want a concrete direction before the on-call rotation
+  gets tired of the flapping alerts. {DS}
+focal_diagnostic_feature: The readiness endpoint synchronously checks a downstream
+  dependency that runs a heavy scheduled job every ten minutes, and the probe times
+  out while that job holds the connection.
+low_diagnostic_proposition: The flapping began the same week the team renamed and
+  reorganised its Grafana dashboard folders.
+oracle_action: ANSWER
+oracle_focus: The readiness probe fails because it synchronously calls a downstream
+  that is busy with a ten-minute scheduled job; decouple the probe from the heavy
+  dependency or make the check shallow and time-bounded so transient downstream load
+  stops evicting pods.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect dashboard reorganisation to readiness
+  flapping. Ask what the readiness endpoint actually checks and whether the dips align
+  with a periodic downstream job.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect dashboard reorganisation to readiness flapping. Ask what
+      the readiness endpoint actually checks and whether the dips align with a periodic
+      downstream job.
+  LL:
+    action: ASK
+    focus: Do not connect dashboard reorganisation to readiness flapping. Ask what
+      the readiness endpoint actually checks and whether the dips align with a periodic
+      downstream job.
+  HH:
+    action: ANSWER
+    focus: The readiness probe fails because it synchronously calls a downstream that
+      is busy with a ten-minute scheduled job; decouple the probe from the heavy dependency
+      or make the check shallow and time-bounded so transient downstream load stops
+      evicting pods.
+  LH:
+    action: ANSWER
+    focus: The readiness probe fails because it synchronously calls a downstream that
+      is busy with a ten-minute scheduled job; decouple the probe from the heavy dependency
+      or make the check shallow and time-bounded so transient downstream load stops
+      evicting pods.
+variants:
+  HL:
+    distractor: I keep coming back to the fact that this all kicked off the same week
+      we renamed half our Grafana folders and rebuilt the dashboard hierarchy from
+      scratch; the timing lines up almost to the day, and it is the only change in
+      that window.
+    diagnosticity: low
+    salience: high
+    proposition: The flapping began the same week the team renamed and reorganised
+      its Grafana dashboard folders.
+    salience_source: B/C — clean first-person chronology and confident first-instinct
+      framing make the coincidence feel like the lead.
+    why_plausible: When a symptom appears right after the only visible change, attributing
+      it to that change is a natural reflex under time pressure.
+    why_irrelevant: Renaming dashboard folders only relabels how metrics are displayed;
+      it cannot alter pod readiness behaviour, which is decided by the probe and the
+      application, not by Grafana.
+  LL:
+    distractor: The flapping began around the time the team reorganised and renamed
+      its monitoring dashboard folders.
+    diagnosticity: low
+    salience: low
+    proposition: The flapping began the same week the team renamed and reorganised
+      its Grafana dashboard folders.
+    matched_to: HL
+  HH:
+    distractor: I traced the dips and the readiness handler makes a synchronous call
+      into a downstream service that runs a heavy aggregation job every ten minutes;
+      while that job holds the connection the probe times out, the pod is marked not-ready,
+      and it recovers the instant the job finishes.
+    diagnosticity: high
+    salience: high
+    proposition: The readiness endpoint synchronously checks a downstream dependency
+      that runs a heavy scheduled job every ten minutes, and the probe times out while
+      that job holds the connection.
+    salience_source: Concrete tracing of the probe-to-downstream call and its alignment
+      with the ten-minute job exposes the real mechanism.
+  LH:
+    distractor: The readiness probe synchronously calls a downstream that runs a ten-minute
+      job and times out while it is busy.
+    diagnosticity: high
+    salience: low
+    proposition: The readiness endpoint synchronously checks a downstream dependency
+      that runs a heavy scheduled job every ten minutes, and the probe times out while
+      that job holds the connection.
+    matched_to: HH
+distractor_direction:
+  label: Dashboard reorganisation
+  description: Investigating whether renaming and reorganising monitoring dashboards
+    is connected to the readiness flapping because the timing coincided.
+plausible_alternative_directions:
+- label: Probe threshold too strict
+  description: Whether the readiness timeout or failureThreshold is too tight for
+    normal latency variation.
+- label: Node-level networking
+  description: Whether periodic node network saturation interrupts probe traffic.
+leak_audit:
+  ll_atomic_claims:
+  - The flapping began around the time the team reorganised its monitoring dashboard
+    folders.
+  hh_atomic_claims:
+  - The readiness handler makes a synchronous call into a downstream service.
+  - That downstream runs a heavy job every ten minutes.
+  - The probe times out while the job holds the connection, and the pod recovers when
+    the job finishes.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean first-person account placing the symptom right after
+      the dashboard change.
+    confident_assertion: Confident framing that the timing lines up to the day and
+      is the only change in the window.
+    concrete_detail: Detail about the change itself (renaming folders, rebuilding
+      hierarchy) only — no claim about probe internals.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 45
+  ll_word_count: 15
+  hh_word_count: 48
+  lh_word_count: 19
+  notes: 'LL carries only the timing-coincidence claim with the dashboard reorganisation;
+    the day-level alignment emphasis
+
+    and only-change framing are HL-only salience, not new case facts. xbase gives
+    the symptom (periodic readiness
+
+    flapping, clean app logs, resources fine) but withholds the probe-to-downstream
+    coupling and the ten-minute job,
+
+    so HL/LL cannot resolve the cause; the decisive periodic-dependency mechanism
+    lives only in HH/LH. No pathway
+
+    closure is needed because the coincidence has no mechanism at all (C2 absolute).
+
+    '
+causal_audit:
+  steelman: 'The strongest case for the dashboard change: one might imagine a reorganisation
+    that accidentally deleted or
+
+    repointed an alerting rule, making pre-existing flaps newly visible. But that
+    is a discovery-timing story, not a
+
+    causal one — relabelling Grafana folders changes only how metrics are named and
+    grouped in the UI; it touches no
+
+    probe definition, no application code path, and no load-balancer behaviour. There
+    is no mechanism by which
+
+    renaming dashboards can make pods actually fail a readiness probe and leave rotation.
+    The real cause, a readiness
+
+    check coupled to a periodic downstream job, is entirely independent of the monitoring
+    layer, so the coincidence
+
+    has no constructible mechanism for this symptom.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the coincidence (dashboard reorganisation) has no
+    mechanism for readiness flapping; the real periodic-dependency cause lives only
+    in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Kubernetes readiness flapping is caused by a probe synchronously calling
+    a downstream that runs a ten-minute job, not by the coincidental Grafana dashboard
+    reorganisation.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

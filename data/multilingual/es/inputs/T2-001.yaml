@@ -1,0 +1,104 @@
+seed_id: T2-001
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Mi iPhone lleva cuatro días calentándose y perdiendo batería rápidamente. La
+  actualización de apps en segundo plano está desactivada y el teléfono funciona con
+  normalidad en todo lo demás. Esta semana no he instalado ninguna actualización de
+  iOS. {DS}
+focal_diagnostic_feature: Los ajustes de batería muestran que una sola app de edición
+  de fotos de terceros acapara la mayor parte de la actividad en segundo plano.
+low_diagnostic_proposition: The battery drain began shortly after an Apple ID password
+  change.
+oracle_action: ANSWER
+oracle_focus: The photo editor is the direct suspect; force-quit it, restrict/remove
+  it, or reinstall it and recheck battery telemetry.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not anchor on the account-change timing. Ask for per-app
+  battery usage before diagnosing the cause.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not anchor on the account-change timing. Ask for per-app battery usage
+      before diagnosing the cause.
+  LL:
+    action: ASK
+    focus: Do not anchor on the account-change timing. Ask for per-app battery usage
+      before diagnosing the cause.
+  HH:
+    action: ANSWER
+    focus: The photo editor is the direct suspect; force-quit it, restrict/remove
+      it, or reinstall it and recheck battery telemetry.
+  LH:
+    action: ANSWER
+    focus: The photo editor is the direct suspect; force-quit it, restrict/remove
+      it, or reinstall it and recheck battery telemetry.
+variants:
+  HL:
+    distractor: Esto empezó exactamente la mañana después de que cambié mi contraseña
+      de Apple ID, justo en el primer ciclo de carga completa tras el cambio.
+    diagnosticity: low
+    salience: high
+    proposition: The battery drain began shortly after an Apple ID password change.
+    salience_source: exact temporal sequence with security-related account event
+    why_plausible: Account changes can trigger sync behaviour, so the timing feels
+      causal.
+    why_irrelevant: A password change does not explain one specific third-party app
+      dominating background activity.
+  LL:
+    distractor: El problema comenzó poco después de una actualización de las credenciales
+      de la cuenta.
+    diagnosticity: low
+    salience: low
+    proposition: The battery drain began shortly after an Apple ID password change.
+    matched_to: HL
+  HH:
+    distractor: En Ajustes de batería se ve que una app de edición de fotos acumula
+      el 64 % de toda la actividad en segundo plano, mientras que el resto de apps
+      están prácticamente a cero.
+    diagnosticity: high
+    salience: high
+    proposition: Battery settings show one third-party photo editor accounts for most
+      background activity.
+    salience_source: per-app telemetry concentration
+  LH:
+    distractor: La telemetría de batería por app muestra que una sola app de edición
+      de fotos de terceros representa el 64 % de la actividad en segundo plano.
+    diagnosticity: high
+    salience: low
+    proposition: Battery settings show one third-party photo editor accounts for most
+      background activity.
+    matched_to: HH
+distractor_direction:
+  label: Cambio de contraseña de Apple ID
+  description: Investigar si la reautenticación de la cuenta, la sincronización de
+    iCloud o la actividad en segundo plano relacionada con las credenciales explica
+    el consumo de batería.
+plausible_alternative_directions:
+- label: Envejecimiento de la batería
+  description: La batería del teléfono está degradada y ahora pierde carga rápidamente
+    con un uso normal.
+- label: Indexación en segundo plano de iOS
+  description: El sistema operativo está realizando una indexación o sincronización
+    temporal en segundo plano no relacionada con una app concreta.
+- label: Señal celular débil
+  description: La mala cobertura está incrementando el consumo de la radio y generando
+    calor.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-001.yaml
+  source_xbase_sha256: 24c53ea5c8ce0643
+  translated_content_sha256: eb19899895bf27ea
+  translation_notes: ''

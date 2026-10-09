@@ -1,0 +1,196 @@
+seed_id: T6-020
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: p99-задержка нашего API несколько раз в день резко скачет на протяжении последней
+  недели, и моим первым шагом является откат последнего деплоя. Спайки короткие, но
+  сильные, после чего задержка сама возвращается к норме. Трафик во время спайков
+  не меняется, а частота ошибок остаётся низкой. Мы выкатываем несколько деплоев в
+  день, но сравнив время спайков с журналом деплоев, я обнаружил, что часть спайков
+  пришлась на часы, когда мы ничего не выкатывали, — значит, они не связаны ни с одним
+  деплоем. {DS}
+focal_diagnostic_feature: Спайки происходят ровно в начало каждого часа независимо
+  от времени деплоев — включая часы без деплоев — и точно совпадают с почасовым обновлением
+  материализованного представления, которое захватывает тяжёлую блокировку и насыщает
+  IOPS базы данных.
+low_diagnostic_proposition: Every latency regression the user has handled before was
+  caused by a bad deploy, so this one is probably a bad deploy too.
+oracle_action: ANSWER
+oracle_focus: Do not roll back; the spikes hit exactly on the hour independent of
+  deploys and match an hourly materialized-view refresh that locks and saturates DB
+  IOPS, so reschedule, incrementalise, or throttle that job.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a bad deploy from past regressions. Ask
+  whether the spikes line up with deploy times or instead recur on a fixed schedule
+  independent of deploys.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a bad deploy from past regressions. Ask whether the spikes
+      line up with deploy times or instead recur on a fixed schedule independent of
+      deploys.
+  LL:
+    action: ASK
+    focus: Do not assume a bad deploy from past regressions. Ask whether the spikes
+      line up with deploy times or instead recur on a fixed schedule independent of
+      deploys.
+  HH:
+    action: ANSWER
+    focus: Do not roll back; the spikes hit exactly on the hour independent of deploys
+      and match an hourly materialized-view refresh that locks and saturates DB IOPS,
+      so reschedule, incrementalise, or throttle that job.
+  LH:
+    action: ANSWER
+    focus: Do not roll back; the spikes hit exactly on the hour independent of deploys
+      and match an hourly materialized-view refresh that locks and saturates DB IOPS,
+      so reschedule, incrementalise, or throttle that job.
+variants:
+  HL:
+    distractor: Каждый регресс задержек, по которому меня когда-либо будили по пейджеру,
+      в итоге оказывался плохим деплоем — кривой запрос, отсутствующий индекс, тяжёлая
+      миграция, выкаченная в неудачное время, — поэтому, как только p99 пополз вверх,
+      мой инстинкт подсказал найти последний релиз и откатить его сразу же.
+    diagnosticity: low
+    salience: high
+    proposition: Every latency regression the user has handled before was caused by
+      a bad deploy, so this one is probably a bad deploy too.
+    salience_source: B/C — a vivid personal history of regressions-as-bad-deploys
+      plus the confident first instinct to roll back the latest release.
+    why_plausible: Bad deploys are a leading cause of latency regressions and a frequent-deploy
+      team makes them statistically likely, so rollback is the reflexive move.
+    why_irrelevant: The spikes recur exactly on the hour including in hours with zero
+      deploys, so they cannot be deploy-caused; rolling back would not touch a scheduled
+      job.
+  LL:
+    distractor: Каждый регресс задержек, с которым сталкивался пользователь, был вызван
+      плохим деплоем — значит, и этот, скорее всего, тоже.
+    diagnosticity: low
+    salience: low
+    proposition: Every latency regression the user has handled before was caused by
+      a bad deploy, so this one is probably a bad deploy too.
+    matched_to: HL
+  HH:
+    distractor: Наложив спайки на циферблат, я обнаружил, что они попадают ровно в
+      начало каждого часа — включая часы, когда мы ничего не выкатывали, — и с точностью
+      до минуты совпадают с почасовым обновлением материализованного представления,
+      которое захватывает тяжёлую блокировку и упирает IOPS базы данных в потолок
+      на всё время своей работы.
+    diagnosticity: high
+    salience: high
+    proposition: The spikes occur at exactly the top of every hour regardless of deploy
+      timing — including hours with no deploy at all — and align precisely with an
+      hourly materialized-view refresh that takes a heavy lock and saturates database
+      IOPS.
+    salience_source: Overlaying spikes on the clock and matching them to the hourly
+      refresh's lock and IOPS saturation makes the scheduled-contention cause concrete.
+  LH:
+    distractor: Спайки попадают ровно в начало каждого часа, включая часы без деплоев,
+      и совпадают с почасовым обновлением материализованного представления, которое
+      захватывает тяжёлую блокировку и насыщает IOPS базы данных.
+    diagnosticity: high
+    salience: low
+    proposition: The spikes occur at exactly the top of every hour regardless of deploy
+      timing — including hours with no deploy at all — and align precisely with an
+      hourly materialized-view refresh that takes a heavy lock and saturates database
+      IOPS.
+    matched_to: HH
+distractor_direction:
+  label: Плохой недавний деплой
+  description: Откат последнего деплоя из предположения, что регресс задержки вызван
+    недавним релизом.
+plausible_alternative_directions:
+- label: Паузы сборщика мусора
+  description: Могут ли периодические паузы GC рантайма вызывать короткие, но сильные
+    спайки задержки.
+- label: Шумный сосед в инфраструктуре
+  description: Не забирает ли сосед по сервису или событие на уровне хоста ресурсы
+    в определённые моменты.
+leak_audit:
+  ll_atomic_claims:
+  - Every latency regression the user handled before was caused by a bad deploy.
+  - Therefore this regression is probably a bad deploy too.
+  hh_atomic_claims:
+  - The spikes land at exactly the top of every hour, including hours with no deploy.
+  - They line up to the minute with an hourly materialized-view refresh.
+  - That refresh takes a heavy lock and pins database IOPS at its ceiling while it
+    runs.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent personal history of paged regressions tracing to
+      bad deploys.
+    confident_assertion: Instinct on seeing the climb is to roll the latest release
+      'straight back'.
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 87
+  hl_word_count: 48
+  ll_word_count: 22
+  hh_word_count: 50
+  lh_word_count: 25
+  notes: 'T6: the availability inference "this one is probably a bad deploy too" is
+    in HL and flat in LL. xbase says deploys
+
+    are frequent, the spikes are brief/severe and self-resolving, traffic is flat,
+    and errors stay low — symptoms
+
+    only. Repair round 1 adds a C4 pathway-closure to xbase: some spikes landed in
+    deploy-free hours, so they are not
+
+    tied to any deploy. This forecloses the rollback mechanism without naming a cause
+    — xbase still does NOT reveal the
+
+    on-the-hour regularity or the materialized-view contention, so the decisive evidence
+    (exactly-top-of-hour cadence +
+
+    scheduled refresh lock/IOPS saturation) lives only in HH/LH and the answer is
+    not computable from xbase alone.
+
+    '
+causal_audit:
+  steelman: 'An on-call engineer could argue a high-velocity team shipping many deploys
+    daily makes a bad release the single
+
+    most likely cause of a new latency regression, that brief self-resolving spikes
+    can come from a slow query under
+
+    bursty load introduced by a deploy, and that rollback is the fastest mitigation
+    — a defensible default.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase forecloses the rollback pathway directly: several
+    spikes landed in hours with zero deploys, so they are not tied to any release
+    — the deploy hypothesis is dead from xbase alone, with no affirmative cause named.
+    The decisive cause (exactly-top-of-hour cadence + hourly materialized-view refresh
+    locking and saturating IOPS) is withheld to HH/LH, so xbase still cannot compute
+    the answer.'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Hourly API latency spikes caused by an on-the-hour materialized-view
+    refresh locking and saturating DB IOPS, not the recent deploy the user's past
+    regressions bias them to roll back.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-020.yaml
+  source_xbase_sha256: 2f1bd837deb74bd2
+  translated_content_sha256: c5d5858879c89893
+  translation_notes: 'Technical terms retained: p99, деплой (deploy as loanword, standard
+    in Russian SRE/backend contexts), IOPS, материализованное представление (materialized
+    view — standard Russian DB term). ''materialized-view refresh'' → ''обновление
+    материализованного представления''. ''Paged for'' → ''будили по пейджеру'' preserves
+    the on-call narrative salience. Register is first-person professional informal.'

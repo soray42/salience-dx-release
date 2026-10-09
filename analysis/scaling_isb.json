@@ -1,0 +1,158 @@
+{
+  "E4B (~4B act/8B)": {
+    "n_pairs": 496,
+    "ISB_pct": 11.49,
+    "ISB_ci": [
+      8.7,
+      14.4
+    ],
+    "vig_pct": 12.1,
+    "vig_ci": [
+      9.4,
+      15.1
+    ],
+    "flip_pct": 23.59,
+    "n_ISB": 57,
+    "n_vig": 60,
+    "asym_p": 0.8534,
+    "DFA_pct": 94.2,
+    "DFA_n": 500,
+    "by_complexity": {
+      "low": {
+        "n": 133,
+        "ISB": 3.8,
+        "vig": 11.3,
+        "flip": 15.0
+      },
+      "medium": {
+        "n": 237,
+        "ISB": 14.8,
+        "vig": 13.9,
+        "flip": 28.7
+      },
+      "high": {
+        "n": 126,
+        "ISB": 13.5,
+        "vig": 9.5,
+        "flip": 23.0
+      }
+    }
+  },
+  "12B dense": {
+    "n_pairs": 500,
+    "ISB_pct": 12.0,
+    "ISB_ci": [
+      9.2,
+      15.0
+    ],
+    "vig_pct": 8.0,
+    "vig_ci": [
+      5.6,
+      10.4
+    ],
+    "flip_pct": 20.0,
+    "n_ISB": 60,
+    "n_vig": 40,
+    "asym_p": 0.0569,
+    "DFA_pct": 96.0,
+    "DFA_n": 500,
+    "by_complexity": {
+      "low": {
+        "n": 133,
+        "ISB": 14.3,
+        "vig": 6.8,
+        "flip": 21.1
+      },
+      "medium": {
+        "n": 240,
+        "ISB": 10.0,
+        "vig": 8.3,
+        "flip": 18.3
+      },
+      "high": {
+        "n": 127,
+        "ISB": 13.4,
+        "vig": 8.7,
+        "flip": 22.0
+      }
+    }
+  },
+  "26B-A4B MoE(~4B act)": {
+    "n_pairs": 499,
+    "ISB_pct": 12.63,
+    "ISB_ci": [
+      9.8,
+      15.6
+    ],
+    "vig_pct": 8.22,
+    "vig_ci": [
+      6.0,
+      10.6
+    ],
+    "flip_pct": 20.84,
+    "n_ISB": 63,
+    "n_vig": 41,
+    "asym_p": 0.039,
+    "DFA_pct": 96.2,
+    "DFA_n": 499,
+    "by_complexity": {
+      "low": {
+        "n": 132,
+        "ISB": 16.7,
+        "vig": 6.8,
+        "flip": 23.5
+      },
+      "medium": {
+        "n": 240,
+        "ISB": 11.7,
+        "vig": 8.3,
+        "flip": 20.0
+      },
+      "high": {
+        "n": 127,
+        "ISB": 10.2,
+        "vig": 9.4,
+        "flip": 19.7
+      }
+    }
+  },
+  "31B dense": {
+    "n_pairs": 499,
+    "ISB_pct": 8.62,
+    "ISB_ci": [
+      6.2,
+      11.2
+    ],
+    "vig_pct": 11.02,
+    "vig_ci": [
+      8.4,
+      13.8
+    ],
+    "flip_pct": 19.64,
+    "n_ISB": 43,
+    "n_vig": 55,
+    "asym_p": 0.2664,
+    "DFA_pct": 95.8,
+    "DFA_n": 500,
+    "by_complexity": {
+      "low": {
+        "n": 133,
+        "ISB": 4.5,
+        "vig": 11.3,
+        "flip": 15.8
+      },
+      "medium": {
+        "n": 240,
+        "ISB": 10.4,
+        "vig": 10.0,
+        "flip": 20.4
+      },
+      "high": {
+        "n": 126,
+        "ISB": 9.5,
+        "vig": 12.7,
+        "flip": 22.2
+      }
+    }
+  }
+}

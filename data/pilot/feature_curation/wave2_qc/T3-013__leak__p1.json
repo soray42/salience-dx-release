@@ -1,0 +1,42 @@
+{
+  "seed_id": "T3-013",
+  "ll_claims_extracted": [
+    "The Bluetooth audio profile might not be configured correctly.",
+    "Incorrect configuration causes the crackling."
+  ],
+  "hl_case_claims": [
+    "It is always a Bluetooth audio profile issue.",
+    "The A2DP profile must not be configured right.",
+    "That is the classic cause of Bluetooth crackling."
+  ],
+  "hl_source_claims": [
+    "Priya is in their IT team.",
+    "Priya handles all the wireless gear for the floor.",
+    "Priya told them about the issue."
+  ],
+  "leaks": [
+    {
+      "text": "A2DP profile",
+      "category": "tunable_value"
+    },
+    {
+      "text": "it is always a Bluetooth audio profile issue",
+      "category": "other_case_content"
+    },
+    {
+      "text": "classic cause of Bluetooth crackling",
+      "category": "other_case_content"
+    }
+  ],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 43,
+    "ll": 14,
+    "xbase": 51,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": false,
+  "verdict": "fail",
+  "repair_hint": "1) Remove 'A2DP' from HL distractor — replace with 'the Bluetooth audio profile' to match LL's generic phrasing. 2) Remove or soften 'always' (LL does not assert universality). 3) Remove 'classic cause of Bluetooth crackling' (adds a domain-characterization claim not present in LL). 4) Add the 'rules out any software or profile explanation' conclusion to LH distractor so HH and LH state equivalent claims — e.g., append 'which rules out any software or profile explanation' to the LH sentence."
+}

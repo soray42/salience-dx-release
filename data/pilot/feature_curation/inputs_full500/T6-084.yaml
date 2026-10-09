@@ -1,0 +1,203 @@
+seed_id: T6-084
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Redis Streams consumer group has been reporting growing lag for three days.
+  The consumer service is running — its health check returns 200 — and the stream
+  has data in it. A restart of the consumer service two days ago did not resolve the
+  issue. {DS}
+focal_diagnostic_feature: XPENDING on the consumer group shows hundreds of thousands
+  of unacknowledged entries accumulating in the pending list, and the consumer code
+  calls XREAD to fetch messages but contains no XACK call anywhere, leaving every
+  fetched message pending indefinitely.
+low_diagnostic_proposition: Past Redis consumer failures for this user were always
+  a password-change config mismatch, so this growing lag is probably the same issue.
+oracle_action: ANSWER
+oracle_focus: Add XACK calls to the consumer code after successfully processing each
+  message; also define a redelivery and dead-letter strategy for messages that fail
+  processing, to prevent indefinite PEL growth on bad records.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the past password-mismatch pattern automatically.
+  Ask what XPENDING shows for this consumer group and whether the consumer code contains
+  XACK calls before investigating authentication.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the past password-mismatch pattern automatically. Ask what
+      XPENDING shows for this consumer group and whether the consumer code contains
+      XACK calls before investigating authentication.
+  LL:
+    action: ASK
+    focus: Do not apply the past password-mismatch pattern automatically. Ask what
+      XPENDING shows for this consumer group and whether the consumer code contains
+      XACK calls before investigating authentication.
+  HH:
+    action: ANSWER
+    focus: Add XACK calls to the consumer code after successfully processing each
+      message; also define a redelivery and dead-letter strategy for messages that
+      fail processing, to prevent indefinite PEL growth on bad records.
+  LH:
+    action: ANSWER
+    focus: Add XACK calls to the consumer code after successfully processing each
+      message; also define a redelivery and dead-letter strategy for messages that
+      fail processing, to prevent indefinite PEL growth on bad records.
+variants:
+  HL:
+    distractor: Every Redis consumer problem I have dealt with before on this stack
+      has been a password change that the consumer's config had not picked up; my
+      instinct still goes there first even with the service showing healthy, because
+      that is what habit trains you to look at.
+    diagnosticity: low
+    salience: high
+    proposition: Past Redis consumer failures for this user were always a password-change
+      config mismatch, so this growing lag is probably the same issue.
+    salience_source: B/C — confident first-person personal history ("every Redis consumer
+      problem I have dealt with before") stated with a habitual first-instinct framing.
+    why_plausible: A Redis password change that the consumer's config does not reflect
+      would prevent authentication and cause the consumer to fail silently while its
+      health endpoint still returns 200 if that endpoint does not check Redis connectivity.
+    why_irrelevant: If AUTH were failing, the consumer would not be reading messages
+      at all; XPENDING revealing 280,000 entries shows messages ARE being read (moved
+      into the pending list by XREAD) but never acknowledged — which is structurally
+      incompatible with an AUTH failure that prevents reading.
+  LL:
+    distractor: Past Redis consumer failures for this user were always a password-change
+      config mismatch, so this growing lag is probably the same issue.
+    diagnosticity: low
+    salience: low
+    proposition: Past Redis consumer failures for this user were always a password-change
+      config mismatch, so this growing lag is probably the same issue.
+    matched_to: HL
+  HH:
+    distractor: XPENDING on the consumer group reveals 280,000 unacknowledged entries
+      building up; searching the consumer code for XACK returns zero results — the
+      service reads messages with XREAD but never acknowledges them, so they accumulate
+      in the pending list indefinitely.
+    diagnosticity: high
+    salience: high
+    proposition: XPENDING on the consumer group shows hundreds of thousands of unacknowledged
+      entries accumulating in the pending list, and the consumer code calls XREAD
+      to fetch messages but contains no XACK call anywhere, leaving every fetched
+      message pending indefinitely.
+    salience_source: The specific count (280,000 entries), the zero-results code search
+      for XACK, and the explicit XREAD-without-XACK mechanism make the missing-acknowledgement
+      finding concrete and directly actionable.
+  LH:
+    distractor: XPENDING shows 280,000 unacknowledged entries; the consumer code has
+      no XACK call, leaving all read messages pending indefinitely.
+    diagnosticity: high
+    salience: low
+    proposition: XPENDING on the consumer group shows hundreds of thousands of unacknowledged
+      entries accumulating in the pending list, and the consumer code calls XREAD
+      to fetch messages but contains no XACK call anywhere, leaving every fetched
+      message pending indefinitely.
+    matched_to: HH
+distractor_direction:
+  label: Redis AUTH config mismatch
+  description: Investigating whether a Redis password change that the consumer's configuration
+    has not picked up is preventing authentication and causing the consumer to fail
+    silently while appearing healthy.
+plausible_alternative_directions:
+- label: Consumer group offset regression
+  description: A misconfigured or reset consumer group offset could cause the consumer
+    to attempt to replay a huge backlog from an earlier position, making lag appear
+    to grow even if processing is occurring.
+- label: Stream retention deletion
+  description: If the stream's MAXLEN trim is set too aggressively, messages could
+    be deleted before the consumer reads them, manifesting as growing apparent lag
+    without actual pending entries.
+- label: Network partition to Redis
+  description: Intermittent connectivity between the consumer service and the Redis
+    instance could cause the consumer to stall without surfacing obvious errors at
+    the health endpoint level.
+leak_audit:
+  ll_atomic_claims:
+  - Past Redis consumer failures for this user were always a password-change config
+    mismatch.
+  - This growing lag is probably the same issue.
+  hh_atomic_claims:
+  - XPENDING on the consumer group reveals 280,000 unacknowledged entries building
+    up.
+  - Searching the consumer code for XACK returns zero results.
+  - The service reads messages with XREAD but never acknowledges them.
+  - Messages accumulate in the pending list indefinitely.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: A confident first-person account of personal diagnostic history
+      on this specific stack, framed as trained instinct.
+    confident_assertion: '"every Redis consumer problem I have dealt with before",
+      "my instinct still goes there first" — confident habitual assertion.'
+    concrete_detail: The health-check 200 detail is in xbase; HL adds only the habitual-instinct
+      framing, not new case facts.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 47
+  ll_word_count: 22
+  hh_word_count: 38
+  lh_word_count: 18
+  notes: 'T6 availability: the user''s past AUTH-mismatch pattern is structurally
+    different
+
+    from the present XACK-omission case. The availability inference (same pattern
+    →
+
+    same cause) appears in both HL and LL per C1 T6 rule. HH/LH provide the
+
+    XPENDING count + code-search finding. The key structural disqualifier: AUTH
+
+    failure prevents XREAD from succeeding, so messages would not appear in the PEL
+
+    at all; 280,000 pending entries prove XREAD is working, defeating the AUTH
+
+    steelman at the focal-evidence stage. Health check 200 is ambiguous (may not
+
+    test Redis auth) — this keeps AUTH alive as a hypothesis from xbase alone.
+
+    Ratios HL:LL=47:22=2.1, HH:LH=38:18=2.1 — both within 4:1.
+
+    '
+causal_audit:
+  steelman: 'A Redis password change that the consumer''s configuration has not been
+    updated
+
+    to reflect would cause authentication failures on every XREAD attempt. If the
+
+    health check endpoint does not test Redis connectivity, the service would still
+
+    return 200 while silently failing to read the stream. This is a plausible
+
+    scenario where apparent "running" status masks a real connectivity failure —
+
+    a common operational gap. The seed is clean because the focal evidence (XPENDING
+
+    showing 280,000 entries) is incompatible with AUTH failure: XPENDING entries are
+
+    messages that have been READ via XREAD and entered the pending state — if AUTH
+
+    were failing, XREAD would error and no entries would accumulate in the PEL.
+
+    The 280,000 pending entries prove XREAD is succeeding, which defeats the AUTH
+
+    steelman at the focal-evidence stage rather than at xbase.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not close the AUTH pathway (health check
+    200 is ambiguous); the AUTH hypothesis remains live from xbase and is defeated
+    only by the XPENDING focal evidence in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Redis Streams consumer group lag grows because the consumer code calls
+    XREAD but never calls XACK, filling the pending entry list indefinitely; user's
+    availability bias toward past AUTH-mismatch failures leads them to suspect authentication
+    rather than the missing acknowledgement.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

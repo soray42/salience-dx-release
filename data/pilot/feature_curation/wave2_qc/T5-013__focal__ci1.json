@@ -1,0 +1,13 @@
+{
+  "seed_id": "T5-013",
+  "my_own_diagnosis": "Given xbase (intermittent crashes ~1-in-20 SDK calls, three stack traces available) plus the focal feature (all three stack traces terminate inside the app-owned onCompletionCallback, not in any SDK frame), a competent practitioner would conclude the crash originates in app callback code — most likely a thread-safety violation such as unsynchronized writes to shared mutable state from an async context — and would direct investigation there rather than at the SDK.",
+  "focal_decisive": true,
+  "focal_notes": "The stack-trace crash-site evidence is unambiguous and sufficient to localize the fault to app callback code and direct investigation toward thread-safety.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "cell_oracles correctly map HL/LL to low-diagnostic oracle and HH/LH to focal oracle; low_diagnostic_oracle_focus correctly instructs non-adoption of the doc-quality distractor and redirects to actual crash evidence.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

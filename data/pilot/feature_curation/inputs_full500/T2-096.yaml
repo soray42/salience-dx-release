@@ -1,0 +1,167 @@
+seed_id: T2-096
+template: T2
+domain: open_qa
+complexity: high
+xbase: My sewing machine has started skipping stitches badly on a quilting project.
+  The thread forms loops on the underside and whole runs of stitches simply do not
+  catch, no matter how slowly I sew. I have rethreaded it carefully several times,
+  checked that the bobbin is seated, and the tension dial is where it always is. It
+  worked fine on the same fabric last month. {DS}
+focal_diagnostic_feature: The needle is blunt and burred and is too fine a gauge for
+  the thick quilted layers being sewn.
+low_diagnostic_proposition: The skipping started around the time the craft room furniture
+  was rearranged.
+oracle_action: ANSWER
+oracle_focus: Replace the needle with a fresh, heavier quilting needle suited to the
+  layered thickness; a blunt, burred, undersized needle fails to form the stitch loop
+  reliably, which is the direct cause of the skipped stitches.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not link a furniture rearrangement to skipped stitches;
+  it has no mechanism. Ask about the needle's condition and gauge relative to the
+  fabric before adjusting anything else.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not link a furniture rearrangement to skipped stitches; it has no mechanism.
+      Ask about the needle's condition and gauge relative to the fabric before adjusting
+      anything else.
+  LL:
+    action: ASK
+    focus: Do not link a furniture rearrangement to skipped stitches; it has no mechanism.
+      Ask about the needle's condition and gauge relative to the fabric before adjusting
+      anything else.
+  HH:
+    action: ANSWER
+    focus: Replace the needle with a fresh, heavier quilting needle suited to the
+      layered thickness; a blunt, burred, undersized needle fails to form the stitch
+      loop reliably, which is the direct cause of the skipped stitches.
+  LH:
+    action: ANSWER
+    focus: Replace the needle with a fresh, heavier quilting needle suited to the
+      layered thickness; a blunt, burred, undersized needle fails to form the stitch
+      loop reliably, which is the direct cause of the skipped stitches.
+variants:
+  HL:
+    distractor: I cannot ignore that the skipping began right after I rearranged the
+      whole craft room, moving the sewing table to the opposite wall under the window
+      where I had wanted it for ages.
+    diagnosticity: low
+    salience: high
+    proposition: The skipping started around the time the craft room furniture was
+      rearranged.
+    salience_source: B/C — vivid first-person account fixing the symptom onset to
+      the room-rearrangement event.
+    why_plausible: A noticeable recent change coinciding with onset tempts treating
+      the move as the cause, especially with a heavy machine relocated.
+    why_irrelevant: Where a freestanding machine sits in the room has no bearing on
+      needle-to-hook stitch formation; the table position cannot cause skipped stitches.
+  LL:
+    distractor: The stitch skipping started around the time the craft room furniture
+      was rearranged into a new layout.
+    diagnosticity: low
+    salience: low
+    proposition: The skipping started around the time the craft room furniture was
+      rearranged.
+    matched_to: HL
+  HH:
+    distractor: When I finally pulled the needle out and looked closely, the point
+      is visibly blunted with a tiny burr, and the needle is a fine universal one
+      far too light for the thick quilt-batting layers I am stitching through.
+    diagnosticity: high
+    salience: high
+    proposition: The needle is blunt and burred and is too fine a gauge for the thick
+      quilted layers being sewn.
+    salience_source: Concrete inspection of the needle (blunt point, burr, undersized
+      gauge versus the batting) makes the cause vivid.
+  LH:
+    distractor: The needle is blunt and burred and is too fine a gauge for the thick
+      quilted layers being sewn.
+    diagnosticity: high
+    salience: low
+    proposition: The needle is blunt and burred and is too fine a gauge for the thick
+      quilted layers being sewn.
+    matched_to: HH
+distractor_direction:
+  label: Furniture rearrangement
+  description: Treating the craft-room rearrangement as the cause of the skipped stitches
+    because the problem began around then.
+plausible_alternative_directions:
+- label: Threading or tension fault
+  description: Whether a misthreaded path or tension imbalance
+  not the needle: null
+  is breaking stitch formation.: null
+- label: Timing or hook issue
+  description: Whether the machine's hook timing has drifted so the hook misses the
+    needle loop.
+leak_audit:
+  ll_atomic_claims:
+  - The stitch skipping started.
+  - It started around the time the craft room furniture was rearranged.
+  hh_atomic_claims:
+  - The needle's point is blunted with a small burr.
+  - The needle is a fine, light gauge.
+  - That gauge is too light for the thick quilted batting layers being sewn.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean rearrange-then-skipping onset chronology.
+    confident_assertion: I cannot ignore that the skipping began right after...
+    concrete_detail: Detail about the move (table to opposite wall under the window)
+      only; no claim about the needle.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 65
+  hl_word_count: 33
+  ll_word_count: 17
+  hh_word_count: 39
+  lh_word_count: 19
+  notes: 'LL carries only the started-around-rearrangement claim; the new table position
+    and window detail are HL-only
+
+    colour about the move. xbase reports symptoms and the user''s already-tried fixes
+    (rethreading, bobbin seated,
+
+    tension unchanged) but withholds the needle inspection, so HL/LL cannot reject
+    the coincidence. The decisive
+
+    blunt-burred-undersized-needle fact lives only in HH/LH. The tried-fixes lines
+    neutrally narrow alternatives
+
+    without naming the needle cause, staying within C4.
+
+    '
+causal_audit:
+  steelman: 'One might argue moving the machine could have jolted it, loosening the
+    needle clamp or nudging hook timing, so
+
+    the rearrangement could plausibly precede a real fault. But the stated event is
+    only that the room furniture was
+
+    rearranged and the table relocated; a freestanding sewing machine''s final resting
+    position has no bearing on its
+
+    internal needle-to-hook stitch geometry, and ordinary placement does not blunt
+    or burr a needle or change its
+
+    gauge. There is no constructible mechanism from a furniture move to skipped stitches,
+    and the focal evidence
+
+    shows a damaged, undersized needle as the cause.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the coincidence has no mechanism; xbase withholds
+    the needle inspection so the cause lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A sewing machine skipping stitches, where a blunt, burred, undersized
+    needle for thick quilted layers, not a coincident craft-room rearrangement, is
+    the cause.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

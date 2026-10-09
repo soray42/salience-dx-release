@@ -1,0 +1,174 @@
+seed_id: T6-022
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: 自从发布最新一个Android版本后，部分用户反映应用一启动就立即崩溃，我的第一反应是让他们清除应用缓存并重新安装。大多数用户完全正常，从未遇到这个问题。崩溃发生在启动的瞬间，任何界面都还没有显示。我已经让几个受影响的用户清除所有应用数据并重新安装，但应用在他们下一次启动时依然崩溃。{DS}
+focal_diagnostic_feature: 每一条崩溃报告都来自运行旧版Android的设备，堆栈跟踪是一个针对仅在新版系统上才存在的平台API的NoSuchMethodError，且该API在启动时被无条件调用。
+low_diagnostic_proposition: Every launch crash the user has fixed before came from
+  a corrupted local cache, so this one is probably a cache problem too.
+oracle_action: ANSWER
+oracle_focus: Guard the newer-OS platform API behind a version check or raise minSdk;
+  the crashes are a NoSuchMethodError on older Android versions for an API that does
+  not exist there, not a corrupted cache.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a cache problem from past crashes. Ask
+  what the stack trace says and whether the affected devices share an OS version.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a cache problem from past crashes. Ask what the stack trace
+      says and whether the affected devices share an OS version.
+  LL:
+    action: ASK
+    focus: Do not assume a cache problem from past crashes. Ask what the stack trace
+      says and whether the affected devices share an OS version.
+  HH:
+    action: ANSWER
+    focus: Guard the newer-OS platform API behind a version check or raise minSdk;
+      the crashes are a NoSuchMethodError on older Android versions for an API that
+      does not exist there, not a corrupted cache.
+  LH:
+    action: ANSWER
+    focus: Guard the newer-OS platform API behind a version check or raise minSdk;
+      the crashes are a NoSuchMethodError on older Android versions for an API that
+      does not exist there, not a corrupted cache.
+variants:
+  HL:
+    distractor: 我排查过的每一次启动崩溃，都来自本地缓存损坏，所以我的直觉立刻想推送一条清除缓存和重新安装的消息给所有受影响的用户，然后结案。
+    diagnosticity: low
+    salience: high
+    proposition: Every launch crash the user has fixed before came from a corrupted
+      local cache, so this one is probably a cache problem too.
+    salience_source: B/C — a vivid personal history of launch crashes as cache corruption
+      plus the confident first instinct to push a clear-cache fix.
+    why_plausible: Corrupted local state genuinely does cause launch crashes, and
+      a clean reinstall is a familiar, often-successful first remedy.
+    why_irrelevant: A missing platform method exists only on certain OS versions;
+      clearing cache changes nothing about which APIs the device's OS provides, so
+      it cannot fix it.
+  LL:
+    distractor: 用户之前修复过的每一次启动崩溃都源于本地缓存损坏，所以这次也很可能是缓存问题。
+    diagnosticity: low
+    salience: low
+    proposition: Every launch crash the user has fixed before came from a corrupted
+      local cache, so this one is probably a cache problem too.
+    matched_to: HL
+  HH:
+    distractor: 拉取崩溃报告一看，每一条都来自运行旧版Android的设备，且堆栈跟踪全是同一个NoSuchMethodError——针对一个只在新版系统发行版上才存在的平台API——而我们在启动时无条件调用了它，甚至没有做任何版本检查。
+    diagnosticity: high
+    salience: high
+    proposition: Every crash report comes from devices on older Android versions,
+      and the stack trace is a NoSuchMethodError for a platform API that only exists
+      on newer OS versions, called unconditionally during startup.
+    salience_source: The older-OS-only crash population plus the NoSuchMethodError
+      on a newer-only API makes the API-availability bug concrete.
+  LH:
+    distractor: 所有崩溃报告均来自运行旧版Android的设备，堆栈跟踪显示的是一个NoSuchMethodError，涉及一个仅在新版Android系统上才存在的平台API，且该API在启动时被无条件调用。
+    diagnosticity: high
+    salience: low
+    proposition: Every crash report comes from devices on older Android versions,
+      and the stack trace is a NoSuchMethodError for a platform API that only exists
+      on newer OS versions, called unconditionally during startup.
+    matched_to: HH
+distractor_direction:
+  label: 本地缓存损坏
+  description: 将启动崩溃视为本地应用数据损坏，通过清除缓存和重新安装来修复。
+plausible_alternative_directions:
+- label: 已存储数据的迁移失败
+  description: 对现有用户数据的数据/Schema迁移失败是否导致启动时崩溃。
+- label: 发布包存在问题
+  description: 损坏或签名错误的构建包是否只触达了部分用户。
+leak_audit:
+  ll_atomic_claims:
+  - Every launch crash the user fixed before came from a corrupted local cache.
+  - Therefore this launch crash is probably a cache problem too.
+  hh_atomic_claims:
+  - Every crash report is from a device on an older Android version.
+  - The stack trace is a NoSuchMethodError for a platform API that only exists on
+    newer OS releases.
+  - The app calls that API unconditionally during startup, before any version check.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent personal history of launch crashes attributed to
+      corrupted local cache.
+    confident_assertion: Gut 'immediately wants' to push a clear-cache and reinstall
+      message and move on.
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 72
+  hl_word_count: 35
+  ll_word_count: 22
+  hh_word_count: 45
+  lh_word_count: 19
+  notes: 'T6: the availability inference "this one is probably a cache problem too"
+    is in HL (the gut instinct to push the
+
+    clear-cache fix) and flat in LL. HL/LL equivalence: HL drops the earlier "or a
+    half-finished install" second
+
+    mechanism and the "fixed it every single time" efficacy/outcome claim (both leaks
+    beyond LL); the HL-only material
+
+    is now purely confident-assertion salience ("my gut immediately wants to ... and
+    move on"), no extra case claim.
+
+    xbase now closes the cache pathway neutrally: a few affected users cleared all
+    app data and reinstalled and still
+
+    crash on the next launch — this rules out corrupted local state without naming
+    any affirmative cause. The decisive
+
+    older-OS-only crash population and NoSuchMethodError on a newer-only API stay
+    only in HH/LH, so xbase alone still
+
+    cannot compute the answer (it cannot tell you it is an API-availability bug),
+    only reject the cache distractor.
+
+    '
+causal_audit:
+  steelman: 'A mobile engineer could note that a "some users only, crash before any
+    screen" pattern is a classic signature of
+
+    corrupted local state surviving an update, that clearing data resolves a large
+    class of such crashes, and that a
+
+    quick clear-cache/reinstall is a cheap, frequently effective first response —
+    a reasonable default.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase reports that several affected users cleared all app
+    data and reinstalled and the app still crashes on the next launch, which forecloses
+    the corrupted-local-cache pathway before the OS-version evidence (which lives
+    only in HH/LH) is introduced. The closure names no affirmative cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An Android launch crash from calling a newer-OS-only API unconditionally
+    on older devices (NoSuchMethodError), not the corrupted cache the user's past
+    launch crashes bias them toward.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-022.yaml
+  source_xbase_sha256: 8b8e6d1bfaed853a
+  translated_content_sha256: 8dd3de077d9ca5d2
+  translation_notes: 'Technical terms kept as-is or in standard form: Android, NoSuchMethodError,
+    minSdk, 堆栈跟踪 (stack trace — standard Chinese dev term). HL salience: vivid personal
+    history of launch crashes as cache corruption and first-instinct confident action
+    (''直觉立刻想…然后结案''). LL is flat and source-less. HH concretely identifies older-OS
+    devices + NoSuchMethodError + unconditional call. LH carries same claims in flat
+    prose. No focal content in HL/LL.'

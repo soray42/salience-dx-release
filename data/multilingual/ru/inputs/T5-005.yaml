@@ -1,0 +1,101 @@
+seed_id: T5-005
+template: T5
+domain: technical_troubleshooting
+complexity: high
+xbase: API-клиент нашего мобильного приложения иногда получает усечённый JSON и выбрасывает
+  ошибку парсинга. Это происходит редко — примерно один запрос из нескольких сотен.
+  API находится за обратным прокси nginx. {DS}
+focal_diagnostic_feature: Усечение происходит около 16 300 байт, что совпадает с настройкой
+  proxy_buffer_size в 16k в конфигурации nginx.
+low_diagnostic_proposition: The internal API documentation site looks old and visually
+  neglected.
+oracle_action: ANSWER
+oracle_focus: Increase/tune nginx proxy buffers for this endpoint or adjust buffering;
+  the byte boundary points at proxy buffer limits.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer runtime buffering from docs aesthetics.
+  Ask for truncation byte position and nginx buffer settings.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer runtime buffering from docs aesthetics. Ask for truncation
+      byte position and nginx buffer settings.
+  LL:
+    action: ASK
+    focus: Do not infer runtime buffering from docs aesthetics. Ask for truncation
+      byte position and nginx buffer settings.
+  HH:
+    action: ANSWER
+    focus: Increase/tune nginx proxy buffers for this endpoint or adjust buffering;
+      the byte boundary points at proxy buffer limits.
+  LH:
+    action: ANSWER
+    focus: Increase/tune nginx proxy buffers for this endpoint or adjust buffering;
+      the byte boundary points at proxy buffer limits.
+variants:
+  HL:
+    distractor: 'Наш внутренний сайт с документацией выглядит как 2012 год: маленькие
+      шрифты с засечками, ярко-синие ссылки и блоки вёрстки, которые не выравниваются.'
+    diagnosticity: low
+    salience: high
+    proposition: The internal API documentation site looks old and visually neglected.
+    salience_source: dated typography, visual neglect of adjacent documentation
+    why_plausible: A neglected-looking docs site can imply sloppy API maintenance.
+    why_irrelevant: Documentation styling has no causal link to response truncation;
+      the byte boundary and proxy setting do.
+  LL:
+    distractor: Сайт с API-документацией использует устаревший визуальный стиль.
+    diagnosticity: low
+    salience: low
+    proposition: The internal API documentation site looks old and visually neglected.
+    matched_to: HL
+  HH:
+    distractor: Обрыв снова и снова приходится примерно на 16 300 байт, а в nginx
+      установлен прокси-буфер 16k; цифры совпадают почти точно.
+    diagnosticity: high
+    salience: high
+    proposition: Truncation occurs near 16,300 bytes, matching nginx's 16k proxy_buffer_size
+      configuration.
+    salience_source: numeric boundary match
+  LH:
+    distractor: Граница усечения приходится примерно на 16 300 байт, что соответствует
+      настроенному размеру proxy_buffer_size в nginx — 16k.
+    diagnosticity: high
+    salience: low
+    proposition: Truncation occurs near 16,300 bytes, matching nginx's 16k proxy_buffer_size
+      configuration.
+    matched_to: HH
+distractor_direction:
+  label: Запущенность сайта с документацией
+  description: Изучение того, связана ли плохая или устаревшая API-документация с
+    усечёнными JSON-ответами и ошибками парсинга.
+plausible_alternative_directions:
+- label: Баг сериализации на бэкенде
+  description: API-сервер может иногда сериализовать или отправлять некорректный JSON
+    ещё до того, как прокси его увидит.
+- label: Баг парсера мобильного клиента
+  description: Мобильный клиент может некорректно обрабатывать валидные, но большие
+    JSON-ответы.
+- label: Потеря сетевых пакетов
+  description: Нестабильное сетевое соединение может усекать ответы до того, как они
+    достигают мобильного приложения.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-005.yaml
+  source_xbase_sha256: ba684ee29ff7d824
+  translated_content_sha256: 89b2f15e49100e2e
+  translation_notes: nginx, proxy_buffer_size, JSON, API — оставлены как есть; это
+    стандартные технические термины. «Parse error» передан как «ошибка парсинга» —
+    устоявшийся русский технический термин. «Reverse proxy» — «обратный прокси».

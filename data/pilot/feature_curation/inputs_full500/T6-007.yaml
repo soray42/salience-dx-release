@@ -1,0 +1,90 @@
+seed_id: T6-007
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our distributed Spark job ran successfully for months and has failed for the
+  last five days with executor OOM kills. Executor memory is set to 8 GB. {DS}
+focal_diagnostic_feature: A new wide join with significant skew on one key was added
+  two weeks ago, while input data volume is only growing about 3% per week.
+low_diagnostic_proposition: The user's previous Spark failures were generally caused
+  by unannounced cluster version changes.
+oracle_action: ANSWER
+oracle_focus: 'Handle the skewed join: salting, AQE skew handling, broadcast where
+  suitable, or repartitioning; the failure is not explained by small data growth alone.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not assume a cluster version bump. Ask for DAG changes,
+  join skew, executor logs, and input-volume trend.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not assume a cluster version bump. Ask for DAG changes, join skew, executor
+      logs, and input-volume trend.
+  LL:
+    action: ASK
+    focus: Do not assume a cluster version bump. Ask for DAG changes, join skew, executor
+      logs, and input-volume trend.
+  HH:
+    action: ANSWER
+    focus: 'Handle the skewed join: salting, AQE skew handling, broadcast where suitable,
+      or repartitioning; the failure is not explained by small data growth alone.'
+  LH:
+    action: ANSWER
+    focus: 'Handle the skewed join: salting, AQE skew handling, broadcast where suitable,
+      or repartitioning; the failure is not explained by small data growth alone.'
+variants:
+  HL:
+    distractor: Every Spark job I've had explode before was because someone bumped
+      the cluster version without telling me, so that is where my brain goes first.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous Spark failures were generally caused by unannounced
+      cluster version changes.
+    salience_source: availability of repeated past infra cause, blame narrative
+    why_plausible: Cluster-version changes really can break Spark jobs.
+    why_irrelevant: The recent skewed join provides a direct mechanism for executor
+      OOMs.
+  LL:
+    distractor: Prior Spark job failures for the user were generally attributed to
+      cluster version changes.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous Spark failures were generally caused by unannounced
+      cluster version changes.
+    matched_to: HL
+  HH:
+    distractor: We added a wide join two weeks ago that piles data onto one hot key,
+      and input volume is only creeping up about 3% a week, not jumping enough to
+      explain a sudden cliff.
+    diagnosticity: high
+    salience: high
+    proposition: A new wide join with significant skew on one key was added two weeks
+      ago, while input data volume is only growing about 3% per week.
+    salience_source: DAG change with skew mechanism
+  LH:
+    distractor: A new skewed wide join was added recently; failures are executor OOMs
+      while input volume growth is modest.
+    diagnosticity: high
+    salience: low
+    proposition: A new wide join with significant skew on one key was added two weeks
+      ago, while input data volume is only growing about 3% per week.
+    matched_to: HH
+distractor_direction:
+  label: Cluster version change
+  description: Investigating whether an unannounced Spark/cluster runtime version
+    change caused the executor OOM failures.
+plausible_alternative_directions:
+- label: Executor memory sizing
+  description: The configured executor memory may be too low for the current workload
+    even without skew.
+- label: Input growth
+  description: Data volume growth may have crossed a memory threshold.
+- label: Shuffle partitioning
+  description: The job may need more or differently sized shuffle partitions.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

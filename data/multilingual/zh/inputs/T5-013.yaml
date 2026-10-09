@@ -1,0 +1,270 @@
+seed_id: T5-013
+template: T5
+domain: technical_troubleshooting
+complexity: high
+xbase: 我们的移动应用自从集成了第三方 SDK 之后就开始间歇性崩溃。崩溃大约每二十次 SDK 调用发生一次，过去一周内持续出现。我已拉取了崩溃报告，并整理出三次独立崩溃的完整调用栈，准备逐一排查。{DS}
+focal_diagnostic_feature: 三份崩溃调用栈均在应用自有的 onCompletionCallback 内终止，而非在任何 SDK 帧内，说明崩溃源自应用代码，而非
+  SDK。
+low_diagnostic_proposition: 'The vendor SDK documentation contains many typos and
+  formatting errors.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'The crash stack traces all terminate in app-owned callback code while
+  mutating shared state; investigate the callback implementation for thread-safety
+  issues such as unsynchronised writes to shared mutable state from an async context.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Documentation quality is not in the causal chain of
+  runtime crashes; do not adopt the SDK-reliability inference from doc aesthetics.
+  Instead, examine the available crash evidence — stack traces, logs, and callback
+  code — to identify the actual root cause.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Documentation quality is not in the causal chain of runtime crashes; do
+      not adopt the SDK-reliability inference from doc aesthetics. Instead, examine
+      the available crash evidence — stack traces, logs, and callback code — to identify
+      the actual root cause.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Documentation quality is not in the causal chain of runtime crashes; do
+      not adopt the SDK-reliability inference from doc aesthetics. Instead, examine
+      the available crash evidence — stack traces, logs, and callback code — to identify
+      the actual root cause.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'The crash stack traces all terminate in app-owned callback code while
+      mutating shared state; investigate the callback implementation for thread-safety
+      issues such as unsynchronised writes to shared mutable state from an async context.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'The crash stack traces all terminate in app-owned callback code while
+      mutating shared state; investigate the callback implementation for thread-safety
+      issues such as unsynchronised writes to shared mutable state from an async context.
+
+      '
+variants:
+  HL:
+    distractor: 一位在某同行初创公司任职的资深移动端工程师告诉我，他们审查过同一个第三方 SDK 的文档，发现到处都是错别字，格式也乱得一塌糊涂。
+    diagnosticity: low
+    salience: high
+    proposition: 'The vendor SDK documentation contains many typos and formatting
+      errors.
+
+      '
+    salience_source: 'A (source credibility: senior mobile engineer at a peer startup);
+      C (confident assertion: "told me"); D (concrete detail about source/setting:
+      "at a peer startup", "reviewed the same vendor SDK documentation" anchors the
+      source''s basis without adding case facts).
+
+      '
+    why_plausible: 'The inference that poor documentation signals poor code quality
+      is a recognisable heuristic in developer culture; a credible peer vouching for
+      the pattern makes it easy to anchor on without scrutinising the actual crash
+      evidence.
+
+      '
+    why_irrelevant: 'Documentation quality is not in the causal chain of runtime crashes.
+      The SDK fires the completion handler successfully — the stack trace shows execution
+      entering the SDK, the SDK dispatching the callback normally, and the crash occurring
+      inside the app''s own callback code. The SDK''s prose quality is structurally
+      disconnected from the execution path that faults.
+
+      '
+  LL:
+    distractor: 有人说这个第三方 SDK 的文档错别字很多，格式也一团糟。
+    diagnosticity: low
+    salience: low
+    proposition: 'The vendor SDK documentation contains many typos and formatting
+      errors.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 仔细查看三份崩溃转储，每一份的调用栈都完全一致：执行正常进入第三方 SDK 调用，SDK 触发我们注册的 onCompletionCallback，崩溃发生在我们的回调函数内部第三帧处——我们在没有加锁的情况下向一个共享可变字典写入数据。
+    diagnosticity: high
+    salience: high
+    proposition: 'Each of the three crash stack traces terminates inside the app-owned
+      onCompletionCallback, not within any SDK frame, indicating the crash originates
+      in application code, not the SDK.
+
+      '
+    salience_source: 'Precise technical detail (three matching stack traces, named
+      callback, specific frame depth, specific operation — unsynchronised dictionary
+      write) makes the evidence vivid and decisive.
+
+      '
+  LH:
+    distractor: 三条完全相同的调用栈均显示 SDK 正常分发回调；崩溃发生在我们自己的回调函数内部，崩溃时正在没有加锁的情况下向共享字典写入数据。
+    diagnosticity: high
+    salience: low
+    proposition: 'Each of the three crash stack traces terminates inside the app-owned
+      onCompletionCallback, not within any SDK frame, indicating the crash originates
+      in application code, not the SDK.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: 将 SDK 文档质量作为可靠性信号
+  description: 第三方 SDK 的文档充斥着错别字和格式混乱，将这种表面现象作为证据，认为 SDK 库代码不可靠，因此很可能是间歇性崩溃的根源。
+plausible_alternative_directions:
+- label: SDK 线程合约违反
+  description: SDK 可能在意外的线程上调用完成回调（例如后台线程而非主线程），当应用代码假定在主线程执行时，就会触发未定义行为。
+- label: SDK 返回格式异常或空值数据
+  description: SDK 可能偶尔向回调返回意外的、空值或格式异常的数据，导致应用自身的回调处理程序内部发生空指针解引用或类型不匹配崩溃。
+- label: SDK 回调被多次调用
+  description: SDK 中的某个缺陷可能导致每次调用触发多次完成回调，使应用的回调函数重复进入并通过双重写入损坏共享状态。
+leak_audit:
+  ll_atomic_claims:
+  - The vendor SDK documentation has many typos.
+  - The vendor SDK documentation has formatting errors.
+  hl_salience_dimensions:
+    source_credibility: Senior mobile engineer at a peer startup.
+    narrative_coherence: Clean, professional register; single clause reporting; no
+      tangents or restarts.
+    confident_assertion: '"told me" — direct report, no hedging.'
+    concrete_detail: '"at a peer startup", "reviewed the same vendor SDK documentation"
+      — about the source/setting, not the case.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 26
+  ll_word_count: 13
+  notes: 'Repair (revision 2): Removed the original HL closing clause "and that in
+
+    their experience, that kind of sloppiness in docs usually means the library
+
+    itself is unreliable" — this was flagged as a severity_claim (case-level
+
+    inference about the user''s SDK reliability) and as hedging_language
+
+    ("usually"). The revised HL ends after the doc-quality observation, keeping
+
+    only source-credibility and case-neutral content. Replaced dash-separated
+
+    construction with "and found" to reach 26 words (within 25–50 range).
+
+
+    HH/LH equivalence fix: LH previously stated only "The crash stack trace ends
+
+    inside our own callback code, not in the SDK," omitting four claims present in
+
+    HH — (a) SDK dispatch proceeds normally, (b) all three traces are identical,
+
+    (c) crash is inside the callback (not just the callback code boundary), (d)
+
+    the specific operation is an unsynchronised write to a shared dictionary
+
+    without a lock. New LH: "All three identical stack traces show the SDK
+
+    dispatching normally; the crash ends in our callback while writing to a shared
+
+    dictionary without a lock." (25 words) — covers all four omitted claims within
+
+    the 12–25 word limit; frame depth ("three frames deep") dropped to fit the
+
+    limit, as it is a vivid detail handled by HH salience, not a distinct
+
+    propositional claim.
+
+
+    LL word count 13 is within the 12–25 range.
+
+
+    Repair (revision 3): xbase focal-evidence removal per cell-integrity lens
+
+    2026-06-11. Original xbase narrated the decisive stack-trace finding ("each
+
+    one terminates inside our own onCompletionCallback method at the point where
+
+    we mutate shared state") — this is the focal evidence that must live only in
+
+    HH/LH. New xbase describes only the symptom (intermittent crashes since SDK
+
+    integration, rough rate, three stack traces available) without disclosing
+
+    where those traces terminate. pathway_closed_in_xbase updated accordingly.
+
+    '
+causal_audit:
+  steelman: 'Strongest argument for the distractor: Documentation quality is a proxy
+
+    signal for overall engineering discipline at the vendor. A team that ships
+
+    public-facing docs with pervasive typos and broken formatting may also be
+
+    running a careless release process for their SDK code — skipping edge-case
+
+    testing, ignoring race conditions in async dispatch, shipping unreviewed
+
+    patches. A senior practitioner evaluating a vendor relationship might
+
+    reasonably note doc quality as one data point in an overall vendor quality
+
+    assessment. If the SDK has a known quality problem, it could plausibly
+
+    produce intermittent bugs in async callbacks.
+
+
+    However, this argument is a general quality-inference about the vendor, not
+
+    a causal mechanism for this specific crash. The assessment "vendor might
+
+    ship buggy code" does not specify any pathway to the observed fault. The
+
+    stack trace already localises the crash: it terminates in app-owned code.
+
+    Even if the SDK were buggy, the crash would need to show SDK frames at fault
+
+    — and it does not. The doc-quality signal is upstream of the code pipeline
+
+    in a speculative and non-specific way; no practitioner would put "check if
+
+    vendor docs have typos" on a crash-triage checklist for a crash whose stack
+
+    trace ends in app code.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — xbase no longer discloses where the stack traces
+    terminate; that decisive finding is carried exclusively by HH/LH. The pathway
+    closure (crash site in app code, not SDK) is delivered only when HH or LH is present.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 3
+  topic_brief: 'Vendor SDK documentation is full of typos and broken formatting, offered
+    as a reason to blame the SDK for intermittent crashes. Focal: the crash stack
+    trace terminates in app-owned callback code.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-013.yaml
+  source_xbase_sha256: dfb2037b3c963836
+  translated_content_sha256: 086b1630f35ff3b1
+  translation_notes: onCompletionCallback 保留英文原名，因为这是代码中的具体方法名称，属于技术标识符。'错别字' 对应 'typos'；'格式'
+    对应 'formatting'。HL 中 '同行初创公司' 对应 'peer startup'，保留了高显著性的具名来源属性。

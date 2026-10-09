@@ -1,0 +1,222 @@
+seed_id: T6-082
+template: T6
+domain: open_qa
+complexity: medium
+xbase: My outdoor tomato plants look healthy but have not set any fruit despite producing
+  many flowers for the past three weeks. I am growing them in raised beds with full
+  sun exposure. The leaves are a good green colour and I see no visible pests or disease
+  spots. {DS}
+focal_diagnostic_feature: Night temperatures have remained above 29°C for three weeks,
+  the threshold above which tomato pollen becomes non-viable and flowers drop without
+  setting fruit.
+low_diagnostic_proposition: Past tomato failures for this user were generally caused
+  by insufficient watering during heat, so the same cause probably applies now.
+oracle_action: ANSWER
+oracle_focus: The blossom drop is caused by heat-induced pollen failure; provide shade
+  cloth during the hottest part of the afternoon and mist flowers in the early morning
+  to lower tissue temperature, then resume normal watering once night temperatures
+  drop below 29°C.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to the past underwatering explanation.
+  Ask about recent night-time temperatures and whether blossom drop is occurring,
+  to determine if heat stress is preventing fruit set.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to the past underwatering explanation. Ask about recent
+      night-time temperatures and whether blossom drop is occurring, to determine
+      if heat stress is preventing fruit set.
+  LL:
+    action: ASK
+    focus: Do not default to the past underwatering explanation. Ask about recent
+      night-time temperatures and whether blossom drop is occurring, to determine
+      if heat stress is preventing fruit set.
+  HH:
+    action: ANSWER
+    focus: The blossom drop is caused by heat-induced pollen failure; provide shade
+      cloth during the hottest part of the afternoon and mist flowers in the early
+      morning to lower tissue temperature, then resume normal watering once night
+      temperatures drop below 29°C.
+  LH:
+    action: ANSWER
+    focus: The blossom drop is caused by heat-induced pollen failure; provide shade
+      cloth during the hottest part of the afternoon and mist flowers in the early
+      morning to lower tissue temperature, then resume normal watering once night
+      temperatures drop below 29°C.
+variants:
+  HL:
+    distractor: Every time tomatoes have let me down before, it was because I let
+      the soil dry out during a hot stretch — that pattern has always been my first
+      suspect when fruit refuses to set.
+    diagnosticity: low
+    salience: high
+    proposition: Past tomato failures for this user were generally caused by insufficient
+      watering during heat, so the same cause probably applies now.
+    salience_source: B — vivid personal history framing the past pattern; C — confident
+      first-instinct framing ('always been my first suspect')
+    why_plausible: Drought stress during hot weather is a very common cause of tomato
+      fruit failure, and a grower who has been burned by it before will naturally
+      reach for increased watering as a first response to any hot-weather failure.
+    why_irrelevant: Watering cannot compensate for heat-induced pollen non-viability;
+      the pollen itself degrades above 29°C at night regardless of soil moisture.
+      The plant already shows no stress indicators (healthy colour, no wilting), so
+      drought is not the current limiting factor.
+  LL:
+    distractor: Past tomato failures for the user were generally attributed to insufficient
+      watering during heat.
+    diagnosticity: low
+    salience: low
+    proposition: Past tomato failures for this user were generally caused by insufficient
+      watering during heat, so the same cause probably applies now.
+    matched_to: HL
+  HH:
+    distractor: Night temperatures over the past three weeks have stayed above 29°C;
+      above that threshold, tomato pollen becomes non-viable and flowers drop without
+      setting, independent of soil moisture or nutrient levels.
+    diagnosticity: high
+    salience: high
+    proposition: Night temperatures have remained above 29°C for three weeks, the
+      threshold above which tomato pollen becomes non-viable and flowers drop without
+      setting fruit.
+    salience_source: D — specific threshold temperature (29°C) with a named physiological
+      mechanism (pollen non-viability); B — explicit independence from soil moisture
+      closes the watering hypothesis
+  LH:
+    distractor: Night temperatures have stayed above 29°C for three weeks, rendering
+      tomato pollen non-viable and causing flower drop independent of soil moisture
+      or nutrients.
+    diagnosticity: high
+    salience: low
+    proposition: Night temperatures have remained above 29°C for three weeks, the
+      threshold above which tomato pollen becomes non-viable and flowers drop without
+      setting fruit.
+    matched_to: HH
+distractor_direction:
+  label: drought stress from underwatering
+  description: Investigating whether the tomato plants are failing to set fruit because
+    the soil is too dry during hot weather, repeating a pattern the user has experienced
+    in past seasons.
+plausible_alternative_directions:
+- label: pollinator absence
+  description: Insufficient bee or insect activity could prevent tomato flowers from
+    being pollinated, causing consistent blossom drop even when the plant and conditions
+    appear healthy.
+- label: excessive nitrogen
+  description: High nitrogen levels in the raised bed soil can push vegetative growth
+    at the expense of fruiting, causing healthy-looking plants that flower but do
+    not set fruit.
+- label: variety not suited to conditions
+  description: Some tomato varieties require specific temperature ranges or daylength
+    cues for reliable fruit set; the planted variety may be ill-matched to the current
+    climate conditions.
+leak_audit:
+  ll_atomic_claims:
+  - Past tomato failures for this user were generally attributed to insufficient watering
+    during heat.
+  hh_atomic_claims:
+  - Night temperatures over the past three weeks have stayed above 29°C.
+  - Above 29°C at night, tomato pollen becomes non-viable.
+  - Flowers drop without setting under those conditions.
+  - This occurs independent of soil moisture or nutrient levels.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Personal history with direct application; concrete pre-emptive
+      action already taken (watering more heavily) grounds the narrative in the present
+      situation
+    confident_assertion: '"every time tomatoes have let me down", "so I have been
+      watering even more heavily every day"'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 48
+  hl_word_count: 35
+  ll_word_count: 14
+  hh_word_count: 30
+  lh_word_count: 23
+  notes: 'T6 rule check: the availability inference ("so the same cause probably applies
+    now")
+
+    appears in HL ("so I have been watering even more heavily") and in the low_diagnostic_proposition
+
+    ("so the same cause probably applies now"). LL carries the past-pattern fact and
+    the
+
+    inference is in low_diagnostic_proposition. C1 satisfied.
+
+    HL adds only: vivid personal history framing and the concrete pre-emptive action
+    already
+
+    taken. The action ("watering more heavily") is about the user''s response, not
+    a new
+
+    case fact. No effort_descriptor added to the case diagnosis.
+
+    C10 repair: HH carried "independent of soil moisture or nutrient levels" as a
+    fourth
+
+    atomic claim; LH now includes the equivalent ("independent of soil moisture or
+    nutrients")
+
+    at 23 words, within the LH operational target. All four hh_atomic_claims now appear
+
+    in LH. HH:LH ratio 30:23 = 1.3:1, within 4:1.
+
+    xbase does not mention soil moisture status, so xbase alone gives no basis to
+    reject
+
+    the watering distractor — C4 satisfied.
+
+    '
+causal_audit:
+  steelman: 'Drought stress during heat waves is one of the most common reasons tomato
+    plants fail
+
+    to set fruit, and a grower who has witnessed this multiple times has legitimate
+    empirical
+
+    grounds to suspect it again. Soil that looks adequate on the surface can be dry
+    at root
+
+    depth in hot weather, especially in raised beds that drain quickly. A practitioner
+    would
+
+    reasonably ask about watering frequency and soil moisture before concluding the
+    problem
+
+    is heat-induced pollen failure. However, xbase explicitly states the leaves are
+    healthy
+
+    green with no wilting — both are reliable visual indicators of adequate soil moisture.
+
+    Drought-stressed tomatoes show clear wilting and leaf curl well before flower
+    drop.
+
+    The absence of any such visual stress indicator structurally deprioritises underwatering
+
+    as the leading hypothesis in this case, and the focal feature (night temperatures
+    above
+
+    the pollen-viability threshold for three weeks) provides a complete and independent
+
+    explanation for persistent blossom drop.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Leaves are described as a good green colour with no visible
+    stress — drought-stressed tomatoes show wilting and leaf curl before blossom drop,
+    so the current visual health forecloses the underwatering pathway.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Outdoor tomato plants produce flowers but no fruit because sustained
+    night temperatures above 29°C render pollen non-viable; availability distractor
+    is the user's past experience of tomato failures from underwatering during heat.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

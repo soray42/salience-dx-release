@@ -1,0 +1,266 @@
+seed_id: T5-014
+template: T5
+domain: open_qa
+complexity: medium
+xbase: 'I filed my taxes this year using a free budget app. The interface is genuinely
+  ugly — the layout is cluttered and inconsistent, fonts are mismatched, and navigating
+  between sections feels like something from 2008. The app calculated my refund at
+  $1,847. I''m second-guessing whether to trust that number before I actually file.
+  {DS}
+
+  '
+focal_diagnostic_feature: 'An accountant manually computed the same return using the
+  same income and deduction figures and arrived at exactly $1,847.
+
+  '
+low_diagnostic_proposition: 'The tool''s interface looks sloppy and outdated, which
+  raises doubt about whether its calculations can be trusted.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'The app''s calculation is correct. An independent manual computation
+  by an accountant on the same inputs produced exactly the same result, which constitutes
+  direct verification of the output. The interface''s appearance has no bearing on
+  the numerical accuracy.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Aesthetic quality of a UI is not a reliable indicator
+  of calculation correctness; the user should verify the output through an independent
+  check (such as manual computation or a second tool) rather than relying on interface
+  appearance to judge accuracy. The distractor claim should not be adopted.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Aesthetic quality of a UI is not a reliable indicator of calculation correctness;
+      the user should verify the output through an independent check (such as manual
+      computation or a second tool) rather than relying on interface appearance to
+      judge accuracy. The distractor claim should not be adopted.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Aesthetic quality of a UI is not a reliable indicator of calculation correctness;
+      the user should verify the output through an independent check (such as manual
+      computation or a second tool) rather than relying on interface appearance to
+      judge accuracy. The distractor claim should not be adopted.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'The app''s calculation is correct. An independent manual computation by
+      an accountant on the same inputs produced exactly the same result, which constitutes
+      direct verification of the output. The interface''s appearance has no bearing
+      on the numerical accuracy.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'The app''s calculation is correct. An independent manual computation by
+      an accountant on the same inputs produced exactly the same result, which constitutes
+      direct verification of the output. The interface''s appearance has no bearing
+      on the numerical accuracy.
+
+      '
+variants:
+  HL:
+    distractor: 'My colleague Tariq, who spent five years at an audit firm, glanced
+      at a screenshot I sent him and told me the interface looks like it was thrown
+      together carelessly — he said a tool that sloppy-looking almost never has reliable
+      calculation logic.
+
+      '
+    diagnosticity: low
+    salience: high
+    proposition: 'The tool''s interface looks sloppy and outdated, which raises doubt
+      about whether its calculations can be trusted.
+
+      '
+    salience_source: 'A (source credibility) + C (confident assertion): Tariq''s five-year
+      audit-firm background lends professional weight; "almost never has reliable
+      calculation logic" is a confident, generalizing claim.
+
+      '
+    why_plausible: 'An audit-firm professional''s opinion that a visually shoddy product
+      signals poor engineering discipline sounds authoritative; readers familiar with
+      software quality heuristics may accept UI polish as a proxy for code quality.
+
+      '
+    why_irrelevant: 'UI aesthetics and calculation correctness are independent properties;
+      a tool can have an outdated interface and correct arithmetic. The anecdote is
+      about appearance, not about any audit of this app''s calculation logic or tax-law
+      implementation.
+
+      '
+  LL:
+    distractor: 'The tool''s interface looks sloppy and outdated, which makes me wonder
+      if its calculations can be trusted.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: 'The tool''s interface looks sloppy and outdated, which raises doubt
+      about whether its calculations can be trusted.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'I asked Beatriz, a CPA I know, to manually work through the same
+      return using my actual W-2 and deduction figures. She calculated line by line
+      and her total came out to exactly $1,847 — matching the app''s number to the
+      dollar.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'An accountant manually computed the same return using the same income
+      and deduction figures and arrived at exactly $1,847.
+
+      '
+    salience_source: 'A (source credibility) + D (concrete believable detail about
+      the setting): a named CPA working line by line with actual source documents
+      gives the verification concrete professional weight.
+
+      '
+  LH:
+    distractor: 'An accountant independently calculated the same return and got $1,847,
+      matching the app exactly.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'An accountant manually computed the same return using the same income
+      and deduction figures and arrived at exactly $1,847.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: UI aesthetics signal calculation errors
+  description: 'The budget tool''s cluttered, outdated-looking interface is treated
+    as evidence that its calculation logic is unreliable or incorrect.
+
+    '
+plausible_alternative_directions:
+- label: outdated tax tables
+  description: 'The app might use stale tax brackets, standard deduction amounts,
+    or rate schedules from a prior year, producing a result that differs from current-year
+    rules regardless of how polished the interface looks.
+
+    '
+- label: data-entry transcription error
+  description: 'The user may have entered an income or deduction figure incorrectly
+    into the app, causing the calculated refund to differ from what a correct filing
+    would show.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - The tool's interface looks sloppy and outdated.
+  - This appearance raises doubt about whether its calculations can be trusted.
+  hl_salience_dimensions:
+    source_credibility: 'Tariq spent five years at an audit firm — a professional
+      with direct exposure to financial software quality.
+
+      '
+    narrative_coherence: 'Clean single-clause report; professional register; no interruptions
+      or tangents.
+
+      '
+    confident_assertion: '"told me" and "almost never has reliable calculation logic"
+      — assertive, generalizing language.
+
+      '
+    concrete_detail: '"glanced at a screenshot I sent him" — grounded in a specific
+      communicative act about the source interaction, not the case itself.
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 47
+  ll_word_count: 17
+  notes: 'Repair (revision 2): replaced "looks like it was thrown together by someone
+
+    with no QA process" with "looks like it was thrown together carelessly" to
+
+    remove the severity_claim / case-content leak identified by QC leak-lens p1.
+
+    The original phrase implied a process-deficiency fact about the app''s
+
+    development not present in LL; the replacement stays within the
+
+    aesthetic/visual-impression frame and introduces no new case claims.
+
+    Retained: no tunable values (no dollar amounts or percentages added in HL
+
+    beyond what xbase already establishes), no effort descriptors, no severity
+
+    claims about consequences of a wrong refund, no sensory color about Tariq''s
+
+    environment. The phrase "glanced at a screenshot I sent him" anchors the
+
+    concrete detail to the source interaction rather than the user''s filing
+
+    case. The word "almost" in "almost never" was retained because it is part
+
+    of Tariq''s assertion about general tool quality, not hedging about this
+
+    specific case; it makes the HL sound more realistic without reducing
+
+    salience.
+
+    '
+causal_audit:
+  steelman: 'Best-faith argument that UI aesthetics could causally inform calculation
+
+    correctness: Poor interface design is often a symptom of constrained
+
+    engineering resources and limited QA investment. A development team that
+
+    cannot allocate effort to a polished UI is likely also cutting corners
+
+    elsewhere, including in testing financial calculation logic against
+
+    edge cases — unusual deductions, partial-year filing situations,
+
+    alternative minimum tax interactions. Tax software bugs are notoriously
+
+    hard to detect because they manifest in uncommon input combinations that
+
+    users rarely hit. An audit professional familiar with small fintech shops
+
+    might legitimately treat "visually abandoned product" as a weak prior for
+
+    "undertested calculation core." This reasoning is how the aesthetic-
+
+    usability heuristic gets inverted into a negative signal: if polish
+
+    correlates with investment, its absence correlates with neglect.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — the steelman identifies only a weak prior about
+    unknown tools, not a causal pathway. The prior is fully resolved by the focal:
+    an independent CPA manual computation on the identical inputs produced the exact
+    same figure. Once that verification exists, no further investigation is warranted
+    and the appearance-based prior carries zero residual weight.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 2
+  topic_brief: 'A budget tax-filing tool has a clunky, ugly interface, offered as
+    a reason to suspect its calculations are wrong. Focal: its numbers exactly match
+    a manual computation by an accountant on the same inputs.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: qc leak p1 2026-06-11
+  generator: generator_B

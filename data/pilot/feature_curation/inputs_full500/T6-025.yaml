@@ -1,0 +1,198 @@
+seed_id: T6-025
+template: T6
+domain: open_qa
+complexity: low
+xbase: I'm deciding whether to pay for my project management app annually or continue
+  on the month-to-month plan. The annual option is 35% cheaper per month if paid upfront.
+  The provider has been operating for eight years with no signs of instability and
+  the tool covers all the features I need. {DS}
+focal_diagnostic_feature: The user's in-app activity log shows they opened the app
+  every working day for the past 11 consecutive months, averaging 3.5 hours of active
+  use per day, with no week where the app was skipped.
+low_diagnostic_proposition: Past annual subscriptions by this user were abandoned
+  before the year ended, suggesting the same early-cancellation pattern may repeat
+  here.
+oracle_action: ANSWER
+oracle_focus: Pay annually; eleven months of unbroken daily heavy use with no missed
+  weeks makes early abandonment implausible, and the 35% saving is material.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not generalise from past subscriptions of different
+  types to this tool. Ask for actual usage history for this app before assuming the
+  abandonment pattern applies.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not generalise from past subscriptions of different types to this tool.
+      Ask for actual usage history for this app before assuming the abandonment pattern
+      applies.
+  LL:
+    action: ASK
+    focus: Do not generalise from past subscriptions of different types to this tool.
+      Ask for actual usage history for this app before assuming the abandonment pattern
+      applies.
+  HH:
+    action: ANSWER
+    focus: Pay annually; eleven months of unbroken daily heavy use with no missed
+      weeks makes early abandonment implausible, and the 35% saving is material.
+  LH:
+    action: ANSWER
+    focus: Pay annually; eleven months of unbroken daily heavy use with no missed
+      weeks makes early abandonment implausible, and the 35% saving is material.
+variants:
+  HL:
+    distractor: Every annual subscription I have committed to before — a gym membership,
+      a meal-kit service, a language learning app — I abandoned within four months
+      and felt trapped paying for something I no longer opened, so I worry the same
+      thing will happen here if I pay upfront.
+    diagnosticity: low
+    salience: high
+    proposition: Past annual subscriptions by this user were abandoned before the
+      year ended, suggesting the same early-cancellation pattern may repeat here.
+    salience_source: B/C — three specific named examples of past sunk costs in a reflective
+      first-person voice, with a concrete abandonment timeline ('four months') and
+      a confident forward worry ('I worry the same thing will happen here').
+    why_plausible: Paying a year upfront for something unused is a real and common
+      loss; three concrete past examples make the pattern feel empirically grounded
+      and a busy adviser would take the concern seriously.
+    why_irrelevant: The three past subscriptions are fitness, food, and language services,
+      all of which carry high habitual-change risk. The project management tool is
+      already embedded in daily professional workflow; the prior abandonment pattern
+      is structurally irrelevant because the nature of the tool and the demonstrated
+      usage differ fundamentally.
+  LL:
+    distractor: Past annual subscriptions by this user were abandoned before the year
+      ended, suggesting the same early-cancellation pattern may repeat here.
+    diagnosticity: low
+    salience: low
+    proposition: Past annual subscriptions by this user were abandoned before the
+      year ended, suggesting the same early-cancellation pattern may repeat here.
+    matched_to: HL
+  HH:
+    distractor: My in-app activity log shows I opened this app on every working day
+      for the past eleven months, averaging 3.5 hours of active use each day, with
+      not a single week where I skipped it entirely.
+    diagnosticity: high
+    salience: high
+    proposition: The user's in-app activity log shows they opened the app every working
+      day for the past 11 consecutive months, averaging 3.5 hours of active use per
+      day, with no week where the app was skipped.
+    salience_source: B/C — first-person account-log data with three precise metrics
+      (daily opens, 3.5-hour average, zero missed weeks) over an 11-month window,
+      presented as direct evidence rather than recall.
+  LH:
+    distractor: Activity logs show daily use every working day for 11 months, averaging
+      3.5 hours per day with no weeks missed.
+    diagnosticity: high
+    salience: low
+    proposition: The user's in-app activity log shows they opened the app every working
+      day for the past 11 consecutive months, averaging 3.5 hours of active use per
+      day, with no week where the app was skipped.
+    matched_to: HH
+distractor_direction:
+  label: habitual abandonment of annual plans
+  description: Treating the user's history of abandoning earlier annual subscriptions
+    before renewal as evidence that paying annually for this tool is also likely to
+    result in waste.
+plausible_alternative_directions:
+- label: provider longevity and lock-in risk
+  description: Paying a full year upfront creates an exposure if the provider raises
+    prices, changes terms, or discontinues the product within the annual period.
+- label: workflow change or tool replacement
+  description: A planned team or technology change in the next year might make the
+    user switch tools regardless of usage, making annual commitment premature.
+- label: cashflow and upfront cost
+  description: Even if the annual plan is cheaper overall, the upfront lump payment
+    may strain current monthly cashflow in a way the monthly plan does not.
+leak_audit:
+  ll_atomic_claims:
+  - Past annual subscriptions by this user were abandoned before the year ended.
+  - The same early-cancellation pattern may repeat here.
+  hh_atomic_claims:
+  - The in-app activity log shows the app was opened every working day for 11 consecutive
+    months.
+  - Average active use is 3.5 hours per day.
+  - There is no week in the 11-month period where the app was skipped.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Three named subscription examples with a concrete timeline
+      ('four months') and an emotionally grounded forward worry in a reflective first-person
+      register.
+    confident_assertion: '''I worry the same thing will happen here'' — unhedged forward
+      projection.'
+    concrete_detail: Gym, meal-kit, language-app are setting details about past subscriptions
+      that are not claims about this app's usage; the four-month abandonment timeline
+      is about the distractor pattern, not a new case claim.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 50
+  hl_word_count: 46
+  ll_word_count: 20
+  hh_word_count: 36
+  lh_word_count: 20
+  notes: 'T6 availability inference check: HL includes ''I worry the same thing will
+    happen here
+
+    if I pay upfront.'' LL includes ''suggesting the same early-cancellation pattern
+    may
+
+    repeat here.'' Both carry the application-to-present inference per C1. The forward
+
+    worry (HL) vs hedged suggestion (LL) is a salience dimension C difference only.
+
+    HH/LH diff: LH covers all three HH claims (daily opens for 11 months, 3.5-hour
+
+    average, no missed weeks) at lower resolution. Clean.
+
+    '
+causal_audit:
+  steelman: 'Habitual subscription abandonment is a well-documented behavioural pattern.
+    A user who
+
+    has abandoned three consecutive annual subscriptions across different categories
+
+    may have a lifestyle tendency toward high initial enthusiasm followed by declining
+
+    engagement, regardless of subscription type. Project management needs can also
+    shift:
+
+    if the user changes jobs, goes freelance, or joins a team using a different tool,
+    the
+
+    app becomes redundant despite prior heavy use. A practitioner applying behavioural
+
+    finance thinking would take three concrete data points seriously. However, the
+    focal
+
+    evidence presents 11 months of logged daily use at 3.5 hours per day — this is
+    not
+
+    recall but measurable in-app telemetry. The three past subscriptions (gym, meal
+    kit,
+
+    language app) are lifestyle services with consumption patterns that do not transfer
+
+    to a daily professional workflow tool. The usage profile is structurally different,
+
+    and the 11-month empirical record directly contradicts the abandonment hypothesis
+
+    for this specific app.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not disclose usage history; that is the
+    focal content in HH/LH. The xbase neutrally establishes the decision context without
+    foreclosing the distractor.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User deciding whether to pay annually for a project management app;
+    11 months of heavy daily use makes annual commitment clearly worthwhile, distracted
+    by a history of abandoning prior annual subscriptions in other categories.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

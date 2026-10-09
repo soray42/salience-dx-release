@@ -1,0 +1,175 @@
+seed_id: T3-079
+template: T3
+domain: open_qa
+complexity: medium
+xbase: My raised vegetable bed had poor yields last season and looks the same this
+  year. I've been watering consistently twice a week and the bed is in the same spot
+  as when I started three years ago. The soil still smells good, I added compost in
+  spring, and a soil test in March came back with normal NPK levels. {DS}
+focal_diagnostic_feature: The raised bed now receives fewer than three hours of direct
+  sunlight daily because a neighbouring tree's canopy has expanded significantly since
+  the garden was planted.
+low_diagnostic_proposition: Established vegetable beds that underperform almost always
+  have a nutrient deficiency.
+oracle_action: ANSWER
+oracle_focus: Relocate the bed or prune the overhanging canopy to restore adequate
+  direct sunlight; nutrient amendments will not compensate for chronic light deficiency
+  in vegetable crops.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the nutrient-deficiency diagnosis from authority
+  alone. Ask about the bed's current daily sun exposure and whether shading has increased
+  since planting.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the nutrient-deficiency diagnosis from authority alone. Ask
+      about the bed's current daily sun exposure and whether shading has increased
+      since planting.
+  LL:
+    action: ASK
+    focus: Do not adopt the nutrient-deficiency diagnosis from authority alone. Ask
+      about the bed's current daily sun exposure and whether shading has increased
+      since planting.
+  HH:
+    action: ANSWER
+    focus: Relocate the bed or prune the overhanging canopy to restore adequate direct
+      sunlight; nutrient amendments will not compensate for chronic light deficiency
+      in vegetable crops.
+  LH:
+    action: ANSWER
+    focus: Relocate the bed or prune the overhanging canopy to restore adequate direct
+      sunlight; nutrient amendments will not compensate for chronic light deficiency
+      in vegetable crops.
+variants:
+  HL:
+    distractor: Rizal, the senior advisor at the garden centre I use, took one look
+      at my soil description and said it is almost always a nutrient deficiency when
+      established beds underperform — in his view, a second compost application each
+      season is the fix.
+    diagnosticity: low
+    salience: high
+    proposition: Established vegetable beds that underperform almost always have a
+      nutrient deficiency.
+    salience_source: A (source credibility — named senior advisor at a specialist
+      retailer); C (confident assertion — 'almost always', 'the fix'); B (narrative
+      coherence — professional setting, brief consultation framing).
+    why_plausible: Nutrient depletion is a genuinely common reason for declining vegetable
+      yields in established beds, and a domain expert's confident pattern-match is
+      easy to defer to.
+    why_irrelevant: Rizal offered a generic category diagnosis without examining sunlight
+      data; the focal feature shows the bed lacks the minimum light required for photosynthesis,
+      which no nutrient amendment can substitute.
+  LL:
+    distractor: A garden centre advisor said established vegetable beds that underperform
+      almost always have a nutrient deficiency.
+    diagnosticity: low
+    salience: low
+    proposition: Established vegetable beds that underperform almost always have a
+      nutrient deficiency.
+    matched_to: HL
+  HH:
+    distractor: Every spot in the bed gets fewer than three hours of direct sun daily
+      now — the oak tree two metres away has grown a canopy that shades the bed from
+      mid-morning onward, which is not how it was when I planted here.
+    diagnosticity: high
+    salience: high
+    proposition: The raised bed now receives fewer than three hours of direct sunlight
+      daily because a neighbouring tree's canopy has expanded significantly since
+      the garden was planted.
+    salience_source: Specific measurement (fewer than three hours), concrete physical
+      cause (named tree, distance, timing of shade onset), vivid contrast with the
+      original planting condition.
+  LH:
+    distractor: The bed receives under three hours of direct sunlight per day due
+      to canopy growth from a nearby tree.
+    diagnosticity: high
+    salience: low
+    proposition: The raised bed now receives fewer than three hours of direct sunlight
+      daily because a neighbouring tree's canopy has expanded significantly since
+      the garden was planted.
+    matched_to: HH
+distractor_direction:
+  label: Nutrient deficiency
+  description: Investigating whether depleted soil nutrients — nitrogen, phosphorus,
+    potassium, or micronutrients — are the primary cause of declining vegetable yields
+    despite compost addition.
+plausible_alternative_directions:
+- label: Compacted or waterlogged soil
+  description: Soil structure degradation over three seasons could reduce drainage
+    and root oxygenation, suppressing growth even with adequate nutrients and water.
+- label: Soil pH imbalance
+  description: Accumulated compost applications could shift soil pH outside the optimal
+    range for vegetable crops, locking out nutrient uptake.
+- label: Root competition from tree
+  description: The neighbouring oak may be drawing water and nutrients from the raised
+    bed through lateral root extension into the soil beneath.
+leak_audit:
+  ll_atomic_claims:
+  - A garden centre advisor made the statement.
+  - The claim is that established beds that underperform almost always have a nutrient
+    deficiency.
+  hh_atomic_claims:
+  - Every spot in the bed gets fewer than three hours of direct sun daily.
+  - An oak tree two metres away has grown a canopy that shades the bed from mid-morning
+    onward.
+  - The shading is a change from conditions when the bed was first planted.
+  hl_salience_dimensions:
+    source_credibility: Rizal named as senior advisor at a specialist garden centre
+      — domain-matched authority.
+    narrative_coherence: 'Clean professional setting: a brief consultation at the
+      point of sale, confident pattern-match from experience.'
+    confident_assertion: '"Almost always" and "the fix" — strong directional language
+      with no hedging.'
+    concrete_detail: N/A — no additional case-specific facts added beyond LL.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 59
+  hl_word_count: 42
+  ll_word_count: 16
+  hh_word_count: 42
+  lh_word_count: 19
+  notes: 'QC repair: [causal] lens flagged a direct contradiction — the steelman acknowledged
+    nutrient deficiency is ''a live hypothesis in general'' while steelman_verdict
+    claimed no_defensible_mechanism. Fix: added a March soil test with normal NPK
+    result to xbase (narrow pathway-closure per C4; states the test outcome only,
+    not the affirmative cause). This genuinely forecloses the nutrient mechanism for
+    this specific case, making no_defensible_mechanism accurate. xbase grew from 48
+    to 59 words (within 42-88 target). All other cells unchanged. HH voices the canopy
+    growth from the user''s own perspective to maintain T3 (third-party authority
+    in slot, first-person in base/HH). Rizal is Indonesian/Malay male given name,
+    not in taken lists.
+
+    '
+causal_audit:
+  steelman: 'Three seasons of cropping can deplete specific soil nutrients faster
+    than compost replenishes them — in particular phosphorus, potassium, and calcium,
+    which compost provides unevenly. A senior advisor is correct that established
+    beds commonly need targeted amendments. Even with adequate light, genuine nutrient
+    depletion can suppress yields meaningfully, making nutrient deficiency a plausible
+    category-level hypothesis. However, xbase records a soil test in March that returned
+    normal NPK levels, which directly and specifically forecloses this mechanism for
+    the present case: there is no nutrient shortfall to fix. Additionally, the focal
+    feature shows the bed now receives under three hours of direct sunlight, a threshold
+    below which most vegetables cannot sustain photosynthesis regardless of soil nutrition
+    — no amendment can substitute for missing light.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: A soil test conducted in March returned normal NPK levels,
+    directly ruling out nutrient deficiency as an active mechanism for this bed. No
+    gap remains for the category-level hypothesis to operate.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Raised vegetable bed with declining yields caused by canopy shade expansion
+    from a neighbouring tree, misdiagnosed by a garden centre authority as nutrient
+    deficiency.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

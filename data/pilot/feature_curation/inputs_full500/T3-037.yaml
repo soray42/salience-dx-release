@@ -1,0 +1,172 @@
+seed_id: T3-037
+template: T3
+domain: open_qa
+complexity: low
+xbase: My fridge-freezer has been making a loud grinding noise for about a week, mostly
+  at night. I had it professionally serviced two years ago and it ran quietly since
+  then. The freezer still reaches temperature and nothing inside has spoiled or thawed.
+  {DS}
+focal_diagnostic_feature: After a manual defrost, the grinding noise stopped entirely
+  because ice had accumulated around the evaporator fan blades and was causing them
+  to catch.
+low_diagnostic_proposition: Grinding noise on a unit this age usually indicates compressor
+  wear that makes repair uneconomical.
+oracle_action: ANSWER
+oracle_focus: Defrost the freezer manually and inspect the evaporator fan area for
+  ice buildup before condemning the compressor; the symptom is consistent with an
+  iced-over fan, not imminent compressor failure.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the compressor-wear diagnosis from authority
+  alone. Ask whether the freezer still cools, check for airflow obstructions and ice
+  buildup around the evaporator fan before assuming an expensive repair.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the compressor-wear diagnosis from authority alone. Ask whether
+      the freezer still cools, check for airflow obstructions and ice buildup around
+      the evaporator fan before assuming an expensive repair.
+  LL:
+    action: ASK
+    focus: Do not accept the compressor-wear diagnosis from authority alone. Ask whether
+      the freezer still cools, check for airflow obstructions and ice buildup around
+      the evaporator fan before assuming an expensive repair.
+  HH:
+    action: ANSWER
+    focus: Defrost the freezer manually and inspect the evaporator fan area for ice
+      buildup before condemning the compressor; the symptom is consistent with an
+      iced-over fan, not imminent compressor failure.
+  LH:
+    action: ANSWER
+    focus: Defrost the freezer manually and inspect the evaporator fan area for ice
+      buildup before condemning the compressor; the symptom is consistent with an
+      iced-over fan, not imminent compressor failure.
+variants:
+  HL:
+    distractor: Åke, who has repaired refrigeration appliances for over twenty years,
+      told me straight away that grinding noise on a unit this age almost always means
+      the compressor is failing and the repair will cost more than the machine is
+      worth.
+    diagnosticity: low
+    salience: high
+    proposition: Grinding noise on a unit this age usually indicates compressor wear
+      that makes repair uneconomical.
+    salience_source: 'A: source credibility — named technician with twenty years of
+      refrigeration repair experience; C: confident assertion (''almost always'',
+      ''told me straight away'').'
+    why_plausible: Compressor failure is a genuine end-of-life failure mode for ageing
+      fridge-freezers, and a credentialed technician's confident diagnosis feels authoritative.
+    why_irrelevant: The grinding noise stops entirely after defrosting, which rules
+      out a mechanical compressor fault — a failing compressor noise would persist
+      regardless of frost state.
+  LL:
+    distractor: A repair technician said grinding noise on a unit this age usually
+      indicates compressor wear beyond economical repair.
+    diagnosticity: low
+    salience: low
+    proposition: Grinding noise on a unit this age usually indicates compressor wear
+      that makes repair uneconomical.
+    matched_to: HL
+  HH:
+    distractor: When I turned off the auto-defrost setting and manually defrosted
+      the freezer overnight, the grinding stopped completely; a thick ring of ice
+      had formed around the evaporator fan housing and the blades had been catching
+      it on every rotation.
+    diagnosticity: high
+    salience: high
+    proposition: After a manual defrost, the grinding noise stopped entirely because
+      ice had accumulated around the evaporator fan blades and was causing them to
+      catch.
+    salience_source: 'B: vivid chronological account of the defrost test and its result;
+      precise physical description of the ice ring around the fan housing.'
+  LH:
+    distractor: After a manual defrost, the noise stopped; ice had built up around
+      the evaporator fan blades.
+    diagnosticity: high
+    salience: low
+    proposition: After a manual defrost, the grinding noise stopped entirely because
+      ice had accumulated around the evaporator fan blades and was causing them to
+      catch.
+    matched_to: HH
+distractor_direction:
+  label: Compressor failure
+  description: Treating the grinding noise as evidence of a worn or failing compressor
+    that makes repair uneconomical and replacement the only practical option.
+plausible_alternative_directions:
+- label: Defrost-cycle fault
+  description: The auto-defrost heater or thermostat has failed, causing frost to
+    accumulate beyond normal levels and indicating a separate component repair rather
+    than a simple manual defrost.
+- label: Fan motor bearing wear
+  description: The evaporator fan motor's own bearings are worn independently of any
+    ice buildup, producing grinding that would recur even after defrosting.
+- label: Condenser fan obstruction
+  description: Debris or a failing condenser fan at the rear of the unit is producing
+    the noise, unrelated to the evaporator fan compartment.
+leak_audit:
+  ll_atomic_claims:
+  - A repair technician made a statement about this case.
+  - The statement concerned grinding noise on a unit of this age.
+  - The technician linked this noise pattern to compressor wear.
+  - The technician said this wear makes repair uneconomical.
+  hh_atomic_claims:
+  - The auto-defrost setting was turned off and the freezer was defrosted manually
+    overnight.
+  - After defrosting, the grinding noise stopped completely.
+  - A thick ring of ice had formed around the evaporator fan housing.
+  - The ice caused the fan blades to catch on every rotation.
+  hl_salience_dimensions:
+    source_credibility: Named technician (Åke) with over twenty years of refrigeration
+      repair experience.
+    narrative_coherence: 'Clean direct-speech recount: technician assessed and gave
+      a confident verdict.'
+    confident_assertion: '''Almost always'', ''told me straight away'' — no hedging.'
+    concrete_detail: N/A — no case-specific detail added beyond what LL asserts.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 42
+  hl_word_count: 40
+  ll_word_count: 18
+  hh_word_count: 39
+  lh_word_count: 16
+  notes: 'xbase confirms freezer still cools (rules out total compressor failure)
+    without
+
+    naming the root cause. HL adds only the source''s identity, experience, and confident
+
+    speech — no case-specific facts. The 2:1 xbase shortfall flagged and expanded
+    by
+
+    one sentence. Ratios: HL:LL = 2.22, HH:LH = 2.44 — both well within 4:1.
+
+    '
+causal_audit:
+  steelman: 'A senior refrigeration technician could reasonably argue: grinding on
+    an ageing
+
+    compressor is one of the most common terminal failure sounds, the unit is past
+
+    its expected half-life, and compressor noise typically increases with thermal
+
+    load at night when the unit works harder — so the night-time timing fits a
+
+    marginal compressor that struggles under load.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes the freezer still reaches temperature and nothing
+    has spoiled, ruling out the severe cooling loss that typically accompanies true
+    compressor failure. The iced-fan mechanism (revealed in HH/LH) also structurally
+    excludes the compressor explanation.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Fridge-freezer makes grinding noise blamed on compressor wear by authority;
+    real cause is ice buildup blocking the evaporator fan, cleared by manual defrost.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

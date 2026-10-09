@@ -1,0 +1,28 @@
+{
+  "seed_id": "T5-013",
+  "ll_claims_extracted": [
+    "The vendor SDK documentation has many typos.",
+    "The vendor SDK documentation has formatting errors."
+  ],
+  "hl_case_claims": [
+    "The vendor SDK documentation has typos everywhere.",
+    "The vendor SDK documentation has broken formatting throughout."
+  ],
+  "hl_source_claims": [
+    "A senior mobile engineer at a peer startup is the source.",
+    "The source told the user directly ('told me') — confident first-hand report.",
+    "The source had reviewed the same vendor SDK documentation (basis for their observation)."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 26,
+    "ll": 12,
+    "xbase": 50,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

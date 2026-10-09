@@ -1,0 +1,172 @@
+seed_id: T2-054
+template: T2
+domain: open_qa
+complexity: medium
+xbase: We moved into our rented house two months ago and the place has felt slightly
+  damp ever since, with a faint musty smell in the back bedroom and a couple of patches
+  on the wall that look like they are getting worse. The rest of the house seems fine.
+  We air the rooms when we can and we have not had any obvious leaks from taps or
+  the roof that we have noticed. I want to figure out what is actually driving the
+  damp in that one room. {DS}
+focal_diagnostic_feature: The back bedroom shares a wall with the bathroom, and that
+  wall has no cavity ventilation, so warm moist air condenses on the cold internal
+  surface and feeds the damp patches.
+low_diagnostic_proposition: The damp seemed to start around the time we replaced all
+  the old curtains with heavier blackout ones.
+oracle_action: ANSWER
+oracle_focus: 'Treat this as condensation on the cold internal wall shared with the
+  bathroom: warm moist air is settling on an unventilated surface. Improve that wall''s
+  ventilation and surface warmth and address the bathroom moisture source.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame the new curtains for the damp. Ask where
+  the damp wall sits in the house and whether it adjoins a moisture source like the
+  bathroom.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame the new curtains for the damp. Ask where the damp wall sits
+      in the house and whether it adjoins a moisture source like the bathroom.
+  LL:
+    action: ASK
+    focus: Do not blame the new curtains for the damp. Ask where the damp wall sits
+      in the house and whether it adjoins a moisture source like the bathroom.
+  HH:
+    action: ANSWER
+    focus: 'Treat this as condensation on the cold internal wall shared with the bathroom:
+      warm moist air is settling on an unventilated surface. Improve that wall''s
+      ventilation and surface warmth and address the bathroom moisture source.'
+  LH:
+    action: ANSWER
+    focus: 'Treat this as condensation on the cold internal wall shared with the bathroom:
+      warm moist air is settling on an unventilated surface. Improve that wall''s
+      ventilation and surface warmth and address the bathroom moisture source.'
+variants:
+  HL:
+    distractor: My partner is convinced it all began the weekend we swapped every
+      room's thin old curtains for heavy blackout ones; the back bedroom got the thickest
+      pair of all, and that is the exact week we first noticed the smell and the patches
+      creeping along the wall.
+    diagnosticity: low
+    salience: high
+    proposition: The damp seemed to start around the time we replaced all the old
+      curtains with heavier blackout ones.
+    salience_source: B/C — a confident partner pinning the onset to the curtain-swap
+      weekend with a clean chronology.
+    why_plausible: Heavy fabrics feel like they trap air, so a busy person might loosely
+      associate new blackout curtains with stuffiness and damp.
+    why_irrelevant: Curtains hang in front of windows and do not add water or change
+      the temperature of an internal party wall, so they cannot create damp patches
+      on the bathroom-side wall.
+  LL:
+    distractor: The damp seemed to start around the time we replaced the old curtains
+      with heavier blackout ones.
+    diagnosticity: low
+    salience: low
+    proposition: The damp seemed to start around the time we replaced all the old
+      curtains with heavier blackout ones.
+    matched_to: HL
+  HH:
+    distractor: The damp wall is the one the back bedroom shares with the bathroom,
+      and that party wall has no cavity ventilation; warm humid air off the showers
+      hits its cold internal surface and condenses, which is exactly where the musty
+      smell and the spreading patches sit.
+    diagnosticity: high
+    salience: high
+    proposition: The back bedroom shares a wall with the bathroom, and that wall has
+      no cavity ventilation, so warm moist air condenses on the cold internal surface
+      and feeds the damp patches.
+    salience_source: The shared bathroom wall with no ventilation, matched to where
+      the patches sit, makes the condensation mechanism concrete.
+  LH:
+    distractor: The damp wall adjoins the bathroom and has no cavity ventilation,
+      so moist air condenses on its cold internal surface.
+    diagnosticity: high
+    salience: low
+    proposition: The back bedroom shares a wall with the bathroom, and that wall has
+      no cavity ventilation, so warm moist air condenses on the cold internal surface
+      and feeds the damp patches.
+    matched_to: HH
+distractor_direction:
+  label: New blackout curtains
+  description: Treating the heavier replacement curtains as the cause of the room's
+    damp and musty smell.
+plausible_alternative_directions:
+- label: Rising damp from the ground
+  description: Whether moisture is wicking up from the floor through a failed damp-proof
+    course.
+- label: Hidden plumbing leak
+  description: Whether a concealed pipe behind the wall is slowly leaking into the
+    plaster.
+leak_audit:
+  ll_atomic_claims:
+  - Around the same period the old curtains were replaced with heavier blackout ones.
+  hh_atomic_claims:
+  - The damp wall is the one shared with the bathroom.
+  - That party wall has no cavity ventilation.
+  - Moist air condenses on its cold internal surface where the patches sit.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean chronology pinning onset to the curtain-swap weekend.
+    confident_assertion: Partner is convinced it all began then.
+    concrete_detail: Detail about the setting (thickest pair in the back bedroom)
+      only — no fact about the wall's adjacency or ventilation.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 88
+  hl_word_count: 44
+  ll_word_count: 16
+  hh_word_count: 42
+  lh_word_count: 20
+  notes: 'LL carries only the curtain-replacement timing coincidence; the thickest-pair
+    detail and the convinced-partner
+
+    chronology are HL-only framing about the setting. xbase states the symptom (musty
+    smell and spreading patches in
+
+    one back room, no obvious leaks) but never reveals that the wall adjoins the bathroom
+    or lacks ventilation, so
+
+    the HL/LL cells cannot resolve it. The decisive shared-wall-condensation fact
+    lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One might try to argue the blackout curtains contribute: heavier window
+    coverings can reduce air movement at the
+
+    glass and, in some rooms, slightly raise local humidity near a cold window, nudging
+    condensation. But that
+
+    mechanism acts at the window, not on an internal party wall, and adds no moisture
+    to the house; curtains do not
+
+    change the temperature of the bathroom-side wall or pump humid air into the cavity.
+    The damp here sits on the
+
+    unventilated wall shared with the bathroom, fed by shower moisture condensing
+    on a cold surface — a process
+
+    entirely independent of what hangs over the windows. The curtain coincidence has
+    no constructible mechanism for
+
+    damp on that specific internal wall.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes the damp is confined to one back room while
+    the rest of the house is fine, which a house-wide curtain swap would not produce,
+    weakening the curtain pathway without naming the shared-wall cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Damp in a rented house's back bedroom caused by condensation on an
+    unventilated wall shared with the bathroom, coinciding only by chance with replacing
+    curtains.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,95 @@
+seed_id: T6-005
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: My Docker container starts, but the application inside it cannot connect to
+  our internal company API. The host machine itself can reach other internal resources.
+  {DS}
+focal_diagnostic_feature: Inside the container, `nslookup internal-api.company.local`
+  returns NXDOMAIN, while the same lookup succeeds on the host; the container uses
+  the default bridge network.
+low_diagnostic_proposition: The user's previous Docker networking issues were caused
+  by missing EXPOSE directives.
+oracle_action: ANSWER
+oracle_focus: Configure container DNS or networking for the internal domain; this
+  is resolver configuration, not EXPOSE metadata.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not reuse the EXPOSE explanation. Ask for DNS resolution
+  inside the container versus the host.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not reuse the EXPOSE explanation. Ask for DNS resolution inside the
+      container versus the host.
+  LL:
+    action: ASK
+    focus: Do not reuse the EXPOSE explanation. Ask for DNS resolution inside the
+      container versus the host.
+  HH:
+    action: ANSWER
+    focus: Configure container DNS or networking for the internal domain; this is
+      resolver configuration, not EXPOSE metadata.
+  LH:
+    action: ANSWER
+    focus: Configure container DNS or networking for the internal domain; this is
+      resolver configuration, not EXPOSE metadata.
+variants:
+  HL:
+    distractor: Every Docker networking bug I've hit before was a missing EXPOSE line,
+      so I keep staring at the Dockerfile even though this one feels different.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous Docker networking issues were caused by missing
+      EXPOSE directives.
+    salience_source: familiar past Docker fix, repeated troubleshooting habit
+    why_plausible: EXPOSE is a common source of Docker confusion.
+    why_irrelevant: EXPOSE does not control DNS resolution; NXDOMAIN inside the container
+      points to resolver/network configuration.
+  LL:
+    distractor: Prior Docker networking issues for the user were generally attributed
+      to missing EXPOSE directives.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous Docker networking issues were caused by missing
+      EXPOSE directives.
+    matched_to: HL
+  HH:
+    distractor: Inside the container, `nslookup internal-api.company.local` returns
+      NXDOMAIN; on the host the same name resolves, and the container is just on Docker's
+      default bridge.
+    diagnosticity: high
+    salience: high
+    proposition: Inside the container, `nslookup internal-api.company.local` returns
+      NXDOMAIN, while the same lookup succeeds on the host; the container uses the
+      default bridge network.
+    salience_source: host/container DNS contrast
+  LH:
+    distractor: DNS resolution for the internal hostname fails inside the default-bridge
+      container but succeeds on the host.
+    diagnosticity: high
+    salience: low
+    proposition: Inside the container, `nslookup internal-api.company.local` returns
+      NXDOMAIN, while the same lookup succeeds on the host; the container uses the
+      default bridge network.
+    matched_to: HH
+distractor_direction:
+  label: Missing EXPOSE directive
+  description: Investigating whether Dockerfile EXPOSE metadata is missing or wrong
+    and blocking container connectivity.
+plausible_alternative_directions:
+- label: Container firewall rule
+  description: The container or host firewall may block outbound API traffic.
+- label: Proxy environment missing
+  description: HTTP proxy, NO_PROXY, or certificate environment variables may be absent
+    inside the container.
+- label: API credential issue
+  description: The container may not have valid credentials or tokens for the internal
+    API.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

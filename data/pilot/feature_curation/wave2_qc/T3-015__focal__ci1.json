@@ -1,0 +1,13 @@
+{
+  "seed_id": "T3-015",
+  "my_own_diagnosis": "The screwdriver penetration test ruling out compaction, combined with sparse patches tracking the deepest canopy shade rather than the foot-traffic path, clearly points to shade and root competition as the cause; autumn core aeration is not warranted and shade management with shade-tolerant overseeding is the appropriate recommendation.",
+  "focal_decisive": true,
+  "focal_notes": "Two independent, orthogonal diagnostic signals (negative compaction test + spatial pattern tracking canopy not traffic) jointly and conclusively exclude the distractor direction and confirm the focal direction.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "oracle_action/oracle_focus correctly conclude shade/root competition and reject aeration; low_diagnostic_oracle correctly instructs asking about compaction evidence rather than adopting the distractor; HL/LL cell_oracles map to low-diagnostic oracle and HH/LH map to focal oracle, all consistent.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

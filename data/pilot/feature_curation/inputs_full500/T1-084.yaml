@@ -1,0 +1,190 @@
+seed_id: T1-084
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our RabbitMQ queue depth keeps climbing while our consumer service sits almost
+  idle, barely using any CPU. The consumers are connected and the management UI shows
+  them attached to the queue, but throughput has collapsed to a trickle. We did not
+  change the consumer code or the broker version in this release, and the publishers
+  are sending at their normal rate. {DS}
+focal_diagnostic_feature: Each consumer has a prefetch count of 250 and is holding
+  250 unacknowledged messages while blocked on a slow downstream call, so the broker
+  will not deliver more to channels that have not acknowledged.
+low_diagnostic_proposition: A comparable idle-consumer backlog at another company
+  was caused by consumers silently failing on each message and reconnecting in a loop.
+oracle_action: ANSWER
+oracle_focus: The consumers are saturated with unacknowledged messages because each
+  holds its full prefetch while blocked on a slow downstream call; reduce or fix the
+  downstream latency, lower prefetch, or move slow work off the consumer so messages
+  get acknowledged and the broker resumes delivery.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not import the other company's crash-loop explanation.
+  Ask whether these consumers are actually crashing and reconnecting, or holding unacknowledged
+  messages, and check the prefetch count and unacked depth per channel.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not import the other company's crash-loop explanation. Ask whether these
+      consumers are actually crashing and reconnecting, or holding unacknowledged
+      messages, and check the prefetch count and unacked depth per channel.
+  LL:
+    action: ASK
+    focus: Do not import the other company's crash-loop explanation. Ask whether these
+      consumers are actually crashing and reconnecting, or holding unacknowledged
+      messages, and check the prefetch count and unacked depth per channel.
+  HH:
+    action: ANSWER
+    focus: The consumers are saturated with unacknowledged messages because each holds
+      its full prefetch while blocked on a slow downstream call; reduce or fix the
+      downstream latency, lower prefetch, or move slow work off the consumer so messages
+      get acknowledged and the broker resumes delivery.
+  LH:
+    action: ANSWER
+    focus: The consumers are saturated with unacknowledged messages because each holds
+      its full prefetch while blocked on a slow downstream call; reduce or fix the
+      downstream latency, lower prefetch, or move slow work off the consumer so messages
+      get acknowledged and the broker resumes delivery.
+variants:
+  HL:
+    distractor: Farhad, a senior platform engineer at a firm running a much larger
+      RabbitMQ fleet, swore their queue once climbed exactly like this while consumers
+      looked attached, and the culprit was consumers silently throwing on every message
+      and reconnecting in a tight crash loop.
+    diagnosticity: low
+    salience: high
+    proposition: A comparable idle-consumer backlog at another company was caused
+      by consumers silently failing on each message and reconnecting in a loop.
+    salience_source: A — a senior platform engineer running a larger fleet, asserting
+      a confidently-recalled matching incident.
+    why_plausible: A silent consumer crash-loop genuinely produces attached-looking
+      consumers with no throughput, so it is a natural first guess for an idle-but-connected
+      backlog.
+    why_irrelevant: These consumers are not crash-looping; they hold their full prefetch
+      of unacknowledged messages while blocked downstream, which the broker treats
+      as a busy channel and stops feeding.
+  LL:
+    distractor: At another company a similar backlog occurred because consumers silently
+      failed on each message and reconnected in a loop.
+    diagnosticity: low
+    salience: low
+    proposition: A comparable idle-consumer backlog at another company was caused
+      by consumers silently failing on each message and reconnecting in a loop.
+    matched_to: HL
+  HH:
+    distractor: Each consumer has a prefetch count of 250 and is holding 250 unacknowledged
+      messages while it blocks on a slow downstream call, so the broker refuses to
+      deliver anything more to a channel that has not acked, leaving consumers connected
+      but starved.
+    diagnosticity: high
+    salience: high
+    proposition: Each consumer has a prefetch count of 250 and is holding 250 unacknowledged
+      messages while blocked on a slow downstream call, so the broker will not deliver
+      more to channels that have not acknowledged.
+    salience_source: Exact prefetch number and unacked depth, with the explicit broker
+      delivery rule, make the saturation mechanism concrete and self-evident.
+  LH:
+    distractor: Each consumer holds its full prefetch of unacknowledged messages while
+      blocked downstream, so the broker delivers nothing further.
+    diagnosticity: high
+    salience: low
+    proposition: Each consumer has a prefetch count of 250 and is holding 250 unacknowledged
+      messages while blocked on a slow downstream call, so the broker will not deliver
+      more to channels that have not acknowledged.
+    matched_to: HH
+distractor_direction:
+  label: Silent consumer crash-loop
+  description: Investigating whether the consumers are repeatedly throwing on each
+    message and reconnecting, leaving them attached but unproductive.
+plausible_alternative_directions:
+- label: Downstream dependency stall
+  description: Whether a downstream service the consumers call has slowed
+  blocking message processing.: null
+- label: Prefetch/QoS misconfiguration
+  description: Whether the channel prefetch and acknowledgement settings are throttling
+    delivery.
+- label: Broker flow control
+  description: Whether the broker has entered a resource alarm state affecting delivery.
+leak_audit:
+  ll_atomic_claims:
+  - At another company a similar idle-consumer backlog occurred.
+  - The cause there was consumers silently failing on each message and reconnecting
+    in a loop.
+  hh_atomic_claims:
+  - Each consumer has a prefetch count of 250.
+  - Each consumer is holding 250 unacknowledged messages while blocked on a slow downstream
+    call.
+  - The broker refuses to deliver more to a channel that has not acknowledged, so
+    consumers stay connected but starved.
+  hl_salience_dimensions:
+    source_credibility: Senior platform engineer at a firm with a larger RabbitMQ
+      fleet.
+    narrative_coherence: A clean recalled-incident narrative matching the present
+      symptom.
+    confident_assertion: '''Swore'', ''the culprit was'' — confident attribution.'
+    concrete_detail: Vivid framing of the past incident (consumers looking attached,
+      tight crash loop) — about the source's case, not this one.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 61
+  hl_word_count: 43
+  ll_word_count: 19
+  hh_word_count: 42
+  lh_word_count: 18
+  notes: 'Clean T1: a silent consumer crash-loop is a real general cause of attached-but-idle
+    consumers, so the anecdote
+
+    is not absurd — but the focal feature (full prefetch of unacknowledged messages
+    held while blocked downstream)
+
+    shows these consumers are busy waiting, not crashing. xbase deliberately keeps
+    only symptoms (connected, low CPU,
+
+    trickle throughput, normal publisher rate) and does not reveal the unacked-prefetch
+    state, so a reader cannot
+
+    distinguish crash-loop from downstream-block from xbase alone. Chose this distractor
+    over a DNS-resolution or
+
+    memory-watermark story because both of those are independently rejectable from
+    xbase (consumers are connected;
+
+    publishers send normally), which would break C4.
+
+    '
+causal_audit:
+  steelman: 'A senior engineer could argue that a consumer throwing an unhandled exception
+    on every delivery, with automatic
+
+    connection recovery, would reconnect, re-register, and immediately fail again
+    — producing exactly the picture of
+
+    attached consumers, near-zero CPU between attempts, and a climbing queue. It is
+    a genuine real-world failure mode.
+
+    But it does not describe this case: the focal evidence shows each consumer holding
+    its entire prefetch of
+
+    unacknowledged messages while blocked on a downstream call, which is the signature
+    of a busy, non-acking channel,
+
+    not a crash loop, so the crash-loop direction cannot inform this incident.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the decisive unacked-prefetch state is intentionally
+    withheld from xbase; xbase carries only ambiguous symptoms consistent with several
+    causes.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A RabbitMQ backlog with idle-looking consumers caused by each consumer
+    holding its full prefetch of unacknowledged messages while blocked downstream,
+    not the silent consumer crash-loop a senior peer recalled.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

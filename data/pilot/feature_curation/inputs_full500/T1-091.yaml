@@ -1,0 +1,177 @@
+seed_id: T1-091
+template: T1
+domain: open_qa
+complexity: medium
+xbase: A pipe under my kitchen sink leaked over the weekend and warped a section of
+  the laminate flooring. A contractor quoted me €620 to pull up and relay the damaged
+  area. I have a home contents and buildings policy and I'm trying to decide whether
+  to file a claim or just pay for the repair myself. The leak is fully fixed now and
+  there is no ongoing damage. I want to make the financially sensible choice here.
+  {DS}
+focal_diagnostic_feature: The policy's water-damage excess is €500 and this insurer
+  steps the renewal premium up after any claim, so a €620 claim returns roughly €120
+  once while adding recurring premium cost.
+low_diagnostic_proposition: A neighbour's water-damage insurance claim was paid out
+  promptly and covered their repair in full.
+oracle_action: ANSWER
+oracle_focus: Pay for the €620 repair yourself rather than claiming; after the €500
+  excess the claim nets only about €120 once, while the post-claim premium step-up
+  costs more than that over the following renewals.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not decide from a neighbour's smooth payout. Ask what
+  the policy's excess is and how a claim affects the user's renewal premium before
+  judging whether claiming is worthwhile.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not decide from a neighbour's smooth payout. Ask what the policy's excess
+      is and how a claim affects the user's renewal premium before judging whether
+      claiming is worthwhile.
+  LL:
+    action: ASK
+    focus: Do not decide from a neighbour's smooth payout. Ask what the policy's excess
+      is and how a claim affects the user's renewal premium before judging whether
+      claiming is worthwhile.
+  HH:
+    action: ANSWER
+    focus: Pay for the €620 repair yourself rather than claiming; after the €500 excess
+      the claim nets only about €120 once, while the post-claim premium step-up costs
+      more than that over the following renewals.
+  LH:
+    action: ANSWER
+    focus: Pay for the €620 repair yourself rather than claiming; after the €500 excess
+      the claim nets only about €120 once, while the post-claim premium step-up costs
+      more than that over the following renewals.
+variants:
+  HL:
+    distractor: Réka two doors down had a washing-machine hose burst and flood her
+      kitchen last winter; she told me over the fence that she filed a claim with
+      her home insurer, the assessor came within days, and the whole repair was paid
+      out without any hassle.
+    diagnosticity: low
+    salience: high
+    proposition: A neighbour's water-damage insurance claim was paid out promptly
+      and covered their repair in full.
+    salience_source: A — a named neighbour describing a recent, concrete payout on
+      a similar water incident makes claiming feel like the obvious move.
+    why_plausible: Insurers do pay valid water-damage claims, so a smooth nearby payout
+      suggests the user should simply claim and be reimbursed.
+    why_irrelevant: Whether the neighbour was paid says nothing about THIS user's
+      excess and premium step-up, which are what determine the net value of claiming.
+  LL:
+    distractor: A neighbour filed a water-damage claim that was paid out promptly
+      and covered their repair fully.
+    diagnosticity: low
+    salience: low
+    proposition: A neighbour's water-damage insurance claim was paid out promptly
+      and covered their repair in full.
+    matched_to: HL
+  HH:
+    distractor: Reading the schedule, my water-damage excess is €500, so a €620 claim
+      would put only about €120 back in my pocket once; and this insurer bumps the
+      renewal premium after any claim, which over the next couple of renewals costs
+      more than that €120.
+    diagnosticity: high
+    salience: high
+    proposition: The policy's water-damage excess is €500 and this insurer steps the
+      renewal premium up after any claim, so a €620 claim returns roughly €120 once
+      while adding recurring premium cost.
+    salience_source: Laying the €500 excess against the €620 quote and the recurring
+      premium step-up makes the net loss from claiming concrete and decisive.
+  LH:
+    distractor: The excess is €500 on a €620 repair, and a claim raises the renewal
+      premium, so claiming nets about €120 once and costs more over time.
+    diagnosticity: high
+    salience: low
+    proposition: The policy's water-damage excess is €500 and this insurer steps the
+      renewal premium up after any claim, so a €620 claim returns roughly €120 once
+      while adding recurring premium cost.
+    matched_to: HH
+distractor_direction:
+  label: Smooth-payout precedent
+  description: Treating a neighbour's prompt, full water-damage payout as evidence
+    that the user should file a claim and be reimbursed.
+plausible_alternative_directions:
+- label: Future-claims record risk
+  description: Whether logging a small claim now could affect insurability or pricing
+    on later
+  larger losses.: null
+- label: Hidden structural damage
+  description: Whether the leak may have caused unseen subfloor or cabinet damage
+    exceeding the visible quote
+  changing the math.: null
+leak_audit:
+  ll_atomic_claims:
+  - A neighbour filed a water-damage insurance claim.
+  - That claim was paid out promptly and covered their repair in full.
+  hh_atomic_claims:
+  - The policy's water-damage excess is €500.
+  - The repair quote is €620, so a claim nets about €120 once.
+  - The insurer raises the renewal premium after any claim, costing more than €120
+    over time.
+  hl_salience_dimensions:
+    source_credibility: Named neighbour (Réka) recounting her own recent claim.
+    narrative_coherence: Coherent burst-hose, assessor-visit, paid-out sequence.
+    confident_assertion: States the repair was paid out without any hassle.
+    concrete_detail: Detail about the source's incident (washing-machine hose, last
+      winter, fast assessor) only — no claim about this user's excess or premium.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 82
+  hl_word_count: 42
+  ll_word_count: 14
+  hh_word_count: 44
+  lh_word_count: 27
+  notes: 'xbase gives the loss, the €620 quote, and that a policy exists, but deliberately
+    withholds the excess amount and
+
+    the premium-step-up behaviour, so HL/LL cannot compute whether claiming pays;
+    the decisive excess-and-premium
+
+    math lives only in HH/LH. The €620 quote in xbase is one input the user already
+    knows; it is not decisive
+
+    without the excess, which is focal. HL adds only the neighbour''s identity and
+    her separate incident; LL keeps the
+
+    bare payout claim.
+
+    '
+causal_audit:
+  steelman: 'An insurance broker could argue the neighbour''s experience is genuinely
+    relevant: a smooth, full payout on a
+
+    comparable domestic water loss shows the insurer treats this peril favourably,
+    which lowers the friction-and-
+
+    rejection risk of claiming and pushes toward filing. But that argument addresses
+    whether a claim would be PAID,
+
+    not whether it is WORTH filing. With a €500 excess on a €620 repair and a premium
+    step-up after any claim, the
+
+    net economics are unfavourable regardless of how smoothly the insurer pays. The
+    neighbour''s payout cannot change
+
+    this user''s excess or premium structure, so it has no mechanism to make claiming
+    the sensible choice here.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the leak is fully fixed with no ongoing damage,
+    foreclosing the 'claim to stop escalating loss' pathway; the excess-versus-quote
+    and premium-step-up math still lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A homeowner weighing a water-damage insurance claim, where a €500 excess
+    on a €620 repair plus a post-claim premium step-up, not a neighbour's smooth payout,
+    is decisive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,97 @@
+seed_id: T2-006
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: 我的 Python 脚本用于从一个公开网站采集页面，两天前开始返回 403 Forbidden。该脚本已稳定运行六个月，每天执行一次。网站的 robots.txt
+  文件看起来没有变化。{DS}
+focal_diagnostic_feature: 脚本以 Python user-agent 标识自身，而网站服务条款禁止自动化访问。
+low_diagnostic_proposition: The 403s began shortly after a peripheral hardware change
+  on the user's desk.
+oracle_action: ANSWER
+oracle_focus: Stop treating this as a bypass problem; the site is likely enforcing
+  anti-automation rules. Use an official API or request permission.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a local desk hardware change to remote
+  HTTP 403s. Ask for request headers, user-agent, ToS/API policy, and whether manual
+  browser access differs.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a local desk hardware change to remote HTTP 403s. Ask for
+      request headers, user-agent, ToS/API policy, and whether manual browser access
+      differs.
+  LL:
+    action: ASK
+    focus: Do not connect a local desk hardware change to remote HTTP 403s. Ask for
+      request headers, user-agent, ToS/API policy, and whether manual browser access
+      differs.
+  HH:
+    action: ANSWER
+    focus: Stop treating this as a bypass problem; the site is likely enforcing anti-automation
+      rules. Use an official API or request permission.
+  LH:
+    action: ANSWER
+    focus: Stop treating this as a bypass problem; the site is likely enforcing anti-automation
+      rules. Use an official API or request permission.
+variants:
+  HL:
+    distractor: 问题恰好从我把旧显示器换成一台 27 英寸的新屏幕、并重新整理了桌下所有走线的第二天早上开始出现。
+    diagnosticity: low
+    salience: high
+    proposition: The 403s began shortly after a peripheral hardware change on the
+      user's desk.
+    salience_source: exact temporal order, concrete hardware change
+    why_plausible: Users often associate any recent setup change with a new failure.
+    why_irrelevant: A monitor change cannot cause a remote server to send policy-based
+      403 responses to an automated user-agent.
+  LL:
+    distractor: 问题出现的时间恰逢本地工作站的一次外设更换。
+    diagnosticity: low
+    salience: low
+    proposition: The 403s began shortly after a peripheral hardware change on the
+      user's desk.
+    matched_to: HL
+  HH:
+    distractor: '请求头里明确写着 `User-Agent: Python-urllib`，而网站的条款明确表示禁止自动化采集。'
+    diagnosticity: high
+    salience: high
+    proposition: The script identifies itself with a Python user-agent and the site's
+      terms prohibit automated access.
+    salience_source: request-header and policy evidence
+  LH:
+    distractor: 该脚本声明了 Python user-agent，而目标网站的服务条款禁止自动化访问。
+    diagnosticity: high
+    salience: low
+    proposition: The script identifies itself with a Python user-agent and the site's
+      terms prohibit automated access.
+    matched_to: HH
+distractor_direction:
+  label: 工作站外设更换
+  description: 调查本地桌面硬件或外设的更换是否以某种方式影响了爬虫脚本。
+plausible_alternative_directions:
+- label: IP 信誉封锁
+  description: 网站因信誉或请求量原因封锁了用户 IP 段的请求。
+- label: 身份验证需求变更
+  description: 网站现在要求对原本公开的页面进行登录、提供 cookie 或 token。
+- label: 速率限制执行
+  description: 公开网站开始对每个客户端执行更严格的请求频率限制。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-006.yaml
+  source_xbase_sha256: 009c07863b07b10e
+  translated_content_sha256: 9aefdbe285f74218
+  translation_notes: 'Python、robots.txt、user-agent、User-Agent、Python-urllib、403 Forbidden、cookie、token、IP、HTTP
+    均保留英文技术术语。HH 中的代码字面量 `User-Agent: Python-urllib` 原样保留。HL 中''27 英寸''和''重新整理走线''等具体细节保留以维持高显著性。robots.txt
+    保留英文，因该术语在中文技术语境中通常不翻译。'

@@ -1,0 +1,187 @@
+seed_id: T3-088
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our RabbitMQ queue is experiencing a message redelivery storm. The same messages
+  cycle back to the queue within seconds of being delivered, and the queue depth oscillates
+  but never drains. Consumer instances are healthy and their logs show no exceptions.
+  We have not changed consumer code this week. {DS}
+focal_diagnostic_feature: The channel prefetch count is set to 1 and nack-with-requeue
+  is configured to true, so each consumer holds at most one message, nacks it synchronously
+  after an internal timeout, and immediately re-enqueues it — creating a permanent
+  loop without any consumer bug.
+low_diagnostic_proposition: A principal engineer asserts that a RabbitMQ redelivery
+  storm is a classic sign of consumer-side exception handling errors and the consumer
+  code needs a review.
+oracle_action: ANSWER
+oracle_focus: 'Fix the channel configuration: raise the prefetch count to allow pipeline
+  throughput and ensure nack is only used for genuinely unprocessable messages; the
+  current loop is a broker-configuration artefact, not a consumer bug.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept a blanket consumer-bug diagnosis from seniority
+  alone. Ask for the channel QoS prefetch setting, the nack-requeue configuration,
+  and whether consumer logs show any processing errors before reviewing consumer code.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept a blanket consumer-bug diagnosis from seniority alone. Ask
+      for the channel QoS prefetch setting, the nack-requeue configuration, and whether
+      consumer logs show any processing errors before reviewing consumer code.
+  LL:
+    action: ASK
+    focus: Do not accept a blanket consumer-bug diagnosis from seniority alone. Ask
+      for the channel QoS prefetch setting, the nack-requeue configuration, and whether
+      consumer logs show any processing errors before reviewing consumer code.
+  HH:
+    action: ANSWER
+    focus: 'Fix the channel configuration: raise the prefetch count to allow pipeline
+      throughput and ensure nack is only used for genuinely unprocessable messages;
+      the current loop is a broker-configuration artefact, not a consumer bug.'
+  LH:
+    action: ANSWER
+    focus: 'Fix the channel configuration: raise the prefetch count to allow pipeline
+      throughput and ensure nack is only used for genuinely unprocessable messages;
+      the current loop is a broker-configuration artefact, not a consumer bug.'
+variants:
+  HL:
+    distractor: Dariush — our principal engineer, who designed the company's first
+      three message-broker integrations — looked at the oscillating queue depth graph
+      and said this is a textbook consumer exception-handling failure, and that we
+      need to audit the consumer code.
+    diagnosticity: low
+    salience: high
+    proposition: A principal engineer asserts that a RabbitMQ redelivery storm is
+      a classic sign of consumer-side exception handling errors and the consumer code
+      needs a review.
+    salience_source: A/C — named principal engineer with concrete institutional credential
+      (designed first three broker integrations), plus a confident 'textbook' framing
+      of the symptom.
+    why_plausible: Redelivery storms frequently do originate from consumer exception
+      loops, and a senior engineer pattern-matching on queue oscillation would reasonably
+      flag consumer code first.
+    why_irrelevant: The assertion is based on pattern-matching against the queue graph,
+      not on the channel configuration; the focal feature shows the redelivery cycle
+      is fully explained by prefetch=1 and nack-with-requeue=true — a configuration-layer
+      cause that produces identical symptoms without any consumer code error.
+  LL:
+    distractor: A principal engineer stated that a RabbitMQ redelivery storm is a
+      classic sign of consumer exception-handling errors requiring a consumer code
+      review.
+    diagnosticity: low
+    salience: low
+    proposition: A principal engineer asserts that a RabbitMQ redelivery storm is
+      a classic sign of consumer-side exception handling errors and the consumer code
+      needs a review.
+    matched_to: HL
+  HH:
+    distractor: The channel QoS shows prefetch_count=1, and the client library is
+      configured with nack-with-requeue=true on every delivery tag; each consumer
+      grabs exactly one message, times out after its internal deadline, nacks and
+      requeues it — the queue graph oscillates because no message ever completes,
+      not because of any exception in the consumer logic.
+    diagnosticity: high
+    salience: high
+    proposition: The channel prefetch count is set to 1 and nack-with-requeue is configured
+      to true, so each consumer holds at most one message, nacks it synchronously
+      after an internal timeout, and immediately re-enqueues it — creating a permanent
+      loop without any consumer bug.
+    salience_source: B/C — exact configuration values (prefetch_count=1, nack-with-requeue=true),
+      precise mechanistic explanation of the loop, and an explicit exoneration of
+      consumer logic make the finding vivid and decisive.
+  LH:
+    distractor: Channel QoS is set to prefetch_count=1 and the client uses nack-with-requeue=true,
+      causing each message to be nacked and re-enqueued before completion.
+    diagnosticity: high
+    salience: low
+    proposition: The channel prefetch count is set to 1 and nack-with-requeue is configured
+      to true, so each consumer holds at most one message, nacks it synchronously
+      after an internal timeout, and immediately re-enqueues it — creating a permanent
+      loop without any consumer bug.
+    matched_to: HH
+distractor_direction:
+  label: Consumer exception-handling bug
+  description: Treating the redelivery storm as caused by unhandled or poorly handled
+    exceptions in the consumer application code that trigger repeated nacks.
+plausible_alternative_directions:
+- label: Dead-letter queue misconfiguration
+  description: Checking whether the dead-letter exchange or routing key is absent
+    or misconfigured, causing poison messages to re-enqueue instead of routing to
+    a DLQ.
+- label: Message TTL expiry loop
+  description: Assessing whether per-message TTL is expiring messages back into the
+    queue before consumers can acknowledge them.
+- label: Consumer connection churn
+  description: Investigating whether consumers are disconnecting and reconnecting
+    rapidly, causing unacked messages to be requeued by the broker on each disconnect.
+leak_audit:
+  ll_atomic_claims:
+  - A principal engineer stated that a RabbitMQ redelivery storm is a classic sign
+    of consumer exception-handling errors.
+  - The principal engineer concluded the consumer code requires a review.
+  hh_atomic_claims:
+  - The channel QoS shows prefetch_count=1.
+  - The client library is configured with nack-with-requeue=true on every delivery
+    tag.
+  - Each consumer grabs one message, times out after its internal deadline, then nacks
+    and requeues it.
+  - No message ever completes, causing the oscillating queue graph.
+  - The loop has no consumer-logic exception as its cause.
+  hl_salience_dimensions:
+    source_credibility: Named principal engineer (Dariush) with specific institutional
+      credential — designed the company's first three broker integrations.
+    narrative_coherence: 'Short professional anecdote: engineer reviews queue graph
+      and delivers a confident pattern-based verdict.'
+    confident_assertion: '''textbook consumer exception-handling failure'', ''need
+      to audit the consumer code''.'
+    concrete_detail: Concrete detail is about the source's institutional history (three
+      integrations), not about channel configuration or message flow.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 66
+  hl_word_count: 39
+  ll_word_count: 21
+  hh_word_count: 48
+  lh_word_count: 20
+  notes: 'Consumer exception-handling bugs are genuinely the most common cause of
+    RabbitMQ redelivery storms, making the distractor highly plausible (C2 steelman
+    is strong). The focal feature (prefetch=1 + nack-with-requeue=true) is a distinct
+    configuration-layer cause that produces identical symptoms and is structurally
+    separate from consumer logic — cleanly passes C3/C4.
+
+    QC repair: removed ''before touching anything else'' from HL distractor — that
+    phrase was a priority-sequencing / effort-descriptor case claim absent from LL,
+    constituting a C1 leak. HL word count updated from 46 to 39.
+
+    '
+causal_audit:
+  steelman: 'A senior messaging systems engineer would immediately and correctly identify
+    consumer exception loops as the most frequent root cause of RabbitMQ redelivery
+    storms. Consumer code that nacks every message due to an unhandled exception produces
+    identical queue oscillation. The principal engineer''s pattern-match is statistically
+    well-grounded. However, the focal feature establishes that the cause here is at
+    the channel configuration layer, not the consumer logic layer: prefetch_count=1
+    forces sequential single-message processing, and nack-with-requeue=true on every
+    delivery tag means any consumer timeout (even without an exception) re-enqueues
+    the message. Consumer logs show no exceptions, which is consistent with a configuration-layer
+    loop and inconsistent with a consumer-bug loop.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes consumer logs show no exceptions, which blocks
+    the consumer-exception mechanism the distractor relies on — within C4's boundary
+    because it names no affirmative cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: 'RabbitMQ redelivery storm: principal engineer blames consumer exception
+    handling, but channel prefetch_count=1 plus nack-with-requeue=true creates a configuration-layer
+    loop with no consumer bug.'
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

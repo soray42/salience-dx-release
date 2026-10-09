@@ -1,0 +1,19 @@
+{
+  "seed_id": "T2-016",
+  "my_own_diagnosis": "From xbase alone, the cosmetic-only template redesign (same fields, same positions) has no plausible mechanism for payment delay, leaving client-side causes open; the focal_diagnostic_feature then delivers the AP chain restructuring as the concrete client-side cause, pointing clearly to an ASK action about what changed in the client's approval process.",
+  "focal_decisive": true,
+  "focal_notes": "The focal feature is fully decisive: it explicitly forecloses the cosmetic-design pathway (no field/position changes) and names AP chain restructuring as the confirmed causal factor, leaving no ambiguity about direction.",
+  "direction_overlaps": [
+    {
+      "a": "focal: AP chain restructuring",
+      "b": "alternative: new or changed payment approver",
+      "why": "An AP chain restructuring necessarily involves new or changed approvers and the same mechanism (longer approval cycle); the alternative is a specific instance that partially subsumes the focal direction from a blind-judge perspective."
+    }
+  ],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "Cell oracles correctly map HL/LL to the low-diagnostic oracle (reject visual-redesign story) and HH/LH to the focal oracle (ask about AP chain restructuring); low_diagnostic_oracle_focus properly instructs non-adoption of the distractor.",
+  "answerable": true,
+  "verdict": "fail",
+  "repair_hint": "Reframe 'new or changed payment approver' alternative to distinguish it clearly from AP chain restructuring — e.g., scope it as a unilateral personnel departure (key approver left/on leave) with no structural process change, so the mechanism differs from a deliberate organizational restructuring of the approval chain."
+}

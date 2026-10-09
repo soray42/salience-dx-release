@@ -1,0 +1,175 @@
+seed_id: T2-089
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: When I flip a feature flag in our admin panel, most users do not see the change
+  for a long time, sometimes most of a day, even though the change is saved correctly
+  server-side. Eventually everyone catches up without me doing anything. The flag
+  service itself reports the new value immediately when I query it. The flag values
+  are delivered to clients as a small JSON document through our CDN. {DS}
+focal_diagnostic_feature: The origin sends Cache-Control max-age=86400 on the flag
+  JSON, so the CDN serves the previous flag document from cache for up to a day before
+  it expires and refetches.
+low_diagnostic_proposition: The delayed flag propagation began the same week the office
+  installed a new espresso machine in the kitchen.
+oracle_action: ANSWER
+oracle_focus: Lower the Cache-Control max-age on the flag JSON (or purge/version it
+  on change) so the CDN stops serving a day-old cached flag document and clients pick
+  up flips promptly.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a kitchen appliance to flag propagation.
+  Ask how long the CDN caches the flag JSON and what Cache-Control the origin sends
+  on it.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a kitchen appliance to flag propagation. Ask how long the
+      CDN caches the flag JSON and what Cache-Control the origin sends on it.
+  LL:
+    action: ASK
+    focus: Do not connect a kitchen appliance to flag propagation. Ask how long the
+      CDN caches the flag JSON and what Cache-Control the origin sends on it.
+  HH:
+    action: ANSWER
+    focus: Lower the Cache-Control max-age on the flag JSON (or purge/version it on
+      change) so the CDN stops serving a day-old cached flag document and clients
+      pick up flips promptly.
+  LH:
+    action: ANSWER
+    focus: Lower the Cache-Control max-age on the flag JSON (or purge/version it on
+      change) so the CDN stops serving a day-old cached flag document and clients
+      pick up flips promptly.
+variants:
+  HL:
+    distractor: I keep coming back to the fact that this whole lag started the same
+      week the office finally installed that big new espresso machine in the kitchen;
+      the timing is almost too neat.
+    diagnosticity: low
+    salience: high
+    proposition: The delayed flag propagation began the same week the office installed
+      a new espresso machine in the kitchen.
+    salience_source: B/C — a confident first-person 'almost too neat' framing with
+      a vivid kitchen scene makes the coincidence feel like a lead.
+    why_plausible: Humans anchor hard on 'it started exactly when X changed', and
+      the espresso-machine timing is memorable and specific.
+    why_irrelevant: A kitchen espresso machine has no path to how a CDN caches and
+      delivers flag JSON to clients; it cannot affect cache TTL or propagation.
+  LL:
+    distractor: The delayed flag propagation began the same week a new espresso machine
+      was installed in the office kitchen.
+    diagnosticity: low
+    salience: low
+    proposition: The delayed flag propagation began the same week the office installed
+      a new espresso machine in the kitchen.
+    matched_to: HL
+  HH:
+    distractor: 'Checking the response headers, the origin sends Cache-Control: max-age=86400
+      on the flag JSON, so the CDN holds the previous flag document for up to a full
+      day before it expires; that exactly matches the most-of-a-day delay before flips
+      appear.'
+    diagnosticity: high
+    salience: high
+    proposition: The origin sends Cache-Control max-age=86400 on the flag JSON, so
+      the CDN serves the previous flag document from cache for up to a day before
+      it expires and refetches.
+    salience_source: Quoting the 86400-second max-age and matching it to the day-long
+      delay makes the cache cause concrete and decisive.
+  LH:
+    distractor: The flag JSON carries Cache-Control max-age=86400, so the CDN serves
+      the old flag document for up to a day before refetching.
+    diagnosticity: high
+    salience: low
+    proposition: The origin sends Cache-Control max-age=86400 on the flag JSON, so
+      the CDN serves the previous flag document from cache for up to a day before
+      it expires and refetches.
+    matched_to: HH
+distractor_direction:
+  label: Espresso-machine timing
+  description: Treating the coincidental installation of a new office espresso machine
+    as connected to the delayed flag propagation.
+plausible_alternative_directions:
+- label: Client-side polling interval
+  description: Whether clients only re-fetch the flag document on a long polling interval
+  delaying visibility of changes.: null
+- label: Stale write replication
+  description: Whether the flag store's writes take time to replicate before the new
+    value is readable by edge fetches.
+leak_audit:
+  ll_atomic_claims:
+  - A new espresso machine was installed in the office kitchen.
+  - The delayed flag propagation began that same week.
+  hh_atomic_claims:
+  - The origin sends Cache-Control max-age=86400 on the flag JSON.
+  - The CDN therefore serves the previous flag document for up to a day before expiry.
+  - That matches the most-of-a-day delay before flips appear.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person 'started the same week' chronology around the
+      install.
+    confident_assertion: Frames the timing as almost too neat to be coincidence.
+    concrete_detail: Detail about the setting event (the espresso machine install)
+      only — no claim about the flag system.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 75
+  hl_word_count: 33
+  ll_word_count: 17
+  hh_word_count: 41
+  lh_word_count: 22
+  notes: 'QC repair: removed ''half the team was buzzing on flat whites the morning
+    the delays first showed up'' from HL —
+
+    that clause was coffee-scene sensory noise (sensory_distractor_about_setting)
+    appended after the core coincidence
+
+    claim, violating C6. HL now ends at ''…the timing is almost too neat.'' The first-person
+    rumination alone
+
+    supplies T2 salience via narrative coherence and confident framing. hl_word_count
+    corrected from 46 to 33.
+
+    xbase reports the symptom (flag flips take ~a day, eventually self-resolve, flag
+    service returns new value
+
+    immediately, JSON delivered via CDN) but withholds the Cache-Control value, so
+    HL/LL cannot resolve the cause;
+
+    the decisive max-age lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'To steelman the espresso-machine timing as causal, I would need a path
+    from a kitchen appliance to CDN cache
+
+    behaviour or client flag delivery. An espresso machine draws power and makes noise;
+    it touches neither the
+
+    origin''s Cache-Control headers, the CDN''s caching of the flag JSON, nor the
+    clients'' fetch logic. There is no
+
+    network, configuration, or deployment coupling between installing a kitchen appliance
+    and how long a CDN holds a
+
+    cached document. The coincidence is pure temporal correlation with no constructible
+    mechanism for the symptom,
+
+    which is governed entirely by the flag JSON''s cache lifetime.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Feature-flag flips take a day to reach users because the flag JSON's
+    Cache-Control max-age lets the CDN serve it stale, unrelated to a coincidental
+    office espresso-machine install.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,9 @@
+{
+  "seed_id": "T1-012",
+  "steelman": "Synchronous consumer-side database lookups are a textbook Kafka single-partition lag cause and would be near the top of any senior engineer's differential: if the consumer assigned to partition 7 performs a blocking external call per message while the other nine consumers do not, that partition lags in isolation — precisely the pattern observed. A defender could argue that the reported 'message processing time' metric might reflect only framework-level callback duration and exclude time spent waiting on an external service inside the callback, meaning the metric could be misleading about wall-clock throughput. The anecdote from a peer fintech post-mortem describing the exact same single-partition lag symptom provides additional prior plausibility. A cautious practitioner might insist on ruling this out by examining consumer thread wall-clock time and network I/O before concluding consumer-side throughput is fine.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Synchronous external call (e.g., DB lookup) inside the consume loop slows the consumer assigned to partition 7, reducing per-message throughput on that partition while all other consumers remain unaffected.",
+  "pathway_closure_check": "effective",
+  "notes": "Xbase explicitly states 'message processing time matches the other partitions exactly' and consumer poll latency is under 5 ms — both identical to the healthy partitions. If synchronous DB lookups were occurring, message processing time would be measurably elevated on partition 7 relative to others; the stated equality forecloses that mechanism. Broker-2 at 95% disk I/O provides a complete broker-side alternative explanation, reinforcing closure. The focal_diagnostic_feature restates the same closure. Seed is clean on this lens."
+}

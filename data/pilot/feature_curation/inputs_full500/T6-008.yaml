@@ -1,0 +1,91 @@
+seed_id: T6-008
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I'm choosing between two phone plans. Plan A is a cheaper plan with a fixed
+  data cap. Plan B is a more expensive unlimited plan. I mostly use Wi-Fi at home
+  and work. {DS}
+focal_diagnostic_feature: Plan A costs €12/month with 20GB data, Plan B costs €35/month
+  unlimited, and the user's usage has stayed between 8 and 12GB for 18 months.
+low_diagnostic_proposition: The user recalls peers having bad outcomes after choosing
+  cheaper capped phone plans.
+oracle_action: ANSWER
+oracle_focus: Choose Plan A unless expected usage changes materially; the unlimited
+  plan's premium is not justified by the usage history.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let friends' overage stories decide it. Ask for
+  actual monthly usage, overage rules, and expected changes.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let friends' overage stories decide it. Ask for actual monthly usage,
+      overage rules, and expected changes.
+  LL:
+    action: ASK
+    focus: Do not let friends' overage stories decide it. Ask for actual monthly usage,
+      overage rules, and expected changes.
+  HH:
+    action: ANSWER
+    focus: Choose Plan A unless expected usage changes materially; the unlimited plan's
+      premium is not justified by the usage history.
+  LH:
+    action: ANSWER
+    focus: Choose Plan A unless expected usage changes materially; the unlimited plan's
+      premium is not justified by the usage history.
+variants:
+  HL:
+    distractor: Every time my friends picked cheap phone plans, they ended up stranded
+      with no data at the worst moment, so unlimited feels safer.
+    diagnosticity: low
+    salience: high
+    proposition: The user recalls peers having bad outcomes after choosing cheaper
+      capped phone plans.
+    salience_source: friend availability stories, worst-moment framing, safety language
+    why_plausible: Stories about losing connectivity are vivid and easy to imagine.
+    why_irrelevant: The user's own usage distribution is the relevant evidence for
+      a recurring plan choice.
+  LL:
+    distractor: The user recalls peers having unfavourable outcomes after choosing
+      lower-cost capped phone plans.
+    diagnosticity: low
+    salience: low
+    proposition: The user recalls peers having bad outcomes after choosing cheaper
+      capped phone plans.
+    matched_to: HL
+  HH:
+    distractor: Plan A is €12 for 20GB, Plan B is €35 unlimited, and my usage log
+      has sat between 8 and 12GB every month for a year and a half.
+    diagnosticity: high
+    salience: high
+    proposition: Plan A costs €12/month with 20GB data, Plan B costs €35/month unlimited,
+      and the user's usage has stayed between 8 and 12GB for 18 months.
+    salience_source: usage history versus plan cap
+  LH:
+    distractor: Plan A costs €12/month for 20GB; Plan B costs €35/month unlimited;
+      historical usage is 8-12GB/month over 18 months.
+    diagnosticity: high
+    salience: low
+    proposition: Plan A costs €12/month with 20GB data, Plan B costs €35/month unlimited,
+      and the user's usage has stayed between 8 and 12GB for 18 months.
+    matched_to: HH
+distractor_direction:
+  label: Capped-plan regret
+  description: Investigating whether peers’ bad outcomes on cheap capped plans imply
+    the user should choose unlimited.
+plausible_alternative_directions:
+- label: Network coverage
+  description: The providers may differ in coverage quality where the user lives and
+    works.
+- label: Roaming need
+  description: International travel or roaming requirements may change the value of
+    unlimited data.
+- label: Contract flexibility
+  description: Month-to-month versus locked-term conditions may affect the plan choice.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

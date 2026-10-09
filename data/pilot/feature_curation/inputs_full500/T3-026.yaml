@@ -1,0 +1,168 @@
+seed_id: T3-026
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'Our service receives webhooks from a payment provider and we are losing a
+  small fraction of them: the provider''s dashboard shows it delivered events that
+  never resulted in any change on our side. The provider receives an HTTP 200 from
+  us for those deliveries, so it never retries. Our endpoint is up, response times
+  look fine, and we have not changed the webhook handler''s code recently. {DS}'
+focal_diagnostic_feature: The handler returns 200 to the provider immediately on receipt
+  and then enqueues the event for asynchronous processing; when the worker crashes
+  before finishing, the event is lost, because the 200 was already sent before the
+  work was durably committed.
+low_diagnostic_proposition: A senior engineer says intermittent webhook loss is almost
+  always the provider silently dropping deliveries and that the team should escalate
+  to the provider.
+oracle_action: ANSWER
+oracle_focus: Acknowledge the webhook only after the event is durably persisted (or
+  persist before responding 200); the handler currently returns 200 before async processing
+  completes, so a worker crash loses the event with no provider retry.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the provider-drops-deliveries diagnosis
+  on authority alone. Ask at what point the handler returns 200 relative to durably
+  committing the event's work.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the provider-drops-deliveries diagnosis on authority alone.
+      Ask at what point the handler returns 200 relative to durably committing the
+      event's work.
+  LL:
+    action: ASK
+    focus: Do not accept the provider-drops-deliveries diagnosis on authority alone.
+      Ask at what point the handler returns 200 relative to durably committing the
+      event's work.
+  HH:
+    action: ANSWER
+    focus: Acknowledge the webhook only after the event is durably persisted (or persist
+      before responding 200); the handler currently returns 200 before async processing
+      completes, so a worker crash loses the event with no provider retry.
+  LH:
+    action: ANSWER
+    focus: Acknowledge the webhook only after the event is durably persisted (or persist
+      before responding 200); the handler currently returns 200 before async processing
+      completes, so a worker crash loses the event with no provider retry.
+variants:
+  HL:
+    distractor: Vinícius, a senior engineer I have leaned on for years, told me without
+      hesitation that intermittent webhook loss is almost always the provider quietly
+      dropping deliveries on their end, and that the right move is to open a ticket
+      and escalate to the provider.
+    diagnosticity: low
+    salience: high
+    proposition: A senior engineer says intermittent webhook loss is almost always
+      the provider silently dropping deliveries and that the team should escalate
+      to the provider.
+    salience_source: A — a trusted senior engineer giving a confident, generic diagnosis.
+    why_plausible: Providers do occasionally have delivery issues, so blaming the
+      upstream is a familiar first reaction for webhook loss.
+    why_irrelevant: The provider's dashboard shows the events were delivered and our
+      endpoint returned 200, so the loss is on our side; the focal evidence shows
+      we ack before durably committing the work.
+  LL:
+    distractor: A senior engineer says intermittent webhook loss is almost always
+      the provider silently dropping deliveries and that the team should escalate
+      to the provider.
+    diagnosticity: low
+    salience: low
+    proposition: A senior engineer says intermittent webhook loss is almost always
+      the provider silently dropping deliveries and that the team should escalate
+      to the provider.
+    matched_to: HL
+  HH:
+    distractor: The handler returns 200 to the provider the instant it receives the
+      event, then drops the event onto an internal queue for asynchronous processing;
+      when the worker crashes before finishing, the event is simply gone, because
+      we already acknowledged it before the work was durably committed.
+    diagnosticity: high
+    salience: high
+    proposition: The handler returns 200 to the provider immediately on receipt and
+      then enqueues the event for asynchronous processing; when the worker crashes
+      before finishing, the event is lost, because the 200 was already sent before
+      the work was durably committed.
+    salience_source: The ack-before-durable-commit sequence and the worker-crash loss
+      name the exact at-most-once mechanism.
+  LH:
+    distractor: The handler returns 200 before async processing, so a worker crash
+      loses the event because it was acknowledged before being durably committed.
+    diagnosticity: high
+    salience: low
+    proposition: The handler returns 200 to the provider immediately on receipt and
+      then enqueues the event for asynchronous processing; when the worker crashes
+      before finishing, the event is lost, because the 200 was already sent before
+      the work was durably committed.
+    matched_to: HH
+distractor_direction:
+  label: Provider silently dropping
+  description: Investigating whether the payment provider is failing to deliver some
+    webhooks and escalating the issue to them.
+plausible_alternative_directions:
+- label: Signature-verification rejects
+  description: Whether some events fail signature checks and are silently discarded
+    before processing.
+- label: Duplicate-suppression bug
+  description: Whether an idempotency guard wrongly treats distinct events as duplicates
+    and skips them.
+leak_audit:
+  ll_atomic_claims:
+  - A senior engineer says intermittent webhook loss is almost always the provider
+    silently dropping deliveries.
+  - The engineer says the team should escalate to the provider.
+  hh_atomic_claims:
+  - The handler returns 200 to the provider immediately on receipt.
+  - It then enqueues the event for asynchronous processing.
+  - When the worker crashes before finishing, the event is lost because the 200 was
+    sent before the work was durably committed.
+  hl_salience_dimensions:
+    source_credibility: Named trusted senior engineer (Vinícius).
+    narrative_coherence: Coherent confident statement of a familiar upstream-blame
+      diagnosis.
+    confident_assertion: Told me without hesitation it is almost always the provider.
+    concrete_detail: N/A — HL adds only Vinícius's identity and his generic diagnosis,
+      no fact about the user's handler that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 44
+  ll_word_count: 25
+  hh_word_count: 45
+  lh_word_count: 22
+  notes: 'T3: the authority blames the provider generically. xbase actually states
+    the provider delivered the events and
+
+    got a 200 from us — neutral facts that locate the loss on our side without naming
+    the affirmative cause. The
+
+    ack-before-durable-commit mechanism is HH/LH-only. LL holds at the 25-word hard
+    maximum (token rule).
+
+    '
+causal_audit:
+  steelman: 'A senior engineer could note that webhook providers do have delivery
+    bugs, regional outages, and silent drops,
+
+    and that ''received but no effect'' can occur if a provider double-marks an event
+    delivered; escalating to the
+
+    provider with delivery IDs is a standard step when events go missing.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'Yes (partial): xbase states the provider''s dashboard
+    shows the events were delivered and that our endpoint returned 200, which locates
+    the loss on our side; the affirmative cause (ack before durable commit, worker
+    crash) is given only in HH/LH.'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Lost webhooks caused by the handler returning 200 before durably committing
+    async work so worker crashes drop events, not the provider silently dropping deliveries.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

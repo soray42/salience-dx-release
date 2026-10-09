@@ -1,0 +1,9 @@
+{
+  "seed_id": "T5-014",
+  "steelman": "Poor interface design can be a symptom of constrained engineering resources and limited QA investment. A development team that neglects frontend polish is plausibly also cutting corners on backend testing, including validation of financial calculation logic against edge cases such as unusual deductions, partial-year filing situations, and AMT interactions. Tax software bugs are notoriously hard to detect because they manifest in uncommon input combinations. An audit professional familiar with small fintech shops might legitimately treat 'visually abandoned product' as a weak prior for 'undertested calculation core,' invoking an inverted aesthetic-usability heuristic: if polish correlates with investment, its absence correlates with neglect.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "",
+  "pathway_closure_check": "effective",
+  "notes": "The steelman yields only a weak probabilistic inference about resource allocation — not a causal pathway from UI aesthetics to calculation errors. No competent practitioner would place 'interface looks cluttered' on a checklist for diagnosing an incorrect tax refund figure; the appropriate diagnostic action is an independent computation, which is exactly what the focal feature provides. The independent CPA verification (same inputs, exact same $1,847 result) fully forecloses any residual doubt even if the aesthetic prior were granted non-zero weight. Seed passes this lens cleanly; no repair needed."
+}

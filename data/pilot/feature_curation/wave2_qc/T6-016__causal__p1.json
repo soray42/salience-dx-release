@@ -1,0 +1,9 @@
+{
+  "seed_id": "T6-016",
+  "steelman": "Fund expense ratios directly and mechanically reduce investor returns every year; a 0.07% fee that the investor misremembers or underestimates, or hidden costs such as transaction costs, bid-ask spread, or securities-lending revenue offsets not captured in the stated expense ratio, could explain incremental underperformance. Any senior CFP or investment adviser would place expense-ratio review on a first-order diagnostic checklist when a client reports multi-year benchmark lag. The investor's three consecutive personal successes at diagnosing fees as the culprit builds a strong Bayesian prior. If the stated 0.07% figure were imprecise or if there were additional undisclosed costs, fees would remain a fully defensible primary explanation.",
+  "verdict": "non_causal",
+  "confidence": "high",
+  "mechanism_if_any": "Fund expense ratios mechanically reduce returns relative to a zero-cost benchmark; a practitioner would check total cost of ownership including hidden transaction costs. However, xbase explicitly states the expense ratio is 0.07% and 'essentially the same as the index tracker itself', eliminating any material fee differential as an explanatory variable.",
+  "pathway_closure_check": "effective",
+  "notes": "The xbase closure is explicit and strong: 0.07% expense ratio matching the index tracker collapses the fees mechanism to ~0bp impact. The seed is well-constructed — the distractor is salient and psychologically plausible (anchored in personal history) but the causal pathway is definitively foreclosed by the stated fee parity. No repair needed. The seed correctly identifies allocation drift (75-78% equity vs 60% target) as the actual explanatory signal."
+}

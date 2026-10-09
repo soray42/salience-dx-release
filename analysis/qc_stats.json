@@ -1,0 +1,38 @@
+{
+  "n_scenarios": 500,
+  "scenarios_by_generator": {
+    "hand-written": 50,
+    "generator_B": 261,
+    "generator_A": 189
+  },
+  "generation_modes": {
+    "hand-written": 80,
+    "generator_A_batches_of_30": 189,
+    "generator_B_batches": 231
+  },
+  "curator_prompts": {
+    "hand-written": 50,
+    "prompts/v5/seed_curator_v3.md": 29,
+    "prompts/v5/seed_curator_v3.1.md": 1,
+    "prompts/v5/seed_curator_oneshot.md": 420
+  },
+  "with_leak_audit_atomic_claims": 450,
+  "with_causal_audit": 450,
+  "with_repair_note": 176,
+  "repair_note_by_generator": {
+    "generator_A": 94,
+    "generator_B": 82
+  },
+  "repair_share_of_expanded_pct": 39.1,
+  "archived_audit_verdicts": {
+    "n_records": 237,
+    "n_scenarios": 30,
+    "by_lens": {
+      "causal": 60,
+      "focal": 47,
+      "leak": 70,
+      "salience": 44,
+      "integrity": 16
+    }
+  }
+}

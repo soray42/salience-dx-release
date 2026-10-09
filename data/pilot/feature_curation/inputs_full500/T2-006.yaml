@@ -1,0 +1,94 @@
+seed_id: T2-006
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: My Python script that collects pages from a public site started returning 403
+  Forbidden two days ago. It had run daily for six months. The site's robots.txt file
+  looks unchanged. {DS}
+focal_diagnostic_feature: The script identifies itself with a Python user-agent and
+  the site's terms prohibit automated access.
+low_diagnostic_proposition: The 403s began shortly after a peripheral hardware change
+  on the user's desk.
+oracle_action: ANSWER
+oracle_focus: Stop treating this as a bypass problem; the site is likely enforcing
+  anti-automation rules. Use an official API or request permission.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a local desk hardware change to remote
+  HTTP 403s. Ask for request headers, user-agent, ToS/API policy, and whether manual
+  browser access differs.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a local desk hardware change to remote HTTP 403s. Ask for
+      request headers, user-agent, ToS/API policy, and whether manual browser access
+      differs.
+  LL:
+    action: ASK
+    focus: Do not connect a local desk hardware change to remote HTTP 403s. Ask for
+      request headers, user-agent, ToS/API policy, and whether manual browser access
+      differs.
+  HH:
+    action: ANSWER
+    focus: Stop treating this as a bypass problem; the site is likely enforcing anti-automation
+      rules. Use an official API or request permission.
+  LH:
+    action: ANSWER
+    focus: Stop treating this as a bypass problem; the site is likely enforcing anti-automation
+      rules. Use an official API or request permission.
+variants:
+  HL:
+    distractor: The failures started the morning after I replaced my old monitor with
+      a 27-inch display and re-routed all the cables under my desk.
+    diagnosticity: low
+    salience: high
+    proposition: The 403s began shortly after a peripheral hardware change on the
+      user's desk.
+    salience_source: exact temporal order, concrete hardware change
+    why_plausible: Users often associate any recent setup change with a new failure.
+    why_irrelevant: A monitor change cannot cause a remote server to send policy-based
+      403 responses to an automated user-agent.
+  LL:
+    distractor: The issue began around the time of a local workstation peripheral
+      change.
+    diagnosticity: low
+    salience: low
+    proposition: The 403s began shortly after a peripheral hardware change on the
+      user's desk.
+    matched_to: HL
+  HH:
+    distractor: 'The request headers literally say `User-Agent: Python-urllib`, and
+      the site''s terms say automated collection is not allowed.'
+    diagnosticity: high
+    salience: high
+    proposition: The script identifies itself with a Python user-agent and the site's
+      terms prohibit automated access.
+    salience_source: request-header and policy evidence
+  LH:
+    distractor: The script declares a Python user-agent, and the target site's terms
+      prohibit automated access.
+    diagnosticity: high
+    salience: low
+    proposition: The script identifies itself with a Python user-agent and the site's
+      terms prohibit automated access.
+    matched_to: HH
+distractor_direction:
+  label: Workstation peripheral change
+  description: Investigating whether a local desk hardware or peripheral change somehow
+    affected the scraping script.
+plausible_alternative_directions:
+- label: IP reputation block
+  description: The site is blocking requests from the user’s IP range because of reputation
+    or request volume.
+- label: Authentication requirement change
+  description: The site now requires login, cookies, or tokens for pages that were
+    previously public.
+- label: Rate-limit enforcement
+  description: The public site has started enforcing stricter per-client request limits.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

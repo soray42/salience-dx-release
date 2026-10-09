@@ -1,0 +1,185 @@
+seed_id: T2-093
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: Our web app shows users their account balance, and several users report it
+  is stuck on an old value for them while the real balance has clearly changed. Closing
+  and reopening the tab does not help, but using a private/incognito window shows
+  the correct, current balance every time. The backend API returns the right number
+  when I call it directly, and the affected users are spread across different browsers
+  and devices. {DS}
+focal_diagnostic_feature: The app's service worker is registered with a cache-first
+  strategy for the balance API route, so it serves the previously cached response
+  from local storage and never revalidates against the network.
+low_diagnostic_proposition: The stale-balance reports began the same week the company
+  rolled out a new desktop wallpaper and logo across employee machines.
+oracle_action: ANSWER
+oracle_focus: Change the service worker to use network-first (or stale-while-revalidate)
+  for the balance API and ship a worker update that clears the stale cached responses,
+  so clients fetch the current balance instead of the cached one.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a wallpaper-and-logo rollout to stale
+  balances. Ask whether a service worker is caching the balance API response and with
+  what strategy.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a wallpaper-and-logo rollout to stale balances. Ask whether
+      a service worker is caching the balance API response and with what strategy.
+  LL:
+    action: ASK
+    focus: Do not connect a wallpaper-and-logo rollout to stale balances. Ask whether
+      a service worker is caching the balance API response and with what strategy.
+  HH:
+    action: ANSWER
+    focus: Change the service worker to use network-first (or stale-while-revalidate)
+      for the balance API and ship a worker update that clears the stale cached responses,
+      so clients fetch the current balance instead of the cached one.
+  LH:
+    action: ANSWER
+    focus: Change the service worker to use network-first (or stale-while-revalidate)
+      for the balance API and ship a worker update that clears the stale cached responses,
+      so clients fetch the current balance instead of the cached one.
+variants:
+  HL:
+    distractor: I cannot shake the feeling that this all kicked off the same week
+      IT pushed that new corporate wallpaper and refreshed logo onto everyone's machines;
+      the rollout was a whole event, screens changing across the office, and the stale-balance
+      complaints seemed to start in that exact stretch.
+    diagnosticity: low
+    salience: high
+    proposition: The stale-balance reports began the same week the company rolled
+      out a new desktop wallpaper and logo across employee machines.
+    salience_source: B/C — a confident first-person 'cannot shake the feeling' framing
+      anchors the bug to the memorable branding rollout week.
+    why_plausible: A visible, company-wide machine change is a salient landmark, so
+      a same-week bug feels naturally tied to it.
+    why_irrelevant: A desktop wallpaper and logo rollout changes the visual shell
+      of machines, not browser service-worker caching of an API response; it cannot
+      freeze a balance.
+  LL:
+    distractor: The stale-balance reports began the same week the company rolled out
+      a new desktop wallpaper and logo.
+    diagnosticity: low
+    salience: low
+    proposition: The stale-balance reports began the same week the company rolled
+      out a new desktop wallpaper and logo across employee machines.
+    matched_to: HL
+  HH:
+    distractor: The app's service worker is registered cache-first for the balance
+      API route, so it answers from the locally cached response and never goes back
+      to the network; that is why a normal tab stays frozen while an incognito window,
+      which has no service worker cache, always shows the live number.
+    diagnosticity: high
+    salience: high
+    proposition: The app's service worker is registered with a cache-first strategy
+      for the balance API route, so it serves the previously cached response from
+      local storage and never revalidates against the network.
+    salience_source: Naming the cache-first service worker and explaining the incognito
+      contrast makes the local-cache mechanism concrete and decisive.
+  LH:
+    distractor: The service worker is cache-first for the balance API, serving the
+      cached response without revalidating; incognito, lacking the cache, shows the
+      live number.
+    diagnosticity: high
+    salience: low
+    proposition: The app's service worker is registered with a cache-first strategy
+      for the balance API route, so it serves the previously cached response from
+      local storage and never revalidates against the network.
+    matched_to: HH
+distractor_direction:
+  label: Branding-rollout timing
+  description: Treating the same-week corporate wallpaper-and-logo rollout as connected
+    to the stale account balances.
+plausible_alternative_directions:
+- label: Backend caching layer
+  description: Whether a server-side or CDN cache is returning a stale balance per
+    user rather than something client-side.
+- label: Stale CDN HTML bundle
+  description: Whether users are running an old cached app bundle that reads balance
+    from a deprecated field.
+leak_audit:
+  ll_atomic_claims:
+  - The company rolled out a new desktop wallpaper and logo across machines.
+  - The stale-balance reports began that same week.
+  hh_atomic_claims:
+  - The service worker is registered cache-first for the balance API route.
+  - It answers from the locally cached response and never revalidates with the network.
+  - That is why a normal tab stays frozen while incognito, lacking the cache, shows
+    the live number.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person same-week chronology around the branding rollout.
+    confident_assertion: Frames the rollout week as exactly when complaints started.
+    concrete_detail: Detail about the rollout event (screens changing across the office)
+      only — no claim about the app's caching.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 74
+  hl_word_count: 44
+  ll_word_count: 16
+  hh_word_count: 47
+  lh_word_count: 23
+  notes: 'xbase shows the symptom (per-user stale balance, incognito correct, backend
+    correct on direct call, spread
+
+    across browsers/devices) which points generally at client-side caching but never
+    identifies the service worker
+
+    or its strategy, so HL/LL cannot resolve the cause; the decisive cache-first registration
+    lives only in HH/LH.
+
+    The incognito-works detail is a symptom narrowing toward client storage, not the
+    specific service-worker
+
+    mechanism. HL adds only the branding-rollout framing; LL keeps the bare same-week
+    coincidence.
+
+    QC repair: LH previously omitted the incognito-explanation clause present in HH
+    (violating C10 HH/LH
+
+    propositional equivalence). LH rewritten to include all three hh_atomic_claims
+    in 23 words; lh_word_count
+
+    updated from 22 to 23.
+
+    '
+causal_audit:
+  steelman: 'To steelman the branding rollout as causal, I would need a path from
+    pushing new wallpaper and a logo to browser
+
+    service-worker caching of an API response. The rollout changes desktop background
+    images and brand assets on
+
+    machines; it does not register, configure, or alter a web app''s service worker,
+    its caching strategy, or the
+
+    browser cache storage. There is no deployment coupling between an OS-level wallpaper
+    push and the app''s
+
+    client-side caching behaviour. The stale balance is fully explained by the cache-first
+    service worker, so the
+
+    rollout timing is coincidental with no constructible mechanism.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the backend returns the right number on a
+    direct call and an incognito window shows the correct balance, foreclosing the
+    server-side-cache pathway and pointing at client storage; the cache-first service
+    worker still lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An account balance shows stale because a cache-first service worker
+    serves a cached API response without revalidating, unrelated to a coincidental
+    corporate wallpaper-and-logo rollout.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

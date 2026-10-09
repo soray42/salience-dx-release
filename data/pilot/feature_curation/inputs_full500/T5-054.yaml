@@ -1,0 +1,180 @@
+seed_id: T5-054
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I am about to relocate to a new city to start a job and am deciding whether
+  to rent for the first year or try to buy straight away. My savings are about €28,000.
+  I have not started the job yet and my contract begins next month. {DS}
+focal_diagnostic_feature: The available savings cover only the minimum deposit and
+  legal fees on any entry-level property with nothing left over, and lenders in this
+  market require six continuous months of payslips before considering a mortgage application.
+low_diagnostic_proposition: The rental listings look visually unprofessional, suggesting
+  the local rental market is poor quality and buying is the smarter choice.
+oracle_action: ANSWER
+oracle_focus: Rent for at least the first six months; the deposit exhausts all savings
+  with no buffer and the lender employment requirement makes an immediate mortgage
+  application impossible.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer rental market quality from listing photography.
+  Ask for savings relative to deposit and fees, and for lender employment requirements,
+  before advising buy or rent.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer rental market quality from listing photography. Ask for savings
+      relative to deposit and fees, and for lender employment requirements, before
+      advising buy or rent.
+  LL:
+    action: ASK
+    focus: Do not infer rental market quality from listing photography. Ask for savings
+      relative to deposit and fees, and for lender employment requirements, before
+      advising buy or rent.
+  HH:
+    action: ANSWER
+    focus: Rent for at least the first six months; the deposit exhausts all savings
+      with no buffer and the lender employment requirement makes an immediate mortgage
+      application impossible.
+  LH:
+    action: ANSWER
+    focus: Rent for at least the first six months; the deposit exhausts all savings
+      with no buffer and the lender employment requirement makes an immediate mortgage
+      application impossible.
+variants:
+  HL:
+    distractor: The rental listings I've browsed use blurry photos shot in low light,
+      with cramped descriptions full of typos — they look like nobody takes the rental
+      market seriously here, so buying seems like the smarter path.
+    diagnosticity: low
+    salience: high
+    proposition: The rental listings look visually unprofessional, suggesting the
+      local rental market is poor quality and buying is the smarter choice.
+    salience_source: B (narrative coherence — multi-detail enumeration of listing
+      flaws in first-person browsing account); C (confident inference — "buying seems
+      like the smarter path").
+    why_plausible: Poor listing quality can correlate with a disorganised, illiquid
+      rental market where landlords are unsophisticated; a practitioner might flag
+      this as a signal about rental-market depth.
+    why_irrelevant: Listing photo quality is a surface property of landlord marketing
+      effort, not a measure of rental-market viability or price; it has no mechanism
+      that resolves whether the user can obtain a mortgage before income verification
+      requirements are met.
+  LL:
+    distractor: The rental listings look unprofessional, suggesting the local rental
+      market is poor quality and buying is the smarter choice.
+    diagnosticity: low
+    salience: low
+    proposition: The rental listings look visually unprofessional, suggesting the
+      local rental market is poor quality and buying is the smarter choice.
+    matched_to: HL
+  HH:
+    distractor: A €28,000 deposit covers just the minimum deposit and legal costs
+      on entry-level properties with nothing left over, and the lenders I consulted
+      all require six months of payslips before considering an application.
+    diagnosticity: high
+    salience: high
+    proposition: The available savings cover only the minimum deposit and legal fees
+      on any entry-level property with nothing left over, and lenders in this market
+      require six continuous months of payslips before considering a mortgage application.
+    salience_source: B (narrative coherence — exact savings figure linked to exact
+      constraint, followed by lender requirement discovered through first-person research);
+      C (definitive — "all require", "nothing left over").
+  LH:
+    distractor: Available savings cover only deposit and fees with no buffer, and
+      lenders require six months of payslips before a mortgage application.
+    diagnosticity: high
+    salience: low
+    proposition: The available savings cover only the minimum deposit and legal fees
+      on any entry-level property with nothing left over, and lenders in this market
+      require six continuous months of payslips before considering a mortgage application.
+    matched_to: HH
+distractor_direction:
+  label: poor-quality rental market signal
+  description: Treating the visual unprofessionalism of rental listings as evidence
+    that the local rental market is inferior and buying is therefore the better choice.
+plausible_alternative_directions:
+- label: savings-to-purchase-cost fit
+  description: €28,000 might suffice for deposit and fees in a lower-priced market
+    segment, potentially making purchase viable despite thin margins.
+- label: opportunity cost of renting
+  description: A year of rent payments in a high-rent market could significantly erode
+    the deposit buffer, affecting the long-run buy calculation.
+- label: job probation and income stability
+  description: Most lenders require evidence of stable income; the employment start
+    date and contract type matter independently of the payslip count rule.
+leak_audit:
+  ll_atomic_claims:
+  - The rental listings look visually unprofessional.
+  - That appearance suggests the local rental market is poor quality.
+  - That inference suggests buying is the smarter choice.
+  hh_atomic_claims:
+  - The €28,000 in savings covers only the minimum deposit and legal costs on entry-level
+    properties.
+  - There is nothing left over after those costs.
+  - The lenders consulted all require six months of payslips before considering an
+    application.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person browsing observation; no named source.
+    narrative_coherence: Multi-element enumeration (blurry photos, low light, cramped
+      descriptions, typos) builds a coherent scene of listing neglect.
+    confident_assertion: '"Buying seems like the smarter path" — direct comparative
+      conclusion drawn from the surface observation.'
+    concrete_detail: N/A — details are about listing appearance, not case financials.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 47
+  hl_word_count: 35
+  ll_word_count: 19
+  hh_word_count: 33
+  lh_word_count: 21
+  notes: 'T5 inferential bridge (listing appearance → market quality → buy is smarter)
+
+    present flatly in LL. HL adds only vivid surface-property description and the
+
+    confident inference bridge. HH/LH diff: both assert the savings-to-cost
+
+    exhaustion and the six-month payslip requirement; HH names the exact savings
+
+    figure and adds "all require" and "nothing left over" for vividness.
+
+    Repair (QC): LH distractor changed "six months of employment" to "six months
+
+    of payslips" to achieve propositional equivalence with HH (C10). Word count
+
+    unchanged at 21.
+
+    '
+causal_audit:
+  steelman: 'Rental listing quality can serve as a proxy for market organisation:
+    in cities
+
+    where professional landlords dominate, listings are polished; where the market
+
+    is thin or disorganised, listings are poor. A practitioner might argue that
+
+    low listing quality signals low rental supply quality, strengthening the case
+
+    for buying. Additionally, a poor rental market may mean higher rents relative
+
+    to purchase price.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not foreclose the rental-market-quality
+    reading. The focal feature (zero buffer after deposit + lender employment requirement)
+    structurally blocks purchasing regardless of rental-market quality; a mortgage
+    application cannot be accepted without six months of payslips.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Rent-vs-buy decision for new-city relocator where savings only cover
+    deposit with no buffer and lenders require six months of payslips; aesthetic distractor
+    is unprofessional rental listings offered as evidence to buy instead.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

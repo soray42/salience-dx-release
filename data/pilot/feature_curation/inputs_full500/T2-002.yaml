@@ -1,0 +1,90 @@
+seed_id: T2-002
+template: T2
+domain: technical_troubleshooting
+complexity: high
+xbase: Our checkout API's p99 latency jumped from about 180 ms to roughly 2.4 seconds
+  three days ago and has stayed high. The application deployment history is quiet
+  for that service. {DS}
+focal_diagnostic_feature: The latency increase is isolated to requests hitting shard
+  7, while host CPU and IO for that shard look normal.
+low_diagnostic_proposition: The latency jump occurred during the same week the team
+  moved offices.
+oracle_action: ASK
+oracle_focus: 'Investigate logical workload on shard 7: slow queries, locks, hot rows,
+  missing indexes, or plan regressions rather than host-level resource saturation.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a staff office move to cloud database
+  latency. Ask for breakdown by shard, endpoint, and query pattern.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a staff office move to cloud database latency. Ask for breakdown
+      by shard, endpoint, and query pattern.
+  LL:
+    action: ASK
+    focus: Do not connect a staff office move to cloud database latency. Ask for breakdown
+      by shard, endpoint, and query pattern.
+  HH:
+    action: ASK
+    focus: 'Investigate logical workload on shard 7: slow queries, locks, hot rows,
+      missing indexes, or plan regressions rather than host-level resource saturation.'
+  LH:
+    action: ASK
+    focus: 'Investigate logical workload on shard 7: slow queries, locks, hot rows,
+      missing indexes, or plan regressions rather than host-level resource saturation.'
+variants:
+  HL:
+    distractor: It started the exact week we moved desks into the new office on the
+      18th floor, with the network cupboards still labelled in masking tape.
+    diagnosticity: low
+    salience: high
+    proposition: The latency jump occurred during the same week the team moved offices.
+    salience_source: specific physical move, concrete office detail, temporal overlap
+    why_plausible: A major organisational event near the onset feels causally tempting.
+    why_irrelevant: Staff seating does not selectively slow one production database
+      shard in a cloud environment.
+  LL:
+    distractor: The timing coincided with a change in the team's physical office location.
+    diagnosticity: low
+    salience: low
+    proposition: The latency jump occurred during the same week the team moved offices.
+    matched_to: HL
+  HH:
+    distractor: Only traffic that touches shard 7 shows the 2.4-second p99; every
+      other shard stays near baseline, and shard 7's CPU and IO graphs are boringly
+      normal.
+    diagnosticity: high
+    salience: high
+    proposition: The latency increase is isolated to requests hitting shard 7, while
+      host CPU and IO for that shard look normal.
+    salience_source: shard-level localisation with normal host metrics
+  LH:
+    distractor: The regression is isolated to shard 7; other shards remain near baseline
+      and shard-level CPU/IO metrics are normal.
+    diagnosticity: high
+    salience: low
+    proposition: The latency increase is isolated to requests hitting shard 7, while
+      host CPU and IO for that shard look normal.
+    matched_to: HH
+distractor_direction:
+  label: Office-move network change
+  description: Investigating whether the team’s physical office move or office network
+    environment is responsible for the checkout latency.
+plausible_alternative_directions:
+- label: Downstream service slowdown
+  description: A payment, inventory, or fraud dependency is slow and only visible
+    in checkout p99 latency.
+- label: Connection-pool exhaustion
+  description: Application instances are exhausting database or service connection
+    pools under load.
+- label: Cache miss pattern
+  description: A cache invalidation or key-distribution change is causing repeated
+    expensive backend work.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

@@ -1,0 +1,174 @@
+seed_id: T6-077
+template: T6
+domain: open_qa
+complexity: low
+xbase: My container tomato plants have plenty of flowers but almost no fruit has set
+  over the past three weeks. The plants look healthy and green, with no sign of pests
+  or disease on the leaves or stems. I am growing them on my south-facing balcony
+  and they get full sun. {DS}
+focal_diagnostic_feature: Balcony temperature logs show daily highs consistently between
+  36C and 39C for three weeks, exceeding the 35C threshold at which tomato pollen
+  ceases to germinate and causes blossom drop.
+low_diagnostic_proposition: Past poor tomato fruit-set was caused by aphid infestations,
+  so aphids are likely the cause again.
+oracle_action: ANSWER
+oracle_focus: The cause is heat-induced blossom drop; shade the plants during peak
+  afternoon hours, mist flowers in the morning to aid pollination, and wait for cooler
+  weather before expecting fruit set to recover.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to aphids from past experience; ask for
+  current temperature readings on the balcony, inspect visible pests carefully, and
+  check whether blossom drop correlates with the hottest part of the day.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to aphids from past experience; ask for current temperature
+      readings on the balcony, inspect visible pests carefully, and check whether
+      blossom drop correlates with the hottest part of the day.
+  LL:
+    action: ASK
+    focus: Do not default to aphids from past experience; ask for current temperature
+      readings on the balcony, inspect visible pests carefully, and check whether
+      blossom drop correlates with the hottest part of the day.
+  HH:
+    action: ANSWER
+    focus: The cause is heat-induced blossom drop; shade the plants during peak afternoon
+      hours, mist flowers in the morning to aid pollination, and wait for cooler weather
+      before expecting fruit set to recover.
+  LH:
+    action: ANSWER
+    focus: The cause is heat-induced blossom drop; shade the plants during peak afternoon
+      hours, mist flowers in the morning to aid pollination, and wait for cooler weather
+      before expecting fruit set to recover.
+variants:
+  HL:
+    distractor: Every time my tomatoes have refused to set fruit before, I eventually
+      found aphids clogging the flower stems — so my gut is telling me it is probably
+      aphids again this summer.
+    diagnosticity: low
+    salience: high
+    proposition: Past poor tomato fruit-set was caused by aphid infestations, so aphids
+      are likely the cause again.
+    salience_source: B/C — vivid personal history with confident first-instinct framing
+      ("every time", "my gut is telling me") creates availability salience without
+      any named external source.
+    why_plausible: Aphids are a genuine and common cause of blossom and fruit-set
+      problems in tomatoes, and a grower with prior aphid experience would plausibly
+      treat past patterns as a strong prior, especially without visible competing
+      explanations.
+    why_irrelevant: Aphid infestations produce visible insects on stems, new growth,
+      and flower buds; the xbase establishes there is no visible pest sign, and heat-induced
+      pollen sterility is a structurally different mechanism that aphid treatment
+      cannot address.
+  LL:
+    distractor: Past poor fruit-set on the user's tomatoes was generally attributed
+      to aphid infestations, so aphids are likely the cause again.
+    diagnosticity: low
+    salience: low
+    proposition: Past poor tomato fruit-set was caused by aphid infestations, so aphids
+      are likely the cause again.
+    matched_to: HL
+  HH:
+    distractor: A min-max thermometer placed on the balcony shows daily highs between
+      36C and 39C every afternoon for the past three weeks, well above the 35C threshold
+      at which tomato pollen stops germinating.
+    diagnosticity: high
+    salience: high
+    proposition: Balcony temperature logs show daily highs consistently between 36C
+      and 39C for three weeks, exceeding the 35C threshold at which tomato pollen
+      ceases to germinate and causes blossom drop.
+    salience_source: B/C — precise temperature range (36-39C), specific instrument
+      named (min-max thermometer), exact biological threshold stated (35C), all in
+      confident declarative form.
+  LH:
+    distractor: Balcony temperature logs show daily highs of 36-39C for three weeks,
+      consistently exceeding the 35C pollen-viability threshold for tomatoes.
+    diagnosticity: high
+    salience: low
+    proposition: Balcony temperature logs show daily highs consistently between 36C
+      and 39C for three weeks, exceeding the 35C threshold at which tomato pollen
+      ceases to germinate and causes blossom drop.
+    matched_to: HH
+distractor_direction:
+  label: aphid infestation
+  description: Investigating whether aphids colonising the flower stems are disrupting
+    pollination and causing fruit-set failure, based on the user's prior experience
+    with the same symptom.
+plausible_alternative_directions:
+- label: pollinator absence
+  description: Container plants on a high balcony may receive insufficient visits
+    from bees or other pollinators, which is a live candidate for blossom-but-no-fruit
+    symptoms in the absence of heat evidence.
+- label: calcium or nutrient deficiency
+  description: Low calcium or inconsistent watering causing blossom-end rot precursors
+    can disrupt fruit development, a plausible candidate when plants appear otherwise
+    healthy.
+leak_audit:
+  ll_atomic_claims:
+  - Past poor fruit-set on the user's tomatoes was generally attributed to aphid infestations.
+  - Aphids are likely the cause again.
+  hh_atomic_claims:
+  - A min-max thermometer on the balcony shows daily highs between 36C and 39C.
+  - This temperature range persisted every afternoon for the past three weeks.
+  - 36-39C is above the 35C threshold at which tomato pollen stops germinating.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Personal history framing ("every time... I eventually found")
+      establishes a consistent past pattern before applying it to the present.
+    confident_assertion: '"every time", "my gut is telling me it is probably" — strong
+      frequency claim plus confident first-instinct application.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 50
+  hl_word_count: 31
+  ll_word_count: 20
+  hh_word_count: 33
+  lh_word_count: 19
+  notes: 'xbase states "no sign of pests or disease on the leaves or stems" — this
+    is a
+
+    neutral factual observation that closes the visible-aphid pathway of the distractor
+
+    under C4 (rules out ONE mechanism without naming the affirmative cause). The
+
+    affirmative heat-threshold cause lives only in HH/LH. T6 availability inference
+
+    ("so aphids are likely the cause again") appears in both HL and LL per C1 and
+
+    the T6 recipe. Past cases (aphids) are structurally different from the present
+
+    one (heat stress), exposed by the temperature data in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'Aphids can colonise flower buds and stems in ways that are not immediately
+
+    obvious, particularly on the undersides of leaves or deep in flower clusters.
+
+    An experienced tomato grower might argue that a careful inspection is warranted
+
+    before ruling aphids out, because the prior experience pattern is strong and
+
+    the symptom is identical.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"No sign of pests or disease on the leaves or stems" —
+    neutrally reports the absence of visible pests, which forecloses the primary mechanism
+    by which aphid infestations cause fruit-set failure (visible colonisation). This
+    is a pathway-closure observation, not a statement of the affirmative cause.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Container tomatoes failing to set fruit on a south-facing balcony suffer
+    from heat-induced pollen sterility at 36-39C daily highs, not the aphid infestation
+    the grower's prior experience makes them suspect.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

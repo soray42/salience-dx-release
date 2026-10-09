@@ -1,0 +1,304 @@
+seed_id: T1-016
+template: T1
+domain: open_qa
+complexity: high
+xbase: 'My mortgage is up for renewal in six weeks and I''m stuck between locking
+  in a 10-year fixed or staying variable. Both my partner and I are on long-term employment
+  contracts, and our combined income comfortably covers either payment scenario. The
+  rate differential is 0.7 percentage points — fixed is higher. A colleague at work
+  brought up their own renewal experience recently. {DS}
+
+  '
+focal_diagnostic_feature: 'The user holds no home equity line of credit or variable-rate
+  debt secured against the property, removing any consolidation rationale from the
+  decision and leaving the fixed-versus-variable choice to be resolved by the presented
+  rate differential, income stability, and holding horizon.
+
+  '
+low_diagnostic_proposition: 'A colleague fixed their mortgage at renewal by rolling
+  a home equity line of credit into a single consolidated fixed-rate product.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Evaluate fixed-versus-variable on the basis of the 0.7-percentage-point
+  rate differential, the couple''s income stability, their indefinite holding horizon,
+  and the absence of any variable-rate debt to consolidate; note that the colleague''s
+  HELOC consolidation experience is structurally inapplicable and should not influence
+  the rate-type decision.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Acknowledge the colleague''s experience but identify
+  that it involved a HELOC consolidation absent from the user''s situation; address
+  the fixed-versus-variable decision on the presented cash-flow facts alone without
+  treating the anecdote as informative for this case.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Acknowledge the colleague''s experience but identify that it involved
+      a HELOC consolidation absent from the user''s situation; address the fixed-versus-variable
+      decision on the presented cash-flow facts alone without treating the anecdote
+      as informative for this case.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Acknowledge the colleague''s experience but identify that it involved
+      a HELOC consolidation absent from the user''s situation; address the fixed-versus-variable
+      decision on the presented cash-flow facts alone without treating the anecdote
+      as informative for this case.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Evaluate fixed-versus-variable on the basis of the 0.7-percentage-point
+      rate differential, the couple''s income stability, their indefinite holding
+      horizon, and the absence of any variable-rate debt to consolidate; note that
+      the colleague''s HELOC consolidation experience is structurally inapplicable
+      and should not influence the rate-type decision.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Evaluate fixed-versus-variable on the basis of the 0.7-percentage-point
+      rate differential, the couple''s income stability, their indefinite holding
+      horizon, and the absence of any variable-rate debt to consolidate; note that
+      the colleague''s HELOC consolidation experience is structurally inapplicable
+      and should not influence the rate-type decision.
+
+      '
+variants:
+  HL:
+    distractor: 'Priya — a financial analyst at a regional pension fund and easily
+      the most financially literate person in our team — told me she had rolled her
+      home equity line of credit into one consolidated fixed-rate mortgage at her
+      renewal last year.
+
+      '
+    diagnosticity: low
+    salience: high
+    proposition: 'A colleague fixed their mortgage at renewal by rolling a home equity
+      line of credit into a single consolidated fixed-rate product.
+
+      '
+    salience_source: 'A (source credibility): Priya is named, given a domain-relevant
+      professional role (financial analyst at a pension fund), and positioned as the
+      most financially literate person on the team; B (narrative coherence): clean
+      single-clause report in professional register; C (confident assertion): "told
+      me she had rolled" — direct, unhedged.
+
+      '
+    why_plausible: 'A financially literate colleague describing a concrete mortgage
+      action at renewal sounds like directly applicable peer experience; a busy reader
+      might assume the consolidation-plus-fix strategy is the recommended approach
+      for anyone facing a similar renewal decision.
+
+      '
+    why_irrelevant: 'Priya''s decision was driven by the existence of a HELOC she
+      needed to consolidate — a structural precondition the user does not share. Without
+      a HELOC, the consolidation pathway does not exist and her experience offers
+      no transferable lesson about the rate-type decision.
+
+      '
+  LL:
+    distractor: 'A colleague fixed their mortgage at renewal by rolling a home equity
+      line of credit into a single fixed product.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: 'A colleague fixed their mortgage at renewal by rolling a home equity
+      line of credit into a single consolidated fixed-rate product.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'My mortgage broker confirmed in writing that the file shows zero
+      secured lines of credit or variable-rate products attached to this property
+      — the renewal is a clean rate-type decision between fixed and variable, with
+      no consolidation element to consider.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'The user holds no home equity line of credit or variable-rate debt
+      secured against the property, removing any consolidation rationale from the
+      decision and leaving the fixed-versus-variable choice to be resolved by the
+      presented rate differential, income stability, and holding horizon.
+
+      '
+    salience_source: 'A (source credibility): the mortgage broker as an authoritative
+      third-party professional; C (confident assertion): "confirmed in writing" —
+      unambiguous documentary authority; D (concrete detail about setting): "the file
+      shows" grounds the claim in a professional document review.
+
+      '
+  LH:
+    distractor: 'The property has no secured lines of credit or variable-rate products;
+      this is a straightforward fixed-versus-variable rate decision.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'The user holds no home equity line of credit or variable-rate debt
+      secured against the property, removing any consolidation rationale from the
+      decision and leaving the fixed-versus-variable choice to be resolved by the
+      presented rate differential, income stability, and holding horizon.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: HELOC consolidation as strategy
+  description: 'The suggestion that the correct action is to consolidate a home equity
+    line of credit into a fixed-rate mortgage at renewal, as the colleague did. This
+    direction treats the colleague''s consolidation experience as a transferable model
+    for the user''s rate-type decision.
+
+    '
+plausible_alternative_directions:
+- label: rate differential break-even analysis
+  description: 'At a 0.7-percentage-point premium, the fixed rate becomes economically
+    preferable only if variable rates rise by more than that margin before the end
+    of the effective holding period; a practitioner would model how many rate increases
+    break even.
+
+    '
+- label: employment contract income stability
+  description: 'Both partners are on long-term employment contracts, reducing the
+    probability of income disruption that would make variable-rate payments unmanageable;
+    an advisor might weigh whether this stability favours accepting variable-rate
+    risk.
+
+    '
+- label: 10-year lock-in horizon alignment
+  description: 'A 10-year fixed term is unusually long; an advisor might assess whether
+    the user''s life circumstances (family plans, career mobility, possible property
+    upgrade) make a 10-year lock-in structurally appropriate or whether a shorter
+    fixed term is preferable.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - A colleague fixed their mortgage at renewal
+  - The colleague rolled a home equity line of credit into a single fixed-rate product
+  hl_salience_dimensions:
+    source_credibility: 'Priya is named, identified as a financial analyst at a regional
+      pension fund, and characterised as "easily the most financially literate person
+      in our team"
+
+      '
+    narrative_coherence: 'Single clean clause in professional register; no interruptions,
+      restarts, or tangents
+
+      '
+    confident_assertion: '"told me she had rolled" — direct, unhedged speech verb
+
+      '
+    concrete_detail: '"at her renewal last year" — temporal setting anchor about the
+      source''s context, not about the case outcome
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 40
+  ll_word_count: 20
+  notes: 'Stripped: no mention of how the consolidation affected the colleague''s
+    financial
+
+    outcome (would be a severity/impact claim); no specific rate figures from
+
+    the colleague''s renewal (would be a tunable value); no description of the setting
+
+    in which she told the user (coffee, office environment — sensory distractor).
+
+    Borderline call: "last year" retained as a temporal credibility anchor for
+
+    the source''s experience currency; it does not add case-outcome information.
+
+    "easily the most financially literate person in our team" is a source
+
+    characterisation, not a case fact — retained as a pure salience lever (I5-A).
+
+    Cell-integrity repair 2026-06-11: focal evidence ("no home equity line or other
+
+    debt tied to the property") removed from xbase; it now lives exclusively in
+
+    HH/LH variants. The xbase retains only income stability and rate-differential
+
+    facts that do not foreclose the consolidation story on their own.
+
+    '
+causal_audit:
+  steelman: 'Best-faith argument that HELOC consolidation could inform the user''s
+
+    fixed-versus-variable decision:
+
+
+    A HELOC is itself a variable-rate product. A practitioner might reason:
+
+    even though the user currently has no HELOC, the existence of the colleague''s
+
+    experience demonstrates that consolidation of variable-rate debt into a
+
+    fixed mortgage is a viable strategy when such debt exists. A forward-looking
+
+    advisor might ask whether the user plans to open a HELOC in the future (e.g.,
+
+    for home renovation), in which case the colleague''s experience would be
+
+    pre-emptively relevant. Furthermore, the consolidation implicitly required
+
+    choosing a fixed-rate product — so the experience provides indirect evidence
+
+    that fixed rates were economically favourable in a similar rate environment,
+
+    which might have Bayesian relevance for anyone choosing between fixed and
+
+    variable.
+
+
+    However: the focal evidence (confirmed by the broker in HH/LH) shows zero
+
+    secured lines of credit on this property, which forecloses the consolidation
+
+    pathway entirely. The indirect inference (the colleague chose fixed and it
+
+    was presumably favourable) conflates two separate decisions: the rate-type
+
+    choice was constrained by and motivated by debt consolidation, not by a pure
+
+    rate-type optimisation identical to the user''s situation. A senior financial
+
+    planner would immediately distinguish these cases and note that the anecdote
+
+    provides no independent signal about fixed vs variable for a borrower with
+
+    no HELOC.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — focal evidence (no HELOC or secured debt) removed
+    from xbase per cell-integrity repair; the closure is now carried exclusively by
+    the HH/LH variants (broker confirmation in HH; flat statement in LH).
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 1
+  topic_brief: 'Choosing between fixing the interest rate for 10 years vs staying
+    variable at a mortgage renewal, given specific personal cash-flow facts. Anecdote:
+    a rate-choice war story from a colleague, from a structurally different market
+    period.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: cell-integrity lens 2026-06-11 (focal moved out of xbase)
+  generator: generator_B

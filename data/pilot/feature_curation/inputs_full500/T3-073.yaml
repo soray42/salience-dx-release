@@ -1,0 +1,169 @@
+seed_id: T3-073
+template: T3
+domain: open_qa
+complexity: low
+xbase: I am choosing between two language-learning apps for Spanish. Both have a mobile
+  app I can use during my commute, and both offer a free trial. I have about fifteen
+  minutes a day to study, I am a complete beginner, and I want to hold basic conversations
+  within six months. {DS}
+focal_diagnostic_feature: App A uses spaced-repetition vocabulary games with no grammar
+  instruction; App B provides explicit grammar explanations with exercises, and independent
+  reviews show beginners reach conversational milestones about twice as fast with
+  it.
+low_diagnostic_proposition: Structured classroom study is always more effective than
+  any language-learning app, so the choice between apps does not matter.
+oracle_action: ANSWER
+oracle_focus: Choose App B; it includes grammar instruction that App A lacks, and
+  independent evidence confirms faster progress for beginners with conversational
+  goals.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the classroom-beats-apps claim as a reason
+  to treat the two apps as equivalent. Ask about each app's method, grammar coverage,
+  and learner outcomes before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the classroom-beats-apps claim as a reason to treat the two
+      apps as equivalent. Ask about each app's method, grammar coverage, and learner
+      outcomes before deciding.
+  LL:
+    action: ASK
+    focus: Do not accept the classroom-beats-apps claim as a reason to treat the two
+      apps as equivalent. Ask about each app's method, grammar coverage, and learner
+      outcomes before deciding.
+  HH:
+    action: ANSWER
+    focus: Choose App B; it includes grammar instruction that App A lacks, and independent
+      evidence confirms faster progress for beginners with conversational goals.
+  LH:
+    action: ANSWER
+    focus: Choose App B; it includes grammar instruction that App A lacks, and independent
+      evidence confirms faster progress for beginners with conversational goals.
+variants:
+  HL:
+    distractor: A language teacher named Hirut I spoke with at a community event told
+      me firmly that all language apps are gamified nonsense and that no app can substitute
+      for a structured classroom, regardless of which one I pick.
+    diagnosticity: low
+    salience: high
+    proposition: Structured classroom study is always more effective than any language-learning
+      app, so the choice between apps does not matter.
+    salience_source: 'A: source credibility (named language teacher, professional
+      domain expertise); C: confident assertion ("firmly", "no app can substitute").'
+    why_plausible: A qualified language teacher's dismissal of app-based learning
+      echoes a widely held pedagogical position; the firm tone lends authority that
+      could make the specific app comparison feel irrelevant.
+    why_irrelevant: The authority claim applies equally to both apps and does not
+      help choose between them; the user cannot afford a classroom alternative and
+      has already committed to app-based study, so this claim cannot inform the choice.
+  LL:
+    distractor: A language teacher stated that structured classroom study is always
+      more effective than any language-learning app.
+    diagnosticity: low
+    salience: low
+    proposition: Structured classroom study is always more effective than any language-learning
+      app, so the choice between apps does not matter.
+    matched_to: HL
+  HH:
+    distractor: App A builds vocabulary through spaced-repetition games but has no
+      grammar instruction at all; App B provides explicit grammar explanations with
+      exercises, and independent reviews show beginners reach conversational milestones
+      about twice as fast with it.
+    diagnosticity: high
+    salience: high
+    proposition: App A uses spaced-repetition vocabulary games with no grammar instruction;
+      App B provides explicit grammar explanations with exercises, and independent
+      reviews show beginners reach conversational milestones about twice as fast with
+      it.
+    salience_source: Stark structural contrast (grammar vs no grammar), quantified
+      outcome evidence ("twice as fast"), aligned with user's stated six-month goal.
+  LH:
+    distractor: App A has no grammar instruction; App B has explicit grammar lessons,
+      and reviews show faster beginner progress.
+    diagnosticity: high
+    salience: low
+    proposition: App A uses spaced-repetition vocabulary games with no grammar instruction;
+      App B provides explicit grammar explanations with exercises, and independent
+      reviews show beginners reach conversational milestones about twice as fast with
+      it.
+    matched_to: HH
+distractor_direction:
+  label: Apps uniformly inferior to classrooms
+  description: Treating the teacher's claim that all language apps are ineffective
+    as relevant to the choice, effectively rendering the comparison between App A
+    and App B undecidable.
+plausible_alternative_directions:
+- label: Daily time budget too small
+  description: Fifteen minutes a day may be insufficient to reach basic conversational
+    ability in Spanish in six months regardless of which app is chosen.
+- label: App A gamification engagement advantage
+  description: App A's game-based design might sustain daily habit better for some
+    learners, potentially outweighing App B's structured grammar instruction over
+    time.
+- label: Trial period outcome comparison
+  description: Using the free trial for both apps and comparing actual retention and
+    comprehension gains might be more informative than reviews alone.
+leak_audit:
+  ll_atomic_claims:
+  - A language teacher stated that structured classroom study is always more effective.
+  - This applies to any language-learning app, including both options.
+  hh_atomic_claims:
+  - App A uses spaced-repetition vocabulary games.
+  - App A has no grammar instruction.
+  - App B provides explicit grammar explanations with exercises.
+  - Independent reviews show beginners reach conversational milestones about twice
+    as fast with App B.
+  hl_salience_dimensions:
+    source_credibility: Named language teacher (Hirut) at a community event — professional
+      domain match.
+    narrative_coherence: Setting (community event), name, delivery ("told me firmly")
+      create a coherent first-person recounting.
+    confident_assertion: '"firmly", "no app can substitute", "regardless of which
+      one I pick"'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 50
+  hl_word_count: 38
+  ll_word_count: 16
+  hh_word_count: 36
+  lh_word_count: 18
+  notes: 'Distractor is app-agnostic: applies equally to A and B, so it cannot
+
+    inform the choice between them — clean non-causality. Authority is a
+
+    language teacher (culturally consistent Ethiopian name Hirut). xbase
+
+    carries no app-specific content; focal content lives in HH/LH only.
+
+    '
+causal_audit:
+  steelman: 'A language teacher with professional experience in pedagogy has a well-grounded
+
+    basis for claiming that structured classroom instruction outperforms app-based
+
+    self-study for beginners — interactivity, feedback, error correction, and
+
+    social accountability are all real pedagogical advantages of classrooms.
+
+    This claim could legitimately make the user reconsider app-based study entirely.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the steelman addresses the general classroom-vs-app
+    claim, not the choice between App A and App B. The distractor is clean because
+    it applies equally to both options and cannot discriminate between them.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Beginner choosing between two language apps where App B's grammar instruction
+    and outcome evidence decisively favour it over App A, regardless of a language
+    teacher's blanket dismissal of all apps.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

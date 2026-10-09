@@ -1,0 +1,168 @@
+seed_id: T5-087
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our Kafka consumer group has been accumulating lag on one topic for the past
+  two days. The consumer application is running, shows no exceptions in the logs,
+  and reports a healthy connection to the broker. We have not deployed any consumer
+  changes this week. {DS}
+focal_diagnostic_feature: Kafka consumer group metadata shows one partition has no
+  assigned consumer — the group coordinator lists it as unassigned — while all other
+  partitions have active members consuming normally.
+low_diagnostic_proposition: The consumer group monitoring dashboard uses a cluttered,
+  hard-to-parse visual layout that makes lag look worse than it is.
+oracle_action: ANSWER
+oracle_focus: 'Investigate why partition assignment is missing: check for a consumer
+  count below the partition count, a crashed member that failed to rejoin, or a stuck
+  group rebalance; reassigning or restarting consumers should close the lag.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer actual consumer assignment state from dashboard
+  appearance. Ask for the raw consumer group description output and per-partition
+  assignment data before adjusting anything.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer actual consumer assignment state from dashboard appearance.
+      Ask for the raw consumer group description output and per-partition assignment
+      data before adjusting anything.
+  LL:
+    action: ASK
+    focus: Do not infer actual consumer assignment state from dashboard appearance.
+      Ask for the raw consumer group description output and per-partition assignment
+      data before adjusting anything.
+  HH:
+    action: ANSWER
+    focus: 'Investigate why partition assignment is missing: check for a consumer
+      count below the partition count, a crashed member that failed to rejoin, or
+      a stuck group rebalance; reassigning or restarting consumers should close the
+      lag.'
+  LH:
+    action: ANSWER
+    focus: 'Investigate why partition assignment is missing: check for a consumer
+      count below the partition count, a crashed member that failed to rejoin, or
+      a stuck group rebalance; reassigning or restarting consumers should close the
+      lag.'
+variants:
+  HL:
+    distractor: The consumer group dashboard we use renders lag bars as overlapping
+      columns with labels that clip below the graph baseline, making the number look
+      inflated and the colour-coded severity bands nearly indistinguishable from one
+      another.
+    diagnosticity: low
+    salience: high
+    proposition: The consumer group monitoring dashboard uses a cluttered, hard-to-parse
+      visual layout that makes lag look worse than it is.
+    salience_source: B/C — precise visual description (overlapping columns, clipped
+      labels, indistinguishable severity bands) delivered with confident specificity
+      creates a vivid and credible-sounding readability complaint.
+    why_plausible: A practitioner who has seen misleading dashboard aggregations before
+      might suspect that poor rendering is overstating the actual lag metric before
+      digging into partition-level detail.
+    why_irrelevant: Dashboard rendering quality cannot change the partition assignment
+      state in the Kafka broker; the lag is real and caused by an unassigned partition,
+      which the focal feature establishes directly from broker metadata, not from
+      the dashboard display.
+  LL:
+    distractor: The consumer group monitoring dashboard has a cluttered layout that
+      makes the lag metric look worse than it is.
+    diagnosticity: low
+    salience: low
+    proposition: The consumer group monitoring dashboard uses a cluttered, hard-to-parse
+      visual layout that makes lag look worse than it is.
+    matched_to: HL
+  HH:
+    distractor: Running kafka-consumer-groups.sh --describe shows partition 3 listed
+      with no CONSUMER-ID and no HOST entry while partitions 0, 1, and 2 each show
+      an active member — that partition's offset has not moved in 47 hours.
+    diagnosticity: high
+    salience: high
+    proposition: Kafka consumer group metadata shows one partition has no assigned
+      consumer — the group coordinator lists it as unassigned — while all other partitions
+      have active members consuming normally.
+    salience_source: B/C — exact command name, specific partition number, concrete
+      absence pattern (no CONSUMER-ID, no HOST), and a precise stall duration make
+      the evidence vivid and actionable.
+  LH:
+    distractor: Consumer group metadata shows partition 3 has no assigned consumer
+      while partitions 0 through 2 have active members.
+    diagnosticity: high
+    salience: low
+    proposition: Kafka consumer group metadata shows one partition has no assigned
+      consumer — the group coordinator lists it as unassigned — while all other partitions
+      have active members consuming normally.
+    matched_to: HH
+distractor_direction:
+  label: Dashboard display distortion
+  description: Investigating whether the monitoring dashboard's visual rendering is
+    misrepresenting the actual lag magnitude rather than reflecting a genuine consumption
+    problem.
+plausible_alternative_directions:
+- label: Consumer throughput bottleneck
+  description: Checking whether consumers are assigned to all partitions but processing
+    messages too slowly to keep up with the producer rate.
+- label: Partition leader election lag
+  description: Assessing whether a broker leader election left the partition temporarily
+    unavailable and the consumer stalled awaiting reconnection.
+leak_audit:
+  ll_atomic_claims:
+  - The consumer group monitoring dashboard has a cluttered layout.
+  - The cluttered layout makes the lag metric look worse than it actually is.
+  hh_atomic_claims:
+  - Running kafka-consumer-groups.sh --describe shows partition 3 with no CONSUMER-ID
+    and no HOST.
+  - Partitions 0, 1, and 2 each show an active member.
+  - Partition 3's offset has not moved in 47 hours.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observation, no named source.
+    narrative_coherence: 'Specific visual anatomy described coherently: overlapping
+      columns, clipped labels, indistinguishable bands.'
+    confident_assertion: Declarative claim that the layout makes lag 'look inflated'.
+    concrete_detail: Detail is about the dashboard interface itself (columns, labels,
+      bands), not about broker state or consumer metrics.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 44
+  hl_word_count: 35
+  ll_word_count: 19
+  hh_word_count: 34
+  lh_word_count: 18
+  notes: 'T5 bridge — the inferential claim ''makes the lag look worse than it is''
+    (surface flaw → inflated reading) appears in both HL and LL as required by C1/self-check
+    13. Dashboard aesthetics have no mechanism to change broker-side partition assignment
+    state.
+
+    Repair: xbase was 37 words (below 40 hard bound); extended second sentence with
+    ''and reports a healthy connection to the broker'' (neutral context, no focal
+    evidence, no distractor content) to reach 44 words. All five counts corrected
+    from stale stored values.
+
+    '
+causal_audit:
+  steelman: 'A senior SRE might argue: dashboards that aggregate lag across partitions
+    can mask per-partition detail, and a confusing colour scheme might have caused
+    the team to misread which partition or topic is affected, leading to incorrect
+    remediation attempts. But this is an argument that the dashboard impedes diagnosis,
+    not that it causes the lag. The focal feature is obtained from the authoritative
+    kafka-consumer-groups.sh output, bypassing the dashboard entirely; it shows the
+    partition is genuinely unassigned, not merely displayed incorrectly. Dashboard
+    aesthetics cannot change broker-side partition assignment state.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the focal feature in HH/LH uses a CLI tool that is
+    independent of the dashboard.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: 'Kafka consumer group lag on one topic: dashboard looks cluttered/misleading,
+    but kafka-consumer-groups.sh shows partition 3 has no assigned consumer and its
+    offset is frozen.'
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_B
+  generation_mode: generator_B_batches

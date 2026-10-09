@@ -1,0 +1,29 @@
+{
+  "seed_id": "T3-013",
+  "ll_claims_extracted": [
+    "Someone said the Bluetooth audio profile might not be configured correctly.",
+    "Incorrect profile configuration causes crackling."
+  ],
+  "hl_case_claims": [
+    "It is a Bluetooth audio profile issue.",
+    "The audio profile must not be configured right."
+  ],
+  "hl_source_claims": [
+    "The person's name is Priya.",
+    "She is in the IT team.",
+    "She handles all the wireless gear for the floor.",
+    "She told me (first-person report to the user)."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 33,
+    "ll": 14,
+    "xbase": 55,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

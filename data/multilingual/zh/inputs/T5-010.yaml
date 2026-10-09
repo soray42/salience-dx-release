@@ -1,0 +1,96 @@
+seed_id: T5-010
+template: T5
+domain: open_qa
+complexity: low
+xbase: 我正在为自己的公寓选择家用网络运营商。我每周有两天在家办公，主要需要稳定的视频通话。两家运营商都能在下周完成安装。{DS}
+focal_diagnostic_feature: 运营商 A 提供 1 Gbps 光纤，每月 €35，锁定价格 24 个月，可靠性评价更好；运营商 B 提供较慢的有线网络，每月
+  €42，附带短期入门折扣。
+low_diagnostic_proposition: Provider B's retail shop looks newer and more polished
+  than Provider A's shop.
+oracle_action: ANSWER
+oracle_focus: Choose Provider A on speed, price stability, and reliability evidence.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not use retail-shop polish as service evidence. Ask
+  for plan technology, price lock, speed, and reliability reviews.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not use retail-shop polish as service evidence. Ask for plan technology,
+      price lock, speed, and reliability reviews.
+  LL:
+    action: ASK
+    focus: Do not use retail-shop polish as service evidence. Ask for plan technology,
+      price lock, speed, and reliability reviews.
+  HH:
+    action: ANSWER
+    focus: Choose Provider A on speed, price stability, and reliability evidence.
+  LH:
+    action: ANSWER
+    focus: Choose Provider A on speed, price stability, and reliability evidence.
+variants:
+  HL:
+    distractor: 运营商 B 的门店有光滑的黑色柜台、暖光照明，墙上整齐陈列着各种路由器；运营商 A 的门店看起来像 2008 年的售票处。
+    diagnosticity: low
+    salience: high
+    proposition: Provider B's retail shop looks newer and more polished than Provider
+      A's shop.
+    salience_source: polished retail environment, product-display aesthetics
+    why_plausible: A slick shop can feel like a proxy for technical service quality.
+    why_irrelevant: Retail interior design does not determine network performance,
+      price lock, or reliability.
+  LL:
+    distractor: 运营商 B 的实体门店比运营商 A 的更新、视觉上更精致。
+    diagnosticity: low
+    salience: low
+    proposition: Provider B's retail shop looks newer and more polished than Provider
+      A's shop.
+    matched_to: HL
+  HH:
+    distractor: 运营商 A 是 1 Gbps 光纤，每月 €35，锁定价格 24 个月，用户可靠性评价更好；运营商 B 是 500 Mbps 有线，每月
+      €42，附带六个月优惠折扣。
+    diagnosticity: high
+    salience: high
+    proposition: Provider A offers 1 Gbps fibre for €35/month with a 24-month price
+      lock and stronger reliability reviews; Provider B offers slower cable for €42/month
+      with a short introductory discount.
+    salience_source: plan technology/price/reliability comparison
+  LH:
+    distractor: 运营商 A 提供更快的光纤服务，价格更低且有锁定期，可靠性评价也优于运营商 B。
+    diagnosticity: high
+    salience: low
+    proposition: Provider A offers 1 Gbps fibre for €35/month with a 24-month price
+      lock and stronger reliability reviews; Provider B offers slower cable for €42/month
+      with a short introductory discount.
+    matched_to: HH
+distractor_direction:
+  label: 实体门店精致度
+  description: 调查运营商 B 更新、更精致的门店是否表明它是更好的网络运营商。
+plausible_alternative_directions:
+- label: 客户服务质量
+  description: 安装响应速度和故障支持可能与宣传的速度和价格不同。
+- label: 合同退出条款
+  description: 取消费用、价格上涨或最短服务期限条款可能影响运营商的选择。
+- label: 楼宇布线限制
+  description: 公寓楼的布线情况可能限制某一运营商的实际使用表现。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-010.yaml
+  source_xbase_sha256: a40dce19d085a4e6
+  translated_content_sha256: 10cc319304c460ba
+  translation_notes: Currency symbol €35/€42 retained as-is (internationally recognised).
+    '1 Gbps', '500 Mbps', '24-month price lock' rendered with standard Chinese telecom
+    vocabulary. Retail aesthetic details (glossy black counter, Edison-style warm
+    lighting, router wall, 2008-era ticket office) preserved in HL for vividness.
+    LL kept flat. '光纤' (fibre) and '有线' (cable) are standard Chinese terms.

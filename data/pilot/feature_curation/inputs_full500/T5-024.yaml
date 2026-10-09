@@ -1,0 +1,188 @@
+seed_id: T5-024
+template: T5
+domain: open_qa
+complexity: high
+xbase: I'm choosing a budgeting app to track spending across four bank accounts and
+  three credit cards. My main need is accurate automatic categorisation without constant
+  manual correction. I have been comparing two options on a free two-week trial and
+  both apps cost the same amount annually. {DS}
+focal_diagnostic_feature: Over two weeks, App A failed to connect automatically to
+  two of the four bank accounts and miscategorised 23 of 37 dining transactions as
+  groceries; App B connected to all seven accounts and miscategorised only 3 of 40
+  transactions.
+low_diagnostic_proposition: App A has a visually polished interface, which suggests
+  its underlying data analysis and categorisation may be more reliable than App B's.
+oracle_action: ANSWER
+oracle_focus: Choose App B; its trial data shows substantially better account connectivity
+  and categorisation accuracy, which are the stated requirements, despite its less
+  polished interface.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer categorisation accuracy from interface aesthetics.
+  Ask for actual connection success rates and categorisation error counts from both
+  trials.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer categorisation accuracy from interface aesthetics. Ask for
+      actual connection success rates and categorisation error counts from both trials.
+  LL:
+    action: ASK
+    focus: Do not infer categorisation accuracy from interface aesthetics. Ask for
+      actual connection success rates and categorisation error counts from both trials.
+  HH:
+    action: ANSWER
+    focus: Choose App B; its trial data shows substantially better account connectivity
+      and categorisation accuracy, which are the stated requirements, despite its
+      less polished interface.
+  LH:
+    action: ANSWER
+    focus: Choose App B; its trial data shows substantially better account connectivity
+      and categorisation accuracy, which are the stated requirements, despite its
+      less polished interface.
+variants:
+  HL:
+    distractor: App A's interface is genuinely striking — smooth transaction animations,
+      a colour-coded spending wheel, and monthly summary screens that look like a
+      personal finance magazine layout — and that level of visual polish makes the
+      underlying data analysis feel considerably more trustworthy and carefully engineered.
+    diagnosticity: low
+    salience: high
+    proposition: App A has a visually polished interface, which suggests its underlying
+      data analysis and categorisation may be more reliable than App B's.
+    salience_source: B/C — specific enumeration of three concrete visual features
+      in a confident first-person evaluative voice, with the inferential bridge stated
+      as a direct felt response ('makes the data analysis feel more trustworthy').
+    why_plausible: Design quality does sometimes correlate with engineering investment;
+      a carefully crafted UI can reasonably suggest an organisation that sweats its
+      product details, including backend accuracy.
+    why_irrelevant: UI animation quality and layout fidelity are determined by front-end
+      design resources, not by the accuracy of the categorisation model or bank-connection
+      logic; the two-week trial produces direct empirical evidence that makes the
+      inference unnecessary and wrong in this case.
+  LL:
+    distractor: App A has a visually polished interface, which suggests its underlying
+      data analysis and categorisation may be more reliable than App B's.
+    diagnosticity: low
+    salience: low
+    proposition: App A has a visually polished interface, which suggests its underlying
+      data analysis and categorisation may be more reliable than App B's.
+    matched_to: HL
+  HH:
+    distractor: App A connected to only two of four bank accounts and miscategorised
+      23 of 37 dining charges as groceries; App B linked all seven accounts without
+      manual setup and miscategorised just 3 of 40 transactions.
+    diagnosticity: high
+    salience: high
+    proposition: Over two weeks, App A failed to connect automatically to two of the
+      four bank accounts and miscategorised 23 of 37 dining transactions as groceries;
+      App B connected to all seven accounts and miscategorised only 3 of 40 transactions.
+    salience_source: B — side-by-side trial counts (23 vs 3 miscategorisations, 2/4
+      vs 7/7 account connections) over an identical test period, directly targeting
+      the stated evaluation criteria.
+  LH:
+    distractor: App B linked all seven accounts automatically with 3 miscategorisations;
+      App A missed two bank connections and miscategorised 23 of 37 dining transactions.
+    diagnosticity: high
+    salience: low
+    proposition: Over two weeks, App A failed to connect automatically to two of the
+      four bank accounts and miscategorised 23 of 37 dining transactions as groceries;
+      App B connected to all seven accounts and miscategorised only 3 of 40 transactions.
+    matched_to: HH
+distractor_direction:
+  label: interface polish as reliability proxy
+  description: Inferring that App A's visually sophisticated interface indicates higher
+    reliability and accuracy of its underlying categorisation and connection logic.
+plausible_alternative_directions:
+- label: long-term data export and portability
+  description: The ability to export transaction history in a portable format (CSV,
+    OFX) may matter more over time than short-term categorisation accuracy alone.
+- label: customer support and update frequency
+  description: Bank connection integrations break when institutions change their APIs;
+    the vendor's update speed and support responsiveness are relevant for a multi-account
+    setup over years.
+- label: privacy and data-sharing policy
+  description: Both apps likely share aggregated or anonymised data with third parties;
+    the specific data-sharing terms could outweigh feature differences for some users.
+leak_audit:
+  ll_atomic_claims:
+  - App A has a visually polished interface.
+  - This visual polish suggests App A's data analysis and categorisation may be more
+    reliable than App B's.
+  hh_atomic_claims:
+  - App A connected automatically to only two of four bank accounts over two weeks.
+  - App A miscategorised 23 of 37 dining transactions as groceries.
+  - App B connected to all seven accounts (four banks, three credit cards) without
+    manual setup.
+  - App B miscategorised only 3 of 40 transactions.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Enumerated specific visual features followed by a clean logical
+      bridge to the reliability inference, in a composed first-person register.
+    confident_assertion: '''Considerably more trustworthy and carefully engineered''
+      — confident unhedged evaluative claim.'
+    concrete_detail: Transaction animations, colour-coded spending wheel, magazine-layout
+      summaries — visual details about the app's UI surface only, not about data quality.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 43
+  ll_word_count: 22
+  hh_word_count: 35
+  lh_word_count: 23
+  notes: 'T5 bridge check: HL states ''that level of visual polish makes the underlying
+    data
+
+    analysis feel considerably more trustworthy and carefully engineered.'' LL states
+
+    ''which suggests its underlying data analysis and categorisation may be more reliable
+
+    than App B''s.'' Both cells carry the inferential bridge (surface -> reliability
+
+    conclusion) per C1 self-check 13. LH was trimmed to 22 words to stay within the
+
+    operational target; all four HH atomic claims are covered at lower resolution.
+
+    '
+causal_audit:
+  steelman: 'Investment in UI/UX quality does sometimes signal broader engineering
+    discipline within
+
+    a company. An organisation that ships polished animations and thoughtful information
+
+    architecture may also invest heavily in its data pipelines and categorisation
+    models.
+
+    Additionally, a well-designed interface can make manual corrections faster and
+    less
+
+    painful, which partly compensates for lower automatic accuracy. However, the two-week
+
+    parallel trial provides direct empirical measurement of both connection reliability
+
+    and categorisation accuracy — the exact criteria stated. The UI quality inference
+
+    is a prior that the trial data directly contradicts for this specific pair of
+    apps;
+
+    there is no defensible mechanism by which spending-wheel animation quality causes
+
+    better bank-API connection handling.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the aesthetic observation has no constructible pathway
+    to bank connection reliability or categorisation algorithm accuracy.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing a budgeting app; App B wins on actual trial data (account
+    connections and categorisation accuracy) despite App A's more polished visual
+    interface.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

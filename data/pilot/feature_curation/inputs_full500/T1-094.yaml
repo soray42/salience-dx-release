@@ -1,0 +1,191 @@
+seed_id: T1-094
+template: T1
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'Some users intermittently get broken images on our site: a small fraction
+  of image requests through the CDN come back as 404 or 502, then the same URL loads
+  fine on retry seconds later. It is worse during our busy evening window. The origin
+  storage has every image present and returns them correctly when I request them directly.
+  The CDN edges otherwise serve our traffic normally and no images have been deleted
+  or renamed. {DS}'
+focal_diagnostic_feature: The CDN has no origin shield, so on a cache miss each of
+  the many edge locations fetches independently from origin, and at peak that fan-out
+  exceeds the origin's request rate limit, which returns transient errors the edges
+  pass through.
+low_diagnostic_proposition: A colleague's intermittent CDN image errors turned out
+  to be corrupted objects cached at certain edge nodes.
+oracle_action: ANSWER
+oracle_focus: Enable an origin shield (a mid-tier consolidating cache) so edge misses
+  funnel through one origin fetch instead of many; this stops the peak fan-out from
+  tripping the origin's rate limit and returning transient errors.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the corrupted-edge-object explanation. Ask
+  how cache misses fan out to origin and whether origin is rate-limiting the aggregate
+  edge fetch volume at peak.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the corrupted-edge-object explanation. Ask how cache misses
+      fan out to origin and whether origin is rate-limiting the aggregate edge fetch
+      volume at peak.
+  LL:
+    action: ASK
+    focus: Do not adopt the corrupted-edge-object explanation. Ask how cache misses
+      fan out to origin and whether origin is rate-limiting the aggregate edge fetch
+      volume at peak.
+  HH:
+    action: ANSWER
+    focus: Enable an origin shield (a mid-tier consolidating cache) so edge misses
+      funnel through one origin fetch instead of many; this stops the peak fan-out
+      from tripping the origin's rate limit and returning transient errors.
+  LH:
+    action: ANSWER
+    focus: Enable an origin shield (a mid-tier consolidating cache) so edge misses
+      funnel through one origin fetch instead of many; this stops the peak fan-out
+      from tripping the origin's rate limit and returning transient errors.
+variants:
+  HL:
+    distractor: Ágnes, a backend engineer two teams over, told me she chased flaky
+      CDN image errors and traced them to a handful of edge nodes that had cached
+      corrupted, truncated copies of some objects.
+    diagnosticity: low
+    salience: high
+    proposition: A colleague's intermittent CDN image errors turned out to be corrupted
+      objects cached at certain edge nodes.
+    salience_source: A — a named backend engineer recounting her own investigation
+      with a definite root cause makes the corrupted-edge-cache theory persuasive.
+    why_plausible: Corrupted cached objects are a real cause of flaky asset delivery,
+      so a colleague's matching hunt feels like a strong lead for this case.
+    why_irrelevant: Corrupted cached objects would fail persistently on the same edge
+      until eviction; these errors clear on immediate retry and track peak load, pointing
+      at miss-time origin behaviour, not cached bytes.
+  LL:
+    distractor: A colleague's intermittent CDN image errors turned out to be corrupted
+      objects cached at certain edge nodes.
+    diagnosticity: low
+    salience: low
+    proposition: A colleague's intermittent CDN image errors turned out to be corrupted
+      objects cached at certain edge nodes.
+    matched_to: HL
+  HH:
+    distractor: We never enabled an origin shield, so on a miss every edge location
+      pulls from origin on its own; the origin logs show it rate-limiting and rejecting
+      requests exactly during the evening peak when that fan-out spikes, and those
+      rejections are the 404s and 502s users see.
+    diagnosticity: high
+    salience: high
+    proposition: The CDN has no origin shield, so on a cache miss each of the many
+      edge locations fetches independently from origin, and at peak that fan-out exceeds
+      the origin's request rate limit, which returns transient errors the edges pass
+      through.
+    salience_source: Tying the missing origin shield to fan-out and to origin rate-limit
+      rejections that line up with the evening peak makes the mechanism concrete and
+      decisive.
+  LH:
+    distractor: With no origin shield, peak fan-out exceeds the origin rate limit
+      — logs confirm it — producing the 404s and 502s.
+    diagnosticity: high
+    salience: low
+    proposition: The CDN has no origin shield, so on a cache miss each of the many
+      edge locations fetches independently from origin, and at peak that fan-out exceeds
+      the origin's request rate limit, which returns transient errors the edges pass
+      through.
+    matched_to: HH
+distractor_direction:
+  label: Corrupted edge objects
+  description: Investigating whether certain edge nodes have cached corrupted or truncated
+    image objects that they serve until eviction.
+plausible_alternative_directions:
+- label: CDN TTL misconfiguration
+  description: Whether overly short cache TTLs are causing premature expiry and amplifying
+    cache misses at peak
+  driving elevated error rates.: null
+- label: Edge health flapping
+  description: Whether some edge nodes are intermittently unhealthy and returning
+    errors regardless of the requested object.
+leak_audit:
+  ll_atomic_claims:
+  - A colleague had intermittent CDN image errors.
+  - Those errors turned out to be corrupted objects cached at certain edge nodes.
+  hh_atomic_claims:
+  - No origin shield is enabled, so each edge fetches from origin independently on
+    a miss.
+  - Origin logs show it rate-limiting and rejecting requests during the evening peak
+    fan-out.
+  - Those rejections are the 404s and 502s users see.
+  hl_salience_dimensions:
+    source_credibility: Named backend engineer (Ágnes) recounting her own investigation
+      with a definite root cause.
+    narrative_coherence: Coherent chase ending in a definite corrupted-cache root
+      cause.
+    confident_assertion: States she traced the errors to corrupted, truncated copies
+      at specific nodes.
+    concrete_detail: Detail about the source's incident (a handful of nodes, truncated
+      copies) only — no claim about this user's shield or origin limits.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 78
+  hl_word_count: 33
+  ll_word_count: 17
+  hh_word_count: 47
+  lh_word_count: 19
+  notes: 'QC repair: removed ''identical'' (HL-only case claim characterising symptom
+    match), ''kept serving those bad
+
+    bytes until they aged out'' (HL-only mechanism persistence detail absent from
+    LL), and ''for a week''
+
+    (forbidden effort_descriptor). LH now includes the ''origin logs confirm rate-limiting''
+    claim to match
+
+    HH atomic claim 2. Replaced ''Origin storage flakiness'' alternative (foreclosed
+    by xbase stating origin
+
+    returns correctly on direct request) with ''CDN TTL misconfiguration'' (a live,
+    unforclosed candidate from
+
+    xbase alone). Recounted all five fields.
+
+    '
+causal_audit:
+  steelman: 'A senior delivery engineer would defend the corrupted-object theory:
+    bad cached bytes are a classic cause of
+
+    flaky image delivery, they appear intermittent because only some edges hold the
+    bad copy, and a colleague found
+
+    exactly this. The steelman holds only if the failure is tied to specific cached
+    objects. But corrupted cache
+
+    entries fail repeatably on the same edge until eviction — they do not clear on
+    an immediate retry of the same
+
+    URL, and they do not concentrate at the traffic peak. These errors clear instantly
+    on retry and scale with
+
+    evening load, which fits miss-time origin rate-limiting from un-shielded fan-out,
+    not stored corruption. Nothing
+
+    in xbase independently elevates cached-object corruption for this load-shaped,
+    retry-clearing pattern.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states origin has every image and returns them correctly
+    on direct request, foreclosing the missing-object and broken-origin pathways;
+    the un-shielded fan-out tripping the origin rate limit still lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Intermittent CDN image 404/502 errors at peak caused by a missing origin
+    shield letting edge fan-out trip the origin rate limit, not corrupted edge-cached
+    objects, which is decisive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

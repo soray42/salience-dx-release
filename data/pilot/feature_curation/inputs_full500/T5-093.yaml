@@ -1,0 +1,170 @@
+seed_id: T5-093
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: Our mobile app's REST endpoint is slow — every call takes about 900 ms regardless
+  of payload size. The endpoint sits behind an API gateway with a CDN in front. Other
+  endpoints on the same stack respond in under 80 ms. The slow one is a product detail
+  fetch that returns about 2 KB of JSON. {DS}
+focal_diagnostic_feature: 'Every response from the product-detail endpoint carries
+  `Cache-Control: no-store`, preventing any CDN caching and forcing every request
+  to traverse the full path to origin.'
+low_diagnostic_proposition: The API gateway console's disorganised appearance suggests
+  its routing configuration is wrong.
+oracle_action: ANSWER
+oracle_focus: 'Remove or replace the `Cache-Control: no-store` directive on product-detail
+  responses so the CDN can cache them; requests will then be served from the edge
+  rather than reaching origin on every call.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer routing misconfiguration from console appearance.
+  Ask for the response headers on the slow endpoint, particularly Cache-Control, and
+  compare cache-hit ratio with the fast endpoints.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer routing misconfiguration from console appearance. Ask for
+      the response headers on the slow endpoint, particularly Cache-Control, and compare
+      cache-hit ratio with the fast endpoints.
+  LL:
+    action: ASK
+    focus: Do not infer routing misconfiguration from console appearance. Ask for
+      the response headers on the slow endpoint, particularly Cache-Control, and compare
+      cache-hit ratio with the fast endpoints.
+  HH:
+    action: ANSWER
+    focus: 'Remove or replace the `Cache-Control: no-store` directive on product-detail
+      responses so the CDN can cache them; requests will then be served from the edge
+      rather than reaching origin on every call.'
+  LH:
+    action: ANSWER
+    focus: 'Remove or replace the `Cache-Control: no-store` directive on product-detail
+      responses so the CDN can cache them; requests will then be served from the edge
+      rather than reaching origin on every call.'
+variants:
+  HL:
+    distractor: The API gateway console is the most disorganised interface I have
+      worked with — greyed-out menus, route tables that scroll sideways forever, and
+      a deployment log that takes three clicks to reach. That mess makes me think
+      something in its routing setup is wrong.
+    diagnosticity: low
+    salience: high
+    proposition: The API gateway console's disorganised appearance suggests its routing
+      configuration is wrong.
+    salience_source: Dimension B (narrative coherence) — three named specific UI deficiencies
+      (greyed-out menus, sideways-scrolling tables, buried deployment log) make the
+      aesthetic observation vivid; dimension C (confident assertion) — 'makes me think
+      something in its routing setup is wrong' is stated as a direct conclusion.
+    why_plausible: A practitioner who finds a tool's interface confusing may reasonably
+      infer that the underlying system was configured without care; disorganised tooling
+      correlates weakly with disorganised configuration practices.
+    why_irrelevant: 'Console UI design has no causal path to HTTP response headers;
+      whether `Cache-Control: no-store` is set on a route is determined by application
+      code or gateway policy, not by how navigable the admin interface is.'
+  LL:
+    distractor: The API gateway console is disorganised and hard to navigate, which
+      makes me suspect its routing configuration is wrong.
+    diagnosticity: low
+    salience: low
+    proposition: The API gateway console's disorganised appearance suggests its routing
+      configuration is wrong.
+    matched_to: HL
+  HH:
+    distractor: 'Every response from the product-detail endpoint carries `Cache-Control:
+      no-store` in its headers — the CDN honours that directive unconditionally, so
+      each request travels all the way to the origin backend with no cache hit possible.'
+    diagnosticity: high
+    salience: high
+    proposition: 'Every response from the product-detail endpoint carries `Cache-Control:
+      no-store`, preventing any CDN caching and forcing every request to traverse
+      the full path to origin.'
+    salience_source: Dimension B (narrative coherence) — precise header name and CDN
+      behaviour described as cause and effect; dimension C (confident assertion) —
+      'unconditionally' and 'no cache hit possible' remove ambiguity.
+  LH:
+    distractor: 'The product-detail endpoint sends `Cache-Control: no-store`, preventing
+      any CDN caching and forcing every request to origin.'
+    diagnosticity: high
+    salience: low
+    proposition: 'Every response from the product-detail endpoint carries `Cache-Control:
+      no-store`, preventing any CDN caching and forcing every request to traverse
+      the full path to origin.'
+    matched_to: HH
+distractor_direction:
+  label: API gateway routing misconfiguration
+  description: Investigating whether a misconfigured routing rule in the API gateway
+    is directing product-detail requests inefficiently and causing the latency gap.
+plausible_alternative_directions:
+- label: origin query or database bottleneck
+  description: The product-detail endpoint may trigger a slow database lookup or external
+    service call that the other fast endpoints avoid.
+- label: missing connection keep-alive
+  description: The slow endpoint may not reuse connections, adding TCP handshake overhead
+    on every request unlike the faster endpoints.
+leak_audit:
+  ll_atomic_claims:
+  - The API gateway console is disorganised and hard to navigate.
+  - That disorganisation suggests the routing configuration is wrong.
+  hh_atomic_claims:
+  - Every response from the product-detail endpoint carries Cache-Control no-store.
+  - The CDN honours that directive unconditionally.
+  - Each request travels to the origin backend.
+  - No cache hit is possible.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observation
+    narrative_coherence: Three specific UI deficiencies named in sequence (greyed-out
+      menus, sideways tables, buried log) create a coherent picture of the interface.
+    confident_assertion: '''Makes me think something in its routing setup is wrong''
+      — direct inferential conclusion from the observation.'
+    concrete_detail: N/A — detail is about the console surface, which is the propositional
+      content for T5.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 56
+  hl_word_count: 44
+  ll_word_count: 19
+  hh_word_count: 35
+  lh_word_count: 16
+  notes: 'T5 bridge (console disorganisation → routing misconfiguration) appears in
+    both HL and LL as required by C1/self-check 13.
+
+    HL adds only named UI deficiencies about the console surface; LL carries the inference
+    flatly.
+
+    Cache-Control no-store header lives only in HH/LH; xbase does not mention any
+    response headers.
+
+    C4 verified: xbase says endpoint is slow and compares with fast endpoints; does
+    not disclose Cache-Control headers or cache hit rates.
+
+    Low complexity: a junior engineer who checks response headers will find the header
+    immediately.
+
+    '
+causal_audit:
+  steelman: 'A senior platform engineer might argue: a poorly-designed API gateway
+    console often reflects rushed configuration by engineers who lacked visibility,
+    and a rushed configuration is more likely to include mistakes such as incorrect
+    route ordering, missing header pass-through, or misconfigured timeouts that add
+    latency. The disorganised console could therefore weakly predict a routing problem
+    worth investigating.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the Cache-Control header is not disclosed in xbase.
+    The steelman's correlation between console quality and configuration care is a
+    general heuristic with no mechanism connecting it to HTTP response header values;
+    the focal feature is the direct cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Product-detail endpoint slow because Cache-Control no-store prevents
+    CDN caching and forces every request to origin; distractor is inference from disorganised
+    API gateway console appearance.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

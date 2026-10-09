@@ -1,0 +1,193 @@
+seed_id: T3-078
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'Our marketing landing page scores poorly on Lighthouse: first meaningful paint
+  takes about 3.4 seconds on a simulated 4G connection. The backend API responds in
+  under 200ms and our CDN serves the HTML globally. We have not recently changed the
+  page structure, but the product team added three new third-party scripts last sprint.
+  {DS}'
+focal_diagnostic_feature: Chrome DevTools Network waterfall shows TTFB is 180ms, but
+  three script tags in the head element lack defer or async, causing the browser to
+  pause HTML parsing for 2.8 seconds while downloading and executing them before any
+  content renders.
+low_diagnostic_proposition: This Lighthouse first-paint pattern is always a server
+  TTFB problem where the browser is waiting for the HTML to arrive.
+oracle_action: ANSWER
+oracle_focus: Add defer or async to the three third-party script tags in the head;
+  this unblocks HTML parsing and eliminates the 2.8-second pre-render delay without
+  touching server infrastructure.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the server-TTFB diagnosis from authority
+  alone; ask for the actual TTFB measurement from DevTools and for the script loading
+  strategy used by the recently added third-party tags before investigating server
+  performance.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the server-TTFB diagnosis from authority alone; ask for the
+      actual TTFB measurement from DevTools and for the script loading strategy used
+      by the recently added third-party tags before investigating server performance.
+  LL:
+    action: ASK
+    focus: Do not accept the server-TTFB diagnosis from authority alone; ask for the
+      actual TTFB measurement from DevTools and for the script loading strategy used
+      by the recently added third-party tags before investigating server performance.
+  HH:
+    action: ANSWER
+    focus: Add defer or async to the three third-party script tags in the head; this
+      unblocks HTML parsing and eliminates the 2.8-second pre-render delay without
+      touching server infrastructure.
+  LH:
+    action: ANSWER
+    focus: Add defer or async to the three third-party script tags in the head; this
+      unblocks HTML parsing and eliminates the 2.8-second pre-render delay without
+      touching server infrastructure.
+variants:
+  HL:
+    distractor: Rizki, our senior front-end architect who led the platform rebuild
+      two years ago, said he has seen this Lighthouse score pattern many times and
+      it is always a server TTFB problem — the browser just waits for the HTML to
+      arrive.
+    diagnosticity: low
+    salience: high
+    proposition: This Lighthouse first-paint pattern is always a server TTFB problem
+      where the browser is waiting for the HTML to arrive.
+    salience_source: A/B/C — source credibility (senior front-end architect, led platform
+      rebuild), narrative coherence (direct in-team consultation), confident universal
+      assertion ("always a server TTFB problem").
+    why_plausible: Server TTFB is a genuinely common cause of Lighthouse first-paint
+      delays, and a senior architect with platform experience confidently pattern-matching
+      to a familiar failure type is a compelling authority for a developer unfamiliar
+      with render-blocking script mechanics.
+    why_irrelevant: The focal evidence shows TTFB is already 180ms, which is excellent;
+      the 2.8-second delay occurs after the HTML arrives but before parsing completes,
+      caused entirely by synchronous script execution — server optimisation cannot
+      address a client-side parsing block.
+  LL:
+    distractor: A senior front-end architect stated that this Lighthouse pattern is
+      always a server TTFB problem where the browser waits for HTML.
+    diagnosticity: low
+    salience: low
+    proposition: This Lighthouse first-paint pattern is always a server TTFB problem
+      where the browser is waiting for the HTML to arrive.
+    matched_to: HL
+  HH:
+    distractor: Chrome DevTools shows TTFB is only 180ms, but three script tags in
+      the head have neither defer nor async, so the browser pauses HTML parsing to
+      download and execute all three before it can render a single visible element
+      — that pause is 2.8 seconds.
+    diagnosticity: high
+    salience: high
+    proposition: Chrome DevTools Network waterfall shows TTFB is 180ms, but three
+      script tags in the head element lack defer or async, causing the browser to
+      pause HTML parsing for 2.8 seconds while downloading and executing them before
+      any content renders.
+    salience_source: B/C — precise TTFB measurement (180ms), exact pause duration
+      (2.8 seconds), specific causal mechanism named (missing defer/async), stated
+      in confident declarative terms with a direct consequence described.
+  LH:
+    distractor: TTFB is 180ms, but three render-blocking scripts in the head without
+      defer or async delay first paint by 2.8 seconds.
+    diagnosticity: high
+    salience: low
+    proposition: Chrome DevTools Network waterfall shows TTFB is 180ms, but three
+      script tags in the head element lack defer or async, causing the browser to
+      pause HTML parsing for 2.8 seconds while downloading and executing them before
+      any content renders.
+    matched_to: HH
+distractor_direction:
+  label: server TTFB bottleneck
+  description: Investigating whether slow server response time or origin-to-edge delivery
+    latency is preventing the browser from receiving the HTML quickly enough to begin
+    rendering.
+plausible_alternative_directions:
+- label: large JavaScript bundle parse time
+  description: Even after HTML is parsed, a very large main bundle requires substantial
+    parse and compile time on a simulated 4G device, which could delay first meaningful
+    paint independently of render-blocking.
+- label: render-blocking CSS
+  description: Stylesheets in the head without media queries block rendering until
+    downloaded and parsed; this is a live candidate if the third-party scripts also
+    inject style dependencies.
+- label: third-party script network latency
+  description: Scripts served from slow third-party origins add download time regardless
+    of defer/async status; a CDN or self-hosting approach could be the right additional
+    fix even after the blocking issue is resolved.
+leak_audit:
+  ll_atomic_claims:
+  - This Lighthouse first-paint pattern is always a server TTFB problem.
+  - The browser is waiting for the HTML to arrive.
+  hh_atomic_claims:
+  - Chrome DevTools shows TTFB is 180ms.
+  - Three script tags in the head have neither defer nor async.
+  - The browser pauses HTML parsing to download and execute all three scripts.
+  - The pause before first render is 2.8 seconds.
+  hl_salience_dimensions:
+    source_credibility: Rizki identified as senior front-end architect who led the
+      platform rebuild two years ago — domain-matched senior technical role with direct
+      platform history.
+    narrative_coherence: In-team consultation with a recognisable authority figure
+      delivering a verdict based on pattern recognition from prior experience.
+    confident_assertion: '"always a server TTFB problem" — universal claim with no
+      hedging delivered with expert authority.'
+    concrete_detail: '"led the platform rebuild two years ago" — concrete source background
+      (about the source, not the case).'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 53
+  hl_word_count: 40
+  ll_word_count: 21
+  hh_word_count: 43
+  lh_word_count: 19
+  notes: 'xbase states "backend API responds in under 200ms and CDN serves HTML globally"
+
+    — this narrows TTFB as a hypothesis (server is already fast) without providing
+
+    the 180ms measurement that lives in HH/LH. Decisive confirmation that TTFB is
+
+    fine AND that the 2.8s block is from scripts lives only in HH/LH. The three
+
+    new third-party scripts from the last sprint provide the live contextual lead.
+
+    Authority''s diagnosis is a pattern-match ("always") that ignores the script
+
+    loading evidence, consistent with T3 recipe.
+
+    '
+causal_audit:
+  steelman: 'A senior architect who has worked on the platform could plausibly argue
+    that
+
+    even a 200ms API response time, when multiplied by CDN edge selection and
+
+    connection overhead on a simulated 4G link, can produce meaningful TTFB delays
+
+    in Lighthouse. They might also argue that fixing TTFB first is the standard
+
+    sequence before investigating client-side blocking, since TTFB impacts all
+
+    subsequent timings. This is a defensible process argument even if not correct
+
+    for this specific case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"The backend API responds in under 200ms and CDN serves
+    HTML globally" narrows but does not conclusively close TTFB as a cause; the HH''s
+    180ms measurement provides the conclusive closure. xbase appropriately keeps the
+    server-speed context without pre-announcing the diagnosis.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: A landing page's 3.4-second first meaningful paint is caused by three
+    render-blocking third-party scripts in the head without defer or async, not by
+    server TTFB as a senior front-end architect confidently pattern-matches.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

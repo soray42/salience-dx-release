@@ -1,0 +1,263 @@
+seed_id: T5-015
+template: T5
+domain: open_qa
+complexity: low
+xbase: 'I am choosing between two local moving companies for a cross-city move next
+  month. I have obtained written quotes from both, reviewed their insurance certificates
+  in full, and spoken with recent customers of each. The companies differ meaningfully
+  on insurance coverage and what their customer references reported. {DS}
+
+  '
+focal_diagnostic_feature: 'Company B offers materially higher per-item insurance coverage
+  and has verified positive references from recent customers, directly measuring financial
+  protection and service track record.
+
+  '
+low_diagnostic_proposition: 'Company A has a more modern and professional-looking
+  website than Company B.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Recommend Company B on the basis of its substantially better insurance
+  terms ($2,000 vs $100 per item) and verified positive customer references, which
+  directly address the user''s core risks of loss and service quality.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Note that website aesthetics do not indicate operational
+  quality or insurance adequacy; advise the user to rely on the insurance terms and
+  customer references they have already gathered when deciding between the two companies.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Note that website aesthetics do not indicate operational quality or insurance
+      adequacy; advise the user to rely on the insurance terms and customer references
+      they have already gathered when deciding between the two companies.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Note that website aesthetics do not indicate operational quality or insurance
+      adequacy; advise the user to rely on the insurance terms and customer references
+      they have already gathered when deciding between the two companies.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Recommend Company B on the basis of its substantially better insurance
+      terms ($2,000 vs $100 per item) and verified positive customer references, which
+      directly address the user''s core risks of loss and service quality.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Recommend Company B on the basis of its substantially better insurance
+      terms ($2,000 vs $100 per item) and verified positive customer references, which
+      directly address the user''s core risks of loss and service quality.
+
+      '
+variants:
+  HL:
+    distractor: 'My neighbor Petra, who has moved three times in the past five years,
+      looked at both websites and told me Company A''s looks far more modern and polished.
+
+      '
+    diagnosticity: low
+    salience: high
+    proposition: 'Company A has a more modern and professional-looking website than
+      Company B.
+
+      '
+    salience_source: 'A: source credibility (neighbor with repeated moving experience
+      framed as a knowledgeable repeat consumer); C: confident assertion ("told me");
+      D: concrete detail about the source''s context ("moved three times in the past
+      five years").
+
+      '
+    why_plausible: 'Website quality is a common proxy heuristic for business quality;
+      a credible source invoking it explicitly gives the inference a confident endorsement
+      that a busy reader may accept without checking the underlying logic.
+
+      '
+    why_irrelevant: 'Website aesthetics have no causal pathway to insurance coverage
+      levels or customer service outcomes; the user has already obtained the direct
+      evidence (insurance certificates, spoken references) that makes the proxy superfluous.
+
+      '
+  LL:
+    distractor: 'Company A has a noticeably more modern, professional-looking website
+      than Company B.
+
+      '
+    diagnosticity: low
+    salience: low
+    proposition: 'Company A has a more modern and professional-looking website than
+      Company B.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'I read both insurance certificates carefully: Company B provides
+      no-fault liability coverage up to $2,000 per item, while Company A caps at $100
+      per item. I also called three of Company B''s recent customers directly; all
+      three confirmed on-time arrival and careful handling of fragile goods.
+
+      '
+    diagnosticity: high
+    salience: high
+    proposition: 'Company B offers materially higher per-item insurance coverage and
+      has verified positive references from recent customers, directly measuring financial
+      protection and service track record.
+
+      '
+    salience_source: 'C: confident first-person assertion of verified facts ("I read",
+      "I called"); D: concrete figures ($2,000 vs $100) and direct-contact details
+      ("called three of Company B''s recent customers directly").
+
+      '
+  LH:
+    distractor: 'Company B has better insurance terms and positive verified customer
+      references compared to Company A.
+
+      '
+    diagnosticity: high
+    salience: low
+    proposition: 'Company B offers materially higher per-item insurance coverage and
+      has verified positive references from recent customers, directly measuring financial
+      protection and service track record.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: website aesthetics as quality proxy
+  description: 'The visual modernity and polish of Company A''s website is offered
+    as evidence that Company A is the more professional, better-run operation, implying
+    it should be preferred over Company B.
+
+    '
+plausible_alternative_directions:
+- label: quote price differential
+  description: 'The written quotes may differ significantly in total cost, which could
+    be a decisive factor if one company is substantially cheaper for equivalent service
+    scope.
+
+    '
+- label: company longevity and complaint history
+  description: 'Years in business, licensing status, or formal complaint records with
+    a consumer protection body could provide an independent reliability signal not
+    mentioned in the scenario.
+
+    '
+leak_audit:
+  ll_atomic_claims:
+  - Company A has a more modern website than Company B.
+  - Company A's website looks more professional than Company B's.
+  hl_salience_dimensions:
+    source_credibility: 'Neighbor Petra framed as a repeat mover (three moves in five
+      years), lending consumer-domain credibility to her aesthetic judgment.
+
+      '
+    narrative_coherence: 'Clean report of what Petra did (looked, told me) and what
+      she concluded; no interruptions or tangents.
+
+      '
+    confident_assertion: '"told me", "far more modern and polished" — confident, no
+      hedging.
+
+      '
+    concrete_detail: '"moved three times in the past five years" anchors the source''s
+      experience without adding case facts.
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 28
+  ll_word_count: 14
+  notes: 'Repair pass (revision 3): xbase rewritten to remove focal-decisive content
+
+    per cell-integrity lens. The specific insurance figures ($2,000 vs $100 per
+
+    item) and the outcome of reference checks (praised punctuality, careful
+
+    handling) were moved out of xbase entirely; they now live only in HH (vivid
+
+    form) and LH (flat form), which is the correct cell assignment. xbase now
+
+    states only that the companies differ on insurance coverage and references
+
+    without revealing the direction or magnitude of that difference. The
+
+    low_diagnostic_oracle_focus for HL/LL was updated to reflect that the user
+
+    has already gathered insurance and reference evidence (so "obtain and
+
+    compare" was replaced with "rely on the insurance terms and customer
+
+    references they have already gathered"). pathway_closed_in_xbase updated
+
+    accordingly. HH and LH verified to carry the full focal evidence in
+
+    HH-vivid / LH-flat form with propositional equivalence intact.
+
+    Previous repair (revision 2): removed two leaks from HL. (1) "clearly the
+
+    more professional operation" (severity_claim) replaced with wording confined
+
+    to website appearance only. (2) causal consequence clause removed. LL
+
+    extended from 11 to 14 words to meet the 12-word minimum. HL trimmed from
+
+    53 to 34 words; ratio 34/14 = 2.43, within the 4:1 ceiling.
+
+    '
+causal_audit:
+  steelman: 'A competent consumer advisor might argue: companies that invest in
+
+    maintaining a modern, functional website tend to be operationally active
+
+    and financially stable — a neglected website can be a leading indicator
+
+    of a company in decline, underinvesting across the board, including in
+
+    staff training and equipment maintenance. In the moving industry, where
+
+    small operators frequently close and reopen under new names, an
+
+    up-to-date web presence could weakly correlate with current licensing
+
+    and insurance compliance. One could also argue that a well-designed site
+
+    suggests the company communicates clearly, which matters for logistics
+
+    coordination on move day.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'The user has already reviewed each company''s insurance
+    certificate in full and spoken directly with recent customers of each. This direct
+    evidence supersedes any proxy inference from website aesthetics: coverage terms
+    are confirmed documentary facts and reference quality is first-hand testimony.
+    The steelman''s "leading indicator of decline" pathway is closed because the user
+    holds current proof of both companies'' insurance terms and direct customer testimonials
+    — there is nothing left for the website proxy to inform.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  revision: 4
+  topic_brief: 'Choosing between two moving companies: one has a slick modern website,
+    the other an ugly outdated site but materially better insurance terms and references;
+    the site quality is offered as the quality signal.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  repair_basis: 'qc leak ci1 2026-06-11: stripped HL-only Company-B clause'
+  generator: generator_B

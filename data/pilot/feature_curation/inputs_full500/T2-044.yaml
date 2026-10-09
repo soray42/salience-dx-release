@@ -1,0 +1,170 @@
+seed_id: T2-044
+template: T2
+domain: open_qa
+complexity: high
+xbase: 'I''m about to spend a lot on a top-of-the-line new router because my home
+  internet crawls every evening: pages hang and video buffers from roughly eight to
+  eleven at night, then it''s perfectly fast again by morning. During the day it''s
+  great. Our current router is only two years old and handles the daytime load without
+  any trouble at all. {DS}'
+focal_diagnostic_feature: A wired speed test plugged straight into the modem also
+  drops to a fraction of the rated speed only during the evening window and is full
+  speed by day, so the bottleneck is shared upstream congestion that a new router
+  cannot fix.
+low_diagnostic_proposition: The evening slowdowns began right after the user switched
+  to a different email provider.
+oracle_action: ANSWER
+oracle_focus: Do not buy the new router; a wired test from the modem is equally slow
+  only in the evening peak, so the limit is upstream neighbourhood/plan congestion,
+  and replacing the router will not change shared-segment throughput.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect changing email providers to evening internet
+  speed. Ask whether a wired test from the modem is also slow in the evening window
+  before deciding the router is at fault.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect changing email providers to evening internet speed. Ask
+      whether a wired test from the modem is also slow in the evening window before
+      deciding the router is at fault.
+  LL:
+    action: ASK
+    focus: Do not connect changing email providers to evening internet speed. Ask
+      whether a wired test from the modem is also slow in the evening window before
+      deciding the router is at fault.
+  HH:
+    action: ANSWER
+    focus: Do not buy the new router; a wired test from the modem is equally slow
+      only in the evening peak, so the limit is upstream neighbourhood/plan congestion,
+      and replacing the router will not change shared-segment throughput.
+  LH:
+    action: ANSWER
+    focus: Do not buy the new router; a wired test from the modem is equally slow
+      only in the evening peak, so the limit is upstream neighbourhood/plan congestion,
+      and replacing the router will not change shared-segment throughput.
+variants:
+  HL:
+    distractor: Now that I think about it, the evening crawl set in right after I
+      moved my whole household over to a new email provider and reconfigured everything
+      around it; the changeover and the slow nights lined up so neatly that switching
+      back keeps crossing my mind as a fix.
+    diagnosticity: low
+    salience: high
+    proposition: The evening slowdowns began right after the user switched to a different
+      email provider.
+    salience_source: B/C — a confident first-person timeline pinning the slowdowns
+      to a specific, memorable account change.
+    why_plausible: People tie new problems to their most recent deliberate change,
+      and the email switch and the slow evenings coincided.
+    why_irrelevant: An email provider handles only mail and consumes negligible bandwidth;
+      it cannot govern whole-connection throughput at a fixed time of night, so it
+      has no pathway to the symptom.
+  LL:
+    distractor: The evening slowdowns began around the same time the user switched
+      email providers.
+    diagnosticity: low
+    salience: low
+    proposition: The evening slowdowns began right after the user switched to a different
+      email provider.
+    matched_to: HL
+  HH:
+    distractor: 'I cabled a laptop straight into the modem, bypassing the router entirely,
+      and ran tests through the day: it''s full rated speed every daytime hour and
+      then collapses to a fraction of it during the exact eight-to-eleven window,
+      every night. The router is out of the loop, so the choke is on the shared line.'
+    diagnosticity: high
+    salience: high
+    proposition: A wired speed test plugged straight into the modem also drops to
+      a fraction of the rated speed only during the evening window and is full speed
+      by day, so the bottleneck is shared upstream congestion that a new router cannot
+      fix.
+    salience_source: Concrete wired-modem test isolating the drop to the evening window
+      with the router bypassed makes the upstream-congestion mechanism unmistakable.
+  LH:
+    distractor: A wired test from the modem is full speed by day and collapses only
+      in the evening window, so the choke is the shared upstream line, not the router.
+    diagnosticity: high
+    salience: low
+    proposition: A wired speed test plugged straight into the modem also drops to
+      a fraction of the rated speed only during the evening window and is full speed
+      by day, so the bottleneck is shared upstream congestion that a new router cannot
+      fix.
+    matched_to: HH
+distractor_direction:
+  label: Email-provider switch timing
+  description: Treating the recent change of email provider as the cause of the evening
+    internet slowdowns.
+plausible_alternative_directions:
+- label: Router evening overload
+  description: Whether the current router itself degrades under the household's heavier
+    evening usage.
+- label: Wi-Fi evening interference
+  description: Whether neighbours' Wi-Fi activity peaks in the evening and congests
+    the user's channel specifically.
+- label: A heavy local device
+  description: Whether one household device runs bandwidth-heavy tasks only in the
+    evening.
+leak_audit:
+  ll_atomic_claims:
+  - The evening slowdowns began around the same time the user switched email providers.
+  hh_atomic_claims:
+  - A wired test plugged straight into the modem is full rated speed during the day.
+  - The same wired test collapses to a fraction of rated speed only in the evening
+    window.
+  - With the router bypassed, the choke is on the shared upstream line.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: A clean timeline tying the evening crawl to the email-provider
+      changeover.
+    confident_assertion: The changeover and slow nights lined up so neatly that switching
+      back keeps crossing the user's mind.
+    concrete_detail: Detail about migrating the household to a new email provider
+      — about the event, not the throughput pattern.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 49
+  ll_word_count: 13
+  hh_word_count: 48
+  lh_word_count: 27
+  notes: 'Per C4, xbase withholds the wired-modem test result (which decides the buy/don''t-buy
+    question); it keeps only the
+
+    evening-only symptom and that the router handles daytime load. The decisive bypassed-router
+    evening collapse lives
+
+    only in HH/LH. Email provider has no whole-connection bandwidth mechanism.
+
+    '
+causal_audit:
+  steelman: 'One might argue a new email provider syncs large mailboxes or pushes
+    heavy attachments that could saturate the
+
+    link. But mail traffic is tiny and bursty, not a nightly whole-connection collapse
+    confined to a fixed window,
+
+    and a wired modem test with the router bypassed shows the same evening drop independent
+    of any client; the cause
+
+    is shared-segment peak congestion, which an email provider cannot create.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the connection is perfectly fast by day and
+    the current router handles daytime load without trouble, foreclosing a constant
+    client-side or router-capacity cause and isolating the issue to the evening window.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to buy an expensive new router for evening-only slowdowns that
+    a wired modem test proves are shared upstream congestion, against email-provider-switch
+    coincidence timing.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

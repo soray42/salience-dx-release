@@ -1,0 +1,171 @@
+seed_id: T2-045
+template: T2
+domain: technical_troubleshooting
+complexity: low
+xbase: Our shared office printer suddenly stopped accepting print jobs from everyone's
+  computers; jobs just sit in the queue marked "offline." The printer itself is powered
+  on, its own screen shows no errors, and it happily prints its internal test page
+  from the front panel. Nothing was changed on the printer's menus, and the network
+  switch it plugs into is fine. {DS}
+focal_diagnostic_feature: The printer's DHCP lease expired and the router handed it
+  a new IP address, but every computer's saved print queue still points at the old
+  IP, so jobs are sent to an address nothing answers on.
+low_diagnostic_proposition: The printer went offline right after someone replaced
+  the desk lamp next to it.
+oracle_action: ANSWER
+oracle_focus: The printer's IP address changed after its DHCP lease renewed; reserve
+  a static IP for it on the router and update or re-add the printer queues to the
+  new address, since the queues still point at the old IP.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect replacing a desk lamp to the printer dropping
+  offline. Ask whether the printer's IP address has changed and what address the computers'
+  print queues are pointing to before diagnosing further.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect replacing a desk lamp to the printer dropping offline. Ask
+      whether the printer's IP address has changed and what address the computers'
+      print queues are pointing to before diagnosing further.
+  LL:
+    action: ASK
+    focus: Do not connect replacing a desk lamp to the printer dropping offline. Ask
+      whether the printer's IP address has changed and what address the computers'
+      print queues are pointing to before diagnosing further.
+  HH:
+    action: ANSWER
+    focus: The printer's IP address changed after its DHCP lease renewed; reserve
+      a static IP for it on the router and update or re-add the printer queues to
+      the new address, since the queues still point at the old IP.
+  LH:
+    action: ANSWER
+    focus: The printer's IP address changed after its DHCP lease renewed; reserve
+      a static IP for it on the router and update or re-add the printer queues to
+      the new address, since the queues still point at the old IP.
+variants:
+  HL:
+    distractor: The whole thing started the same morning I swapped out the dying desk
+      lamp beside the printer for a brighter LED one and tucked its cable along the
+      same run; the timing was so on-the-nose that the new lamp is honestly the first
+      thing I suspect.
+    diagnosticity: low
+    salience: high
+    proposition: The printer went offline right after someone replaced the desk lamp
+      next to it.
+    salience_source: B/C — a precise, confident first-person timeline pinning the
+      failure to a specific, memorable desk change.
+    why_plausible: People blame the newest visible change nearby, and the lamp swap
+      and the printer dropping offline happened the same morning.
+    why_irrelevant: A desk lamp shares no data path with the printer and cannot alter
+      IP addressing; the queues fail because they point at an address the printer
+      no longer holds, which a lamp cannot cause.
+  LL:
+    distractor: The printer went offline around the time someone replaced the nearby
+      desk lamp.
+    diagnosticity: low
+    salience: low
+    proposition: The printer went offline right after someone replaced the desk lamp
+      next to it.
+    matched_to: HL
+  HH:
+    distractor: 'I checked the printer''s network screen: its DHCP lease lapsed and
+      the router gave it a brand-new IP, but every computer''s print queue is still
+      aimed at the old address, so each job is fired off to an IP nothing answers
+      on anymore while the printer waits, perfectly online, on its new one.'
+    diagnosticity: high
+    salience: high
+    proposition: The printer's DHCP lease expired and the router handed it a new IP
+      address, but every computer's saved print queue still points at the old IP,
+      so jobs are sent to an address nothing answers on.
+    salience_source: Concrete address mismatch (new DHCP IP versus the old IP saved
+      in every queue) makes the offline cause unmistakable.
+  LH:
+    distractor: The printer's DHCP lease lapsed; queues target the old IP so jobs
+      reach nothing, while the printer is online at its new address.
+    diagnosticity: high
+    salience: low
+    proposition: The printer's DHCP lease expired and the router handed it a new IP
+      address, but every computer's saved print queue still points at the old IP,
+      so jobs are sent to an address nothing answers on.
+    matched_to: HH
+distractor_direction:
+  label: New-desk-lamp timing
+  description: Treating the recent desk-lamp replacement next to the printer as connected
+    to it dropping offline.
+plausible_alternative_directions:
+- label: Print spooler fault
+  description: Whether each computer's print spooler service has hung and is mishandling
+    jobs.
+- label: Printer driver issue
+  description: Whether a driver update broke communication with the printer for all
+    clients at once.
+- label: Switch port problem
+  description: Whether the network switch port or cable to the printer is intermittently
+    failing.
+leak_audit:
+  ll_atomic_claims:
+  - The printer went offline around the time someone replaced the nearby desk lamp.
+  hh_atomic_claims:
+  - The printer's DHCP lease expired and the router gave it a new IP address.
+  - Every computer's print queue still points at the old IP address.
+  - Jobs are sent to an address nothing answers on while the printer is online at
+    its new IP.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: A clean same-morning timeline tying the failure to the lamp
+      swap.
+    confident_assertion: The timing was so on-the-nose the lamp is the first thing
+      suspected.
+    concrete_detail: Detail about swapping to a brighter LED lamp and routing its
+      cable — about the event, not the IP change.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 47
+  ll_word_count: 13
+  hh_word_count: 48
+  lh_word_count: 23
+  notes: 'xbase shows the printer prints its own test page and the switch is fine
+    (symptoms ruling out the printer
+
+    hardware and the link) but withholds the DHCP-IP-change/queue-mismatch, which
+    lives only in HH/LH. A desk lamp
+
+    has no network pathway. QC repair: LH expanded to include all three hh_atomic_claims
+    — the consequence clause
+
+    (jobs reach nothing, printer online at new address) was previously absent from
+    LH.
+
+    '
+causal_audit:
+  steelman: 'One might argue the new lamp''s switching power supply emits electrical
+    noise that disturbs the nearby network
+
+    cable. But the printer prints its own test page and reaches the switch fine, and
+    the failure is purely that
+
+    every queue targets a stale IP after a DHCP renewal; the printer is online at
+    a new address, which no lamp can
+
+    cause, so there is no mechanism.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states the printer prints its internal test page
+    and the switch it plugs into is fine, foreclosing a printer-hardware or cabling/interference
+    pathway a lamp swap might be imagined to touch.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: An office printer dropping offline because a DHCP lease renewal changed
+    its IP while saved queues kept the old one, coincidentally timed with replacing
+    a desk lamp.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

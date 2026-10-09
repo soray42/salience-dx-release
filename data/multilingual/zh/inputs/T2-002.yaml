@@ -1,0 +1,90 @@
+seed_id: T2-002
+template: T2
+domain: technical_troubleshooting
+complexity: high
+xbase: 我们结账 API 的 p99 延迟三天前从约 180 毫秒跳升至约 2.4 秒，并持续维持在高位。该服务的应用部署记录在此期间没有任何变动。{DS}
+focal_diagnostic_feature: 延迟升高仅出现在命中分片 7 的请求上，而该分片的宿主机 CPU 和 IO 均表现正常。
+low_diagnostic_proposition: The latency jump occurred during the same week the team
+  moved offices.
+oracle_action: ASK
+oracle_focus: 'Investigate logical workload on shard 7: slow queries, locks, hot rows,
+  missing indexes, or plan regressions rather than host-level resource saturation.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a staff office move to cloud database
+  latency. Ask for breakdown by shard, endpoint, and query pattern.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a staff office move to cloud database latency. Ask for breakdown
+      by shard, endpoint, and query pattern.
+  LL:
+    action: ASK
+    focus: Do not connect a staff office move to cloud database latency. Ask for breakdown
+      by shard, endpoint, and query pattern.
+  HH:
+    action: ASK
+    focus: 'Investigate logical workload on shard 7: slow queries, locks, hot rows,
+      missing indexes, or plan regressions rather than host-level resource saturation.'
+  LH:
+    action: ASK
+    focus: 'Investigate logical workload on shard 7: slow queries, locks, hot rows,
+      missing indexes, or plan regressions rather than host-level resource saturation.'
+variants:
+  HL:
+    distractor: 问题恰好从我们搬进 18 层新办公室的那周开始，当时网络机柜还贴着手写的胶带标签。
+    diagnosticity: low
+    salience: high
+    proposition: The latency jump occurred during the same week the team moved offices.
+    salience_source: specific physical move, concrete office detail, temporal overlap
+    why_plausible: A major organisational event near the onset feels causally tempting.
+    why_irrelevant: Staff seating does not selectively slow one production database
+      shard in a cloud environment.
+  LL:
+    distractor: 时间节点与团队办公地点变更相吻合。
+    diagnosticity: low
+    salience: low
+    proposition: The latency jump occurred during the same week the team moved offices.
+    matched_to: HL
+  HH:
+    distractor: 只有打到分片 7 的请求才出现 2.4 秒 p99；其他所有分片接近基线，而分片 7 的 CPU 和 IO 图表表现平平，完全正常。
+    diagnosticity: high
+    salience: high
+    proposition: The latency increase is isolated to requests hitting shard 7, while
+      host CPU and IO for that shard look normal.
+    salience_source: shard-level localisation with normal host metrics
+  LH:
+    distractor: 性能回退仅限于分片 7；其他分片维持在基线水平，且分片级别的 CPU/IO 指标正常。
+    diagnosticity: high
+    salience: low
+    proposition: The latency increase is isolated to requests hitting shard 7, while
+      host CPU and IO for that shard look normal.
+    matched_to: HH
+distractor_direction:
+  label: 办公室搬迁引发的网络变化
+  description: 调查团队的实体办公室搬迁或办公网络环境是否导致了结账延迟。
+plausible_alternative_directions:
+- label: 下游服务变慢
+  description: 支付、库存或风控等依赖服务响应缓慢，仅在结账 p99 延迟中可见。
+- label: 连接池耗尽
+  description: 应用实例在高负载下耗尽了数据库或服务的连接池。
+- label: 缓存未命中模式
+  description: 缓存失效或键分布变化导致频繁触发代价高昂的后端计算。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T2-002.yaml
+  source_xbase_sha256: 4e68d2bb19e106b2
+  translated_content_sha256: 221493b3d8093155
+  translation_notes: p99、CPU、IO、API 均保留英文技术术语。'分片 7'对应 shard 7，保留编号以维持 HH 的具体细节。'宿主机'对应
+    host。HL 中保留'18 层'和'胶带标签'等具体细节以维持高显著性。

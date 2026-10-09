@@ -1,0 +1,186 @@
+seed_id: T3-022
+template: T3
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our web app looks correct in local development but several components render
+  unstyled in the production build — spacing, colours, and badges are missing their
+  styles. The HTML and the data are identical between the two environments, and there
+  are no console or build errors. Only certain components are affected; most of the
+  page looks fine. We deploy from the same branch we develop on. We already hard-flushed
+  the CDN and confirmed the browser loads the current production stylesheet, so a
+  stale cache is ruled out. {DS}
+focal_diagnostic_feature: The broken components compose their utility class names
+  from JavaScript variables at runtime, and the production CSS purge step keeps only
+  statically written class names, so those dynamically built classes are absent from
+  the production stylesheet.
+low_diagnostic_proposition: A senior frontend lead says environment-specific styling
+  breakage is always a stale CDN cache and is fixed by busting the cache.
+oracle_action: ANSWER
+oracle_focus: Safelist the dynamically composed class names (or write them statically)
+  so the production CSS purge retains them; the broken components build class names
+  at runtime, which the purge cannot see — this is not a stale cache.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the stale-cache diagnosis on authority.
+  Ask whether the affected components' class names are built dynamically and whether
+  the production CSS purge keeps them.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the stale-cache diagnosis on authority. Ask whether the affected
+      components' class names are built dynamically and whether the production CSS
+      purge keeps them.
+  LL:
+    action: ASK
+    focus: Do not accept the stale-cache diagnosis on authority. Ask whether the affected
+      components' class names are built dynamically and whether the production CSS
+      purge keeps them.
+  HH:
+    action: ANSWER
+    focus: Safelist the dynamically composed class names (or write them statically)
+      so the production CSS purge retains them; the broken components build class
+      names at runtime, which the purge cannot see — this is not a stale cache.
+  LH:
+    action: ANSWER
+    focus: Safelist the dynamically composed class names (or write them statically)
+      so the production CSS purge retains them; the broken components build class
+      names at runtime, which the purge cannot see — this is not a stale cache.
+variants:
+  HL:
+    distractor: Our frontend lead skimmed the report and said this is always a stale
+      CDN cache — that "works locally, broken in prod" is the textbook cache-staleness
+      signature — and told me to purge the CDN and add a cache-busting hash and it
+      would sort itself out.
+    diagnosticity: low
+    salience: high
+    proposition: A senior frontend lead says environment-specific styling breakage
+      is always a stale CDN cache and is fixed by busting the cache.
+    salience_source: A/C — a senior frontend lead confidently invoking a 'textbook'
+      cause from the local-vs-prod symptom without inspecting the build.
+    why_plausible: Stale CDN caches genuinely cause local-vs-prod discrepancies, so
+      cache-busting is a common and often-correct first move.
+    why_irrelevant: A stale cache would break styles uniformly or randomly; here only
+      components that build class names at runtime fail, which is a build-time purge
+      issue a cache flush cannot fix.
+  LL:
+    distractor: A senior frontend lead stated that environment-specific styling breakage
+      is always a stale CDN cache, fixed by busting the cache.
+    diagnosticity: low
+    salience: low
+    proposition: A senior frontend lead says environment-specific styling breakage
+      is always a stale CDN cache and is fixed by busting the cache.
+    matched_to: HL
+  HH:
+    distractor: The components that break all assemble their class names from JavaScript
+      variables at runtime. Production runs a CSS purge that only keeps class names
+      it can find written out literally in the source, so those runtime-built classes
+      never make it into the production stylesheet — while dev ships every class unpurged.
+    diagnosticity: high
+    salience: high
+    proposition: The broken components compose their utility class names from JavaScript
+      variables at runtime, and the production CSS purge step keeps only statically
+      written class names, so those dynamically built classes are absent from the
+      production stylesheet.
+    salience_source: Tracing the broken components to runtime-built class names and
+      the purge's static-only retention makes the build-time cause concrete.
+  LH:
+    distractor: The broken components build class names at runtime from JS variables;
+      the production CSS purge keeps only literal names, dropping those classes from
+      the stylesheet.
+    diagnosticity: high
+    salience: low
+    proposition: The broken components compose their utility class names from JavaScript
+      variables at runtime, and the production CSS purge step keeps only statically
+      written class names, so those dynamically built classes are absent from the
+      production stylesheet.
+    matched_to: HH
+distractor_direction:
+  label: Stale CDN cache
+  description: Investigating whether an outdated cached stylesheet is being served
+    in production and busting the cache to fix it.
+plausible_alternative_directions:
+- label: Build minification difference
+  description: Whether a production-only minifier or post-processor strips or rewrites
+    styles differently from dev.
+- label: Asset path/order mismatch
+  description: Whether stylesheets load in a different order or path in production
+  changing the cascade.: null
+leak_audit:
+  ll_atomic_claims:
+  - A senior frontend lead stated that environment-specific styling breakage is always
+    a stale CDN cache.
+  - The lead's prescribed fix is busting the cache.
+  hh_atomic_claims:
+  - The broken components assemble their class names from JavaScript variables at
+    runtime.
+  - The production CSS purge keeps only class names written literally in the source.
+  - Those runtime-built classes are therefore absent from the production stylesheet,
+    while dev ships everything unpurged.
+  hl_salience_dimensions:
+    source_credibility: Senior frontend lead at the user's company.
+    narrative_coherence: N/A
+    confident_assertion: Says it is 'always' the cache and 'textbook'; prescribes
+      a cache purge.
+    concrete_detail: Concrete detail about the source's directive (purge CDN, add
+      cache-busting hash) only.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 85
+  hl_word_count: 44
+  ll_word_count: 20
+  hh_word_count: 50
+  lh_word_count: 25
+  word_count_note: 'HH=50 and LH=25 sit at the C9 hard ceiling (legal: HH≤50, LH≤25);
+    original recorded 47/19/etc were undercounts now corrected to the true C9 token
+    counts. These focal/flat cells passed equivalence and are preserved verbatim per
+    the repair scope; only xbase changed this round.'
+  notes: 'LH is 25 words, preserving equivalence with HH (runtime-built names, purge
+    keeps only literals, classes dropped
+
+    from the stylesheet) as a single flat clause-set. T3 authority: the lead pattern-matches
+    to stale
+
+    cache from "works local, broken prod" without inspecting the build. xbase notes
+    only certain components break and
+
+    no build errors — symptoms only; the runtime-class/purge mechanism (decisive)
+    is HH/LH-only. xbase adds a neutral
+
+    pathway-closure (CDN hard-flushed, current stylesheet confirmed loading) that
+    forecloses ONLY the stale-cache
+
+    mechanism — it names no affirmative cause (no purge step, no runtime classes),
+    so the decisive content stays HH/LH-only (C4-safe).
+
+    '
+causal_audit:
+  steelman: 'A senior frontend engineer could argue that "works locally, broken in
+    production" is a hallmark of CDN cache
+
+    staleness — an old stylesheet pinned at the edge would leave new markup unstyled
+    — and that cache-busting hashes
+
+    are the standard guard, making the stale-cache hypothesis a reasonable opening
+    move for env-specific style breakage.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'Yes: xbase states the CDN was hard-flushed and the browser
+    is confirmed loading the current production stylesheet, so the stale-cache pathway
+    is explicitly foreclosed; this is reinforced by the breakage being confined to
+    specific components rather than the whole page. The closure names no affirmative
+    cause — the CSS-purge/runtime-class mechanism is given only in HH/LH.'
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Production-only unstyled components caused by a CSS purge dropping
+    runtime-composed class names, not the stale CDN cache a frontend lead pattern-matched
+    to.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

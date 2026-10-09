@@ -1,0 +1,193 @@
+seed_id: T5-099
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: A network share I added to my workstation is not mounting automatically at
+  boot. I added it to fstab last week. If I mount it manually after login the share
+  works fine. The fstab entry looks messy — I copied it from an old forum post and
+  the whitespace is irregular with a mix of tabs and spaces. {DS}
+focal_diagnostic_feature: The fstab entry omits the _netdev mount option, causing
+  the OS to attempt the network mount before the network interface is ready at boot.
+low_diagnostic_proposition: The irregular whitespace and mixed tabs in the fstab entry
+  look like formatting that could cause a mount parsing failure.
+oracle_action: ANSWER
+oracle_focus: Add the _netdev option to the fstab entry so the OS defers the mount
+  until the network is up; the whitespace formatting is not the cause.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not diagnose the mount failure from fstab appearance.
+  Ask whether the entry includes _netdev and whether boot logs show the mount being
+  attempted before the network is ready.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not diagnose the mount failure from fstab appearance. Ask whether the
+      entry includes _netdev and whether boot logs show the mount being attempted
+      before the network is ready.
+  LL:
+    action: ASK
+    focus: Do not diagnose the mount failure from fstab appearance. Ask whether the
+      entry includes _netdev and whether boot logs show the mount being attempted
+      before the network is ready.
+  HH:
+    action: ANSWER
+    focus: Add the _netdev option to the fstab entry so the OS defers the mount until
+      the network is up; the whitespace formatting is not the cause.
+  LH:
+    action: ANSWER
+    focus: Add the _netdev option to the fstab entry so the OS defers the mount until
+      the network is up; the whitespace formatting is not the cause.
+variants:
+  HL:
+    distractor: That kind of irregular whitespace and mixed tabs in fstab is exactly
+      the sort of thing the parser stumbles on — inconsistent formatting in fstab
+      has caused silent mount failures on my systems before, and it looks unreliable
+      enough to suspect here.
+    diagnosticity: low
+    salience: high
+    proposition: The irregular whitespace and mixed tabs in the fstab entry look like
+      formatting that could cause a mount parsing failure.
+    salience_source: B — confident first-person rule stated from personal experience;
+      C — 'exactly the sort of thing' and 'has caused' as strong assertive framing.
+    why_plausible: fstab entries with truly malformed whitespace can confuse some
+      older parsing implementations; a practitioner who has seen this might consider
+      it a reasonable first hypothesis when the entry looks untidy.
+    why_irrelevant: Linux fstab parsing is whitespace-flexible — tabs and extra spaces
+      between fields are treated equivalently; the mount failure occurs before the
+      network is available, which the _netdev omission explains completely and formatting
+      cannot.
+  LL:
+    distractor: The irregular whitespace and mixed tabs in the fstab entry look like
+      formatting that could cause a parsing failure.
+    diagnosticity: low
+    salience: low
+    proposition: The irregular whitespace and mixed tabs in the fstab entry look like
+      formatting that could cause a mount parsing failure.
+    matched_to: HL
+  HH:
+    distractor: The fstab entry is missing the _netdev mount option; without it the
+      OS attempts to mount the network share during the pre-network boot stage, before
+      the interface is up, and silently gives up — the manual mount after login works
+      because the network is ready by then.
+    diagnosticity: high
+    salience: high
+    proposition: The fstab entry omits the _netdev mount option, causing the OS to
+      attempt the network mount before the network interface is ready at boot.
+    salience_source: B — specific option name (_netdev) with mechanistic explanation
+      (pre-network boot stage) and explicit account of why the manual mount works,
+      forming a complete causal chain.
+  LH:
+    distractor: The fstab entry omits _netdev, so the OS mounts before the network
+      is up; post-login manual mounting works because the network is ready.
+    diagnosticity: high
+    salience: low
+    proposition: The fstab entry omits the _netdev mount option, causing the OS to
+      attempt the network mount before the network interface is ready at boot.
+    matched_to: HH
+distractor_direction:
+  label: fstab whitespace parsing failure
+  description: Investigating whether the irregular whitespace and mixed tabs in the
+    fstab entry are causing the mount to fail silently at boot due to a field-parsing
+    error.
+plausible_alternative_directions:
+- label: Network share credential or auth failure
+  description: The share may require credentials that are not available until after
+    user login, making the boot-time mount fail regardless of timing options.
+- label: Share hostname not resolvable at boot
+  description: If the network share is referenced by hostname, DNS resolution may
+    not be available early enough in the boot sequence even with _netdev present.
+- label: Filesystem type driver not loaded early
+  description: If the share uses a filesystem type (e.g., cifs, nfs) whose kernel
+    module loads late, the mount attempt may fail regardless of whitespace or _netdev
+    status.
+leak_audit:
+  ll_atomic_claims:
+  - The fstab entry has irregular whitespace and mixed tabs.
+  - The formatting could cause a mount parsing failure.
+  hh_atomic_claims:
+  - The fstab entry is missing the _netdev mount option.
+  - Without _netdev the OS attempts the mount during the pre-network boot stage.
+  - The network interface is not yet up at that point.
+  - The manual mount after login works because the network is ready by then.
+  hl_salience_dimensions:
+    source_credibility: N/A — T5 first-person aesthetic inference, no named source.
+    narrative_coherence: B — confident personal rule stated as general pattern from
+      experience.
+    confident_assertion: C — 'exactly the sort of thing' and 'has caused' as strong
+      confident assertions.
+    concrete_detail: D — 'irregular whitespace and mixed tabs' as specific observable
+      surface properties of the fstab entry, not the cause of the failure.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 57
+  hl_word_count: 41
+  ll_word_count: 19
+  hh_word_count: 46
+  lh_word_count: 23
+  notes: 'T5 inferential bridge (messy appearance → parsing failure) appears flatly
+    in both
+
+    HL and LL per C1 T5 rule.
+
+    HL adds personal history ("has caused on my systems before") which is source-weight
+
+    framing, not a new claim about the current case. Allowed per C1.
+
+    The key distractor-ruling evidence (HH/LH) is the _netdev omission — a configuraton
+
+    fact, not a whitespace fact. fstab whitespace parsing is flexible in Linux; this
+    is
+
+    widely documented but not assumed by all practitioners.
+
+    Steelman: there are real cases where copy-pasted fstab entries with Unicode spaces
+
+    or non-standard characters cause parse failures. The concern is not unreasonable
+
+    on sight, but the focal feature (_netdev omission + boot-order timing) explains
+
+    the failure completely and specifically.
+
+    QC repair: LH previously omitted the fourth atomic claim from HH (''the manual
+    mount
+
+    after login works because the network is ready by then''). LH rewritten to include
+
+    all four claims within the 14-23 word operational target (23 words). hh_atomic_claims
+
+    was already correctly enumerated; no changes needed there.
+
+    '
+causal_audit:
+  steelman: 'Copied-and-pasted fstab entries from forum posts sometimes contain non-breaking
+
+    spaces, Unicode dashes, or tab/space mixtures that cause some fstab parsers to
+
+    misidentify field boundaries, resulting in the mount option field being ignored
+    or
+
+    misread. A practitioner who has debugged such issues would be justified in suspecting
+
+    the formatting first, particularly when the entry "looks messy." It is a reasonable
+
+    first diagnostic step before examining option fields.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the whitespace hypothesis is not foreclosed by xbase;
+    HH/LH (missing _netdev + boot-order timing) rule it out structurally, preserving
+    C4.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Network share fails to auto-mount at boot because fstab entry lacks
+    _netdev; the messy whitespace in the entry triggers a parsing-failure aesthetic
+    inference.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,185 @@
+seed_id: T3-072
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our Kubernetes cluster has been evicting pods from one particular deployment
+  every few hours. The evictions started three days ago without any code change. The
+  namespace has a ResourceQuota in place, and all other deployments in the cluster
+  are stable. Node memory utilization across the cluster has stayed below 55% throughout
+  the eviction window per CloudWatch. Each evicted pod logs only the OOMKilled exit
+  code before terminating. {DS}
+focal_diagnostic_feature: The deployment's container memory limit is 256Mi, while
+  heap profiling of the last failed run shows the JVM allocating 310-340Mi before
+  the kernel terminates it — the pod is breaching its own container limit, not the
+  node's total memory.
+low_diagnostic_proposition: Global node-memory pressure on the underlying EC2 instances
+  is the cause of the OOMKilled evictions.
+oracle_action: ANSWER
+oracle_focus: Raise the container memory limit for this deployment (or tune JVM heap
+  settings) to accommodate the observed 310-340Mi allocation; the pod is hitting its
+  own resource limit, not node-level pressure.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the node-pressure diagnosis from authority
+  alone. Ask for the deployment's resource limits and recent memory profiling or container
+  metrics before attributing the OOMKilled events to global node saturation.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the node-pressure diagnosis from authority alone. Ask for
+      the deployment's resource limits and recent memory profiling or container metrics
+      before attributing the OOMKilled events to global node saturation.
+  LL:
+    action: ASK
+    focus: Do not accept the node-pressure diagnosis from authority alone. Ask for
+      the deployment's resource limits and recent memory profiling or container metrics
+      before attributing the OOMKilled events to global node saturation.
+  HH:
+    action: ANSWER
+    focus: Raise the container memory limit for this deployment (or tune JVM heap
+      settings) to accommodate the observed 310-340Mi allocation; the pod is hitting
+      its own resource limit, not node-level pressure.
+  LH:
+    action: ANSWER
+    focus: Raise the container memory limit for this deployment (or tune JVM heap
+      settings) to accommodate the observed 310-340Mi allocation; the pod is hitting
+      its own resource limit, not node-level pressure.
+variants:
+  HL:
+    distractor: Our platform architect Fitsum glanced at the eviction timeline and
+      told me, with full confidence, that this is always global node-memory pressure
+      on the underlying EC2 instances — never a per-pod limit issue.
+    diagnosticity: low
+    salience: high
+    proposition: Global node-memory pressure on the underlying EC2 instances is the
+      cause of the OOMKilled evictions.
+    salience_source: 'A: source credibility (named platform architect); C: confident
+      assertion ("full confidence", "always … never").'
+    why_plausible: Node memory saturation is a real and common cause of OOMKilled
+      events in Kubernetes, so a senior architect's confident attribution sounds authoritative.
+    why_irrelevant: The focal evidence shows the JVM exceeds this pod's own 256Mi
+      container limit, not the node ceiling — node-level pressure cannot explain a
+      pod being killed before reaching the node's total. Additionally, xbase confirms
+      node memory utilization stayed below 55% throughout the eviction window, structurally
+      ruling out node-level exhaustion as the trigger.
+  LL:
+    distractor: One common interpretation is that OOMKilled evictions always reflect
+      global node-memory pressure rather than a per-pod configuration issue.
+    diagnosticity: low
+    salience: low
+    proposition: Global node-memory pressure on the underlying EC2 instances is the
+      cause of the OOMKilled evictions.
+    matched_to: HL
+  HH:
+    distractor: The deployment memory limit is set to 256Mi, but heap profiling during
+      the last run shows the JVM allocating between 310 and 340Mi before the kernel
+      kills it — the pod is hitting its own container limit, not the node total.
+    diagnosticity: high
+    salience: high
+    proposition: The deployment's container memory limit is 256Mi, while heap profiling
+      of the last failed run shows the JVM allocating 310-340Mi before the kernel
+      terminates it — the pod is breaching its own container limit, not the node's
+      total memory.
+    salience_source: Vivid numeric range (310-340Mi vs 256Mi), concrete mechanism
+      (JVM heap vs kernel kill), explicit contrast (container limit vs node total).
+  LH:
+    distractor: The container memory limit is 256Mi, while heap profiling shows allocations
+      reaching 310-340Mi before termination.
+    diagnosticity: high
+    salience: low
+    proposition: The deployment's container memory limit is 256Mi, while heap profiling
+      of the last failed run shows the JVM allocating 310-340Mi before the kernel
+      terminates it — the pod is breaching its own container limit, not the node's
+      total memory.
+    matched_to: HH
+distractor_direction:
+  label: Global node-memory pressure
+  description: Investigating whether the EC2 host nodes are running out of total memory
+    and evicting pods as a result of node-level resource exhaustion rather than per-pod
+    limit violations.
+plausible_alternative_directions:
+- label: ResourceQuota limit hit
+  description: The namespace ResourceQuota may be capping total memory and causing
+    evictions when aggregate consumption approaches the quota ceiling.
+- label: Memory leak in dependent service
+  description: A sidecar or init container in the deployment could be leaking memory
+    and contributing to the OOMKilled exit without appearing in the main container's
+    heap profiling.
+- label: Horizontal scaling misconfiguration
+  description: The deployment's HorizontalPodAutoscaler may be failing to scale out,
+    concentrating load on a fixed number of pods that then exhaust their limits.
+leak_audit:
+  ll_atomic_claims:
+  - The symptom (OOMKilled evictions) always reflects global node-memory pressure.
+  - Node-memory pressure is the cause rather than a per-pod configuration issue.
+  hh_atomic_claims:
+  - The deployment's container memory limit is set to 256Mi.
+  - Heap profiling during the last failed run shows JVM allocation of 310-340Mi.
+  - The kernel terminates the pod when allocation exceeds the 256Mi limit.
+  - The pod is hitting its own container limit rather than the node's total memory.
+  hl_salience_dimensions:
+    source_credibility: Named platform architect (Fitsum) with implied institutional
+      authority.
+    narrative_coherence: Clean chronological framing — architect reviewed the timeline
+      and delivered a verdict.
+    confident_assertion: '"full confidence", "always … never"'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 67
+  hl_word_count: 33
+  ll_word_count: 18
+  hh_word_count: 41
+  lh_word_count: 15
+  notes: 'QC repair: (1) Added definitive node-memory closure to xbase — "Node memory
+
+    utilization across the cluster has stayed below 55% throughout the eviction
+
+    window per CloudWatch" — structurally forecloses node-pressure mechanism
+
+    within C4''s boundary (rules out one tempting pathway; does not supply the
+
+    affirmative per-pod-limit cause). (2) Rewrote LL to strip source attribution
+
+    entirely: replaced "A senior architect stated that..." with "One common
+
+    interpretation is that..." — now source-less as required. ll_atomic_claims
+
+    unchanged. xbase_word_count updated from 51 to 67.
+
+    '
+causal_audit:
+  steelman: 'OOMKilled is the exit code for both per-pod container-limit breaches
+    and
+
+    node-level memory pressure evictions. A senior architect could reasonably
+
+    hypothesise that other workloads spiked memory on the node, pushing available
+
+    memory below what this deployment needed, causing the kernel to kill it.
+
+    This is a genuine mechanism — node pressure causes OOMKilled events in
+
+    multi-tenant clusters regularly.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase explicitly states that node memory utilization across
+    the cluster stayed below 55% throughout the eviction window per CloudWatch. This
+    definitively forecloses node-level memory exhaustion as the mechanism: a node
+    at 55% utilization is not under pressure sufficient to trigger OOMKill evictions
+    of co-located pods. Combined with all other deployments remaining stable, the
+    node-pressure pathway is structurally ruled out by xbase alone.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Kubernetes pods OOMKilled because the JVM heap exceeds the 256Mi container
+    memory limit, not node-level pressure as a platform architect confidently asserts.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

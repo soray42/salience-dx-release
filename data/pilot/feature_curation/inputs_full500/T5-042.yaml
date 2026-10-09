@@ -1,0 +1,165 @@
+seed_id: T5-042
+template: T5
+domain: open_qa
+complexity: medium
+xbase: I am shopping for a robot vacuum to clean my two-bedroom apartment with wood
+  floors and an area rug. Both models I am comparing are self-emptying, work with
+  my voice assistant, avoid obstacles using sensors, and have app scheduling. One
+  costs forty euros more than the other. {DS}
+focal_diagnostic_feature: The cheaper model has higher rated suction, a longer battery
+  per charge, and a warranty three times longer than the pricier option.
+low_diagnostic_proposition: The pricier model has a more polished premium appearance,
+  suggesting it will outperform the plainer cheaper option.
+oracle_action: ANSWER
+oracle_focus: Recommend the cheaper model; it leads on suction, runtime, and warranty
+  — the variables most relevant to cleaning performance and ownership risk.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer cleaning performance from cosmetic appearance.
+  Ask for suction ratings, battery runtime, warranty terms, and any independent test
+  results before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer cleaning performance from cosmetic appearance. Ask for suction
+      ratings, battery runtime, warranty terms, and any independent test results before
+      deciding.
+  LL:
+    action: ASK
+    focus: Do not infer cleaning performance from cosmetic appearance. Ask for suction
+      ratings, battery runtime, warranty terms, and any independent test results before
+      deciding.
+  HH:
+    action: ANSWER
+    focus: Recommend the cheaper model; it leads on suction, runtime, and warranty
+      — the variables most relevant to cleaning performance and ownership risk.
+  LH:
+    action: ANSWER
+    focus: Recommend the cheaper model; it leads on suction, runtime, and warranty
+      — the variables most relevant to cleaning performance and ownership risk.
+variants:
+  HL:
+    distractor: The pricier vacuum has a glossy carbon-finish lid, a colour touch
+      screen, and packaging that looks like a premium consumer electronics launch,
+      which makes me trust it will perform better than the plain-looking cheaper option.
+    diagnosticity: low
+    salience: high
+    proposition: The pricier model has a more polished premium appearance, suggesting
+      it will outperform the plainer cheaper option.
+    salience_source: B — vivid specific visual details (carbon-finish lid, colour
+      touch screen, premium packaging); C — confident inferential framing ("makes
+      me trust").
+    why_plausible: Premium consumer electronics packaging often does correlate with
+      higher build quality and brand investment; a busy shopper could reasonably treat
+      a polished presentation as a proxy for engineering quality.
+    why_irrelevant: Cosmetic design and packaging quality have no constructible mechanism
+      for suction motor strength, battery cell capacity, or warranty policy — the
+      three dimensions that directly determine cleaning effectiveness and ownership
+      risk for this user.
+  LL:
+    distractor: The pricier model has a more polished premium appearance, suggesting
+      it will outperform the plain cheaper option.
+    diagnosticity: low
+    salience: low
+    proposition: The pricier model has a more polished premium appearance, suggesting
+      it will outperform the plainer cheaper option.
+    matched_to: HL
+  HH:
+    distractor: The cheaper vacuum pulls 4500 Pa suction against the pricier model's
+      3800 Pa, runs 130 minutes per charge versus 90, and carries a three-year warranty
+      where the pricier model offers only a one-year warranty.
+    diagnosticity: high
+    salience: high
+    proposition: The cheaper model has higher rated suction, a longer battery per
+      charge, and a warranty three times longer than the pricier option.
+    salience_source: B — exact numeric comparisons (4500 Pa vs 3800 Pa, 130 min vs
+      90 min, 3-year vs 1-year warranty) across all three decisive dimensions.
+  LH:
+    distractor: The cheaper model has higher rated suction, longer battery life per
+      charge, and a significantly longer warranty than the pricier option.
+    diagnosticity: high
+    salience: low
+    proposition: The cheaper model has higher rated suction, a longer battery per
+      charge, and a warranty three times longer than the pricier option.
+    matched_to: HH
+distractor_direction:
+  label: Premium cosmetic appearance as quality signal
+  description: Treating the pricier model's polished visual design and premium packaging
+    as evidence that it will outperform the cheaper robot vacuum.
+plausible_alternative_directions:
+- label: Navigation mapping quality
+  description: Lidar-based mapping versus camera-based navigation could differ significantly
+    between models, affecting coverage efficiency in a two-bedroom apartment with
+    a rug — not captured by suction or battery ratings.
+- label: Maintenance cost and consumables
+  description: Filter and brush-roll replacement frequency and cost could offset warranty
+    and upfront price differences over a multi-year ownership period.
+leak_audit:
+  ll_atomic_claims:
+  - The pricier model has a more polished premium appearance.
+  - The premium appearance suggests it will outperform the plain cheaper option.
+  hh_atomic_claims:
+  - The cheaper vacuum has 4500 Pa rated suction.
+  - The pricier model has 3800 Pa rated suction.
+  - The cheaper model runs 130 minutes per charge.
+  - The pricier model runs 90 minutes per charge.
+  - The cheaper model has a three-year warranty.
+  - The pricier model has a one-year warranty.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person observer, no named expert
+    narrative_coherence: Specific visual details (carbon-finish lid, colour touch
+      screen, premium packaging) grounding the observation
+    confident_assertion: makes me trust
+    concrete_detail: N/A — visual detail is about the product's appearance, not case-diagnostic
+      facts
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 47
+  hl_word_count: 35
+  ll_word_count: 17
+  hh_word_count: 33
+  lh_word_count: 20
+  notes: 'T5 inferential bridge ("polished appearance → will outperform") present
+    in both HL
+
+    and LL as required by C1/self-check 13. HL details are surface properties of the
+
+    product''s appearance only — no suction, battery, or warranty facts added. xbase
+
+    does not disclose which model wins on specs; the specs live entirely in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'Premium consumer electronics brands sometimes do invest more in both
+    cosmetic and
+
+    functional engineering simultaneously; a polished exterior can correlate with
+
+    better internal quality control practices and tighter component sourcing. A
+
+    practitioner could argue that brand investment signalled by premium packaging
+    is a
+
+    reasonable proxy for overall product reliability, especially when independent
+
+    reviews are absent.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not disclose the spec comparison. The
+    focal evidence (suction, battery, warranty) directly contradicts the appearance
+    inference for this specific pair; a prettier exterior cannot make a 3800 Pa motor
+    equal a 4500 Pa motor.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing between two robot vacuums where the cheaper model has higher
+    suction, longer battery, and triple the warranty, against the inference that the
+    pricier model's polished appearance signals superior performance.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

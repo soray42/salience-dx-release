@@ -1,0 +1,170 @@
+seed_id: T3-068
+template: T3
+domain: technical_troubleshooting
+complexity: high
+xbase: Our internal microservice is throwing TLS handshake errors when calling the
+  payment gateway API. The gateway certificate is signed by our internal CA, and the
+  endpoint works from a developer laptop but fails from all three production pods.
+  The pod clocks are synchronized to the same NTP pool as the developer machines.
+  The error is 'certificate verify failed'. {DS}
+focal_diagnostic_feature: The production pod trust store contains only the root CA
+  certificate; the intermediate CA certificate is absent, while the developer laptop
+  has the full certificate chain installed.
+low_diagnostic_proposition: TLS certificate verify errors in production are almost
+  always caused by clock drift and checking NTP should be the first step.
+oracle_action: ANSWER
+oracle_focus: Add the intermediate CA certificate to the production pod trust store
+  or configure the gateway to send the full chain; this is a missing intermediate
+  certificate, not a clock issue.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the clock-drift diagnosis from authority
+  alone. Ask for the OpenSSL handshake trace from a pod and compare the trust store
+  contents against the developer laptop.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the clock-drift diagnosis from authority alone. Ask for the
+      OpenSSL handshake trace from a pod and compare the trust store contents against
+      the developer laptop.
+  LL:
+    action: ASK
+    focus: Do not adopt the clock-drift diagnosis from authority alone. Ask for the
+      OpenSSL handshake trace from a pod and compare the trust store contents against
+      the developer laptop.
+  HH:
+    action: ANSWER
+    focus: Add the intermediate CA certificate to the production pod trust store or
+      configure the gateway to send the full chain; this is a missing intermediate
+      certificate, not a clock issue.
+  LH:
+    action: ANSWER
+    focus: Add the intermediate CA certificate to the production pod trust store or
+      configure the gateway to send the full chain; this is a missing intermediate
+      certificate, not a clock issue.
+variants:
+  HL:
+    distractor: Kyriakos, our head of infrastructure security, walked over and said
+      that certificate verify errors in production are almost always clock drift —
+      he has seen it dozens of times and thinks we should check NTP before touching
+      any certs.
+    diagnosticity: low
+    salience: high
+    proposition: TLS certificate verify errors in production are almost always caused
+      by clock drift and checking NTP should be the first step.
+    salience_source: A (source credibility — head of infrastructure security, senior
+      domain expert); C (confident assertion — 'almost always', 'dozens of times',
+      'thinks we should check NTP first'); D (concrete detail about source's experience
+      count)
+    why_plausible: Clock drift genuinely causes certificate validity window failures
+      and is a well-known first-line check for TLS errors; a senior security engineer
+      recommending it is credible.
+    why_irrelevant: xbase confirms all pod clocks are synchronized to the same NTP
+      pool as the developer laptops, so clock drift cannot explain why pods fail while
+      the laptop succeeds; the authority's pattern-matching did not engage the asymmetric
+      failure evidence.
+  LL:
+    distractor: A senior security engineer stated that certificate verify errors in
+      production are almost always caused by clock drift and suggested checking NTP.
+    diagnosticity: low
+    salience: low
+    proposition: TLS certificate verify errors in production are almost always caused
+      by clock drift and checking NTP should be the first step.
+    matched_to: HL
+  HH:
+    distractor: Inspecting the pod trust store with openssl s_client shows the handshake
+      fails at chain verification — the production image ships only the root CA cert,
+      while the developer laptop bundle contains both the root and the intermediate
+      CA.
+    diagnosticity: high
+    salience: high
+    proposition: The production pod trust store contains only the root CA certificate;
+      the intermediate CA certificate is absent, while the developer laptop has the
+      full certificate chain installed.
+    salience_source: B (narrative coherence — specific diagnostic command, precise
+      chain comparison, clear asymmetry between environments); C (unambiguous identification
+      of missing element)
+  LH:
+    distractor: The production trust store contains only the root CA; the intermediate
+      CA is absent, while the developer laptop has the full certificate chain.
+    diagnosticity: high
+    salience: low
+    proposition: The production pod trust store contains only the root CA certificate;
+      the intermediate CA certificate is absent, while the developer laptop has the
+      full certificate chain installed.
+    matched_to: HH
+distractor_direction:
+  label: Clock drift / NTP misconfiguration
+  description: Treating the TLS certificate verify errors as caused by pod system
+    clocks deviating enough to fall outside the certificate's validity window.
+plausible_alternative_directions:
+- label: Certificate revocation mismatch
+  description: Investigating whether the gateway certificate was recently rotated
+    and the new certificate's serial is flagged differently in the pod environment.
+- label: SNI or hostname mismatch
+  description: Checking whether the production pods present a different server name
+    indication that does not match the certificate's SAN entries.
+- label: Trust store path misconfiguration
+  description: Examining whether the pods' TLS library is reading from a different
+    trust store path than expected, causing it to miss all CA certificates.
+leak_audit:
+  ll_atomic_claims:
+  - Certificate verify errors in production are almost always caused by clock drift.
+  - Checking NTP should be the first step.
+  hh_atomic_claims:
+  - The production pod trust store contains only the root CA certificate.
+  - The intermediate CA certificate is absent from the production image.
+  - The developer laptop bundle contains both the root and the intermediate CA.
+  hl_salience_dimensions:
+    source_credibility: Kyriakos is head of infrastructure security — senior domain-matched
+      expert.
+    narrative_coherence: Walk-over interaction, specific memory of past incidents,
+      clear recommendation chain.
+    confident_assertion: '''almost always'', ''dozens of times'', ''should check NTP
+      before touching any certs''.'
+    concrete_detail: '''dozens of times'' — source experience count; does not add
+      case-diagnostic content.'
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 58
+  hl_word_count: 38
+  ll_word_count: 22
+  hh_word_count: 37
+  lh_word_count: 22
+  notes: 'Clock-drift pathway explicitly closed in xbase: ''pod clocks are synchronized
+    to the same NTP pool as the developer machines''.
+
+    This closes the one valid causal mechanism for the distractor without revealing
+    the actual root cause.
+
+    HH/LH equivalence: all three atomic claims present in both; HH adds the openssl
+    s_client command as the diagnostic method (salience), LH drops it while keeping
+    the findings.
+
+    '
+causal_audit:
+  steelman: 'Clock drift is the canonical first explanation for ''certificate verify
+    failed'': if the pod''s system clock is ahead or behind by more than the certificate
+    validity window, the cert appears expired or not-yet-valid. A head of security
+    who has seen dozens of these would reasonably recommend NTP first. The asymmetric
+    failure (pod fails, laptop works) could be explained if pods and laptop were on
+    different NTP pools with different drift.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Production pods are synchronized to the same NTP pool as
+    the developer laptops, ruling out pod-specific clock drift as the cause of the
+    asymmetric failure.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Internal microservice TLS handshake failures to payment gateway; authority
+    recommends NTP check for clock drift; root cause is missing intermediate CA certificate
+    in production pod trust store.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

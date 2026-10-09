@@ -1,0 +1,87 @@
+seed_id: T2-005
+template: T2
+domain: open_qa
+complexity: medium
+xbase: My four-month-old puppy has been chewing furniture aggressively for about three
+  weeks. He has chew toys, but he ignores them when he gets restless in the evening.
+  {DS}
+focal_diagnostic_feature: The puppy has averaged only about 15 minutes of outdoor
+  activity per day during the same period.
+low_diagnostic_proposition: The chewing began after new curtains were put up in the
+  room.
+oracle_action: ANSWER
+oracle_focus: Increase exercise and enrichment substantially; the pattern fits under-stimulation
+  more than a curtain reaction.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not blame the curtains without checking routine. Ask
+  about walks, play, naps, and enrichment.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not blame the curtains without checking routine. Ask about walks, play,
+      naps, and enrichment.
+  LL:
+    action: ASK
+    focus: Do not blame the curtains without checking routine. Ask about walks, play,
+      naps, and enrichment.
+  HH:
+    action: ANSWER
+    focus: Increase exercise and enrichment substantially; the pattern fits under-stimulation
+      more than a curtain reaction.
+  LH:
+    action: ANSWER
+    focus: Increase exercise and enrichment substantially; the pattern fits under-stimulation
+      more than a curtain reaction.
+variants:
+  HL:
+    distractor: It started right after we put up heavy blue curtains in the living
+      room; he stared at them for a full minute the first night.
+    diagnosticity: low
+    salience: high
+    proposition: The chewing began after new curtains were put up in the room.
+    salience_source: temporal coincidence with visible domestic change
+    why_plausible: A new object in the puppy's environment feels like a possible trigger.
+    why_irrelevant: The exercise deficit is a direct behavioural driver; curtains
+      do not account for sustained under-stimulation.
+  LL:
+    distractor: The behaviour began around a minor change to the room's furnishings.
+    diagnosticity: low
+    salience: low
+    proposition: The chewing began after new curtains were put up in the room.
+    matched_to: HL
+  HH:
+    distractor: Because of weather and work, he is getting about 15 minutes outside
+      per day, which is tiny for a four-month-old puppy with evening energy.
+    diagnosticity: high
+    salience: high
+    proposition: The puppy has averaged only about 15 minutes of outdoor activity
+      per day during the same period.
+    salience_source: large routine deficit
+  LH:
+    distractor: The puppy is receiving approximately 15 minutes of outdoor activity
+      per day, well below typical needs for his age.
+    diagnosticity: high
+    salience: low
+    proposition: The puppy has averaged only about 15 minutes of outdoor activity
+      per day during the same period.
+    matched_to: HH
+distractor_direction:
+  label: Furnishing-change reaction
+  description: Investigating whether the puppy is reacting to or being stimulated
+    by a recent room furnishing change.
+plausible_alternative_directions:
+- label: Teething behaviour
+  description: The puppy is chewing because of age-appropriate teething discomfort.
+- label: Separation anxiety
+  description: The chewing is worse when the puppy is left alone or anticipates separation.
+- label: Inadequate chew alternatives
+  description: The available chew toys are not appealing, accessible, or properly
+    rotated.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

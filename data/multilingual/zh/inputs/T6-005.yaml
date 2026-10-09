@@ -1,0 +1,97 @@
+seed_id: T6-005
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: 我的 Docker 容器启动了，但容器内的应用程序无法连接到公司内部 API。宿主机本身可以访问其他内部资源。{DS}
+focal_diagnostic_feature: 在容器内，`nslookup internal-api.company.local` 返回 NXDOMAIN，而同一查询在宿主机上成功；容器使用默认
+  bridge 网络。
+low_diagnostic_proposition: The user's previous Docker networking issues were caused
+  by missing EXPOSE directives.
+oracle_action: ANSWER
+oracle_focus: Configure container DNS or networking for the internal domain; this
+  is resolver configuration, not EXPOSE metadata.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not reuse the EXPOSE explanation. Ask for DNS resolution
+  inside the container versus the host.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not reuse the EXPOSE explanation. Ask for DNS resolution inside the
+      container versus the host.
+  LL:
+    action: ASK
+    focus: Do not reuse the EXPOSE explanation. Ask for DNS resolution inside the
+      container versus the host.
+  HH:
+    action: ANSWER
+    focus: Configure container DNS or networking for the internal domain; this is
+      resolver configuration, not EXPOSE metadata.
+  LH:
+    action: ANSWER
+    focus: Configure container DNS or networking for the internal domain; this is
+      resolver configuration, not EXPOSE metadata.
+variants:
+  HL:
+    distractor: 我之前遇到的每个 Docker 网络问题都是 EXPOSE 行漏写了，所以我一直盯着 Dockerfile 看，尽管这次感觉不太一样。
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous Docker networking issues were caused by missing
+      EXPOSE directives.
+    salience_source: familiar past Docker fix, repeated troubleshooting habit
+    why_plausible: EXPOSE is a common source of Docker confusion.
+    why_irrelevant: EXPOSE does not control DNS resolution; NXDOMAIN inside the container
+      points to resolver/network configuration.
+  LL:
+    distractor: 该用户此前的 Docker 网络问题通常被归因于缺少 EXPOSE 指令。
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous Docker networking issues were caused by missing
+      EXPOSE directives.
+    matched_to: HL
+  HH:
+    distractor: 在容器内，`nslookup internal-api.company.local` 返回 NXDOMAIN；在宿主机上同一个名称可以解析，而该容器只是使用
+      Docker 默认的 bridge 网络。
+    diagnosticity: high
+    salience: high
+    proposition: Inside the container, `nslookup internal-api.company.local` returns
+      NXDOMAIN, while the same lookup succeeds on the host; the container uses the
+      default bridge network.
+    salience_source: host/container DNS contrast
+  LH:
+    distractor: 内部主机名的 DNS 解析在默认 bridge 网络的容器内失败，但在宿主机上成功。
+    diagnosticity: high
+    salience: low
+    proposition: Inside the container, `nslookup internal-api.company.local` returns
+      NXDOMAIN, while the same lookup succeeds on the host; the container uses the
+      default bridge network.
+    matched_to: HH
+distractor_direction:
+  label: 缺少 EXPOSE 指令
+  description: 调查 Dockerfile 中的 EXPOSE 元数据是否缺失或错误，从而阻塞了容器连接。
+plausible_alternative_directions:
+- label: 容器防火墙规则
+  description: 容器或宿主机的防火墙可能阻止了向外的 API 流量。
+- label: 代理环境变量缺失
+  description: 容器内可能缺少 HTTP 代理、NO_PROXY 或证书相关的环境变量。
+- label: API 凭证问题
+  description: 容器可能没有访问内部 API 所需的有效凭证或令牌。
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: zh
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T6-005.yaml
+  source_xbase_sha256: 2941ea2d585d9c5e
+  translated_content_sha256: b599ab30233f0903
+  translation_notes: Technical terms EXPOSE, NXDOMAIN, nslookup, internal-api.company.local,
+    bridge network, Dockerfile, DNS retained as-is per instrument. No culture-bound
+    salience cues present.

@@ -1,0 +1,174 @@
+seed_id: T6-017
+template: T6
+domain: open_qa
+complexity: low
+xbase: I'm buying a new laptop and the shop is pushing a three-year extended warranty
+  for a meaningful chunk of the price. I keep hesitating at the counter because I
+  have a strong feeling I will regret skipping it. There is no specific fault I am
+  worried about; it is more a gut sense that something always goes wrong once the
+  basic cover runs out. {DS}
+focal_diagnostic_feature: This laptop's brand and model rank at the top of independent
+  reliability surveys, the card paying for it automatically doubles the manufacturer
+  warranty for free, and the extended plan costs about 25% of the laptop with a high
+  per-claim deductible.
+low_diagnostic_proposition: Every laptop the user has owned failed soon after its
+  standard warranty ended, so this one probably will too.
+oracle_action: ANSWER
+oracle_focus: Skip the extended warranty; this model is highly reliable, the paying
+  card already doubles the manufacturer cover for free, and the plan's ~25% cost with
+  a high deductible makes it poor value.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not buy on the strength of past laptops failing. Ask
+  about this model's reliability, any warranty the card adds, and the plan's cost
+  and deductible.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not buy on the strength of past laptops failing. Ask about this model's
+      reliability, any warranty the card adds, and the plan's cost and deductible.
+  LL:
+    action: ASK
+    focus: Do not buy on the strength of past laptops failing. Ask about this model's
+      reliability, any warranty the card adds, and the plan's cost and deductible.
+  HH:
+    action: ANSWER
+    focus: Skip the extended warranty; this model is highly reliable, the paying card
+      already doubles the manufacturer cover for free, and the plan's ~25% cost with
+      a high deductible makes it poor value.
+  LH:
+    action: ANSWER
+    focus: Skip the extended warranty; this model is highly reliable, the paying card
+      already doubles the manufacturer cover for free, and the plan's ~25% cost with
+      a high deductible makes it poor value.
+variants:
+  HL:
+    distractor: Every laptop I have ever owned has died soon after the basic warranty
+      ran out, so my gut is screaming that this one will do the same.
+    diagnosticity: low
+    salience: high
+    proposition: Every laptop the user has owned failed soon after its standard warranty
+      ended, so this one probably will too.
+    salience_source: B/C — a vivid personal run of past laptop failures plus a confident
+      first-instinct that this one will repeat it.
+    why_plausible: A consistent personal streak of post-warranty failures feels like
+      strong evidence the pattern will continue.
+    why_irrelevant: Past models from other brands say nothing about this specific
+      high-reliability model, and the streak ignores the free card cover and the plan's
+      poor economics.
+  LL:
+    distractor: Every laptop the user has owned failed soon after its standard warranty
+      ended, so this one probably will too.
+    diagnosticity: low
+    salience: low
+    proposition: Every laptop the user has owned failed soon after its standard warranty
+      ended, so this one probably will too.
+    matched_to: HL
+  HH:
+    distractor: Checking the specifics, this exact model sits at the top of independent
+      reliability surveys, the card I am paying with doubles the manufacturer warranty
+      for free, and the extended plan costs about a quarter of the laptop and still
+      carries a high deductible on every claim.
+    diagnosticity: high
+    salience: high
+    proposition: This laptop's brand and model rank at the top of independent reliability
+      surveys, the card paying for it automatically doubles the manufacturer warranty
+      for free, and the extended plan costs about 25% of the laptop with a high per-claim
+      deductible.
+    salience_source: Naming the top reliability ranking, the free card cover, and
+      the ~25% cost plus deductible makes the value case concrete.
+  LH:
+    distractor: This model tops reliability surveys, the paying card doubles the manufacturer
+      warranty free, and the extended plan costs about 25% with a high deductible.
+    diagnosticity: high
+    salience: low
+    proposition: This laptop's brand and model rank at the top of independent reliability
+      surveys, the card paying for it automatically doubles the manufacturer warranty
+      for free, and the extended plan costs about 25% of the laptop with a high per-claim
+      deductible.
+    matched_to: HH
+distractor_direction:
+  label: Past-failure repetition
+  description: Buying the warranty because the user's previous laptops all failed
+    soon after their standard cover ended.
+plausible_alternative_directions:
+- label: Usage-driven risk
+  description: Whether the user's handling (travel
+  drops: null
+  heavy load) raises this laptop's failure risk regardless of brand.: null
+- label: Repair-cost exposure
+  description: Whether out-of-warranty repair costs for this model would be ruinous
+    enough to justify cover.
+leak_audit:
+  ll_atomic_claims:
+  - Every laptop the user has owned failed soon after its standard warranty ended.
+  - Therefore this laptop will probably do the same.
+  hh_atomic_claims:
+  - This exact model sits at the top of independent reliability surveys.
+  - The paying card doubles the manufacturer warranty for free.
+  - The extended plan costs about 25% of the laptop and carries a high per-claim deductible.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Coherent personal run of past post-warranty laptop failures.
+    confident_assertion: Gut is 'screaming' this one will do the same; first instinct
+      to lock in cover.
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 64
+  hl_word_count: 27
+  ll_word_count: 19
+  hh_word_count: 46
+  lh_word_count: 24
+  notes: 'LH is 24 words to keep equivalence with HH (top reliability, free card cover,
+    ~25% cost, deductible) as a single
+
+    flat clause-set. T6: the availability inference "this one will do the same" is
+    in HL and flat in LL (rule for T6).
+
+    xbase carries only the gut feeling and the plan''s price-as-a-chunk; the model
+    reliability, card cover, and exact
+
+    economics (decisive) live only in HH/LH.
+
+    Repair round 1: removed the parenthetical enumeration of past failure modes ("a
+    screen on one, the board on
+
+    another, a dead battery on the last") from HL — that enumeration was case content
+    absent from LL (other_case_content
+
+    leak). HL now asserts only the bare proposition shared with LL (every past laptop
+    failed soon after warranty → this
+
+    one will too), preserving the vivid first-instinct register that carries the B/C
+    salience. HL recount 50 → 36.
+
+    '
+causal_audit:
+  steelman: 'A cautious buyer could argue that the user''s repeated post-warranty
+    failures might reflect how they use laptops —
+
+    heavy travel, no case, long hours — which would carry over to any new machine,
+    so the personal base rate is
+
+    arguably informative about their future failure risk irrespective of brand.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the model's high reliability, the free card cover,
+    and the plan's poor economics that defeat the streak live only in HH/LH; xbase
+    does not foreclose the purchase.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to buy a costly extended laptop warranty given a top-reliability
+    model and free card cover, against the user's availability bias that past laptops
+    always failed after warranty.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 2 (orchestrator-adjudicated leak fix per protocol max-2-rounds)
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

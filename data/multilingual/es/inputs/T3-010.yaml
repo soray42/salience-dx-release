@@ -1,0 +1,109 @@
+seed_id: T3-010
+template: T3
+domain: open_qa
+complexity: low
+xbase: Un amigo me pide prestados €2.000 y dice que me lo devolverá «pronto». Tengo
+  €5.000 ahorrados y estoy intentando ahorrar para la entrada de un piso. No hemos
+  discutido un plan de pago por escrito. {DS}
+focal_diagnostic_feature: 'Este mismo amigo ha tenido tres préstamos anteriores con
+  el usuario: solo uno fue devuelto íntegramente, uno fue parcial después de 18 meses,
+  y uno no fue devuelto nunca.'
+low_diagnostic_proposition: A family elder says helping friends financially should
+  be treated as a moral duty.
+oracle_action: ANSWER
+oracle_focus: Do not lend €2,000 on a vague verbal promise; at most offer a smaller
+  amount you can afford to treat as a gift.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let a moral proverb replace repayment evidence.
+  Ask for the friend's repayment history and whether the user can afford to lose the
+  money.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let a moral proverb replace repayment evidence. Ask for the friend's
+      repayment history and whether the user can afford to lose the money.
+  LL:
+    action: ASK
+    focus: Do not let a moral proverb replace repayment evidence. Ask for the friend's
+      repayment history and whether the user can afford to lose the money.
+  HH:
+    action: ANSWER
+    focus: Do not lend €2,000 on a vague verbal promise; at most offer a smaller amount
+      you can afford to treat as a gift.
+  LH:
+    action: ANSWER
+    focus: Do not lend €2,000 on a vague verbal promise; at most offer a smaller amount
+      you can afford to treat as a gift.
+variants:
+  HL:
+    distractor: Mi abuela siempre decía «los amigos de verdad nunca rechazan ayuda
+      en los momentos difíciles», y casi puedo oírla juzgándome por decir que no.
+    diagnosticity: low
+    salience: high
+    proposition: A family elder says helping friends financially should be treated
+      as a moral duty.
+    salience_source: family authority, quoted proverb, shame pressure
+    why_plausible: Family norms can feel morally binding and override calculation.
+    why_irrelevant: The relevant evidence is this friend's repayment record and the
+      user's savings goal, not a general proverb.
+  LL:
+    distractor: Un familiar mayor expresó que ayudar económicamente a los amigos es
+      una fuerte obligación moral.
+    diagnosticity: low
+    salience: low
+    proposition: A family elder says helping friends financially should be treated
+      as a moral duty.
+    matched_to: HL
+  HH:
+    distractor: 'Este amigo me ha pedido dinero prestado tres veces antes: una devolución
+      completa, una devolución parcial después de 18 meses, y un préstamo que nunca
+      volvió.'
+    diagnosticity: high
+    salience: high
+    proposition: This same friend has had three previous loans from the user; only
+      one was fully repaid, one was partial after 18 months, and one was never repaid.
+    salience_source: specific repayment history
+  LH:
+    distractor: 'El historial de devoluciones del amigo es malo: un préstamo anterior
+      devuelto, uno devuelto parcialmente tras 18 meses, y uno sin devolver.'
+    diagnosticity: high
+    salience: low
+    proposition: This same friend has had three previous loans from the user; only
+      one was fully repaid, one was partial after 18 months, and one was never repaid.
+    matched_to: HH
+distractor_direction:
+  label: Préstamo como deber moral
+  description: Tratar la decisión de prestar principalmente como una obligación de
+    ayudar económicamente a un amigo.
+plausible_alternative_directions:
+- label: Plan de pago por escrito
+  description: Si existe un calendario, fecha o garantía por escrito clara para el
+    reembolso.
+- label: Encuadre de asequibilidad como regalo
+  description: Si el usuario puede permitirse tratar una cantidad menor como un regalo
+    no reembolsable.
+- label: Riesgo para los límites de la relación
+  description: Si rechazar o reducir el préstamo dañaría la amistad más que el riesgo
+    económico.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.
+language: es
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T3-010.yaml
+  source_xbase_sha256: e7762776501ad261
+  translated_content_sha256: 6b09dd60ecc63be1
+  translation_notes: €2,000 and €5,000 kept as-is. HL salience preserved via family
+    authority ('mi abuela'), quoted proverb in Spanish (natural equivalent of the
+    English), and shame/guilt pressure ('casi puedo oírla juzgándome'). The proverb
+    is culturally transferable in Spanish. LL stays flat. First-person singular register
+    preserved. 'Entrada de un piso' is natural ES term for flat deposit.

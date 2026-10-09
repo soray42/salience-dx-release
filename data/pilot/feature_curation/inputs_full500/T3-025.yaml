@@ -1,0 +1,158 @@
+seed_id: T3-025
+template: T3
+domain: open_qa
+complexity: low
+xbase: I am trimming my budget and looking hard at a meal-kit delivery subscription
+  I signed up for a while ago. It is one of my pricier recurring charges. I do cook,
+  and I like the idea of it in principle, so I want to make an honest decision rather
+  than cancel on a whim. I have the delivery and usage records from the service in
+  front of me. {DS}
+focal_diagnostic_feature: The service's own records show the user skipped or let lapse
+  two-thirds of the recent deliveries, and the boxes that did arrive were mostly thrown
+  out unused.
+low_diagnostic_proposition: A relative says meal-kit subscriptions are always cheaper
+  than buying the same ingredients at a grocery store.
+oracle_action: ANSWER
+oracle_focus: Cancel the meal-kit subscription; the service's own records show the
+  user skipped two-thirds of deliveries and wasted most of the rest, so it is being
+  paid for and not used.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the always-cheaper claim on authority alone.
+  Ask how many recent deliveries the user actually used versus skipped or wasted.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the always-cheaper claim on authority alone. Ask how many
+      recent deliveries the user actually used versus skipped or wasted.
+  LL:
+    action: ASK
+    focus: Do not accept the always-cheaper claim on authority alone. Ask how many
+      recent deliveries the user actually used versus skipped or wasted.
+  HH:
+    action: ANSWER
+    focus: Cancel the meal-kit subscription; the service's own records show the user
+      skipped two-thirds of deliveries and wasted most of the rest, so it is being
+      paid for and not used.
+  LH:
+    action: ANSWER
+    focus: Cancel the meal-kit subscription; the service's own records show the user
+      skipped two-thirds of deliveries and wasted most of the rest, so it is being
+      paid for and not used.
+variants:
+  HL:
+    distractor: Otávio, my brother-in-law who cooks for a big family and watches his
+      grocery bill closely, insists that meal-kit subscriptions always come out cheaper
+      than buying the same ingredients yourself at the store, so to him cancelling
+      one is simply throwing money away.
+    diagnosticity: low
+    salience: high
+    proposition: A relative says meal-kit subscriptions are always cheaper than buying
+      the same ingredients at a grocery store.
+    salience_source: A — a cost-conscious relative asserting a confident, generic
+      cost claim.
+    why_plausible: Meal kits can reduce waste and impulse buys for some households,
+      so a budget-minded relative's blanket claim sounds reasonable.
+    why_irrelevant: Per-ingredient cost is irrelevant when the user is not using the
+      deliveries; a service that is mostly skipped or thrown out is pure waste regardless
+      of its theoretical price advantage.
+  LL:
+    distractor: A relative says meal-kit subscriptions are always cheaper than buying
+      the same ingredients at a grocery store.
+    diagnosticity: low
+    salience: low
+    proposition: A relative says meal-kit subscriptions are always cheaper than buying
+      the same ingredients at a grocery store.
+    matched_to: HL
+  HH:
+    distractor: 'The service''s own records are damning: over the recent period I
+      skipped or let lapse two out of every three deliveries, and the boxes that did
+      show up mostly sat in the fridge until I threw the ingredients out unused, so
+      I am paying for food I do not cook.'
+    diagnosticity: high
+    salience: high
+    proposition: The service's own records show the user skipped or let lapse two-thirds
+      of the recent deliveries, and the boxes that did arrive were mostly thrown out
+      unused.
+    salience_source: The two-thirds-skipped rate plus mostly-wasted delivered boxes
+      quantifies the non-use concretely.
+  LH:
+    distractor: The service's records show the user skipped two-thirds of recent deliveries
+      and threw out most of the boxes that arrived.
+    diagnosticity: high
+    salience: low
+    proposition: The service's own records show the user skipped or let lapse two-thirds
+      of the recent deliveries, and the boxes that did arrive were mostly thrown out
+      unused.
+    matched_to: HH
+distractor_direction:
+  label: Per-ingredient cost advantage
+  description: Treating a generic claim that meal kits are always cheaper than grocery
+    shopping as the dominant reason to keep the subscription.
+plausible_alternative_directions:
+- label: Pause instead of cancel
+  description: Whether pausing the subscription preserves the option while stopping
+    the cost during low-use periods.
+- label: Cheaper plan size
+  description: Whether a smaller box or lower-frequency plan would match actual cooking
+    habits.
+leak_audit:
+  ll_atomic_claims:
+  - A relative says meal-kit subscriptions are always cheaper than buying the same
+    ingredients at a grocery store.
+  hh_atomic_claims:
+  - The service's records show the user skipped or let lapse two-thirds of recent
+    deliveries.
+  - The boxes that did arrive were mostly thrown out unused.
+  hl_salience_dimensions:
+    source_credibility: Named cost-conscious relative (brother-in-law Otávio) who
+      watches his grocery bill.
+    narrative_coherence: Coherent confident statement of a familiar cost-comparison
+      claim.
+    confident_assertion: Insists meal kits always come out cheaper.
+    concrete_detail: N/A — HL adds only Otávio's identity and his generic claim, no
+      fact about the user's own usage that LL lacks.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 71
+  hl_word_count: 43
+  ll_word_count: 19
+  hh_word_count: 47
+  lh_word_count: 20
+  notes: 'T3: the relative offers a generic always-cheaper claim, not an analysis
+    of this user''s usage. xbase establishes
+
+    the subscription is pricey and that the user cooks and likes the idea, but withholds
+    the decisive
+
+    two-thirds-skipped-and-wasted record, which is HH/LH-only. HL adds only Otávio''s
+    identity and his blanket claim.
+
+    '
+causal_audit:
+  steelman: 'A budget-minded cook could argue meal kits genuinely reduce grocery waste,
+    impulse purchases, and the overhead of
+
+    buying small quantities of specialty ingredients, so for a household that uses
+    them the per-meal cost really can
+
+    undercut a store run — making ''keep it, it is cheaper'' a defensible default.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the cost-per-ingredient claim assumes the kits are
+    used; the decisive usage record (two-thirds skipped, rest wasted), which makes
+    the subscription pure waste, lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to cancel a mostly-unused meal-kit subscription, decided by
+    the service's two-thirds-skipped-and-wasted records, against a relative's blanket
+    meal-kits-are-always-cheaper claim.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

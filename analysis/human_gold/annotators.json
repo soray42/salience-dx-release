@@ -1,0 +1,24 @@
+{
+  "1": {
+    "background": "university student, finance",
+    "dates": "2026-09-26",
+    "passes": "first pass: 134 of 150 items, 20 of them labelled in under five seconds each; second pass: those 20 items again (the judge's label had been shown for them) and the 16 remaining items. Only the second-pass labels of the 20 items were kept."
+  },
+  "2": {
+    "background": "university student, computer science",
+    "dates": "2026-09-26 to 2026-09-27",
+    "passes": "one pass, 150 of 150 items"
+  },
+  "3": {
+    "background": "university student, finance",
+    "dates": "2026-09-26 to 2026-09-27",
+    "passes": "one pass, 150 of 150 items"
+  },
+  "all": {
+    "recruitment": "acquaintances of an author, unpaid volunteers",
+    "reveal_after_commit": true,
+    "labels_released_with_consent": true,
+    "identifiers": "numeric only",
+    "timing": "minutes, per-item medians and per-sitting agreement: human_gold_results.json, annotators/<id>/timing"
+  }
+}

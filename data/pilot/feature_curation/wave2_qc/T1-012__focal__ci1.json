@@ -1,0 +1,13 @@
+{
+  "seed_id": "T1-012",
+  "my_own_diagnosis": "Broker-2, as partition 7's leader, is at 95% disk I/O while all other brokers are below 20%, and consumer processing time for partition 7 matches healthy partitions — this combination decisively points to broker-side disk I/O saturation (failing disk, near-full disk, or I/O throttling) as the root cause, ruling out any consumer-side throughput constraint.",
+  "focal_decisive": true,
+  "focal_notes": "The dual evidence of isolated broker-level I/O saturation plus consumer-processing-time parity across all partitions provides unambiguous pointer to broker-2 disk constraint and rules out the consumer-side pathway.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL correctly receive the low-diagnostic oracle (withhold judgment, gather metrics); HH/LH correctly receive the focal oracle (investigate broker-2 disk I/O saturation); low_diagnostic_oracle_focus properly instructs non-adoption of the synchronous-lookup hypothesis.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

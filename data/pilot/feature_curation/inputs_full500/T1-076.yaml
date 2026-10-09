@@ -1,0 +1,179 @@
+seed_id: T1-076
+template: T1
+domain: technical_troubleshooting
+complexity: high
+xbase: Our managed Kubernetes cluster autoscaler keeps adding nodes even though dashboards
+  show the existing nodes sitting around 30% CPU and memory. We end up paying for
+  far more nodes than the workload seems to need. Nothing changed in the autoscaler
+  config for two months, and pod counts are steady. The cluster is multi-tenant with
+  several teams' workloads. I want to understand the scale-up before our cloud bill
+  grows further. {DS}
+focal_diagnostic_feature: A batch of pods sit in Pending because their CPU resource
+  requests sum above node capacity, so the autoscaler adds nodes to satisfy requests
+  even though actual usage is low.
+low_diagnostic_proposition: Another company saw runaway node scale-up caused by a
+  metrics-server misconfiguration reporting inflated utilisation.
+oracle_action: ANSWER
+oracle_focus: The autoscaler scales on pod resource requests, not actual usage; pending
+  pods with oversized CPU requests are forcing scale-up. Right-size the pod requests
+  to match real usage so the scheduler packs them onto fewer nodes.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not adopt the outside metrics-server story. Ask whether
+  pods are Pending on unschedulable requests and what the sum of pod CPU requests
+  is versus node capacity.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not adopt the outside metrics-server story. Ask whether pods are Pending
+      on unschedulable requests and what the sum of pod CPU requests is versus node
+      capacity.
+  LL:
+    action: ASK
+    focus: Do not adopt the outside metrics-server story. Ask whether pods are Pending
+      on unschedulable requests and what the sum of pod CPU requests is versus node
+      capacity.
+  HH:
+    action: ANSWER
+    focus: The autoscaler scales on pod resource requests, not actual usage; pending
+      pods with oversized CPU requests are forcing scale-up. Right-size the pod requests
+      to match real usage so the scheduler packs them onto fewer nodes.
+  LH:
+    action: ANSWER
+    focus: The autoscaler scales on pod resource requests, not actual usage; pending
+      pods with oversized CPU requests are forcing scale-up. Right-size the pod requests
+      to match real usage so the scheduler packs them onto fewer nodes.
+variants:
+  HL:
+    distractor: Getachew, an SRE I know at a fintech, said their cluster scaled up
+      endlessly while real load was tiny, and it traced back to a broken metrics-server
+      that reported wildly inflated utilisation; once they fixed the metrics pipeline,
+      the autoscaler settled down immediately.
+    diagnosticity: low
+    salience: high
+    proposition: Another company saw runaway node scale-up caused by a metrics-server
+      misconfiguration reporting inflated utilisation.
+    salience_source: A — a named SRE at a fintech recounting a closely matching runaway-scale-up
+      incident lends the metrics-server theory weight.
+    why_plausible: A broken metrics pipeline feeding bad utilisation is a real cause
+      of mis-scaling, so the matching story feels like a strong lead.
+    why_irrelevant: The cluster autoscaler scales on unschedulable pod requests, not
+      utilisation metrics, so a metrics-server fault cannot drive it; the inflated-utilisation
+      story has no path to this scale-up.
+  LL:
+    distractor: Another company's runaway node scale-up was caused by a metrics-server
+      misconfiguration reporting inflated utilisation.
+    diagnosticity: low
+    salience: low
+    proposition: Another company saw runaway node scale-up caused by a metrics-server
+      misconfiguration reporting inflated utilisation.
+    matched_to: HL
+  HH:
+    distractor: I checked the scheduler and a batch of pods sit Pending because their
+      summed CPU requests exceed what the current nodes can offer, so the autoscaler
+      keeps adding nodes to satisfy the requests — even though those same pods barely
+      use a fraction of what they request once running.
+    diagnosticity: high
+    salience: high
+    proposition: A batch of pods sit in Pending because their CPU resource requests
+      sum above node capacity, so the autoscaler adds nodes to satisfy requests even
+      though actual usage is low.
+    salience_source: Concrete observation of Pending pods on unschedulable requests
+      against low real usage exposes the request-versus-usage mechanism.
+  LH:
+    distractor: Pending pods have CPU requests exceeding node capacity, so the autoscaler
+      adds nodes despite low actual usage.
+    diagnosticity: high
+    salience: low
+    proposition: A batch of pods sit in Pending because their CPU resource requests
+      sum above node capacity, so the autoscaler adds nodes to satisfy requests even
+      though actual usage is low.
+    matched_to: HH
+distractor_direction:
+  label: Metrics-server fault
+  description: Investigating whether a misconfigured metrics pipeline reports inflated
+    utilisation and triggers scale-up, as happened at another company.
+plausible_alternative_directions:
+- label: Autoscaler thresholds
+  description: Whether scale-down thresholds or stabilisation windows are misconfigured
+    and preventing consolidation.
+- label: Pod anti-affinity
+  description: Whether scheduling constraints spread pods thinly and force extra nodes.
+leak_audit:
+  ll_atomic_claims:
+  - Another company saw runaway node scale-up.
+  - That scale-up was caused by a metrics-server misconfiguration reporting inflated
+    utilisation.
+  hh_atomic_claims:
+  - A batch of pods sit Pending because their summed CPU requests exceed node capacity.
+  - The autoscaler adds nodes to satisfy those requests.
+  - The same pods use only a fraction of their requested CPU once running.
+  hl_salience_dimensions:
+    source_credibility: Named SRE (Getachew) at a fintech recounting a resolved scale-up
+      incident.
+    narrative_coherence: 'Clear arc: endless scale-up, found broken metrics-server,
+      fixed pipeline, autoscaler settled.'
+    confident_assertion: Stated as a confirmed root cause.
+    concrete_detail: Detail about the source's incident (their inflated-utilisation
+      reports, the metrics fix) only — no claim about this cluster's pending pods
+      or requests.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 69
+  hl_word_count: 43
+  ll_word_count: 14
+  hh_word_count: 48
+  lh_word_count: 17
+  notes: 'LL carries only the other-company metrics-server claim; the named SRE, his
+    fintech, and the metrics fix are
+
+    HL-only and about the source. xbase shows the symptom (scale-up while nodes sit
+    at 30% utilisation) but withholds
+
+    the Pending-pods-on-unschedulable-requests fact, so HL/LL cannot resolve the cause;
+    the decisive request-driven
+
+    mechanism lives only in HH/LH. The 30%-utilisation figure in xbase is a symptom
+    that, on its own, is exactly what
+
+    makes the metrics-server story tempting — it does not reveal the request/usage
+    decoupling that defeats it.
+
+    '
+causal_audit:
+  steelman: 'A Kubernetes SRE could argue the metrics-server theory is reasonable:
+    if utilisation metrics were inflated, an
+
+    autoscaler keyed on usage would over-provision while dashboards (reading the same
+    bad source) might or might not
+
+    agree, and another team confirmed exactly this failure. But the cluster autoscaler
+    does not scale on utilisation
+
+    at all — it scales on whether Pending pods can be scheduled given their resource
+    requests. The focal feature shows
+
+    Pending pods with summed requests above node capacity driving scale-up while real
+    usage stays low, a mechanism a
+
+    metrics-server fault cannot touch. The outside utilisation story therefore has
+    no path to this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase withholds the Pending-pods-on-unschedulable-requests
+    fact; the request-driven scale-up mechanism that rules out the metrics-server
+    story appears only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Kubernetes cluster-autoscaler over-provisioning is driven by Pending
+    pods with oversized CPU requests, not by the metrics-server misconfiguration a
+    peer SRE described.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

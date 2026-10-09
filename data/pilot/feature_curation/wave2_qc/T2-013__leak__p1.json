@@ -1,0 +1,29 @@
+{
+  "seed_id": "T2-013",
+  "ll_claims_extracted": [
+    "The upload throttling began because of the company's rebrand announcement."
+  ],
+  "hl_case_claims": [
+    "The rebrand announcement triggered the throttling."
+  ],
+  "hl_source_claims": [
+    "Priya is the person making the claim (named individual).",
+    "Priya is the communications lead (role).",
+    "Priya ran the rebrand launch (involvement/setting).",
+    "Priya told the speaker this (reporting relationship).",
+    "Priya has seen this exact pattern before (claimed prior experience).",
+    "Priya is confident in her assessment (confidence level)."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 26,
+    "ll": 13,
+    "xbase": 65,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

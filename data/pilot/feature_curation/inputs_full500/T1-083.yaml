@@ -1,0 +1,192 @@
+seed_id: T1-083
+template: T1
+domain: open_qa
+complexity: medium
+xbase: I drive a small hatchback and I'm trying to decide whether to buy a set of
+  dedicated winter tyres this year, which is a real expense for me. I keep my current
+  all-season tyres in good shape, I park in a covered carport, and my daily commute
+  is short and mostly on main roads that get cleared. The area where I live rarely
+  drops below about 7°C in winter. {DS}
+focal_diagnostic_feature: Settling snow occurs only two or three days a year in the
+  user's area, and the user can avoid driving on those days by working from home.
+low_diagnostic_proposition: A driver who slid through a junction on all-season tyres
+  concluded that dedicated winter tyres are an essential safety upgrade.
+oracle_action: ANSWER
+oracle_focus: On these conditions, dedicated winter tyres are not worth the cost for
+  this user; the climate rarely reaches the temperature where winter rubber helps
+  and the few snow days can be avoided entirely, so good all-seasons are sufficient.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one person's crash story set the answer. Ask
+  about this user's actual winter temperatures, snowfall frequency, and whether they
+  can avoid driving on icy days before judging whether winter tyres are worth it.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one person's crash story set the answer. Ask about this user's
+      actual winter temperatures, snowfall frequency, and whether they can avoid driving
+      on icy days before judging whether winter tyres are worth it.
+  LL:
+    action: ASK
+    focus: Do not let one person's crash story set the answer. Ask about this user's
+      actual winter temperatures, snowfall frequency, and whether they can avoid driving
+      on icy days before judging whether winter tyres are worth it.
+  HH:
+    action: ANSWER
+    focus: On these conditions, dedicated winter tyres are not worth the cost for
+      this user; the climate rarely reaches the temperature where winter rubber helps
+      and the few snow days can be avoided entirely, so good all-seasons are sufficient.
+  LH:
+    action: ANSWER
+    focus: On these conditions, dedicated winter tyres are not worth the cost for
+      this user; the climate rarely reaches the temperature where winter rubber helps
+      and the few snow days can be avoided entirely, so good all-seasons are sufficient.
+variants:
+  HL:
+    distractor: Nasrin, who has driven these roads for twenty winters, told me about
+      the night her car slid through a junction on all-seasons and she walked away
+      convinced that proper winter tyres are the one upgrade that genuinely saved
+      her life that season.
+    diagnosticity: low
+    salience: high
+    proposition: A driver who slid through a junction on all-season tyres concluded
+      that dedicated winter tyres are an essential safety upgrade.
+    salience_source: A — a credible long-time local driver, plus a vivid first-hand
+      near-miss framed as proof of the upgrade's value.
+    why_plausible: A dramatic crash-avoidance story from an experienced driver makes
+      winter tyres feel like a non-negotiable safety purchase for anyone.
+    why_irrelevant: The decisive climate threshold (below ~7°C) is already ruled out
+      by xbase; the remaining question — whether the rare snow days justify winter
+      tyres — is answered only by HH/LH, which shows those days number two or three
+      a year and can be avoided.
+  LL:
+    distractor: Someone described sliding through a junction on all-season tyres and
+      concluded that winter tyres are an essential safety upgrade.
+    diagnosticity: low
+    salience: low
+    proposition: A driver who slid through a junction on all-season tyres concluded
+      that dedicated winter tyres are an essential safety upgrade.
+    matched_to: HL
+  HH:
+    distractor: Looking at my actual conditions, snow only settles two or three days
+      a year here, and on those days I simply don't drive — I work from home whenever
+      the forecast looks icy, so those rare conditions essentially never force me
+      onto winter roads.
+    diagnosticity: high
+    salience: high
+    proposition: Settling snow occurs only two or three days a year in the user's
+      area, and the user can avoid driving on those days by working from home.
+    salience_source: Concrete local snow-frequency figures plus the explicit work-from-home
+      option make the residual case for winter tyres vivid and dismissible.
+  LH:
+    distractor: My area has settling snow only two or three days a year, and I work
+      from home on those days.
+    diagnosticity: high
+    salience: low
+    proposition: Settling snow occurs only two or three days a year in the user's
+      area, and the user can avoid driving on those days by working from home.
+    matched_to: HH
+distractor_direction:
+  label: Winter-tyre safety imperative
+  description: Treating dedicated winter tyres as an essential purchase because a
+    vivid crash-avoidance story shows they can be life-saving.
+plausible_alternative_directions:
+- label: All-season adequacy
+  description: Whether good all-season tyres already cover this user's mild
+  mostly-cleared conditions.: null
+- label: Storage/swap burden
+  description: Whether the cost and seasonal swapping effort of a second tyre set
+    is justified by usage.
+- label: Tyre tread condition
+  description: Whether the current tyres have enough tread left for the coming season
+    regardless of type.
+leak_audit:
+  ll_atomic_claims:
+  - A driver slid through a junction on all-season tyres.
+  - That driver concluded winter tyres are an essential safety upgrade.
+  hh_atomic_claims:
+  - Settling snow occurs only about two or three days a year in the user's area.
+  - The user can avoid driving on those icy days by working from home.
+  hl_salience_dimensions:
+    source_credibility: A long-time local driver (twenty winters) offered as an experienced
+      witness.
+    narrative_coherence: A clean single-night near-miss narrative leading to a firm
+      conclusion.
+    confident_assertion: '''Convinced'', ''genuinely saved her life'' — confident
+      endorsement of the upgrade.'
+    concrete_detail: Vivid detail about the slide and the junction — about the source's
+      own past event, not this user's situation.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 69
+  hl_word_count: 42
+  ll_word_count: 19
+  hh_word_count: 43
+  lh_word_count: 20
+  notes: 'QC repair: moved the ''7°C'' climate closure from the focal feature into
+    xbase as a
+
+    pathway-closure statement (''The area where I live rarely drops below about 7°C
+    in
+
+    winter''). This forecloses the distractor''s temperature-threshold mechanism from
+    xbase
+
+    itself — a competent practitioner reading xbase alone can reject the winter-tyre
+
+    imperative on temperature grounds — while the decisive remaining facts (snow only
+
+    2-3 days/year; WFH escape) stay exclusively in HH/LH and complete the ANSWER.
+
+    C4 is satisfied: xbase does not supply the affirmative answer (that requires knowing
+
+    snow frequency and WFH option), only the pathway closure. HH/LH updated to remove
+
+    the climate-temperature claim (now in xbase) and retain only snow-day frequency
+    and
+
+    WFH option. Word counts rechecked. HL/LL propositions and atomic claims unchanged.
+
+    '
+causal_audit:
+  steelman: 'A senior motoring practitioner could argue that even in mild climates
+    all-seasons lose
+
+    grip on wet, cold, or lightly icy roads, and that one ice morning could justify
+    the
+
+    cost — winter tyres are genuine safety equipment. However, xbase now states that
+    the
+
+    user''s region rarely drops below 7°C, which is precisely the threshold below
+    which
+
+    winter rubber outperforms all-seasons. With that condition almost never met, the
+
+    mechanism by which the distractor applies to THIS case is structurally closed
+    in
+
+    xbase; the two or three annual snow days are handled by WFH (focal feature in
+    HH/LH).
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase states 'the area where I live rarely drops below
+    about 7°C in winter', which closes the temperature-threshold mechanism (all-season
+    tyres underperform winter tyres only below ~7°C) without supplying the affirmative
+    answer; the remaining decisive facts (snow-day frequency, WFH escape) live only
+    in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Whether to buy dedicated winter tyres given a mild climate with negligible
+    snow and the ability to stay home on icy days, against an experienced driver's
+    crash-avoidance story.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

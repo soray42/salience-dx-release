@@ -1,0 +1,169 @@
+seed_id: T6-071
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I signed up for an online machine learning course three weeks ago and have
+  barely made progress. I complete about one lesson a week instead of the four the
+  course recommends. I am a working professional with genuine interest in the topic
+  and I have finished other online courses successfully before. {DS}
+focal_diagnostic_feature: The course lists matrix calculus and linear algebra as prerequisites;
+  the user has no calculus background since undergrad and three specific lessons have
+  required eigenvalue decomposition the user cannot follow.
+low_diagnostic_proposition: The user's slow course progress is probably caused by
+  phone distraction, as past non-completion was generally due to poor focus habits.
+oracle_action: ANSWER
+oracle_focus: Slow progress is driven by a prerequisite gap, not distraction; either
+  take a bridging course in linear algebra and matrix calculus first, or switch to
+  a course designed for non-calculus backgrounds.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the past distraction pattern automatically.
+  Ask what the user actually encounters when stuck — whether the content is unclear
+  or whether focus is the obstacle — before recommending a digital-discipline change.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the past distraction pattern automatically. Ask what the user
+      actually encounters when stuck — whether the content is unclear or whether focus
+      is the obstacle — before recommending a digital-discipline change.
+  LL:
+    action: ASK
+    focus: Do not apply the past distraction pattern automatically. Ask what the user
+      actually encounters when stuck — whether the content is unclear or whether focus
+      is the obstacle — before recommending a digital-discipline change.
+  HH:
+    action: ANSWER
+    focus: Slow progress is driven by a prerequisite gap, not distraction; either
+      take a bridging course in linear algebra and matrix calculus first, or switch
+      to a course designed for non-calculus backgrounds.
+  LH:
+    action: ANSWER
+    focus: Slow progress is driven by a prerequisite gap, not distraction; either
+      take a bridging course in linear algebra and matrix calculus first, or switch
+      to a course designed for non-calculus backgrounds.
+variants:
+  HL:
+    distractor: Every online course where I struggled to keep pace before turned out
+      to be distraction — I was just checking my phone too much — so I assume I need
+      to cut social media again.
+    diagnosticity: low
+    salience: high
+    proposition: The user's slow course progress is probably caused by phone distraction,
+      as past non-completion was generally due to poor focus habits.
+    salience_source: 'B: narrative coherence — personal history with a clear prior
+      pattern; C: confident first-instinct framing ("I assume I need to").'
+    why_plausible: Distraction is a common and self-acknowledged obstacle for working
+      professionals in self-paced online learning, and a user who has experienced
+      it before will naturally reach for that explanation first.
+    why_irrelevant: The focal evidence shows that three course lessons require eigenvalue
+      decomposition the user cannot follow — this is a comprehension barrier that
+      persists regardless of attention level, so distraction reduction would not enable
+      progress.
+  LL:
+    distractor: Past course non-completion for this user was generally attributed
+      to distraction and poor focus habits.
+    diagnosticity: low
+    salience: low
+    proposition: The user's slow course progress is probably caused by phone distraction,
+      as past non-completion was generally due to poor focus habits.
+    matched_to: HL
+  HH:
+    distractor: The course prerequisites include fluency with linear algebra and matrix
+      calculus, but my background is business analytics with no calculus since undergrad
+      — three lessons have required eigenvalue decomposition I cannot follow at all.
+    diagnosticity: high
+    salience: high
+    proposition: The course lists matrix calculus and linear algebra as prerequisites;
+      the user has no calculus background since undergrad and three specific lessons
+      have required eigenvalue decomposition the user cannot follow.
+    salience_source: Specific prerequisite names, concrete count of blocking lessons,
+      frank first-person admission of inability to follow the material.
+  LH:
+    distractor: The course requires matrix calculus prerequisites; the user has no
+      calculus background and three lessons have required eigenvalue decomposition.
+    diagnosticity: high
+    salience: low
+    proposition: The course lists matrix calculus and linear algebra as prerequisites;
+      the user has no calculus background since undergrad and three specific lessons
+      have required eigenvalue decomposition the user cannot follow.
+    matched_to: HH
+distractor_direction:
+  label: Phone distraction and focus deficit
+  description: Investigating whether the user's slow course progress stems from phone
+    use and poor focus during study sessions rather than a content comprehension problem.
+plausible_alternative_directions:
+- label: Insufficient study time per week
+  description: The user's available study time may be genuinely too low for the course's
+    pace, regardless of focus quality or content difficulty.
+- label: Course pacing and structure mismatch
+  description: The course's lesson format or structure may not suit self-directed
+    study by working professionals, creating friction independent of prerequisites.
+- label: Motivation decline after initial enrolment
+  description: Interest may have peaked at sign-up and the user may need accountability
+    structures or a cohort to sustain engagement over weeks.
+leak_audit:
+  ll_atomic_claims:
+  - Past course non-completion for this user was attributed to distraction.
+  - Poor focus habits are the offered cause.
+  hh_atomic_claims:
+  - The course has matrix calculus and linear algebra prerequisites.
+  - The user's background is business analytics with no calculus since undergrad.
+  - Three lessons have specifically required eigenvalue decomposition.
+  - The user cannot follow those lessons.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person availability narrative, no named source.
+    narrative_coherence: Personal history of prior non-completion from the same cause,
+      with a clear self-diagnosis and resolution plan.
+    confident_assertion: '"I assume I need to cut social media again"'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 51
+  hl_word_count: 35
+  ll_word_count: 15
+  hh_word_count: 34
+  lh_word_count: 19
+  notes: 'T6 availability inference ("so it''s probably the same thing again") is
+
+    propositional content present in both HL and LL ("I assume I need to cut
+
+    social media again" / "attributed to distraction and poor focus habits").
+
+    xbase does not mention prerequisites or calculus — focal content lives
+
+    entirely in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'Distraction impairs encoding and retention. A user who is not truly
+
+    attending to lessons will struggle to progress even through material
+
+    they are nominally capable of. Past experience reliably predicting
+
+    the mechanism is a reasonable inductive inference — the user has solved
+
+    this problem before by reducing distraction, and the present situation
+
+    looks similar from the outside.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes the user has finished other online courses
+    successfully and has genuine interest, which weakens (but does not eliminate)
+    the distraction explanation. The focal evidence (eigenvalue decomposition lessons
+    that the user cannot follow) is a comprehension failure distraction-reduction
+    cannot fix.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Online ML course stalls because the user lacks calculus prerequisites
+    for eigenvalue-heavy lessons, not because of phone distraction as past non-completion
+    experience suggests.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

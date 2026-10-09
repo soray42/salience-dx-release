@@ -1,0 +1,225 @@
+seed_id: T5-012
+template: T5
+domain: technical_troubleshooting
+complexity: low
+xbase: كنت أستخدم BackPulse، وهي أداة CLI مفتوحة المصدر للنسخ الاحتياطي، لحماية لقطات
+  قاعدة بيانات الإنتاج لدينا. بدأت أقلق من أن الأداة قد تُتلف بيانات النسخ الاحتياطي
+  بصمت. أجريت استعادة كاملة إلى وحدة تخزين اختبار منفصلة ثم استخدمت أمر verify المدمج
+  في الأداة للتحقق من سلامة البيانات. {DS}
+focal_diagnostic_feature: أمر verify أكد أن مجاميع التحقق لجميع الملفات المُستعادة
+  تطابق الأصلية تماماً، مما يستبعد أي تلف في البيانات من قِبَل الأداة.
+low_diagnostic_proposition: 'The tool''s website has a very outdated, 1990s-era visual
+  appearance.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'Checksum verification confirms data integrity; the tool is functioning
+  correctly; website aesthetics are irrelevant to backup correctness.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'Acknowledge the website aesthetics concern but explain
+  that visual design has no causal relationship to backup data integrity; recommend
+  verifying checksums or checking commit history rather than judging reliability by
+  website appearance.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'Acknowledge the website aesthetics concern but explain that visual design
+      has no causal relationship to backup data integrity; recommend verifying checksums
+      or checking commit history rather than judging reliability by website appearance.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'Acknowledge the website aesthetics concern but explain that visual design
+      has no causal relationship to backup data integrity; recommend verifying checksums
+      or checking commit history rather than judging reliability by website appearance.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'Checksum verification confirms data integrity; the tool is functioning
+      correctly; website aesthetics are irrelevant to backup correctness.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'Checksum verification confirms data integrity; the tool is functioning
+      correctly; website aesthetics are irrelevant to backup correctness.
+
+      '
+variants:
+  HL:
+    distractor: مهندسة البنية التحتية الرئيسية لدينا — وهي تدير البنية التحتية للنسخ
+      الاحتياطي لثلاثة بنوك متوسطة الحجم في شركتها — أخبرتني أن موقع الأداة يبدو تماماً
+      كما لو كان قد بُني في التسعينيات.
+    diagnosticity: low
+    salience: high
+    proposition: 'The tool''s website has a very outdated, 1990s-era visual appearance.
+
+      '
+    salience_source: 'A: source credibility (lead infrastructure engineer managing
+      backups for multiple banks); C: confident verb "told me"; D: concrete detail
+      about source''s role and employer context.
+
+      '
+    why_plausible: 'A senior engineer with hands-on backup infrastructure experience
+      at regulated institutions carries real authority; her observation sounds like
+      the kind of red-flag a practitioner would flag.
+
+      '
+    why_irrelevant: 'Website aesthetics have no causal pathway to cryptographic hash
+      computation during backup or restore; a 1990s-looking site cannot alter the
+      byte-level fidelity of file transfers.
+
+      '
+  LL:
+    distractor: أحدهم ذكر أن موقع الأداة يبدو كما لو كان قد بُني في التسعينيات.
+    diagnosticity: low
+    salience: low
+    proposition: 'The tool''s website has a very outdated, 1990s-era visual appearance.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: 'اكتمل أمر verify دون أخطاء: جميع الملفات المُستعادة لديها مجاميع
+      تحقق SHA-256 تطابق الأصلية في القائمة المخزنة تماماً. صفر حالات عدم تطابق في
+      جميع ملفات مجموعة النسخ الاحتياطي.'
+    diagnosticity: high
+    salience: high
+    proposition: 'The verify command confirmed that all restored file checksums match
+      the originals exactly, ruling out data corruption by the tool.
+
+      '
+    salience_source: 'C: confident, precise result statement ("Zero mismatches");
+      D: concrete technical detail (SHA-256, manifest reference, full coverage assertion).
+
+      '
+  LH:
+    distractor: أمر verify أكد أن مجاميع التحقق الخاصة بجميع الملفات المُستعادة تطابق
+      الأصلية تماماً.
+    diagnosticity: high
+    salience: low
+    proposition: 'The verify command confirmed that all restored file checksums match
+      the originals exactly, ruling out data corruption by the tool.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: الموقع القديم يُشير إلى تلف البيانات
+  description: الشكل الجمالي للموقع الإلكتروني للأداة الذي يعود إلى حقبة التسعينيات
+    مُقدَّم كدليل على أن المشروع غير موثوق وأن بيانات النسخ الاحتياطي قد تكون متلفة.
+plausible_alternative_directions:
+- label: إعداد النسخ الاحتياطي غير مكتمل
+  description: قد تكون BackPulse مُهيَّأة خطأً لاستبعاد مسارات ملفات معينة، مما يُغفل
+    بصمت بيانات من النسخ الاحتياطية دون رفع خطأ.
+- label: تلف في طبقة التخزين
+  description: قد يُحدث القرص الصلب أو وحدة تخزين الشبكة الأساسية تلفاً بشكل مستقل
+    عن أداة النسخ الاحتياطي ذاتها.
+- label: خلل في منطق اللقطة التزايدية
+  description: قد يتضمن خوارزمية النسخ الاحتياطي التزايدي في BackPulse نسخاً قديمة
+    أو غير صحيحة من الملفات دون رفع أخطاء أثناء مرحلة النسخ الاحتياطي.
+leak_audit:
+  ll_atomic_claims:
+  - The tool's website looks like it was built in the 1990s.
+  hl_salience_dimensions:
+    source_credibility: 'Lead infrastructure engineer who manages backup infrastructure
+      for three mid-sized banks at her firm — domain-matched authority.
+
+      '
+    narrative_coherence: 'Single clean declarative sentence; professional register;
+      no interruptions or tangents.
+
+      '
+    confident_assertion: '"told me" — direct confident verb, no hedging.
+
+      '
+    concrete_detail: '"manages backup infrastructure for three mid-sized banks at
+      her firm" — detail about the source''s role and employer, not about the case.
+
+      '
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 29
+  ll_word_count: 14
+  notes: 'Stripped: no mention of what the engineer concluded from the website
+
+    (avoided "not safe for production data" as a severity/impact leak).
+
+    No description of the website''s specific features (frames, broken
+
+    links) added to HL beyond what the distractor claim requires.
+
+    Concrete detail kept strictly to source role and employer context.
+
+    Ratio 29/14 = 2.07:1, well within 4:1 ceiling.
+
+    '
+causal_audit:
+  steelman: 'A software project with an obviously neglected website might also
+
+    have neglected code: if maintainers do not update their web
+
+    presence, they may not be applying security patches, fixing known
+
+    bugs, or testing on modern OS versions. An unmaintained backup tool
+
+    could accumulate silent data-corruption bugs over time. A senior
+
+    sysadmin doing vendor due diligence would include "check project
+
+    maintenance signals" — website recency, last commit date,
+
+    issue-tracker responsiveness — as an evaluation criterion. So a
+
+    1990s-looking website is a (weak) proxy for maintenance neglect,
+
+    which is a (weak) proxy for reliability risk. Under this chain,
+
+    a practitioner might list it as worth noting.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'The steelman reveals only a weak correlation heuristic
+    for tool selection, not a causal mechanism for a specific backup corruption event.
+    Crucially, the xbase states the user already ran the verify command; the focal
+    variants confirm checksums matched — the definitive test for byte-level integrity.
+    Website aesthetics have no pathway to the cryptographic hash results. A senior
+    practitioner troubleshooting "is my backup corrupted?" puts checksum verification
+    on the checklist, not website aesthetics. Once checksums pass, the aesthetic proxy
+    is completely uninformative about this case.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  topic_brief: 'The website of an open-source backup CLI looks like it was made in
+    the 1990s, offered as a reason to suspect the tool is corrupting backups. Focal:
+    restore-verification checksums match.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  generator: generator_B
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-012.yaml
+  source_xbase_sha256: a31d9ef6c9d1b0d8
+  translated_content_sha256: cb710fb267fb39de
+  translation_notes: 'Technical terms (BackPulse, CLI, SHA-256, verify) kept as-is.
+    The HL preserves the named-source salience structure: a specific senior engineer
+    described by role and employer context (managing backup infrastructure for three
+    mid-sized banks), matching the English source-credibility cue. LL uses the anonymous
+    أحدهم (someone) for flat/source-less register. The HH concrete technical detail
+    (SHA-256, manifest, zero mismatches) carried over directly.'

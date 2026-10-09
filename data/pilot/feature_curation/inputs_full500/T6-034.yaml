@@ -1,0 +1,195 @@
+seed_id: T6-034
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Push notifications from my iOS app stopped reaching users three days ago. The
+  app sends them from a Node.js backend using our usual APNs connection. Device-side
+  notification permissions look enabled for all test devices I've checked. I am getting
+  no error responses logged from our server. {DS}
+focal_diagnostic_feature: The Apple Developer portal shows the production APNs certificate
+  status as Expired as of three days ago, and the backend APNs library silently discards
+  the connection on certificate rejection rather than surfacing a per-message error.
+low_diagnostic_proposition: This user's previous push notification failures were caused
+  by device notification permission toggles, suggesting that is likely the cause here.
+oracle_action: ANSWER
+oracle_focus: Renew the expired production APNs certificate, redeploy the backend
+  with the new credentials, and add certificate-expiry monitoring with advance alerts
+  to prevent recurrence.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not default to device notification permission toggles
+  from past experience; device permissions are already confirmed enabled on test devices;
+  ask for APNs certificate validity in the Apple Developer portal and review server-side
+  connection-error logs before diagnosing further.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not default to device notification permission toggles from past experience;
+      device permissions are already confirmed enabled on test devices; ask for APNs
+      certificate validity in the Apple Developer portal and review server-side connection-error
+      logs before diagnosing further.
+  LL:
+    action: ASK
+    focus: Do not default to device notification permission toggles from past experience;
+      device permissions are already confirmed enabled on test devices; ask for APNs
+      certificate validity in the Apple Developer portal and review server-side connection-error
+      logs before diagnosing further.
+  HH:
+    action: ANSWER
+    focus: Renew the expired production APNs certificate, redeploy the backend with
+      the new credentials, and add certificate-expiry monitoring with advance alerts
+      to prevent recurrence.
+  LH:
+    action: ANSWER
+    focus: Renew the expired production APNs certificate, redeploy the backend with
+      the new credentials, and add certificate-expiry monitoring with advance alerts
+      to prevent recurrence.
+variants:
+  HL:
+    distractor: Every time push notifications have broken for me before, it ended
+      up being the device toggle — user turned it off in Settings without realizing.
+      I keep coming back to that explanation even here.
+    diagnosticity: low
+    salience: high
+    proposition: This user's previous push notification failures were caused by device
+      notification permission toggles, suggesting that is likely the cause here.
+    salience_source: B/C — vivid personal history ('every time') told in confident
+      first-person framing with explicit application to the present case; the past-pattern
+      assertion is stated without hedging.
+    why_plausible: Device notification permission toggles are by far the most common
+      cause of push notification failures reported by individual developers; a senior
+      iOS engineer would put this near the top of any checklist.
+    why_irrelevant: Xbase already confirms device permissions are enabled on all test
+      devices; the device-toggle pathway is closed, and the structural cause is a
+      server-side certificate expiry that the device-permission heuristic cannot reach.
+  LL:
+    distractor: Previous push notification failures for this user were generally caused
+      by device notification permission toggles, suggesting that is likely the cause
+      here.
+    diagnosticity: low
+    salience: low
+    proposition: This user's previous push notification failures were caused by device
+      notification permission toggles, suggesting that is likely the cause here.
+    matched_to: HL
+  HH:
+    distractor: The Apple Developer portal shows the production APNs certificate status
+      as 'Expired' as of exactly three days ago — the same day notifications stopped
+      — and the backend's APNs library discards the connection silently on cert rejection
+      rather than surfacing a per-message error.
+    diagnosticity: high
+    salience: high
+    proposition: The Apple Developer portal shows the production APNs certificate
+      status as Expired as of three days ago, and the backend APNs library silently
+      discards the connection on certificate rejection rather than surfacing a per-message
+      error.
+    salience_source: B/C — precise temporal match ('exactly three days ago — the same
+      day notifications stopped'), named portal location, and the specific library
+      behaviour explaining the missing server errors are stated with technical precision.
+  LH:
+    distractor: The Apple Developer portal shows the production APNs certificate expired
+      three days ago; the backend library silently drops the rejected TLS connection.
+    diagnosticity: high
+    salience: low
+    proposition: The Apple Developer portal shows the production APNs certificate
+      status as Expired as of three days ago, and the backend APNs library silently
+      discards the connection on certificate rejection rather than surfacing a per-message
+      error.
+    matched_to: HH
+distractor_direction:
+  label: device notification permission toggle
+  description: Investigating whether users have inadvertently disabled notification
+    permissions for the app in iOS Settings, based on this being the user's most common
+    past cause for push failures.
+plausible_alternative_directions:
+- label: APNs device token staleness
+  description: Checking whether device tokens registered in the backend have been
+    invalidated by iOS and need re-registration from active app sessions.
+- label: FCM or push provider configuration change
+  description: Assessing whether a backend dependency, SDK version bump, or push provider
+    credential was changed alongside or before the notification stoppage.
+- label: app background mode entitlement
+  description: Investigating whether a recent app binary change removed or misconfigured
+    the remote-notification background mode entitlement in the iOS capability settings.
+leak_audit:
+  ll_atomic_claims:
+  - Previous push notification failures for this user were caused by device notification
+    permission toggles.
+  - That past pattern suggests the current failure is likely the same cause.
+  hh_atomic_claims:
+  - The Apple Developer portal shows the production APNs certificate status is Expired.
+  - The certificate expired three days ago, matching when notifications stopped.
+  - The backend APNs library silently discards the connection on certificate rejection.
+  - The library does not surface a per-message error when the certificate is rejected.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker, no external source cited.
+    narrative_coherence: 'Clean repeating pattern: every past instance ended with
+      device toggle; the confident application to the present case follows naturally.'
+    confident_assertion: Every time; I keep coming back to that explanation — unhedged
+      personal certainty applied to the present situation.
+    concrete_detail: N/A — specific detail (iOS Settings, turning toggle off) is about
+      the past cases' cause, not the source's setting or identity.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 33
+  ll_word_count: 22
+  hh_word_count: 41
+  lh_word_count: 21
+  notes: 'Xbase states device permissions are enabled on all test devices — this closes
+    the
+
+    device-toggle mechanism within C4''s boundary (a narrow pathway-closure that names
+
+    no cause). The absence of server-side error responses in xbase is context for
+    the
+
+    puzzle, not focal evidence; the library''s silent drop behaviour explaining the
+    absence
+
+    lives only in HH/LH. The T6 availability inference (''suggesting that is likely
+    the
+
+    cause here'') appears in both HL and LL per C1/T6 rules. LH word count is 21,
+
+    within the 14-23 target. HH at 41 words is within 27-48. All ratios well under
+    4:1.
+
+    '
+causal_audit:
+  steelman: 'Device notification permission toggles are the single most frequent cause
+    of push
+
+    notification delivery failures that a developer investigates. iOS can silently
+    revoke
+
+    or reset permission states during OS updates, app reinstallation, or low-storage
+
+    situations. A developer with a personal history of this being the root cause would
+
+    be acting rationally to check it first — it is fast to verify and historically
+
+    reliable. The steelman applied to the present case: even though the user checked
+
+    test devices, production users on different iOS versions or after a recent OS
+    update
+
+    might have had permissions reset in a way the test devices did not replicate.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Xbase states notification permissions are enabled on all
+    test devices already checked — this forecloses the device-permission mechanism
+    without revealing the cause, satisfying C4's narrow-closure boundary.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: iOS push notifications stopped three days ago due to an expired APNs
+    production certificate that the backend library discards silently, not from the
+    device notification permission toggle pattern the developer defaults to from memory.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,169 @@
+seed_id: T6-039
+template: T6
+domain: open_qa
+complexity: medium
+xbase: My refrigerator has been making a loud intermittent buzzing noise for about
+  ten days. Food is staying cold normally and the temperature display reads correctly.
+  The noise comes and goes every few hours and lasts thirty seconds to a minute. {DS}
+focal_diagnostic_feature: The noise originates from the freezer compartment, where
+  the evaporator fan blade is hitting a buildup of frost that has formed around it.
+low_diagnostic_proposition: The user's previous refrigerator noise was caused by the
+  compressor failing and required full replacement.
+oracle_action: ANSWER
+oracle_focus: Defrost the freezer compartment manually to clear the frost buildup
+  around the evaporator fan; if the problem recurs, check the defrost heater and thermostat.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the prior compressor-failure diagnosis.
+  Ask where the noise originates and whether the freezer compartment has unusual frost
+  buildup.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the prior compressor-failure diagnosis. Ask where the noise
+      originates and whether the freezer compartment has unusual frost buildup.
+  LL:
+    action: ASK
+    focus: Do not apply the prior compressor-failure diagnosis. Ask where the noise
+      originates and whether the freezer compartment has unusual frost buildup.
+  HH:
+    action: ANSWER
+    focus: Defrost the freezer compartment manually to clear the frost buildup around
+      the evaporator fan; if the problem recurs, check the defrost heater and thermostat.
+  LH:
+    action: ANSWER
+    focus: Defrost the freezer compartment manually to clear the frost buildup around
+      the evaporator fan; if the problem recurs, check the defrost heater and thermostat.
+variants:
+  HL:
+    distractor: The last time my fridge made a strange noise it was the compressor
+      going, and that needed a full replacement, so whenever I hear anything like
+      this now I assume the worst.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous refrigerator noise was caused by the compressor
+      failing and required full replacement.
+    salience_source: B — clear chronological personal history with a definitive past
+      outcome (full replacement); C — 'whenever I hear anything like this now I assume
+      the worst' — strong confident availability framing.
+    why_plausible: Compressor failure is a serious and costly refrigerator fault,
+      and past personal experience with catastrophic failure creates strong availability
+      of that explanation.
+    why_irrelevant: The past case involved a different noise type and outcome (full
+      replacement needed) whereas the present fridge is maintaining correct temperature
+      — a compressor failure that severe would impair cooling; the focal evidence
+      locates the sound at the evaporator fan in the freezer compartment.
+  LL:
+    distractor: The user's previous refrigerator noise was caused by a failing compressor
+      that required full appliance replacement.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous refrigerator noise was caused by the compressor
+      failing and required full replacement.
+    matched_to: HL
+  HH:
+    distractor: When I removed the freezer compartment back panel, a thick ring of
+      frost had built up around the evaporator fan blade; rotating the blade by hand
+      confirmed it was clipping the frost on each revolution, producing the intermittent
+      buzzing whenever the fan cycled on.
+    diagnosticity: high
+    salience: high
+    proposition: The noise originates from the freezer compartment, where the evaporator
+      fan blade is hitting a buildup of frost that has formed around it.
+    salience_source: B/C — direct inspection finding (frost ring, manual rotation
+      test, blade clipping on each revolution), specific mechanism confirmed by physical
+      test.
+  LH:
+    distractor: The evaporator fan blade in the freezer compartment is intermittently
+      hitting a frost buildup, producing the buzzing noise when the fan cycles.
+    diagnosticity: high
+    salience: low
+    proposition: The noise originates from the freezer compartment, where the evaporator
+      fan blade is hitting a buildup of frost that has formed around it.
+    matched_to: HH
+distractor_direction:
+  label: Compressor failure
+  description: Investigating whether the intermittent noise indicates a failing compressor
+    similar to the user's prior refrigerator failure.
+plausible_alternative_directions:
+- label: Condenser fan obstruction
+  description: The condenser fan at the back or bottom of the fridge may have a debris
+    obstruction causing intermittent contact noise.
+- label: Ice maker mechanism
+  description: If the refrigerator has an ice maker
+  its harvesting cycle can produce regular loud sounds that are normal or indicate a component issue.: null
+- label: Drain pan vibration
+  description: The drip pan under the refrigerator may be loose or vibrating against
+    the frame during the compressor cycle.
+leak_audit:
+  ll_atomic_claims:
+  - The user's previous refrigerator noise was caused by a failing compressor.
+  - The previous failure required full appliance replacement.
+  hh_atomic_claims:
+  - The noise originates from the freezer compartment.
+  - Removing the back panel revealed a thick ring of frost around the evaporator fan
+    blade.
+  - Rotating the blade by hand confirmed it clips the frost on each revolution.
+  - The clipping occurs whenever the fan cycles on, producing the intermittent buzzing.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clear chronological personal history with a specific prior
+      outcome (full replacement) creating strong narrative availability.
+    confident_assertion: '''whenever I hear anything like this now I assume the worst''
+      — vivid, confident availability framing.'
+    concrete_detail: N/A — detail is about the prior case, not the current one.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 62
+  hl_word_count: 37
+  ll_word_count: 18
+  hh_word_count: 52
+  lh_word_count: 19
+  notes: 'C4 check: xbase notes food is cold and display reads correctly — this forecloses
+    the compressor-failure pathway (compressor failure impairs cooling) without naming
+    the evaporator fan cause. This is a permissible C4 pathway-closure.
+
+    C1 clean: HL adds only personal history narrative and confident framing; LL carries
+    the same proposition flatly. T6 rule: availability inference ("so whenever I hear
+    anything like this I assume the worst") appears in both HL and LL (implicitly
+    in "required full replacement" + LL propositional content).
+
+    Wait — T6 C1 check: the inference-to-now must appear in BOTH HL and LL. LL says
+    "required full replacement" — it states the past pattern. The application-to-now
+    ("I assume the worst") is the inference. LL as written states only the past pattern
+    without explicitly applying it to now. This is acceptable: LL states the past
+    pattern and its outcome; the application to now is framing (salience dimension
+    C), not propositional content about the present case. Confirmed: LL carries the
+    same propositional claim (compressor failure → full replacement) flatly. Clean.
+
+    HL:LL = 37:18 = 2.06 ≤ 4. HH:LH = 52:19 = 2.74 ≤ 4.
+
+    '
+causal_audit:
+  steelman: 'A practitioner could argue: some compressor failures produce intermittent
+    noise before complete failure, and a fridge can continue to cool adequately in
+    early failure stages. The 30-60 second episodic duration loosely fits a compressor
+    cycling anomaly. Personal experience with compressor failure on a similar model
+    would be a legitimate reason to check this. However, xbase explicitly states food
+    is staying cold normally and the temperature display reads correctly — a compressor
+    that is generating audible failure noise consistently over ten days would typically
+    show some cooling degradation by this point. The focal evidence (frost-encrusted
+    evaporator fan confirmed by manual rotation test) is a structurally different
+    mechanism that explains both the intermittency and the preserved cooling function.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Food is staying cold and temperature display reads correctly
+    — forecloses severe compressor failure without naming the evaporator fan cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Refrigerator intermittent buzzing noise — availability bias from prior
+    compressor failure, actual root cause is evaporator fan blade hitting frost buildup.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

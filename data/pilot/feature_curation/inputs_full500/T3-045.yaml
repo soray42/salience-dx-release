@@ -1,0 +1,174 @@
+seed_id: T3-045
+template: T3
+domain: open_qa
+complexity: low
+xbase: I want to buy a portable power bank for charging my phone and laptop on day
+  trips. I have narrowed it down to two options from the same brand, both rated at
+  20,000 mAh. The price gap between them is about twenty-five euros. {DS}
+focal_diagnostic_feature: The cheaper bank supports 65-watt USB-PD output and can
+  charge the laptop, while the pricier model is limited to 18-watt and cannot sustain
+  laptop charging above idle drain.
+low_diagnostic_proposition: A colleague with power electronics experience states that
+  rated capacity is the only relevant factor when choosing a portable charger.
+oracle_action: ANSWER
+oracle_focus: Choose the cheaper model; it charges the laptop via 65W USB-PD while
+  the pricier model's 18W output cannot keep up with laptop draw.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept a blanket capacity-only rule from authority.
+  Ask for the output wattage and port type for each model before deciding, given the
+  user needs to charge a laptop.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept a blanket capacity-only rule from authority. Ask for the
+      output wattage and port type for each model before deciding, given the user
+      needs to charge a laptop.
+  LL:
+    action: ASK
+    focus: Do not accept a blanket capacity-only rule from authority. Ask for the
+      output wattage and port type for each model before deciding, given the user
+      needs to charge a laptop.
+  HH:
+    action: ANSWER
+    focus: Choose the cheaper model; it charges the laptop via 65W USB-PD while the
+      pricier model's 18W output cannot keep up with laptop draw.
+  LH:
+    action: ANSWER
+    focus: Choose the cheaper model; it charges the laptop via 65W USB-PD while the
+      pricier model's 18W output cannot keep up with laptop draw.
+variants:
+  HL:
+    distractor: My coworker Thanh built power supply systems at a consumer electronics
+      company for eight years and told me that for a portable charger, rated capacity
+      is the only number that matters in any buying decision.
+    diagnosticity: low
+    salience: high
+    proposition: A colleague with power electronics experience states that rated capacity
+      is the only relevant factor when choosing a portable charger.
+    salience_source: A — source credibility (eight years building power supply systems
+      at a consumer electronics company); C — confident assertion ("only number that
+      matters").
+    why_plausible: Capacity in mAh is the most commonly cited and genuinely important
+      spec for a power bank; a hardware professional's confident summary could easily
+      anchor a buyer's attention on this single metric.
+    why_irrelevant: The authority's generic rule does not engage the specific use
+      case of laptop charging, where output wattage — not stored capacity — determines
+      whether the bank can actually deliver net charge to the laptop; 18W is below
+      most laptop draw under load and will drain the battery even while plugged in.
+  LL:
+    distractor: A colleague with power electronics experience stated that rated capacity
+      is the only relevant factor when choosing a portable charger.
+    diagnosticity: low
+    salience: low
+    proposition: A colleague with power electronics experience states that rated capacity
+      is the only relevant factor when choosing a portable charger.
+    matched_to: HL
+  HH:
+    distractor: The cheaper bank outputs 65-watt USB-PD and can fast-charge my laptop
+      in under two hours; the pricier model tops out at 18 watts and cannot charge
+      the laptop above idle drain.
+    diagnosticity: high
+    salience: high
+    proposition: The cheaper bank supports 65-watt USB-PD output and can charge the
+      laptop, while the pricier model is limited to 18-watt and cannot sustain laptop
+      charging above idle drain.
+    salience_source: B — exact wattage figures (65W vs 18W), concrete outcome statement
+      (charges in under two hours vs cannot charge above idle drain).
+  LH:
+    distractor: The cheaper model's 65W USB-PD charges the laptop in under two hours;
+      the pricier model's 18W output cannot charge the laptop above idle draw.
+    diagnosticity: high
+    salience: low
+    proposition: The cheaper bank supports 65-watt USB-PD output and can charge the
+      laptop, while the pricier model is limited to 18-watt and cannot sustain laptop
+      charging above idle drain.
+    matched_to: HH
+distractor_direction:
+  label: Capacity-only purchasing rule
+  description: Treating rated mAh capacity as the sole relevant factor for choosing
+    between the two power banks, ignoring output wattage and port compatibility.
+plausible_alternative_directions:
+- label: Charging speed for phone
+  description: Fast-charging protocol support (e.g., Quick Charge 3.0, PPS) for the
+    phone is a separate variable that the laptop-focused wattage comparison does not
+    fully resolve.
+- label: Weight and size for day trips
+  description: A 20,000 mAh power bank can be heavy; physical dimensions and weight
+    are live considerations for a day-trip user not addressed by capacity or wattage
+    specs.
+leak_audit:
+  ll_atomic_claims:
+  - A colleague with power electronics experience made the claim.
+  - Rated capacity is the only relevant factor when choosing a portable charger.
+  hh_atomic_claims:
+  - The cheaper bank outputs 65-watt USB-PD.
+  - The cheaper bank can fast-charge the laptop in under two hours.
+  - The pricier model tops out at 18 watts.
+  - The pricier model cannot charge the laptop above idle drain.
+  hl_salience_dimensions:
+    source_credibility: Eight years building power supply systems at a consumer electronics
+      company
+    narrative_coherence: Clean professional direct-speech delivery
+    confident_assertion: only number that matters
+    concrete_detail: N/A — no case-specific wattage or port facts added
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 43
+  hl_word_count: 35
+  ll_word_count: 20
+  hh_word_count: 32
+  lh_word_count: 21
+  notes: 'Both models have identical 20,000 mAh capacity (stated in xbase), so the
+    authority''s
+
+    capacity rule is trivially unable to differentiate them — this is correctly focal
+
+    on the output wattage difference. The authority claim is generic ("any buying
+
+    decision") not an analysis of this case. Low complexity as the decisive fact
+
+    (65W USB-PD vs 18W) requires only understanding of basic laptop power requirements.
+
+    QC repair: LH previously omitted the ''in under two hours'' fast-charge claim
+    present
+
+    in HH, violating C10. LH rewritten to include the charging-time claim flatly;
+
+    lh_word_count updated from 20 to 21.
+
+    '
+causal_audit:
+  steelman: 'Rated capacity is genuinely the dominant variable in most power bank
+    decisions —
+
+    for phone-only users it often is the only relevant metric. A power electronics
+
+    professional has a reasonable basis for the rule even if it does not generalise
+
+    to laptop charging. One could argue the 18W limit still provides some top-up
+
+    benefit when the laptop is sleeping or at low brightness.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase establishes that both models have the same
+    rated capacity (20,000 mAh) and the user needs to charge a laptop. This means
+    the authority's capacity-only rule cannot differentiate the two options and xbase's
+    laptop mention frames the wattage as decisive, without disclosing which model
+    wins.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing between two identical-capacity power banks for phone and laptop
+    day trips, where the cheaper model has 65W USB-PD laptop charging and the pricier
+    model is limited to 18W, against a power-electronics colleague's blanket 'capacity
+    is the only metric' authority claim.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

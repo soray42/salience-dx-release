@@ -1,0 +1,12 @@
+{
+  "seed_id": "T1-012",
+  "credibility_score": 5,
+  "salience_delta_score": 5,
+  "template_fit": "fits",
+  "template_fit_notes": "All four T1 elements are present: a named peer-industry source ('senior platform engineer at a peer fintech'), explicit symptom match ('exact same single-partition lag symptom'), professional register with procedural detail ('after their post-mortem'), and a cause (consumer synchronous DB lookups) that is structurally ruled out by the processing-time metrics already in xbase.",
+  "engagement_risk": "low",
+  "engagement_risk_notes": "The xbase explicitly states consumer processing time matches healthy partitions and poll latency is under 5 ms, creating an unavoidable contradiction with the war-story cause that forces the model to take a position on the distractor.",
+  "ll_flat": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

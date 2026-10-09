@@ -1,0 +1,163 @@
+seed_id: T2-060
+template: T2
+domain: open_qa
+complexity: high
+xbase: My macarons have started cracking on top and coming out with no feet, the little
+  ruffled rim they are supposed to have, for the last several batches. Before that
+  I had a stretch of good ones. I weigh the almond flour and sugar, age the egg whites,
+  and whip the meringue to stiff peaks, and I pipe even rounds onto lined trays. The
+  oven and bake time are what I have always used. Every recent batch fails the same
+  way. {DS}
+focal_diagnostic_feature: The piped shells are put straight into the oven with no
+  resting time, so no skin forms on top before baking.
+low_diagnostic_proposition: The cracking began the same week the user bought a new
+  set of decorative kitchen tea towels.
+oracle_action: ANSWER
+oracle_focus: Rest the piped shells until a dry skin forms before baking; cracks and
+  missing feet come from baking unrested shells, not from the new tea towels.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect the new tea towels to the macaron failures.
+  Ask whether the piped shells are rested to form a skin before they go in the oven.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect the new tea towels to the macaron failures. Ask whether
+      the piped shells are rested to form a skin before they go in the oven.
+  LL:
+    action: ASK
+    focus: Do not connect the new tea towels to the macaron failures. Ask whether
+      the piped shells are rested to form a skin before they go in the oven.
+  HH:
+    action: ANSWER
+    focus: Rest the piped shells until a dry skin forms before baking; cracks and
+      missing feet come from baking unrested shells, not from the new tea towels.
+  LH:
+    action: ANSWER
+    focus: Rest the piped shells until a dry skin forms before baking; cracks and
+      missing feet come from baking unrested shells, not from the new tea towels.
+variants:
+  HL:
+    distractor: What nags at me is that the trouble started the same week I bought
+      a new set of patterned tea towels for the kitchen and swapped out all the old
+      ones. The good batches were before them and the cracked ones came after, and
+      the timing lines up almost perfectly.
+    diagnosticity: low
+    salience: high
+    proposition: The cracking began the same week the user bought a new set of decorative
+      kitchen tea towels.
+    salience_source: B/C — a clean before-and-after first-person chronology pinning
+      the failures to the tea-towel swap.
+    why_plausible: When a reliable recipe suddenly fails, the mind reaches for whatever
+      changed at the same time, and the towel swap is the salient recent change.
+    why_irrelevant: Decorative tea towels never touch the batter, the trays, or the
+      oven; they cannot alter how a macaron shell sets or rises.
+  LL:
+    distractor: The cracking began the same week the user bought a new set of decorative
+      kitchen tea towels.
+    diagnosticity: low
+    salience: low
+    proposition: The cracking began the same week the user bought a new set of decorative
+      kitchen tea towels.
+    matched_to: HL
+  HH:
+    distractor: Thinking back over the recent batches, I have been piping the rounds
+      and sliding them straight into the oven without letting them sit, so no dry
+      skin ever forms on top; the trapped steam blows through the soft surface, cracking
+      the tops and stopping any feet from rising.
+    diagnosticity: high
+    salience: high
+    proposition: The piped shells are put straight into the oven with no resting time,
+      so no skin forms on top before baking.
+    salience_source: The skipped rest and its consequence for skin formation make
+      the technique error concrete and decisive.
+  LH:
+    distractor: The piped shells go straight into the oven with no resting time, so
+      no skin forms before baking.
+    diagnosticity: high
+    salience: low
+    proposition: The piped shells are put straight into the oven with no resting time,
+      so no skin forms on top before baking.
+    matched_to: HH
+distractor_direction:
+  label: Tea-towel change timing
+  description: Investigating whether buying a new set of decorative kitchen tea towels
+    is connected to the macaron failures.
+plausible_alternative_directions:
+- label: Under-whipped meringue
+  description: Whether the meringue is not stiff enough
+  leaving a fragile structure that cracks.: null
+- label: Oven too hot
+  description: Whether an oven running hotter than intended is forcing the shells
+    to crack.
+leak_audit:
+  ll_atomic_claims:
+  - The cracking began the same week the user bought a new set of decorative kitchen
+    tea towels.
+  hh_atomic_claims:
+  - The piped shells go straight into the oven with no resting time.
+  - As a result no skin forms on top before baking.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean good-batches-before, cracked-batches-after chronology
+      tied to the towel swap.
+    confident_assertion: '''the timing lines up almost perfectly'' — confident framing.'
+    concrete_detail: Detail about the setting (patterned towels, swapping the old
+      ones) only; no new fact about the bake.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 79
+  hl_word_count: 46
+  ll_word_count: 16
+  hh_word_count: 46
+  lh_word_count: 17
+  notes: 'T2: tea towels have no mechanism for macaron physics. LL is the bare timing
+    claim; HL adds only first-person
+
+    framing and the towel detail. xbase lists the steps the user does perform (weigh,
+    age whites, whip to stiff
+
+    peaks, pipe even rounds) but withholds the resting step; the decisive no-rest
+    / no-skin finding lives only in
+
+    HH/LH. ''tea towels'' and ''stiff peaks'' each count as their two tokens; no double-counting
+    issue.
+
+    '
+causal_audit:
+  steelman: 'Could the tea towels matter at all? One might stretch to say new textiles
+    add lint, or that the user now dries
+
+    trays differently. But the failure mode here is specifically cracked tops and
+    missing feet, which is governed by
+
+    the shell''s surface skin and internal steam, not by any cloth: decorative tea
+    towels are not used to line trays,
+
+    do not contact the batter, and do not change oven behaviour. There is no path
+    by which buying patterned towels
+
+    alters how a macaron shell sets. Nothing in xbase ties the towels to the bake,
+    so the timing is pure coincidence
+
+    with no constructible mechanism, while the unrested shells fully account for the
+    symptom.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase confirms the user pipes onto lined trays, so the
+    towels are not used as a baking surface, foreclosing the only contact pathway
+    without naming the resting step; the decisive no-rest finding lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Cracked, footless macarons caused by baking shells with no resting
+    time so no skin forms, coincidentally timed with buying new decorative tea towels,
+    which have no mechanism for the bake.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

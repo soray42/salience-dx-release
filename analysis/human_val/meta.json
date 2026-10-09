@@ -1,0 +1,72 @@
+{
+  "n_pairs": 62,
+  "n_items": 186,
+  "n_chunks": 6,
+  "models": [
+    "claude-sonnet-4-6",
+    "gemini-3.5-flash",
+    "llama3.1:8b",
+    "google/gemma-4-31B-it"
+  ],
+  "budget": {
+    "ISB": 15,
+    "vigilance": 15,
+    "proto_ISB": 4,
+    "proto_vigilance": 4,
+    "stable_adopt": 12,
+    "stable_reject": 12
+  },
+  "proxy_tag": "proxy5-humanval-v1",
+  "rubric_path": "prompts/v4.3/judge_categorical_v3_1.md",
+  "rubric_sha256": "8ba6038c92f2577f9bbcac8a6cb18baecd5bce3d3dbddbf3425b940d979bcac3",
+  "v31_source": "data/full/judge_deepseek_v31.ndjson",
+  "chunks": {
+    "packet_chunk1.jsonl": {
+      "n_items": 31,
+      "sha256": "58a080f670e9bc1b2335eecf8398c98a310d94eeef3b923aca6cbccab9a214a2"
+    },
+    "packet_chunk2.jsonl": {
+      "n_items": 31,
+      "sha256": "849b0271d947f713639f3a116b20ed2bdee6aec6a1996353e9e2b3941b75cbdc"
+    },
+    "packet_chunk3.jsonl": {
+      "n_items": 31,
+      "sha256": "32aef3cf956a454f930d42a8500d8e15f1169967f3e525f9a6749bf5c32465bc"
+    },
+    "packet_chunk4.jsonl": {
+      "n_items": 31,
+      "sha256": "6855966c4b8f400b022ab9503587b212eb48a9ea1072c1093a809079aaa917c4"
+    },
+    "packet_chunk5.jsonl": {
+      "n_items": 31,
+      "sha256": "1d0e5b1cad9a94c4692d081d5c921d4f0c68d1112f56e8203ab85d232328356b"
+    },
+    "packet_chunk6.jsonl": {
+      "n_items": 31,
+      "sha256": "a9266a952f9977e31f80cb2f5059a9e10da5dca06245e21eb8635ddae2913421"
+    }
+  },
+  "key_sha256": "80fc1fbc687c0efcd10e4fa1cddc4bbcb988b1dbc98fa2477474a47b53c9d2b4",
+  "bucket_counts": {
+    "ISB": 15,
+    "vigilance": 15,
+    "proto_ISB": 4,
+    "proto_vigilance": 4,
+    "stable_adopt": 12,
+    "stable_reject": 12
+  },
+  "item_bucket_counts": {
+    "stable_adopt": 36,
+    "vigilance": 45,
+    "stable_reject": 36,
+    "proto_ISB": 12,
+    "ISB": 45,
+    "proto_vigilance": 12
+  },
+  "cell_counts": {
+    "LL": 62,
+    "LH": 62,
+    "HL": 62
+  },
+  "key_sha256_note": "sha256 of the released key.json (field names anonymized for release)"
+}

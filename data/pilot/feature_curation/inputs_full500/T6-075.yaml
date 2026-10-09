@@ -1,0 +1,184 @@
+seed_id: T6-075
+template: T6
+domain: open_qa
+complexity: medium
+xbase: I am deciding whether to renew my language learning app subscription for another
+  year to prepare for a B2 proficiency exam in eight months. The annual plan costs
+  less than a single month of a private tutor. I have been studying the language on
+  and off for two years. This is the first time I have structured an attempt around
+  external commitments from the start. {DS}
+focal_diagnostic_feature: The user has an active accountability partner meeting weekly,
+  an eleven-week unbroken practice slot, and a paid and registered exam date that
+  carries a cancellation penalty.
+low_diagnostic_proposition: The user has a history of subscribing to language apps
+  and abandoning them within weeks.
+oracle_action: ANSWER
+oracle_focus: Renew the subscription; the established accountability structure, eleven-week
+  track record, and registered exam date distinguish this attempt from past abandonment
+  patterns, and the cost advantage over tutoring is clear.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not treat past app abandonment as decisive for this
+  attempt; ask what accountability structures, practice consistency, and exam commitments
+  are in place before advising.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not treat past app abandonment as decisive for this attempt; ask what
+      accountability structures, practice consistency, and exam commitments are in
+      place before advising.
+  LL:
+    action: ASK
+    focus: Do not treat past app abandonment as decisive for this attempt; ask what
+      accountability structures, practice consistency, and exam commitments are in
+      place before advising.
+  HH:
+    action: ANSWER
+    focus: Renew the subscription; the established accountability structure, eleven-week
+      track record, and registered exam date distinguish this attempt from past abandonment
+      patterns, and the cost advantage over tutoring is clear.
+  LH:
+    action: ANSWER
+    focus: Renew the subscription; the established accountability structure, eleven-week
+      track record, and registered exam date distinguish this attempt from past abandonment
+      patterns, and the cost advantage over tutoring is clear.
+variants:
+  HL:
+    distractor: Every language app subscription I have ever paid for has lasted about
+      six weeks before I ghost it. I pay, feel motivated, fall off in week five, and
+      look back months later with regret.
+    diagnosticity: low
+    salience: high
+    proposition: The user has a history of subscribing to language apps and abandoning
+      them within weeks.
+    salience_source: B/C — vivid first-person chronology of a recurring failure cycle
+      (pay, motivate, fall off, regret) with confident assertion ("every language
+      app subscription").
+    why_plausible: Past behaviour is a strong predictor of future behaviour in habit
+      formation; the recurring pattern described is highly specific and emotionally
+      credible, raising the prior that this attempt will repeat.
+    why_irrelevant: Xbase establishes that this attempt is the first structured around
+      external commitments, closing the same-modality mechanism; the focal evidence
+      then reveals what those commitments are, showing this attempt is structurally
+      distinct from the past abandonment pattern.
+  LL:
+    distractor: The user has a history of subscribing to language apps and abandoning
+      them within weeks.
+    diagnosticity: low
+    salience: low
+    proposition: The user has a history of subscribing to language apps and abandoning
+      them within weeks.
+    matched_to: HL
+  HH:
+    distractor: This time I have a study partner who checks in with me every Tuesday,
+      a fixed 40-minute morning slot that has held for eleven weeks, and a registered
+      exam date that costs 180 euros to reschedule.
+    diagnosticity: high
+    salience: high
+    proposition: The user has an active accountability partner meeting weekly, an
+      eleven-week unbroken practice slot, and a paid and registered exam date that
+      carries a cancellation penalty.
+    salience_source: Concrete specifics (Tuesday check-in, 40 minutes, eleven weeks,
+      180 euro penalty) make the structural difference from past attempts vivid and
+      countable.
+  LH:
+    distractor: The user has an accountability partner, an eleven-week-old daily practice
+      slot, and a paid exam registration creating schedule commitment.
+    diagnosticity: high
+    salience: low
+    proposition: The user has an active accountability partner meeting weekly, an
+      eleven-week unbroken practice slot, and a paid and registered exam date that
+      carries a cancellation penalty.
+    matched_to: HH
+distractor_direction:
+  label: past app abandonment pattern
+  description: Treating the user's history of abandoning language app subscriptions
+    within weeks as the dominant predictor for this renewal decision.
+plausible_alternative_directions:
+- label: app content adequacy for B2
+  description: The app may not cover B2-level grammar and listening comprehension
+    deeply enough; exam-specific suitability is independent of adherence history.
+- label: tutor supplementation need
+  description: Eight months before a B2 exam, a tutor providing targeted feedback
+    on speaking and writing errors could be more effective than app practice alone,
+    regardless of cost.
+leak_audit:
+  ll_atomic_claims:
+  - the user has a history of subscribing to language apps
+  - those subscriptions were abandoned within weeks
+  hh_atomic_claims:
+  - the user has a study partner who checks in every Tuesday
+  - a fixed 40-minute morning slot has held for eleven weeks
+  - a registered exam date costs 180 euros to reschedule
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: First-person cycle narrative (pay → motivate → fall off →
+      regret) with a consistent recurring pattern creates a credible behavioural self-report.
+    confident_assertion: '"every language app subscription" is a categorical confident
+      claim.'
+    concrete_detail: N/A
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 65
+  hl_word_count: 34
+  ll_word_count: 15
+  hh_word_count: 36
+  lh_word_count: 19
+  notes: 'xbase mentions studying "on and off for two years" — consistent with the
+
+    availability narrative. A pathway-closure sentence ("This is the first time
+
+    I have structured an attempt around external commitments from the start.")
+
+    forecloses the behavioral-consistency mechanism without revealing what those
+
+    commitments are; that decisive detail lives only in HH/LH (partner, slot,
+
+    exam penalty). HL repair: removed "yearly charge on my statement" (was
+
+    annual-plan-specific leak absent from LL) and replaced with "look back
+
+    months later with regret" — preserving temporal-regret tone without
+
+    specifying plan format.
+
+    '
+causal_audit:
+  steelman: 'A behavioural psychologist would note that past abandonment in the same
+
+    modality (apps) is a strong predictor of future abandonment, and that people
+
+    routinely overestimate the salience of new accountability structures. However,
+
+    xbase itself closes this pathway by establishing that this is the first
+
+    attempt the user has structured around external commitments — making the
+
+    past cases structurally non-comparable. A practitioner reading xbase cannot
+
+    apply the base-rate without asking what those commitments are, so the
+
+    mechanism is foreclosed before the focal evidence is introduced.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: '"This is the first time I have structured an attempt around
+    external commitments from the start" — neutrally establishes structural differentiation
+    from past abandonment episodes without revealing what the commitments are (those
+    details live in HH/LH), thereby blocking the behavioral-consistency mechanism
+    from applying to this case.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: User deciding whether to renew a language learning app subscription
+    before a B2 exam; availability distractor is a history of abandoning apps within
+    weeks; focal is an eleven-week practice track record, weekly accountability partner,
+    and paid exam registration.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

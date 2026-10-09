@@ -1,0 +1,205 @@
+seed_id: T5-022
+template: T5
+domain: open_qa
+complexity: medium
+xbase: أوظف مصورًا لحدث ووصلت إلى مرحلة الاختيار بين اثنين. أسعارهما متقاربة جدًا
+  وكلاهما متاح في تاريخي. أحدهما يمتلك موقع معرض أعمال مبهر — طباعة أنيقة، معارض ملء
+  الشاشة — رغم أن نص التذييل يكشف أن استوديو تصميم ويب محترفًا قد أنشأه. الآخر موقعه
+  قالب بسيط تُعرض فيه الصور على شبكة أساسية. أريد من سيُنجز التركيز والإضاءة والتسليم
+  في الوقت المحدد فعليًا يوم الحدث. {DS}
+focal_diagnostic_feature: تُظهر المجموعات الكاملة المُسلَّمة للعملاء والمراجعات أن
+  المصور صاحب الموقع البسيط يُنجز التركيز والإضاءة والتسليم في الوقت المحدد باستمرار،
+  بينما مجموعات المصور صاحب الموقع المبهر غير متسقة مع شكاوى متكررة بشأن فوات اللحظات
+  المهمة والتأخر في التسليم.
+low_diagnostic_proposition: The photographer with the polished, professional portfolio
+  site is the more reliable choice who will deliver better photos.
+oracle_action: ANSWER
+oracle_focus: Hire the plain-site photographer; their full delivered galleries are
+  consistently strong and on time, while the stunning site sits atop uneven complete
+  work and repeated missed-moment and late-delivery complaints.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not infer skill from portfolio-site design. Ask to
+  see each photographer's full delivered client galleries and their reviews on consistency
+  and delivery.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not infer skill from portfolio-site design. Ask to see each photographer's
+      full delivered client galleries and their reviews on consistency and delivery.
+  LL:
+    action: ASK
+    focus: Do not infer skill from portfolio-site design. Ask to see each photographer's
+      full delivered client galleries and their reviews on consistency and delivery.
+  HH:
+    action: ANSWER
+    focus: Hire the plain-site photographer; their full delivered galleries are consistently
+      strong and on time, while the stunning site sits atop uneven complete work and
+      repeated missed-moment and late-delivery complaints.
+  LH:
+    action: ANSWER
+    focus: Hire the plain-site photographer; their full delivered galleries are consistently
+      strong and on time, while the stunning site sits atop uneven complete work and
+      repeated missed-moment and late-delivery complaints.
+variants:
+  HL:
+    distractor: الموقع المصقول يعطي إحساسًا بالثقة في التوظيف — الطباعة الأنيقة، المعارض
+      الغامرة، التقديم الاحترافي الكامل — ومصور يستثمر في إظهار هذا المستوى من الاحترافية
+      هو بالتأكيد المشغّل الأكثر جدية والأكثر موثوقية الذي سيُسلّم صورًا أفضل يوم
+      الحدث.
+    diagnosticity: low
+    salience: high
+    proposition: The photographer with the polished, professional portfolio site is
+      the more reliable choice who will deliver better photos.
+    salience_source: B/D — vivid concrete detail of the polished portfolio site carrying
+      the bridge that a professional presentation signals a more reliable operator.
+    why_plausible: A photographer who invests in a polished, professional web presence
+      seems likely to be a more serious, more reliable operator overall.
+    why_irrelevant: The polished site was built by a hired studio and shows only curated
+      highlights; presentation polish says nothing about focus, lighting, or delivery
+      timing across a full shoot.
+  LL:
+    distractor: المصور صاحب الموقع المصقول والاحترافي هو الخيار الأكثر موثوقية الذي
+      سيُسلّم صورًا أفضل.
+    diagnosticity: low
+    salience: low
+    proposition: The photographer with the polished, professional portfolio site is
+      the more reliable choice who will deliver better photos.
+    matched_to: HL
+  HH:
+    distractor: بالنظر إلى المجموعات الكاملة المُسلَّمة بدلًا من أبرز الأعمال، مجموعات
+      العملاء الكاملة للمصور صاحب الموقع البسيط حادة ومضاءة جيدًا وتصل في الموعد المحدد،
+      بينما مجموعات المصور صاحب الموقع المبهر غير متسقة وتستقطب شكاوى متكررة بشأن
+      فوات اللحظات المهمة والتأخر في التسليم.
+    diagnosticity: high
+    salience: high
+    proposition: Full delivered client galleries and reviews show the plain-site photographer
+      consistently nails focus, lighting, and delivers on time, while the stunning-site
+      photographer's complete sets are uneven with repeated complaints about missed
+      key moments and late delivery.
+    salience_source: Comparing complete delivered sets and reviews — consistency,
+      missed moments, delivery timing — makes the real skill gap concrete.
+  LH:
+    distractor: مجموعات المصور صاحب الموقع البسيط المُسلَّمة للعملاء متسقة وحادة وتصل
+      في الموعد المحدد؛ بينما مجموعات المصور صاحب الموقع المبهر غير متسقة وتستقطب
+      شكاوى متكررة بشأن فوات اللحظات المهمة والتأخر في التسليم.
+    diagnosticity: high
+    salience: low
+    proposition: Full delivered client galleries and reviews show the plain-site photographer
+      consistently nails focus, lighting, and delivers on time, while the stunning-site
+      photographer's complete sets are uneven with repeated complaints about missed
+      key moments and late delivery.
+    matched_to: HH
+distractor_direction:
+  label: الموقع المصقول يعني الموثوقية
+  description: اختيار المصور صاحب الموقع المصقول لأن تقديمه الاحترافي يُؤخذ دليلًا
+    على أنه مشغّل أكثر موثوقية وسيُسلّم صورًا أفضل.
+plausible_alternative_directions:
+- label: تطابق الأسلوب والتوقعات
+  description: هل يتوافق أسلوب التصوير لكل مصور مع المظهر الذي يريده المستخدم للحدث.
+- label: النسخ الاحتياطي وشروط العقد
+  description: هل يوفر أي منهما عتادًا احتياطيًا وعقدًا واضحًا وضمانات إعادة التصوير.
+  a clear contract: null
+  and reshoot guarantees.: null
+leak_audit:
+  ll_atomic_claims:
+  - One photographer has a polished, professional portfolio site.
+  - That polished presentation makes them the more reliable choice who will deliver
+    better photos.
+  hh_atomic_claims:
+  - The plain-site photographer's full delivered client sets are consistently sharp,
+    well-lit, and on schedule.
+  - The stunning-site photographer's full sets are uneven.
+  - The stunning-site photographer draws repeated complaints about missed key moments
+    and late delivery.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: N/A
+    confident_assertion: N/A
+    concrete_detail: Vivid concrete detail about the portfolio site (elegant type,
+      immersive galleries, professional presentation).
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 74
+  hl_word_count: 45
+  ll_word_count: 18
+  hh_word_count: 44
+  lh_word_count: 23
+  notes: 'T5: the bridge "a polished, professional site signals a more reliable operator"
+    is in HL and flat in LL (self-check 13).
+
+    xbase contrasts the polished vs plain site and equal price/availability but withholds
+    the full-gallery and
+
+    review evidence — decisive — which lives only in HH/LH. Highlight-reel vs full-set
+    distinction kept out of xbase.
+
+    QC repair round 1: re-anchored the question and bridge from general "skill"/aesthetic
+    taste to operational
+
+    reliability (focus, lighting, on-time delivery), and added a neutral pathway-closure
+    to xbase — a footer credit
+
+    showing the polished site was built by a hired web-design studio — foreclosing
+    the aesthetic-transfer mechanism
+
+    (the photographer''s own design eye) without supplying any affirmative cause;
+    the decisive full-gallery/review
+
+    evidence still lives only in HH/LH (C4 boundary preserved).
+
+    '
+causal_audit:
+  steelman: 'The strongest argument was aesthetic transfer: a photographer whose own
+    portfolio site shows refined visual
+
+    composition and design taste plausibly applies the same eye to framing and editing,
+    making site craft a weak
+
+    signal of photographic skill. That mechanism is foreclosed: xbase states a footer
+    credit shows the polished site
+
+    was built by a hired web-design studio, so the design eye is not the photographer''s.
+    The residual bridge — a
+
+    professional web presence implies a more reliable operator — has no mechanism
+    for whether THIS photographer nails
+
+    focus, lighting, and on-time delivery on the day; presentation polish and shoot-day
+    execution are independent,
+
+    and the decisive consistency/delivery evidence lives only in HH/LH.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase's footer-credit line (the polished site was built
+    by a hired web-design studio) forecloses the aesthetic-transfer mechanism — the
+    photographer's own design eye — without supplying any affirmative cause; it does
+    not let xbase reject the distractor's conclusion, since the deciding full-gallery
+    and review evidence is supplied only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Choosing between two event photographers where full delivered galleries
+    and reviews favour the plain-site one, against the inference that the polished
+    portfolio site signals a more reliable operator.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair round 1
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30
+language: ar
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-022.yaml
+  source_xbase_sha256: 9183d13e215655b1
+  translated_content_sha256: ed201f97a0ab1c24
+  translation_notes: The footer-credit detail (hired web-design studio) is preserved
+    in xbase as a pathway-closure cue. 'معارض ملء الشاشة' captures 'immersive full-screen
+    galleries'. No culture-bound salience cues. First-person register maintained throughout.

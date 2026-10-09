@@ -1,0 +1,213 @@
+seed_id: T5-011
+template: T5
+domain: technical_troubleshooting
+complexity: medium
+xbase: 'Мне только что передали инцидент по дежурной ротации: дашборд состояния сервисов
+  показывает повышенный уровень ошибок для сервиса платежей. Я открыл дашборд, чтобы
+  проверить ситуацию перед тем, как поднять команду платежей — но интерфейс выглядит
+  откровенно устаревшим: раскладка захламлена, а цветовая схема не обновлялась годами.
+  Я не уверен, можно ли доверять тому, что он показывает. {DS}'
+focal_diagnostic_feature: Прямой запрос в Prometheus возвращает те же значения уровня
+  ошибок, что отображает дашборд.
+low_diagnostic_proposition: 'The dashboard''s dated and cluttered visual appearance
+  means the numbers it shows cannot be trusted.
+
+  '
+oracle_action: ANSWER
+oracle_focus: 'The Prometheus query confirms the dashboard values are accurate; the
+  elevated error rate is real and the payments team should be paged for investigation.
+
+  '
+low_diagnostic_oracle_action: ANSWER
+low_diagnostic_oracle_focus: 'The dashboard''s visual appearance (dated, cluttered)
+  has no causal bearing on whether its metric values are accurate; the correct response
+  is to verify the numbers against the underlying data source rather than accept the
+  aesthetic judgment, and to not adopt the distractor as a reason to dismiss the dashboard.
+
+  '
+cell_oracles:
+  HL:
+    action: ANSWER
+    focus: 'The dashboard''s visual appearance (dated, cluttered) has no causal bearing
+      on whether its metric values are accurate; the correct response is to verify
+      the numbers against the underlying data source rather than accept the aesthetic
+      judgment, and to not adopt the distractor as a reason to dismiss the dashboard.
+
+      '
+  LL:
+    action: ANSWER
+    focus: 'The dashboard''s visual appearance (dated, cluttered) has no causal bearing
+      on whether its metric values are accurate; the correct response is to verify
+      the numbers against the underlying data source rather than accept the aesthetic
+      judgment, and to not adopt the distractor as a reason to dismiss the dashboard.
+
+      '
+  HH:
+    action: ANSWER
+    focus: 'The Prometheus query confirms the dashboard values are accurate; the elevated
+      error rate is real and the payments team should be paged for investigation.
+
+      '
+  LH:
+    action: ANSWER
+    focus: 'The Prometheus query confirms the dashboard values are accurate; the elevated
+      error rate is real and the payments team should be paged for investigation.
+
+      '
+variants:
+  HL:
+    distractor: Даниэла, наш главный SRE, отвечающий за платформу наблюдаемости, сказала
+      мне напрямую, что когда дашборд выглядит настолько устаревшим и захламлённым,
+      она бы не доверяла цифрам, которые он показывает.
+    diagnosticity: low
+    salience: high
+    proposition: 'The dashboard''s dated and cluttered visual appearance means the
+      numbers it shows cannot be trusted.
+
+      '
+    salience_source: 'A (source credibility): principal SRE who owns the observability
+      platform; C (confident assertion): "told me directly", "would not put any confidence".
+
+      '
+    why_plausible: 'A senior SRE''s confident dismissal of the numbers, backed by
+      ownership of the platform, gives the aesthetic judgment professional weight
+      a busy on-call engineer would be tempted to defer to.
+
+      '
+    why_irrelevant: 'Visual styling (layout, color scheme, UI age) is entirely decoupled
+      from the data pipeline that feeds metric values; a dashboard can carry a decade-old
+      design and still display perfectly accurate numbers from its backing store.
+
+      '
+  LL:
+    distractor: Коллега сказал, что дашборду, который выглядит настолько устаревшим
+      и захламлённым, нельзя доверять в части точности цифр.
+    diagnosticity: low
+    salience: low
+    proposition: 'The dashboard''s dated and cluttered visual appearance means the
+      numbers it shows cannot be trusted.
+
+      '
+    matched_to: HL
+  HH:
+    distractor: Я запустил прямой запрос в Prometheus по уровню ошибок сервиса платежей
+      за тот же временной интервал, что отображает дашборд, — и возвращённые значения
+      точно совпадают с показателями дашборда.
+    diagnosticity: high
+    salience: high
+    proposition: 'Querying Prometheus directly returns the same error-rate values
+      the dashboard is displaying.
+
+      '
+    salience_source: 'B (narrative coherence): crisp procedural description of the
+      verification step; D (concrete believable detail): same time window, exact match
+      framing — anchors the claim in a reproducible action.
+
+      '
+  LH:
+    distractor: Прямой запрос в Prometheus возвращает те же значения уровня ошибок,
+      что и дашборд.
+    diagnosticity: high
+    salience: low
+    proposition: 'Querying Prometheus directly returns the same error-rate values
+      the dashboard is displaying.
+
+      '
+    matched_to: HH
+distractor_direction:
+  label: Внешний вид свидетельствует о недоверии к данным
+  description: Визуально устаревший и захламлённый интерфейс дашборда используется
+    как доказательство ненадёжности отображаемых метрик, смешивая поверхностную эстетику
+    с корректностью конвейера данных.
+plausible_alternative_directions:
+- label: Неверная конфигурация источника данных дашборда
+  description: Дашборд может запрашивать другой неймспейс, окружение или временной
+    диапазон, отображая завышенный уровень ошибок, не относящийся к живому сервису
+    платежей.
+- label: Неверная калибровка порогов оповещений
+  description: Повышенный уровень ошибок может отражать нормальные колебания трафика,
+    превышающие слишком чувствительный порог, а не реальную деградацию сервиса.
+leak_audit:
+  ll_atomic_claims:
+  - A colleague expressed distrust of the dashboard numbers
+  - The stated reason is the dashboard's dated and cluttered visual appearance
+  hl_salience_dimensions:
+    source_credibility: principal SRE who owns the observability platform
+    narrative_coherence: N/A
+    confident_assertion: '"told me directly", "would not put any confidence"'
+    concrete_detail: role ownership of the observability platform as setting anchor
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  hl_word_count: 37
+  ll_word_count: 19
+  notes: 'Stripped: no tunable values (no specific thresholds, counts, or percentages);
+
+    no effort descriptors (no "after two days" style phrases); no severity claims
+
+    about impact or consequences; no sensory environment color about the speaker;
+
+    no rambling or interruption markers. The HL-only material is confined to
+
+    Daniela''s name, role, platform ownership, and the confident speech verb —
+
+    all about the source, none about the case specifics.
+
+    '
+causal_audit:
+  steelman: 'Best-faith argument for the distractor: visual neglect of a dashboard
+    (dated
+
+    color scheme, cluttered layout) may reflect broader engineering neglect of
+
+    that codebase. A neglected dashboard codebase could plausibly have broken or
+
+    stale polling logic — for example, a scrape interval that is too infrequent,
+
+    a hardcoded time-range offset, or a cached query that never refreshes —
+
+    resulting in metric values that lag behind or differ from the live data source.
+
+    A senior SRE might note that cosmetically abandoned tooling often correlates
+
+    with functionally abandoned maintenance, and would flag "check dashboard
+
+    polling and refresh configuration" as worth ruling out.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — the xbase does not foreclose the correlational pathway;
+    the focal feature (direct Prometheus query returning identical values) is what
+    closes it by proving the dashboard values match the authoritative source regardless
+    of how the UI looks.
+
+    '
+unconstructable: false
+provenance:
+  date: '2026-06-10'
+  topic_brief: 'A service-health dashboard looks dated and cluttered, and the scenario
+    voice offers that as a reason to distrust the numbers it shows. Focal: the underlying
+    metrics store confirms the dashboard values.
+
+    '
+  curator_prompt: prompts/v5/seed_curator_v3.md
+  generator: generator_B
+language: ru
+translation:
+  instrument: prompts/v5/translation_instrument.md
+  instrument_sha256: 06c7be9bf0d79359
+  translator: generator_B (an evaluated model)
+  qc: independent back-translation, passed
+  source_seed: data/pilot/feature_curation/inputs_full500/T5-011.yaml
+  source_xbase_sha256: 0963d29c2cdaa839
+  translated_content_sha256: fe981588ecda8ff2
+  translation_notes: The named source 'Daniela' kept as-is — it is a recognizable
+    name in Russian contexts and preserves the named-source salience. 'Principal SRE'
+    rendered as 'главный SRE' — SRE is used as-is in Russian tech. Prometheus kept
+    as-is. 'On-call rotation' rendered as 'дежурная ротация' (standard Russian DevOps
+    term). 'Paging' the team rendered as 'поднять команду' (raise/alert the team)
+    — natural first-person register in Russian.

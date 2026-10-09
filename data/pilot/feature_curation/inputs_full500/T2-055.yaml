@@ -1,0 +1,169 @@
+seed_id: T2-055
+template: T2
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our GitLab CI pipeline's container builds started taking roughly three times
+  as long to start about a week ago, where they used to begin almost instantly. Once
+  a build actually gets going it runs at normal speed; it is purely the startup before
+  any of our build commands run that drags. The pipeline YAML and the base image reference
+  are unchanged, and a colleague on the same project sees the same slow start. {DS}
+focal_diagnostic_feature: The build's base image was retagged to a much larger variant
+  upstream, so each job now pulls a far bigger image before any build step runs, all
+  of which happens before our commands start.
+low_diagnostic_proposition: The slow starts began around the week the company rolled
+  out a new corporate logo and rebranded the CI dashboard.
+oracle_action: ANSWER
+oracle_focus: 'Investigate the base image pull: the tag now points at a much larger
+  image, so every job spends the extra time pulling it before any build command runs.
+  Pin a slimmer tag or warm an image cache to cut the startup delay.'
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not connect a logo rebrand to slow CI startup. Ask
+  what the build pulls before commands run and whether the base image size changed.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not connect a logo rebrand to slow CI startup. Ask what the build pulls
+      before commands run and whether the base image size changed.
+  LL:
+    action: ASK
+    focus: Do not connect a logo rebrand to slow CI startup. Ask what the build pulls
+      before commands run and whether the base image size changed.
+  HH:
+    action: ANSWER
+    focus: 'Investigate the base image pull: the tag now points at a much larger image,
+      so every job spends the extra time pulling it before any build command runs.
+      Pin a slimmer tag or warm an image cache to cut the startup delay.'
+  LH:
+    action: ANSWER
+    focus: 'Investigate the base image pull: the tag now points at a much larger image,
+      so every job spends the extra time pulling it before any build command runs.
+      Pin a slimmer tag or warm an image cache to cut the startup delay.'
+variants:
+  HL:
+    distractor: 'It is hard not to notice this lined up with the week marketing pushed
+      the whole company rebrand: new logo everywhere, fresh colours, and even our
+      GitLab dashboard got reskinned with the new theme. The first slow pipeline I
+      remember was the same Monday the new branding went live.'
+    diagnosticity: low
+    salience: high
+    proposition: The slow starts began around the week the company rolled out a new
+      corporate logo and rebranded the CI dashboard.
+    salience_source: B/C — a confident first-person timeline tying the first slow
+      run to the Monday the rebrand went live.
+    why_plausible: A visible platform change landing in the same week can tempt an
+      engineer to suspect the reskin touched something underneath.
+    why_irrelevant: A logo and dashboard theme are presentation-layer assets that
+      do not alter image pulls or job scheduling, so they cannot slow build startup.
+  LL:
+    distractor: The slow starts began around the week the company rolled out a new
+      corporate logo and rebranded the CI dashboard.
+    diagnosticity: low
+    salience: low
+    proposition: The slow starts began around the week the company rolled out a new
+      corporate logo and rebranded the CI dashboard.
+    matched_to: HL
+  HH:
+    distractor: The base image tag we reference was retagged upstream to a much heavier
+      variant about a week ago, so every job now pulls a far larger image before anything
+      else; all of that download happens up front, before our first build command
+      ever executes, which is exactly the part that got slow.
+    diagnosticity: high
+    salience: high
+    proposition: The build's base image was retagged to a much larger variant upstream,
+      so each job now pulls a far bigger image before any build step runs, all of
+      which happens before our commands start.
+    salience_source: The upstream retag to a heavier image, pulled before any command
+      runs, maps precisely onto the slow-startup symptom.
+  LH:
+    distractor: The base image tag now points at a much larger variant, so each job
+      pulls a bigger image before any build command runs.
+    diagnosticity: high
+    salience: low
+    proposition: The build's base image was retagged to a much larger variant upstream,
+      so each job now pulls a far bigger image before any build step runs, all of
+      which happens before our commands start.
+    matched_to: HH
+distractor_direction:
+  label: Corporate rebrand rollout
+  description: Investigating whether the new logo, colours, or reskinned CI dashboard
+    introduced the slow pipeline startup.
+plausible_alternative_directions:
+- label: Runner pool change
+  description: Whether the CI runner fleet was resized or relocated
+  adding scheduling latency.: null
+- label: Registry latency
+  description: Whether the image registry itself has become slow to serve pulls.
+leak_audit:
+  ll_atomic_claims:
+  - Around the same week the company rolled out a new corporate logo and rebranded
+    the CI dashboard.
+  hh_atomic_claims:
+  - The referenced base image tag was retagged upstream to a much larger variant.
+  - Each job now pulls a far bigger image before any build step.
+  - That pull happens before the first build command runs.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clean timeline tying the first slow run to the rebrand Monday.
+    confident_assertion: Notes it is hard not to see the alignment.
+    concrete_detail: Detail about the setting (new logo, colours, reskinned dashboard)
+      only — no fact about the image or pulls.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 74
+  hl_word_count: 45
+  ll_word_count: 19
+  hh_word_count: 47
+  lh_word_count: 22
+  notes: 'LL carries only the rebrand timing coincidence; the Monday-go-live chronology
+    and the dashboard-reskin detail are
+
+    HL-only framing about the setting. xbase isolates the symptom to startup before
+    commands run and notes the YAML
+
+    and base image reference are unchanged, but never reveals that the tag''s underlying
+    image grew, so the HL/LL
+
+    cells cannot resolve it. The decisive image-size fact lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'One could try to argue the rebrand mattered: large platform rollouts
+    sometimes ship alongside infrastructure
+
+    changes, and a dashboard reskin might hint at a CI platform upgrade that altered
+    scheduling. But a logo and a
+
+    dashboard theme are static front-end assets; they do not change how jobs are scheduled,
+    how images are pulled, or
+
+    how runners provision. The symptom is concentrated entirely in the pre-command
+    startup phase, which is dominated
+
+    by base-image pulls, and the base image was retagged to a much larger variant
+    upstream — a cause wholly
+
+    independent of branding. Presentation-layer rebranding has no constructible mechanism
+    for longer image pulls, so
+
+    the coincidence is empty.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase notes the pipeline YAML and base image reference
+    are unchanged and the slowness is purely pre-command, which a dashboard reskin
+    would not selectively cause, weakening the rebrand pathway without naming the
+    image-size cause.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: Slow CI build startup caused by an upstream retag of the base image
+    to a larger variant, coinciding only by chance with a company rebrand and dashboard
+    reskin.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

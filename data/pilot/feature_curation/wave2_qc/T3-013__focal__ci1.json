@@ -1,0 +1,19 @@
+{
+  "seed_id": "T3-013",
+  "my_own_diagnosis": "From xbase alone, the symptom is laptop-specific Bluetooth crackling that works fine with the phone and started recently — this is consistent with several explanations (driver/profile issues, RF interference, headphone battery) without a clear winner. Adding the focal_diagnostic_feature (crackling stops strictly at one meter from the laptop), a competent practitioner would immediately identify laptop-local RF emission as the cause, ruling out any distance-invariant explanation such as profile misconfiguration.",
+  "focal_decisive": true,
+  "focal_notes": "The strict proximity-dependence to the laptop is a strong, unambiguous diagnostic marker for laptop-local RF emission that a competent practitioner would correctly interpret and use to rule out the profile-misconfiguration distractor.",
+  "direction_overlaps": [
+    {
+      "a": "RF interference from laptop hardware (focal)",
+      "b": "Physical multipath interference",
+      "why": "Both predict location-dependent crackling at the user's desk; however, the focal feature specifies the symptom clears at ~1 m from the laptop in any direction, which is more consistent with a laptop-centred radiation source than room-geometry reflections — the mechanisms and remediation differ enough to keep them distinct, but a judge without the exact distance framing could conflate them."
+    }
+  ],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cells correctly receive the low-diagnostic oracle (ask clarifying questions, do not adopt the profile story) and HH/LH cells correctly receive the focal oracle (investigate RF interference from laptop hardware); the cell mapping is fully consistent.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": "Minor: consider tightening the 'Physical multipath interference' alternative description to note that multipath would depend on room geometry rather than isotropic distance from the laptop, making it more clearly distinct from the focal direction; this would eliminate any residual ambiguity for a blind judge."
+}

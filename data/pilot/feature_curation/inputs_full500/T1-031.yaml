@@ -1,0 +1,180 @@
+seed_id: T1-031
+template: T1
+domain: open_qa
+complexity: medium
+xbase: I have an external offer and I am leaning toward turning it down to stay where
+  I am, mostly because my current salary is comfortable and leaving feels risky. The
+  external company is reputable and the pay is similar to what I make now. I have
+  been at my current employer for five years and I know the systems inside out. I
+  keep telling myself the grass is not always greener, and I have until the end of
+  next week to respond. {DS}
+focal_diagnostic_feature: The external offer carries a senior title and ownership
+  of a platform area the user has been denied internally for three years, while staying
+  keeps them under the same manager who has repeatedly blocked that scope.
+low_diagnostic_proposition: A friend left a great company for an outside offer, found
+  the new place chaotic, and regretted leaving.
+oracle_action: ANSWER
+oracle_focus: Lean toward taking the external offer; it resolves the multi-year scope
+  and title block that staying perpetuates under the same manager, which outweighs
+  the comfort of familiarity at similar pay.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not let one friend's bad outside move decide this.
+  Ask what the external offer changes about the user's title, scope, and manager versus
+  staying, before treating leaving as the riskier choice.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not let one friend's bad outside move decide this. Ask what the external
+      offer changes about the user's title, scope, and manager versus staying, before
+      treating leaving as the riskier choice.
+  LL:
+    action: ASK
+    focus: Do not let one friend's bad outside move decide this. Ask what the external
+      offer changes about the user's title, scope, and manager versus staying, before
+      treating leaving as the riskier choice.
+  HH:
+    action: ANSWER
+    focus: Lean toward taking the external offer; it resolves the multi-year scope
+      and title block that staying perpetuates under the same manager, which outweighs
+      the comfort of familiarity at similar pay.
+  LH:
+    action: ANSWER
+    focus: Lean toward taking the external offer; it resolves the multi-year scope
+      and title block that staying perpetuates under the same manager, which outweighs
+      the comfort of familiarity at similar pay.
+variants:
+  HL:
+    distractor: 'Ifeoma, who I trained with years ago, left a company she loved for
+      a shiny outside offer and walked into total chaos: no onboarding, shifting priorities,
+      a team that barely talked. She told me last month that leaving a place she understood
+      was the worst call she ever made.'
+    diagnosticity: low
+    salience: high
+    proposition: A friend left a great company for an outside offer, found the new
+      place chaotic, and regretted leaving.
+    salience_source: A — a named long-standing peer recounting her own recent, first-hand
+      departure regret lends the cautionary tale credibility.
+    why_plausible: Leaving a place you know well for a chaotic new employer is a real
+      and painful outcome, so a vivid first-hand version of it feels like a warning
+      worth heeding.
+    why_irrelevant: Her chaos was at a different company and says nothing about this
+      offer's title and scope or the user's own blocked advancement, which are what
+      actually distinguish leaving from staying.
+  LL:
+    distractor: A friend left a great company for an outside offer, found the new
+      place chaotic, and regretted leaving.
+    diagnosticity: low
+    salience: low
+    proposition: A friend left a great company for an outside offer, found the new
+      place chaotic, and regretted leaving.
+    matched_to: HL
+  HH:
+    distractor: The outside role gives me a senior title and full ownership of a platform
+      area I have asked for and been refused three years running; staying keeps me
+      under the same manager who has blocked that scope every single time I have raised
+      it.
+    diagnosticity: high
+    salience: high
+    proposition: The external offer carries a senior title and ownership of a platform
+      area the user has been denied internally for three years, while staying keeps
+      them under the same manager who has repeatedly blocked that scope.
+    salience_source: The concrete three-years-refused history and the named blocking
+      manager make the staying-cost vivid and decision-relevant.
+  LH:
+    distractor: The outside offer gives a senior title and platform ownership refused
+      internally for three years; staying keeps the same blocking manager.
+    diagnosticity: high
+    salience: low
+    proposition: The external offer carries a senior title and ownership of a platform
+      area the user has been denied internally for three years, while staying keeps
+      them under the same manager who has repeatedly blocked that scope.
+    matched_to: HH
+distractor_direction:
+  label: Leaving-regret risk
+  description: Treating the external move as likely to lead to chaos and regret, as
+    happened to a friend who left a good company for an outside offer.
+plausible_alternative_directions:
+- label: Tenure and equity value
+  description: Whether five years of accrued standing
+  vesting: null
+  or institutional knowledge has value that leaving forfeits.: null
+- label: Compensation parity
+  description: Whether the similar pay means there is no financial reason to take
+    on the disruption of a move.
+leak_audit:
+  ll_atomic_claims:
+  - A friend left a great company for an outside offer.
+  - The friend found the new place chaotic.
+  - The friend regretted leaving.
+  hh_atomic_claims:
+  - The outside role offers a senior title and ownership of a platform area.
+  - The user has been refused that scope internally for three years.
+  - Staying keeps the user under the same manager who blocked that scope.
+  hl_salience_dimensions:
+    source_credibility: Named long-standing peer (Ifeoma) recounting her own first-hand
+      departure and regret.
+    narrative_coherence: Clean loved-company to chaos to last-month-regret chronology.
+    confident_assertion: N/A
+    concrete_detail: Detail about the source (trained together, the chaos she described,
+      her 'worst call' phrasing) only — no claim about this user's own offer or scope.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 82
+  hl_word_count: 49
+  ll_word_count: 18
+  hh_word_count: 44
+  lh_word_count: 21
+  notes: 'LL carries only the left-then-chaos-then-regret claim; the named source,
+    their shared training, the chaos
+
+    specifics and her "worst call" phrasing are HL-only and concern the source, not
+    this user''s offer. xbase
+
+    withholds the title/scope/manager facts so HL/LL cannot resolve the stay-versus-leave
+    question; it states only
+
+    comfortable pay, five-year tenure, deep system knowledge, and the deadline, all
+    of which point toward staying
+
+    and so do not pre-empt the decision. The decisive title/scope/blocking-manager
+    facts live only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A career advisor might argue the friend''s experience is genuinely informative:
+    leaving a company you know well
+
+    for an outside role trades known good conditions for unknown ones, and the friend''s
+    slide into chaos shows how
+
+    badly that bet can go, which is a reason to weight staying. But that reasoning
+    only holds if the new employer''s
+
+    conditions are actually unknown and the current ones are actually good. The friend''s
+    chaos occurred at a
+
+    different company under different management; it provides no evidence about THIS
+    offer''s title and scope or about
+
+    the user''s own three-year scope block, which are the facts that determine whether
+    leaving is the better move.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the leaving-regret pathway is defeated by the focal
+    title/scope/manager facts in HH/LH; xbase keeps only the comfort/tenure framing
+    that, if anything, leans the reader toward staying.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A user leaning toward staying at their job, where the external offer's
+    senior title and three-years-blocked platform scope, not a friend's chaotic departure,
+    are decisive.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

@@ -1,0 +1,31 @@
+{
+  "seed_id": "T5-011",
+  "ll_claims_extracted": [
+    "A colleague made the statement about the dashboard",
+    "The dashboard looks dated and cluttered",
+    "A dashboard that looks dated and cluttered cannot be trusted for accurate numbers"
+  ],
+  "hl_case_claims": [
+    "The dashboard looks dated and cluttered",
+    "Such a dashboard cannot be trusted for accurate numbers (she would not put any confidence in the numbers it shows)"
+  ],
+  "hl_source_claims": [
+    "The person is named Daniela",
+    "Daniela is a principal SRE",
+    "Daniela owns the observability platform",
+    "She told the user directly (not second-hand)",
+    "She expressed zero confidence (strong confident assertion)"
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 32,
+    "ll": 17,
+    "xbase": 63,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

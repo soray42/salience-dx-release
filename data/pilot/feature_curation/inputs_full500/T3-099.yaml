@@ -1,0 +1,198 @@
+seed_id: T3-099
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I do occasional through-hole soldering on simple hobby electronics — LED strips,
+  basic sensor boards, nothing surface-mount. I want to buy my first soldering iron
+  and am choosing between a basic fixed-temperature pencil iron for around twenty
+  dollars and a proper temperature-controlled station for around eighty dollars. {DS}
+focal_diagnostic_feature: A basic fixed pencil iron suits through-hole work on simple
+  boards reliably, while the temperature-controlled station costs four times more
+  for adjustability relevant to surface-mount and heat-sensitive work that does not
+  apply to this use case.
+low_diagnostic_proposition: A temperature-controlled station is the only sensible
+  starting point for any electronics work.
+oracle_action: ANSWER
+oracle_focus: Buy the fixed pencil iron; it handles through-hole joints on simple
+  boards without issue, and the temperature-controlled station's additional cost buys
+  features the user's use case does not require.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept the universal station recommendation from
+  authority alone. Ask about the user's specific work type, component heat sensitivity,
+  and budget before recommending a temperature-controlled station.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept the universal station recommendation from authority alone.
+      Ask about the user's specific work type, component heat sensitivity, and budget
+      before recommending a temperature-controlled station.
+  LL:
+    action: ASK
+    focus: Do not accept the universal station recommendation from authority alone.
+      Ask about the user's specific work type, component heat sensitivity, and budget
+      before recommending a temperature-controlled station.
+  HH:
+    action: ANSWER
+    focus: Buy the fixed pencil iron; it handles through-hole joints on simple boards
+      without issue, and the temperature-controlled station's additional cost buys
+      features the user's use case does not require.
+  LH:
+    action: ANSWER
+    focus: Buy the fixed pencil iron; it handles through-hole joints on simple boards
+      without issue, and the temperature-controlled station's additional cost buys
+      features the user's use case does not require.
+variants:
+  HL:
+    distractor: Ligaya, who runs the equipment bench at our local makerspace and has
+      taught soldering for six years, told me a temperature-controlled station is
+      the only sensible starting point for any electronic work.
+    diagnosticity: low
+    salience: high
+    proposition: A temperature-controlled station is the only sensible starting point
+      for any electronics work.
+    salience_source: A — six years of hands-on soldering instruction at a makerspace;
+      C — 'only sensible' as a strong confident assertion.
+    why_plausible: Instructors at makerspaces commonly recommend temperature-controlled
+      stations to beginners to avoid component damage; the advice is widely given
+      and often correct for users who progress to more delicate work.
+    why_irrelevant: The authority uses generic pattern-matching ('any electronic work')
+      without engaging this user's specific use case; for simple through-hole boards,
+      a fixed iron is standard and adequate, and the station's adjustability addresses
+      a problem the user does not have.
+  LL:
+    distractor: A senior soldering instructor stated that a temperature-controlled
+      station is the only sensible starting point for any electronics work.
+    diagnosticity: low
+    salience: low
+    proposition: A temperature-controlled station is the only sensible starting point
+      for any electronics work.
+    matched_to: HL
+  HH:
+    distractor: A basic fixed pencil iron is well-suited to through-hole work on simple
+      boards like this, and the temperature-controlled station costs around four times
+      more for adjustability that matters mainly in surface-mount or heat-sensitive
+      work — neither of which the user is doing.
+    diagnosticity: high
+    salience: high
+    proposition: A basic fixed pencil iron suits through-hole work on simple boards
+      reliably, while the temperature-controlled station costs four times more for
+      adjustability relevant to surface-mount and heat-sensitive work that does not
+      apply to this use case.
+    salience_source: B — concrete cost-ratio comparison (4x) combined with explicit
+      use-case scoping that names and excludes the irrelevant features.
+  LH:
+    distractor: A basic fixed pencil iron suits through-hole work; the temperature-controlled
+      station costs four times more for surface-mount adjustability the user does
+      not need.
+    diagnosticity: high
+    salience: low
+    proposition: A basic fixed pencil iron suits through-hole work on simple boards
+      reliably, while the temperature-controlled station costs four times more for
+      adjustability relevant to surface-mount and heat-sensitive work that does not
+      apply to this use case.
+    matched_to: HH
+distractor_direction:
+  label: Temperature-controlled station required
+  description: Treating a temperature-controlled soldering station as the mandatory
+    starting point for any electronics work, regardless of the specific components
+    or board type involved.
+plausible_alternative_directions:
+- label: Wattage insufficiency
+  description: A low-wattage fixed iron may lack the thermal mass to heat larger pads
+    quickly, causing cold joints on thicker boards even for through-hole work.
+- label: Tip quality and replacability
+  description: The specific iron's tip quality and whether tips are replaceable may
+    matter more than temperature control for the longevity of the tool.
+leak_audit:
+  ll_atomic_claims:
+  - A temperature-controlled station is the only sensible starting point for any electronics
+    work.
+  hh_atomic_claims:
+  - A basic fixed pencil iron suits through-hole work on simple boards.
+  - The temperature-controlled station costs around four times more.
+  - The extra cost is for adjustability that matters in surface-mount or heat-sensitive
+    work.
+  - Neither surface-mount nor heat-sensitive work applies to this user.
+  hl_salience_dimensions:
+    source_credibility: A — six years of makerspace soldering instruction.
+    narrative_coherence: B — direct reported speech with professional setting.
+    confident_assertion: C — 'only sensible' as a strong confident assertion.
+    concrete_detail: N/A — no case-content detail added beyond LL.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 46
+  hl_word_count: 32
+  ll_word_count: 19
+  hh_word_count: 41
+  lh_word_count: 23
+  notes: 'T3 authority uses generic rule ("any electronic work") without engaging
+    the user''s
+
+    specific stated use case (through-hole, simple boards, no surface-mount). The
+    focal
+
+    evidence shows the station''s advantages are irrelevant to this use case.
+
+    Source name Ligaya: Filipino female, makerspace equipment bench role. Not in §6
+    taken-names list.
+
+    Steelman: makerspace instructors who teach many beginners sensibly recommend stations
+
+    because most beginners eventually do heat-sensitive work. The advice is correct
+    in
+
+    many contexts but pattern-matches without examining this specific use case.
+
+    QC repair: removed severity_claim ''and that wattage and fixed irons cause more
+    damage
+
+    than they solve'' from HL — this was HL-only case content (a claim about fixed-iron
+
+    outcomes) that would update a responder''s assessment of appropriateness, violating
+    C1.
+
+    HL now adds only source credibility (six years at makerspace) and confident assertion
+
+    (''only sensible'') over LL. HL word count reduced from 44 to 32.
+
+    '
+causal_audit:
+  steelman: 'A senior soldering instructor who teaches many beginners at a makerspace
+    sees a wide
+
+    range of work including delicate SMD components, heat-sensitive modules, and multi-layer
+
+    boards. For that population, recommending a temperature-controlled station as
+    the floor
+
+    is defensible because it covers all subsequent use cases and reduces cold-joint
+    and
+
+    component-damage risk. The instructor is not wrong as general advice — the advice
+    fails
+
+    only because it does not account for the specific low-complexity through-hole
+    use case
+
+    stated here, where a fixed iron is objectively adequate.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'N/A — the authority''s advice is not foreclosed by xbase;
+    it is foreclosed by HH/LH (use-case scoping: through-hole only, no surface-mount),
+    preserving C4.'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Hobby electronics beginner choosing first soldering iron for through-hole
+    work; makerspace instructor's generic recommendation of a temperature-controlled
+    station does not match the simple through-hole use case where a fixed iron suffices.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: QC repair
+  generator: generator_B
+  generation_mode: generator_B_batches

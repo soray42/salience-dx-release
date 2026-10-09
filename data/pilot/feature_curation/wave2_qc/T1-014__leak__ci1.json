@@ -1,0 +1,29 @@
+{
+  "seed_id": "T1-014",
+  "ll_claims_extracted": [
+    "A relative replaced their dishwasher instead of repairing it.",
+    "The reason for replacing was that a repair would void the remaining manufacturer warranty."
+  ],
+  "hl_case_claims": [
+    "Third-party repairs void remaining manufacturer warranty coverage.",
+    "The relative chose to replace rather than repair (replacing was the right call).",
+    "The relative's machine still had years of warranty coverage remaining.",
+    "The warranty-voiding concern was the deciding factor in the relative's decision."
+  ],
+  "hl_source_claims": [
+    "The brother-in-law told the user about this.",
+    "The brother-in-law's appliance technician pointed out the warranty-voiding issue."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "ll": 17,
+    "hl": 40,
+    "xbase": 50,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": false,
+  "verdict": "fail",
+  "repair_hint": "LH distractor omits the 50% repair-threshold benchmark that HH explicitly states ('well under the standard 50% repair threshold'). Add that evaluative context to LH so it flatly states all claims HH makes — e.g., append 'which is well under the standard 50% repair threshold' after the cost-ratio sentence."
+}

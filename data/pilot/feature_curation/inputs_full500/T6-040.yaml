@@ -1,0 +1,211 @@
+seed_id: T6-040
+template: T6
+domain: technical_troubleshooting
+complexity: high
+xbase: Our online feature store has been serving stale feature values to our model
+  inference service for about eight days. The feature pipeline runs on schedule and
+  logs show successful writes. The staleness is not uniform across features — some
+  refresh correctly while others lag by twelve to thirty-six hours. {DS}
+focal_diagnostic_feature: The lagging features all belong to a single feature group
+  whose time-travel window parameter was changed from 48h to 2h during a schema migration
+  eleven days ago; the inference service queries that group with a point-in-time timestamp
+  that now frequently falls outside the 2h window, returning the previous materialization
+  instead of the latest.
+low_diagnostic_proposition: The user's previous feature store staleness issues were
+  generally caused by cache eviction failures leaving old values in memory.
+oracle_action: ANSWER
+oracle_focus: Restore the time-travel window for the affected feature group to a value
+  that encompasses the inference timestamp, or adjust the query timestamp; then audit
+  other feature groups for similar window misconfiguration from the same migration.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the prior cache-eviction diagnosis. Ask
+  which features are stale, whether they share a feature group, and whether any schema
+  parameters changed around the onset of the issue.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the prior cache-eviction diagnosis. Ask which features are
+      stale
+    whether they share a feature group: null
+    and whether any schema parameters changed around the onset of the issue.: null
+  LL:
+    action: ASK
+    focus: Do not apply the prior cache-eviction diagnosis. Ask which features are
+      stale
+    whether they share a feature group: null
+    and whether any schema parameters changed around the onset of the issue.: null
+  HH:
+    action: ANSWER
+    focus: Restore the time-travel window for the affected feature group to a value
+      that encompasses the inference timestamp, or adjust the query timestamp; then
+      audit other feature groups for similar window misconfiguration from the same
+      migration.
+  LH:
+    action: ANSWER
+    focus: Restore the time-travel window for the affected feature group to a value
+      that encompasses the inference timestamp, or adjust the query timestamp; then
+      audit other feature groups for similar window misconfiguration from the same
+      migration.
+variants:
+  HL:
+    distractor: Every feature staleness problem I have dealt with before came down
+      to cache eviction failing silently — values stuck in the in-memory layer past
+      their TTL — so that is where I instinctively start looking every time this happens.
+    diagnosticity: low
+    salience: high
+    proposition: The user's previous feature store staleness issues were generally
+      caused by cache eviction failures leaving old values in memory.
+    salience_source: B — clear chronological pattern of repeated past occurrences
+      with a specific mechanism ('cache eviction failing silently', 'past their TTL');
+      C — 'every time', 'instinctively start looking' — strong confident first-instinct
+      framing.
+    why_plausible: Cache eviction failures are a genuine and common source of feature
+      staleness in online feature stores; the confident pattern from personal operational
+      experience is highly credible.
+    why_irrelevant: The staleness is non-uniform across features and tied to a specific
+      feature group — a cache-layer failure would typically produce more uniform staleness
+      or errors, not a group-bounded pattern; the focal evidence shows the cause is
+      a schema parameter (time-travel window) not a cache mechanism.
+  LL:
+    distractor: Previous feature store staleness issues for this user were generally
+      caused by cache eviction failures leaving old values in memory.
+    diagnosticity: low
+    salience: low
+    proposition: The user's previous feature store staleness issues were generally
+      caused by cache eviction failures leaving old values in memory.
+    matched_to: HL
+  HH:
+    distractor: The stale features all belong to a single feature group; the migration
+      changelog shows its time-travel window was narrowed from 48h to 2h eleven days
+      ago, one day before staleness appeared. The inference service queries that group
+      with a point-in-time lookup that now regularly falls outside the 2h window,
+      so the store returns the prior materialisation rather than the latest write.
+    diagnosticity: high
+    salience: high
+    proposition: The lagging features all belong to a single feature group whose time-travel
+      window parameter was changed from 48h to 2h during a schema migration eleven
+      days ago; the inference service queries that group with a point-in-time timestamp
+      that now frequently falls outside the 2h window, returning the previous materialization
+      instead of the latest.
+    salience_source: B/C — specific parameter values (48h → 2h), tight timeline (eleven
+      days ago, one day before symptom), exact mechanism (point-in-time lookup falling
+      outside the window), and group-bounded scope confirming the hypothesis.
+  LH:
+    distractor: The stale features share a single feature group whose time-travel
+      window was narrowed from 48h to 2h eleven days ago; inference queries with a
+      point-in-time timestamp now fall outside that window and retrieve the prior
+      materialisation.
+    diagnosticity: high
+    salience: low
+    proposition: The lagging features all belong to a single feature group whose time-travel
+      window parameter was changed from 48h to 2h during a schema migration eleven
+      days ago; the inference service queries that group with a point-in-time timestamp
+      that now frequently falls outside the 2h window, returning the previous materialization
+      instead of the latest.
+    matched_to: HH
+distractor_direction:
+  label: Cache eviction failure
+  description: Investigating whether an in-memory cache layer is failing to evict
+    expired feature values, causing stale data to be served past TTL.
+plausible_alternative_directions:
+- label: Pipeline write latency
+  description: The feature pipeline may be completing successfully but writing so
+    late in the window that inference queries arrive before the new values are committed.
+- label: Feature group registry inconsistency
+  description: The feature store registry may have a version mismatch between the
+    pipeline's write schema and the inference service's read schema
+  causing the store to fall back to older snapshots.: null
+- label: Point-in-time query clock skew
+  description: A clock offset between the inference service and feature store could
+    cause point-in-time queries to request timestamps slightly in the future
+  systematically missing the latest materialisation.: null
+leak_audit:
+  ll_atomic_claims:
+  - Previous feature store staleness issues for this user were generally caused by
+    cache eviction failures.
+  - The cache eviction failures left old values in memory past their TTL.
+  hh_atomic_claims:
+  - The stale features all belong to a single feature group.
+  - The migration changelog shows the feature group's time-travel window was changed
+    from 48h to 2h.
+  - The change occurred eleven days ago, one day before staleness appeared.
+  - The inference service queries that group with a point-in-time lookup.
+  - The point-in-time lookup now regularly falls outside the 2h window.
+  - The store returns the prior materialisation instead of the latest write as a result.
+  hl_salience_dimensions:
+    source_credibility: N/A
+    narrative_coherence: Clear pattern of repeated past occurrences with a named mechanism
+      (cache eviction, TTL) creating strong operational narrative.
+    confident_assertion: '''every time'', ''instinctively start looking every time''
+      — very strong confident first-instinct framing.'
+    concrete_detail: N/A — detail is about the past failure pattern, not the current
+      case.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 70
+  hl_word_count: 44
+  ll_word_count: 17
+  hh_word_count: 77
+  lh_word_count: 30
+  notes: 'C4 check: xbase notes non-uniform staleness across features with some refreshing
+    correctly — this is inconsistent with a cache-layer failure (which would affect
+    all cached features similarly) and creates a pathway-closure without naming the
+    time-travel window as the cause.
+
+    C1: HL adds only personal history pattern and confident framing; LL carries the
+    same proposition flatly (no case content added in HL).
+
+    T6 rule: the availability inference ("so that is where I instinctively start looking
+    every time") appears in HL as confident framing (salience dimension B/C); LL states
+    the past pattern flatly without the application-to-now framing. The application-to-now
+    is framing (C dimension), not propositional content about the present case — this
+    is clean under C1/T6.
+
+    HH is 77 words — within the 27-88 hard bound but above the 48-word operational
+    target. Recount: "The stale features all belong to a single feature group; the
+    migration changelog shows its time-travel window was narrowed from 48h to 2h eleven
+    days ago, one day before staleness appeared. The inference service queries that
+    group with a point-in-time lookup that now regularly falls outside the 2h window,
+    so the store returns the prior materialisation rather than the latest write."
+    = 77 tokens. Hard bound is 90; operational target is 48. This is above operational
+    target but within hard bound. The complexity level (high) and the multi-component
+    mechanism (window parameter + point-in-time query + prior materialisation return)
+    justify the length; no padding. Noting this borderline.
+
+    HL:LL = 44:17 = 2.59 ≤ 4. HH:LH = 77:30 = 2.57 ≤ 4.
+
+    '
+causal_audit:
+  steelman: 'A practitioner could argue: cache eviction failures in feature stores
+    are a genuine and common problem — values can get stuck in Redis or similar in-memory
+    stores past their configured TTL due to maxmemory-policy misconfiguration, eviction
+    race conditions, or connection pool issues. This is a high-priority hypothesis
+    in any feature staleness investigation and the operational experience pattern
+    is credible. However, the staleness in this case is explicitly non-uniform — some
+    features refresh correctly while others lag — and the lagging ones form a specific
+    group. A cache eviction failure at the layer level would affect features more
+    uniformly; a group-bounded pattern points to a group-specific configuration issue
+    rather than a cache mechanism. The focal evidence (time-travel window narrowed
+    to 2h on a group queried with timestamps outside that window) is a structurally
+    different mechanism that explains the group-bounded non-uniformity that cache
+    eviction cannot.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: Non-uniform staleness with some features refreshing correctly
+    forecloses a cache-layer explanation (which would be more uniform) without naming
+    the time-travel window cause.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Online feature store serving stale values non-uniformly — availability
+    bias toward cache eviction failure, actual root cause is time-travel window misconfigured
+    to 2h during schema migration.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

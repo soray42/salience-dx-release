@@ -1,0 +1,172 @@
+seed_id: T6-054
+template: T6
+domain: technical_troubleshooting
+complexity: medium
+xbase: Our self-hosted CI runner started failing builds three days ago with a vague
+  'unexpected error during build' message. The failure is not on a specific step —
+  different jobs exit differently. Builds pass without issue on the cloud runner for
+  the same repository. {DS}
+focal_diagnostic_feature: The self-hosted runner's disk is at 97% capacity; `docker
+  images` lists 23 untagged image layers totalling 18 GB accumulated since the last
+  system restart, leaving no space for build artefacts or temp files.
+low_diagnostic_proposition: Past runner failures on this machine were caused by a
+  corrupted npm cache, so that is probably the cause this time too.
+oracle_action: ANSWER
+oracle_focus: Prune dangling Docker layers with `docker image prune` and add a scheduled
+  prune to prevent recurrence; the disk-full condition explains why the cloud runner
+  passes and the self-hosted runner fails.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply the npm-cache explanation automatically.
+  Ask for disk usage and error logs on the self-hosted runner before assuming cache
+  corruption.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply the npm-cache explanation automatically. Ask for disk usage
+      and error logs on the self-hosted runner before assuming cache corruption.
+  LL:
+    action: ASK
+    focus: Do not apply the npm-cache explanation automatically. Ask for disk usage
+      and error logs on the self-hosted runner before assuming cache corruption.
+  HH:
+    action: ANSWER
+    focus: Prune dangling Docker layers with `docker image prune` and add a scheduled
+      prune to prevent recurrence; the disk-full condition explains why the cloud
+      runner passes and the self-hosted runner fails.
+  LH:
+    action: ANSWER
+    focus: Prune dangling Docker layers with `docker image prune` and add a scheduled
+      prune to prevent recurrence; the disk-full condition explains why the cloud
+      runner passes and the self-hosted runner fails.
+variants:
+  HL:
+    distractor: Every mysterious build failure on this runner I've debugged before
+      turned out to be a poisoned npm cache directory, so my instinct is to clear
+      the npm cache first and see if that unsticks it.
+    diagnosticity: low
+    salience: high
+    proposition: Past runner failures on this machine were caused by a corrupted npm
+      cache, so that is probably the cause this time too.
+    salience_source: B (narrative coherence — "every mysterious build failure" frames
+      a consistent personal pattern with first-person narrative arc); C (first-instinct
+      framing — "my instinct is to clear the npm cache first").
+    why_plausible: npm cache corruption does cause opaque build failures and is a
+      well-known footgun on shared runners; the past-experience claim is operationally
+      credible for someone who maintains CI infrastructure.
+    why_irrelevant: 'The past npm-cache failures were structurally different: the
+      cloud runner for the same repository passes today, pointing to a self-hosted
+      runner-specific environmental state, not application-layer cache content. A
+      corrupted npm cache would also affect cloud runs using the same package-lock.'
+  LL:
+    distractor: Past runner failures were caused by a corrupted npm cache, so that
+      is probably the cause now.
+    diagnosticity: low
+    salience: low
+    proposition: Past runner failures on this machine were caused by a corrupted npm
+      cache, so that is probably the cause this time too.
+    matched_to: HL
+  HH:
+    distractor: The runner's disk reads 97% full; running `docker images` shows 23
+      dangling image layers that have built up to 18 GB since the last reboot, leaving
+      almost no room for build output or temp files.
+    diagnosticity: high
+    salience: high
+    proposition: The self-hosted runner's disk is at 97% capacity; `docker images`
+      lists 23 untagged image layers totalling 18 GB accumulated since the last system
+      restart, leaving no space for build artefacts or temp files.
+    salience_source: B (narrative coherence — metric, command, count, size, and consequence
+      stated in one diagnostic chain); C (precise assertion — "97% full", "23 dangling
+      image layers", "18 GB").
+  LH:
+    distractor: The self-hosted runner disk is at 97% capacity due to 18 GB of untagged
+      Docker layers, leaving no space for build artifacts.
+    diagnosticity: high
+    salience: low
+    proposition: The self-hosted runner's disk is at 97% capacity; `docker images`
+      lists 23 untagged image layers totalling 18 GB accumulated since the last system
+      restart, leaving no space for build artefacts or temp files.
+    matched_to: HH
+distractor_direction:
+  label: npm cache corruption
+  description: Diagnosing the self-hosted runner failures as caused by a corrupted
+    or poisoned npm cache directory based on past experience with this machine.
+plausible_alternative_directions:
+- label: runner software version drift
+  description: The self-hosted runner agent may be on an older version than the cloud
+    runner, causing incompatibility with a recently updated workflow step.
+- label: network or registry access
+  description: The self-hosted machine may have lost connectivity to a private registry
+    or internal dependency mirror that the cloud runner can still reach.
+leak_audit:
+  ll_atomic_claims:
+  - Past runner failures on this machine were caused by a corrupted npm cache.
+  - That history implies the current failure is probably the same cause.
+  hh_atomic_claims:
+  - The self-hosted runner disk reads 97% full.
+  - Running `docker images` reveals 23 dangling image layers.
+  - Those layers total 18 GB of disk usage.
+  - They have accumulated since the last reboot.
+  - There is almost no room remaining for build output or temp files.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person speaker; T6 template.
+    narrative_coherence: '"Every mysterious build failure" establishes a complete
+      and consistent personal debugging history on this specific machine.'
+    confident_assertion: '"My instinct is to clear the npm cache first" — direct first-person
+      prescription derived from the availability heuristic.'
+    concrete_detail: N/A — "npm cache directory" is about the past cause, not this
+      case's symptoms.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 42
+  hl_word_count: 35
+  ll_word_count: 17
+  hh_word_count: 35
+  lh_word_count: 22
+  notes: 'T6 availability inference present in both HL and LL. HL adds only the personal
+
+    pattern ("every... before") and the first-instinct framing. HH/LH diff: both
+
+    assert 97% disk, 18 GB untagged layers, no remaining space; HH adds the 23-layer
+
+    count, the `docker images` command, and the "since the last reboot" timeline
+
+    for vividness. xbase states "cloud runner passes" — this is a narrow
+
+    pathway-closure for the npm-cache direction (cloud would also fail if npm cache
+
+    were the issue), per C4 steelman reasoning.
+
+    '
+causal_audit:
+  steelman: 'npm cache corruption is a real and common cause of opaque build failures
+    on
+
+    shared self-hosted runners, particularly when multiple jobs write concurrently.
+
+    The vague error message and per-job variability are consistent with a partially
+
+    corrupted cache directory. An experienced CI maintainer with exactly this prior
+
+    experience would reasonably try clearing the npm cache first.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: 'xbase states that builds pass on the cloud runner for
+    the same repository. A corrupted npm cache on the self-hosted machine would not
+    explain why cloud runs succeed — cloud runners use independent workspace directories.
+    This foreecloses the npm-cache hypothesis without naming the true cause (C4 pathway-closure
+    boundary respected: symptom asymmetry is stated, root cause is not).'
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Self-hosted CI runner fails with vague errors because accumulated untagged
+    Docker layers have filled the disk to 97%; availability distractor is past npm
+    cache corruption fixes on the same machine.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

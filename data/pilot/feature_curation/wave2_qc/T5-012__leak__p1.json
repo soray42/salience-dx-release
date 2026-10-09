@@ -1,0 +1,26 @@
+{
+  "seed_id": "T5-012",
+  "ll_claims_extracted": [
+    "The tool's website looks like it was built in the 1990s."
+  ],
+  "hl_case_claims": [
+    "The tool's website looks completely like it was built in the 1990s."
+  ],
+  "hl_source_claims": [
+    "The source is the user's lead infrastructure engineer.",
+    "She manages backup infrastructure for three mid-sized banks at her firm.",
+    "She told the user this directly (confident verb: 'told me')."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 29,
+    "ll": 14,
+    "xbase": 46,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}

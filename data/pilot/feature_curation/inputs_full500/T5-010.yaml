@@ -1,0 +1,92 @@
+seed_id: T5-010
+template: T5
+domain: open_qa
+complexity: low
+xbase: I'm choosing a home internet provider for my apartment. I work from home two
+  days a week and mostly need stable video calls. Both providers can install next
+  week. {DS}
+focal_diagnostic_feature: Provider A offers 1 Gbps fibre for €35/month with a 24-month
+  price lock and stronger reliability reviews; Provider B offers slower cable for
+  €42/month with a short introductory discount.
+low_diagnostic_proposition: Provider B's retail shop looks newer and more polished
+  than Provider A's shop.
+oracle_action: ANSWER
+oracle_focus: Choose Provider A on speed, price stability, and reliability evidence.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not use retail-shop polish as service evidence. Ask
+  for plan technology, price lock, speed, and reliability reviews.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not use retail-shop polish as service evidence. Ask for plan technology,
+      price lock, speed, and reliability reviews.
+  LL:
+    action: ASK
+    focus: Do not use retail-shop polish as service evidence. Ask for plan technology,
+      price lock, speed, and reliability reviews.
+  HH:
+    action: ANSWER
+    focus: Choose Provider A on speed, price stability, and reliability evidence.
+  LH:
+    action: ANSWER
+    focus: Choose Provider A on speed, price stability, and reliability evidence.
+variants:
+  HL:
+    distractor: Provider B's shop has a glossy black counter, warm lighting, and a
+      wall of neat routers; Provider A's shop looks like a ticket office from 2008.
+    diagnosticity: low
+    salience: high
+    proposition: Provider B's retail shop looks newer and more polished than Provider
+      A's shop.
+    salience_source: polished retail environment, product-display aesthetics
+    why_plausible: A slick shop can feel like a proxy for technical service quality.
+    why_irrelevant: Retail interior design does not determine network performance,
+      price lock, or reliability.
+  LL:
+    distractor: Provider B's retail location is newer and visually more polished than
+      Provider A's.
+    diagnosticity: low
+    salience: low
+    proposition: Provider B's retail shop looks newer and more polished than Provider
+      A's shop.
+    matched_to: HL
+  HH:
+    distractor: Provider A is 1 Gbps fibre at €35 with a 24-month price lock and better
+      reliability reviews; Provider B is 500 Mbps cable at €42 after a six-month promo.
+    diagnosticity: high
+    salience: high
+    proposition: Provider A offers 1 Gbps fibre for €35/month with a 24-month price
+      lock and stronger reliability reviews; Provider B offers slower cable for €42/month
+      with a short introductory discount.
+    salience_source: plan technology/price/reliability comparison
+  LH:
+    distractor: Provider A offers faster fibre service at a lower locked price and
+      has stronger reliability evidence than Provider B.
+    diagnosticity: high
+    salience: low
+    proposition: Provider A offers 1 Gbps fibre for €35/month with a 24-month price
+      lock and stronger reliability reviews; Provider B offers slower cable for €42/month
+      with a short introductory discount.
+    matched_to: HH
+distractor_direction:
+  label: Retail-shop polish
+  description: Investigating whether Provider B’s newer, more polished shop indicates
+    it is the better internet provider.
+plausible_alternative_directions:
+- label: Customer support quality
+  description: Installation responsiveness and outage support may differ from advertised
+    speed and price.
+- label: Contract exit terms
+  description: Cancellation fees, price hikes, or minimum-term clauses may change
+    the provider choice.
+- label: Building wiring constraints
+  description: The apartment building’s wiring may limit real-world performance for
+    one provider.
+leak_audit:
+  source: 'v4.2 hybrid: v2 HL/LL distractor text + v4.1b distractor_direction + plausible_alternative_directions'
+  hl_distractor_source: 'v2 original (real-world salience: credible source + coherent
+    narrative + concrete detail)'
+  ll_distractor_source: v2 original
+  notes: v4.1b HL was rejected post-test (cartoonish over-decoration triggered vigilance
+    not ISB). Returning to v2 text which exhibits the realistic salience pattern we
+    want to measure.

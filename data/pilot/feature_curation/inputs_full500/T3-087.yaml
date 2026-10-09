@@ -1,0 +1,169 @@
+seed_id: T3-087
+template: T3
+domain: open_qa
+complexity: medium
+xbase: I bought a road bike six months ago and have been getting lower back pain on
+  every ride longer than an hour. A local coach watched me ride for a few minutes
+  and gave me an opinion on the cause. I have not adjusted the saddle height or handlebar
+  reach since purchase. {DS}
+focal_diagnostic_feature: A professional bike fitter measures 4 cm of excess saddle
+  height and 3 cm of insufficient handlebar reach, placing the rider in sustained
+  lumbar flexion throughout the pedal stroke.
+low_diagnostic_proposition: An experienced coach asserts that lower back pain on road
+  bikes is almost always caused by an overly aggressive racing frame geometry rather
+  than fit adjustments.
+oracle_action: ANSWER
+oracle_focus: Book a professional bike fit session; the saddle is too high and the
+  bars too far, causing the measured lumbar stress — these are correctable without
+  changing the frame.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept a blanket geometry diagnosis without measurement
+  data. Ask for saddle height, handlebar reach, and a professional fit assessment
+  before concluding the frame is wrong.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept a blanket geometry diagnosis without measurement data. Ask
+      for saddle height, handlebar reach, and a professional fit assessment before
+      concluding the frame is wrong.
+  LL:
+    action: ASK
+    focus: Do not accept a blanket geometry diagnosis without measurement data. Ask
+      for saddle height, handlebar reach, and a professional fit assessment before
+      concluding the frame is wrong.
+  HH:
+    action: ANSWER
+    focus: Book a professional bike fit session; the saddle is too high and the bars
+      too far, causing the measured lumbar stress — these are correctable without
+      changing the frame.
+  LH:
+    action: ANSWER
+    focus: Book a professional bike fit session; the saddle is too high and the bars
+      too far, causing the measured lumbar stress — these are correctable without
+      changing the frame.
+variants:
+  HL:
+    distractor: Zara — who coaches the regional cycling club and has placed riders
+      at national level — told me straight out that this frame geometry is simply
+      too aggressive for recreational riders and that pain like mine always comes
+      from the wrong bike, not from setup.
+    diagnosticity: low
+    salience: high
+    proposition: An experienced coach asserts that lower back pain on road bikes is
+      almost always caused by an overly aggressive racing frame geometry rather than
+      fit adjustments.
+    salience_source: A/C — named source with specific elite credential (national-level
+      placements) plus a confident universal assertion ('always comes from the wrong
+      bike').
+    why_plausible: A regionally credentialed coach's confident pattern-match could
+      persuade a novice rider that geometry is the culprit before any measurements
+      are taken.
+    why_irrelevant: The coach's assertion is generic — 'always' — rather than based
+      on any measurement of this rider on this bike; the focal feature supplies the
+      actual measurements that identify a correctable fit problem, not a geometry
+      mismatch.
+  LL:
+    distractor: An experienced coach stated that road bike back pain is almost always
+      caused by frame geometry, not fit adjustments.
+    diagnosticity: low
+    salience: low
+    proposition: An experienced coach asserts that lower back pain on road bikes is
+      almost always caused by an overly aggressive racing frame geometry rather than
+      fit adjustments.
+    matched_to: HL
+  HH:
+    distractor: A professional bike fitter used plumb-line and goniometer checks and
+      found the saddle is 4 cm above the recommended height for my leg length and
+      the bars are 3 cm too far away, placing my lower back in continuous flexion
+      throughout every pedal stroke.
+    diagnosticity: high
+    salience: high
+    proposition: A professional bike fitter measures 4 cm of excess saddle height
+      and 3 cm of insufficient handlebar reach, placing the rider in sustained lumbar
+      flexion throughout the pedal stroke.
+    salience_source: A/B/C — credentialed fitter using named tools (plumb-line, goniometer),
+      precise measurements, and a mechanistic explanation of the postural load.
+  LH:
+    distractor: A professional bike fitter found 4 cm of excess saddle height and
+      3 cm of insufficient handlebar reach, causing continuous lumbar flexion.
+    diagnosticity: high
+    salience: low
+    proposition: A professional bike fitter measures 4 cm of excess saddle height
+      and 3 cm of insufficient handlebar reach, placing the rider in sustained lumbar
+      flexion throughout the pedal stroke.
+    matched_to: HH
+distractor_direction:
+  label: Frame geometry mismatch
+  description: Concluding that the bike's designed geometry is inherently too aggressive
+    for recreational riding and that the frame itself must be replaced or swapped.
+plausible_alternative_directions:
+- label: Core muscle weakness
+  description: Exploring whether inadequate core strength or cycling-specific conditioning
+    is contributing to lumbar fatigue on longer rides.
+- label: Cleat and foot alignment
+  description: Assessing whether misaligned cleats create a chain of compensatory
+    tension that reaches the lower back.
+leak_audit:
+  ll_atomic_claims:
+  - An experienced coach stated that lower back pain on road bikes is almost always
+    caused by frame geometry being too aggressive.
+  - The coach framed this as a geometry problem rather than a fit-adjustment problem.
+  hh_atomic_claims:
+  - A professional bike fitter performed plumb-line and goniometer checks.
+  - The saddle is 4 cm above the recommended height for the rider's leg length.
+  - The handlebars are 3 cm too far away.
+  - This places the lower back in continuous flexion throughout the pedal stroke.
+  hl_salience_dimensions:
+    source_credibility: Named coach (Zara) with elite coaching credential — regional
+      club, national-level placements.
+    narrative_coherence: Brief but professional coaching interaction framed as direct
+      advice.
+    confident_assertion: '''told me straight out'', ''always comes from the wrong
+      bike'' — categorical claim.'
+    concrete_detail: N/A — no case-content facts added; credentials are about the
+      source, not this rider's measurements.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 60
+  hl_word_count: 43
+  ll_word_count: 19
+  hh_word_count: 46
+  lh_word_count: 19
+  notes: 'HL''s ''always'' is the coach''s general heuristic, not a claim about this
+    rider''s measurements — clean under C1. Frame-geometry as a cause-class is real
+    but the focal measurements structurally rule it out for this case: correctable
+    setup errors (4 cm saddle, 3 cm reach) explain the symptoms without any need to
+    replace the frame. LL shortened from 26 to 19 words by consolidating the two propositional
+    claims into one flat clause (''road bike back pain is almost always caused by
+    frame geometry, not fit adjustments'') while preserving both claims from ll_atomic_claims.
+
+    '
+causal_audit:
+  steelman: 'A senior sports physiotherapist might argue: aggressive road geometry
+    (long reach, low stack) does genuinely overload recreational riders'' lumbar extensors,
+    and a coach watching live movement could observe a forward-lean posture consistent
+    with that. However, the focal fitter''s measurements reveal that the saddle is
+    4 cm too high and reach is 3 cm too short — these are correctable setup errors,
+    not intrinsic geometry flaws. The coach''s observation provides no measurement
+    data and the ''always'' framing is pattern-matching, not an analysis of this rider''s
+    setup. The focal feature structurally rules out the frame as the primary cause.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — xbase does not close a specific mechanism; the fitter's
+    measurements in HH/LH do the ruling out.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: 'Road bike lower back pain: credentialed coach blames aggressive frame
+    geometry, but a professional bike fitter''s measurements show correctable saddle
+    and reach errors causing sustained lumbar flexion.'
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  repair_note: lint word-count/name fix
+  generator: generator_B
+  generation_mode: generator_B_batches

@@ -1,0 +1,27 @@
+{
+  "seed_id": "T6-016",
+  "ll_claims_extracted": [
+    "The investor's portfolio lagged its benchmark on at least three prior occasions.",
+    "Fund fees were identified as the cause each of those times."
+  ],
+  "hl_case_claims": [
+    "The investor's portfolio lagged its benchmark on at least three prior occasions ('three prior years').",
+    "Fund fees were identified as the cause each of those times ('I traced the lag back to fund fees').",
+    "The investor's first instinct is that this year the lag has the same cause (fees) — 'my first instinct is that this year is the same'."
+  ],
+  "hl_source_claims": [
+    "The speaker is reporting from first-person personal experience ('to me before', 'I traced')."
+  ],
+  "leaks": [],
+  "style_flags": [],
+  "word_counts": {
+    "hl": 29,
+    "ll": 15,
+    "xbase": 59,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": false,
+  "verdict": "fail",
+  "repair_hint": "LH distractor is missing case claims present in HH: (1) the two-year duration of non-rebalancing ('over two years' / 'two equity-bull years'), (2) the equity-market appreciation mechanism ('equity markets ran hard over that period'), and (3) the explicit drift magnitude ('15–18 percentage points above target'; LH only says 'well above my 60% target'). Revise LH distractor to flatly restate all three omitted claims with low-salience phrasing, e.g.: 'My equity allocation has drifted to about 75–78% — roughly 15–18 pp above my 60% target — after two equity-bull years without rebalancing.'"
+}

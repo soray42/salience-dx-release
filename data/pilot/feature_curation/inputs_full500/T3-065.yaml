@@ -1,0 +1,174 @@
+seed_id: T3-065
+template: T3
+domain: open_qa
+complexity: low
+xbase: I'm trying to settle whether to do my cardio before or after my weights in
+  the same gym session. My main goal right now is getting stronger on my big lifts;
+  the cardio is just there to keep my conditioning ticking over. I have the same hour
+  either way and I'm not short on time. I just want to order the two parts so I actually
+  make progress on the lifting that matters most to me. {DS}
+focal_diagnostic_feature: The user's own training log shows their top working-set
+  weight on the main lifts is about 12% lower on the days they do cardio first than
+  on the days they lift first.
+low_diagnostic_proposition: A senior figure stated that one should always do cardio
+  before weights as a general rule.
+oracle_action: ANSWER
+oracle_focus: Lift first, then do cardio; the user's own log shows their main-lift
+  working weight is about 12% lower when cardio comes first, which directly undermines
+  the strength goal they care about.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not accept a blanket cardio-first rule from authority
+  alone. Ask how the user's own lifting performance differs between the two orderings
+  given their strength goal.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not accept a blanket cardio-first rule from authority alone. Ask how
+      the user's own lifting performance differs between the two orderings given their
+      strength goal.
+  LL:
+    action: ASK
+    focus: Do not accept a blanket cardio-first rule from authority alone. Ask how
+      the user's own lifting performance differs between the two orderings given their
+      strength goal.
+  HH:
+    action: ANSWER
+    focus: Lift first, then do cardio; the user's own log shows their main-lift working
+      weight is about 12% lower when cardio comes first, which directly undermines
+      the strength goal they care about.
+  LH:
+    action: ANSWER
+    focus: Lift first, then do cardio; the user's own log shows their main-lift working
+      weight is about 12% lower when cardio comes first, which directly undermines
+      the strength goal they care about.
+variants:
+  HL:
+    distractor: Despina, who has coached at my gym for over a decade and trains half
+      the regulars there, told me flatly that you always warm the engine first, so
+      cardio before weights is just the right order, full stop, no matter what you're
+      training for.
+    diagnosticity: low
+    salience: high
+    proposition: A senior figure stated that one should always do cardio before weights
+      as a general rule.
+    salience_source: A — a long-tenured, widely-followed gym coach asserting a confident
+      blanket rule lends status and authority.
+    why_plausible: A decade of coaching and a firm rule make the cardio-first ordering
+      sound like settled best practice worth deferring to.
+    why_irrelevant: Her rule is a generic prescription with no engagement with this
+      user's strength goal or their own performance data, which is what actually decides
+      the ordering.
+  LL:
+    distractor: A senior figure stated that one should always do cardio before weights
+      as a general rule.
+    diagnosticity: low
+    salience: low
+    proposition: A senior figure stated that one should always do cardio before weights
+      as a general rule.
+    matched_to: HL
+  HH:
+    distractor: 'I compared my own logs and the difference is stark: on the days I
+      do cardio first, my top working set on the main lifts comes in roughly twelve
+      percent lighter than on the days I lift first, every time I''ve tracked it.'
+    diagnosticity: high
+    salience: high
+    proposition: The user's own training log shows their top working-set weight on
+      the main lifts is about 12% lower on the days they do cardio first than on the
+      days they lift first.
+    salience_source: Concrete first-person retrieval of the consistent 12% working-weight
+      gap makes the order's cost to strength vivid.
+  LH:
+    distractor: The user's log shows their main-lift top working weight is about 12%
+      lower on cardio-first days than on lift-first days.
+    diagnosticity: high
+    salience: low
+    proposition: The user's own training log shows their top working-set weight on
+      the main lifts is about 12% lower on the days they do cardio first than on the
+      days they lift first.
+    matched_to: HH
+distractor_direction:
+  label: Cardio-first rule
+  description: Treating a blanket always-do-cardio-first prescription from an experienced
+    coach as the right ordering regardless of the user's goal.
+plausible_alternative_directions:
+- label: Warm-up adequacy
+  description: Whether a short general warm-up rather than full cardio would prepare
+    the lifts without fatiguing them.
+- label: Split into two sessions
+  description: Whether separating cardio and lifting into different times of day would
+    remove the trade-off entirely.
+leak_audit:
+  ll_atomic_claims:
+  - A senior figure stated that one should always do cardio before weights as a general
+    rule.
+  hh_atomic_claims:
+  - The user compared their own training logs.
+  - Top working-set weight on the main lifts is about 12% lower on cardio-first days.
+  - It is consistently lower than on lift-first days.
+  hl_salience_dimensions:
+    source_credibility: Long-tenured gym coach (Despina) who trains many regulars.
+    narrative_coherence: Coherent appeal to a decade of coaching experience.
+    confident_assertion: Told me flatly ... full stop — confident, unhedged blanket
+      rule.
+    concrete_detail: Detail about the source (her decade coaching, training half the
+      regulars) only — no claim about the user's own lift performance.
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 79
+  hl_word_count: 42
+  ll_word_count: 16
+  hh_word_count: 42
+  lh_word_count: 20
+  notes: 'LL carries only the always-cardio-first rule; Despina''s name, tenure, and
+    following are HL-only and about the
+
+    source. xbase states the user''s strength goal, that cardio is secondary, and
+    that time is not a constraint, but
+
+    withholds the user''s own ordering-versus-performance data, so HL/LL cannot resolve
+    it. The decisive 12%-gap fact
+
+    lives only in HH/LH.
+
+    '
+causal_audit:
+  steelman: 'A coach could argue that cardio-first is defensible: a light aerobic
+    warm-up raises core temperature and primes
+
+    the cardiovascular system, and many general-fitness programs do sequence conditioning
+    before resistance work.
+
+    The prescription is a real coaching position in some contexts. But it does not
+    engage THIS user''s situation: the
+
+    user''s explicit priority is maximal strength on the big lifts, and exercise-order
+    research and the user''s own log
+
+    agree that pre-lifting cardio blunts working-set output — here by a measured 12%.
+    An authority''s blanket rule
+
+    asserted without reference to the strength goal or the user''s data has no mechanism
+    to make cardio-first the right
+
+    choice for this person. The rule is generic pattern-matching, not analysis of
+    this case.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: xbase fixes the goal as strength and cardio as secondary
+    with no time pressure, removing the time-efficiency rationale for a fixed order;
+    the decisive 12%-performance-gap fact lives only in HH/LH.
+unconstructable: false
+provenance:
+  date: 2026-06-13
+  topic_brief: A strength-focused lifter choosing exercise order, where their own
+    12%-lower working weight on cardio-first days decides it, not a coach's blanket
+    cardio-first rule.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_A
+  generation_mode: generator_A_batches_of_30

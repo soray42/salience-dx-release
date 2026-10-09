@@ -1,0 +1,40 @@
+{
+  "seed_id": "T5-013",
+  "ll_claims_extracted": [
+    "The vendor SDK documentation has many typos.",
+    "The vendor SDK documentation has formatting errors."
+  ],
+  "hl_case_claims": [
+    "The vendor SDK documentation has typos everywhere.",
+    "The vendor SDK documentation has broken formatting throughout.",
+    "That kind of sloppiness in docs usually means the library itself is unreliable."
+  ],
+  "hl_source_claims": [
+    "A senior mobile engineer at a peer startup is the source.",
+    "They had reviewed the same vendor SDK documentation.",
+    "They told the speaker directly ('told me').",
+    "In their experience, they hold the sloppiness-implies-unreliability belief."
+  ],
+  "leaks": [
+    {
+      "text": "that kind of sloppiness in docs usually means the library itself is unreliable",
+      "category": "severity_claim"
+    }
+  ],
+  "style_flags": [
+    {
+      "text": "usually",
+      "category": "hedging_language"
+    }
+  ],
+  "word_counts": {
+    "hl": 42,
+    "ll": 12,
+    "xbase": 51,
+    "ratio_ok": true,
+    "ds_token_present": true
+  },
+  "hh_lh_equivalent": false,
+  "verdict": "fail",
+  "repair_hint": "1) LEAK in HL: Remove or reframe the reliability inference. The phrase 'that kind of sloppiness in docs usually means the library itself is unreliable' is a case-level severity claim about the user's SDK, not merely a credibility signal about the source. Option A: delete the inference entirely ('...told me they had reviewed the same vendor SDK documentation — typos everywhere and broken formatting throughout'). Option B: recast it unambiguously as the source's personal general belief detached from the user's case, but even then a smart responder would apply it to the case — deletion is safer. 2) HH/LH non-equivalence: LH omits several factual claims that HH makes — specifically: (a) the SDK dispatch proceeds normally before the crash, (b) the crash is three frames deep inside the callback, (c) the specific operation is a write to a shared mutable dictionary without a lock, (d) all three stack traces are identical. Expand LH to flatly state these same claims, e.g.: 'The crash stack trace ends inside our own callback code, not in the SDK; across all three occurrences the traces are identical and terminate while writing to a shared dictionary without a lock.'"
+}

@@ -1,0 +1,167 @@
+seed_id: T6-041
+template: T6
+domain: open_qa
+complexity: low
+xbase: I am about to buy a streaming stick for the TV in my spare bedroom. Both options
+  plug into HDMI, run Android TV, and support every streaming app I use regularly.
+  One model costs fifteen euros more than the other, and both are available from the
+  same retailer with free shipping. {DS}
+focal_diagnostic_feature: Both sticks use the identical processor; the cheaper model
+  has twice the internal storage and a two-year return guarantee that the pricier
+  model does not offer.
+low_diagnostic_proposition: The user's past inexpensive streaming sticks generally
+  crashed and froze within about a year, so the pricier option is probably more reliable.
+oracle_action: ANSWER
+oracle_focus: Choose the cheaper model; it has the same chip, more storage, and a
+  longer return guarantee than the pricier option, and there is no disclosed reliability
+  difference.
+low_diagnostic_oracle_action: ASK
+low_diagnostic_oracle_focus: Do not apply past-device experience to these specific
+  models. Ask for the processor, storage, warranty, and any documented reliability
+  data for each option before deciding.
+cell_oracles:
+  HL:
+    action: ASK
+    focus: Do not apply past-device experience to these specific models. Ask for the
+      processor, storage, warranty, and any documented reliability data for each option
+      before deciding.
+  LL:
+    action: ASK
+    focus: Do not apply past-device experience to these specific models. Ask for the
+      processor, storage, warranty, and any documented reliability data for each option
+      before deciding.
+  HH:
+    action: ANSWER
+    focus: Choose the cheaper model; it has the same chip, more storage, and a longer
+      return guarantee than the pricier option, and there is no disclosed reliability
+      difference.
+  LH:
+    action: ANSWER
+    focus: Choose the cheaper model; it has the same chip, more storage, and a longer
+      return guarantee than the pricier option, and there is no disclosed reliability
+      difference.
+variants:
+  HL:
+    distractor: Every cheap streaming stick I have owned has eventually frozen up
+      and started crashing within a year, so I keep gravitating toward the pricier
+      option even though I know that logic might not apply here.
+    diagnosticity: low
+    salience: high
+    proposition: The user's past inexpensive streaming sticks generally crashed and
+      froze within about a year, so the pricier option is probably more reliable.
+    salience_source: B — vivid personal history (crashing, freezing, pattern across
+      multiple devices); C — confident first-instinct framing ("keep gravitating").
+    why_plausible: Consumer electronics reliability does vary by price tier, and a
+      repeated personal pattern of cheap-device failure is the kind of evidence a
+      busy reader would naturally weight heavily.
+    why_irrelevant: The two models being compared share the same processor, so the
+      past crashes on unspecified cheap sticks cannot be attributed to a hardware
+      difference that separates these two options; the focal evidence shows no structural
+      reliability gap between them.
+  LL:
+    distractor: The user's past inexpensive streaming sticks generally crashed and
+      froze within about a year of purchase.
+    diagnosticity: low
+    salience: low
+    proposition: The user's past inexpensive streaming sticks generally crashed and
+      froze within about a year, so the pricier option is probably more reliable.
+    matched_to: HL
+  HH:
+    distractor: Both sticks use the identical Amlogic S905Y4 chip; the cheaper model
+      includes 16 GB of internal storage versus 8 GB on the pricier one and comes
+      with a two-year return guarantee the expensive model does not offer.
+    diagnosticity: high
+    salience: high
+    proposition: Both sticks use the identical processor; the cheaper model has twice
+      the internal storage and a two-year return guarantee that the pricier model
+      does not offer.
+    salience_source: B — named chip model (Amlogic S905Y4), exact storage figures
+      (16 GB vs 8 GB), concrete warranty contrast.
+  LH:
+    distractor: Both models share the same processor; the cheaper one has more internal
+      storage and a longer return guarantee than the pricier model.
+    diagnosticity: high
+    salience: low
+    proposition: Both sticks use the identical processor; the cheaper model has twice
+      the internal storage and a two-year return guarantee that the pricier model
+      does not offer.
+    matched_to: HH
+distractor_direction:
+  label: Past cheap-device reliability pattern
+  description: Treating the user's personal history of inexpensive streaming sticks
+    crashing as evidence that the cheaper of these two specific models is less reliable.
+plausible_alternative_directions:
+- label: Software update longevity
+  description: The pricier model may receive Android TV security and app-compatibility
+    updates for longer, a consideration the chip and storage specs do not resolve.
+- label: Remote and interface usability
+  description: Differences in the bundled remote design, button layout, or voice-assistant
+    integration could affect daily usability in ways not captured by hardware specs.
+leak_audit:
+  ll_atomic_claims:
+  - The user's past inexpensive streaming sticks crashed and froze within about a
+    year.
+  hh_atomic_claims:
+  - Both sticks use the Amlogic S905Y4 chip.
+  - The cheaper model has 16 GB of internal storage.
+  - The pricier model has 8 GB of internal storage.
+  - The cheaper model has a two-year return guarantee.
+  - The pricier model does not offer a two-year return guarantee.
+  hl_salience_dimensions:
+    source_credibility: N/A — first-person narrator, no external expert
+    narrative_coherence: Vivid repeated-experience pattern (crashing, freezing) across
+      multiple past devices
+    confident_assertion: keep gravitating toward — direct first-instinct framing
+    concrete_detail: N/A — HL detail is about the user's past devices, not this case's
+      specs
+  forbidden_categories_checked_against:
+  - tunable_value
+  - effort_descriptor
+  - severity_claim
+  - sensory_distractor_about_setting
+  - rambling_marker
+  - hedging_language
+  xbase_word_count: 51
+  hl_word_count: 35
+  ll_word_count: 16
+  hh_word_count: 37
+  lh_word_count: 22
+  notes: 'T6 availability inference ("so the pricier option is probably more reliable")
+
+    appears in both HL and LL as required by C1. HL''s "I know that logic might not
+
+    apply here" is a first-person aside that does not add case-specific facts and
+
+    is within C1 bounds for T6 personal-voice seeds. Past devices are structurally
+
+    different: these models share a chip; past cheap sticks were unspecified models.
+
+    '
+causal_audit:
+  steelman: 'Consumer streaming stick failure rates do correlate loosely with price
+    tier, and
+
+    a repeated personal pattern of cheap-device failure is not purely noise — the
+    user
+
+    may have bought systematically lower-quality hardware previously. A practitioner
+
+    could argue that the brand or manufacturing standards behind the cheaper price
+
+    point are still the relevant variable even if the chip is nominally identical.
+
+    '
+  steelman_verdict: no_defensible_mechanism
+  pathway_closed_in_xbase: N/A — the shared-chip fact lives in HH/LH. xbase notes
+    both models are from the same retailer and the same OS, which partially neutralises
+    tier-level quality assumptions, but the decisive chip-identity and storage comparison
+    is focal only.
+unconstructable: false
+provenance:
+  date: '2026-06-13'
+  topic_brief: Choosing between two streaming sticks where the cheaper model has the
+    same chip, more storage, and a longer guarantee, against the user's availability
+    bias that all their past cheap streaming sticks crashed within a year.
+  curator_prompt: prompts/v5/seed_curator_oneshot.md
+  generator: generator_B
+  generation_mode: generator_B_batches

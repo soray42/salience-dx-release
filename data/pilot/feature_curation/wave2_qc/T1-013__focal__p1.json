@@ -1,0 +1,13 @@
+{
+  "seed_id": "T1-013",
+  "my_own_diagnosis": "From xbase alone: manual heat fires immediately but scheduled heat never runs, which eliminates downstream hardware (relay, boiler) and localises the fault to the thermostat's schedule-execution layer; the focal feature then clinches a UTC timezone offset as the precise mechanism — the schedule fires correctly at 06:30 UTC (01:30 local), while the house is asleep.",
+  "focal_decisive": true,
+  "focal_notes": "The five-hour clock discrepancy (11:32 on-device vs 06:32 local) is a single unambiguous mechanical fact that fully accounts for the observed pattern with no residual ambiguity.",
+  "direction_overlaps": [],
+  "alternatives_live": true,
+  "oracle_consistent": true,
+  "oracle_notes": "HL/LL cells map to the low-diagnostic oracle and HH/LH cells map to the focal oracle, both are correct; the low-diagnostic oracle correctly rejects the relay hypothesis by citing the working manual control.",
+  "answerable": true,
+  "verdict": "pass",
+  "repair_hint": ""
+}
